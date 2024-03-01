@@ -3,7 +3,7 @@ import axios from 'axios';
 
 
 //export const apiUrl = 'http://localhost:8081';
-export const apiUrl = 'https://talentstreambackendversion2.onrender.com';
+export const apiUrl = 'https://kqryamxpv3.ap-south-1.awsapprunner.com';
 
 
 
