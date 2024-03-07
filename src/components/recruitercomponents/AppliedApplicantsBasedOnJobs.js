@@ -131,7 +131,6 @@ function AppliedApplicantsBasedOnJobs() {
                           <th>Mobile Number</th>
                           <th>Job Title</th>
                           <th>Applicant Status</th>
-                          <th>Schedule InterView</th>
                           <th>Experience</th>
                           <th>Skill Name</th>
                           <th>Qualification</th>
@@ -158,49 +157,6 @@ function AppliedApplicantsBasedOnJobs() {
                             <td>{application.mobilenumber}</td>
                             <td>{application.jobTitle}</td>
                             <td>{application.applicantStatus}</td>
-                            <td>
-                                  <button
-                                    onClick={() =>
-                                      application.applicantStatus ===
-                                      'interviewing'
-                                        ? setShowPopup(true)
-                                        : null
-                                    }
-                                    style={{
-                                      border: 'none',
-                                      background: 'none',
-                                      padding: '0',
-                                      cursor:
-                                        application.applicantStatus ===
-                                        'interviewing'
-                                          ? 'pointer'
-                                          : 'default',
-                                      outline: 'none',
-                                    }}
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      viewBox="0 0 16 16"
-                                      className="bi bi-clock"
-                                      fill={
-                                        application.applicantStatus ===
-                                        'interviewing'
-                                          ? '#3498db'
-                                          : '#d3d3d3'
-                                      }
-                                    >
-                                      <path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0zM9 4a.5.5 0 0 1 1 0v4.5h3a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5V4z" />
-                                      <path d="M7.5 15a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 1 0v5.5a.5.5 0 0 1-.5.5z" />
-                                    </svg>
-                                  </button>
-                                  <ScheduleInterviewPopup
-                                    show={showPopup}
-                                    handleClose={() => setShowPopup(false)}
-                                    applyjobid={application.applyjobid}
-                                  />
-                                </td>
                             <td>{application.minimumExperience}</td>
                             <td>{application.skillName}</td>
                             <td>{application.minimumQualification}</td>

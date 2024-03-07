@@ -153,7 +153,7 @@ useEffect(() => {
                
               <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
-                  <span className="icon-keyboard_arrow_down" />
+                  {/* <span className="icon-keyboard_arrow_down" /> */}
                 </div>
                 <div className="sub-account">
                
@@ -230,12 +230,12 @@ useEffect(() => {
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/applicant-update-profile">
               <span className="icon-profile dash-icon"></span>
               <span className="dash-titles">Update Profile</span>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/applicant-find-jobs" className="tf-effect">
               <span className="icon-resumes dash-icon"></span>
@@ -260,7 +260,7 @@ useEffect(() => {
           <span className="icon-bell1 dash-icon">
             <sup
               style={{
-                background: 'red',
+                background: '#121212',
                 borderRadius: '50%',
                 padding: '2px 5px',
                 color: 'white',

@@ -131,60 +131,18 @@ const Nav = () => {
                 </nav>
               </div>
             </div> */}
-             <div className="header-ct-right st-1">
-  <div className="header-customize-item account">
-    <div className="sub-account-item">
-      <a
-        href="/candidate"
-        style={{
-          color: '#FFFFFF',
-          backgroundColor: '#f97316',
-          border: '1px solid #f97316',
-          padding: '10px 10px 10px 30px',
-          borderRadius: '8px',
-          display: 'inline-flex',
-          textAlign: 'center',
-          width: '130px',
-        }}
-        onMouseOver={(e) => {
-          e.target.style.color = '#FFFFFF';
-          e.target.style.backgroundColor = '#EE6D12';
-        }}
-        onMouseOut={(e) => {
-          e.target.style.color = '#FFFFEF';
-          e.target.style.backgroundColor = '#f97316';
-        }}
-      >
-        Find Jobs
-      </a>
-    </div>
-    <div className="sub-account-item">
-      <a
-        href="/recruiter"
-        style={{
-          color: '#f97316',
-          backgroundColor: 'white',
-          border: '1px solid #f97316',
-          padding: '10px 10px 10px 30px',
-          borderRadius: '8px',
-          display: 'inline-flex',
-          textAlign: 'center',
-          width: '190px',
-        }}
-        onMouseOver={(e) => {
-          e.target.style.color = '#FFFFFF';
-          e.target.style.backgroundColor = '#f97316';
-        }}
-        onMouseOut={(e) => {
-          e.target.style.color = '#f97316';
-          e.target.style.backgroundColor = 'white';
-        }}
-      >
-        Find Candidates
-      </a>
-    </div>
-  </div>
-</div>
+              <div className="header-ct-right st-1">
+                <div class="header-customize-item account">
+                <div class="sub-account-item">
+                  <a href="/recruiter" style={{ color: '#FFFFFF', backgroundColor: '#f97316', border: '1px solid #f97316', padding: '10px 10px 10px 30px', borderRadius: '8px', display: 'inline-flex', textAlign: 'center',width: '190px' }}
+                    onMouseOver={(e) => { e.target.style.color = '#FFFFFF'; e.target.style.backgroundColor = '#EE6D12'; }}
+                    onMouseOut={(e) => { e.target.style.color = '#FFFFFF'; e.target.style.backgroundColor = '#f97316'; }}
+                    >
+                   Find Candidates
+                 </a>
+                  </div>
+              </div>
+                 </div>
                  {/* <div className="nav-filter" id="left-menu-btn" onClick={handleToggleMenu}>
                   <div className="nav-mobile">
                     <span />

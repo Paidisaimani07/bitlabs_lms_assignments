@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState,useEffect} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
@@ -11,7 +11,6 @@ import OTPVerification from '../applicantcomponents/OTPVerification';
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidatePassword, setCandidatePassword] = useState('');
- 
   const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
   const registrationSuccess = location.state?.registrationSuccess;
@@ -74,7 +73,7 @@ const login = useGoogleLogin({
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
  
-        navigate('/applicanthome');
+        navigate('/applicant-find-jobs');
       }
     } catch (err) {
       console.log(err);
@@ -90,7 +89,7 @@ const login = useGoogleLogin({
     setActiveTab(tab);
     setErrorMessage('');
   };
- 
+  let userType1;
   const handleCandidateSubmit = async (e) => {
     e.preventDefault();
     if (!isCandidateFormValid()) {
@@ -111,7 +110,7 @@ const login = useGoogleLogin({
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
  
-        let userType1;
+       
  
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
           userType1 = 'jobseeker';
@@ -139,7 +138,8 @@ const login = useGoogleLogin({
         // }
  
         // Navigate to the applicant home page
-        navigate('/applicanthome');
+        
+        navigate('/applicant-find-jobs');
             }
  
     } catch (error) {
@@ -158,6 +158,7 @@ const login = useGoogleLogin({
       console.error('Login failed', error);
     }
   };
+
   const isCandidateFormValid = () => {
     const emailError = validateEmail(candidateEmail);
     setCandidateEmailError(emailError);

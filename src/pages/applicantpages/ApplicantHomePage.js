@@ -25,6 +25,9 @@ function ApplicantHomePage() {
   const updateActiveRoute = () => {
     const pathname = location.pathname;
     switch (pathname) {
+      case '/applicant-find-jobs':
+        setActiveRoute('findjobs');
+        break;
       case '/applicanthome':
         setActiveRoute('dashboard');
         break;
@@ -37,9 +40,6 @@ function ApplicantHomePage() {
           case '/applicant-edit-profile':
             setActiveRoute('editprofile');
             break;
-        case '/applicant-find-jobs':
-        setActiveRoute('findjobs');
-        break;
         case '/applicant-view-job':
           setActiveRoute('viewjob');
         break;
@@ -75,18 +75,20 @@ function ApplicantHomePage() {
   React.useEffect(() => {
     updateActiveRoute();
   }, [location.pathname]);
+  
   return (
     <div  class="dashboard show"> 
      <ApplicantNavBar />
+     {activeRoute === 'findjobs' && (<ApplicantFindJobs setSelectedJobId={setSelectedJobId} /> )}
      {activeRoute === 'dashboard' && <ApplicantDashboard />}
      {activeRoute === 'profile' && <ApplicantUpdateProfile />}
      {activeRoute === 'viewprofile' && <ApplicantViewProfile />}
      {activeRoute === 'editprofile' && <ApplicantEditProfile />}
-     {activeRoute === 'findjobs' && (<ApplicantFindJobs setSelectedJobId={setSelectedJobId} /> )}
+     
      {activeRoute === 'viewjob' && (<ApplicantViewJob selectedJobId={selectedJobId} /> )}
      {activeRoute === 'appliedjobs' && <ApplicantAppliedJobs setSelectedJobId={setSelectedJobId}/>}
      {activeRoute === 'savedjobs' && <ApplicantSavedJobs />}
-     {activeRoute === 'interviewstatus' && (<ApplicantInterviewStatus selectedJobId={selectedJobId} /> )}
+     {activeRoute === 'interviewstatus' && (<ApplicantInterviewStatus selectedJobId={selectedJobId} setSelectedJobId={setSelectedJobId} /> )}
      {activeRoute === 'changepassword' && <ApplicantChangePassword />}
      {activeRoute === 'deleteprofile' && <ApplicantDeleteProfile />}
      {activeRoute === 'jobalerts' && <ApplicantJobAlerts />}
