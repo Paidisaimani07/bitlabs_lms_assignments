@@ -77,12 +77,19 @@ function ApplicantChangePassword() {
       const response = await axios.post(`${apiUrl}/applicant/authenticateUsers/${user.id}`, formData);
       if (response.data === 'Password updated and stored') {
         window.alert('Password Changed Successfully');
+      }else if(response.data==='your new password should not be same as old password'){
+        window.alert('New password should not be same as old password.');
       } else {
         window.alert('Password change failed. Old password is wrong.');
+        // window.alert('Password change failed. New password should not be same as Old password.');
       }
-    } catch (error) {
+    } /*catch (error) {
       console.error('Error resetting password:', error);
       window.alert('Error resetting password');
+    }*/
+  catch (error) {
+      console.error('Password change failed. Old password is wrong.:', error);
+      window.alert('Password change failed. Old password is wrong.');
     }
   };
   const isValidPassword = (password) => {
@@ -109,7 +116,8 @@ function ApplicantChangePassword() {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="change-password bg-white">
-                    <form action="https://themesflat.co/html/jobtex/dashboard/dashboard.html">
+                    {/* <form action="https://themesflat.co/html/jobtex/dashboard/dashboard.html"> */}
+                    <form action="#">
                       <div className="form-password">
                         <div className="inner info-wd">
                           <label className="title-url fs-16">
@@ -137,7 +145,7 @@ function ApplicantChangePassword() {
                           <label className="title-url fs-16">
                             New Password <span className="color-red">*</span>
                           </label>
-                          
+                         
                           <div className="inputs-group auth-pass-inputgroup relative flex2">
         <input
           type={showNewPassword ? 'text' : 'password'}
@@ -160,7 +168,7 @@ function ApplicantChangePassword() {
                           <label className="title-url fs-16">
                             Confirm Password<span className="color-red">*</span>
                           </label>
-                          
+                         
                           <div className="inputs-group auth-pass-inputgroup relative flex2">
         <input
           type={showConfirmedPassword ? 'text' : 'password'}
@@ -180,7 +188,8 @@ function ApplicantChangePassword() {
                         </div>
                         <div className="tt-button submit">
                           <button type="button" class="button-status" onClick={handleChangePassword}>
-                            Update Password
+                            {/* Update Password */}
+                            Change Password
                           </button>
                         </div>
                       </div>
@@ -190,9 +199,10 @@ function ApplicantChangePassword() {
               </div>
             </div>
           </section>
+          <br></br>
         </div>
       </>
     </div>
   );
-} 
+}
 export default ApplicantChangePassword;

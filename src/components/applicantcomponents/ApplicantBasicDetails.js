@@ -10,18 +10,18 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
  
-
+ 
 const ApplicantBasicDetails = () => {
-
-
+ 
+ 
   const { user } = useUserContext();
-  
+ 
   const[applicant,setApplicant]=useState({
     name:"",
     email:"",
     mobilenumber:"",
    });
-
+ 
    
   const [experience, setExperience] = useState('');
   const [skills, setSkills] = useState([]);
@@ -44,12 +44,12 @@ const ApplicantBasicDetails = () => {
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [skillsRequired, setSkillsRequired] = useState([
-    
+   
   ]);
   useEffect(() => {
     setLoading(false);
   }, []);
-
+ 
   const [preferredJobLocations, setPreferredJobLocations] = useState([]);
   const yearsOptions = Array.from({ length: 16 }, (_, i) => i); // 0 to 10
  
@@ -60,58 +60,71 @@ const ApplicantBasicDetails = () => {
     'Intermediate',
     'Diploma',
   ];
-
-  
-
+ 
+ 
+ 
   const validateForm = () => {
     const newErrors = { ...errors }; // Assuming errors is the state containing existing errors
-  
+ 
     if (!experience) {
       newErrors.experience = 'Experience is required';
     } else {
       delete newErrors.experience; // Clear the error message if experience is filled
     }
-  
+ 
     if (!qualification) {
       newErrors.qualification = 'Qualification is required';
     } else {
       delete newErrors.qualification; // Clear the error message if qualification is filled
     }
-  
+ 
     if (!specialization) {
       newErrors.specialization = 'Specialization is required';
     } else {
       delete newErrors.specialization; // Clear the error message if specialization is filled
     }
-  
+ 
     if (preferredJobLocations.length === 0) {
       newErrors.city = 'City is required';
     } else {
       delete newErrors.city; // Clear the error message if city is filled
     }
-  
+ 
     if (skillsRequired.length === 0) {
       newErrors.skills = 'Skills are required';
     } else {
       delete newErrors.skills; // Clear the error message if skills are filled
     }
-  
+ 
+    if (!applicant.name && (!fullName || !fullName.trim())) {
+      newErrors.name = 'Name is required';
+    } else {
+      delete newErrors.name; // Clear the error message if name is filled or pre-filled
+    }
+ 
+    // Add a condition to skip validation if mobileNumber is pre-filled
+    if (!applicant.mobilenumber && !mobilenumber) {
+      newErrors.mobileNumber = 'Mobile number is required';
+    } else {
+      delete newErrors.mobileNumber; // Clear the error message if mobileNumber is filled or pre-filled
+    }
+ 
     setErrors(newErrors);
-  
+ 
     return Object.keys(newErrors).length === 0;
   };
-  
  
-
+ 
+ 
     const handleQualificationChange = (e) => {
     const selectedQualification = e.target.value;
     setQualification(selectedQualification);
-    setSpecialization(''); 
+    setSpecialization('');
     clearError('qualification');
     clearError('specialization');
-    
+   
   };
-
+ 
   const handleCityChange = (selected) => {
     setSelectedCities(selected);
     if (selected.length > 0) {
@@ -120,19 +133,37 @@ const ApplicantBasicDetails = () => {
       setCityError('Please select at least one city.');
     }
   };
-
+ 
   const clearError = (fieldName) => {
     setErrors((prevErrors) => ({
       ...prevErrors,
       [fieldName]: '',
     }));
   };
-
-  
+ 
+  // const handleChange2 = (e) => {
+  //   // setFullName(e.target.value);
+  //   setApplicant({...applicant,name: e.target.value});
+  //   clearError('fullName'); // Clear the error message for fullName
+  // };
+ 
+  const handleChange2 = (e) => {
+    setFullName(e.target.value);
+    setApplicant({...applicant,name: e.target.value});
+    clearError('name'); // Clear the error message for name
+  };
+ 
+  const handleChange3 = (e) => {
+    setMobileNumber(e.target.value);
+    clearError('mobileNumber'); // Clear the error message for mobileNumber
+  };
+ 
+ 
+ 
   const specializationsByQualification = {
-    'B.Tech': ['Computer Science and Engineering (CSE)', 
-                'Electronics and Communication Engineering (ECE)', 
-                'Electrical and Electronics Engineering (EEE)', 
+    'B.Tech': ['Computer Science and Engineering (CSE)',
+                'Electronics and Communication Engineering (ECE)',
+                'Electrical and Electronics Engineering (EEE)',
                 'Mechanical Engineering (ME)',
                 'Civil Engineering (CE)',
                 'Aerospace Engineering',
@@ -151,9 +182,9 @@ const ApplicantBasicDetails = () => {
                  'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
                   'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
                  'Radiology and Imaging Technology'],          
-    
+   
   };
-  
+ 
   const cities = [
     'Chennai',
     'Thiruvananthapuram',
@@ -167,9 +198,9 @@ const ApplicantBasicDetails = () => {
     'Pondicherry',
     'Vijayawada',
   ];
-
-
-
+ 
+ 
+ 
   // Assuming skillsOptions is an array of skill names
   const skillsOptions = [
     'Java',
@@ -200,35 +231,45 @@ const ApplicantBasicDetails = () => {
     'Regression Testing',
     'Manual Testing'
   ];
-
+ 
   const skillsOptionsWithStructure = skillsOptions.map(skill => ({ skillName: skill }));
-
-
+ 
+ 
   const handleSkillsChange = (selected) => {
     const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
     setSkillsRequired(skillsWithNames);
-  
+ 
     if (skillsWithNames.length > 0) {
       setSkillsError('');
     } else {
       setSkillsError('Please select at least one skill.');
     }
   };
-  
-  
-
+ 
+  const citiesOptionsWithStructure = cities.map((city) => ({ city }));
+ 
+  const filterOutSelectedSkills = (options, selectedSkills) => {
+    const selectedSkillNames = selectedSkills.map((skill) => skill.skillName.toLowerCase());
+    return options.filter((option) => !selectedSkillNames.includes(option.skillName.toLowerCase()));
+  };
+ 
+  const filterOutSelectedCities = (allCities = [], selectedCities = []) => {
+    const selectedCityNames = new Set(selectedCities.map((city) => city.city?.toLowerCase()));
+    return allCities.filter((city) => !selectedCityNames.has(city.city.toLowerCase()));
+  };
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isFormValid = validateForm();
-  
+ 
     if (!isFormValid) {
       return;
     }
-  
+ 
     const formattedSkillsRequired = skillsRequired.map((skill) => ({
       skillName: skill.skillName.toLowerCase(),
     }));
-  
+ 
     const profileFormData = {
       experience,
       qualification,
@@ -236,15 +277,15 @@ const ApplicantBasicDetails = () => {
       preferredJobLocations: preferredJobLocations.map((location) => location.city),
       skillsRequired: formattedSkillsRequired,
     };
-  
+ 
     const userFormData = {
       name: applicant.name,
       mobilenumber,
     };
-  
+ 
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      
+     
         // Use PUT API if profile exists
         const putResponse = await axios.put(`${apiUrl}/applicant/editApplicant/${user.id}`,
           userFormData,
@@ -254,9 +295,9 @@ const ApplicantBasicDetails = () => {
             },
           }
         );
-  
+ 
         console.log('PUT API Response for User Data:', putResponse.data);
-  
+ 
         // Now update the details in the applicant_profile table
         const putProfileResponse = await axios.post(`${apiUrl}/applicantprofile/createprofile/${user.id}`,
           profileFormData,
@@ -266,12 +307,32 @@ const ApplicantBasicDetails = () => {
             },
           }
         );
-  
+ 
         console.log('POST API Response for Profile Data:', putProfileResponse.data);
-      
-  
+     
+ 
       window.alert('Profile saved successfully!');
       await new Promise((resolve) => setTimeout(resolve, 1000));
+ 
+      setExperience('');
+      setSkills([]);
+      setCity('');
+      setState('');
+      setQualification('');
+      setPassingYear('');
+      setResume(null);
+      setFullName(null);
+      setMobileNumber(null);
+      setEmail(null);
+      setPhone('');
+      setSpecialization('');
+      setSelectedCity([]);
+      setSelectedCities([]);
+      setCityError('');
+      setSelectedSkills([]);
+      setSkillsError('');
+      setLoading(true);
+ 
       navigate('/applicant-find-jobs');
     } catch (error) {
       console.error('Error submitting form data:', error);
@@ -282,7 +343,7 @@ const ApplicantBasicDetails = () => {
         try {
           const jwtToken = localStorage.getItem('jwtToken');
       console.log('jwt token new', jwtToken);
-      const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {       
+      const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {      
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },
@@ -294,29 +355,29 @@ const ApplicantBasicDetails = () => {
           setLoading(false);
         }
       };
-      fetchData();     
+      fetchData();    
     }, []);
-
+ 
     const handleChange = (selectedCities) => {
       setPreferredJobLocations(selectedCities);
       setErrors({}); // Reset errors when there is a change in selection
     };
-
+ 
     const filteredOptions = cities.filter(city => !preferredJobLocations.includes(city));
-
-    
+ 
+   
       const handleChange1 = (selectedSkills) => {
         setSkillsRequired(selectedSkills);
         setErrors({}); // Reset errors when there is a change in selection
       };
-    
+   
       // Filter out selected skills from the options
       const filteredOptions1 = skillsOptions.filter(skill => !skillsRequired.includes(skill));
-    
-
-
+   
+ 
+ 
   return (
-    
+   
     <div>
       {loading && (
       <div className="loading-spinner">
@@ -329,7 +390,7 @@ const ApplicantBasicDetails = () => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
-            <div className="title-dash flex2">Application Form</div>
+            <div className="title-dash flex2">Profile Details</div>
           </div>
         </div>
       </div>
@@ -337,10 +398,10 @@ const ApplicantBasicDetails = () => {
   </section>
   <form onSubmit={handleSubmit}>
   <section className="flat-dashboard-post flat-dashboard-setting">
-  
+ 
     <div className="themes-container">
       <div className="row">
-
+ 
         <div className="col-lg-12 col-md-12 ">
           <div className="post-new profile-setting bg-white">
  
@@ -352,14 +413,14 @@ const ApplicantBasicDetails = () => {
                     placeholder="*Full Name"
                     value={applicant.name}
                     className="input-form"
-                    onChange={(e) =>
-                      setApplicant({...applicant,name: e.target.value,})}
+                    onChange={(e) => handleChange2(e)}
+                    // onChange={(e) =>setApplicant({...applicant,name: e.target.value,})}
                     style={{ color: fullName ? 'black' : 'black' }}
-                    
-                  /> 
-                   {errors.fullName && (
-                    <div className="error-message">{errors.fullName}</div>
-                  )}
+                   
+                  />
+                   {errors.name && (
+      <div className="error-message">{errors.name}</div>
+    )}
                 </div>
               </div>
               <div className="col-lg-6 col-md-12">
@@ -374,7 +435,7 @@ const ApplicantBasicDetails = () => {
                     className="input-form"
                     onChange={(e) => setEmail(e.target.value)}
                     style={{ color: email ? 'black' : 'black' }}
-                    
+                   
                   />
                   {errors.email && (
                     <div className="error-message">{errors.email}</div>
@@ -386,7 +447,7 @@ const ApplicantBasicDetails = () => {
         {/* <label className="title-user fw-7">
           WhatsApp Number<span className="color-red">*</span>
         </label> */}
-        <div style={{ display: 'flex',height: '50px' }}>
+     
           {/* <div style={{ marginRight: '10px' }}>
           <PhoneInput
   placeholder="*Email"
@@ -411,17 +472,18 @@ const ApplicantBasicDetails = () => {
             placeholder="WhatsApp"
             value={applicant.mobilenumber}
             className="input-form"
-            onChange={(e) => setMobileNumber(e.target.value)}
+            // onChange={(e) => setMobileNumber(e.target.value)}
+            onChange={(e) => handleChange3(e)}
             style={{ color: mobilenumber ? 'black' : 'black' }}
-            
+           
           />
-           {errors.mobileNumber && (
-          <div className="error-message">{errors.mobileNumber}</div>
-        )}
+            {errors.mobileNumber && (
+        <div className="error-message">{errors.mobileNumber}</div>
+      )}
         </div>
        
       </div>
-    </div>
+   
           <div className="col-lg-6 col-md-12">
           <div id="item_1" className="dropdown titles-dropdown info-wd">
   <select
@@ -441,8 +503,8 @@ const ApplicantBasicDetails = () => {
     <div className="error-message">{errors.experience}</div>
   )}
 </div>
-
-
+ 
+ 
               </div>
               <div className="col-lg-6 col-md-12">
               <div id="item_4" className="dropdown titles-dropdown info-wd">
@@ -463,7 +525,7 @@ const ApplicantBasicDetails = () => {
     <div className="error-message">{errors.qualification}</div>
   )}
 </div>
-
+ 
       </div>
       <div className="col-lg-6 col-md-12">
       <div id="item_4" className="dropdown titles-dropdown info-wd">
@@ -485,34 +547,34 @@ const ApplicantBasicDetails = () => {
     <div className="error-message">{errors.specialization}</div>
   )}
 </div>
-
+ 
       </div>
   <div className="col-lg-6 col-md-12">
   <div id="item_3" className="dropdown titles-dropdown info-wd">
   <Typeahead
-    id="cityTypeahead"
-    labelKey="city"
-    multiple
-    placeholder="*Preferred Job Location(s)"
-    options={filteredOptions}
-    onChange={handleChange}
-    selected={preferredJobLocations}
-    filterBy={(option, props) =>
-      option &&
-      option.toLowerCase().startsWith(props.text.toLowerCase())
-    }
-    inputProps={{
-      className: 'input-form',
-    }}
-  />
-
+  id="cityTypeahead"
+  labelKey={(option) => option.city}
+  multiple
+  placeholder="*Preferred Job Location(s)"
+  options={filterOutSelectedCities(citiesOptionsWithStructure, preferredJobLocations)}
+  onChange={(selectedCities) => setPreferredJobLocations(selectedCities)}
+  selected={preferredJobLocations}
+  inputProps={{
+    className: 'input-form',
+  }}
+  allowNew={false} // Prevent new entries
+  filterBy={(option, props) =>
+    option.city.toLowerCase().startsWith(props.text.toLowerCase())
+  }
+/>
+ 
   {preferredJobLocations.length === 0 && errors.city && (
     <div className="error-message">{errors.city}</div>
   )}
 </div>
-
-
-
+ 
+ 
+ 
     </div>  
     <div className="col-lg-6 col-md-12">
     <div id="item_2" className="dropdown titles-dropdown info-wd">
@@ -521,23 +583,22 @@ const ApplicantBasicDetails = () => {
   labelKey={(option) => option.skillName}
   multiple
   placeholder="*Skills"
-  options={skillsOptionsWithStructure}
+  options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
   onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
   selected={skillsRequired}
-  filterBy={(option, props) =>
-    option &&
-    option.skillName &&
-    option.skillName.toLowerCase().includes(props.text.toLowerCase())
-  }
   inputProps={{
     className: 'input-form',
   }}
+  allowNew={false} // Prevent new entries
+  filterBy={(option, props) =>
+    option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
+  }
 />
       {skillsRequired.length === 0 && errors.skills && (
         <div className="error-message">{errors.skills}</div>
       )}
     </div>
-
+ 
 </div>            
               </div>
             <div className="form-infor flex flat-form">
@@ -551,7 +612,7 @@ const ApplicantBasicDetails = () => {
         </div>
       </div>
     </div>
-
+ 
   </section>
   </form>
 </div>

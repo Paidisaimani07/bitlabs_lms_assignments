@@ -27,7 +27,18 @@ function ApplicantSavedJobs() {
   useEffect(() => {
     const fetchSavedJobs = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/savedjob/getSavedJobs/${applicantId}`);
+        // Assuming you have a function to get the JWT token from wherever it's stored
+        const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
+
+        const response = await axios.get(
+          `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+
         const jobsData = response.data;
         setJobs(jobsData);
       } catch (error) {
@@ -113,6 +124,7 @@ function ApplicantSavedJobs() {
                               <li>
                                 <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
                               </li>
+                              <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
                             </ul>
                             <div className="star">
                               {Array.from({ length: job.starRating }).map((_, index) => (

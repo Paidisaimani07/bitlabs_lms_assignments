@@ -20,6 +20,7 @@ function ApplicantEditProfile() {
     applicant:{},
   });
   const [errors, setErrors] = useState({
+    applicant: {},
     basicDetails: {},
     xClassDetails: {},
     intermediateDetails: {},
@@ -30,137 +31,183 @@ function ApplicantEditProfile() {
   });
   const validateForm = (fielname) => {
     const newErrors = {
+      applicant: {},
       basicDetails: {},
       xClassDetails: {},
       intermediateDetails: {},
       graduationDetails: {},
       skillsRequired: [],
       experienceDetails: [],
-      applicant:{},    
-    };   
-
-    
-
+    };
 const currentDate = new Date();
 const maxAllowedAge = 18;
-if(fielname === "" || fielname === "dateOfBirth")
-{
-if (!/^\d{4}-\d{2}-\d{2}$/.test(basicDetails.dateOfBirth)){ 
-  newErrors.basicDetails.dateOfBirth = 'Date of Birth is required';
-} else {
-  const selectedDate = new Date(basicDetails.dateOfBirth);    
-  if (selectedDate > new Date(currentDate.getFullYear() - maxAllowedAge, currentDate.getMonth(), currentDate.getDate())) {
-    newErrors.basicDetails.dateOfBirth = 'The Date of Birth should be at least 18 years ago.';
+if(fielname === "" || fielname === 'email'){
+  if (!applicant.email) {
+    newErrors.applicant.email='Email is required.';
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  newErrors.applicant.email=emailRegex.test(applicant.email) ? '' : 'Please enter a valid email address.';
+
+}
+if(fielname === "" || fielname === 'name'){
+  if (!applicant.name) {
+    newErrors.applicant.name= 'Full name is required.';
+  }
+  if (!/^[a-zA-Z\s]+$/.test(applicant.name)) {
+    newErrors.applicant.name='Please enter a valid full name and should not have any numbers and special char.';
+  }
+  if (applicant.name.length < 3) {
+    newErrors.applicant.name= 'Full name should be at least three characters long.';
   }
 }
+if(fielname === "" || fielname === 'mobilenumber'){
+  if (!applicant.mobilenumber.trim()) {
+    newErrors.applicant.mobilenumber= 'Mobile number is required.';
+  }
+  if (!/^\d+$/.test(applicant.mobilenumber)) {
+    newErrors.applicant.mobilenumber= 'Mobile number must contain only numeric digits.';
+  }
+  if (applicant.mobilenumber.length !== 10) {
+    newErrors.applicant.mobilenumber='Mobile number must have a specific length (e.g., 10 digits).';
+  }
+  if (/\s/.test(applicant.mobilenumber)) {
+    newErrors.applicant.mobilenumber= 'Mobile number cannot contain spaces.';
+  }
+  const firstDigit = applicant.mobilenumber.charAt(0);
+  if (!['6', '7', '8', '9'].includes(firstDigit)) {
+    newErrors.applicant.mobilenumber= 'Mobile number should begin with 6, 7, 8, or 9.';
+  }
 }
+
+if(fielname === "" || fielname === "dateOfBirth")
+{
+ 
+  if (basicDetails && (fielname === "" || fielname === "dateOfBirth")) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(basicDetails.dateOfBirth)){
+      //newErrors.basicDetails.dateOfBirth = 'Date of birth is required';
+    } else {
+      const selectedDate = new Date(basicDetails.dateOfBirth);
+      const currentDate = new Date();
+      const maxAllowedAge = 18;
+   
+      if (selectedDate > new Date(currentDate.getFullYear() - maxAllowedAge, currentDate.getMonth(), currentDate.getDate())) {
+        newErrors.basicDetails.dateOfBirth = 'The Date of Birth should be at least 18 years ago.';
+      }
+    }
+  }
+}
+
+
+if(fielname === "" || fielname === "experience")
+{
+    if (!experience) {
+      newErrors.basicDetails.city = 'Experience is required';
+    } else {
+      if (/\D/.test(experience)) {
+        newErrors.basicDetails.city = 'Experience should not be number';
+      }
+    }
+  }
+  
 if(fielname === "" || fielname === "city")
 {
     if (!basicDetails.city) {
       newErrors.basicDetails.city = 'City is required';
-    } else {    
-      if (/\d/.test(basicDetails.city.trim())) {
+    } else {
+      if (/\d/.test(basicDetails.city)) {
         newErrors.basicDetails.city = 'City should not be number';
       }
     }
   }
   if(fielname==="" || fielname === "address")
   {
-    if (!basicDetails.address.trim()) {
+    if (!basicDetails.address) {
       newErrors.basicDetails.address = 'Address is required';
     }
   }
-       if(fielname === "" || fielname === "pincode")
+  
+    if(fielname === "" || fielname === "pincode")
 {
-    if (!basicDetails.pincode.trim()) {
-      newErrors.basicDetails.pincode = 'Pin Code is required';
-    } else if (!/^\d{6}$/.test(basicDetails.pincode.trim())) {
-      newErrors.basicDetails.pincode = 'Pin Code should be 6 digits and contain only numbers';
+    if (!basicDetails.pincode) {
+      newErrors.basicDetails.pincode = 'Pincode is required';
+    } else if (!/^\d{6}$/.test(basicDetails.pincode)) {
+      newErrors.basicDetails.pincode = 'Pincode should be 6 digits and contain only numbers';
     }
   }
-  if(fielname === "" || fielname === "mobilenumber")
-  {
-     if (!applicant.mobilenumber.trim()) {
-       newErrors.applicant.mobilenumber = 'Mobile number is required';
-     } else if (!/^\d{10}$/.test(applicant.mobilenumber.trim())) {
-       newErrors.applicant.mobilenumber = 'Mobile  should be 10 digits and contain only numbers';
-     }
-    }
-    if (applicant.name == null || applicant.name.trim()) {
-      return "Name is required";
-  } else if (!applicant.name.matches("^[a-zA-Z]{1,20}$")) {
-      return "Name should contain only alphabets and have a maximum of 20 characters";
-  }
-       if(fielname === "" || fielname === "state")
+   
+    if(fielname === "" || fielname === "state")
 {
     if (!basicDetails.state) {
-      newErrors.basicDetails.state = 'State is required';
+      newErrors.basicDetails.state = 'state is required';
     } else {
-           if (/\d/.test(basicDetails.state.trim())) {
-        newErrors.basicDetails.state = 'State should contain text only';
+      if (/\d/.test(basicDetails.state)) {
+        newErrors.basicDetails.state = 'State should contain charectes only';
       }
     }
   }
-       if(fielname === "" || fielname === "xschoolName")
+ 
+    if(fielname === "" || fielname === "xschoolName")
     {
     if (!xClassDetails.xschoolName) {
-      newErrors.xClassDetails.xschoolName = 'School Name is required';
+      newErrors.xClassDetails.xschoolName = 'School name is required';
     } else {
-      if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xschoolName.trim())) {
-        newErrors.xClassDetails.xschoolName = 'School Name should not be number';
+      if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xschoolName)) {
+        newErrors.xClassDetails.xschoolName = 'School name should not be number';
       }
     }}
+   
     if(fielname === "" || fielname === "xboard")
     {
     if (!xClassDetails.xboard) {
       newErrors.xClassDetails.xboard = 'Board is required';
     } else {
-          if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xboard.trim())) {
+      if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xboard)) {
         newErrors.xClassDetails.xboard = 'Board should not be number';
       }
     }
   }
+   
     if(fielname === "" || fielname === "xpercentage")
 {
-    if (!xClassDetails.xpercentage.trim()) {
+    if (!xClassDetails.xpercentage) {
       newErrors.xClassDetails.xpercentage = 'Percentage is required';
     } else {
-      const percentageValue = xClassDetails.xpercentage.trim();   
+      const percentageValue = xClassDetails.xpercentage;
       const validPercentageRegex = /^\d+(\.\d+)?$/;
-   
       if (!validPercentageRegex.test(percentageValue) || parseFloat(percentageValue) < 0 || parseFloat(percentageValue) > 100) {
         newErrors.xClassDetails.xpercentage = 'Enter a valid percentage between 0 and 100 (only digits and period(.) are allowed)';
       }
     }
   }
+   
     if(fielname === "" || fielname === "xPincode")
     {
-    if (!xClassDetails.xPincode.trim()) {
-      newErrors.xClassDetails.xPincode = 'Pin Code is required';
-    } else if (!/^\d{6}$/.test(xClassDetails.xPincode.trim())) {
-      newErrors.xClassDetails.xPincode = 'Pin Code should be 6 digits and contain only numbers';
+    if (!xClassDetails.xPincode) {
+      newErrors.xClassDetails.xPincode = 'Pincode is required';
+    } else if (!/^\d{6}$/.test(xClassDetails.xPincode)) {
+      newErrors.xClassDetails.xPincode = 'Pincode should be 6 digits and contain only numbers';
     }
   }
-     if(fielname === "" || fielname === "xyearOfPassing")
+   if(fielname === "" || fielname === "xyearOfPassing")
 {
 if (!xClassDetails.xyearOfPassing) {
-  newErrors.xClassDetails.xyearOfPassing = 'Year of Passing is required';
+  newErrors.xClassDetails.xyearOfPassing = 'Year of passing is required';
 } else {
-  if (!/^\d{4}$/.test(xClassDetails.xyearOfPassing.trim())) {
-    newErrors.xClassDetails.xyearOfPassing = 'Year of Passing should be a 4-digit number';
+  if (!/^\d{4}$/.test(xClassDetails.xyearOfPassing)) {
+    newErrors.xClassDetails.xyearOfPassing = 'Year of passing should be a 4-digit number';
   } else {
-       if (!/^\d+$/.test(xClassDetails.xyearOfPassing.trim())) {
-      newErrors.xClassDetails.xyearOfPassing = 'Year of Passing should contain only digits';
+    if (!/^\d+$/.test(xClassDetails.xyearOfPassing)) {
+      newErrors.xClassDetails.xyearOfPassing = 'Year of passing should contain only digits';
     }
   }
 }
-}   
+}
     if(fielname === "" || fielname === "xCity")
 {
 if (!xClassDetails.xCity) {
   newErrors.xClassDetails.xCity = 'City is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xCity.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xCity)) {
     newErrors.xClassDetails.xCity = 'City should not be number';
   }
 }
@@ -170,142 +217,141 @@ if(fielname === "" || fielname === "xState")
 if (!xClassDetails.xState) {
   newErrors.xClassDetails.xState = 'State is required';
 } else {
- 
-  if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xState.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(xClassDetails.xState)) {
     newErrors.xClassDetails.xState = 'State should not be number';
   }
 }
-}   
+}
    if(fielname === "" || fielname === "icollegeName")
 {
 if (!intermediateDetails.icollegeName) {
-  newErrors.intermediateDetails.icollegeName = 'College Name is required';
+  newErrors.intermediateDetails.icollegeName = 'College name is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.icollegeName.trim())) {
-    newErrors.intermediateDetails.icollegeName = 'College Name should not be number';
+  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.icollegeName)) {
+    newErrors.intermediateDetails.icollegeName = 'College name should not be number';
   }
 }
-}  
+}
 if(fielname === "" || fielname === "iboard")
 {
 if (!intermediateDetails.iboard) {
-  newErrors.intermediateDetails.iboard = 'Board Name is required';
-} else { 
-  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iboard.trim())) {
-    newErrors.intermediateDetails.iboard = 'Board Name should not be number only';
+  newErrors.intermediateDetails.iboard = 'Board name is required';
+} else {
+  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iboard)) {
+    newErrors.intermediateDetails.iboard = 'Board name should not be number only';
   }
 }
-}  
+}
 if(fielname === "" || fielname === "iprogram")
 {
 if (!intermediateDetails.iprogram) {
   newErrors.intermediateDetails.iprogram = 'Program is required';
-} else {  
-  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iprogram.trim())) {
+} else {
+  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iprogram)) {
     newErrors.intermediateDetails.iprogram = 'Program should contain text only';
   }
 }
-}
-      if(fielname === "" || fielname === "ipercentage")
+}  
+    if(fielname === "" || fielname === "ipercentage")
 {
-    if (!intermediateDetails.ipercentage.trim()) {
+    if (!intermediateDetails.ipercentage) {
       newErrors.intermediateDetails.ipercentage = 'Percentage is required';
     } else {
-      const percentageValue = intermediateDetails.ipercentage.trim();
-       
+      const percentageValue = intermediateDetails.ipercentage;
       const validPercentageRegex = /^\d+(\.\d+)?$/;
-   
       if (!validPercentageRegex.test(percentageValue) || parseFloat(percentageValue) < 0 || parseFloat(percentageValue) > 100) {
         newErrors.intermediateDetails.ipercentage = 'Enter a valid percentage between 0 (only digits and period(.) are allowed)';
       }
     }
   }
+
     if(fielname === "" || fielname === "iyearOdPassing")
 {
     if (!intermediateDetails.iyearOfPassing) {
-      newErrors.intermediateDetails.iyearOfPassing = 'Year of Passing is required';
-    } else {     
-      if (!/^\d{4}$/.test(intermediateDetails.iyearOfPassing.trim())) {
-        newErrors.intermediateDetails.iyearOfPassing = 'Year of Passing should be a 4-digit number';
+      newErrors.intermediateDetails.iyearOfPassing = 'Year of passing is required';
+    } else {
+      if (!/^\d{4}$/.test(intermediateDetails.iyearOfPassing)) {
+        newErrors.intermediateDetails.iyearOfPassing = 'Year of passing should be a 4-digit number';
       } else {
-               if (!/^\d+$/.test(intermediateDetails.iyearOfPassing.trim())) {
-          newErrors.intermediateDetails.iyearOfPassing = 'Year of Passing should contain only digits';
+        if (!/^\d+$/.test(intermediateDetails.iyearOfPassing)) {
+          newErrors.intermediateDetails.iyearOfPassing = 'Year of passing should contain only digits';
         }
       }
     }
-  }   
+  }
 if(fielname === "" || fielname === "iCity")
 {
 if (!intermediateDetails.iCity) {
   newErrors.intermediateDetails.iCity = 'City is required';
 } else {
-    if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iCity.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iCity)) {
     newErrors.intermediateDetails.iCity = 'City should contain text only';
   }
 }
-}  
+}
     if(fielname === "" || fielname === "iState")
 {
 if (!intermediateDetails.iState) {
   newErrors.intermediateDetails.iState = 'State is required';
 } else {
-    if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iState.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(intermediateDetails.iState)) {
     newErrors.intermediateDetails.iState = 'State should contain text only';
   }
 }
 }
-       if(fielname === "" || fielname === "gcollegeName")
+    if(fielname === "" || fielname === "gcollegeName")
 {
 if (!graduationDetails.gcollegeName) {
-  newErrors.graduationDetails.gcollegeName = 'College Name is required';
-} else { 
-  if (!/^[^\d]+$/.test(graduationDetails.gcollegeName.trim())) {
-    newErrors.graduationDetails.gcollegeName = 'College Name should contain text only';
+  newErrors.graduationDetails.gcollegeName = 'College name is required';
+} else {
+  if (!/^[^\d]+$/.test(graduationDetails.gcollegeName)) {
+    newErrors.graduationDetails.gcollegeName = 'College name should contain text only';
   }
 }
 }
     if(fielname === "" || fielname === "gboard")
 {
 if (!graduationDetails.gboard) {
-  newErrors.graduationDetails.gboard = 'Board Name is required';
+  newErrors.graduationDetails.gboard = 'Board name is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gboard.trim())) {
-    newErrors.graduationDetails.gboard = 'Board Name should contain text only';
+  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gboard)) {
+    newErrors.graduationDetails.gboard = 'Board name should contain text only';
   }
 }
 }
-     if(fielname === "" || fielname === "gprogram")
+    if(fielname === "" || fielname === "gprogram")
 {
 if (!graduationDetails.gprogram) {
   newErrors.graduationDetails.gprogram = 'Program is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gprogram.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gprogram)) {
     newErrors.graduationDetails.gprogram = 'Program should contain text only';
   }
 }
 }
       if(fielname === "" || fielname === "gpercentage")
 {
-    if (!graduationDetails.gpercentage.trim()) {
+    if (!graduationDetails.gpercentage) {
       newErrors.graduationDetails.gpercentage = 'Percentage is required';
     } else {
-      const percentageValue = graduationDetails.gpercentage.trim();
+      const percentageValue = graduationDetails.gpercentage;
       const validPercentageRegex = /^\d+(\.\d+)?$/;
       if (!validPercentageRegex.test(percentageValue) || parseFloat(percentageValue) < 0 || parseFloat(percentageValue) > 100) {
         newErrors.graduationDetails.gpercentage = 'Enter a valid percentage between 0 and 100 (only digits and period(.) are allowed)';
       }
     }
   }
+   
     if(fielname === "" || fielname === "gyearOfPassing")
 {
     if (!graduationDetails.gyearOfPassing) {
-      newErrors.graduationDetails.gyearOfPassing = 'Year of Passing is required';
+      newErrors.graduationDetails.gyearOfPassing = 'Year of passing is required';
     } else {
-          if (!/^\d{4}$/.test(graduationDetails.gyearOfPassing.trim())) {
-        newErrors.graduationDetails.gyearOfPassing = 'Year of Passing should be a 4-digit number';
+      if (!/^\d{4}$/.test(graduationDetails.gyearOfPassing)) {
+        newErrors.graduationDetails.gyearOfPassing = 'Year of passing should be a 4-digit number';
       } else {
-              if (!/^\d+$/.test(graduationDetails.gyearOfPassing.trim())) {
-          newErrors.graduationDetails.gyearOfPassing = 'Year of Passing should contain only digits';
+        if (!/^\d+$/.test(graduationDetails.gyearOfPassing)) {
+          newErrors.graduationDetails.gyearOfPassing = 'Year of passing should contain only digits';
         }
       }
     }
@@ -315,7 +361,7 @@ if (!graduationDetails.gprogram) {
 if (!graduationDetails.gCity) {
   newErrors.graduationDetails.gCity = 'City is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gCity.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gCity)) {
     newErrors.graduationDetails.gCity = 'City should contain text only';
   }
 }
@@ -325,25 +371,25 @@ if(fielname === "" || fielname === "gState")
 if (!graduationDetails.gState) {
   newErrors.graduationDetails.gState = 'State is required';
 } else {
-  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gState.trim())) {
+  if (!/^[a-zA-Z\s]+$/.test(graduationDetails.gState)) {
     newErrors.graduationDetails.gState = 'State should contain text only';
   }
 }
 }
-       skillsRequired.forEach((skill, index) => {
-         if(fielname === "" || fielname === "skillName")
+    skillsRequired.forEach((skill, index) => {
+      if(fielname === "" || fielname === "skillName")
 {
       if (skill==undefined || !skill.skillName) {     
         if(newErrors.skillsRequired[index]===undefined)
         newErrors.skillsRequired[index] =  {skillName:'',experience:''};
-        newErrors.skillsRequired[index].skillName='Skill Name is required';
+        newErrors.skillsRequired[index].skillName='Skill name is required';
       } else if (/^\d+$/.test(skill.skillName)) {
         if(newErrors.skillsRequired[index]===undefined)
   newErrors.skillsRequired[index] =  {skillName:'',experience:''};
-          newErrors.skillsRequired[index].skillName='Skill Name should not be a numeric'; 
+          newErrors.skillsRequired[index].skillName='Skill name should not be a numeric'; 
       }
     }
-          if(fielname === "" || fielname === "experience")
+      if(fielname === "" || fielname === "experience")
 {
       if (!skill.experience) {
         if(newErrors.skillsRequired[index]===undefined)
@@ -357,7 +403,8 @@ if (!graduationDetails.gState) {
       }
     }
     });
-    setErrors(newErrors);   
+    setErrors(newErrors);
+    console.log(newErrors);
     return Object.keys(newErrors).every(key => Object.keys(newErrors[key]).length === 0);
   };
   useEffect(() => {    
@@ -370,7 +417,7 @@ if (!graduationDetails.gState) {
           Authorization: `Bearer ${jwtToken}`,
         },
       });
-          setApplicant(response.data.applicant,response.data.experience);
+          setApplicant(response.data.applicant);
           setBasicDetails(response.data.basicDetails);
              setXClassDetails(response.data.xClassDetails);
             setIntermediateDetails(response.data.intermediateDetails);
@@ -389,14 +436,50 @@ if (!graduationDetails.gState) {
       };
       fetchData();     
     }, []);
-   const[applicant,setApplicant]=useState({
-    name:"",
-    mobilenumber:""
-   });
+   const[applicant,setApplicant]=useState();
    const[experience,setExperience]=useState();
    const[qualification,setQualification]=useState();
    const[specialization,setSpecialization]=useState();
    const[preferredJobLocations,setpreferredJobLocations]=useState([]);
+   const qualificationsOptions = [
+    'B.Tech',
+    'MCA',
+    'Degree',
+    'Intermediate',
+    'Diploma',
+  ];
+  const handleQualificationChange = (e) => {
+    const selectedQualification = e.target.value;
+    setQualification(selectedQualification);
+    setSpecialization('');
+    // clearError('qualification');
+    // clearError('specialization');
+   
+  };
+  const specializationsByQualification = {
+    'B.Tech': ['Computer Science and Engineering (CSE)',
+                'Electronics and Communication Engineering (ECE)',
+                'Electrical and Electronics Engineering (EEE)',
+                'Mechanical Engineering (ME)',
+                'Civil Engineering (CE)',
+                'Aerospace Engineering',
+                'Information Technology(IT)',
+                 'Chemical Engineering',
+                 'Biotechnology Engineering'],
+    'MCA': ['Software Engineering', 'Data Science','Artificial Intelligence','Machine Learning','Information Security',
+             'Cloud Computing','Mobile Application Development','Web Development','Database Management','Network Administration',
+            'Cyber Security','IT Project Management'],
+    'Degree': ['Bachelor of Science (B.Sc) Physics','Bachelor of Science (B.Sc) Mathematics','Bachelor of Science (B.Sc) Statistics',
+               'Bachelor of Science (B.Sc) Computer Science','Bachelor of Science (B.Sc) Electronics','Bachelor of Science (B.Sc) Chemistry',
+               'Bachelor of Commerce (B.Com)'],
+    'Intermediate': ['MPC','BiPC','CEC','HEC'],
+    'Diploma': ['Mechanical Engineering','Civil Engineering','Electrical Engineering','Electronics and Communication Engineering',
+                'Computer Engineering','Automobile Engineering','Chemical Engineering','Information Technology','Instrumentation Engineering',
+                 'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
+                  'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
+                 'Radiology and Imaging Technology'],          
+   
+  };
    const cities = [
     'Chennai',
     'Thiruvananthapuram',
@@ -500,10 +583,12 @@ if (!graduationDetails.gState) {
   const handleSubmit = async (e) => {
     e.preventDefault();
   console.log("in handleSubmit")
-    const isFormValid = validateForm(""); 
-    if (!isFormValid) {
-      return;
-    }
+//  let dateOfBirth=applicant.dateOfBirth;
+//      const isFormValid = validateForm("dateOfBirth"); 
+//      if (!isFormValid) {
+//        console.log("returned becuse while validating");
+//       return;
+//     }
     const formData={
       applicant:applicant,
       basicDetails: basicDetails,
@@ -645,11 +730,11 @@ const handleResumeUpload = async () => {
       onClick={uploadPhoto}
       className="btn-3"
       style={{
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F97316',
         color: 'white',
         padding: '10px 15px',
         border: 'none',
-        borderRadius: '5px',
+        borderRadius: '8px',
         cursor: 'pointer',
         marginLeft:'5px',
         marginTop:'5px'
@@ -676,11 +761,11 @@ const handleResumeUpload = async () => {
   onClick={handleResumeUpload}
   className="btn-3"
   style={{
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#F97316',
     color: 'white',
     padding: '10px 15px',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '8px',
     cursor: 'pointer',
     marginLeft:'5px',
     marginTop:'5px'
@@ -734,7 +819,7 @@ const handleResumeUpload = async () => {
                   </div> */}
 
                   <fieldset>
-                  <label class="title-user fw-7">WhatsApp</label>
+                  <label class="title-user fw-7">WhatsApp<span className="color-red">*</span></label>
                     <input
                            type="text"
                            placeholder="WhatsAppNumber"
@@ -753,20 +838,20 @@ const handleResumeUpload = async () => {
 
                   <fieldset>
                   <label class="title-user fw-7">Qualification <span className="color-red">*</span></label>
-                    <input
-                        type="text"
-                        placeholder="Highiest Qualification"
-                        className="input-form"
-                        value={qualification}
-                           onChange={(e) =>
-                           setApplicant({ ...applicant, qualification: e.target.value })}
-                           onBlur={() => validateForm("qualification")}
-
-                        // value={qualification || ''}
-                        // onChange={(e) =>
-                        // setBasicDetails({ ...basicDetails, state: e.target.value })}
-                        // onBlur={() => validateForm("state")}
-                   />
+                  <select
+    value={qualification}
+    className="input-form"
+    onChange={handleQualificationChange}
+    onBlur={() => validateForm("qualification")}
+    style={{ color: qualification ? 'black' : 'lightgrey' }}
+  >
+    <option value="" disabled>*Qualification</option>
+    {qualificationsOptions.map((qual) => (
+      <option key={qual} value={qual}>
+        {qual}
+      </option>
+    ))}
+  </select>
                    <div className="validation-errors">
             {errors.applicant.qualification && (
               <div className="error-message">{errors.applicant.qualification}</div>
@@ -854,7 +939,7 @@ const handleResumeUpload = async () => {
                 <div className="info-box info-wd">
 
                 <fieldset>
-                  <label class="title-user fw-7">Date of Birth <span className="color-red">*</span></label>
+                  <label class="title-user fw-7">Date of Birth </label>
                      {/* <input
                              type="date"
                              placeholder="Date of Birth"
@@ -885,8 +970,8 @@ const handleResumeUpload = async () => {
                              onBlur={() => validateForm("dateOfBirth")}                             
                        /> 
                        {errors.basicDetails.dateOfBirth && (
-              <div className="error-message">{errors.basicDetails.dateOfBirth}</div>
-            )}
+        <div className="error-message">{errors.basicDetails.dateOfBirth}</div>
+    )}
                   </fieldset>
 
                 <fieldset>
@@ -905,10 +990,32 @@ const handleResumeUpload = async () => {
                     // style={{ color: email ? 'black' : 'black' }}
                     
                   />
-                  {errors.email && (
-                    <div className="error-message">{errors.email}</div>
-                  )}
+                   {errors.applicant.email && (
+              <div className="error-message">{errors.applicant.email}</div>
+            )}
           </fieldset>
+
+          <fieldset>
+                  <label class="title-user fw-7">Specialization <span className="color-red">*</span></label>
+                  <select
+    value={specialization}
+    className="input-form"
+    onChange={(e) =>
+    setSpecialization(e.target.value)}
+    style={{ color: specialization ? 'black' : 'lightgrey' }}
+    disabled={!qualification} // Disable if no qualification selected
+  >
+    <option value="" disabled>*Specialization</option>
+    {specializationsByQualification[qualification]?.map((spec) => (
+      <option key={spec} value={spec}>
+        {spec}
+      </option>
+    ))}
+  </select>
+                    {/* {errors.basicDetails.state && (
+              <div className="error-message">{errors.basicDetails.state}</div>
+            )} */}
+                  </fieldset>
 
           <fieldset>
                   <label class="title-user fw-7">Total Experience <span className="color-red">*</span></label>
@@ -917,30 +1024,15 @@ const handleResumeUpload = async () => {
                         placeholder="Overall Experience"
                         className="input-form"
                         value={experience || ''}
-                        onChange={(e) =>
-                        setBasicDetails({ ...basicDetails, state: e.target.value })}
-                        onBlur={() => validateForm("state")}
+                        onChange={(e) => setExperience(e.target.value)}
+                        //onBlur={() => validateForm("experience")}
                    />
-                    {errors.basicDetails.state && (
+                    {/* {errors.basicDetails.state && (
               <div className="error-message">{errors.basicDetails.state}</div>
-            )}
+            )} */}
                   </fieldset>
 
-                  <fieldset>
-                  <label class="title-user fw-7">Specialization <span className="color-red">*</span></label>
-                    <input
-                        type="text"
-                        placeholder="Specialization"
-                        className="input-form"
-                        value={specialization || ''}
-                        onChange={(e) =>
-                        setBasicDetails({ ...basicDetails, state: e.target.value })}
-                        onBlur={() => validateForm("state")}
-                   />
-                    {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )}
-                  </fieldset>
+                  
 
                   {/* <fieldset>
                   <label class="title-user fw-7">Address <span className="color-red">*</span></label>

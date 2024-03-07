@@ -1229,14 +1229,15 @@
     text-align: center;
   }
 
-  .wd-review-job.thumb1 .trader-box.box3 {
-    bottom: -5%;
-    left: 8.5%;
-  }
 
   .header-style2 .logo {
     padding: 20px 0;
   }
+
+  .wd-review-job.thumb1 .trader-box.box3 {
+    bottom: -12%;
+    left: 8.5%;
+}
 
   .wd-review-job.contentbox1,
   .wd-review-job.thumb-style3 {

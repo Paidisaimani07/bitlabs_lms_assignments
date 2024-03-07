@@ -49,6 +49,8 @@ function App() {
           <Router>
             <Routes>
               <Route path="/" element={<IndexPage />} />
+              <Route path="/find-jobs" element={<IndexPage />} />
+              <Route path="/find-candidates" element={<IndexPage />} />
               <Route path="/aboutus" element={<AboutPage />} />
               <Route path="/contactus" element={<ContactPage />} />
               <Route path="/candidate" element={<LoginPage onLogin={handleLogin} />} />
