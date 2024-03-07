@@ -4,7 +4,7 @@ import logoCompany1 from '../../images/cty12.png';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
- 
+
 function ApplicantViewJob({ selectedJobId }) {
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,45 +12,18 @@ function ApplicantViewJob({ selectedJobId }) {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const applicantId = user.id;
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
- 
-  useEffect(() => {
-    const fetchJobDetails = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`);
-        const {body} = response.data;
-        setLoading(false);
-        if (body) {
-          setJobDetails(body);
-          const appliedStatus = localStorage.getItem(`appliedStatus-${selectedJobId}`);
-          if (appliedStatus) {
-            setApplied(appliedStatus === 'true');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching job details:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchJobDetails();
-  }, [selectedJobId]);
- 
+
   const fetchJobDetails = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`);
-      const {body} = response.data;
+      const response = await axios.get(
+        `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        }
+      );
+      const { body } = response.data;
       setLoading(false);
       if (body) {
         setJobDetails(body);
@@ -65,10 +38,33 @@ function ApplicantViewJob({ selectedJobId }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    fetchJobDetails(); // Call the function directly when the component mounts
+  }, [selectedJobId]); 
+
+  
   const handleApplyNow = async () => {
     try {
       // Check the profile ID
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`);
+      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      });
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
@@ -76,24 +72,35 @@ function ApplicantViewJob({ selectedJobId }) {
         navigate('/applicant-basic-details-form');
         return;
       } else {
-      setApplied(true);
-      const response = await axios.post(`${apiUrl}/applyjob/applicants/applyjob/${applicantId}/${selectedJobId}`);
-      const { applied } = response.data;
-      window.alert('Job applied successfully');
-      localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
-      setApplied(applied);
-      fetchJobDetails();
-    }} catch (error) {
+        setApplied(true);
+        const response = await axios.post(
+          `${apiUrl}/applyjob/applicants/applyjob/${applicantId}/${selectedJobId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+            },
+          }
+        );
+        const { applied } = response.data;
+        window.alert('Job applied successfully');
+        localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
+        setApplied(applied);
+        fetchJobDetails();
+      }
+    } catch (error) {
       console.error('Error applying for the job:', error);
       window.alert('Job has already been applied by the applicant');
       setApplied(false);
     }
   };
- function formatDate(dateString) {
+
+  function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+
   return (
     <div>
       {loading ? null : (
@@ -120,67 +127,31 @@ function ApplicantViewJob({ selectedJobId }) {
                         <div className="features-job style-2 stc-apply">
                           <div className="job-archive-header">
                             <div className="inner-box">
-                               <div className="logo-company">                            
-                               {jobDetails.logoFile ? ( <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" /> )
-                               : (<img src="images/logo-company/cty12.png" alt={`Default Company Logo`} /> )}
-                            </div>
+                              <div className="logo-company">
+                                {jobDetails.logoFile ? (
+                                  <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" />
+                                ) : (
+                                  <img src="images/logo-company/cty12.png" alt={`Default Company Logo`} />
+                                )}
+                              </div>
                               <div className="box-content">
                                 <h4>
                                   <a href="#">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
                                   <a href="#">{jobDetails.jobTitle}</a>
-                                 
                                 </h3>
                                 <ul>
                                   <li>
                                     <span className="icon-map-pin"></span>
-                                     &nbsp;{jobDetails.location}
+                                    &nbsp;{jobDetails.location}
                                   </li>
                                   <li>
                                     <span className="icon-calendar"></span>
                                     &nbsp;{formatDate(jobDetails.creationDate)}
                                   </li>
                                 </ul>
-                                <div className="button-readmore">
-                                 
-                                  {/* <a className="btn-apply btn-popup"> */}
-           
- 
-  {/* <div style={{ display: 'flex', alignItems: 'center' }}>
-  <button
-    className={`btn-apply btn-popup ${applied ? 'applied' : ''}`}
-    onClick={handleApplyNow}
-    disabled={jobDetails.jobStatus === 'Already Applied'}
-    style={{
-      backgroundColor: jobDetails.jobStatus === 'Already Applied' ? 'green' : '',
-      cursor: applied ? 'not-allowed' : 'pointer',height:'30px',
-    }}
-  >
-    <span className="icon-send"></span>
-    {jobDetails.jobStatus}
-  </button>
- 
-  <a
-    href="/applicant-find-jobs"
-    className="btn-apply btn-popup"
-    style={{
-      display: 'inline-block',
-      marginLeft: '10px',  // Added margin for spacing between buttons
-      padding: '5px 20px',
-      backgroundColor: '#1967d2',
-      color: 'white',
-      textDecoration: 'none',
-      borderRadius: '10px',
-      cursor: 'pointer',
-    }}
-  >
-    Cancel
-  </a>
-</div> */}
- 
- 
-                                </div>
+                                <div className="button-readmore"></div>
                               </div>
                             </div>
                           </div>
@@ -193,6 +164,7 @@ function ApplicantViewJob({ selectedJobId }) {
                                 <li>
                                   <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
+                                <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</p>
                               </ul>
                               <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -202,46 +174,48 @@ function ApplicantViewJob({ selectedJobId }) {
                             </div>
                             <div className="job-footer-right">
                               <div className="price">
-                                <span></span>Package :  &nbsp;
+                                <span></span>Package : &nbsp;
                                 <p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
-                               
                               </div>
-                             
                               <div className="button-readmore">
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
-  <button
-    className={`btn-apply btn-popup ${applied ? 'applied' : ''}`}
-    onClick={handleApplyNow}
-    disabled={jobDetails.jobStatus === 'Already Applied'}
-    style={{
-      backgroundColor: jobDetails.jobStatus === 'Already Applied' ? 'green' : '#1967d2',
-      cursor:'pointer',height:'37px',color:'white',borderRadius:'10px',
-    }}
-  >
-    <span className="icon-send"></span>&nbsp;
-   
-    {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
-  </button>
- 
-  <a
-    href="/applicant-find-jobs"
-    className="btn-apply btn-popup"
-    style={{
-      display: 'inline-block',
-      marginLeft: '10px',  // Added margin for spacing between buttons
-      padding: '5px 20px',
-      backgroundColor: '#1967d2',
-      color: 'white',
-      textDecoration: 'none',
-      borderRadius: '10px',
-      cursor: 'pointer',
-      fontWeight:'bold',
-    }}
-  >
-    Cancel
-  </a>
-</div>
-</div>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                  <button
+                                    className={`btn-apply btn-popup ${applied ? 'applied' : ''}`}
+                                    onClick={handleApplyNow}
+                                    disabled={jobDetails.jobStatus === 'Already Applied'}
+                                    style={{
+                                      backgroundColor:
+                                        jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
+                                      cursor: 'pointer',
+                                      height: '40px',
+                                      color: '#FFFFFF',
+                                      borderRadius: '8px',
+                                    }}
+                                  >
+                                    <span className="icon-send"></span>&nbsp;
+                                    {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
+                                  </button>
+                                  
+                                  <a
+                                    href="/applicant-find-jobs"
+                                    className="btn-apply btn-popup"
+                                    style={{
+                                      display: 'inline-block',
+                                      marginLeft: '10px',
+                                      padding: '5px 20px',
+                                      backgroundColor: '#F97316',
+                                      color: 'white',
+                                      height: '40px',
+                                      textDecoration: 'none',
+                                      borderRadius: '8px',
+                                      cursor: 'pointer',
+                                      fontWeight: 'bold',
+                                    }}
+                                  >
+                                    Cancel
+                                  </a>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -263,4 +237,5 @@ function ApplicantViewJob({ selectedJobId }) {
     </div>
   );
 }
+
 export default ApplicantViewJob;

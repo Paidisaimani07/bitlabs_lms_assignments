@@ -24,7 +24,12 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
   useEffect(() => {
     const fetchAppliedJobs = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/applyjob/getAppliedJobs/${applicantId}`);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applyjob/getAppliedJobs/${applicantId}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
         const jobsData = response.data;
         setJobs(jobsData);
       } catch (error) {
@@ -33,7 +38,8 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
         setLoading(false);
       }
     };
-   fetchAppliedJobs();
+  
+    fetchAppliedJobs();
   }, []);
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -77,10 +83,10 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
                              </div>
                             <div className="box-content">
                               <h4>
-                                <a href="#">{job.companyname}</a>
+                                <a href="javascript:void(0);">{job.companyname}</a>
                               </h4>
                               <h3>
-                                <a href="#">
+                                <a href="javascript:void(0);">
                                   {job.jobTitle}                                  
                                 </a>
                               </h3>
@@ -101,11 +107,12 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
                             <div className="job-footer-left">
                               <ul className="job-tag">
                                 <li>
-                                  <a href="#">{job.employeeType}</a>
+                                  <a href="javascript:void(0);">{job.employeeType}</a>
                                 </li>
                                 <li>
-                                  <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                  <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
+                                <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
                               </ul>
                               <div className="star">
                                 {Array.from({ length: job.starRating }).map((_, index) => (

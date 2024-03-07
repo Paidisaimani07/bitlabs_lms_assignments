@@ -15,6 +15,21 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   const disabledStatusClass = 'disabled-status';
   const [jobStatus,setJobStatus]=useState();
  
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Define windowWidth state variable
+ 
+  // Update windowWidth state variable on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+ 
+    window.addEventListener('resize', handleResize);
+ 
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+ 
   // useEffect(() => {
   //   const jwtToken = localStorage.getItem('jwtToken');
   //   if (jwtToken) {
@@ -32,6 +47,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   //     });
   // }, [user.id]);
  
+ 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -39,10 +55,10 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
         if (jwtToken) {
           axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
         }
-
+ 
         // Try to get jobs from local storage
         const localJobs = JSON.parse(localStorage.getItem('jobs')) || [];
-
+ 
         // If local jobs are available, use them
         if (localJobs.length > 0) {
           // Fetch job status for each job
@@ -53,14 +69,14 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
               return { ...job, status };
             })
           );
-
+ 
           setJobs(updatedJobs);
           setLoading(false);
         } else {
           // Fetch job details from the server
           const jobsResponse = await axios.get(`${apiUrl}/job/recruiters/viewJobs/${user.id}`);
           const jobsData = jobsResponse.data;
-
+ 
           // Fetch job status for each job
           const updatedJobs = await Promise.all(
             jobsData.map(async (job) => {
@@ -69,10 +85,10 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
               return { ...job, status };
             })
           );
-
+ 
           // Save the fetched jobs to local storage
           localStorage.setItem('jobs', JSON.stringify(updatedJobs));
-
+ 
           setJobs(updatedJobs);
           setLoading(false);
         }
@@ -81,22 +97,22 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
         setLoading(false);
       }
     };
-
+ 
     fetchJobs();
   }, [user.id]);
-
+ 
   const handleStatusChange = async (jobId, newStatus) => {
     try {
       // Update the job status using the API
       await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
-
+ 
       // Update the local state to reflect the changes
       setJobs((prevJobs) =>
         prevJobs.map((job) =>
           job.id === jobId ? { ...job, status: newStatus } : job
         )
       );
-
+ 
       // Update local storage with the modified job status
       const updatedJobs = jobs.map((job) =>
         job.id === jobId ? { ...job, status: newStatus } : job
@@ -106,7 +122,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
       console.error('Error updating job status:', error);
     }
   };
-
+ 
   const handleButtonClick1 = (jobId) => {
     setSelectedJobId(jobId);
   };
@@ -129,13 +145,13 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   //   };
   //   fetchJobStatus();
   // }, []);
-
-
+ 
+ 
   // const handleStatusChange = async (jobId, newStatus) => {
   //   try {
   //     // Update the job status using the API
   //     await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
-
+ 
   //     // Update the local state to reflect the changes
   //     setJobs((prevJobs) =>
   //       prevJobs.map((job) =>
@@ -167,25 +183,41 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
               <div className="inner">
                 <br />
                 <div className="group-col-2">
-                
+               
                 {jobs.map((job) => (
   <div    className={`features-job cl2 ${job.status === 'Inactive' ? 'inactive-job' : ''}`}
   key={job.id}>
-    
+   
     <select
   value={job.status}
   onChange={(e) => handleStatusChange(job.id, e.target.value)}
   style={{
     backgroundColor: 'white',
-    borderColor: '#1967d2',
+    borderColor: '#F97316',
     borderRadius: '5px',
-    width: '30%',
+    width: windowWidth >= 400 ? '46%' : '66%', // Adjust width based on window width
     float: 'right',
-    fontSize: '20px',  
-    color: job.status === 'Active' ? '#00ff00' : '#808080', // Dynamic color based on status
+    fontSize: '15px',
+    color: job.status === 'Active' ? '#EE6D12' : '#808080', // Dynamic color based on status
   }}
+    // width: '30%',
+    // width: '66%', // Default width for mobile devices
+    // width: '66%',
+   
+    // width: windowWidth >= 400 ? '48%' : // Desktop view
+    //    windowWidth >= 350 ? '56%' : // Tablet view
+    //    '66%', // Mobile view
+ 
+     
+    // color: job.status === 'Active' ? '#00ff00' : '#808080', // Dynamic color based on status
+   
+    // Media query for adjusting width on larger screens
+    // '@media (min-width: 768px)': {
+    //   width: '30%', // Adjust the width for larger screens
+    // }
+ 
 >
-<option value="Active" style={{ color: job.status === 'Active' ? '#00ff00' : '#808080' }}>
+<option value="Active" style={{ color: job.status === 'Active' ? '#EE6D12' : '#808080' }}>
     Active
 </option>
 <option value="Inactive" style={{ color: job.status === 'Inactive' ? '#808080' : '#808080' }}>
@@ -233,6 +265,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
 <li>
 <a href="#" onClick={(e) => { e.preventDefault(); }}>{job.remote ? 'Remote' : 'Office-based'}</a>
 </li>
+<p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
         </ul>
         <div className="star">
           {Array.from({ length: job.starRating }).map((_, index) => (
@@ -248,7 +281,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
         <Link  to={`/recruiter-edit-job/${job.id}`}>
   {/* <button
     type="button"
-      
+     
   >
    
   </button> */}
@@ -268,7 +301,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     View Applicants
   </button>
 </Link>
-
+ 
       </div>
     </div>
   </div>

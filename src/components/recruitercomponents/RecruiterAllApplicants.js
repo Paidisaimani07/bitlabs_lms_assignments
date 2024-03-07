@@ -319,20 +319,23 @@ const handleTextFieldChange = (e) => {
     const exportCSV = () => {
       // Extracting headers from the table, excluding the "Schedule Interview" column
       const headers = Array.from(tableref.current.querySelectorAll('thead th')).map(th => th.textContent);
-      const scheduleInterviewIndex = headers.indexOf('Schedule Interview');
-      if (scheduleInterviewIndex !== -1) {
-        headers.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" header
-      }
+      // const scheduleInterviewIndex = headers.indexOf('Schedule Interview');
+      // if (scheduleInterviewIndex !== -1) {
+      //   headers.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" header
+      // }
+     
+      // Convert headers to uppercase
+      const capitalizedHeaders = headers.map(header => header.toUpperCase());
    
       // Extracting data rows from the table, excluding the "Schedule Interview" column
       const data = Array.from(tableref.current.querySelectorAll('tbody tr')).map(tr => {
         const rowData = Array.from(tr.children).map(td => td.textContent);
-        rowData.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" column
+        // rowData.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" column
         return rowData;
       });
    
       // Adding headers to the data
-      data.unshift(headers);
+      data.unshift(capitalizedHeaders);
    
       // Creating CSV content
       const csvContent = data.map(row => row.join(',')).join('\n');

@@ -57,8 +57,8 @@ export default function Footer() {
                 <h6 class="ft-title">Quick Links</h6>
                 <ul class="navigation-menu-footer">
                   <li><a href="/aboutus">About</a></li>
-                  <li><a href="/login">Find Jobs</a></li>
-                  <li><a href="/recruiterlogin">Find Candidates</a></li>
+                  <li><a href="/candidate">Find Jobs</a></li>
+                  <li><a href="/recruiter">Find Candidates</a></li>
                   <li><a href="/contactus">Contact</a></li>
                 </ul>
               </div>

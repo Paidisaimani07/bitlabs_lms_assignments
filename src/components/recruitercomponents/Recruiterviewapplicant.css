@@ -69,6 +69,13 @@
   margin-top: 20px;
 }
 
+/* Media query for smaller screen sizes */
+@media only screen and (max-width: 768px) {
+  .tt-button {
+    text-align: center; /* Adjust alignment for smaller screens */
+  }
+}
+
 .wrap-about {
   display: flex;
 }

@@ -6,7 +6,7 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import { ClipLoader } from 'react-spinners';
-
+ 
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [profileid1, setprofileid] = useState();
@@ -14,25 +14,40 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const userId = user.id;
+ 
+  const getAuthToken = () => {
+    return localStorage.getItem('jwtToken');
+  };
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         let jobData;
- 
         // Check the profile ID
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
         const profileId = profileIdResponse.data;
         setprofileid(profileId);
         if (profileId === 0) {
           // If profile ID is "0", fetch promoted jobs
-          const promotedJobsResponse = await axios.get(`${apiUrl}/job/promote/yes`);
+          const promotedJobsResponse = await axios.get(`${apiUrl}/job/promote/${userId}/yes`, {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          });
           jobData = promotedJobsResponse.data;
         } else {
           // If profile ID has any other value, fetch recommended jobs
-          const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`);
+          const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          });
           jobData = recommendedJobsResponse.data;
         }
- 
         setJobs(jobData);
       } catch (error) {
         console.error('Error fetching job data:', error);
@@ -40,10 +55,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
         setLoading(false);
       }
     };
- 
     fetchJobs();
   }, [userId]);
- 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -56,19 +69,55 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchData();
   }, []);
+  // const handleSaveJob = async (jobId) => {
+  //   try {
+  //     const response = await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${jwtToken}`,
+  //         },
+  //       });
+  //     const { message } = response.data;
+  //      if(response.status =200){
+  //       window.alert('Job Saved successfully');
+  //      }
+  //      fetchJobs();
+  //   } catch (error) {
+  //     window.alert('Job has already been saved by the applicant');
+  //     console.error('Error saving job:', error);
+  //   }
+  // };
+ 
   const handleSaveJob = async (jobId) => {
     try {
-      const response = await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`);
-      const { message } = response.data;
-       if(response.status =200){
+      const jwtToken = localStorage.getItem('jwtToken');
+ 
+      const response = await axios.post(
+        `${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+ 
+      if (response.status === 200) {
         window.alert('Job Saved successfully');
-       }
-       fetchJobs();
+      }
+      fetchJobs();
     } catch (error) {
-      window.alert('Job has already been saved by the applicant');
-      console.error('Error saving job:', error);
+      if (error.response && error.response.status === 403) {
+        window.alert('Access Denied. Please check your credentials.');
+      } else if (error.response && error.response.status === 401) {
+        window.alert('Unauthorized. Please log in.');
+      } else {
+        window.alert('Error saving job. Please try again later.');
+        console.error('Error saving job:', error);
+      }
     }
   };
+ 
   const fetchJobs = async () => {
     try {
       const response = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`);
@@ -86,141 +135,135 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     return formattedDate;
   }
   return (
-    <div>
-       {loading && (
-      <div className="loading-spinner">
-        <ClipLoader color="#1967d2" size={50} />
-      </div>
-    )}
+<div>
       {loading ? null : (
-       <div className="dashboard__content">
-       <section className="page-title-dashboard">
-         <div className="themes-container">
-           <div className="row">
-             <div className="col-lg-12 col-md-12 ">
-               <div className="title-dashboard">
-                 <div className="title-dash flex2">Recommended Jobs For You!</div>
-               </div>
-             </div>
-           </div>
-         </div>
-       </section>
-          <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container bg-white">
-              <div className="content-tab">
-                <div className="inner">
-                  <br />
-                  <div className="group-col-2">
+<div className="dashboard__content">
+<section className="page-title-dashboard">
+<div className="themes-container">
+<div className="row">
+<div className="col-lg-12 col-md-12 ">
+<div className="title-dashboard">
+<div className="title-dash flex2">Recommended Jobs For You!</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section className="flat-dashboard-setting flat-dashboard-setting2">
+<div className="themes-container bg-white">
+<div className="content-tab">
+<div className="inner">
+<br />
+<div className="group-col-2">
                   {jobs.length === 0 ? (
-                       <div style={{marginLeft:30}}>
+<div style={{marginLeft:30}}>
                      {/* <h4>Kindly Update your profile, and as per your skill set, you will get job recommendations.</h4><br/> */}
-                     </div>
+</div>
                     ) : (
                       jobs.map((job) => (
-                        <div className="features-job cl2" key={job.id}>
-                          <div className="job-archive-header">
-                            <div className="inner-box">
-                            <div className="logo-company">                            
+<div className="features-job cl2" key={job.id}>
+<div className="job-archive-header">
+<div className="inner-box">
+<div className="logo-company">                            
                                {job.logoFile ? ( <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" /> )
                                : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
-                            </div>
-                              <div className="box-content">
-                                <h4>
-                                  <a href="#">{job.companyname}</a>
-                                </h4>
-                                <h3>
-                                  <a href="#">
+</div>
+<div className="box-content">
+<h4>
+<a href="javascript:void(0);">{job.companyname}</a>
+</h4>
+<h3>
+<a href="javascript:void(0);">
                                     {job.jobTitle}
-                                  </a>
-                                </h3>
-                                <ul>
-                                  <li>
-                                    <span className="icon-map-pin"></span>
-                                    &nbsp;{job.location}
-                                  </li>
-                                  <li>
-                                    <span className="icon-calendar"></span>
-                                    &nbsp;{formatDate(job.creationDate)}
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="job-archive-footer">
-                              <div className="job-footer-left">
-                                <ul className="job-tag">
-                                <li>
-  <a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.employeeType}</a>
+</a>
+</h3>
+<ul>
+<li>
+<span className="icon-map-pin"></span>
+&nbsp;{job.location}
 </li>
-
-                                  <li>
-  <a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.remote ? 'Remote' : 'Office-based'}</a>
+<li>
+<span className="icon-calendar"></span>
+&nbsp;{formatDate(job.creationDate)}
 </li>
-
+</ul>
+</div>
+</div>
+</div>
+<div className="job-archive-footer">
+<div className="job-footer-left">
+<ul className="job-tag">
+<li>
+<a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.employeeType}</a>
+</li>
+ 
+                                  <li>
+<a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.remote ? 'Remote' : 'Office-based'}</a>
+</li>
+<p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
+ 
                                 </ul>
-                                <div className="star">
+<div className="star">
                                   {Array.from({ length: job.starRating }).map((_, index) => (
-                                    <span key={index} className="icon-star-full"></span>
+<span key={index} className="icon-star-full"></span>
                                   ))}
-                                </div>
-                              </div>
-                              <div className="job-footer-right">
-                                <div className="price">
-                                  <span></span>
-                                  <p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
-                                </div>
-                                <ul className="job-tag">
-    <li>
+</div>
+</div>
+<div className="job-footer-right">
+<div className="price">
+<span></span>
+<p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+</div>
+<ul className="job-tag">
+<li>
       {job && (
-        <Link
+<Link
           to="/applicant-view-job"
           onClick={() => setSelectedJobId(job.id)}
           className="button-status1"
-        >
+>
           Apply Now
-        </Link>
+</Link>
       )}
-    </li>
-    <li>
-        {job.saveJobStatus==='saved' ? (
-            <button
+</li>
+<li>
+        {job.isSaved==='saved' ? (
+<button
             disabled
             className="button-status1"
-            style={{ backgroundColor: 'green', color: 'white' }}
-          >
+            style={{ backgroundColor: '#FEF1E8', color: '#64666C' }}
+>
             Saved
-          </button>
+</button>
            ) : (
-            <button
+<button
               onClick={() => handleSaveJob(job.id)}
               className="button-status1"
-            >
+>
               Save Job
-            </button>
+</button>
           )}
- 
-    </li>
-  </ul>
-                              </div>
-                            </div>
-                        </div>
+</li>
+</ul>
+</div>
+</div>
+</div>
                       )))}
-                    </div>
-                  </div>
-              </div>
-            </div>
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
+</div>
+</div>
+</div>
+</div>
+<div style={{ textAlign: "center", marginTop: "20px" }}>
             {profileid1 === 0 && (
-              <Link to="/applicant-basic-details-form" className="button-status1">
+<Link to="/applicant-basic-details-form" className="button-status1">
                 More Jobs
-              </Link>
+</Link>
             )}
-          </div>
-          </section>
-         
-        </div>
+</div>
+</section>
+</div>
       )}
-    </div>
+</div>
   );
 }
 export default ApplicantFindJobs;

@@ -498,6 +498,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
   return (
     <div>
+      <a id="scroll-top" />
     <section className="account-section">
       <div className="tf-container">
         <div className="row">
