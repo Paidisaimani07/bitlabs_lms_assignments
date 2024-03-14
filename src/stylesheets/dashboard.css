@@ -280,7 +280,7 @@
 }
 
 .flat-dashboard-dyagram .box-notifications {
-    width: 34%;
+    width: 100%;
     padding: 25px 23px;
 }
 
@@ -558,9 +558,52 @@ tbody tr td:nth-child(2) {
     gap: 4px;
 }
 
-    
+.dashboard .button-status2 {
+    background-color: #FFFFFF;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    width: 100px;
+    height: 40px;
+    align-items: center;
+    height: 34px;
+    color:#292929;
+    font-size:15px;
+    line-height: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    /* border:1px solid #F97316; */
+}    
    
-  
+
+.dashboard .button-status2:hover {
+    background-color: #f3f4f6;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    width: 100px;
+    height: 40px;
+    align-items: center;
+    height: 34px;
+    color:#292929;
+    font-size:15px;
+    line-height: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    
+}
 
 .dashboard .button-status:hover
 {
@@ -850,20 +893,20 @@ tbody tr td:nth-child(2) {
     font-weight: 500;
 }
 
-#sidebar-menu ul li ul.sub-menu2 li a.acti {
-    color: #14a077;
+#sidebar-menu ul li ul.sub-menu2 li a.active {
+    color: #121212 !important;
     background-color: #fff;
 }
 
 #sidebar-menu ul li a.active,
-#sidebar-menu ul li a:hover {
-    color: #000;
-    background-color: #f5f5f2;
+#sidebar-menu ul li a:hover{
+    color: #121212 !important;
+    background-color: #FEF1E8;
 }
 
 .show-job #sidebar-menu ul li a.active,
 .show-job #sidebar-menu ul li a:hover {
-    color: #14a077;
+    color: #121212;
     background-color: #fff;
 }
 
@@ -1018,14 +1061,17 @@ tbody tr td:nth-child(2) {
 #sidebar-menu ul .ff-active a .dash-icon::before,
 #sidebar-menu ul .ff-active a .dash-icon,
 #sidebar-menu ul li a:hover .dash-icon::before,
-#sidebar-menu ul li a:hover .dash-icon {
+#sidebar-menu ul li a:hover .dash-icon,
+#sidebar-menu ul li a:active .dash-icon::before {
     color: #EE6D12;
 }
 
+
 #sidebar-menu ul li a .dash-icon::before,
 #sidebar-menu ul li a .dash-icon {
-    color: #F97316;
+    color: #999999;
 }
+
 
 .down-menu {
     margin: 0;
@@ -3618,7 +3664,7 @@ input[type="radio"]:checked:after {
     }
 
     .flat-dashboard-dyagram .box-notifications {
-        width: 39%;
+        width: 100%;
         padding: 25px 15px;
     }
 
@@ -4242,7 +4288,7 @@ input[type="radio"]:checked:after {
     transition: margin-left 0.3s ease; 
   }
 
-@media only screen and (max-width: 1400px) {
+  @media only screen and (max-width: 1400px) {
     .btn.header-item {
       cursor: pointer;
       padding: 10px;
@@ -4341,8 +4387,8 @@ font-size: 14px;
      top: 0;
      transform: translateX(50%);
      border-radius: 50%;
-     background: #2837d3;
-     border: 1px #2837d3 solid;
+     background: #F97316;
+     border: 1px #F97316 solid;
      width: .8em;
      height: .8em;
   }
@@ -4359,7 +4405,7 @@ font-size: 14px;
      z-index: 1;
      left: 0;
      height: 100%;
-     border-left: 1px #2837d3 solid;
+     border-left: 1px #F97316 solid;
   }
   
   .events strong {
@@ -4425,3 +4471,5 @@ font-size: 14px;
     /* Add your custom styles here */
     width: 100%; /* or any other styles you want to apply */
   }
+
+  

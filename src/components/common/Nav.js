@@ -133,7 +133,7 @@ const Nav = () => {
             </div> */}
              <div className="header-ct-right st-1">
   <div className="header-customize-item account">
-    <div className="sub-account-item">
+  <div className="sub-account-item">
       <a
         href="/candidate"
         style={{
@@ -153,6 +153,9 @@ const Nav = () => {
         onMouseOut={(e) => {
           e.target.style.color = '#FFFFEF';
           e.target.style.backgroundColor = '#f97316';
+        }}
+        onClick={() => {
+          localStorage.clear();
         }}
       >
         Find Jobs
@@ -178,6 +181,9 @@ const Nav = () => {
         onMouseOut={(e) => {
           e.target.style.color = '#f97316';
           e.target.style.backgroundColor = 'white';
+        }}
+        onClick={() => {
+          localStorage.clear();
         }}
       >
         Find Candidates

@@ -5365,8 +5365,14 @@
   
   .wd-form-login .group-ant-choice a {
     color: #F97316;
+    
   }
   
+  .wd-form-login .group-ant-choice a:hover {
+    color: #F97316;
+    text-decoration: underline;
+  }
+
   .wd-form-login .group-ant-choice .sub-ip input {
     border: 1px solid #64666c;
     border-radius: 2px;
@@ -5418,8 +5424,9 @@
   }
   
   .wd-form-login .btn-social:hover {
-    background: #EE6D12;
-    color: #fff;
+    
+    border:1px solid #EE6D12;
+    color: #121212;
   }
   
   .wd-form-login .btn-social img {
@@ -5470,13 +5477,13 @@
     margin-left: 20px;
     padding: 12px 16px; /* Adjusted padding for smaller screens */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    background: #F97316;
+    background: #f5f5f2;
     border-radius: 4px;
     font-weight: 700;
     font-size: 16px;
     line-height: 26px;
     text-transform: capitalize;
-    color: #ffffff;
+    color: #121212;
     cursor: pointer;
     -webkit-transition: all 0.3s ease 0s;
     -moz-transition: all 0.3s ease 0s;
@@ -5495,9 +5502,9 @@
   
   .wd-form-login .menu-tab li:hover,
   .wd-form-login .menu-tab li.active {
-    background: #f5f5f2;
+    background: #F97316;
     border-radius: 4px;
-    color: #F97316;
+    color: #FFFFFF;
   }
   
   .wd-form-login .group-ant-choice.st {
@@ -7611,7 +7618,7 @@
   .features-job {
     margin-bottom: 32px;
     gap: 32;
-    border: 1px solid #e5e5e5;
+    /* border: 1px solid #e5e5e5; */
     padding: 24px;
     -webkit-transition: all 0.3s ease 0s;
     -moz-transition: all 0.3s ease 0s;
@@ -7621,6 +7628,8 @@
     position: relative;
     cursor: pointer;
     z-index: 1;
+    border-radius: 16px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05) ;
   }
   
   .jobtex-link-item {
@@ -7632,8 +7641,9 @@
   }
   
   .features-job:hover {
-    border: 1px solid #F97316;
+    /* border: 1px solid #F97316; */
     transition: all 0.3s ease-in-out;
+    box-shadow: 0px 0px 15px 4px rgba(0, 0, 0, 0.14) ;
   }
   
   .features-job .inner-box {
@@ -7657,6 +7667,7 @@
   .features-job .inner-box .logo-company>img {
     max-width: 60px;
     height: 60px;
+    border-radius: 8px;
   }
   
   .features-job .job-archive-header span.icon-heart {
@@ -7769,7 +7780,7 @@
   }
   
   .features-job .job-archive-footer .job-tag li a {
-    background-color: #FEF1E8;
+    background-color: #F6F6f6;
     color: #121212;
     font-size: 12px;
     line-height: 16px;
@@ -7778,10 +7789,10 @@
     border-radius: 52px;
   }
   
-  .features-job .job-archive-footer .job-tag li a:hover {
+  /* .features-job .job-archive-footer .job-tag li a:hover {
     background: #EE6D12;
     color: #fff;
-  }
+  } */
   
   .features-job .star span,
   .employer-block .star span {
@@ -8752,6 +8763,10 @@
     background-color: #123841;
   }
   
+  .background4 {
+    background-color: #FEF1E8;
+  }
+
   .title-iconbox {
     padding-bottom: 40px;
   }

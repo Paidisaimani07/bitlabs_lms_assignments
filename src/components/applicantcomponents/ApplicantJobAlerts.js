@@ -38,20 +38,16 @@ export default function ApplicantJobAlerts() {
       <section className="flat-dashboard-dyagram">
         <div className="themes-container">
         <div className="row">
-          <div className="col-lg-12 col-md-12 ">
-              <div className="box-notifications bg-white">
+          <div className="col-lg-12 col-md-12">
+              <div className="box-notifications">
               {jobAlerts.length > 0 ? (
-                <ul className="inner-box">
+                <ul>
                   {jobAlerts.map(alert => (
-                    <li key={alert.alertsId} className="inner">
+                    <li key={alert.alertsId} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
                       <a className="noti-icon"><span className="icon-bell1"></span></a>
-                      <h4>
-  <span style={{ fontWeight: 'bold', fontSize: '1.2em', color: 'purple' }}>Success!</span> {' '}
-  <span style={{ color: 'orange' }}>{alert.companyName}</span> has updated the job status to {' '}
-  <span style={{ color: 'green' }}>{alert.status}</span> on {' '}
-  <span style={{ color: 'red' }}>{formatDate(alert.changeDate)}</span>. For the role of {' '}
-  <span style={{ color: 'blue' }}>{alert.jobTitle}</span>.
-</h4>
+                      <h4>Success!&nbsp; {alert.companyName} has updated the job status to {' '}
+                             {alert.status} on {' '} {formatDate(alert.changeDate)}. For the role of {' '} {alert.jobTitle}.
+                     </h4>
                       {alert.applyJob && (
                         <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
                       )}

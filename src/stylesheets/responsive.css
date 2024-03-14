@@ -2198,9 +2198,9 @@
 
   /* -----------------header------------------------------= */
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-    width: 95px !important;
+    width: 130px !important;
     display: block;
-    /* margin-top:10px; */
+    margin-top:5px;
   }
   @media only screen and (min-width: 50px) and (max-width: 300px) {
     #header .sticky-area-wrap .header-ct-left .logo .site-logo {

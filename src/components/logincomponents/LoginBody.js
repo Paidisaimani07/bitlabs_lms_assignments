@@ -471,8 +471,8 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                {/* <h4>Candidate </h4> */}
- 
+                <h4>Candidate </h4>
+               
                 <ul className="menu-tab">
                   <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
                     Login
@@ -545,7 +545,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                   </div>
  
                   <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
-                  <p class="line-ip"><span>or Log in using</span></p>
+                  <p class="line-ip"><span>or Sign Up using</span></p>
                    
                   <form onSubmit={handleSubmit}>
                 <div className="ip">
