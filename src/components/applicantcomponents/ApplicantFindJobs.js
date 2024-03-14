@@ -39,6 +39,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
             },
           });
           jobData = promotedJobsResponse.data;
+          console.log(jobData.companyname);
+          console.log(jobData.jobTitle);
         } else {
           // If profile ID has any other value, fetch recommended jobs
           const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
@@ -164,13 +166,30 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="features-job cl2" key={job.id}>
 <div className="job-archive-header">
 <div className="inner-box">
-<div className="logo-company">                            
+{/* <div className="logo-company">                            
                                {job.logoFile ? ( <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" /> )
                                : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
+</div> */}
+
+<div className="logo-company">
+  {job.logoFile ? (
+    <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
+  ) : (
+    job.jobRecruiter && job.jobRecruiter.logoFile ? (
+      <img src={`data:image/png;base64,${job.jobRecruiter.logoFile}`} alt="Company Logo" />
+    ) : (
+      <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
+    )
+  )}
 </div>
+
 <div className="box-content">
-<h4>
+{/* <h4>
 <a href="javascript:void(0);">{job.companyname}</a>
+</h4> */}
+
+<h4>
+  {job.companyname || (job.jobRecruiter && job.jobRecruiter.companyname) ? (<a href="javascript:void(0);">{job.companyname || job.jobRecruiter.companyname}</a>) : null}
 </h4>
 <h3>
 <a href="javascript:void(0);">
