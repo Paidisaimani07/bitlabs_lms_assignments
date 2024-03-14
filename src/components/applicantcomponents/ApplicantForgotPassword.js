@@ -121,6 +121,8 @@ function ApplicantForgotPassword() {
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
+        // Redirect to login page after password reset
+        navigate('/candidate');
       } else {
         setResetSuccess(false);
         setResetError('Password reset failed. Please try again later.');
