@@ -1539,6 +1539,11 @@ tbody tr td:nth-child(2) {
    
 }
 
+.flat-dashboard-setting .profile-setting-left {
+    padding: 20px 0px 20px 20px;
+   
+}
+
 .flat-dashboard-setting .author-profile {
     margin-bottom: 32px;
     padding-bottom: 32px;
