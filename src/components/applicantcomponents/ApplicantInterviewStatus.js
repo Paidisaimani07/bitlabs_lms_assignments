@@ -187,7 +187,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span></span>Package :  &nbsp;
 <p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
 </div>
-{/* <ul className="job-tag">
+<ul className="job-tag">
 <li>
       {jobDetails && (
 <Link
@@ -199,7 +199,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </Link>
       )}
 </li>
-</ul> */}
+</ul>
 </div>
 </div>
 </div>
@@ -233,3 +233,4 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   );
 };
 export default ApplicantInterviewStatus;
+
