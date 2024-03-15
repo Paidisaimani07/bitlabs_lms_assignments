@@ -117,14 +117,14 @@ function ApplicantViewJob({ selectedJobId }) {
             </div>
           </section>
           <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container bg-white">
+            <div className="themes-container">
               <div className="content-tab">
                 <div className="inner">
-                  <br />
+                  
                   <article className="job-article">
                     {jobDetails && (
                       <div className="top-content">
-                        <div className="features-job style-2 stc-apply">
+                        <div className="features-job style-2 stc-apply  bg-white">
                           <div className="job-archive-header">
                             <div className="inner-box">
                               <div className="logo-company">
@@ -164,7 +164,9 @@ function ApplicantViewJob({ selectedJobId }) {
                                 <li>
                                   <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
-                                <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</p>
+                                <li>
+<a href="javascript:void(0);"> Exp &nbsp;{jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
+</li>
                               </ul>
                               <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -188,15 +190,18 @@ function ApplicantViewJob({ selectedJobId }) {
                                         jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
                                       cursor: 'pointer',
                                       height: '40px',
-                                      color: '#FFFFFF',
+                                      color: '#F97316',
                                       borderRadius: '8px',
+                                      backgroundColor: '#FFFFFF',
+                                      opacity:'80%',
+                                      borderColor:'#F97316'
                                     }}
                                   >
                                     <span className="icon-send"></span>&nbsp;
                                     {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
                                   </button>
                                   
-                                  <a
+                                  {/* <a
                                     href="/applicant-find-jobs"
                                     className="btn-apply btn-popup"
                                     style={{
@@ -213,7 +218,7 @@ function ApplicantViewJob({ selectedJobId }) {
                                     }}
                                   >
                                     Cancel
-                                  </a>
+                                  </a> */}
                                 </div>
                               </div>
                             </div>

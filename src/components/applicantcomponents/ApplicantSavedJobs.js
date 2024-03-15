@@ -73,16 +73,16 @@ function ApplicantSavedJobs() {
             </div>
           </section>
           <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container bg-white">
+            <div className="themes-container">
               <div className="content-tab">
                 <div className="inner">
-                  <br />
+                
                   <div className="group-col-2">
                   {jobs.length === 0 ? (
                       <div style={{marginLeft:30}}>No Saved jobs available</div>
                     ) : (
                     jobs.map((job) => (
-                      <div className="features-job cl2" key={job.id}>
+                      <div className="features-job cl2  bg-white" key={job.id}>
                         <div className="job-archive-header">
                           <div className="inner-box">
                           <div className="logo-company">
@@ -124,7 +124,9 @@ function ApplicantSavedJobs() {
                               <li>
                                 <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
                               </li>
-                              <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
+                              <li>
+<a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+</li>
                             </ul>
                             <div className="star">
                               {Array.from({ length: job.starRating }).map((_, index) => (

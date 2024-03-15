@@ -95,7 +95,7 @@ export default function Banner() {
               <div className="wd-counter style-light widget-counter">
                 <div className="inner wrap-counter">
                   <h2>
-                    <span className="counter-number" data-speed="1000" data-to="50"></span><span>50+</span>
+                    <span></span><span>50+</span>
                   </h2>
                 </div>
                 <p className="description">Live Jobs</p>
@@ -105,7 +105,7 @@ export default function Banner() {
               <div className="wd-counter style-light widget-counter">
                 <div className="inner wrap-counter">
                   <h2>
-                    <span className="counter-number" data-speed="1000" data-to="10"></span><span>10+</span>
+                    <span></span><span>10+</span>
                   </h2>
                 </div>
                 <p className="description">Hiring Companies</p>
@@ -115,7 +115,7 @@ export default function Banner() {
               <div className="wd-counter style-light widget-counter">
                 <div className="inner wrap-counter">
                   <h2>
-                    <span className="counter-number" data-speed="1000" data-to="7"></span><span>7 Days</span>
+                    <span></span><span>7 Days</span>
                   </h2>
                 </div>
                 <p className="description">Hiring Process</p>
@@ -125,7 +125,7 @@ export default function Banner() {
               <div className="wd-counter style-light widget-counter">
                 <div className="inner wrap-counter">
                   <h2>
-                    <span className="counter-number" data-speed="1000" data-to="20"></span><span>20k+</span>
+                    <span></span><span>20k+</span>
                   </h2>
                 </div>
                 <p className="description">Candidates</p>

@@ -503,7 +503,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       <div className="tf-container">
         <div className="row">
           <div className="wd-form-login tf-tab">
-            {/* <h4>Recruiter</h4> */}<br /><br />
+            <h4>Recruiter</h4>
            
             <ul className="menu-tab">
               <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
