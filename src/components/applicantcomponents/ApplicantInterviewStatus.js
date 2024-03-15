@@ -132,14 +132,14 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
 </section>
 <section className="flat-dashboard-setting flat-dashboard-setting2">
-<div className="themes-container bg-white">
+<div className="themes-container">
 <div className="content-tab">
 <div className="inner">
 <br />
 <article className="job-article">
                     {jobDetails && (
 <div className="top-content">
-<div className="features-job style-2 stc-apply">
+<div className="features-job style-2 stc-apply  bg-white">
 <div className="job-archive-header">
 <div className="inner-box">
 <div className="logo-company">                            
@@ -175,6 +175,9 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <li>
 <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
 </li>
+<li>
+<a href="javascript:void(0);"> Exp&nbsp; {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
+</li>
 </ul>
 <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -187,19 +190,19 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span></span>Package :  &nbsp;
 <p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
 </div>
-{/* <ul className="job-tag">
+<ul className="job-tag">
 <li>
       {jobDetails && (
 <Link
           to="/applicant-view-job"
           onClick={() => setSelectedJobId(selectedJobId)}
-          className="button-status1"
+          className="button-status"
 >
           View Job Details
 </Link>
       )}
 </li>
-</ul> */}
+</ul>
 </div>
 </div>
 </div>

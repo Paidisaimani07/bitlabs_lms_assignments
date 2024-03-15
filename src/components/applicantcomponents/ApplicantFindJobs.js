@@ -5,7 +5,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
-import { ClipLoader } from 'react-spinners';
+
  
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -134,6 +134,13 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+
+  const handleApplyNowClick = (jobId) => {
+    setSelectedJobId(jobId);
+    // Perform any additional actions you need here
+    navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
+  };
+
   return (
 <div>
       {loading ? null : (
@@ -150,10 +157,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 </section>
 <section className="flat-dashboard-setting flat-dashboard-setting2">
-<div className="themes-container bg-white">
+<div className="themes-container">
 <div className="content-tab">
 <div className="inner">
-<br />
 <div className="group-col-2">
                   {jobs.length === 0 ? (
 <div style={{marginLeft:30}}>
@@ -161,7 +167,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
                     ) : (
                       jobs.map((job) => (
-<div className="features-job cl2" key={job.id}>
+<div className="features-job cl2  bg-white" key={job.id}>
 <div className="job-archive-header">
 <div className="inner-box">
 <div className="logo-company">                            
@@ -200,7 +206,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   <li>
 <a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.remote ? 'Remote' : 'Office-based'}</a>
 </li>
-<p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
+<li>
+<a href="javascript:void(0);"> Exp&nbsp; {job.minimumExperience} - {job.maximumExperience} years</a>
+</li>
  
                                 </ul>
 <div className="star">
@@ -215,7 +223,26 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
 </div>
 <ul className="job-tag">
+
 <li>
+        {job.isSaved==='saved' ? (
+<button
+            disabled
+            className="button-status2"
+            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316' }}
+>
+            Saved
+</button>
+           ) : (
+<button
+              onClick={() => handleSaveJob(job.id)}
+              className="button-status2"
+>
+              Save Job
+</button>
+          )}
+</li>
+{/* <li>
       {job && (
 <Link
           to="/applicant-view-job"
@@ -225,25 +252,17 @@ function ApplicantFindJobs({ setSelectedJobId }) {
           Apply Now
 </Link>
       )}
-</li>
-<li>
-        {job.isSaved==='saved' ? (
-<button
-            disabled
-            className="button-status1"
-            style={{ backgroundColor: '#FEF1E8', color: '#64666C' }}
->
-            Saved
-</button>
-           ) : (
-<button
-              onClick={() => handleSaveJob(job.id)}
-              className="button-status1"
->
-              Save Job
-</button>
-          )}
-</li>
+</li> */}
+ <li>
+      {job && (
+        <button
+          onClick={() => handleApplyNowClick(job.id)}
+          className="button-status1"
+        >
+          Apply Now
+        </button>
+      )}
+    </li>
 </ul>
 </div>
 </div>

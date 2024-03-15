@@ -134,7 +134,7 @@ const Nav = () => {
               <div className="header-ct-right st-1">
                 <div class="header-customize-item account">
                 <div class="sub-account-item">
-                  <a href="/candidate" style={{ color: '#FFFFFF', backgroundColor: '#f97316', border: '1px solid #f97316', padding: '10px 10px 10px 30px', borderRadius: '8px', display: 'inline-flex', textAlign: 'center',width: '130px' }}
+                  <a href="/find-jobs-login" style={{ color: '#FFFFFF', backgroundColor: '#f97316', border: '1px solid #f97316', padding: '10px 10px 10px 30px', borderRadius: '8px', display: 'inline-flex', textAlign: 'center',width: '130px' }}
                     onMouseOver={(e) => { e.target.style.color = '#FFFFFF'; e.target.style.backgroundColor = '#EE6D12'; }}
                     onMouseOut={(e) => { e.target.style.color = '#FFFFFF'; e.target.style.backgroundColor = '#f97316'; }}
                     >

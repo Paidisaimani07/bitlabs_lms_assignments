@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery.cookie';
 import 'metismenu';
@@ -16,6 +16,7 @@ function ApplicantNavBar() {
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const [profileStatus, setProfileStatus] = useState(true); // Define profileStatus state
+  const location = useLocation();
  
   const toggleProfileStatus = async checked => {
     try {
@@ -28,10 +29,11 @@ function ApplicantNavBar() {
   };
  
  
-  const handleToggleMenu = () => {
-    console.log("function called..")
+  const handleToggleMenu = e => {
+    e.stopPropagation(); // Stop event propagation
     setIsOpen(!isOpen);
   };
+
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 768);
@@ -182,7 +184,7 @@ useEffect(() => {
                       checked={profileStatus}
                       onChange={toggleProfileStatus}
                       size="small" // Set the size to "small"
-                      style={{ marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }} />
+                      style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }} />
                   </div>
                
                   <div className="sub-account-item">
@@ -213,11 +215,13 @@ useEffect(() => {
       </div>
     </div>
     <div className="btn header-item " id="left-menu-btn">
-      <span className="hamburger-icon"  onClick={handleToggleMenu}>
-        <span />
-        <span />
-        <span />
-      </span>
+    {window.innerWidth < 768 && (
+            <span className="hamburger-icon" onClick={handleToggleMenu}>
+              <span />
+              <span />
+              <span />
+            </span>
+          )}
     </div>
   </header>
   {(isOpen &&
@@ -225,7 +229,7 @@ useEffect(() => {
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/applicanthome" className="tf-effect">
+            <Link to="/applicanthome"  className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
@@ -237,30 +241,30 @@ useEffect(() => {
             </Link>
           </li> */}
           <li>
-            <Link to="/applicant-find-jobs" className="tf-effect">
+            <Link to="/applicant-find-jobs"  className={location.pathname === "/applicant-find-jobs" ? "tf-effect active" : ""}>
               <span className="icon-resumes dash-icon"></span>
               <span className="dash-titles">Recommended Jobs</span>
             </Link>
           </li>
           <li>
-            <Link to="/applicant-applied-jobs" className="tf-effect">
+            <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" ? "tf-effect active" : ""}>
               <span className="icon-my-apply dash-icon"></span>
               <span className="dash-titles">Applied Jobs</span>
             </Link>
           </li>
           <li>
-            <Link to="/applicant-saved-jobs" className="tf-effect">
+            <Link to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" ? "tf-effect active" : ""}>
               <span className="icon-work dash-icon"></span>
               <span className="dash-titles">Saved Jobs</span>
             </Link>
           </li>
           <li>
-      <Link to="/applicant-job-alerts" className="tf-effect" onClick={fetchAlertCount}>
+      <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <span className="icon-bell1 dash-icon">
             <sup
               style={{
-                background: '#121212',
+                background: 'red',
                 borderRadius: '50%',
                 padding: '2px 5px',
                 color: 'white',
@@ -278,7 +282,7 @@ useEffect(() => {
       </Link>
     </li>
           <li>
-            <Link to="/applicant-resume" className="tf-effect">
+            <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
             </Link>
