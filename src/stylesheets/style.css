@@ -3388,3 +3388,8 @@ input[type="color"],
   }
 }
 
+@media screen and (max-width: 465px) {
+  .sticky-area-wrap .header-ct-right .account .sub-account-item a {
+    font-size: 12px;
+  }
+}
