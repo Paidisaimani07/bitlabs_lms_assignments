@@ -244,3 +244,5 @@ function ApplicantViewJob({ selectedJobId }) {
 }
 
 export default ApplicantViewJob;
+
+

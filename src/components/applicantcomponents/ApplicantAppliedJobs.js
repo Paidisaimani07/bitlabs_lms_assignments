@@ -148,3 +148,5 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
   );
 }
 export default ApplicantAppliedJobs;
+
+

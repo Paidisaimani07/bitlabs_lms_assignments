@@ -381,7 +381,7 @@ const handleTextFieldChange = (e) => {
       <option value="selected">All the applicants</option>
     </select>
     <button className="export-buttonn" onClick={exportCSV}>
-      ExportCSV
+      Export CSV
     </button>
   </div>
 </div>
