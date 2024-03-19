@@ -3366,7 +3366,9 @@ input[type="color"],
   border-radius: 4px;
   font-size: 16px;
   font-family: sans-serif;
+
   width: 150px;
+
 }
  
 .dashboard__content .export-buttonn {
@@ -3379,7 +3381,9 @@ input[type="color"],
   font-size: 16px;
   font-weight: 400;
   font-family: sans-serif;
+
   width: 150px;
+
 }
 
 @media (max-width: 455px) {

@@ -121,8 +121,10 @@ function ApplicantForgotPassword() {
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
+
         // Redirect to login page after password reset
         navigate('/candidate');
+
       } else {
         setResetSuccess(false);
         setResetError('Password reset failed. Please try again later.');
@@ -192,7 +194,7 @@ function ApplicantForgotPassword() {
                               one lowercase letter, one number, one special character, and no spaces.
                             </div>
  
-                            <button type="button" onClick={handleResetPassword}>Reset Password </button>
+                            <button type="button" onClick={handleResetPassword}>Reset Password</button>
                             <p style={{ color: 'green',textAlign:'center' }}>OTP verified successfully!</p>
                           </div>
                         ) : (
