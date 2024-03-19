@@ -9,7 +9,8 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
- 
+
+
  
 const ApplicantBasicDetails = () => {
  
@@ -158,30 +159,32 @@ const ApplicantBasicDetails = () => {
     clearError('mobileNumber'); // Clear the error message for mobileNumber
   };
  
+ //specializationsByQualification
  
  
   const specializationsByQualification = {
-    'B.Tech': ['Computer Science and Engineering (CSE)',
-                'Electronics and Communication Engineering (ECE)',
-                'Electrical and Electronics Engineering (EEE)',
-                'Mechanical Engineering (ME)',
-                'Civil Engineering (CE)',
-                'Aerospace Engineering',
-                'Information Technology(IT)',
-                 'Chemical Engineering',
-                 'Biotechnology Engineering'],
-    'MCA': ['Software Engineering', 'Data Science','Artificial Intelligence','Machine Learning','Information Security',
-             'Cloud Computing','Mobile Application Development','Web Development','Database Management','Network Administration',
-            'Cyber Security','IT Project Management'],
-    'Degree': ['Bachelor of Science (B.Sc) Physics','Bachelor of Science (B.Sc) Mathematics','Bachelor of Science (B.Sc) Statistics',
-               'Bachelor of Science (B.Sc) Computer Science','Bachelor of Science (B.Sc) Electronics','Bachelor of Science (B.Sc) Chemistry',
-               'Bachelor of Commerce (B.Com)'],
+    
+    'B.Tech': ['(CSE) Computer Science and Engineering',
+                '(ECE) Electronics and Communication Engineering',
+                '(EEE) Electrical and Electronics Engineering',
+                '(MECH) Mechanical Engineering',
+                '(CE) Civil Engineering',
+                '(Aerosp. Eng.) Aerospace Engineering',
+                '(IT) Information Technology',
+                 '(Chem. Eng.) Chemical Engineering',
+                 '(BSc) Biotechnology Engineering'],
+    'MCA': ['(SWE)Software Engineering', '(DS)Data Science','(AI)Artificial Intelligence','(ML)Machine Learning','(InfoSec)Information Security',
+             '(CC)Cloud Computing','(MAD)Mobile Application Development','(WD)Web Development','(DBM)Database Management','(NA)Network Administration',
+            '(CS)Cyber Security','(IT PM)IT Project Management'],
+    'Degree': ['(B.Sc) Physics','(B.Sc) Mathematics','(B.Sc) Statistics',
+               '(B.Sc) Computer Science','(B.Sc) Electronics','(B.Sc) Chemistry',
+               '(B.Com)Bachelor of Commerce'],
     'Intermediate': ['MPC','BiPC','CEC','HEC'],
-    'Diploma': ['Mechanical Engineering','Civil Engineering','Electrical Engineering','Electronics and Communication Engineering',
-                'Computer Engineering','Automobile Engineering','Chemical Engineering','Information Technology','Instrumentation Engineering',
-                 'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
-                  'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
-                 'Radiology and Imaging Technology'],          
+    'Diploma': ['(MECH) Mechanical Engineering','(CE) Civil Engineering','(EEE) Electrical Engineering','(ECE) Electronics and Communication Engineering',
+                '(CSE) Computer Engineering','(AME)Automobile Engineering','(Chem. Eng.)Chemical Engineering','(IT) Information Technology','(IE)Instrumentation Engineering',
+                 '(Min. Eng.)Mining Engineering','(Met E)Metallurgical Engineering','(Agri. Eng.)Agricultural Engineering','(TE)Textile Technology',
+                  '(ID)Interior Designing','(FD)Fashion Designing','(HMCT)Hotel Management and Catering Technology','Pharmacy','(MLT)Medical Laboratory Technology',
+                 '(RIT)Radiology and Imaging Technology'],          
    
   };
  
@@ -373,9 +376,25 @@ const ApplicantBasicDetails = () => {
    
       // Filter out selected skills from the options
       const filteredOptions1 = skillsOptions.filter(skill => !skillsRequired.includes(skill));
-   
- 
- 
+      const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
+      const [truncated, setTruncated] = useState(false);
+    
+      useEffect(() => {
+        const handleResize = () => {
+          setViewportWidth(window.innerWidth);
+        };
+    
+        window.addEventListener('resize', handleResize);
+    
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+      }, []);
+    
+      const handleSpecializationChange = (e) => {
+        setSpecialization(e.target.value);
+      };
+      
   return (
    
     <div>
@@ -429,14 +448,14 @@ const ApplicantBasicDetails = () => {
                     Email<span className="color-red">*</span>
                   </label> */}
                   <input
-                    type="text"
-                    placeholder="*Email"
-                    value={applicant.email}
-                    className="input-form"
-                    onChange={(e) => setEmail(e.target.value)}
-                    style={{ color: email ? 'black' : 'black' }}
-                   
-                  />
+    type="text"
+    placeholder="Enter Email"
+    value={applicant.email}
+    className="input-form"
+    onChange={(e) => setEmail(e.target.value)}
+    style={{ color: email ? 'black' : 'black', maxWidth: '600px', fontSize: '15px' }} // Adjust the width as needed
+/>
+
                   {errors.email && (
                     <div className="error-message">{errors.email}</div>
                   )}
@@ -528,7 +547,7 @@ const ApplicantBasicDetails = () => {
  
       </div>
       <div className="col-lg-6 col-md-12">
-      <div id="item_4" className="dropdown titles-dropdown info-wd">
+      {/* <div id="item_4" className="dropdown titles-dropdown info-wd">
   <select
     value={specialization}
     className="input-form"
@@ -537,17 +556,38 @@ const ApplicantBasicDetails = () => {
     disabled={!qualification} // Disable if no qualification selected
   >
     <option value="" disabled>*Specialization</option>
-    {specializationsByQualification[qualification]?.map((spec) => (
+    {specializationsByQualification[qualification]?.map((spec, index) => (
       <option key={spec} value={spec}>
         {spec}
       </option>
+      {index === Math.floor(specializationsByQualification[qualification].length / 2) - 1 && <br />} // Insert a line break halfway through the options
     ))}
   </select>
   {!specialization && errors.specialization && (
     <div className="error-message">{errors.specialization}</div>
   )}
 </div>
- 
+ */}
+ <div id="item_4" className="dropdown titles-dropdown info-wd">
+      <select
+        value={specialization}
+        className="input-form"
+        onChange={handleSpecializationChange}
+        style={{ color: specialization ? 'black' : 'lightgrey', width: '100%' }} 
+        disabled={!qualification} 
+      >
+        <option value="" disabled>*Specialization</option>
+        {specializationsByQualification[qualification]?.map((spec) => (
+          <option key={spec} value={spec}>
+            {viewportWidth <= 500 && spec.length > 10 ? `${spec.substring(0, 20)}...` : spec} 
+          </option>
+        ))}
+      </select>
+      {!specialization && errors.specialization && (
+        <div className="error-message">{errors.specialization}</div>
+      )}
+    </div> 
+
       </div>
   <div className="col-lg-6 col-md-12">
   <div id="item_3" className="dropdown titles-dropdown info-wd">
@@ -560,7 +600,7 @@ const ApplicantBasicDetails = () => {
   onChange={(selectedCities) => setPreferredJobLocations(selectedCities)}
   selected={preferredJobLocations}
   inputProps={{
-    className: 'input-form',
+    className: 'input-form placeholder-light-grey',
   }}
   allowNew={false} // Prevent new entries
   filterBy={(option, props) =>
@@ -587,7 +627,7 @@ const ApplicantBasicDetails = () => {
   onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
   selected={skillsRequired}
   inputProps={{
-    className: 'input-form',
+    className: 'input-form placeholder-light-grey',
   }}
   allowNew={false} // Prevent new entries
   filterBy={(option, props) =>

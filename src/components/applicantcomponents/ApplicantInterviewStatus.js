@@ -64,7 +64,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
 
         const response = await axios.get(
-          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
+          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${jobId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -91,30 +91,30 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-  // const handleApplyNowClick = () => {
-  //   if (jobDetails && jobDetails.id) {
-  //     // Construct the API URL
-  //     const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
-  //     console.log('API Endpoint:', apiEndpoint); // Log API endpoint
-  //     // Call your API using fetch or any other method (e.g., axios)
-  //     axios.get(apiEndpoint)
-  //       .then(response => {
-  //         // Handle response if needed
-  //         console.log('API Response:', response);
-  //         const { body } = response.data;
-  //       setLoading(false);
-  //       if (body) {
-  //         setJobDetails(body);
-  //       }
-  //       })
-  //       .catch(error => {
-  //         // Handle error if needed
-  //         console.error('API Error:', error);
-  //       });
-  //   } else {
-  //     console.error('No job details or jobId available');
-  //   }
-  // };
+  const handleApplyNowClick = () => {
+    if (jobDetails && jobDetails.id) {
+      // Construct the API URL
+      const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
+      console.log('API Endpoint:', apiEndpoint); // Log API endpoint
+      // Call your API using fetch or any other method (e.g., axios)
+      axios.get(apiEndpoint)
+        .then(response => {
+          // Handle response if needed
+          console.log('API Response:', response);
+          const { body } = response.data;
+        setLoading(false);
+        if (body) {
+          setJobDetails(body);
+        }
+        })
+        .catch(error => {
+          // Handle error if needed
+          console.error('API Error:', error);
+        });
+    } else {
+      console.error('No job details or jobId available');
+    }
+  };
 
   return (
 <div>
@@ -187,11 +187,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span></span>Package :  &nbsp;
 <p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
 </div>
-{/* <ul className="job-tag">
+<ul className="job-tag">
 <li>
       {jobDetails && (
 <Link
-          to="/applicant-view-job"
+          to={`/applicant-view-job?jobId=${jobId}`}
           onClick={() => setSelectedJobId(selectedJobId)}
           className="button-status1"
 >
@@ -199,7 +199,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </Link>
       )}
 </li>
-</ul> */}
+</ul> 
 </div>
 </div>
 </div>

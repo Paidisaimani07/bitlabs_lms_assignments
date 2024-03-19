@@ -3,6 +3,7 @@ import axios from 'axios';
 import logoCompany1 from '../../images/cty12.png';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 function ApplicantViewJob({ selectedJobId }) {
@@ -12,11 +13,13 @@ function ApplicantViewJob({ selectedJobId }) {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const applicantId = user.id;
+  const location = useLocation();
+  const jobId = new URLSearchParams(location.search).get('jobId');
 
   const fetchJobDetails = async () => {
     try {
       const response = await axios.get(
-        `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
+        `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
