@@ -486,19 +486,26 @@ const ApplicantBasicDetails = () => {
    
           <div className="col-lg-6 col-md-12">
           <div id="item_1" className="dropdown titles-dropdown info-wd">
+
+                    
   <select
     value={experience}
     className="input-form"
     onChange={(e) => setExperience(e.target.value)}
     style={{ color: experience ? 'black' : 'lightgrey' }}
+    // size="1" // Set the size attribute to 5 to display 5 options at a time
   >
+    {/* <div className="select-wrapper"> */}
     <option value="" disabled>*Experience</option>
     {yearsOptions.map((year) => (
       <option key={year} value={year}>
         {year}
       </option>
+      
     ))}
+    {/* </div> */}
   </select>
+  
   {!experience && errors.experience && (
     <div className="error-message">{errors.experience}</div>
   )}
@@ -513,10 +520,13 @@ const ApplicantBasicDetails = () => {
     className="input-form"
     onChange={handleQualificationChange}
     style={{ color: qualification ? 'black' : 'lightgrey' }}
+    
   >
     <option value="" disabled>*Qualification</option>
-    {qualificationsOptions.map((qual) => (
-      <option key={qual} value={qual}>
+    {/* {qualificationsOptions.map((qual,index) => (
+      <option key={qual} value={qual} style={{ display: index < 5 ? 'block' : 'none' }}> */}
+      {qualificationsOptions.map((qual) => (
+      <option key={qual} value={qual}> 
         {qual}
       </option>
     ))}
