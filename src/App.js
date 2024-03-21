@@ -95,7 +95,8 @@ function App() {
                 <Route path= "/recruiter-edit-job/:id" element={<RecruiterHomePage />} />
                 <Route path="/job-applicant-alerts" element={<RecruiterHomePage />} />
                 <Route path="/viewapplicant/:id" element={<Recruiterviewapplicant />} />
-                <Route path="/appliedapplicantsbasedonjob/:id" element={<AppliedApplicantsBasedOnJobs />} />
+                {/* <Route path="/appliedapplicantsbasedonjob/:id" element={<AppliedApplicantsBasedOnJobs />} /> */}
+                <Route path="/appliedapplicantsbasedonjob/:id" element={<RecruiterHomePage />} />
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />
