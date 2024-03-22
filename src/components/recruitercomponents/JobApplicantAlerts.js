@@ -47,8 +47,8 @@ export default function JobApplicantAlerts() {
             <ul className="custom-inner-box">
               {jobAlerts.map(alert => (
                 <li key={alert.alertsId} className="custom-inner">
-                  <Link to="/recruiter-allapplicants" className="tf-effect">
-                  {/* <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link"> */}
+                  {/* <Link to="/recruiter-allapplicants" className="tf-effect"> */}
+                  <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link">
                   {/* <Link to={`/appliedapplicantsbasedonjob/1`} className="custom-link"> */}
                   <h4>
                     <br />
