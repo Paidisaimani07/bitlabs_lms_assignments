@@ -3,7 +3,7 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
 
 function RecruiterNavBar() {
@@ -11,6 +11,7 @@ function RecruiterNavBar() {
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(1);
+  const location = useLocation();
  
   useEffect(() => {
     const handleResize = () => {
@@ -164,11 +165,13 @@ useEffect(() => {
       </div>
     </div>
     <div className="btn header-item " id="left-menu-btn">
-      <span className="hamburger-icon" onClick={handleToggleMenu}>
-        <span />
-        <span />
-        <span />
-      </span>
+      {window.innerWidth < 768 && (
+            <span className="hamburger-icon" onClick={handleToggleMenu}>
+              <span />
+              <span />
+              <span />
+            </span>
+          )}
     </div>
   </header>
   {(isOpen &&
@@ -176,31 +179,31 @@ useEffect(() => {
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/recruiterhome" className="tf-effect">
+            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-postjob" className="tf-effect">
+            <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}>
               <span className="icon-work dash-icon"></span>
               <span className="dash-titles">Post Job</span>
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-jobopenings" className="tf-effect">
+            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
               <span className="icon-submit dash-icon"></span>
               <span className="dash-titles">Job Openings</span>
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-allapplicants" className="tf-effect">
+            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""}>
               <span className="icon-applicant dash-icon"></span>
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-applicantinterviews" className="tf-effect">
+            <Link to="/recruiter-applicantinterviews" className={location.pathname === "/recruiter-applicantinterviews" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">Interviews</span>
             </Link>
@@ -212,12 +215,12 @@ useEffect(() => {
             </Link>
           </li> */}
           <li>
-          <Link to="/job-applicant-alerts" className="tf-effect" onClick={fetchAlertCount}>
+          <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <span className="icon-bell1 dash-icon">
             <sup
               style={{
-                background: '#121212',
+                background: 'red',
                 borderRadius: '50%',
                 padding: '2px 5px',
                 color: 'white',
@@ -235,7 +238,7 @@ useEffect(() => {
       </Link>
       </li>
           <li>
-            <Link to="/recruiter-my-organization" className="tf-effect">
+            <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>

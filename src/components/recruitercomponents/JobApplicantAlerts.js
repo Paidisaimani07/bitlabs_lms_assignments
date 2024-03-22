@@ -25,6 +25,7 @@ export default function JobApplicantAlerts() {
     return formattedDate;
   }
   return (
+    <div>
     <div className="dashboard__content">
       <section className="page-title-dashboard">
         <div className="themes-container">
@@ -81,6 +82,7 @@ export default function JobApplicantAlerts() {
     </div>
   </div>
 </section>
+    </div>
     </div>
   );
 }

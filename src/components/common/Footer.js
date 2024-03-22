@@ -41,7 +41,7 @@ export default function Footer() {
             <div class="col-lg-4 col-md-6">
               <div class="footer-cl-1">
                 <p>
-                  Job Searching Just Hot Easy. Use <strong>TalentStream</strong> To Run A Hiring Site
+                  Job Searching Just Hot Easy. Use <strong>bitLabs Jobs</strong> To Run A Hiring Site
                   And Earn Money In The Process!
                 </p>
                 <p>

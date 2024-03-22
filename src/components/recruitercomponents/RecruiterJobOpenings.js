@@ -178,14 +178,13 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
           </div>
         </section>
         <section className="flat-dashboard-setting flat-dashboard-setting2">
-          <div className="themes-container bg-white">
+          <div className="themes-container">
             <div className="content-tab">
               <div className="inner">
-                <br />
                 <div className="group-col-2">
                
                 {jobs.map((job) => (
-  <div    className={`features-job cl2 ${job.status === 'Inactive' ? 'inactive-job' : ''}`}
+  <div    className={`features-job cl2  bg-white ${job.status === 'Inactive' ? 'inactive-job' : ''}`}
   key={job.id}>
    
     <select
