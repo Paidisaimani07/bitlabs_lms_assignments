@@ -192,15 +192,12 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
 <ul className="job-tag">
 <li>
-      {jobDetails && (
-<Link
-          to="/applicant-view-job"
-          onClick={() => setSelectedJobId(selectedJobId)}
-          className="button-status"
->
-          View Job Details
-</Link>
-      )}
+{jobDetails && (
+      <Link to="/applicant-view-job"
+      onClick={()=>setSelectedJobId(selectedJobId)}
+      className="button-status"
+      >View Job Details</Link>
+)}
 </li>
 </ul>
 </div>
