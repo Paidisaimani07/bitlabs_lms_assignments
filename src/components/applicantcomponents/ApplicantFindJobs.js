@@ -39,6 +39,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
             },
           });
           jobData = promotedJobsResponse.data;
+          console.log(jobData.companyname);
+          console.log(jobData.jobTitle);
         } else {
           // If profile ID has any other value, fetch recommended jobs
           const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
@@ -180,8 +182,12 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
 </div> */}
 <div className="box-content">
-<h4>
+{/* <h4>
 <a href="javascript:void(0);">{job.companyname}</a>
+</h4> */}
+
+<h4>
+  {job.companyname || (job.jobRecruiter && job.jobRecruiter.companyname) ? (<a href="javascript:void(0);">{job.companyname || job.jobRecruiter.companyname}</a>) : null}
 </h4>
 <h3>
 <a href="javascript:void(0);">

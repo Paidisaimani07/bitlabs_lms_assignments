@@ -242,3 +242,4 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   );
 };
 export default ApplicantInterviewStatus;
+

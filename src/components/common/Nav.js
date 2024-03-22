@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
 import $ from 'jquery';
-
+ 
 import '../../stylesheets/bootstrap.min.css';
 import '../../stylesheets/boostrap-select.min.css';
 import '../../stylesheets/swiper-bundle.min.css';
@@ -13,38 +13,38 @@ import '../../stylesheets/colors/color6.css';
 import '../../stylesheets/responsive.css';
 import '../../fonts/fonts.css';
 import '../../stylesheets/jquery.dataTables.min.css';
-
+ 
 const Nav = () => {
-
+ 
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
-
+ 
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 768);
     };
-
+ 
     window.addEventListener('resize', handleResize);
-
+ 
     $("#left-menu-btn").on("click", function (e) {
       e.preventDefault();
       handleToggleMenu();
     });
-
+ 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-
+ 
+ 
   return (
     <div>
   <>
   <a id="scroll-top" />
-
+ 
   {/* <div className="menu-mobile-popup">
     <div className="modal-menu__backdrop" />
     <div className="widget-filter">

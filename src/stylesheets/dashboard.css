@@ -1589,6 +1589,11 @@ tbody tr td:nth-child(2) {
     border-radius: 15px;
 }
 
+.flat-dashboard-setting .profile-setting-left {
+    padding: 20px 0px 20px 20px;
+   
+}
+
 .flat-dashboard-setting .author-profile {
     margin-bottom: 32px;
     padding-bottom: 32px;
@@ -1731,6 +1736,12 @@ tbody tr td:nth-child(2) {
     transition: all 0.3s ease-in-out;
     border-radius:8px;
 }
+
+/* .select-wrapper {
+    max-height: 100%; 
+    overflow-y:auto;
+
+  } */
 
 textarea:focus,
 .info-wd .input-form2:focus,
