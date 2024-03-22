@@ -6,6 +6,7 @@ import 'metismenu';
 import { useState, useEffect, useReducer } from "react";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
+import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
@@ -17,6 +18,10 @@ function ApplicantNavBar() {
   const [alertCount, setAlertCount] = useState(0);
   const [profileStatus, setProfileStatus] = useState(true); // Define profileStatus state
   const location = useLocation();
+  const [url, setUrl] = useState('');
+  const [loginUrl, setLoginUrl] = useState('');
+  
+  
  
   const toggleProfileStatus = async checked => {
     try {
@@ -27,6 +32,64 @@ function ApplicantNavBar() {
       console.error('Error updating profile status:', error);
     }
   };
+  const [requestData, setRequestData] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Make API call to update status in backend
+                const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
+                
+                // Construct requestData
+                const newData = {
+                    identifier: response.data.email,
+                    password: response.data.password
+                };
+
+                setRequestData(newData);
+            } catch (error) {
+                console.error('Error updating profile status:', error);
+            }
+        };
+        fetchData();
+      }, []); // Empty dependency array to run the effect only once
+      
+      
+  const handleClick = () => {
+    // API endpoint URL
+    const apiUrl = 'http://localhost:5173/api/auth/login';
+
+    // Options for the fetch request
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+        // Add any other headers if needed
+      },
+      body: JSON.stringify(requestData)
+    };
+
+    // Make the API call
+    fetch(apiUrl, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
+        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+       window.open(loginUrl, '_blank');
+        //setUrl(loginUrl);
+        setLoginUrl(loginUrl);
+      })
+      .catch(error => {
+        // Handle errors here
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  };
+ 
  
  
   const handleToggleMenu = e => {
@@ -241,13 +304,13 @@ useEffect(() => {
             </Link>
           </li> */}
           <li>
-            <Link to="/applicant-find-jobs"  className={location.pathname === "/applicant-find-jobs" ? "tf-effect active" : ""}>
+            <Link to="/applicant-find-jobs"  className={location.pathname === "/applicant-find-jobs" || location.pathname === "/applicant-view-job" ? "tf-effect active" : ""}>
               <span className="icon-resumes dash-icon"></span>
               <span className="dash-titles">Recommended Jobs</span>
             </Link>
           </li>
           <li>
-            <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" ? "tf-effect active" : ""}>
+            <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
               <span className="icon-my-apply dash-icon"></span>
               <span className="dash-titles">Applied Jobs</span>
             </Link>
@@ -285,6 +348,18 @@ useEffect(() => {
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
+            </Link>
+          </li>
+          <li>
+          {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
+    Build Your Resume
+</button>
+<ResumeBuilder loginUrl={loginUrl} /> */}
+</li>
+<li>
+            <Link to="#" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+              <span className="icon-chat dash-icon"></span>
+              <span className="dash-titles">Build Your Resume</span>
             </Link>
           </li>
         </ul>
