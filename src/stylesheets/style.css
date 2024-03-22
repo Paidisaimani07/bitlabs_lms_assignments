@@ -1505,7 +1505,7 @@ input[type="color"],
   display: flex;
   gap: 9px;
   align-items: center;
-  padding-right: 21px;
+  padding-right: -50px;
   position: relative;
   cursor: pointer;
   height: 80px;
@@ -1552,7 +1552,7 @@ input[type="color"],
 
 .sticky-area-wrap .header-ct-right .account .sub-account-item {
   width: 100%;
-  padding: 12px;
+  padding: 5px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -3054,6 +3054,7 @@ input[type="color"],
   z-index: 9999;
 }
 
+
 #scroll-top:hover {
   transform: translateY(-3px);
 }
@@ -3395,6 +3396,6 @@ input[type="color"],
 
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
-    font-size: 12px;
+    font-size: 15px;
   }
 }
