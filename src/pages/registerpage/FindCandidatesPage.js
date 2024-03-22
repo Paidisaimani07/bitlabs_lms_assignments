@@ -8,9 +8,9 @@ export default function FindCandidatesPage({onLogin}) {
   localStorage.clear();
   return (
     <div>
-     <FindCandidates />
+     {/* <FindCandidates /> */}
      <RegisterBody handleLogin={onLogin}/>
-     <Footer />
+     {/* <Footer /> */}
     </div>
   )
 }

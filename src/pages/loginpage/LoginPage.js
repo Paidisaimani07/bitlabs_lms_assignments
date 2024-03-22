@@ -8,9 +8,9 @@ function LoginPage({onLogin}) {
   localStorage.clear();
   return (
     <div>
-     <Nav />
+     {/* <Nav /> */}
     <LoginBody handleLogin={onLogin}/>
-    <Footer />
+    {/* <Footer /> */}
     </div>
   )
 }

@@ -751,7 +751,7 @@ const handleMaxSalaryChange = (e) => {
                         )}
                       </div>
                       {index === skillsRequired.length - 1 && (
-                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'#1967d2'}}>
+                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'green'}}>
                           +
                         </button>
                       )} &nbsp;

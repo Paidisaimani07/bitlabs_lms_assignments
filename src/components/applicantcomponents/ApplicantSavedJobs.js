@@ -56,7 +56,9 @@ function ApplicantSavedJobs() {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
   return (
     <div>
       {loading ? null : (
@@ -85,13 +87,13 @@ function ApplicantSavedJobs() {
                       <div className="features-job cl2  bg-white" key={job.id}>
                         <div className="job-archive-header">
                           <div className="inner-box">
-                          <div className="logo-company">
+                          {/* <div className="logo-company">
                               {job.logoFile ? (
                                   <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                               ) : (
                               <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
                               )}
-                          </div>
+                          </div> */}
                             <div className="box-content">
                               <h4>
                                 <a href="#">{job.companyname}</a>
@@ -107,10 +109,10 @@ function ApplicantSavedJobs() {
                                   <span className="icon-map-pin"></span>
                                   &nbsp;{job.location}
                                 </li>
-                                <li>
+                                {/* <li>
                                   <span className="icon-calendar"></span>
                                   &nbsp;{formatDate(job.creationDate)}
-                                </li>
+                                </li> */}
                               </ul>
                             </div>
                           </div>
@@ -127,6 +129,9 @@ function ApplicantSavedJobs() {
                               <li>
 <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
 </li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+</li>
                             </ul>
                             <div className="star">
                               {Array.from({ length: job.starRating }).map((_, index) => (
@@ -136,8 +141,8 @@ function ApplicantSavedJobs() {
                           </div>
                           <div className="job-footer-right">
                             <div className="price">
-                              <span></span>
-                              <p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+                            <span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                             </div>
                           </div>
                         </div>

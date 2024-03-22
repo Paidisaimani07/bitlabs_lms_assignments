@@ -105,7 +105,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       );
  
       if (response.status === 200) {
-        window.alert('Job Saved successfully');
+         window.alert('Job Saved successfully');
+       
       }
       fetchJobs();
     } catch (error) {
@@ -143,6 +144,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
   };
 
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
+
   return (
 <div>
       {loading ? null : (
@@ -152,7 +157,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-<div className="title-dash flex2">Recommended Jobs For You!</div>
+<div className="title-dash flex2">Recommended Jobs</div>
 </div>
 </div>
 </div>
@@ -176,19 +181,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                {job.logoFile ? ( <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" /> )
                                : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
 </div> */}
-
-<div className="logo-company">
-  {job.logoFile ? (
-    <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
-  ) : (
-    job.jobRecruiter && job.jobRecruiter.logoFile ? (
-      <img src={`data:image/png;base64,${job.jobRecruiter.logoFile}`} alt="Company Logo" />
-    ) : (
-      <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
-    )
-  )}
-</div>
-
 <div className="box-content">
 {/* <h4>
 <a href="javascript:void(0);">{job.companyname}</a>
@@ -207,10 +199,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <span className="icon-map-pin"></span>
 &nbsp;{job.location}
 </li>
-<li>
+{/* <li>
 <span className="icon-calendar"></span>
-&nbsp;{formatDate(job.creationDate)}
-</li>
+&nbsp;
+</li> */}
 </ul>
 </div>
 </div>
@@ -228,6 +220,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <li>
 <a href="javascript:void(0);"> Exp&nbsp; {job.minimumExperience} - {job.maximumExperience} years</a>
 </li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+</li>
  
                                 </ul>
 <div className="star">
@@ -238,8 +233,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 <div className="job-footer-right">
 <div className="price">
-<span></span>
-<p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+<span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
 </div>
 <ul className="job-tag">
 
@@ -248,7 +243,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <button
             disabled
             className="button-status2"
-            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316' }}
+            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316',opacity:'30%' }}
 >
             Saved
 </button>
@@ -301,6 +296,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </section>
 </div>
       )}
+      
 </div>
   );
 }
