@@ -59,6 +59,7 @@ function RecruiterPostJob() {
       .then((response) => {
         console.log('API Response:', response.data);
         window.alert('job saved successfully');
+        localStorage.setItem('jobs', JSON.stringify(''));
         clearForm();
       })
       .catch((error) => {

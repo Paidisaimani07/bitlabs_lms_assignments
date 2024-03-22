@@ -138,6 +138,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
           if (response.status === 200) {
             console.log(response.body);
             window.alert('Job updated successfully');
+            localStorage.setItem('jobs', JSON.stringify(''));
             navigate('/recruiter-jobopenings');
             // You can perform additional actions after saving, such as redirecting to another page
           } else {
