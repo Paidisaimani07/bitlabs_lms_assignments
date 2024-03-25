@@ -115,6 +115,9 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   //     console.error('No job details or jobId available');
   //   }
   // };
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
 
   return (
 <div>
@@ -142,10 +145,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="features-job style-2 stc-apply  bg-white">
 <div className="job-archive-header">
 <div className="inner-box">
-<div className="logo-company">                            
+{/* <div className="logo-company">                            
                                 {jobDetails.logoFile ? ( <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" /> )
                                 : (<img src="images/logo-company/cty12.png" alt={`Default Company Logo ${jobDetails.id}`} /> )}
-</div>
+</div> */}
 <div className="box-content">
 <h4>
 <a href="#">{jobDetails.companyname}</a>
@@ -158,10 +161,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span className="icon-map-pin"></span>
                                     {jobDetails.location}
 </li>
-<li>
+{/* <li>
 <span className="icon-calendar"></span>
                                     {formatDate(jobDetails.creationDate)}
-</li>
+</li> */}
 </ul>  
 </div>
 </div>
@@ -170,13 +173,16 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="job-footer-left">
 <ul className="job-tag">
 <li>
-<a href="#">{jobDetails.employeeType}</a>
+<a href="javascript:void(0);">{jobDetails.employeeType}</a>
 </li>
 <li>
-<a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
+<a href="javascript:void(0);">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
 </li>
 <li>
 <a href="javascript:void(0);"> Exp&nbsp; {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
+</li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA</a>
 </li>
 </ul>
 <div className="star">
@@ -187,14 +193,14 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
 <div className="job-footer-right">
 <div className="price">
-<span></span>Package :  &nbsp;
-<p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
+<span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
 </div>
 <ul className="job-tag">
 <li>
       {jobDetails && (
 <Link
-          to="/applicant-view-job"
+          to="/applicant-view-job?jobId=${job.id}"
           onClick={() => setSelectedJobId(selectedJobId)}
           className="button-status"
 >

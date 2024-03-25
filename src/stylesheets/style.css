@@ -916,7 +916,7 @@ input[type="color"],
 }
 
 .sub-categorie .group-menu-category ul li a:hover {
-  color: #14a077;
+  color: #F97316;
 }
 
 .sub-categorie .group-menu-category ul li:not(:last-child) {
@@ -1860,7 +1860,7 @@ input[type="color"],
 .sub-categorie-mobile .pop-up .categories-mobilea:active>a,
 .sub-categorie-mobile ul.pop-up li:hover span::before,
 .sub-categorie-mobile ul.pop-up li.active span::before {
-  color: #14a077;
+  color: #F97316;
 }
 
 .sub-categorie-mobile ul.pop-up li span {
@@ -3395,6 +3395,6 @@ input[type="color"],
 
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
-    font-size: 12px;
+    font-size: 14px;
   }
 }

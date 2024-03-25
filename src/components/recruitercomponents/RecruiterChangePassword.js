@@ -190,7 +190,7 @@ function RecruiterChangePassword() {
                             <div className="error-message">{formErrors.confirmedPassword}</div>
                           )}
                         </div>
-                        <div className="tt-button submit">
+                        <div>
                           <button type="button" class="button-status" onClick={handleChangePassword}>
                             Change Password
                           </button>

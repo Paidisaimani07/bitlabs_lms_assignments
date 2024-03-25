@@ -292,7 +292,7 @@ function RecruiterMyOrganization() {
       onClick={uploadPhoto}
       className="btn-3"
       style={{
-        backgroundColor: '#4CAF50',
+        backgroundColor: '#F97316',
         color: 'white',
         padding: '10px 15px',
         border: 'none',
