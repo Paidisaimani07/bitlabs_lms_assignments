@@ -2211,10 +2211,9 @@
     }
 }
 
-
-
   #header .sticky-area-wrap .header-ct-right .account .sub-account {
-    width: 264px;
+    /* width: 264px; */
+    width: 300px;
     padding: 20px;
   }
 
