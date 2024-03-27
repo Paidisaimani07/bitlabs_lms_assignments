@@ -91,7 +91,7 @@ function ApplicantHomePage() {
      
      {activeRoute === 'viewjob' && (<ApplicantViewJob selectedJobId={selectedJobId} /> )}
      {activeRoute === 'appliedjobs' && <ApplicantAppliedJobs setSelectedJobId={setSelectedJobId}/>}
-     {activeRoute === 'savedjobs' && <ApplicantSavedJobs />}
+     {activeRoute === 'savedjobs' && <ApplicantSavedJobs setSelectedJobId={setSelectedJobId} />}
      {activeRoute === 'interviewstatus' && (<ApplicantInterviewStatus selectedJobId={selectedJobId} setSelectedJobId={setSelectedJobId} /> )}
      {activeRoute === 'changepassword' && <ApplicantChangePassword />}
      {activeRoute === 'deleteprofile' && <ApplicantDeleteProfile />}

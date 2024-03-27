@@ -20,18 +20,48 @@ function ApplicantNavBar() {
   const location = useLocation();
   const [url, setUrl] = useState('');
   const [loginUrl, setLoginUrl] = useState('');
-  
-  
+  const [loading, setLoading] = useState(true);
  
-  const toggleProfileStatus = async checked => {
+  useEffect(() => {
+    const fetchProfileStatus = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/applicant/${user.id}/profilestatus`);
+        setProfileStatus(response.data === 'active'); // Assuming the API returns 'active' or 'inactive'
+      } catch (error) {
+        console.error('Error fetching profile status:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileStatus();
+  }, [apiUrl, user.id]);
+
+  const toggleProfileStatus = async (checked) => {
     try {
-      // Make API call to update status in backend
-      await axios.post(`${apiUrl}/applicant/changeStatus/${user.id}`, { isActive: checked });
+      const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+      const response = await axios.post(
+        `${apiUrl}/applicant/changeStatus/${user.id}`,
+        { isActive: checked },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Add authorization header with JWT token
+          },
+        }
+      );
+      
       setProfileStatus(checked);
+      localStorage.setItem('profileStatus', checked.toString());
+      window.location.reload();
     } catch (error) {
       console.error('Error updating profile status:', error);
+      // Rollback the change in UI if there's an error
+      setProfileStatus(!checked);
     }
   };
+
+
+
   const [requestData, setRequestData] = useState(null);
 
     useEffect(() => {
@@ -151,30 +181,55 @@ function ApplicantNavBar() {
       }
     }
   };
- const fetchAlertCount = async () => {
+//  const fetchAlertCount = async () => {
+//   try {
+//     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+//     setAlertCount(response.data);
+//     //window.location.reload();
+//   } catch (error) {
+//     console.error('Error fetching alert count:', error);
+//   }
+// };
+// useEffect(() => {
+//   const fetchAlertCount = async () => {
+//     try {
+//       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+//         },
+//       });
+//       setAlertCount(response.data);
+//     } catch (error) {
+//       console.error('Error fetching alert count:', error);
+//     }
+//   };
+//   fetchAlertCount();
+// }, [user.id]);
+
+const fetchAlertCount = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+      },
+    });
     setAlertCount(response.data);
-    window.location.reload();
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
 };
+
 useEffect(() => {
-  const fetchAlertCount = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
-      setAlertCount(response.data);
-    } catch (error) {
-      console.error('Error fetching alert count:', error);
-    }
-  };
+  // Fetch initial alert count
   fetchAlertCount();
+
+  // Set up polling interval
+  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+
+  // Clean up function to clear interval when component unmounts
+  return () => clearInterval(intervalId);
 }, [user.id]);
+
   return (
     <div>
   <div className="menu-mobile-popup">

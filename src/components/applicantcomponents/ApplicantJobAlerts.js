@@ -8,7 +8,15 @@ export default function ApplicantJobAlerts() {
   useEffect(() => {
     const fetchJobAlerts = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/applyjob/applicant/job-alerts/${user.id}`);
+        const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+        const response = await axios.get(
+          `${apiUrl}/applyjob/applicant/job-alerts/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`, // Add JWT token to request headers
+            },
+          }
+        );
         const alerts = response.data;
         setJobAlerts(alerts);
       } catch (error) {
@@ -17,6 +25,7 @@ export default function ApplicantJobAlerts() {
     };
     fetchJobAlerts();
   }, []);
+  
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);

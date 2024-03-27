@@ -148,6 +148,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
 
+  const handleMoreJobsClick = () => {
+    navigate('/applicant-basic-details-form');
+  };
+
   return (
 <div>
       {loading ? null : (
@@ -287,12 +291,14 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 </div>
 <div style={{ textAlign: "center", marginTop: "20px" }}>
-            {profileid1 === 0 && (
-<Link to="/applicant-basic-details-form" className="button-status1">
-                More Jobs
-</Link>
-            )}
-</div>
+      {profileid1 === 0 && (
+        <div style={{ display: 'inline-block' }}>
+        <button className="button-status1" onClick={handleMoreJobsClick}>
+          More Jobs
+        </button>
+        </div>
+      )}
+    </div>
 </section>
 </div>
       )}
