@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
-
+import leftArrow from '../../images/arrow-left.png';
 export default function ApplicantJobAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();
@@ -103,6 +104,11 @@ export default function ApplicantJobAlerts() {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
+              <div className="back-to-previous pb-4">
+                  <Link to="/applicanthome" className="back-link" >
+                  <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                  </div>
                 <div className="title-dash flex2">Your Job Alerts</div>
               </div>
             </div>

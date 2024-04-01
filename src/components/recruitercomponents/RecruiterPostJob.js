@@ -3,6 +3,8 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect,useRef } from "react";
 import axios from 'axios';
+import leftArrow from '../../images/arrow-left.png';
+import { Link } from 'react-router-dom';
  
 function RecruiterPostJob() {
   const [jobTitle, setJobTitle] = useState("");
@@ -58,7 +60,9 @@ function RecruiterPostJob() {
       .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
       .then((response) => {
         console.log('API Response:', response.data);
+        localStorage.setItem('jobs', JSON.stringify(''));
         window.alert('job saved successfully');
+        localStorage.setItem('jobs', JSON.stringify(''));
         clearForm();
       })
       .catch((error) => {
@@ -452,6 +456,11 @@ const handleMaxSalaryChange = (e) => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+          <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+          </div>
             <div className="title-dash flex2">Post Job</div>
           </div>
         </div>
@@ -751,7 +760,7 @@ const handleMaxSalaryChange = (e) => {
                         )}
                       </div>
                       {index === skillsRequired.length - 1 && (
-                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'#1967d2'}}>
+                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'green'}}>
                           +
                         </button>
                       )} &nbsp;

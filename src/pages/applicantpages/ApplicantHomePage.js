@@ -18,6 +18,7 @@ import ApplicantJobAlerts from '../../components/applicantcomponents/ApplicantJo
 import ApplicantResume from '../../components/applicantcomponents/ApplicantResume';
 import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
 import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
+import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
   const [selectedJobId, setSelectedJobId] = useState('');
@@ -64,6 +65,9 @@ function ApplicantHomePage() {
         case '/applicant-resume':
           setActiveRoute('resume');
         break;
+        case '/applicant-resume-builder':
+          setActiveRoute('resumebuilder');
+        break;
         case '/applicant-basic-details-form':
           setActiveRoute('abdf');
         break;
@@ -93,6 +97,7 @@ function ApplicantHomePage() {
      {activeRoute === 'deleteprofile' && <ApplicantDeleteProfile />}
      {activeRoute === 'jobalerts' && <ApplicantJobAlerts />}
      {activeRoute === 'resume' && <ApplicantResume />}
+     {activeRoute === 'resumebuilder' && <ResumeBuilder />}
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
       </div> 
   )
