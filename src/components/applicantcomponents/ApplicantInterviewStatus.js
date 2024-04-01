@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-calendar-timeline';
 import 'react-calendar-timeline/lib/Timeline.css';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import leftArrow from '../../images/arrow-left.png';
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStatus, setJobStatus] = useState([]);
@@ -64,7 +65,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
 
         const response = await axios.get(
-          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
+          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${jobId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -91,6 +92,29 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+  const handleApplyNowClick = () => {
+    if (jobDetails && jobDetails.id) {
+      // Construct the API URL
+      const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
+      console.log('API Endpoint:', apiEndpoint); // Log API endpoint
+      // Call your API using fetch or any other method (e.g., axios)
+      axios.get(apiEndpoint)
+        .then(response => {
+          // Handle response if needed
+          console.log('API Response:', response);
+          const { body } = response.data;
+        setLoading(false);
+        if (body) {
+          setJobDetails(body);
+        }
+        })
+        .catch(error => {
+          // Handle error if needed
+          console.error('API Error:', error);
+        });
+    } else {
+      console.error('No job details or jobId available');
+    }
   // const handleApplyNowClick = () => {
   //   if (jobDetails && jobDetails.id) {
   //     // Construct the API URL
@@ -117,6 +141,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   // };
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+
   };
 
   return (
@@ -128,6 +153,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+<div className="back-to-previous pb-4">
+    <Link to="/applicant-applied-jobs" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+    </Link>
+</div>
 <div className="title-dash flex2">Job Status</div>
 </div>
 </div>
@@ -135,14 +165,14 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
 </section>
 <section className="flat-dashboard-setting flat-dashboard-setting2">
-<div className="themes-container">
+<div className="themes-container bg-white">
 <div className="content-tab">
 <div className="inner">
 <br />
 <article className="job-article">
                     {jobDetails && (
 <div className="top-content">
-<div className="features-job style-2 stc-apply  bg-white">
+<div className="features-job style-2 stc-apply">
 <div className="job-archive-header">
 <div className="inner-box">
 {/* <div className="logo-company">                            
@@ -202,13 +232,13 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <Link
           to="/applicant-view-job?jobId=${job.id}"
           onClick={() => setSelectedJobId(selectedJobId)}
-          className="button-status"
+          className=""
 >
           View Job Details
 </Link>
       )}
 </li>
-</ul>
+</ul> 
 </div>
 </div>
 </div>
@@ -242,4 +272,3 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   );
 };
 export default ApplicantInterviewStatus;
-
