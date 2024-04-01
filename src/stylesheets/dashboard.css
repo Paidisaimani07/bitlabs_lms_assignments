@@ -1075,6 +1075,10 @@ tbody tr td:nth-child(2) {
     color: #999999;
 }
 
+#sidebar-menu ul li a.ff-active .dash-icon::after,
+#sidebar-menu ul li a .dash-icon {
+    color: #EE6D12;
+}
 
 .down-menu {
     margin: 0;
@@ -1585,7 +1589,7 @@ tbody tr td:nth-child(2) {
 
 .flat-dashboard-setting .profile-setting {
     padding: 20px 20px 20px;
-   
+    border-radius: 15px;
 }
 
 .flat-dashboard-setting .profile-setting-left {
@@ -1733,7 +1737,14 @@ tbody tr td:nth-child(2) {
     border: 1px solid #e5e5e5;
     font-size: 16px;
     transition: all 0.3s ease-in-out;
+    border-radius:8px;
 }
+
+/* .select-wrapper {
+    max-height: 100%; 
+    overflow-y:auto;
+
+  } */
 
 textarea:focus,
 .info-wd .input-form2:focus,
@@ -2108,6 +2119,7 @@ textarea:focus,
     padding: 12px 15px;
     height: unset;
     border: 0;
+    border-radius: 8px;
 }
 
 .flat-dashboard-setting .message-wrap textarea::placeholder {
@@ -3807,6 +3819,7 @@ input[type="radio"]:checked:after {
 
     .flat-dashboard-setting .profile-setting {
         padding: 32px 15px 34px;
+        border-radius: 15px;
     }
 
     .flat-dashboard-setting .author-profile {
@@ -4480,4 +4493,7 @@ font-size: 14px;
     width: 100%; /* or any other styles you want to apply */
   }
 
+  .inactive-job {
+    background-color: #f2f2f2; /* Change this to the desired gray color */
+  }
   

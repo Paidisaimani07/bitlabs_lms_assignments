@@ -9,9 +9,9 @@ function FindJobPage({onLogin}) {
   localStorage.clear();
   return (
     <div>
-     <FindJobs />
+     {/* <FindJobs /> */}
     <LoginBody handleLogin={onLogin}/>
-    <Footer />
+    {/* <Footer /> */}
     </div>
   )
 }

@@ -4,6 +4,8 @@ import axios from 'axios';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { useUserContext } from '../common/UserProvider';
+import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 function ApplicantEditProfile() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -697,6 +699,11 @@ const handleResumeUpload = async () => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+            <div className="back-to-previous pb-4">
+              <Link to="/applicant-view-profile" className="back-link" >
+                <img src={leftArrow} alt="Back"  />BACK
+              </Link>
+            </div>
             <div className="title-dash flex2">Edit Your Profile</div>
           </div>
         </div>

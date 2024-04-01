@@ -3364,13 +3364,13 @@
   
   .tf-btn {
     padding: 7px 24px;
-    background: #ffffff;
-    border: 1px solid #F97316;
+    background: #F97316;
+    /* border: 1px solid #F97316; */
     border-radius: 4px;
     font-weight: 700;
     font-size: 16px;
     line-height: 26px;
-    color: #121212;
+    color: #FFFFFF;
     text-align: center;
   }
   
@@ -5355,7 +5355,7 @@
   }
   
   .wd-form-login .group-ant-choice {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     font-weight: 400;
     font-size: 14px;
@@ -7683,6 +7683,16 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
   }
+  .features-job .job-archive-header span.tog-but {
+    right: 0;
+    top: 0;
+    position: absolute;
+    padding: 12px;
+    color: #e5e5e5;
+    font-size: 17.42px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
   
   .features-job .job-archive-header span.icon-heart:active,
   .features-job .job-archive-header span.icon-heart:hover {
@@ -9550,8 +9560,8 @@
   
   .wrapper-author-page-title .tf-btn {
     text-transform: capitalize;
-    border: 1px solid #ffffff;
-    color: #F97316;
+    border: 1px solid #EE6D12;
+    color: #FFFFFF;
     width: 184px;
     padding: 12px 0px;
   }
@@ -9563,9 +9573,9 @@
   
   .wrapper-author-page-title .btn-author {
     background: transparent;
-    color: #ffffff;
+    color: #F97316;
     margin-left: 16px;
-    padding: 12px 56.5px;
+    /* padding: 12px 56.5px; */
     border: 1px solid #ffffff;
     text-transform: capitalize;
   }
@@ -10688,7 +10698,7 @@
   }
   
   .account-section {
-    padding: 61px 0px 68px;
+    /* padding: 61px 0px 68px; */
   }
   
   .inner-news-section {

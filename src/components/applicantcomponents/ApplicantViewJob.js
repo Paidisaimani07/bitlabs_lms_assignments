@@ -5,6 +5,8 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { useUserContext } from '../common/UserProvider';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 
 function ApplicantViewJob({ selectedJobId }) {
   const [jobDetails, setJobDetails] = useState(null);
@@ -18,6 +20,7 @@ function ApplicantViewJob({ selectedJobId }) {
 
   const fetchJobDetails = async () => {
     try {
+      console.log(jobId);
       const response = await axios.get(
         `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
         {
@@ -103,7 +106,9 @@ function ApplicantViewJob({ selectedJobId }) {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
   return (
     <div>
       {loading ? null : (
@@ -112,7 +117,12 @@ function ApplicantViewJob({ selectedJobId }) {
             <div className="themes-container">
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
-                  <div className="title-dashboard">
+                  <div className="title-dashboard">                  
+                  <div className="back-to-previous pb-4">
+                    <Link to="/applicant-interview-status" className="back-link" >
+                      <img src={leftArrow} alt="Back"  />BACK
+                    </Link>
+                  </div>
                     <div className="title-dash flex2">Full Job Details</div>
                   </div>
                 </div>
@@ -130,13 +140,13 @@ function ApplicantViewJob({ selectedJobId }) {
                         <div className="features-job style-2 stc-apply">
                           <div className="job-archive-header">
                             <div className="inner-box">
-                              <div className="logo-company">
+                              {/* <div className="logo-company">
                                 {jobDetails.logoFile ? (
                                   <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" />
                                 ) : (
                                   <img src="images/logo-company/cty12.png" alt={`Default Company Logo`} />
                                 )}
-                              </div>
+                              </div> */}
                               <div className="box-content">
                                 <h4>
                                   <a href="#">{jobDetails.companyname}</a>
@@ -149,10 +159,10 @@ function ApplicantViewJob({ selectedJobId }) {
                                     <span className="icon-map-pin"></span>
                                     &nbsp;{jobDetails.location}
                                   </li>
-                                  <li>
+                                  {/* <li>
                                     <span className="icon-calendar"></span>
                                     &nbsp;{formatDate(jobDetails.creationDate)}
-                                  </li>
+                                  </li> */}
                                 </ul>
                                 <div className="button-readmore"></div>
                               </div>
@@ -168,6 +178,13 @@ function ApplicantViewJob({ selectedJobId }) {
                                   <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
                                 <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</p>
+                                <li>
+<a href="javascript:void(0);"> Exp &nbsp;{jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
+</li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA</a>
+</li>
+
                               </ul>
                               <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -177,8 +194,8 @@ function ApplicantViewJob({ selectedJobId }) {
                             </div>
                             <div className="job-footer-right">
                               <div className="price">
-                                <span></span>Package : &nbsp;
-                                <p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
+                              <span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
                               </div>
                               <div className="button-readmore">
                                 <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -5,6 +5,7 @@ import axios from 'axios';
 import $ from 'jquery';
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
+import leftArrow from '../../images/arrow-left.png';
 import { Link } from 'react-router-dom';
 $.DataTable = require('datatables.net')
  
@@ -359,6 +360,11 @@ const handleTextFieldChange = (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
+                <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                </div>
                   <div className="title-dash flex2">All Applicants</div>
                 </div>
               </div>
@@ -378,15 +384,13 @@ const handleTextFieldChange = (e) => {
       <option value="Shortlisted">Shortlisted</option>
       <option value="Interviewing">Interviewing</option>
       <option value="Selected">Selected</option>
-      <option value="selected">All the applicants</option>
+      {/* <option value="selected">All the applicants</option> */}
     </select>
     <button className="export-buttonn" onClick={exportCSV}>
       Export CSV
     </button>
   </div>
-</div>
-       
- 
+</div>        
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
             <div className="row">
@@ -407,7 +411,8 @@ const handleTextFieldChange = (e) => {
     onChange={handleCheckboxChange}
     style={{ width: 'auto' }} // Adjust the width of the checkbox
   />
-  <label className="label" htmlFor="nameFilter">NAME</label>
+  <label className="label" htmlFor="nameFilter">&nbsp;&nbsp;Name</label>
+
   {filterOptions.nameFilter && (
     <>
     <div className="dropdown-container1">
@@ -435,7 +440,8 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.emailFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="emailFilter">EMAIL</label>
+
+  <label className="label" htmlFor="emailFilter">&nbsp;&nbsp;Email</label>
   {filterOptions.emailFilter && (
     <>
       <div className="dropdown-container1">
@@ -460,7 +466,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.mobileFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="mobileFilter">MOBILE NUMBER</label>
+  <label className="label" htmlFor="mobileFilter">&nbsp;&nbsp;MobileNumber</label>
   {filterOptions.mobileFilter && (
     <>
       <div className="dropdown-container1">
@@ -485,7 +491,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.jobFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="jobFilter">JOB TITLE</label>
+  <label className="label" htmlFor="jobFilter">&nbsp;&nbsp;Job Title</label>
   {filterOptions.jobFilter && (
     <>
       <div className="dropdown-container1">
@@ -510,7 +516,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.statusFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="statusFilter">APPLICANT STATUS</label>
+  <label className="label" htmlFor="statusFilter">&nbsp;&nbsp;ApplicantStatus</label>
   {filterOptions.statusFilter && (
     <>
       <div className="dropdown-container1">
@@ -535,7 +541,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.skillFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="skillFilter">SKILL NAME</label>
+  <label className="label" htmlFor="skillFilter">&nbsp;&nbsp;Skill Name</label>
   {filterOptions.skillFilter && (
     <>
       <div className="dropdown-container1">
@@ -560,7 +566,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.experienceFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="experienceFilter">EXPERIENCE</label>
+  <label className="label" htmlFor="experienceFilter">&nbsp;&nbsp;Experience</label>
   {filterOptions.experienceFilter && (
     <>
       <div className="dropdown-container1">
@@ -586,7 +592,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.locationFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="locationFilter">LOCATION</label>
+  <label className="label" htmlFor="locationFilter">&nbsp;&nbsp;Location</label>
   {filterOptions.locationFilter && (
     <>
       <div className="dropdown-container1">
