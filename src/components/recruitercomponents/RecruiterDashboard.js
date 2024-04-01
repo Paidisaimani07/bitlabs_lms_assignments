@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { useNavigate } from "react-router-dom";
 
 function RecruiterDashboard() {
     const [token, setToken] = useState('');
@@ -12,6 +13,7 @@ function RecruiterDashboard() {
     const [contJobHires, setJobHires] = useState(0);
     const [countInterviews, setInterviews] = useState(0);
     const [applicants, setApplicants] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
@@ -100,6 +102,16 @@ function RecruiterDashboard() {
         const todayTimestamp = new Date().setHours(0, 0, 0, 0);
         return interviewTimestamp >= todayTimestamp && interviewTimestamp < todayTimestamp + 24 * 60 * 60 * 1000;
       });
+      // const jobopenings = () => {
+    
+      //   navigate("/recruiter-jobopenings");
+      // };
+      const allapplicants = () => {
+        navigate("/recruiter-allapplicants");
+      };
+      const interviews = () => {
+        navigate("/recruiter-applicantinterviews");
+      };
   return (
     <div>
 <div className="dashboard__content">
@@ -146,6 +158,13 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3>{contActiveJobs}</h3>
+              {/* <h4
+        className="title-count"
+        onClick={jobopenings}
+        style={{ cursor: "pointer" }}
+      >
+        Active Jobs
+      </h4> */}
                 <h4 className="title-count">Active Jobs</h4>
               </div>
             </div>
@@ -184,7 +203,14 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3>{contJobApplicants}</h3>
-                <h4 className="title-count">Job Applicants</h4>
+              <h4
+        className="title-count"
+        onClick={allapplicants}
+        style={{ cursor: "pointer" }}
+      >
+        Applicants
+      </h4>
+                {/* <h4 className="title-count">Applicants</h4> */}
               </div>
             </div>
             <div className="box-icon wrap-counter flex">
@@ -230,7 +256,14 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3> {countInterviews}</h3>
-                <h4 className="title-count">Interviews</h4>
+              <h4
+        className="title-count"
+        onClick={interviews}
+        style={{ cursor: "pointer" }}
+      >
+        Interviews
+      </h4>
+                {/* <h4 className="title-count">Interviews</h4> */}
               </div>
             </div>
           </div>
