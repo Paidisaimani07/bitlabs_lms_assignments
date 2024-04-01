@@ -5,7 +5,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
-
+import leftArrow from '../../images/arrow-left.png';
  
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -157,6 +157,11 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+<div className="back-to-previous pb-4">
+<Link to="/applicanthome" className="back-link" >
+  <img src={leftArrow} alt="Back"/>BACK
+  </Link>
+  </div>
 <div className="title-dash flex2">Recommended Jobs</div>
 </div>
 </div>

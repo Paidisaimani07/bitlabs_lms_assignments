@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Document, Page, pdfjs} from 'react-pdf';
 import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { apiUrl } from '../../services/ApplicantAPIService';
+import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 import { useUserContext } from '../common/UserProvider';
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`; 
 const ApplicantResume = () => {
@@ -67,6 +69,11 @@ return (
         <div className="row">
           <div className="col-lg-12 col-md-12">
             <div className="title-dashboard">
+            <div className="back-to-previous pb-4">
+                  <Link to="/applicanthome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+            </div>
               <div className="title-dash flex2">Your Resume</div>
             </div>
           </div>

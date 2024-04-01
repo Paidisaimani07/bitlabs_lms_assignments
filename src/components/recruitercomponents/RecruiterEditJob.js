@@ -3,6 +3,8 @@ import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 const RecruiterEditJob = ({selectedJobId}) => {
  
     const navigate=useNavigate();
@@ -328,6 +330,11 @@ errors.skillsRequired = skillsErrors;
           <div className="row">
             <div className="col-lg-12 col-md-12 ">
               <div className="title-dashboard">
+              <div className="back-to-previous pb-4">
+                  <Link to="/recruiter-jobopenings" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+              </div>
                 <div className="title-dash flex2">Edit Job</div>
               </div>
             </div>
