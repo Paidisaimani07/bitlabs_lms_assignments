@@ -243,32 +243,33 @@ const ApplicantViewProfile = () => {
                 </div>
                 <h5>Experience</h5>
                 <div className="group-infor">
-  {profileData.experienceDetails.map((experience, index) => (
-    <div className="inner" key={index}>
-      <div className="row">
-        <div className="col">
-          <div className="subtitle-1 fw-7">
-            Company: <br /> {experience.company || ""}
-          </div>
+  {profileData && profileData.experienceDetails && profileData.experienceDetails.map((experience, index) => (
+  <div className="inner" key={index}>
+    <div className="row">
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Company: <br /> {experience.company || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-1 fw-7">
-            Position: <br /> {experience.position || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Position: <br /> {experience.position || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-2 fw-7 fw-5">
-            Start Date: <br /> {experience.startDate || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          Start Date: <br /> {experience.startDate || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-2 fw-7 fw-5">
-            End Date: <br /> {experience.endDate || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          End Date: <br /> {experience.endDate || ""}
         </div>
       </div>
     </div>
-  ))}
+  </div>
+))}
+
 </div>
 
 
@@ -303,7 +304,7 @@ const ApplicantViewProfile = () => {
               </li>
               <li>
                 <div className="category">Experience</div>
-                <div className="detail">{profileData.experience} Year(s)</div>
+                <div className="detail">{profileData.experience}</div>
               </li>
               {/* <li>
                 <div className="category">Language</div>

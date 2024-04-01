@@ -184,6 +184,12 @@ function RecruiterPostJob() {
     } else {
       errors.minimumQualification = '';
     }
+    if (!specialization.trim()) {
+      errors.specialization = 'Specialization is required.';
+      isValid = false;
+    } else {
+      errors.specialization = '';
+    }
     const skillsErrors = [];
     skillsRequired.forEach((skill, index) => {
       const skillErrors = {};
@@ -220,7 +226,7 @@ function RecruiterPostJob() {
       isValid = false;
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        specialization: 'Specialization must be at least 3 characters long.',
+        specialization: 'Specialization must be select.',
       }));
       return isValid;
     }
@@ -593,7 +599,7 @@ const handleMaxSalaryChange = (e) => {
                 </div>
                 <div className="col-lg-6 col-md-12">
                 <div id="item_1" className="dropdown titles-dropdown info-wd">
-                <label className="title-user fw-7">Specialization</label>
+                <label className="title-user fw-7">Specialization<span className="color-red">*</span></label>
 <select
   value={specialization}
   className="input-form"

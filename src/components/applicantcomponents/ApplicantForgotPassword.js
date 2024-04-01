@@ -4,6 +4,7 @@ import axios from 'axios';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import logoCompany1 from '../../images/bitlabs-logo.png';
 function ApplicantForgotPassword() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -148,7 +149,7 @@ function ApplicantForgotPassword() {
                   </div>
                 ) : (
                   <div>
-                    <h4>Forgot Password</h4><br />
+                    <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
                       <div className="ip">
                       <label>
                     Email Address<span>*</span>

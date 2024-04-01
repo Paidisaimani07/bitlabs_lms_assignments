@@ -4497,3 +4497,16 @@ font-size: 14px;
     background-color: #f2f2f2; /* Change this to the desired gray color */
   }
   
+
+  /* Default toggle style for "off" state */
+.react-toggle {
+    .react-toggle-track {
+      background-color: black;
+    }
+  }
+  
+  /* Toggle style for "on" state */
+  .toggle-on .react-toggle-track {
+    background-color: green;
+  }
+  

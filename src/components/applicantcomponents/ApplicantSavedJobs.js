@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
+import { useNavigate } from "react-router-dom";
 import leftArrow from '../../images/arrow-left.png';
 
-function ApplicantSavedJobs() {
+function ApplicantSavedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const applicantId = user.id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,33 +28,32 @@ function ApplicantSavedJobs() {
     fetchData();
   }, []);
 
+  const fetchSavedJobs = async () => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+
+      const response = await axios.get(
+        `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const jobsData = response.data;
+      setJobs(jobsData);
+    } catch (error) {
+      console.error('Error fetching saved jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSavedJobs = async () => {
-      try {
-        // Assuming you have a function to get the JWT token from wherever it's stored
-        const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
-
-        const response = await axios.get(
-          `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-
-        const jobsData = response.data;
-        setJobs(jobsData);
-      } catch (error) {
-        console.error('Error fetching saved jobs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSavedJobs();
   }, [applicantId]);
-
+  
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
@@ -61,6 +62,36 @@ function ApplicantSavedJobs() {
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
+
+  const handleApplyNowClick = (jobId) => {
+    setSelectedJobId(jobId);
+    // Perform any additional actions you need here
+    navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
+  };
+
+  const handleRemoveJob = async (jobId) => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+      const response = await axios.delete(
+        `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      if(response.status === 200){
+        window.alert('Job Successfully removed from Saved Jobs');
+        }
+     
+      await fetchSavedJobs(); // Fetch jobs again after removal
+    } catch (error) {
+      console.error('Error removing job:', error);
+    }
+  };
+
+
   return (
     <div>
       {loading ? null : (
@@ -151,6 +182,30 @@ function ApplicantSavedJobs() {
                             <span>
 <span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                             </div>
+                            <ul className="job-tag">
+
+<li>
+      
+<button
+            className="button-status2"
+            onClick={() => handleRemoveJob(job.id)}
+            //style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316',opacity:'30%' }}
+>
+            Remove
+</button>
+          
+</li>
+ <li>
+      {job && (
+        <button
+          onClick={() => handleApplyNowClick(job.id)}
+          className="button-status1"
+        >
+          Apply Now
+        </button>
+      )}
+    </li>
+</ul>
                           </div>
                         </div>
                       </div>
