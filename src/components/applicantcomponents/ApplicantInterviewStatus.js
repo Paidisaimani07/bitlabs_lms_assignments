@@ -115,6 +115,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     } else {
       console.error('No job details or jobId available');
     }
+
   // const handleApplyNowClick = () => {
   //   if (jobDetails && jobDetails.id) {
   //     // Construct the API URL
@@ -141,6 +142,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   // };
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+
 
   };
 
@@ -230,7 +232,9 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <li>
       {jobDetails && (
 <Link
-          to="/applicant-view-job?jobId=${job.id}"
+
+          to={`/applicant-view-job?jobId=${jobId}`}
+
           onClick={() => setSelectedJobId(selectedJobId)}
           className=""
 >

@@ -1728,6 +1728,13 @@ tbody tr td:nth-child(2) {
     margin-bottom: 11px;
 }
 
+@media screen and (max-width: 320px) {
+    .input-form {
+      max-width: 320px;
+      /* Add any other styling adjustments as needed */
+    }
+  }
+  
 .info-wd .input-form2,
 .info-wd .input-form,.typeahead-input{
     font-style: unset;
