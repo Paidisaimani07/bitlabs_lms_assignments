@@ -289,6 +289,27 @@ errors.skillsRequired = skillsErrors;
       return isValid;
     };
  
+    const handleMinimumQualificationChange = (e) => {
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        minimumQualification: e.target.value,
+      }));
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        minimumQualification: '',
+      }));
+    };
+   
+    const handleSpecializationChange = (e) => {
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        specialization: e.target.value,
+      }));
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        specialization: '',
+      }));
+    };
   const handleSkillChange = (e, index, field) => {
     const updatedSkillsRequired = [...skillsRequired];
     updatedSkillsRequired[index][field] = e.target.value;
@@ -322,6 +343,80 @@ errors.skillsRequired = skillsErrors;
       }
     };
  
+    const getSpecializationOptions = (qualification) => {
+      switch (qualification) {
+        case 'B.Tech':
+          return [
+            'Computer Science and Engineering (CSE)',
+            'Electronics and Communication Engineering (ECE)',
+            'Electrical and Electronics Engineering (EEE)',
+            'Mechanical Engineering (ME)',
+            'Civil Engineering (CE)',
+            'Aerospace Engineering',
+            'Information Technology(IT)',
+            'Chemical Engineering',
+            'Biotechnology Engineering',
+            // Add other specializations as needed
+          ];
+        case 'MCA':
+          return [
+            'Software Engineering',
+            'Data Science',
+            'Artificial Intelligence',
+            'Machine Learning',
+            'Information Security',
+            'Cloud Computing',
+            'Mobile Application Development',
+            'Web Development',
+            'Database Management',
+            'Network Administration',
+            'Cyber Security',
+            'IT Project Management',
+            // Add other specializations as needed
+          ];
+        case 'Degree':
+          return [
+            'Bachelor of Science (B.Sc) Physics',
+            'Bachelor of Science (B.Sc) Mathematics',
+            'Bachelor of Science (B.Sc) Statistics',
+            'Bachelor of Science (B.Sc) Computer Science',
+            'Bachelor of Science (B.Sc) Electronics',
+            'Bachelor of Science (B.Sc) Chemistry',
+            'Bachelor of Commerce (B.Com)',
+            // Add other specializations as needed
+          ];
+        case 'Intermediate':
+          return ['MPC', 'BiPC', 'CEC', 'HEC'];
+        case 'Diploma':
+          return [
+            'Mechanical Engineering',
+            'Civil Engineering',
+            'Electrical Engineering',
+            'Electronics and Communication Engineering',
+            'Computer Engineering',
+            'Automobile Engineering',
+            'Chemical Engineering',
+            'Information Technology',
+            'Instrumentation Engineering',
+            'Mining Engineering',
+            'Metallurgical Engineering',
+            'Agricultural Engineering',
+            'Textile Technology',
+            'Architecture',
+            'Interior Designing',
+            'Fashion Designing',
+            'Hotel Management and Catering Technology',
+            'Pharmacy',
+            'Medical Laboratory Technology',
+            'Radiology and Imaging Technology',
+            // Add other specializations as needed
+          ];
+        // Add cases for other qualifications
+        default:
+          return [];
+      }
+    };
+
     return (
         <div>
            <div className="dashboard__content">
@@ -445,53 +540,76 @@ errors.skillsRequired = skillsErrors;
                     <div className="col-lg-6 col-md-12">
                     <div id="item_3" className="dropdown titles-dropdown info-wd">
                       <label className="title-user fw-7">Minimum Qualification<span className="color-red">*</span></label>
-                      <input
-                                 type="text"
-                                 value={jobData.minimumQualification}
-                                 className="input-form"
-                                 placeholder="BTech"
-                                 onChange={(e) => setJobData({ ...jobData, minimumQualification: e.target.value })}
-                               
-                                 required
-                     />
-                      {formErrors.minimumQualification && (
-                      <div className="error-message">{formErrors.minimumQualification}</div>
+                       <select
+                         value={jobData.minimumQualification}
+                         className="input-form"
+                         onChange={handleMinimumQualificationChange}
+                         required
+                      >
+                    <option value="">Select Qualification</option>
+                    <option value="B.Tech">B.Tech</option>
+                    <option value="MCA">MCA</option>
+                    <option value="Degree">Degree</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Diploma">Diploma</option>
+                    {/* Add other qualifications as needed */}
+                    </select>
+                   {formErrors.minimumQualification && (
+                    <div className="error-message">{formErrors.minimumQualification}</div>
                     )}
-                    </div>
-                    </div>
-                    <div className="col-lg-6 col-md-12">
-                    <div id="item_1" className="dropdown titles-dropdown info-wd">
-                      <label className="title-user fw-7">Specialization</label>
-                      <input
-                                type="text"
-                                value={jobData.specialization}
-                                className="input-form"
-                                placeholder="Other courses"
-                                onChange={(e) => setJobData({ ...jobData, specialization: e.target.value })}
-                             
-                      />
-                      {formErrors.specialization && (
-                      <div className="error-message">{formErrors.specialization}</div>
-                    )}
-                    </div>
-                    </div>
-                    <div className="col-lg-6 col-md-12">
-                    <div id="item_apply" className="dropdown titles-dropdown info-wd">
-                      <label className="title-user fw-7">Location<span className="color-red">*</span></label>
-                      <input type="text"
-                             className="input-form"
-                             value={jobData.location}
-                             placeholder="City"
-                             onChange={(e) => setJobData({ ...jobData, location: e.target.value })}
-                             required
-                             />
-                            
-                     
-                      {formErrors.location && (
-                      <div className="error-message">{formErrors.location}</div>
-                    )}
-                    </div>
-                    </div>
+                  </div>
+                  </div>
+ 
+                  <div className="col-lg-6 col-md-12">
+      <div id="item_1" className="dropdown titles-dropdown info-wd">
+        <label className="title-user fw-7">Specialization</label>
+        <select
+  value={jobData.specialization}
+  className="input-form"
+  style={{ color: jobData.specialization ? 'black' : 'lightgrey' }}
+  onChange={handleSpecializationChange}
+>
+  <option value="">Select Specialization</option>
+  {getSpecializationOptions(jobData.minimumQualification).map((option) => (
+    <option key={option} value={option}>
+      {option}
+    </option>
+  ))}
+</select>
+{formErrors.specialization && (
+  <div className="error-message">{formErrors.specialization}</div>
+)}
+      </div>
+    </div>
+    <div className="col-lg-6 col-md-12">
+  <div id="item_apply" className="dropdown titles-dropdown info-wd">
+    <label className="title-user fw-7">Location<span className="color-red">*</span></label>
+    <select
+      value={jobData.location}
+      className="input-form"
+      style={{ color: jobData.location ? 'black' : 'lightgrey' }}
+      onChange={(e) => setJobData({ ...jobData, location: e.target.value })}
+      required
+    >
+         <option value="">Select Location</option>
+         <option value="Chennai">Chennai</option>
+         <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+         <option value="Bangalore">Bangalore</option>
+         <option value="Hyderabad">Hyderabad</option>
+         <option value="Coimbatore">Coimbatore</option>
+         <option value="Kochi">Kochi</option>
+         <option value="Madurai">Madurai</option>
+         <option value="Mysore">Mysore</option>
+         <option value="Thanjavur">Thanjavur</option>
+         <option value="Pondicherry">Pondicherry</option>
+         <option value="Vijayawada">Vijayawada</option>
+        {/* Add other location options as needed */}
+    </select>
+    {formErrors.location && (
+      <div className="error-message">{formErrors.location}</div>
+    )}
+    </div>
+    </div>
                     <div className="col-lg-6 col-md-12">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
                       <label className="title-user fw-7">Industry Type</label>
