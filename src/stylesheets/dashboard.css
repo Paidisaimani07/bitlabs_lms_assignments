@@ -57,6 +57,9 @@
     font: 16px/28px "Plus Jakarta Sans", sans-serif;
     font-weight: 500;
 }
+.title-count:hover {
+    font-weight: bold;
+  }
 
 .dashboard h5 {
     font: 14px/24px "Plus Jakarta Sans", sans-serif;
@@ -1072,6 +1075,10 @@ tbody tr td:nth-child(2) {
     color: #999999;
 }
 
+#sidebar-menu ul li a.ff-active .dash-icon::after,
+#sidebar-menu ul li a .dash-icon {
+    color: #EE6D12;
+}
 
 .down-menu {
     margin: 0;
@@ -1582,7 +1589,7 @@ tbody tr td:nth-child(2) {
 
 .flat-dashboard-setting .profile-setting {
     padding: 20px 20px 20px;
-   
+    border-radius: 15px;
 }
 
 .flat-dashboard-setting .profile-setting-left {
@@ -1745,6 +1752,15 @@ tbody tr td:nth-child(2) {
     transition: all 0.3s ease-in-out;
     
 }}
+
+    border-radius:8px;
+}
+
+/* .select-wrapper {
+    max-height: 100%; 
+    overflow-y:auto;
+
+  } */
 
 
 textarea:focus,
@@ -2120,6 +2136,7 @@ textarea:focus,
     padding: 12px 15px;
     height: unset;
     border: 0;
+    border-radius: 8px;
 }
 
 .flat-dashboard-setting .message-wrap textarea::placeholder {
@@ -3819,6 +3836,7 @@ input[type="radio"]:checked:after {
 
     .flat-dashboard-setting .profile-setting {
         padding: 32px 15px 34px;
+        border-radius: 15px;
     }
 
     .flat-dashboard-setting .author-profile {
@@ -4492,4 +4510,20 @@ font-size: 14px;
     width: 100%; /* or any other styles you want to apply */
   }
 
+  .inactive-job {
+    background-color: #f2f2f2; /* Change this to the desired gray color */
+  }
+  
+
+  /* Default toggle style for "off" state */
+.react-toggle {
+    .react-toggle-track {
+      background-color: black;
+    }
+  }
+  
+  /* Toggle style for "on" state */
+  .toggle-on .react-toggle-track {
+    background-color: green;
+  }
   

@@ -5,9 +5,9 @@ import ApplicantForgotPassword from '../../components/applicantcomponents/Applic
 function RecruiterForgotPasswordPage() {
   return (
     <div>
-     <Nav />
+     {/* <Nav /> */}
     <ApplicantForgotPassword />
-    <Footer />
+    {/* <Footer /> */}
     </div>
   )
 }

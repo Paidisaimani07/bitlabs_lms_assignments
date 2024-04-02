@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Body() {
   return (
@@ -134,7 +135,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Reduce Hiring bias</a>
+                    <Link to="/#">Reduce Hiring bias</Link>
                   </h1>
                   <p>
                     Structured digital interviews increase the predictive
@@ -229,7 +230,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Save time &amp; headspace</a>
+                  <Link to="/#">Save time &amp; headspace</Link>
                   </h1>
                   <p>
                     Reduce your time-to-hire by up to 75% and free up headspace
@@ -388,7 +389,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Minimize environmental impact</a>
+                  <Link to="/#">Minimize environmental impact</Link>
                   </h1>
                   <p>
                     Did you know? U.S. office workers use ~10,000 sheets of
@@ -579,7 +580,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Save money</a>
+                  <Link to="/#">Save money</Link>
                   </h1>
                   <p>
                     Interview more candidates, more quickly – and still save

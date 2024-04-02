@@ -3,6 +3,7 @@ import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import logoCompany1 from '../../images/bitlabs-logo.png';
  
 function RecruiterForgotPassword() {
     const [email, setEmail] = useState('');
@@ -136,7 +137,7 @@ function RecruiterForgotPassword() {
                   </div>
                 ) : (
                   <div>
-                    <h5>Recruiter Forgot Password</h5><br />
+                    <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
                       <div className="ip">
                       <label>
                     Email Address<span>*</span>

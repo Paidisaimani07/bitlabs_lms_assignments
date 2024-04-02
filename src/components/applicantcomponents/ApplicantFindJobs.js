@@ -5,7 +5,8 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
-
+import { ClipLoader } from 'react-spinners';
+import leftArrow from '../../images/arrow-left.png';
  
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -39,8 +40,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
             },
           });
           jobData = promotedJobsResponse.data;
-          console.log(jobData.companyname);
-          console.log(jobData.jobTitle);
         } else {
           // If profile ID has any other value, fetch recommended jobs
           const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
@@ -105,7 +104,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       );
  
       if (response.status === 200) {
-        window.alert('Job Saved successfully');
+         window.alert('Job Saved successfully');
+       
       }
       fetchJobs();
     } catch (error) {
@@ -136,11 +136,18 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
   const handleApplyNowClick = (jobId) => {
     setSelectedJobId(jobId);
     // Perform any additional actions you need here
     navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
+  };
+
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
+
+  const handleMoreJobsClick = () => {
+    navigate('/applicant-basic-details-form');
   };
 
   return (
@@ -152,16 +159,22 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-<div className="title-dash flex2">Recommended Jobs For You!</div>
+<div className="back-to-previous pb-4">
+<Link to="/applicanthome" className="back-link" >
+  <img src={leftArrow} alt="Back"/>BACK
+  </Link>
+  </div>
+<div className="title-dash flex2">Recommended Jobs</div>
 </div>
 </div>
 </div>
 </div>
 </section>
 <section className="flat-dashboard-setting flat-dashboard-setting2">
-<div className="themes-container">
+<div className="themes-container bg-white">
 <div className="content-tab">
 <div className="inner">
+<br />
 <div className="group-col-2">
                   {jobs.length === 0 ? (
 <div style={{marginLeft:30}}>
@@ -169,33 +182,17 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
                     ) : (
                       jobs.map((job) => (
-<div className="features-job cl2  bg-white" key={job.id}>
+<div className="features-job cl2" key={job.id}>
 <div className="job-archive-header">
 <div className="inner-box">
-{/* <div className="logo-company">                            
+                               {/*<div className="logo-company">                            
                                {job.logoFile ? ( <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" /> )
                                : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
+
 </div> */}
-
-<div className="logo-company">
-  {job.logoFile ? (
-    <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
-  ) : (
-    job.jobRecruiter && job.jobRecruiter.logoFile ? (
-      <img src={`data:image/png;base64,${job.jobRecruiter.logoFile}`} alt="Company Logo" />
-    ) : (
-      <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
-    )
-  )}
-</div>
-
 <div className="box-content">
-{/* <h4>
-<a href="javascript:void(0);">{job.companyname}</a>
-</h4> */}
-
 <h4>
-  {job.companyname || (job.jobRecruiter && job.jobRecruiter.companyname) ? (<a href="javascript:void(0);">{job.companyname || job.jobRecruiter.companyname}</a>) : null}
+<a href="javascript:void(0);">{job.companyname}</a>
 </h4>
 <h3>
 <a href="javascript:void(0);">
@@ -207,10 +204,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <span className="icon-map-pin"></span>
 &nbsp;{job.location}
 </li>
-<li>
+{/* <li>
 <span className="icon-calendar"></span>
-&nbsp;{formatDate(job.creationDate)}
-</li>
+&nbsp;
+</li> */}
 </ul>
 </div>
 </div>
@@ -225,8 +222,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   <li>
 <a href="javascript:void(0);" onclick="{yourToggleFunction()}">{job.remote ? 'Remote' : 'Office-based'}</a>
 </li>
+<p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
+
 <li>
-<a href="javascript:void(0);"> Exp&nbsp; {job.minimumExperience} - {job.maximumExperience} years</a>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
 </li>
  
                                 </ul>
@@ -238,50 +237,40 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 <div className="job-footer-right">
 <div className="price">
-<span></span>
-<p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+<span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
 </div>
 <ul className="job-tag">
-
 <li>
-        {job.isSaved==='saved' ? (
-<button
-            disabled
-            className="button-status2"
-            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316' }}
->
-            Saved
-</button>
-           ) : (
-<button
-              onClick={() => handleSaveJob(job.id)}
-              className="button-status2"
->
-              Save Job
-</button>
-          )}
-</li>
-{/* <li>
       {job && (
 <Link
-          to="/applicant-view-job"
+          to={`/applicant-view-job?jobId=${job.id}`}
           onClick={() => setSelectedJobId(job.id)}
           className="button-status1"
 >
           Apply Now
 </Link>
       )}
-</li> */}
- <li>
-      {job && (
-        <button
-          onClick={() => handleApplyNowClick(job.id)}
-          className="button-status1"
-        >
-          Apply Now
-        </button>
-      )}
-    </li>
+</li>
+<li>
+        {job.isSaved==='saved' ? (
+<button
+            disabled
+
+            className="button-status2"
+            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316',opacity:'30%' }}
+>
+            Saved
+</button>
+           ) : (
+<button
+              onClick={() => handleSaveJob(job.id)}
+              className="button-status1"
+>
+              Save Job
+</button>
+          )}
+</li>
 </ul>
 </div>
 </div>
@@ -292,15 +281,18 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 </div>
 <div style={{ textAlign: "center", marginTop: "20px" }}>
-            {profileid1 === 0 && (
-<Link to="/applicant-basic-details-form" className="button-status1">
-                More Jobs
-</Link>
-            )}
-</div>
+      {profileid1 === 0 && (
+        <div style={{ display: 'inline-block' }}>
+        <button className="button-status1" onClick={handleMoreJobsClick}>
+          More Jobs
+        </button>
+        </div>
+      )}
+    </div>
 </section>
 </div>
       )}
+      
 </div>
   );
 }

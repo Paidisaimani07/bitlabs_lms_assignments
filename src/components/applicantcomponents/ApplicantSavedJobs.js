@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
+import { useNavigate } from "react-router-dom";
+import leftArrow from '../../images/arrow-left.png';
 
-function ApplicantSavedJobs() {
+function ApplicantSavedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const applicantId = user.id;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,38 +28,69 @@ function ApplicantSavedJobs() {
     fetchData();
   }, []);
 
+  const fetchSavedJobs = async () => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+
+      const response = await axios.get(
+        `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const jobsData = response.data;
+      setJobs(jobsData);
+    } catch (error) {
+      console.error('Error fetching saved jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchSavedJobs = async () => {
-      try {
-        // Assuming you have a function to get the JWT token from wherever it's stored
-        const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
-
-        const response = await axios.get(
-          `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-
-        const jobsData = response.data;
-        setJobs(jobsData);
-      } catch (error) {
-        console.error('Error fetching saved jobs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchSavedJobs();
   }, [applicantId]);
-
+  
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
+
+  const handleApplyNowClick = (jobId) => {
+    setSelectedJobId(jobId);
+    // Perform any additional actions you need here
+    navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
+  };
+
+  const handleRemoveJob = async (jobId) => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+      const response = await axios.delete(
+        `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      if(response.status === 200){
+        window.alert('Job Successfully removed from Saved Jobs');
+        }
+     
+      await fetchSavedJobs(); // Fetch jobs again after removal
+    } catch (error) {
+      console.error('Error removing job:', error);
+    }
+  };
+
 
   return (
     <div>
@@ -66,6 +101,11 @@ function ApplicantSavedJobs() {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
+                  <div className="back-to-previous pb-4">
+                  <Link to="/applicanthome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                  </div>
                     <div className="title-dash flex2">My Saved Jobs</div>
                   </div>
                 </div>
@@ -85,13 +125,13 @@ function ApplicantSavedJobs() {
                       <div className="features-job cl2  bg-white" key={job.id}>
                         <div className="job-archive-header">
                           <div className="inner-box">
-                          <div className="logo-company">
+                          {/* <div className="logo-company">
                               {job.logoFile ? (
                                   <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                               ) : (
                               <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
                               )}
-                          </div>
+                          </div> */}
                             <div className="box-content">
                               <h4>
                                 <a href="#">{job.companyname}</a>
@@ -107,10 +147,10 @@ function ApplicantSavedJobs() {
                                   <span className="icon-map-pin"></span>
                                   &nbsp;{job.location}
                                 </li>
-                                <li>
+                                {/* <li>
                                   <span className="icon-calendar"></span>
                                   &nbsp;{formatDate(job.creationDate)}
-                                </li>
+                                </li> */}
                               </ul>
                             </div>
                           </div>
@@ -127,6 +167,9 @@ function ApplicantSavedJobs() {
                               <li>
 <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
 </li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+</li>
                             </ul>
                             <div className="star">
                               {Array.from({ length: job.starRating }).map((_, index) => (
@@ -136,9 +179,33 @@ function ApplicantSavedJobs() {
                           </div>
                           <div className="job-footer-right">
                             <div className="price">
-                              <span></span>
-                              <p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+                            <span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                             </div>
+                            <ul className="job-tag">
+
+<li>
+      
+<button
+            className="button-status2"
+            onClick={() => handleRemoveJob(job.id)}
+            //style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316',opacity:'30%' }}
+>
+            Remove
+</button>
+          
+</li>
+ <li>
+      {job && (
+        <button
+          onClick={() => handleApplyNowClick(job.id)}
+          className="button-status1"
+        >
+          Apply Now
+        </button>
+      )}
+    </li>
+</ul>
                           </div>
                         </div>
                       </div>

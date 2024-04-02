@@ -3,6 +3,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 const ApplicantViewProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -84,185 +85,248 @@ const ApplicantViewProfile = () => {
  
   return (
     <div className="dashboard__content">
-  <section className="page-title-dashboard">
-    <div className="themes-container">
-      <div className="row">
-        <div className="col-lg-12 col-md-12 ">
-          <div className="title-dashboard">
-            <div className="title-dash flex2">Overview</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section className="flat-dashboard-user flat-dashboard-profile">
-    <div className="themes-container">
-      <div className="row">
-        <div className="col-lg-12 col-md-12 ">
-          <div className="wrap-profile flex2 bg-white">
-            <div className="box-profile flex2">
-              <div className="images">
-                {/* <img src={imageSrc} alt="" width="130px" height="40px"/> */}
-
-                <img width="130px" height="40px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')} />
-              </div>
-              <div className="content">
-                <h5 style={{ fontSize: '24px' }} className="fw-6 color-3 ">{profileData.applicant.name}</h5>
-               
-              </div>
-             
-            </div>
-            <div>
-            <Link to="/applicant-edit-profile"  className="button-status">Edit Profile</Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section className="flat-dashboard-overview flat-dashboard-about">
-    <div className="themes-container">
-      <div className="row">
-        <div className="col-lg-12 col-md-12 ">
-          <div className="wrap-about flex">
-            <div className="side-bar">
-              <div className="sidebar-map bg-white">
-              <div className="title-box flex">
-                  <div className="p-16">Email</div>
-                  <h4>{profileData.applicant.email} </h4>
-                </div>
-                
-                <div className="title-box flex">
-                  <div className="p-16">Mobile Number</div>
-                  <h4>{profileData.applicant.mobilenumber} </h4>
-                </div>
-                {/* <div className="title-box flex">
-                  <div className="p-16">Experience time</div>
-                  <h4>2</h4>
-                </div> */}
-                               
-                <div className="title-box flex">
-                  <div className="p-16">Qualification</div>
-                  
-                  {/* <h4> {(profileData.graduationDetails && profileData.graduationDetails.gprogram) || 'Not available'}</h4> */}
-                  <h4>
-  {profileData && profileData.qualification|| ''}
-</h4>
-
-
-
-                </div>      
-                <div className="title-box flex">
-                <div className="p-16">Skills</div>
-                <h4>
-                {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
+      <section className="page-title-dashboard">
+<div className="themes-container">
+<div className="row">
+<div className="col-lg-12 col-md-12 ">
+<div className="title-dashboard">
+  <div className="back-to-previous pb-4">
+      <Link to="/applicanthome" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+      </Link>
+  </div>
+<div className="title-dash flex2">My Profile</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+   <section className="wrapper-author-page-title stc2 ">
+    <div className="tf-container">
+      <div className="wd-author-page-title">
+        <div className="author-archive-header">
+        <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')} style={{padding:'10px',borderRadius:'100px'}} />
+          <div className="content">
+            {/* <a href="#" className="tag-head">
+              Available now
+            </a> */}
+            <h4>
+              {/* <a href="#">Computer Systems Analyst</a> */}
+            </h4>
+            <h3>
+              <a href="#">{profileData.applicant.name}</a>
+            </h3>
+            <ul className="author-list">
+              <li>  {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
   <React.Fragment key={skill.id}>
     <span>
       <a>
-        <ul className="job-tag">
+        <ul className="tag">
           <li>{skill.skillName}</li>
         </ul>
-      </a>
+        </a>
     </span>
     {index < profileData.skillsRequired.length - 1 && ", "}
   </React.Fragment>
+))}           </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="author-archive-footer">
+          <div className="group-btn">
+            {/* <button className="tf-btn">Edit Profile</button> */}
+            <Link to="/applicant-edit-profile"  className="tf-btn">Edit Profile</Link>&nbsp;
+            {/* <button className="tf-btn btn-author">Message</button> */}
+            <Link to="#"  className="tf-btn btn-author">Download Resume</Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section className="candidates-section">
+    <div className="tf-container">
+      <div className="row">
+        <div className="col-lg-8">
+          <article className="job-article tf-tab single-job stc2">
+            <ul className="menu-tab">
+              <li className="ct-tab active"> Education & Experience Details</li>
+              {/* <li className="ct-tab">Portfolio</li>
+              <li className="ct-tab">Contact</li> */}
+            </ul>
+            <div className="content-tab">
+              <div className="inner-content">
+                <h5>Education</h5>
+                <div className="group-infor">
+                  <div className="inner">
+                    <div className="heading">
+                      Graduation 
+                    </div>
+                    <div className="row">
+  <div className="col">
+    <div className="heading">University:<br/> {(profileData.graduationDetails && profileData.graduationDetails.gboard) || ''}</div>
+  </div>
+  <div className="col">
+    <div className="subtitle-1 fw-7">
+      Branch:<br /> {(profileData.graduationDetails && profileData.graduationDetails.gprogram) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+      Percentage: <br /> {(profileData.graduationDetails && profileData.graduationDetails.gpercentage) || <span style={{ color: '#808080',textAlign:'center'}}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+      Year of Passing:<br />  {(profileData.graduationDetails && profileData.graduationDetails.gyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+</div>
+
+                    
+                  </div>
+                  <div className="inner">
+                    <div className="heading">
+                    Intermediate Details:
+                    </div>
+                    <div className="row">
+                    
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Board: <br /> {(profileData.intermediateDetails && profileData.intermediateDetails.iboard) || <span style={{ color: '#808080' }}></span>}
+  </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-1 fw-7">
+    Branch: <br />{(profileData.intermediateDetails && profileData.intermediateDetails.iprogram) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+    Percentage:<br /> {(profileData.intermediateDetails && profileData.intermediateDetails.ipercentage) || <span style={{ color: '#808080'}}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+    Year of Passing: <br />{(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+</div>
+                  </div>
+                  <div className="inner">
+                    <div className="heading">
+                    SSC Details:
+                    </div>
+                    <div className="row">
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Board:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xboard) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Percentage:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xpercentage) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Year of Passing:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+    {/* <div className="subtitle-2 fw-7 fw-5">
+    Year of Passing: {(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div> */}
+  </div>
+</div>
+                  </div>
+                </div>
+                <h5>Experience</h5>
+                <div className="group-infor">
+  {profileData && profileData.experienceDetails && profileData.experienceDetails.map((experience, index) => (
+  <div className="inner" key={index}>
+    <div className="row">
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Company: <br /> {experience.company || ""}
+        </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Position: <br /> {experience.position || ""}
+        </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          Start Date: <br /> {experience.startDate || ""}
+        </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          End Date: <br /> {experience.endDate || ""}
+        </div>
+      </div>
+    </div>
+  </div>
 ))}
 
-  </h4>
-                  </div>  
-                  <div className="title-box flex">
-                  <div className="p-16">Totla Experience</div>
-                  <h4>{profileData.experience} </h4>
+</div>
+
+
+              </div>
+              </div>
+          </article>
+        </div>
+        <div className="col-lg-4 ">
+          <div className="cv-form-details stc2 po-sticky">
+            <ul className="list-infor">
+            <li>
+                <div className="category">Email</div>
+                <div className="detail">
+                {profileData.applicant.email}
                 </div>
-                 <div className="title-box flex">
-                  <h4>
-                  <div className="p-16">Preferred Job Location</div>
-                   <h4>{(profileData.basicDetails && profileData.basicDetails.city) || ''}</h4>
-                   <h4>
-  {profileData && profileData.preferredJobLocations && profileData.preferredJobLocations.map((location, index) => (
+              </li>
+              <li>
+                <div className="category">Phone Number</div>
+                <div className="detail">{profileData.applicant.mobilenumber} </div>
+              </li>
+              <li>
+                <div className="category">Preferred Job Location</div>
+                <div className="detail">{profileData && profileData.preferredJobLocations && profileData.preferredJobLocations.map((location, index) => (
     <span key={index}>
       {location}
       {index !== profileData.preferredJobLocations.length - 1 && ', '}
     </span>
   ))}
-</h4>
-</h4>
-            </div>   
-              </div>
-           
-            </div>
-            <div className="post-about widget-dash-video bg-white">
-                <h3 class="title-education">Education</h3>
-                <div class="education-wrap">
-                  <div class="education-box">
-                  <h4 class="fw-7"><h4 style={{ fontWeight: 'bold', color: '#F97316' }}> Graduation:</h4></h4>
-<div style={{ marginLeft: '20px' }}>
-  {/* <div className="subtitle-1 fw-7">University: {(profileData.graduationDetails && profileData.graduationDetails.gboard) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Branch: {(profileData.graduationDetails && profileData.graduationDetails.gprogram) || 'Not available'}</div>
-  <div className="subtitle-2 fw-7 fw-5">Percentage: {(profileData.graduationDetails && profileData.graduationDetails.gpercentage) || 'Not available'}</div>
-  <div className="subtitle-2 fw-7 fw-5">Year of Passing: {(profileData.graduationDetails && profileData.graduationDetails.gyearOfPassing) || 'Not available'}</div> */}
-
-  <div className="subtitle-1 fw-7">
-  University: {(profileData.graduationDetails && profileData.graduationDetails.gboard) || <span style={{ color: '#808080'}}></span>}
-</div>
-<div className="subtitle-1 fw-7">
-  Branch: {(profileData.graduationDetails && profileData.graduationDetails.gprogram) || <span style={{ color: '#808080' }}></span>}
-</div>
-<div className="subtitle-2 fw-7 fw-5">
-  Percentage: {(profileData.graduationDetails && profileData.graduationDetails.gpercentage) || <span style={{ color: '#808080'}}></span>}
-</div>
-<div className="subtitle-2 fw-7 fw-5">
-  Year of Passing: {(profileData.graduationDetails && profileData.graduationDetails.gyearOfPassing) || <span style={{ color: '#808080' }}></span>}
-</div>
-
-
-
-</div>
-        
-<h4 class="fw-7"><h4 style={{ fontWeight: 'bold', color: '#F97316' }}> Intermediate Details:</h4></h4>
-<div style={{ marginLeft: '20px' }}>
-  {/* <div className="subtitle-1 fw-7">Board: {(profileData.intermediateDetails && profileData.intermediateDetails.iboard) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Branch: {(profileData.intermediateDetails && profileData.intermediateDetails.iprogram) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Percentage: {(profileData.intermediateDetails && profileData.intermediateDetails.ipercentage) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Year of Passing: {(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || 'Not available'}</div> */}
-
-  <div className="subtitle-1 fw-7">
-  Board: {(profileData.intermediateDetails && profileData.intermediateDetails.iboard) || <span style={{ color: '#808080' }}></span>}
-</div>
-<div className="subtitle-1 fw-7">
-  Branch: {(profileData.intermediateDetails && profileData.intermediateDetails.iprogram) || <span style={{ color: '#808080' }}></span>}
-</div>
-<div className="subtitle-1 fw-7">
-  Percentage: {(profileData.intermediateDetails && profileData.intermediateDetails.ipercentage) || <span style={{ color: '#808080'}}></span>}
-</div>
-<div className="subtitle-1 fw-7">
-  Year of Passing: {(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
-</div>
-
-</div>
-<h4 class="fw-7"><h4 style={{ fontWeight: 'bold', color: '#F97316' }}> SSC Details:</h4></h4>
-<div style={{ marginLeft: '20px' }}>
-  {/* <div className="subtitle-1 fw-7">Board: {(profileData.xClassDetails && profileData.xClassDetails.xboard) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Branch: SSC/CBSE/ICSE {(profileData.xClassDetails && profileData.xClassDetails.xprogram) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Percentage: {(profileData.xClassDetails && profileData.xClassDetails.xpercentage) || 'Not available'}</div>
-  <div className="subtitle-1 fw-7">Year of Passing: {(profileData.xClassDetails && profileData.xClassDetails.xyearOfPassing) || 'Not available'}</div> */}
-  <div className="subtitle-1 fw-7">
-  Board: {(profileData.xClassDetails && profileData.xClassDetails.xboard) || <span style={{ color: '#808080' }}></span>}
-</div>
-{/* <div className="subtitle-1 fw-7">
-  Branch: SSC/CBSE/ICSE {(profileData.xClassDetails && profileData.xClassDetails.xprogram) || <span style={{ color: '#808080' }}>Not available</span>}
-</div> */}
-<div className="subtitle-1 fw-7">
-  Percentage: {(profileData.xClassDetails && profileData.xClassDetails.xpercentage) || <span style={{ color: '#808080' }}></span>}
-</div>
-<div className="subtitle-1 fw-7">
-  Year of Passing: {(profileData.xClassDetails && profileData.xClassDetails.xyearOfPassing) || <span style={{ color: '#808080' }}></span>}
-</div>
-
-</div>
-                  </div>
-                </div>
-         </div>
+  
+  {(profileData.basicDetails && profileData.basicDetails.city) || ''}
+  </div>
+              </li>
+              <li>
+                <div className="category">Experience</div>
+                <div className="detail">{profileData.experience}</div>
+              </li>
+              {/* <li>
+                <div className="category">Language</div>
+                <div className="detail">English, Vietnamese </div>
+              </li>
+              <li>
+                <div className="category">Age</div>
+                <div className="detail">26 Years Old</div>
+              </li> */}
+              <li>
+                <div className="category">Qualification</div>
+                <div className="detail">{profileData && profileData.qualification|| ''}</div>
+              </li>
+            </ul>
+            {/* <div className="preview-cv mgt-32">
+              <div className="title">Samle_cv_jobitex</div>
+              <div className="category">PDF</div>
+              <div className="icon icon-file-pdf" />
+            </div> */}
+            {/* <a href="#" className="btn-dowload">
+              <i className="icon-download" /> Download CV
+            </a> */}
           </div>
         </div>
       </div>

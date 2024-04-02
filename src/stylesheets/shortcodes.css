@@ -751,7 +751,7 @@
   }
   
   .wd-review-job.thumb1 .user-tag.tag4 {
-    left: 3%;
+    left: -3%;
     bottom: 29.8%;
   }
   
@@ -861,8 +861,9 @@
     padding: 12px;
     background: #fff;
     position: absolute;
-    top: 37%;
-    left: 6.5%;
+    top: 99% !important;
+    left: -5% !important;
+    height: 10px !important;
   }
   
   .wd-review-job.thumb2 .tes-box .client-box {
@@ -3363,13 +3364,13 @@
   
   .tf-btn {
     padding: 7px 24px;
-    background: #ffffff;
-    border: 1px solid #F97316;
+    background: #F97316;
+    /* border: 1px solid #F97316; */
     border-radius: 4px;
     font-weight: 700;
     font-size: 16px;
     line-height: 26px;
-    color: #121212;
+    color: #FFFFFF;
     text-align: center;
   }
   
@@ -5354,7 +5355,7 @@
   }
   
   .wd-form-login .group-ant-choice {
-    display: flex;
+    /* display: flex; */
     justify-content: space-between;
     font-weight: 400;
     font-size: 14px;
@@ -7682,6 +7683,16 @@
     cursor: pointer;
     transition: all 0.3s ease-in-out;
   }
+  .features-job .job-archive-header span.tog-but {
+    right: 0;
+    top: 0;
+    position: absolute;
+    padding: 12px;
+    color: #e5e5e5;
+    font-size: 17.42px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
   
   .features-job .job-archive-header span.icon-heart:active,
   .features-job .job-archive-header span.icon-heart:hover {
@@ -9549,8 +9560,8 @@
   
   .wrapper-author-page-title .tf-btn {
     text-transform: capitalize;
-    border: 1px solid #ffffff;
-    color: #F97316;
+    border: 1px solid #EE6D12;
+    color: #FFFFFF;
     width: 184px;
     padding: 12px 0px;
   }
@@ -9562,9 +9573,9 @@
   
   .wrapper-author-page-title .btn-author {
     background: transparent;
-    color: #ffffff;
+    color: #F97316;
     margin-left: 16px;
-    padding: 12px 56.5px;
+    /* padding: 12px 56.5px; */
     border: 1px solid #ffffff;
     text-transform: capitalize;
   }
@@ -10687,7 +10698,7 @@
   }
   
   .account-section {
-    padding: 61px 0px 68px;
+    /* padding: 61px 0px 68px; */
   }
   
   .inner-news-section {
@@ -11588,3 +11599,51 @@
     box-shadow: unset;
   
   }
+  @media screen and (max-width: 455px) and (min-width: 320px) {
+    .wd-review-job.thumb1 .trader-box.box1 {
+      top: -50px !important;
+      left: 7.5% !important;
+      height:70px !important;
+    }
+    
+    .wd-review-job.thumb1 .trader-box.box2 {
+      top: 25px !important;
+      right: 14.2% !important;
+      width: 238px !important;
+      height:70px !important;
+    }
+  }
+
+  @media screen and (max-width: 455px) and (min-width: 320px) {
+    .wd-review-job.thumb1 .user-tag.tag1 {
+        top: -32% !important;
+        left: 60% !important;
+    }
+    
+    
+    .wd-review-job.thumb1 .user-tag.tag2 {
+        top: 10% !important;
+        right: 10% !important;
+    }
+    
+    
+    .wd-review-job.thumb1 .user-tag.tag3 {
+        left: 65% !important;
+        bottom: 7% !important;
+    }
+    }
+    @media screen and (max-width: 455px) and (min-width: 320px) {
+      .wd-review-job.thumb2 .trader-box .content {
+          background: #ffffff;
+          box-shadow: 0px 4px 4px rgb(0 0 0 / 25%);
+          border-radius: 32px;
+          padding: 8px 32px;
+          text-align: center;
+          position: relative;
+          z-index: 5;
+          top: 96% !important; 
+          left: 25% !important; 
+          height:85px !important; 
+          margin-top: -25px !important; 
+        }
+      }

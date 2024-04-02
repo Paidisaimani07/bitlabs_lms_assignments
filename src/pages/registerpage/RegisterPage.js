@@ -7,9 +7,9 @@ export default function RegisterPage({onLogin}) {
   localStorage.clear();
   return (
     <div>
-     <Nav />
+     {/* <Nav /> */}
      <RegisterBody handleLogin={onLogin}/>
-     <Footer />
+     {/* <Footer /> */}
     </div>
   )
 }
