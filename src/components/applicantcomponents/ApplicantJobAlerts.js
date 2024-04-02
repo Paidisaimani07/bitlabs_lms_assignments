@@ -158,8 +158,6 @@ Your application has been successfully submitted to &nbsp;{alert.companyName} fo
                             <>
                               <Link
   to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
-  //applicant-interview-status?jobId
-  //applicant-view-job?jobId
 >
 Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '} on {' '} {formatDate(alert.changeDate)}.
 </Link>

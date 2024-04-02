@@ -168,7 +168,7 @@ function RecruiterDashboard() {
                 <h4 className="title-count">Active Jobs</h4>
               </div>
             </div>
-            <div className="box-icon wrap-counter flex">
+            <div className="box-icon wrap-counter flex" onClick={allapplicants}>
               <div className="icon style2">
                 <span className="icon-bag">
                   <svg
@@ -237,7 +237,7 @@ function RecruiterDashboard() {
                 <h4 className="title-count">Hires</h4>
               </div>
             </div>
-            <div className="box-icon wrap-counter flex">
+            <div className="box-icon wrap-counter flex" onClick={interviews}>
               <div className="icon style4">
                 <span className="icon-bag">
                   <svg
