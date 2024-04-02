@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-calendar-timeline';
 import 'react-calendar-timeline/lib/Timeline.css';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import leftArrow from '../../images/arrow-left.png';
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStatus, setJobStatus] = useState([]);
@@ -114,6 +115,35 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     } else {
       console.error('No job details or jobId available');
     }
+
+  // const handleApplyNowClick = () => {
+  //   if (jobDetails && jobDetails.id) {
+  //     // Construct the API URL
+  //     const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
+  //     console.log('API Endpoint:', apiEndpoint); // Log API endpoint
+  //     // Call your API using fetch or any other method (e.g., axios)
+  //     axios.get(apiEndpoint)
+  //       .then(response => {
+  //         // Handle response if needed
+  //         console.log('API Response:', response);
+  //         const { body } = response.data;
+  //       setLoading(false);
+  //       if (body) {
+  //         setJobDetails(body);
+  //       }
+  //       })
+  //       .catch(error => {
+  //         // Handle error if needed
+  //         console.error('API Error:', error);
+  //       });
+  //   } else {
+  //     console.error('No job details or jobId available');
+  //   }
+  // };
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+
+
   };
 
   return (
@@ -125,6 +155,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+<div className="back-to-previous pb-4">
+    <Link to="/applicant-applied-jobs" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+    </Link>
+</div>
 <div className="title-dash flex2">Job Status</div>
 </div>
 </div>
@@ -142,10 +177,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="features-job style-2 stc-apply">
 <div className="job-archive-header">
 <div className="inner-box">
-<div className="logo-company">                            
+{/* <div className="logo-company">                            
                                 {jobDetails.logoFile ? ( <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" /> )
                                 : (<img src="images/logo-company/cty12.png" alt={`Default Company Logo ${jobDetails.id}`} /> )}
-</div>
+</div> */}
 <div className="box-content">
 <h4>
 <a href="#">{jobDetails.companyname}</a>
@@ -158,10 +193,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span className="icon-map-pin"></span>
                                     {jobDetails.location}
 </li>
-<li>
+{/* <li>
 <span className="icon-calendar"></span>
                                     {formatDate(jobDetails.creationDate)}
-</li>
+</li> */}
 </ul>  
 </div>
 </div>
@@ -170,10 +205,16 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="job-footer-left">
 <ul className="job-tag">
 <li>
-<a href="#">{jobDetails.employeeType}</a>
+<a href="javascript:void(0);">{jobDetails.employeeType}</a>
 </li>
 <li>
-<a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
+<a href="javascript:void(0);">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
+</li>
+<li>
+<a href="javascript:void(0);"> Exp&nbsp; {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
+</li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA</a>
 </li>
 </ul>
 <div className="star">
@@ -184,16 +225,18 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
 <div className="job-footer-right">
 <div className="price">
-<span></span>Package :  &nbsp;
-<p>&#x20B9; {jobDetails.minSalary} - &#x20B9; {jobDetails.maxSalary} / year</p>
+<span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
 </div>
 <ul className="job-tag">
 <li>
       {jobDetails && (
 <Link
+
           to={`/applicant-view-job?jobId=${jobId}`}
+
           onClick={() => setSelectedJobId(selectedJobId)}
-          className="button-status1"
+          className=""
 >
           View Job Details
 </Link>

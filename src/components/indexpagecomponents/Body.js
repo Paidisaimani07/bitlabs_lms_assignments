@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Body() {
   return (
   <>
-    <section className="wd-iconbox style-1">
+    <section className="wd-iconbox style-1 background4">
   <div className="tf-container">
     <div className="row">
       <div className="box">
@@ -16,10 +17,10 @@ export default function Body() {
             />
           </div>
         </div>
-        <div className="column-6 background2">
+        <div className="column-6 background4">
           <div className="group-iconbox">
             <div className="title-iconbox">
-            <h1>What Can I Do With TalentStream?</h1>
+            <h1>What Can I Do With bitLabs?</h1>
              
             </div>
             <div className="text-iconbox wow fadeInRight">
@@ -134,7 +135,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Reduce Hiring bias</a>
+                    <Link to="/#">Reduce Hiring bias</Link>
                   </h1>
                   <p>
                     Structured digital interviews increase the predictive
@@ -229,7 +230,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Save time &amp; headspace</a>
+                  <Link to="/#">Save time &amp; headspace</Link>
                   </h1>
                   <p>
                     Reduce your time-to-hire by up to 75% and free up headspace
@@ -388,7 +389,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Minimize environmental impact</a>
+                  <Link to="/#">Minimize environmental impact</Link>
                   </h1>
                   <p>
                     Did you know? U.S. office workers use ~10,000 sheets of
@@ -579,7 +580,7 @@ export default function Body() {
                 </div>
                 <div className="box-content">
                   <h1 className="box-title">
-                    <a href="#">Save money</a>
+                  <Link to="/#">Save money</Link>
                   </h1>
                   <p>
                     Interview more candidates, more quickly – and still save
@@ -620,7 +621,7 @@ export default function Body() {
                   </div>
                   <div className="content">
                     <h6 className="number wrap-counter">
-                      <span className="number counter-number" data-speed="2000" data-to="198"></span><span>+</span>
+                      <span></span><span>2+</span>
                     </h6>
                     <div className="des">Countries</div>
                   </div>
@@ -646,7 +647,7 @@ export default function Body() {
                   </div>
                   <div className="content">
                     <h6 className="number wrap-counter">
-                      <span className="number counter-number" data-speed="2000" data-to="350"></span><span>k</span>
+                      <span></span><span>35k</span>
                     </h6>
                     <div className="des">Job Search Success</div>
                   </div>
@@ -689,7 +690,7 @@ export default function Body() {
                     </svg>
                   </div>
                   <div className="content">
-                    <h6 className="number">20k+</h6>
+                    <h6 className="number">40k+</h6>
                     <div className="des">Candidates</div>
                   </div>
                 </div>
@@ -714,7 +715,7 @@ export default function Body() {
                           fillRule="evenodd"
                           clipRule="evenodd"
                           d="M25.9343 34.4846C18.3247 37.7642 9.49824 34.2544 6.21866 26.6448C2.93909 19.0352 6.44886 10.2088 14.0584 6.92922C21.668 3.64965 30.4945 7.15942 33.774 14.769C37.0536 22.3786 33.5438 31.205 25.9343 34.4846ZM26.764 21.0106C25.8277 18.838 23.9418 18.1958 20.4373 18.7995L18.7895 14.9761C19.858 14.7546 20.9797 14.7725 22.1847 15.0404L22.5399 12.6451C21.0234 12.2976 19.4422 12.3538 17.9542 12.8081L17.4339 11.6008L15.6169 12.3838L16.1198 13.5506C13.5958 14.8774 12.4627 17.1311 13.399 19.3037C14.3788 21.577 16.2756 22.0715 19.6544 21.5221L21.3541 25.4659C19.9093 25.8497 18.522 25.7318 16.9321 25.3194L16.3847 27.7261C18.2898 28.2108 20.2913 28.1653 22.1724 27.5944L23.0393 29.606L24.8563 28.8229L23.9979 26.8312C26.5547 25.4668 27.7178 23.2236 26.764 21.0106ZM18.6044 19.0881C16.7974 19.3186 16.1671 18.9459 15.8027 18.1003C15.4215 17.2159 15.8068 16.2147 17.0792 15.5469L18.6044 19.0881ZM24.3601 22.2131C24.7764 23.1792 24.3108 24.1671 23.0385 24.8349L21.469 21.1933C23.2979 20.9544 23.97 21.308 24.3604 22.2139L24.3601 22.2131Z"
-                          fill="#1E68F6"
+                          fill="#F97316"
                         />
                       </g>
                       <defs>

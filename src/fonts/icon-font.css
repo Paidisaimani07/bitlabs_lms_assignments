@@ -33,27 +33,27 @@
 
 .icon-call-calling .path1:before {
   content: "\e908";
-  color:#1967d2;
+  color:#F97316;
 }
 
 .icon-call-calling .path2:before {
   content: "\e90f";
   margin-left: -1em;
-  color: #1967d2;
+  color: #F97316;
   opacity: 0.5;
 }
 
 .icon-call-calling .path3:before {
   content: "\e910";
   margin-left: -1em;
-  color: #1967d2;
+  color: #F97316;
   opacity: 0.5;
 }
 
 .icon-call-calling .path4:before {
   content: "\e9b3";
   margin-left: -1em;
-  color: #1967d2;
+  color: #F97316;
 }
 
 .icon-categorie-2:before {

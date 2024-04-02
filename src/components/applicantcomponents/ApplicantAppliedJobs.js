@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';  
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
+import leftArrow from '../../images/arrow-left.png';
 function ApplicantAppliedJobs({setSelectedJobId}) {
     const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,6 +47,9 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
   return (
     <div>
     {loading ? null : (
@@ -55,6 +59,11 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
+                  <div className="back-to-previous pb-4">
+                  <Link to="/applicanthome" className="back-link" >
+                  <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                  </div>
                     <div className="title-dash flex2">My Applied Jobs</div>
                   </div>
                 </div>
@@ -62,25 +71,25 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
             </div>
           </section>
           <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container bg-white">
+            <div className="themes-container">
               <div className="content-tab">
                 <div className="inner">
-                  <br />
+                  
                   <div className="group-col-2">
                   {jobs.length === 0 ? (
                       <div style={{marginLeft:30}}>No Applied jobs available</div>
                     ) : (
                     jobs.map((job) => (
-                      <div className="features-job cl2" key={job.id}>
+                      <div className="features-job cl2  bg-white" key={job.id}>
                         <div className="job-archive-header">
                           <div className="inner-box">
-                          <div className="logo-company">
+                          {/* <div className="logo-company">
                               {job.logoFile ? (
                                    <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                               ) : (
                                     <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
                               )}
-                             </div>
+                             </div> */}
                             <div className="box-content">
                               <h4>
                                 <a href="javascript:void(0);">{job.companyname}</a>
@@ -95,10 +104,10 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
                                   <span className="icon-map-pin"></span>
                                   &nbsp;{job.location}
                                 </li>
-                                <li>
+                                {/* <li>
                                   <span className="icon-calendar"></span>
                                   &nbsp;{formatDate(job.creationDate)}
-                                </li>
+                                </li> */}
                               </ul>                              
                             </div>
                           </div>
@@ -112,7 +121,12 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
                                 <li>
                                   <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
-                                <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {job.minimumExperience} - {job.maximumExperience} years</p>
+                                <li>
+<a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+</li>
+<li>
+<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+</li>
                               </ul>
                               <div className="star">
                                 {Array.from({ length: job.starRating }).map((_, index) => (
@@ -122,8 +136,8 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
                             </div>
                             <div className="job-footer-right">
                               <div className="price">
-                                <span></span>
-                                <p>&#x20B9; {job.minSalary} - &#x20B9; {job.maxSalary} / year</p>
+                              <span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                               </div>
                               <button class="button-status">
                               {job && (<Link to={`/applicant-interview-status?jobId=${job.id}`} style={{ color: 'white' }} onClick={() => setSelectedJobId(job.applyJobId)}>
@@ -146,3 +160,5 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
   );
 }
 export default ApplicantAppliedJobs;
+
+

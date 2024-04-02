@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import leftArrow from '../../images/arrow-left.png';
 export default function JobApplicantAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();
@@ -25,43 +26,50 @@ export default function JobApplicantAlerts() {
     return formattedDate;
   }
   return (
+    <div>
     <div className="dashboard__content">
       <section className="page-title-dashboard">
         <div className="themes-container">
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
+                <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                </div>
                 <div className="title-dash flex2">Your Job Alerts</div>
               </div>
             </div>
           </div>
         </div>
       </section>
-      <section className="custom-dashboard-section">
-  <div className="custom-container">
-    <div className="custom-row">
-      <div className="custom-col">
-        <div className="custom-notifications-box bg-white">
+      <section className="flat-dashboard-dyagram">
+        <div className="themes-container">
+        <div className="row">
+          <div className="col-lg-12 col-md-12">
+              <div className="box-notifications">
           {jobAlerts.length > 0 ? (
-            <ul className="custom-inner-box">
+            <ul>
               {jobAlerts.map(alert => (
-                <li key={alert.alertsId} className="custom-inner">
+                <li key={alert.alertsId} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
                   <Link to="/recruiter-allapplicants" className="tf-effect">
                   {/* <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link"> */}
                   {/* <Link to={`/appliedapplicantsbasedonjob/1`} className="custom-link"> */}
                   <h4>
-                    <br />
-                        <a className="custom-noti-icon" style={{ color: alert.newStatus === 'newapplicants' ? 'red' : 'inherit' }}>
+                        <a className="noti-icon">
+                        <span className="icon-bell1" ></span></a>
+                        <a style={{ color: alert.newStatus === 'newapplicants' ? 'red' : 'inherit' }}>
                         {alert.newStatus === 'newapplicants' ? 'New ' : ''}
-                        <span className="icon-bell1" ></span>
                         </a>
+                        &nbsp;
                         {' '}
                         <span >
                        
                         {alert.alertCount === 1 ? (
-                        <span>{alert.alertCount} applicant has applied for {' '}</span>
+                        <span>{alert.alertCount}&nbsp; applicant has applied for {' '}</span>
                         ) : (
-                        <span>{alert.alertCount} total applicants have applied for {' '}</span>
+                        <span>{alert.alertCount}&nbsp; total applicants have applied for {' '}</span>
                         )}
                         </span>
                         <span style={{ color: 'blue' }}>{alert.jobTitle} </span>role
@@ -81,6 +89,7 @@ export default function JobApplicantAlerts() {
     </div>
   </div>
 </section>
+    </div>
     </div>
   );
 }

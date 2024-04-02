@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
 import $ from 'jquery';
-
+ 
 import '../../stylesheets/bootstrap.min.css';
 import '../../stylesheets/boostrap-select.min.css';
 import '../../stylesheets/swiper-bundle.min.css';
@@ -13,38 +13,40 @@ import '../../stylesheets/colors/color6.css';
 import '../../stylesheets/responsive.css';
 import '../../fonts/fonts.css';
 import '../../stylesheets/jquery.dataTables.min.css';
-
+ 
 const Nav = () => {
-
+ 
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
-
+ 
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 768);
     };
-
+ 
     window.addEventListener('resize', handleResize);
-
+ 
     $("#left-menu-btn").on("click", function (e) {
       e.preventDefault();
       handleToggleMenu();
     });
-
+ 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-
+ 
+ 
   return (
     <div>
   <>
-  <a id="scroll-top" />
+  {/* <a id="scroll-top" /> */}
+  <a id="scroll-top" href="#"></a>
 
+ 
   {/* <div className="menu-mobile-popup">
     <div className="modal-menu__backdrop" />
     <div className="widget-filter">
@@ -132,10 +134,12 @@ const Nav = () => {
               </div>
             </div> */}
              <div className="header-ct-right st-1">
-  <div className="header-customize-item account">
-    <div className="sub-account-item">
+  <div className="header-customize-item1 account">
+  <div className="sub-account-item1 ">
+    
       <a
         href="/candidate"
+        
         style={{
           color: '#FFFFFF',
           backgroundColor: '#f97316',
@@ -143,8 +147,9 @@ const Nav = () => {
           padding: '10px 10px 10px 30px',
           borderRadius: '8px',
           display: 'inline-flex',
-          textAlign: 'center',
+          // textAlign: 'center',
           width: '130px',
+          textAlign: window.innerWidth >= 320 && window.innerWidth <= 462 ? 'center' : '',
         }}
         onMouseOver={(e) => {
           e.target.style.color = '#FFFFFF';
@@ -154,10 +159,17 @@ const Nav = () => {
           e.target.style.color = '#FFFFEF';
           e.target.style.backgroundColor = '#f97316';
         }}
+        onClick={() => {
+          localStorage.clear();
+        }}
       >
+        <div class="btn-dowload">
         Find Jobs
+        </div>
       </a>
     </div>
+    </div>
+    <div className="header-customize-item2 account2">
     <div className="sub-account-item">
       <a
         href="/recruiter"
@@ -169,7 +181,8 @@ const Nav = () => {
           borderRadius: '8px',
           display: 'inline-flex',
           textAlign: 'center',
-          width: '190px',
+          width: '170px',
+          marginRight:'-20px',
         }}
         onMouseOver={(e) => {
           e.target.style.color = '#FFFFFF';
@@ -178,6 +191,9 @@ const Nav = () => {
         onMouseOut={(e) => {
           e.target.style.color = '#f97316';
           e.target.style.backgroundColor = 'white';
+        }}
+        onClick={() => {
+          localStorage.clear();
         }}
       >
         Find Candidates

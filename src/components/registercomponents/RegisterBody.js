@@ -5,6 +5,7 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import OTPVerification1 from '../recruitercomponents/OTPVerification1';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import logoCompany1 from '../../images/bitlabs-logo.png';
  
  function RegisterBody({handleLogin}) {
   const [activeTab, setActiveTab] = useState('Candidate');
@@ -503,7 +504,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       <div className="tf-container">
         <div className="row">
           <div className="wd-form-login tf-tab">
-            {/* <h4>Recruiter</h4> */}<br /><br />
+          <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
            
             <ul className="menu-tab">
               <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
@@ -522,10 +523,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
             )}</span></p>
               <form onSubmit={handleRecruiterSubmit}>
                       <div className="ip">
-                        <label>Email Address<span>*</span></label>
+                        {/* <label>Email Address<span>*</span></label> */}
                         <input
                           type="text"
-                          placeholder="Enter your Email"
+                          placeholder="Email"
                           value={recruiterEmail}
                           onChange={(e) => {
                             setRecruiterEmail(e.target.value);
@@ -535,7 +536,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         {recruiterEmailError && <div className="error-message">{recruiterEmailError}</div>}
                       </div>
                       <div className="ip">
-                        <label>Password<span>*</span></label>
+                        {/* <label>Password<span>*</span></label> */}
                         <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
@@ -553,13 +554,14 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         </div>
                         {recruiterPasswordError && <div className="error-message">{recruiterPasswordError}</div>}
                       </div>
+                   
+                      <button type="submit">Login</button>
                       <div className="group-ant-choice">
                         <div className="sub-ip"></div>
-                        <a href="/recruiter-forgot-password" className="forgot">
+                        <a href="/recruiter-forgot-password" className="forgot"><br />
                           Forgot password?
                         </a>
                       </div>
-                      <button type="submit">Login</button>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
                       {/* <div className="sign-up">
                         Not registered yet? <a href="/register">Sign Up</a>
@@ -574,10 +576,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               {/* <p class="line-ip"><span>or signup with</span></p> */}
                 <form onSubmit={handleSubmit1}>
                 <div className="ip">
-                    <label>Company Name<span>*</span></label>
+                    {/* <label>Company Name<span>*</span></label> */}
                     <input
                       type="text"
-                      placeholder="Enter your company name"
+                      placeholder="company name"
                       value={companyName}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
@@ -588,7 +590,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                      {employerNameError && <div className="error-message">{employerNameError}</div>}
                   </div>
                   <div className="ip">
-                    <label>Email Address<span>*</span></label>
+                    {/* <label>Email Address<span>*</span></label> */}
                     <input
                       type="email"
                       placeholder="Email"
@@ -603,7 +605,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                      {employerEmailError && <div className="error-message">{employerEmailError}</div>}
                   </div>
                   <div className="ip">
-                    <label>Mobile Number<span>*</span></label>
+                    {/* <label>Mobile Number<span>*</span></label> */}
                     <input
                       type="text"
                       placeholder="Mobile Number"
@@ -618,7 +620,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     {employerMobileNumberError && <div className="error-message">{employerMobileNumberError}</div>}
                   </div>
                   <div className="ip">
-                    <label>Password<span>*</span></label>
+                    {/* <label>Password<span>*</span></label> */}
                     <div className="inputs-group auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}

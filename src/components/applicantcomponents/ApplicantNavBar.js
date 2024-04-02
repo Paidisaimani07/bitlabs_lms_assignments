@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery.cookie';
 import 'metismenu';
 import { useState, useEffect, useReducer } from "react";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
+import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
@@ -16,22 +17,116 @@ function ApplicantNavBar() {
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const [profileStatus, setProfileStatus] = useState(true); // Define profileStatus state
+  const location = useLocation();
+  const [url, setUrl] = useState('');
+  const [loginUrl, setLoginUrl] = useState('');
+  const [loading, setLoading] = useState(true);
  
-  const toggleProfileStatus = async checked => {
+  useEffect(() => {
+    const fetchProfileStatus = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/applicant/${user.id}/profilestatus`);
+        setProfileStatus(response.data === 'active'); // Assuming the API returns 'active' or 'inactive'
+      } catch (error) {
+        console.error('Error fetching profile status:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileStatus();
+  }, [apiUrl, user.id]);
+
+  const toggleProfileStatus = async (checked) => {
     try {
-      // Make API call to update status in backend
-      await axios.post(`${apiUrl}/applicant/changeStatus/${user.id}`, { isActive: checked });
+      const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+      const response = await axios.post(
+        `${apiUrl}/applicant/changeStatus/${user.id}`,
+        { isActive: checked },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Add authorization header with JWT token
+          },
+        }
+      );
+      
       setProfileStatus(checked);
+      localStorage.setItem('profileStatus', checked.toString());
+      window.location.reload();
     } catch (error) {
       console.error('Error updating profile status:', error);
+      // Rollback the change in UI if there's an error
+      setProfileStatus(!checked);
     }
   };
+
+
+
+  const [requestData, setRequestData] = useState(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // Make API call to update status in backend
+                const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
+                
+                // Construct requestData
+                const newData = {
+                    identifier: response.data.email,
+                    password: response.data.password
+                };
+
+                setRequestData(newData);
+            } catch (error) {
+                console.error('Error updating profile status:', error);
+            }
+        };
+        fetchData();
+      }, []); // Empty dependency array to run the effect only once
+      
+      
+  const handleClick = () => {
+    // API endpoint URL
+    const apiUrl = 'http://localhost:5173/api/auth/login';
+
+    // Options for the fetch request
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+        // Add any other headers if needed
+      },
+      body: JSON.stringify(requestData)
+    };
+
+    // Make the API call
+    fetch(apiUrl, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
+        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+       window.open(loginUrl, '_blank');
+        //setUrl(loginUrl);
+        setLoginUrl(loginUrl);
+      })
+      .catch(error => {
+        // Handle errors here
+        console.error('There was a problem with the fetch operation:', error);
+      });
+  };
  
  
-  const handleToggleMenu = () => {
-    console.log("function called..")
+ 
+  const handleToggleMenu = e => {
+    e.stopPropagation(); // Stop event propagation
     setIsOpen(!isOpen);
   };
+
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 768);
@@ -86,30 +181,55 @@ function ApplicantNavBar() {
       }
     }
   };
- const fetchAlertCount = async () => {
+//  const fetchAlertCount = async () => {
+//   try {
+//     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+//     setAlertCount(response.data);
+//     //window.location.reload();
+//   } catch (error) {
+//     console.error('Error fetching alert count:', error);
+//   }
+// };
+// useEffect(() => {
+//   const fetchAlertCount = async () => {
+//     try {
+//       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+//         },
+//       });
+//       setAlertCount(response.data);
+//     } catch (error) {
+//       console.error('Error fetching alert count:', error);
+//     }
+//   };
+//   fetchAlertCount();
+// }, [user.id]);
+
+const fetchAlertCount = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+      },
+    });
     setAlertCount(response.data);
-    window.location.reload();
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
 };
+
 useEffect(() => {
-  const fetchAlertCount = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
-      setAlertCount(response.data);
-    } catch (error) {
-      console.error('Error fetching alert count:', error);
-    }
-  };
+  // Fetch initial alert count
   fetchAlertCount();
+
+  // Set up polling interval
+  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+
+  // Clean up function to clear interval when component unmounts
+  return () => clearInterval(intervalId);
 }, [user.id]);
+
   return (
     <div>
   <div className="menu-mobile-popup">
@@ -182,7 +302,7 @@ useEffect(() => {
                       checked={profileStatus}
                       onChange={toggleProfileStatus}
                       size="small" // Set the size to "small"
-                      style={{ marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }} />
+                      style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }} />
                   </div>
                
                   <div className="sub-account-item">
@@ -213,11 +333,13 @@ useEffect(() => {
       </div>
     </div>
     <div className="btn header-item " id="left-menu-btn">
-      <span className="hamburger-icon"  onClick={handleToggleMenu}>
-        <span />
-        <span />
-        <span />
-      </span>
+    {window.innerWidth < 768 && (
+            <span className="hamburger-icon" onClick={handleToggleMenu}>
+              <span />
+              <span />
+              <span />
+            </span>
+          )}
     </div>
   </header>
   {(isOpen &&
@@ -225,7 +347,7 @@ useEffect(() => {
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/applicanthome" className="tf-effect">
+            <Link to="/applicanthome"  className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
@@ -237,30 +359,30 @@ useEffect(() => {
             </Link>
           </li> */}
           <li>
-            <Link to="/applicant-find-jobs" className="tf-effect">
+            <Link to="/applicant-find-jobs"  className={location.pathname === "/applicant-find-jobs" || location.pathname === "/applicant-view-job" ? "tf-effect active" : ""}>
               <span className="icon-resumes dash-icon"></span>
               <span className="dash-titles">Recommended Jobs</span>
             </Link>
           </li>
           <li>
-            <Link to="/applicant-applied-jobs" className="tf-effect">
+            <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
               <span className="icon-my-apply dash-icon"></span>
               <span className="dash-titles">Applied Jobs</span>
             </Link>
           </li>
           <li>
-            <Link to="/applicant-saved-jobs" className="tf-effect">
+            <Link to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" ? "tf-effect active" : ""}>
               <span className="icon-work dash-icon"></span>
               <span className="dash-titles">Saved Jobs</span>
             </Link>
           </li>
           <li>
-      <Link to="/applicant-job-alerts" className="tf-effect" onClick={fetchAlertCount}>
+      <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
           <span className="icon-bell1 dash-icon">
             <sup
               style={{
-                background: '#121212',
+                background: 'red',
                 borderRadius: '50%',
                 padding: '2px 5px',
                 color: 'white',
@@ -278,9 +400,21 @@ useEffect(() => {
       </Link>
     </li>
           <li>
-            <Link to="/applicant-resume" className="tf-effect">
+            <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
+            </Link>
+          </li>
+          <li>
+          {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
+    Build Your Resume
+</button>
+<ResumeBuilder loginUrl={loginUrl} /> */}
+</li>
+<li>
+            <Link to="#" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+              <span className="icon-chat dash-icon"></span>
+              <span className="dash-titles">Build Your Resume</span>
             </Link>
           </li>
         </ul>

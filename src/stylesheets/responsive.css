@@ -257,7 +257,7 @@
   }
 
   .wd-review-job.sl7 .thumb3 .group-user {
-    right: 0%;
+    right: -22%;
   }
 
   .meta-category-job {
@@ -347,7 +347,7 @@
   }
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 2500px) {
 
   .row-group-search.st2 .form-group:first-child,
   .row-group-search.st2 .form-group {
@@ -1235,7 +1235,7 @@
   }
 
   .wd-review-job.thumb1 .trader-box.box3 {
-    bottom: -12%;
+    bottom: -5%;
     left: 8.5%;
 }
 
@@ -2106,7 +2106,7 @@
   }
 }
 
-@media only screen and (max-width: 550px) {
+@media only screen and (max-width: 556px) {
 
   .features-job,
   .jobs-tab-section .features-job {
@@ -2198,9 +2198,10 @@
 
   /* -----------------header------------------------------= */
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-    width: 95px !important;
+    width: 110px !important;
+    height: 40px !important;
     display: block;
-    /* margin-top:10px; */
+    margin-top:5px;
   }
   @media only screen and (min-width: 50px) and (max-width: 300px) {
     #header .sticky-area-wrap .header-ct-left .logo .site-logo {
@@ -2211,10 +2212,9 @@
     }
 }
 
-
-
   #header .sticky-area-wrap .header-ct-right .account .sub-account {
-    width: 264px;
+    /* width: 264px; */
+    width: 300px;
     padding: 20px;
   }
 
@@ -2232,7 +2232,7 @@
   }
 
   #header .sticky-area-wrap .header-ct-right .account {
-    margin-right: 1px;
+    /* margin-right: 1px; */
   }
 
   @media only screen and (min-width: 50px) and (max-width: 300px) {
@@ -2775,5 +2775,52 @@
 @media only screen and (max-width: 375px) {
   .features-job .job-archive-header span.icon-heart {
     right: -10px;
+  }
+}
+@media screen and (max-width: 462px) and (min-width: 320px) {
+  .header-customize-item1 a {
+    padding: 11px !important;
+    padding-left: 15px !important;
+    width: 80px !important;
+    height: 30px !important;
+    text-align: center !important;
+    /* display:inline-flex !important;  */
+    font-size:10px !important;
+    margin-top:5px !important;
+    line-height:1;
+    font-weight: 500;
+  }
+
+  .sub-account-item1 {
+    margin-bottom: 5px;
+    padding: 3px !important;
+    text-align:center !important;
+  }
+}
+@media screen and (max-width: 462px) and (min-width: 320px) {
+  .header-customize-item2 a {
+    padding: 5px !important;
+    width: 80px !important;
+    height: 30px !important;
+    text-align: center !important;
+    /* display:inline-flex !important;  */
+    font-size:10px !important;
+    margin-top:5px !important;
+    line-height:1;
+    font-weight: 500;
+    margin-right: -10px !important;
+  }
+
+  .sub-account-item {
+    margin-bottom: 5px;
+  }
+}
+
+@media screen and (max-width: 455px) and (min-width: 320px) {
+  .wd-review-job.thumb1 .trader-box.box3 {
+    bottom: -10px !important;
+    left: 8.5% !important;
+    height:70px !important;
+    
   }
 }

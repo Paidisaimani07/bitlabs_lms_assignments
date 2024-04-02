@@ -6,6 +6,8 @@ import IndexPage from './pages/indexpage/IndexPage';
 import AboutPage from './pages/aboutpage/AboutPage';
 import ContactPage from './pages/contactpage/ContactPage';
 import LoginPage from './pages/loginpage/LoginPage';
+import FindJobPage from './pages/loginpage/FindJobPage';
+import FindCandidatesPage from './pages/registerpage/FindCandidatesPage';
 import RegisterPage from './pages/registerpage/RegisterPage';
 import ApplicantHomePage from './pages/applicantpages/ApplicantHomePage';
 import UserProvider from './components/common/UserProvider';
@@ -19,6 +21,7 @@ import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
 import Recruiterviewapplicant from './components/recruitercomponents/Recruiterviewapplicant';
 import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/AppliedApplicantsBasedOnJobs';
+
 
 
 
@@ -50,6 +53,8 @@ function App() {
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/find-jobs" element={<IndexPage />} />
+              <Route path="/find-jobs-login" element={<FindJobPage onLogin={handleLogin} />} />
+              <Route path="/find-candidates-login" element={<FindCandidatesPage onLogin={handleLogin} />} />
               <Route path="/find-candidates" element={<IndexPage />} />
               <Route path="/aboutus" element={<AboutPage />} />
               <Route path="/contactus" element={<ContactPage />} />
@@ -77,6 +82,7 @@ function App() {
                 <Route path="/applicant-delete-profile" element={<ApplicantHomePage />} />
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
                 <Route path="/applicant-basic-details-form" element={<ApplicantHomePage />} />
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
@@ -89,11 +95,8 @@ function App() {
                 <Route path="/recruiter-team-member" element={<RecruiterHomePage />} />
                 <Route path= "/recruiter-edit-job/:id" element={<RecruiterHomePage />} />
                 <Route path="/job-applicant-alerts" element={<RecruiterHomePage />} />
-                <Route path="/viewapplicant/:id" element={<Recruiterviewapplicant />} />
-                <Route path="/appliedapplicantsbasedonjob/:id" element={<AppliedApplicantsBasedOnJobs />} />
-                
-
-
+                <Route path="/viewapplicant/:id" element={<RecruiterHomePage />} />
+                <Route path="/appliedapplicantsbasedonjob/:id" element={<RecruiterHomePage />} />
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />

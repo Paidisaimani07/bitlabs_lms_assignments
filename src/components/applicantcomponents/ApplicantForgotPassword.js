@@ -4,6 +4,7 @@ import axios from 'axios';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import logoCompany1 from '../../images/bitlabs-logo.png';
 function ApplicantForgotPassword() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -121,6 +122,10 @@ function ApplicantForgotPassword() {
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
+
+        // Redirect to login page after password reset
+        navigate('/candidate');
+
       } else {
         setResetSuccess(false);
         setResetError('Password reset failed. Please try again later.');
@@ -144,7 +149,7 @@ function ApplicantForgotPassword() {
                   </div>
                 ) : (
                   <div>
-                    <h4>Forgot Password</h4><br />
+                    <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
                       <div className="ip">
                       <label>
                     Email Address<span>*</span>
@@ -190,7 +195,7 @@ function ApplicantForgotPassword() {
                               one lowercase letter, one number, one special character, and no spaces.
                             </div>
  
-                            <button type="button" onClick={handleResetPassword}>Reset Password </button>
+                            <button type="button" onClick={handleResetPassword}>Reset Password</button>
                             <p style={{ color: 'green',textAlign:'center' }}>OTP verified successfully!</p>
                           </div>
                         ) : (

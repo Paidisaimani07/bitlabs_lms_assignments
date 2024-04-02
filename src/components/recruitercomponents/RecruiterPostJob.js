@@ -3,6 +3,8 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect,useRef } from "react";
 import axios from 'axios';
+import leftArrow from '../../images/arrow-left.png';
+import { Link } from 'react-router-dom';
  
 function RecruiterPostJob() {
   const [jobTitle, setJobTitle] = useState("");
@@ -58,7 +60,9 @@ function RecruiterPostJob() {
       .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
       .then((response) => {
         console.log('API Response:', response.data);
+        localStorage.setItem('jobs', JSON.stringify(''));
         window.alert('job saved successfully');
+        localStorage.setItem('jobs', JSON.stringify(''));
         clearForm();
       })
       .catch((error) => {
@@ -180,6 +184,12 @@ function RecruiterPostJob() {
     } else {
       errors.minimumQualification = '';
     }
+    if (!specialization.trim()) {
+      errors.specialization = 'Specialization is required.';
+      isValid = false;
+    } else {
+      errors.specialization = '';
+    }
     const skillsErrors = [];
     skillsRequired.forEach((skill, index) => {
       const skillErrors = {};
@@ -216,7 +226,7 @@ function RecruiterPostJob() {
       isValid = false;
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        specialization: 'Specialization must be at least 3 characters long.',
+        specialization: 'Specialization must be select.',
       }));
       return isValid;
     }
@@ -350,6 +360,80 @@ const handleMaxSalaryChange = (e) => {
       setSkillsRequired(updatedSkills);
     }
   };
+  const getSpecializationOptions = (qualification) => {
+    switch (qualification) {
+      case 'B.Tech':
+        return [
+          'Computer Science and Engineering (CSE)',
+          'Electronics and Communication Engineering (ECE)',
+          'Electrical and Electronics Engineering (EEE)',
+          'Mechanical Engineering (ME)',
+          'Civil Engineering (CE)',
+          'Aerospace Engineering',
+          'Information Technology(IT)',
+          'Chemical Engineering',
+          'Biotechnology Engineering',
+          // Add other specializations as needed
+        ];
+      case 'MCA':
+        return [
+          'Software Engineering',
+          'Data Science',
+          'Artificial Intelligence',
+          'Machine Learning',
+          'Information Security',
+          'Cloud Computing',
+          'Mobile Application Development',
+          'Web Development',
+          'Database Management',
+          'Network Administration',
+          'Cyber Security',
+          'IT Project Management',
+          // Add other specializations as needed
+        ];
+      case 'Degree':
+        return [
+          'Bachelor of Science (B.Sc) Physics',
+          'Bachelor of Science (B.Sc) Mathematics',
+          'Bachelor of Science (B.Sc) Statistics',
+          'Bachelor of Science (B.Sc) Computer Science',
+          'Bachelor of Science (B.Sc) Electronics',
+          'Bachelor of Science (B.Sc) Chemistry',
+          'Bachelor of Commerce (B.Com)',
+          // Add other specializations as needed
+        ];
+      case 'Intermediate':
+        return ['MPC', 'BiPC', 'CEC', 'HEC'];
+      case 'Diploma':
+        return [
+          'Mechanical Engineering',
+          'Civil Engineering',
+          'Electrical Engineering',
+          'Electronics and Communication Engineering',
+          'Computer Engineering',
+          'Automobile Engineering',
+          'Chemical Engineering',
+          'Information Technology',
+          'Instrumentation Engineering',
+          'Mining Engineering',
+          'Metallurgical Engineering',
+          'Agricultural Engineering',
+          'Textile Technology',
+          'Architecture',
+          'Interior Designing',
+          'Fashion Designing',
+          'Hotel Management and Catering Technology',
+          'Pharmacy',
+          'Medical Laboratory Technology',
+          'Radiology and Imaging Technology',
+          // Add other specializations as needed
+        ];
+      // Add cases for other qualifications
+      default:
+        return [];
+    }
+  };
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -378,6 +462,11 @@ const handleMaxSalaryChange = (e) => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+          <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+          </div>
             <div className="title-dash flex2">Post Job</div>
           </div>
         </div>
@@ -486,50 +575,76 @@ const handleMaxSalaryChange = (e) => {
                 </div>
                 <div className="col-lg-6 col-md-12">
                 <div id="item_3" className="dropdown titles-dropdown info-wd">
-                  <label className="title-user fw-7">Minimum Qualification<span className="color-red">*</span></label>
-                  <input
-                             type="text"
-                             value={minimumQualification}
-                             className="input-form"
-                             placeholder="BTech"
-                             onChange={handleMinimumQualificationChange}
-                           
-                             required
-                 />
-                  {formErrors.minimumQualification && (
-                  <div className="error-message">{formErrors.minimumQualification}</div>
-                )}
+                <label className="title-user fw-7">Minimum Qualification<span className="color-red">*</span></label>
+<select
+  value={minimumQualification}
+  placeholder='Select Qualification'
+  className="input-form"
+  style={{ color: minimumQualification ? 'black' : 'lightgrey' }}
+  onChange={handleMinimumQualificationChange}
+  required
+>
+  <option value="" >Select Qualification</option>
+  <option value="B.Tech">B.Tech</option>
+  <option value="MCA">MCA</option>
+  <option value="Degree">Degree</option>
+  <option value="Intermediate">Intermediate</option>
+  <option value="Diploma">Diploma</option>
+  {/* Add other qualifications as needed */}
+</select>
+{formErrors.minimumQualification && (
+  <div className="error-message">{formErrors.minimumQualification}</div>
+)}
                 </div>
                 </div>
                 <div className="col-lg-6 col-md-12">
                 <div id="item_1" className="dropdown titles-dropdown info-wd">
-                  <label className="title-user fw-7">Specialization</label>
-                  <input
-                            type="text"
-                            value={specialization}
-                            className="input-form"
-                            placeholder="Other courses"
-                            onChange={handleSpecializationChange}
-                         
-                  />
-                  {formErrors.specialization && (
-                  <div className="error-message">{formErrors.specialization}</div>
-                )}
+                <label className="title-user fw-7">Specialization<span className="color-red">*</span></label>
+<select
+  value={specialization}
+  className="input-form"
+  style={{ color: specialization ? 'black' : 'lightgrey' }}
+  onChange={handleSpecializationChange}
+>
+  <option value="">Select Specialization</option>
+  {getSpecializationOptions(minimumQualification).map((option) => (
+    <option key={option} value={option}>
+      {option}
+    </option>
+  ))}
+</select>
+{formErrors.specialization && (
+  <div className="error-message">{formErrors.specialization}</div>
+)}
                 </div>
                 </div>
                 <div className="col-lg-6 col-md-12">
                 <div id="item_apply" className="dropdown titles-dropdown info-wd">
-                  <label className="title-user fw-7">Location<span className="color-red">*</span></label>
-                  <input type="text"
-                         className="input-form"
-                         value={location}
-                         placeholder="City"
-                         onChange={ handleLocationChange}
-                        required
-                  />
-                  {formErrors.location && (
-                  <div className="error-message">{formErrors.location}</div>
-                )}
+                <label className="title-user fw-7">Location<span className="color-red">*</span></label>
+<select
+  value={location}
+  className="input-form"
+  onChange={handleLocationChange}
+  style={{ color: location ? 'black' : 'lightgrey' }}
+  required
+>
+  <option value="">Select Location</option>
+  <option value="Chennai">Chennai</option>
+  <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+  <option value="Bangalore">Bangalore</option>
+  <option value="Hyderabad">Hyderabad</option>
+  <option value="Coimbatore">Coimbatore</option>
+  <option value="Kochi">Kochi</option>
+  <option value="Madurai">Madurai</option>
+  <option value="Mysore">Mysore</option>
+  <option value="Thanjavur">Thanjavur</option>
+  <option value="Pondicherry">Pondicherry</option>
+  <option value="Vijayawada">Vijayawada</option>
+  {/* Add other locations as needed */}
+</select>
+{formErrors.location && (
+  <div className="error-message">{formErrors.location}</div>
+)}
                 </div>
                 </div>
                 <div className="col-lg-6 col-md-12">
@@ -595,14 +710,44 @@ const handleMaxSalaryChange = (e) => {
                   {skillsRequired.map((skill, index) => (
                     <div key={index} className="experience-table">
                       <div>
-                        <input
-                          type="text"
-                          placeholder="Skill"
-                          className="input-form"
-                          value={skill.skillName}
-                          onChange={(e) => handleSkillChange(e, index, "skillName")}
-                          required
-                        />
+                      <select
+        value={skill.skillName}
+        className="input-form"
+        onChange={(e) => handleSkillChange(e, index, "skillName")}
+        style={{ color: skill.skillName ? 'black' : 'lightgrey' }}
+        required
+      >
+        <option value="">Select Skill</option>
+        <option value="Java">Java</option>
+        <option value="C">C</option>
+        <option value="C+">C+</option>
+        <option value="C Sharp">C Sharp</option>
+        <option value="Python">Python</option>
+        <option value="HTML">HTML</option>
+        <option value="CSS">CSS</option>
+        <option value="JavaScript">JavaScript</option>
+        <option value="TypeScript">TypeScript</option>
+        <option value="Angular">Angular</option>
+        <option value="React">React</option>
+        <option value="Vue">Vue</option>
+        <option value="JSP">JSP</option>
+        <option value="Servlets">Servlets</option>
+        <option value="Spring">Spring</option>
+        <option value="Spring Boot">Spring Boot</option>
+        <option value="Hibernate">Hibernate</option>
+        <option value=".Net">.Net</option>
+        <option value="Django">Django</option>
+        <option value="Flask">Flask</option>
+        <option value="SQL">SQL</option>
+        <option value="MySQL">MySQL</option>
+        <option value="SQL-Server">SQL-Server</option>
+        <option value="Mongo DB">Mongo DB</option>
+        <option value="Selenium">Selenium</option>
+        <option value="Regression Testing">Regression Testing</option>
+        <option value="Manual Testing">Manual Testing</option>
+        {/* Add other skills as needed */}
+      </select>
+                        
                         {formErrors.skillsRequired && formErrors.skillsRequired[index] && formErrors.skillsRequired[index].skillName && (
                           <div className="error-message">{formErrors.skillsRequired[index].skillName}</div>
                         )}
@@ -621,7 +766,7 @@ const handleMaxSalaryChange = (e) => {
                         )}
                       </div>
                       {index === skillsRequired.length - 1 && (
-                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'#1967d2'}}>
+                        <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'green'}}>
                           +
                         </button>
                       )} &nbsp;

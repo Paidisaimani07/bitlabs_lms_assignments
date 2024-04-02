@@ -7,6 +7,7 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useGoogleLogin } from '@react-oauth/google'; // Import GoogleLoginButton
 import jwt_decode from "jwt-decode";
 import OTPVerification from '../applicantcomponents/OTPVerification';
+import logoCompany1 from '../../images/bitlabs-logo.png';
  
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
@@ -471,8 +472,8 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                {/* <h4>Candidate </h4> */}
- 
+                <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
+               
                 <ul className="menu-tab">
                   <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
                     Login
@@ -493,7 +494,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
             )}</span></p>
                     <form onSubmit={handleCandidateSubmit}>
                       <div className="ip">
-                        <label>Email Address<span>*</span></label>
+                        {/* <label>Email Address<span>*</span></label> */}
                         <input
                   type="text"
                   placeholder="Email"
@@ -507,7 +508,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         {candidateEmailError && <div className="error-message">{candidateEmailError}</div>}
                       </div>
                       <div className="ip">
-                        <label>Password<span>*</span></label>
+                        {/* <label>Password<span>*</span></label> */}
                         <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
@@ -525,13 +526,19 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         </div>
                         {candidatePasswordError && <div className="error-message">{candidatePasswordError}</div>}
                       </div>
-                      <div className="group-ant-choice">
+                      {/* <div className="group-ant-choice">
                         <div className="sub-ip"></div>
                         <a href="/applicant-forgot-password" className="forgot">
                           Forgot password?
                         </a>
-                      </div>
+                      </div> */}
                       <button type="submit">Login</button>
+                      <div className="group-ant-choice">
+                        <div className="sub-ip"></div>
+                        <a href="/applicant-forgot-password" className="forgot"><br/>
+                          Forgot password?
+                        </a>
+                      </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
                       {/* <div className="sign-up">
                         Not registered yet? <a href="/register">Sign Up</a>
@@ -545,11 +552,11 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                   </div>
  
                   <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
-                  <p class="line-ip"><span>or Log in using</span></p>
+                  <p class="line-ip"><span>or Sign Up using</span></p>
                    
                   <form onSubmit={handleSubmit}>
                 <div className="ip">
-                    <label>Full Name<span>*</span></label>
+                    {/* <label>Full Name<span>*</span></label> */}
                     <input
                       type="text"
                       placeholder="Name"
@@ -563,7 +570,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     {candidateNameError && <div className="error-message">{candidateNameError}</div>}
                   </div>
                   <div className="ip">
-                    <label>Email Address<span>*</span></label>
+                    {/* <label>Email Address<span>*</span></label> */}
                 <input
                   type="email"
                   placeholder="Email"
@@ -578,7 +585,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     {candidateEmailError1 && <div className="error-message">{candidateEmailError1}</div>}
                   </div>
                   <div className="ip">
-                    <label>Mobile Number<span>*</span></label>
+                    {/* <label>Mobile Number<span>*</span></label> */}
                   <input
                     type="text"
                     placeholder="Mobile Number"
@@ -593,7 +600,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     {candidateMobileNumberError && <div className="error-message">{candidateMobileNumberError}</div>}
                   </div>
                   <div className="ip">
-                    <label>Password<span>*</span></label>
+                    {/* <label>Password<span>*</span></label> */}
                     <div className="inputs-group auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}

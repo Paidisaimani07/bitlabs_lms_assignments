@@ -4,6 +4,7 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { Link,useParams } from 'react-router-dom';
 import $ from 'jquery';
+import leftArrow from '../../images/arrow-left.png';
 
 function RecruiterAppliedApplicants({selectedJobId}) {
   const [applicants, setApplicants] = useState([]);
@@ -46,6 +47,11 @@ function RecruiterAppliedApplicants({selectedJobId}) {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+            <div className="back-to-previous pb-4">
+                  <Link to="/recruiter-jobopenings" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+              </div>
             <div className="title-dash flex2">Applied Applicants</div>
           </div>
         </div>

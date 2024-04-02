@@ -2,20 +2,20 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import './Recruiterviewapplicant.css';
-
-
-const Recruiterviewapplicant = () =>{
+import { Link,useParams } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
+const Recruiterviewapplicant = () => {
   const [profileData, setProfileData] = useState(null);
+  const [profileid1, setprofileid] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [alertShown, setAlertShown] = useState(false);
+  const[experience,setExperience]=useState();
+   const[qualification,setQualification]=useState();
+   const[specialization,setSpecialization]=useState();
+   const[preferredJobLocations,setpreferredJobLocations]=useState([]);
   const { user } = useUserContext();
   const { id } = useParams();
-
- 
   
   const checkAndShowAlert = (message) => {
     const alertShownBefore = localStorage.getItem('alertShown');
@@ -28,9 +28,6 @@ const Recruiterviewapplicant = () =>{
       }
     }
   };
-
-
-  
   useEffect(() => {
     let count = 0;
     let profileResponse = null;
@@ -80,278 +77,252 @@ const Recruiterviewapplicant = () =>{
   }
  
   return (
-
     <div className="dashboard__content">
       <section className="page-title-dashboard">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12 ">
-              <div className="title-dashboard">
-                {/* <div className="title-dash flex2">Overview</div> */}
-              </div>
-            </div>
+<div className="themes-container">
+<div className="row">
+<div className="col-lg-12 col-md-12 ">
+<div className="title-dashboard">
+  <div className="back-to-previous pb-4">
+    <Link to="/recruiter-allapplicants" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+    </Link>
+  </div>
+<div className="title-dash flex2">Applicant Profile</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+   <section className="wrapper-author-page-title stc2 ">
+    <div className="tf-container">
+      <div className="wd-author-page-title">
+        <div className="author-archive-header">
+        <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}  style={{padding:'10px',borderRadius:'100px'}} />
+          <div className="content">
+            {/* <a href="#" className="tag-head">
+              Available now
+            </a> */}
+            <h4>
+              {/* <a href="#">Computer Systems Analyst</a> */}
+            </h4>
+            <h3>
+              <a href="#">{profileData.applicant.name}</a>
+            </h3>
+            <ul className="author-list">
+              <li>  {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
+  <React.Fragment key={skill.id}>
+    <span>
+      <a>
+        <ul className="tag">
+          <li>{skill.skillName}</li>
+        </ul>
+        </a>
+    </span>
+    {index < profileData.skillsRequired.length - 1 && ", "}
+  </React.Fragment>
+))}           </li>
+            </ul>
           </div>
         </div>
-      </section>
-      <section className="flat-dashboard-user flat-dashboard-profile">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12 ">
-              <div className="wrap-profile flex2 bg-white">
-                <div className="box-profile flex2">
-                  <div className="images">
-                    <img
-                      width="130px"
-                      height="40px"
-                      src={imageSrc || '../images/user/avatar/profile-pic.png'}
-                      alt="Profile"
-                      onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
-                    />
-                  </div>
-                  <div className="content">
-                    <h5 style={{color: '#000', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal'}} className="fw-6 color-3">
-                      {profileData.applicant.name}
-                    </h5>
-                  </div>
-                </div>
-                <div className="tt-button">
-                  {/* <Link to="/applicant-edit-profile">Edit Profile</Link> */}
-                </div>
-              </div>
-            </div>
+        <div className="author-archive-footer">
+          <div className="group-btn">
+            {/* <button className="tf-btn">Edit Profile</button> */}
+            {/* <Link to="/applicant-edit-profile"  className="tf-btn">Edit Profile</Link> */}
+            <button className="tf-btn btn-author">View Resume</button>
           </div>
         </div>
-      </section>
-      <section className="flat-dashboard-overview flat-dashboard-about">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-10 col-md-10 ">
-              <div className="wrap-about flex">
-                <div className="side-bar">
-                <div className="sidebar-map bg-white" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '20px',width: '100%',marginLeft: '20px',borderRadius: '10px',maxHeight: '400px', overflowY: 'auto',height:'80vh' }}>{/*sidebar-map bg-white*/}
-                <h3 className="" style={{ marginTop: '-10px',marginLeft:'7px',marginBottom:'5px' ,marginBottom:'10px',color: '#1F76DC', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal'}}>Personal Details</h3>
-                <div>
-                <div style={{ display: 'flex', alignItems: 'baseline' }}>
-  <div style={{ fontSize: '18px', fontFamily: 'Inter', padding: 'px', marginLeft: '8px', color: '#767676', fontStyle: 'normal', fontWeight: '400', lineHeight: 'normal', marginBottom: '-5px' }} className="p-16 bold-text">Email</div>
-  <div style={{ fontStyle: 'normal', fontWeight: '500', lineHeight: 'normal', fontFamily: 'Inter', color: 'black', fontSize: '20px', marginLeft: '82px', fontWeight: 'bold', marginBottom: '15px' }} className="small-text">
-    {profileData.applicant.email}
+      </div>
+    </div>
+  </section>
+  <section className="candidates-section">
+    <div className="tf-container">
+      <div className="row">
+        <div className="col-lg-8">
+          <article className="job-article tf-tab single-job stc2">
+            <ul className="menu-tab">
+              <li className="ct-tab active"> Education & Experience Details</li>
+              {/* <li className="ct-tab">Portfolio</li>
+              <li className="ct-tab">Contact</li> */}
+            </ul>
+            <div className="content-tab">
+              <div className="inner-content">
+                <h5>Education</h5>
+                <div className="group-infor">
+                  <div className="inner">
+                    <div className="heading">
+                      Graduation 
+                    </div>
+                    <div className="row">
+  <div className="col">
+    <div className="heading">University:<br/> {(profileData.graduationDetails && profileData.graduationDetails.gboard) || ''}</div>
+  </div>
+  <div className="col">
+    <div className="subtitle-1 fw-7">
+      Branch:<br /> {(profileData.graduationDetails && profileData.graduationDetails.gprogram) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+      Percentage: <br /> {(profileData.graduationDetails && profileData.graduationDetails.gpercentage) || <span style={{ color: '#808080',textAlign:'center'}}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+      Year of Passing:<br />  {(profileData.graduationDetails && profileData.graduationDetails.gyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div>
   </div>
 </div>
 
-<div style={{ display: 'flex', alignItems: 'baseline' }}>
-  <div style={{ fontSize: '18px', fontFamily: 'Inter', padding: 'px', marginLeft: '10px', color: '#767676', fontStyle: 'normal', fontWeight: '400', lineHeight: 'normal', marginBottom: '-3px' }} className="p-16 bold-text">Location</div>
-  <div style={{ fontStyle: 'normal', fontWeight: '500', lineHeight: 'normal', fontFamily: 'Inter', color: 'black', fontSize: '20px', marginLeft: '60px', fontWeight: 'bold', marginBottom: '15px' }} className="small-text">
-    {profileData.basicDetails.city}, {profileData.basicDetails.state}
+                    
+                  </div>
+                  <div className="inner">
+                    <div className="heading">
+                    Intermediate Details:
+                    </div>
+                    <div className="row">
+                    
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Board: <br /> {(profileData.intermediateDetails && profileData.intermediateDetails.iboard) || <span style={{ color: '#808080' }}></span>}
+  </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-1 fw-7">
+    Branch: <br />{(profileData.intermediateDetails && profileData.intermediateDetails.iprogram) || <span style={{ color: '#808080' }}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+    Percentage:<br /> {(profileData.intermediateDetails && profileData.intermediateDetails.ipercentage) || <span style={{ color: '#808080'}}></span>}
+    </div>
+  </div>
+  <div className="col">
+    <div className="subtitle-2 fw-7 fw-5">
+    Year of Passing: <br />{(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div>
   </div>
 </div>
-
-
-  <div style={{ display: 'flex', alignItems: 'baseline' }}>
-  <div style={{ fontSize: '18px', fontFamily: 'Inter', padding: 'px', marginLeft: '10px', color: '#767676', fontStyle: 'normal', fontWeight: '400', lineHeight: 'normal', marginBottom: '1px' }} className="p-16 bold-text">Mobile Number</div>
-  <div style={{ fontStyle: 'normal', fontWeight: '500', lineHeight: 'normal', fontFamily: 'Inter', color: 'black', fontSize: '20px', marginLeft: '10px', fontWeight: 'bold', marginBottom: '15px' }} className="small-text">
-    {profileData.applicant.mobilenumber}
+                  </div>
+                  <div className="inner">
+                    <div className="heading">
+                    SSC Details:
+                    </div>
+                    <div className="row">
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Board:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xboard) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Percentage:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xpercentage) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+  <div className="subtitle-1 fw-7">
+  Year of Passing:<br /> {(profileData.xClassDetails && profileData.xClassDetails.xyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+</div>
+  </div>
+  <div className="col">
+    {/* <div className="subtitle-2 fw-7 fw-5">
+    Year of Passing: {(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
+    </div> */}
   </div>
 </div>
-
-
-<div style={{ display: 'flex', alignItems: 'baseline' }}>
-  <div style={{ fontSize: '18px', fontFamily: 'Inter', padding: 'px', marginLeft: '10px', color: '#767676', fontStyle: 'normal', fontWeight: '400', lineHeight: 'normal', marginBottom: '-1px' }} className="p-16 bold-text">Qualification</div>
-  <div style={{ fontStyle: 'normal', fontWeight: '500', lineHeight: 'normal', fontFamily: 'Inter', color: 'black', fontSize: '20px', marginLeft: '30px', fontWeight: 'bold', marginBottom: '15px' }} className="small-text">
-    {profileData.graduationDetails.gprogram}
-  </div>
-</div>
-
-
-  <div style={{ fontSize: '18px', fontFamily: 'Inter', padding: 'px', marginLeft: '10px',color: '#767676',fontstyle:'normal',fontweight: '400',lineheight: 'normal',marginBottom: '-1px'  }} className="p-16 bold-text">Skills</div>
-  <div style={{ fontStyle: 'normal', fontWeight: '500', lineHeight: 'normal', fontFamily: 'Inter', color: 'black', fontSize: '20px', marginLeft: 'px', fontWeight: 'bold', marginBottom: '15px' }} className="small-text">
-  {profileData.skillsRequired.map((skill, index) => (
-    <div key={skill.id}>&nbsp;&bull;&nbsp;
-      <span>
-        <a href="#">{skill.skillName}</a>
-      </span>
-      {index < profileData.skillsRequired.length - 1 && <span></span>}
+                  </div>
+                </div>
+                <h5>Experience</h5>
+                <div className="group-infor">
+  {profileData.experienceDetails.map((experience, index) => (
+    <div className="inner" key={index}>
+      <div className="row">
+        <div className="col">
+          <div className="subtitle-1 fw-7">
+            Company: <br /> {experience.company || ""}
+          </div>
+        </div>
+        <div className="col">
+          <div className="subtitle-1 fw-7">
+            Position: <br /> {experience.position || ""}
+          </div>
+        </div>
+        <div className="col">
+          <div className="subtitle-2 fw-7 fw-5">
+            Start Date: <br /> {experience.startDate || ""}
+          </div>
+        </div>
+        <div className="col">
+          <div className="subtitle-2 fw-7 fw-5">
+            End Date: <br /> {experience.endDate || ""}
+          </div>
+        </div>
+      </div>
     </div>
   ))}
 </div>
 
-</div>
-</div>
+
+              </div>
+              </div>
+          </article>
+        </div>
+        <div className="col-lg-4 ">
+          <div className="cv-form-details stc2 po-sticky">
+            <ul className="list-infor">
+            <li>
+                <div className="category">Email</div>
+                <div className="detail">
+                {profileData.applicant.email}
                 </div>
-                <div className="post-about widget-dash-video bg-white">
-                <div className="sidebar-map bg-white" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '20px',width: '160%',marginLeft: '20px',height:'70vh',marginTop:'-25px',borderRadius: '10px',maxHeight: '400px', overflowY: 'auto',marginRight:'10px' }}>{/*sidebar-map bg-white*/}
-                  <h3 className="" style={{ marginTop: '-10px',marginLeft:'0px',marginBottom:'5px' ,marginBottom:'10px',color: '#1F76DC', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal'}}>Education Details</h3>
-                  <div className="">
-                    <div className="">
-                      <h4 className="small-text1">
-                        <span></span>
-                        <h4 style={{color: '#020202', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 700, lineHeight: '100%',marginBottom:'10px'}}> Graduation</h4>
-                      </h4>
-                      <div style={{ marginLeft: '0px' }}>
-                      <table style={{ marginLeft: '20px', fontFamily: 'inherit', fontSize: '18px', color: 'grey' }}>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%'}}>Qualification</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iboard}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Branch</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iprogram}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Percentage</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.ipercentage}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Year of Passing</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iyearOfPassing}</b></td>
-  </tr>
-</table>
-
-</div>
-                      <h4 className="fw-7">
-                      
-                        <h4 style={{color: '#020202', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 700, lineHeight: '100%',marginTop:'15px',marginBottom:'10px'}}> Intermediate </h4>
-                      </h4>
-                      <table style={{ marginLeft: '20px', fontFamily: 'inherit', fontSize: '18px', color: 'grey' }}>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Board</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iboard}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Branch</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iprogram}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Percentage</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.ipercentage}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Year of Passing</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.intermediateDetails.iyearOfPassing}</b></td>
-  </tr>
-</table>
-
-                      <h4 className="fw-7">
-                    
-                        <h4 style={{color: '#020202', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 700, lineHeight: '100%',marginTop:'15px',marginBottom:'10px'}}> SSC </h4>
-                      </h4>
-                      <table style={{ marginLeft: '20px', fontFamily: 'inherit', fontSize: '18px', color: 'grey' }}>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Board</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%'}}>
-      
-    <div style={{ marginRight: '18px' }}>
-    <b>{profileData.xClassDetails.xboard}</b>
+              </li>
+              <li>
+                <div className="category">Phone Number</div>
+                <div className="detail">{profileData.applicant.mobilenumber} </div>
+              </li>
+              <li>
+                <div className="category">Preferred Job Location</div>
+                <div className="detail">{profileData && profileData.preferredJobLocations && profileData.preferredJobLocations.map((location, index) => (
+    <span key={index}>
+      {location}
+      {index !== profileData.preferredJobLocations.length - 1 && ', '}
+    </span>
+  ))}
+  
+  {(profileData.basicDetails && profileData.basicDetails.city) || ''}
   </div>
-      
-      </td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Percentage</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.xClassDetails.xpercentage}</b></td>
-  </tr>
-  <tr>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#7C7C7C', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>Year of Passing</td>
-    <td style={{ padding: '5px 0 5px', marginBottom: '5px',color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}><b>{profileData.xClassDetails.xyearOfPassing}</b></td>
-  </tr>
-</table>
-                    </div>
-                    
-                  </div>
-                  
-                </div>
-                
-                </div>
-                <section className="flat-dashboard-overview flat-dashboard-about">
-        <div className="themes-container" style={{marginRight:'150px', marginTop: '-20px'}}>
-          <div className="row">
-            <div className="col-lg-10 col-md-10 ">
-              <div className="wrap-about flex">
-                <div className="side-bar">
-                  <div className="sidebar-map bg-white" style={{ boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', padding: '20px', width: '100%',borderRadius: '10px',maxHeight: '400px', overflowY: 'auto',height:'100vh',marginLeft:'220px'}}>{/*sidebar-map bg-white*/}
-                    <h3 className="" style={{marginTop: '-10px',marginLeft:'7px',marginBottom:'5px' ,marginBottom:'10px',color: '#1F76DC', fontFamily: 'Inter', fontSize: '24px', fontStyle: 'normal', fontWeight: 700, lineHeight: 'normal' }}>Experience</h3>
-                    <div style={{ fontFamily: 'inherit', padding: '5px', marginLeft: '5px',color: 'grey' }} className="small-text">
-                    <div>
-                      {profileData.experienceDetails.map((experience, index) => (
-                    <div key={index} style={{ marginBottom: 'px', borderBottom: 'px ', paddingBottom: 'px' }}>
-                    {/* <td style={{ padding: '5px 0 5px', marginBottom: '5px', color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%' }}>
-  <div style={{ display: 'inline-block', marginRight: '10px', color: '#000' }}>Company:</div>
-  <b style={{ display: 'inline-block' }}>{experience.company}</b>
-</td> */}
-
-<div style={{ display: 'flex', alignItems: 'center' }}>
-  <span style={{ marginRight: '10px' }}>Company</span>
-  <td style={{ padding: '5px 0 5px', marginBottom: '-1px', color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%',marginLeft:'75px' }}>
-    <b>{experience.company}</b>
-  </td>
-</div>
-
-
-
-<div style={{ display: 'flex', alignItems: 'center' }}>
-  <span style={{ marginRight: '10px' }}>Position</span>
-  <td style={{ padding: '5px 0 5px', marginBottom: '-1px', color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%',marginLeft:'88px' }}>
-    <b>{experience.position}</b>
-  </td>
-</div>
-
-<div style={{ display: 'flex', alignItems: 'center' }}>
-  <span style={{ marginRight: '10px' }}>Start Date</span>
-  <td style={{ padding: '5px 0 5px', marginBottom: '-1px', color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%',marginLeft:'75px' }}>
-    <b>{experience.startDate}</b>
-  </td>
-</div>
-
-<div style={{ display: 'flex', alignItems: 'center' }}>
-  <span style={{ marginRight: '10px' }}>End Date</span>
-  <td style={{ padding: '5px 0 5px', marginBottom: '-1px', color: '#000', fontFamily: 'Inter', fontSize: '20px', fontStyle: 'normal', fontWeight: 400, lineHeight: '100%',marginLeft:'80px' }}>
-    <b>{experience.endDate}</b>
-  </td>
-</div>
-
-                    </div>
-                     ))}
-                  </div>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </li>
+              <li>
+                <div className="category">Experience</div>
+                <div className="detail">{profileData.experience} Year(s)</div>
+              </li>
+              {/* <li>
+                <div className="category">Language</div>
+                <div className="detail">English, Vietnamese </div>
+              </li>
+              <li>
+                <div className="category">Age</div>
+                <div className="detail">26 Years Old</div>
+              </li> */}
+              <li>
+                <div className="category">Qualification</div>
+                <div className="detail">{profileData && profileData.qualification|| ''}</div>
+              </li>
+            </ul>
+            {/* <div className="preview-cv mgt-32">
+              <div className="title">Samle_cv_jobitex</div>
+              <div className="category">PDF</div>
+              <div className="icon icon-file-pdf" />
+            </div> */}
+            {/* <a href="#" className="btn-dowload">
+              <i className="icon-download" /> Download CV
+            </a> */}
           </div>
         </div>
-</section>
-              </div>
-              {/* Experience field */}
-
-
-            </div>
-            
-          </div>
-        </div>
-      </section>
-      
-      
-
-
-{/* Close button */}
-      <div
-        style={{
-          position: 'fixed',
-          top: '45px',
-          right: '45px',
-          padding: '10px 20px',
-          backgroundColor: '#3498db',
-          color: '#fff',
-          textDecoration: 'none',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-      >
-        <Link to="/recruiter-allapplicants" style={{ color: '#fff', textDecoration: 'none' }}>
-          Close
-        </Link>
       </div>
     </div>
-  );
+  </section>
+</div>
+  ); 
 }; 
 export default Recruiterviewapplicant;
