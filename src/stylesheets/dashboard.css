@@ -57,6 +57,9 @@
     font: 16px/28px "Plus Jakarta Sans", sans-serif;
     font-weight: 500;
 }
+.title-count:hover {
+    font-weight: bold;
+  }
 
 .dashboard h5 {
     font: 14px/24px "Plus Jakarta Sans", sans-serif;
@@ -1725,6 +1728,13 @@ tbody tr td:nth-child(2) {
     margin-bottom: 11px;
 }
 
+@media screen and (max-width: 320px) {
+    .input-form {
+      max-width: 320px;
+      /* Add any other styling adjustments as needed */
+    }
+  }
+  
 .info-wd .input-form2,
 .info-wd .input-form,.typeahead-input{
     font-style: unset;
@@ -1734,6 +1744,22 @@ tbody tr td:nth-child(2) {
     border: 1px solid #e5e5e5;
     font-size: 16px;
     transition: all 0.3s ease-in-out;
+    
+}
+
+@media screen and (max-width: 370px){
+.info-wd .input-form2,
+.info-wd .input-form,.typeahead-input{
+    font-style: unset;
+    background: linear-gradient(0deg, #f5f5f5, #f5f5f5), linear-gradient(0deg, #e5e5e5, #e5e5e5);
+    padding: 0 15px;
+    color: #000;
+    border: 1px solid #e5e5e5;
+    font-size: 12px;
+    transition: all 0.3s ease-in-out;
+    
+}}
+
     border-radius:8px;
 }
 
@@ -1742,6 +1768,7 @@ tbody tr td:nth-child(2) {
     overflow-y:auto;
 
   } */
+
 
 textarea:focus,
 .info-wd .input-form2:focus,
@@ -4492,5 +4519,18 @@ font-size: 14px;
 
   .inactive-job {
     background-color: #f2f2f2; /* Change this to the desired gray color */
+  }
+  
+
+  /* Default toggle style for "off" state */
+.react-toggle {
+    .react-toggle-track {
+      background-color: black;
+    }
+  }
+  
+  /* Toggle style for "on" state */
+  .toggle-on .react-toggle-track {
+    background-color: green;
   }
   

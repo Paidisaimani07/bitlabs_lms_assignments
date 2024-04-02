@@ -5,6 +5,7 @@ import axios from 'axios';
 import $ from 'jquery';
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
+import leftArrow from '../../images/arrow-left.png';
 import { Link } from 'react-router-dom';
 $.DataTable = require('datatables.net')
  
@@ -359,6 +360,11 @@ const handleTextFieldChange = (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
+                <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                </div>
                   <div className="title-dash flex2">All Applicants</div>
                 </div>
               </div>
@@ -384,9 +390,7 @@ const handleTextFieldChange = (e) => {
       Export CSV
     </button>
   </div>
-</div>
-       
- 
+</div>        
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
             <div className="row">

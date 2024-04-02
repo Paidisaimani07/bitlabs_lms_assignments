@@ -3,6 +3,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 const ApplicantViewProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -89,6 +90,11 @@ const ApplicantViewProfile = () => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+  <div className="back-to-previous pb-4">
+      <Link to="/applicanthome" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+      </Link>
+  </div>
 <div className="title-dash flex2">My Profile</div>
 </div>
 </div>
@@ -237,32 +243,33 @@ const ApplicantViewProfile = () => {
                 </div>
                 <h5>Experience</h5>
                 <div className="group-infor">
-  {profileData.experienceDetails.map((experience, index) => (
-    <div className="inner" key={index}>
-      <div className="row">
-        <div className="col">
-          <div className="subtitle-1 fw-7">
-            Company: <br /> {experience.company || ""}
-          </div>
+  {profileData && profileData.experienceDetails && profileData.experienceDetails.map((experience, index) => (
+  <div className="inner" key={index}>
+    <div className="row">
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Company: <br /> {experience.company || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-1 fw-7">
-            Position: <br /> {experience.position || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-1 fw-7">
+          Position: <br /> {experience.position || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-2 fw-7 fw-5">
-            Start Date: <br /> {experience.startDate || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          Start Date: <br /> {experience.startDate || ""}
         </div>
-        <div className="col">
-          <div className="subtitle-2 fw-7 fw-5">
-            End Date: <br /> {experience.endDate || ""}
-          </div>
+      </div>
+      <div className="col">
+        <div className="subtitle-2 fw-7 fw-5">
+          End Date: <br /> {experience.endDate || ""}
         </div>
       </div>
     </div>
-  ))}
+  </div>
+))}
+
 </div>
 
 
@@ -297,7 +304,7 @@ const ApplicantViewProfile = () => {
               </li>
               <li>
                 <div className="category">Experience</div>
-                <div className="detail">{profileData.experience} Year(s)</div>
+                <div className="detail">{profileData.experience}</div>
               </li>
               {/* <li>
                 <div className="category">Language</div>

@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const ApplicantDashboard = () => 
 {
   const [token, setToken] = useState('');
@@ -11,6 +13,8 @@ const ApplicantDashboard = () =>
   const [contRecJobs, setCountRecJobs] = useState(0);
   const [contAppliedJob, setAppliedJobs] = useState(0);
   const [contSavedJobs, setSavedJobs] = useState(0);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
     if (storedToken) {
@@ -71,6 +75,22 @@ const ApplicantDashboard = () =>
               console.error('Error fetching team members:', error);
           });
   }, [user.id]);
+
+  const handleRedirect = () => {
+    
+    navigate("/applicant-find-jobs");
+  };
+
+  const handleRedirect1 = () => {
+    
+    navigate("/applicant-applied-jobs");
+  };
+
+  const handleRedirect2 = () => {
+    
+    navigate("/applicant-saved-jobs");
+  };
+  
   return (
     <div>
     {loading ? null : (
@@ -91,7 +111,7 @@ const ApplicantDashboard = () =>
     <div className="row">
       <div className="col-lg-12 col-md-12 ">
         <div className="wrap-icon widget-counter">
-          <div className="box-icon wrap-counter flex">
+          <div className="box-icon wrap-counter flex" onClick={handleRedirect}>
             <div className="icon style1">
               <span className="icon-bag">
                 <svg
@@ -119,11 +139,18 @@ const ApplicantDashboard = () =>
             <div className="content">
             
               <h3>{contRecJobs}</h3>
-              <h4 className="title-count">Recommended Jobs</h4>
+              <h4
+        className="title-count"
+        onClick={handleRedirect}
+        style={{ cursor: "pointer" }}
+      >
+        Recommended Jobs
+      </h4>
             </div>
           </div>
-          <div className="box-icon wrap-counter flex">
-            <div className="icon style2">
+          <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
+          
+          <div className="icon style2">
               <span className="icon-bag">
                 <svg
                   width={45}
@@ -154,13 +181,22 @@ const ApplicantDashboard = () =>
                   />
                 </svg>
               </span>
+              
             </div>
+            
             <div className="content style3">
               <h3>{contAppliedJob}</h3>
-              <h4 className="title-count">Applied Jobs</h4>
+              <h4
+        className="title-count"
+        onClick={handleRedirect1}
+        style={{ cursor: "pointer" }}
+      >
+        Applied Jobs
+      </h4>
+              {/* <h4 className="title-count"></h4> */}
             </div>
           </div>
-          <div className="box-icon wrap-counter flex">
+          <div className="box-icon wrap-counter flex" onClick={handleRedirect2}>
             <div className="icon style4">
               <span className="icon-bag">
                 <svg
@@ -179,7 +215,14 @@ const ApplicantDashboard = () =>
             </div>
             <div className="content">
               <h3>{contSavedJobs}</h3>
-              <h4 className="title-count">Saved Jobs</h4>
+              <h4
+        className="title-count"
+        onClick={handleRedirect2}
+        style={{ cursor: "pointer" }}
+      >
+        Saved Jobs
+      </h4>
+              {/* <h4 className="title-count"></h4> */}
             </div>
           </div>
         </div>
