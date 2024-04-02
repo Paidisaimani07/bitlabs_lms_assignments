@@ -15,8 +15,24 @@
     opacity: 1;
     outline: none;
     padding: 0.2rem;
-    padding-left: 0;
+    padding-left: 1px;
     padding-top: 0px;
     margin-top: 2px;
     text-shadow: none;
+    margin-right:2px;
+    margin-left: -2px;
 }
+.placeholder-light-grey::placeholder {
+    color: lightgrey !important;
+  }
+  
+  .input-form option {
+    max-width: 150px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /*@media screen and (max-width: 507px) {
+    
+  }*/
+  
+  

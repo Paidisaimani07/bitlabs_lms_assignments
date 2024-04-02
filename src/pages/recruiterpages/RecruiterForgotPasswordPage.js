@@ -5,9 +5,9 @@ import RecruiterForgotPassword from '../../components/recruitercomponents/Recrui
 function RecruiterForgotPasswordPage() {
   return (
     <div>
-     <Nav />
+     {/* <Nav /> */}
      <RecruiterForgotPassword />
-    <Footer />
+    {/* <Footer /> */}
     </div>
   )
 }

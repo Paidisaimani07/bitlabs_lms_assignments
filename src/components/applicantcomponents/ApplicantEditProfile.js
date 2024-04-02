@@ -4,6 +4,8 @@ import axios from 'axios';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { useUserContext } from '../common/UserProvider';
+import { Link } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 function ApplicantEditProfile() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -697,6 +699,11 @@ const handleResumeUpload = async () => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+            <div className="back-to-previous pb-4">
+              <Link to="/applicant-view-profile" className="back-link" >
+                <img src={leftArrow} alt="Back"  />BACK
+              </Link>
+            </div>
             <div className="title-dash flex2">Edit Your Profile</div>
           </div>
         </div>
@@ -1496,116 +1503,148 @@ const handleResumeUpload = async () => {
                   </div>
                 </div>            
               </div>             */}
-    <div class="contact-wrap info-wd">
-                  <h3>Experience & Skills</h3>
-                 <div class="form-social form-wg flex flat-form">
-                    <div class="form-box  wg-box">
-                      <div id="item_category2" class="dropdown titles-dropdow">
-                        <label class="title-user color-1 fw-7">Experience</label>
-                       
-                        {experienceDetails.map((experience, index) => (
-            <div key={index}>
-              <fieldset>
-              <label class="title-user color-1 fw-7">Compnay Name</label>
-                <input
-                  type="text"
-                  className="input-form"
-                  placeholder="ABC Pvt Ltd"
-                  value={experience?.company || ''}
-                  onChange={(e) => handleExperienceChange(e, index, "company")}
-                />
-              </fieldset>
-              <fieldset>
-              <label class="title-user color-1 fw-7">Position</label>
-                <input
-                  type="text"
-                  className="input-form"
-                  placeholder="Java Developer"
-                  value={experience?.position || ''}
-                  onChange={(e) => handleExperienceChange(e, index, "position")}
-                />
-              </fieldset>
-              <div id="item_date" className="dropdown titles-dropdown">
-                <label class="title-user color-1 fw-7" htmlFor={`startDate-${index}`}>Start Date</label>
-                <input
-                  type="date"
-                  className="input-form"
-                  id={`startDate-${index}`}
-                  value={experience?.startDate || ''}
-                  onChange={(e) => handleExperienceChange(e, index, "startDate")}
-                />
+    <div className="contact-wrap info-wd">
+      <h3>Experience & Skills</h3>
+      <div className="form-social form-wg flex flat-form">
+        <div className="form-box  wg-box">
+          <div id="item_category2" className="dropdown titles-dropdow">
+            <label className="title-user color-1 fw-7">Experience</label>
+            {experienceDetails && experienceDetails.map((experience, index) => (
+              <div key={index}>
+                <fieldset>
+                  <label className="title-user color-1 fw-7">Company Name</label>
+                  <input
+                    type="text"
+                    className="input-form"
+                    placeholder="ABC Pvt Ltd"
+                    value={experience?.company || ''}
+                    onChange={(e) => handleExperienceChange(e, index, "company")}
+                  />
+                </fieldset>
+                <fieldset>
+                  <label className="title-user color-1 fw-7">Position</label>
+                  <input
+                    type="text"
+                    className="input-form"
+                    placeholder="Java Developer"
+                    value={experience?.position || ''}
+                    onChange={(e) => handleExperienceChange(e, index, "position")}
+                  />
+                </fieldset>
+                <div id="item_date" className="dropdown titles-dropdown">
+                  <label className="title-user color-1 fw-7" htmlFor={`startDate-${index}`}>Start Date</label>
+                  <input
+                    type="date"
+                    className="input-form"
+                    id={`startDate-${index}`}
+                    value={experience?.startDate || ''}
+                    onChange={(e) => handleExperienceChange(e, index, "startDate")}
+                  />
+                </div>
+                <div id="item_date" className="dropdown titles-dropdown">
+                  <label className="title-user color-1 fw-7" htmlFor={`endDate-${index}`}>End Date</label>
+                  <input
+                    type="date"
+                    className="input-form"
+                    id={`endDate-${index}`}
+                    value={experience?.endDate || ''}
+                    onChange={(e) => handleExperienceChange(e, index, "endDate")}
+                  />
+                </div>
               </div>
-              <div id="item_date" className="dropdown titles-dropdown">
-                <label class="title-user color-1 fw-7" htmlFor={`endDate-${index}`}>End Date</label>
-                <input
-                  type="date"
-                  className="input-form"
-                  id={`endDate-${index}`}
-                  value={experience?.endDate|| ''}
-                  onChange={(e) => handleExperienceChange(e, index, "endDate")}
-                />
-              </div>
-            </div>
-          ))}
-          <button type="button" onClick={addExperience} style={{'color':'#FFFFFF','backgroundColor':'#1967d2'}}>
-            +
-          </button>
-          {experienceDetails.length > 0 && (
-          <button type="button" onClick={() => removeExperience(experienceDetails.length - 1)} style={{'color':'#FFFFFF','backgroundColor':'#FF0000'}}>
+            ))}
+            <button type="button" onClick={addExperience} style={{ color: '#FFFFFF', backgroundColor: '#1967d2' }}>
+              +
+            </button>
+            {experienceDetails && experienceDetails.length > 0 && (
+          <button type="button" onClick={() => removeExperience(experienceDetails.length - 1)} style={{ color: '#FFFFFF', backgroundColor: '#FF0000' }}>
             -
           </button>
         )}
-                      </div>
-                    </div>
-                    <div class="form-box  wg-box">
-                      <fieldset class="">
-                        <label class="title-user fw-7">Skills</label>
-                        {skillsRequired.map((skill, index) => (
-<div key={index} className="experience-table">
-<div>
-<label class="title-user fw-7">Your Skill</label>
-<input
-  type="text"
-  placeholder="Java"
-  className="input-form"
-  value={skill.skillName}
-  onChange={(e) => handleSkillChange(e, index, "skillName")}
-  onBlur={() => validateForm("skillName")}
-/>
-{errors.skillsRequired[index]?.skillName && (
-<div className="error-message">{errors.skillsRequired[index].skillName}</div>
+          </div>
+        </div>
+        <div className="form-box  wg-box">
+  <fieldset className="">
+    <label className="title-user fw-7">Skills</label>
+    {skillsRequired && skillsRequired.length > 0 ? ( 
+      skillsRequired.map((skill, index) => (
+        <div key={index} className="experience-table">
+                <div>
+                  <label className="title-user fw-7">Your Skill</label>
+                  <input
+                    type="text"
+                    placeholder="Java"
+                    className="input-form"
+                    value={skill.skillName}
+                    onChange={(e) => handleSkillChange(e, index, "skillName")}
+                    onBlur={() => validateForm("skillName")}
+                  />
+                  {errors.skillsRequired[index]?.skillName && (
+                    <div className="error-message">{errors.skillsRequired[index].skillName}</div>
                   )}
-</div>
-<div>
-<label class="title-user fw-7">Your Experience</label>
-<input
-  type="text"
-  placeholder="5"
-  className="input-form"
-  value={skill.experience}
-  onChange={(e) => handleSkillChange(e, index, "experience")}
-  onBlur={() => validateForm("experience")} 
-/>
-{errors.skillsRequired[index]?.experience && (
+                </div>
+                <div>
+                  <label className="title-user fw-7">Your Experience</label>
+                  <input
+                    type="text"
+                    placeholder="5"
+                    className="input-form"
+                    value={skill.experience}
+                    onChange={(e) => handleSkillChange(e, index, "experience")}
+                    onBlur={() => validateForm("experience")}
+                  />
+                  {errors.skillsRequired[index]?.experience && (
                     <div className="error-message">{errors.skillsRequired[index].experience}</div>
                   )}
-</div>
-{index === skillsRequired.length - 1 && (
-<button type="button" onClick={addSkills} className="btn-3" style={{'color':'#FFFFFF','backgroundColor':'#1967d2'}}>
-  +
-</button>
-)}
-{index === skillsRequired.length - 1 && (
-        <button type="button" onClick={removeSkills} style={{'color':'#FFFFFF','backgroundColor':'#FF0000'}}>
-          -
-        </button>
-      )}
-</div>
-))}
-                      </fieldset>
-                    </div>
-                  </div>
                 </div>
+                {index === skillsRequired.length - 1 && (
+                  <button type="button" onClick={addSkills} className="btn-3" style={{ color: '#FFFFFF', backgroundColor: '#1967d2' }}>
+                    +
+                  </button>
+                )}
+                {index === skillsRequired.length - 1 && (
+                  <button type="button" onClick={removeSkills} style={{ color: '#FFFFFF', backgroundColor: '#FF0000' }}>
+                    -
+                  </button>
+                )}
+        </div>
+      ))
+    ) : (
+      <div className="experience-table">
+        <div>
+          <label className="title-user fw-7">Your Skill</label>
+          <input
+            type="text"
+            placeholder="Java"
+            className="input-form"
+            value=""
+            onChange={(e) => handleSkillChange(e, 0, "skillName")}
+            onBlur={() => validateForm("skillName")}
+          />
+          {errors.skillsRequired[0]?.skillName && (
+            <div className="error-message">{errors.skillsRequired[0].skillName}</div>
+          )}
+        </div>
+        <div>
+          <label className="title-user fw-7">Your Experience</label>
+          <input
+            type="text"
+            placeholder="5"
+            className="input-form"
+            value=""
+            onChange={(e) => handleSkillChange(e, 0, "experience")}
+            onBlur={() => validateForm("experience")}
+          />
+          {errors.skillsRequired[0]?.experience && (
+            <div className="error-message">{errors.skillsRequired[0].experience}</div>
+          )}
+        </div>
+      </div>
+    )}
+  </fieldset>
+</div>
+      </div>
+    </div>
                 <div className="tt-button button-style">
               </div>
                 <div>

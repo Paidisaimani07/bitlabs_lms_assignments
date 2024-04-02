@@ -76,7 +76,7 @@ const fetchAlertCount = async () => {
   try {
     const response = await axios.get(`${apiUrl}/recuriters/appledjobs/${user.id}/unread-alert-count`);
     setAlertCount(response.data);
-    window.location.reload();
+   // window.location.reload();
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
@@ -96,6 +96,18 @@ useEffect(() => {
   };
   fetchAlertCount();
 }, [user.id]);
+
+useEffect(() => {
+  // Fetch initial alert count
+  fetchAlertCount();
+
+  // Set up polling interval
+  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+
+  // Clean up function to clear interval when component unmounts
+  return () => clearInterval(intervalId);
+}, [user.id]);
+
   return (
 <div>
   <div className="menu-mobile-popup">

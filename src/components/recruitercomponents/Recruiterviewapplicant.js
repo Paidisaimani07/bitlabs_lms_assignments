@@ -3,6 +3,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { Link,useParams } from 'react-router-dom';
+import leftArrow from '../../images/arrow-left.png';
 const Recruiterviewapplicant = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -37,7 +38,7 @@ const Recruiterviewapplicant = () => {
         profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view1`);
         setProfileData(profileResponse.data);
         count = 1;
-        const imageResponse = await axios.get(`${apiUrl}/applicant-image/getphoto/${id}`, { responseType: 'arraybuffer' });
+        const imageResponse = await axios.get(`${apiUrl}/applicant-image/getphoto1/${id}`, { responseType: 'arraybuffer' });
         const base64Image = btoa(
           new Uint8Array(imageResponse.data).reduce(
             (data, byte) => data + String.fromCharCode(byte),
@@ -82,6 +83,11 @@ const Recruiterviewapplicant = () => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+  <div className="back-to-previous pb-4">
+    <Link to="/recruiter-allapplicants" className="back-link" >
+        <img src={leftArrow} alt="Back"  />BACK
+    </Link>
+  </div>
 <div className="title-dash flex2">Applicant Profile</div>
 </div>
 </div>
@@ -92,7 +98,7 @@ const Recruiterviewapplicant = () => {
     <div className="tf-container">
       <div className="wd-author-page-title">
         <div className="author-archive-header">
-        <img width="130px" height="40px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')} style={{padding:'10px',borderRadius:'8px'}} />
+        <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}  style={{padding:'10px',borderRadius:'100px'}} />
           <div className="content">
             {/* <a href="#" className="tag-head">
               Available now
@@ -123,7 +129,7 @@ const Recruiterviewapplicant = () => {
           <div className="group-btn">
             {/* <button className="tf-btn">Edit Profile</button> */}
             {/* <Link to="/applicant-edit-profile"  className="tf-btn">Edit Profile</Link> */}
-            {/* <button className="tf-btn btn-author">Message</button> */}
+            <button className="tf-btn btn-author">View Resume</button>
           </div>
         </div>
       </div>
@@ -308,9 +314,9 @@ const Recruiterviewapplicant = () => {
               <div className="category">PDF</div>
               <div className="icon icon-file-pdf" />
             </div> */}
-            <a href="#" className="btn-dowload">
+            {/* <a href="#" className="btn-dowload">
               <i className="icon-download" /> Download CV
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
