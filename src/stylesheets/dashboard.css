@@ -1760,8 +1760,8 @@ tbody tr td:nth-child(2) {
     
 }}
 
-    border-radius:8px;
-}
+    /* border-radius:8px; */
+/* } */
 
 /* .select-wrapper {
     max-height: 100%; 

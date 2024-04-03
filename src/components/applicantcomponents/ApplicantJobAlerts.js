@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from 'react-router-dom';
 import leftArrow from '../../images/arrow-left.png';
 export default function ApplicantJobAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
