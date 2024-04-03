@@ -5,7 +5,6 @@ import axios from 'axios';
 import $ from 'jquery';
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
-import leftArrow from '../../images/arrow-left.png';
 import { Link } from 'react-router-dom';
 $.DataTable = require('datatables.net')
  
@@ -114,10 +113,16 @@ const body = {
             { data: 'mobilenumber' },
             { data: 'jobTitle' },
             { data: 'applicantStatus' },
-            { data: 'minimumExperience' },
-            { data: 'skillName' },
+            { data: 'experience' },
+            // { data: 'skillName' },
             { data: 'minimumQualification' },
-            { data: 'location' }
+            // { data: 'location' }
+            {
+              data: null,
+              render: function(data, type, row) {
+                return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
+              }
+            }
         ]
     });
     count=setCount(data.length);
@@ -360,11 +365,6 @@ const handleTextFieldChange = (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
-                <div className="back-to-previous pb-4">
-                  <Link to="/recruiterhome" className="back-link" >
-                    <img src={leftArrow} alt="Back"  />BACK
-                  </Link>
-                </div>
                   <div className="title-dash flex2">All Applicants</div>
                 </div>
               </div>
@@ -384,20 +384,22 @@ const handleTextFieldChange = (e) => {
       <option value="Shortlisted">Shortlisted</option>
       <option value="Interviewing">Interviewing</option>
       <option value="Selected">Selected</option>
-      {/* <option value="selected">All the applicants</option> */}
+      <option value="selected">All the applicants</option>
     </select>
     <button className="export-buttonn" onClick={exportCSV}>
-      Export CSV
+      ExportCSV
     </button>
   </div>
-</div>        
+</div>
+       
+ 
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
             <div className="row">
             <div className="col-lg-2 col-md-2" style={{ borderRight: '1px solid black', paddingLeft: '1px', paddingRight: '0px' }}>
         {/* <!-- First Section --> */}
        
-<div className="profile-setting-left">
+<div className="profile-setting">
   <div className="table-container-wrapper">
     <div className="table-container">
     <h3 className="filter"><strong>Filters </strong></h3>
@@ -411,8 +413,7 @@ const handleTextFieldChange = (e) => {
     onChange={handleCheckboxChange}
     style={{ width: 'auto' }} // Adjust the width of the checkbox
   />
-  <label className="label" htmlFor="nameFilter">&nbsp;&nbsp;Name</label>
-
+  <label className="label" htmlFor="nameFilter">Name</label>
   {filterOptions.nameFilter && (
     <>
     <div className="dropdown-container1">
@@ -440,8 +441,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.emailFilter}
     onChange={handleCheckboxChange}
   />
-
-  <label className="label" htmlFor="emailFilter">&nbsp;&nbsp;Email</label>
+  <label className="label" htmlFor="emailFilter">Email</label>
   {filterOptions.emailFilter && (
     <>
       <div className="dropdown-container1">
@@ -466,7 +466,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.mobileFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="mobileFilter">&nbsp;&nbsp;MobileNumber</label>
+  <label className="label" htmlFor="mobileFilter">MobileNumber</label>
   {filterOptions.mobileFilter && (
     <>
       <div className="dropdown-container1">
@@ -491,7 +491,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.jobFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="jobFilter">&nbsp;&nbsp;Job Title</label>
+  <label className="label" htmlFor="jobFilter">Job Title</label>
   {filterOptions.jobFilter && (
     <>
       <div className="dropdown-container1">
@@ -516,7 +516,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.statusFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="statusFilter">&nbsp;&nbsp;ApplicantStatus</label>
+  <label className="label" htmlFor="statusFilter">ApplicantStatus</label>
   {filterOptions.statusFilter && (
     <>
       <div className="dropdown-container1">
@@ -534,14 +534,14 @@ const handleTextFieldChange = (e) => {
   )}
 </div>
  
-<div className="filter-option">
+{/* <div className="filter-option">
   <input
     type="checkbox"
     id="skillFilter"
     checked={filterOptions.skillFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="skillFilter">&nbsp;&nbsp;Skill Name</label>
+  <label className="label" htmlFor="skillFilter">Skill Name</label>
   {filterOptions.skillFilter && (
     <>
       <div className="dropdown-container1">
@@ -557,7 +557,7 @@ const handleTextFieldChange = (e) => {
       </div>
     </>
   )}
-</div>
+</div> */}
  
 <div className="filter-option">
   <input
@@ -566,7 +566,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.experienceFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="experienceFilter">&nbsp;&nbsp;Experience</label>
+  <label className="label" htmlFor="experienceFilter">Experience</label>
   {filterOptions.experienceFilter && (
     <>
       <div className="dropdown-container1">
@@ -585,14 +585,14 @@ const handleTextFieldChange = (e) => {
   )}
 </div>
  
-<div className="filter-option">
+{/* <div className="filter-option">
   <input
     type="checkbox"
     id="locationFilter"
     checked={filterOptions.locationFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="locationFilter">&nbsp;&nbsp;Location</label>
+  <label className="label" htmlFor="locationFilter">Location</label>
   {filterOptions.locationFilter && (
     <>
       <div className="dropdown-container1">
@@ -610,7 +610,7 @@ const handleTextFieldChange = (e) => {
     </>
   )}
  
-</div>
+</div> */}
 <div>
   <button className="apply-button1" onClick={applyFilter}>Apply</button>
   <button className="reset-button1" onClick={resetFilter}>Reset</button>
@@ -642,9 +642,10 @@ const handleTextFieldChange = (e) => {
                           <th>Job Title</th>
                           <th>Applicant Status</th>
                           <th>Experience</th>
-                          <th>Skill Name</th>
+                          {/* <th>Skill Name</th> */}
                           <th>Qualification</th>
-                          <th>Location</th>
+                          {/* <th>Location</th> */}
+                          <th>Resume</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -731,10 +732,11 @@ const handleTextFieldChange = (e) => {
                                     applyjobid={application.applyjobid}
                                   />
                                 </td> */}
-                            <td>{application.minimumExperience}</td>
-                            <td>{application.skillName}</td>
+                            <td>{application.experience}</td>
+                            {/* <td>{application.skillName}</td> */}
                             <td>{application.minimumQualification}</td>
-                            <td>{application.location}</td>
+                            {/* <td>{application.location}</td> */}
+                            <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View Resume</Link></td>
                           </tr>
                         ))}
                       </tbody>
