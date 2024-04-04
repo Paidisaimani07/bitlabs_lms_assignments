@@ -3,9 +3,8 @@ import axios from 'axios';
 import logoCompany1 from '../../images/cty12.png';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { Link} from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import leftArrow from '../../images/arrow-left.png';
 
 function ApplicantViewJob({ selectedJobId }) {
@@ -22,7 +21,7 @@ function ApplicantViewJob({ selectedJobId }) {
     try {
       console.log(jobId);
       const response = await axios.get(
-        `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
+        `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -117,9 +116,9 @@ function ApplicantViewJob({ selectedJobId }) {
             <div className="themes-container">
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
-                  <div className="title-dashboard">                  
+                  <div className="title-dashboard">
                   <div className="back-to-previous pb-4">
-                    <Link to="/applicant-interview-status" className="back-link" >
+                    <Link to="/applicanthome" className="back-link" >
                       <img src={leftArrow} alt="Back"  />BACK
                     </Link>
                   </div>
@@ -130,14 +129,14 @@ function ApplicantViewJob({ selectedJobId }) {
             </div>
           </section>
           <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container bg-white">
+            <div className="themes-container">
               <div className="content-tab">
                 <div className="inner">
-                  <br />
+                  
                   <article className="job-article">
                     {jobDetails && (
                       <div className="top-content">
-                        <div className="features-job style-2 stc-apply">
+                        <div className="features-job style-2 stc-apply  bg-white">
                           <div className="job-archive-header">
                             <div className="inner-box">
                               {/* <div className="logo-company">
@@ -177,14 +176,12 @@ function ApplicantViewJob({ selectedJobId }) {
                                 <li>
                                   <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
-                                <p style={{ marginLeft: '8px', paddingTop: '2px', fontSize: '14px'}}> Exp {jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</p>
                                 <li>
 <a href="javascript:void(0);"> Exp &nbsp;{jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
 </li>
 <li>
 <a href="javascript:void(0);">&#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA</a>
 </li>
-
                               </ul>
                               <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -208,15 +205,18 @@ function ApplicantViewJob({ selectedJobId }) {
                                         jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
                                       cursor: 'pointer',
                                       height: '40px',
-                                      color: '#FFFFFF',
+                                      color: '#F97316',
                                       borderRadius: '8px',
+                                      backgroundColor: '#FFFFFF',
+                                      opacity:'80%',
+                                      borderColor:'#F97316'
                                     }}
                                   >
                                     <span className="icon-send"></span>&nbsp;
                                     {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
                                   </button>
                                   
-                                  <a
+                                  {/* <a
                                     href="/applicant-find-jobs"
                                     className="btn-apply btn-popup"
                                     style={{
@@ -233,7 +233,7 @@ function ApplicantViewJob({ selectedJobId }) {
                                     }}
                                   >
                                     Cancel
-                                  </a>
+                                  </a> */}
                                 </div>
                               </div>
                             </div>
@@ -259,3 +259,4 @@ function ApplicantViewJob({ selectedJobId }) {
 }
 
 export default ApplicantViewJob;
+

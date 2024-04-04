@@ -19,7 +19,6 @@ const ApplicantViewProfile = () => {
   
   const checkAndShowAlert = (message) => {
     const alertShownBefore = localStorage.getItem('alertShown');
-
     if (!alertShownBefore && !loading) {
       const userResponse = window.confirm(message);
       if (userResponse) {
@@ -182,7 +181,6 @@ const ApplicantViewProfile = () => {
     </div>
   </div>
 </div>
-
                     
                   </div>
                   <div className="inner">
@@ -269,10 +267,7 @@ const ApplicantViewProfile = () => {
     </div>
   </div>
 ))}
-
 </div>
-
-
               </div>
               </div>
           </article>
