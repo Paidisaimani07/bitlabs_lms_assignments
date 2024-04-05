@@ -321,6 +321,25 @@
 .flat-dashboard-dyagram .box-notifications .inner p {
     margin-right: 5px;
 }
+.filter-button {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 37px;
+    font-size: 15px;
+    border: 1px solid #000000; /* default stroke for secondary button */
+  }
+  
+  .filter-button.active {
+    background-color: #F97316; /* Primary button background color */
+    border: none; /* No border for primary button */
+  }
+  
+  .filter-button.inactive {
+    background-color: #FFFFFF; /* Secondary button background color */
+  }
 
 table {
     table-layout: auto;

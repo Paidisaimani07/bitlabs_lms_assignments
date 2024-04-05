@@ -15,65 +15,95 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   const user1 = useUserContext();
   const user = user1.user;
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [activeButton, setActiveButton] = useState('active');
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setWindowWidth(window.innerWidth);
+  //   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+  //   window.addEventListener('resize', handleResize);
 
-    window.addEventListener('resize', handleResize);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, []);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const fetchJobs = async () => {
+  //     try {
+  //       const jwtToken = localStorage.getItem('jwtToken');
+  //       if (jwtToken) {
+  //         axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //       }
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
+  //       const localJobs = JSON.parse(localStorage.getItem('jobs')) || [];
 
-        const localJobs = JSON.parse(localStorage.getItem('jobs')) || [];
+  //       if (localJobs.length > 0) {
+  //         const updatedJobs = await Promise.all(
+  //           localJobs.map(async (job) => {
+  //             const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
+  //             const status = statusResponse.data;
+  //             return { ...job, status };
+  //           })
+  //         );
 
-        if (localJobs.length > 0) {
-          const updatedJobs = await Promise.all(
-            localJobs.map(async (job) => {
-              const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
-              const status = statusResponse.data;
-              return { ...job, status };
-            })
-          );
+  //         setJobs(updatedJobs);
+  //         setLoading(false);
+  //       } else {
+  //         const jobsResponse = await axios.get(`${apiUrl}/job/recruiters/viewJobs/${user.id}`);
+  //         const jobsData = jobsResponse.data;
 
-          setJobs(updatedJobs);
-          setLoading(false);
-        } else {
-          const jobsResponse = await axios.get(`${apiUrl}/job/recruiters/viewJobs/${user.id}`);
-          const jobsData = jobsResponse.data;
+  //         const updatedJobs = await Promise.all(
+  //           jobsData.map(async (job) => {
+  //             const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
+  //             const status = statusResponse.data;
+  //             return { ...job, status };
+  //           })
+  //         );
 
-          const updatedJobs = await Promise.all(
-            jobsData.map(async (job) => {
-              const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
-              const status = statusResponse.data;
-              return { ...job, status };
-            })
-          );
+  //         localStorage.setItem('jobs', JSON.stringify(updatedJobs));
 
-          localStorage.setItem('jobs', JSON.stringify(updatedJobs));
+  //         setJobs(updatedJobs);
+  //         setLoading(false);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching job details:', error);
+  //       setLoading(false);
+  //     }
+  //   };
 
-          setJobs(updatedJobs);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching job details:', error);
-        setLoading(false);
-      }
-    };
+  //   fetchJobs();
+  // }, [user.id]);
 
-    fetchJobs();
-  }, [user.id]);
+  
+ useEffect(() => {
+  fetchActiveJobs(); // Fetch active jobs when component mounts
+}, [user.id]);
+const fetchActiveJobs = async () => {
+  try {
+    setLoading(true);
+    const activeJobsResponse = await axios.get(`${apiUrl}/job/${user.id}/active`);
+    const sortedActiveJobs = activeJobsResponse.data.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+    setJobs(sortedActiveJobs);
+    setLoading(false);
+  } catch (error) {
+    console.error('Error fetching active jobs:', error);
+    setLoading(false);
+  }
+};
+
+const getInactiveJobs = async () => {
+  try {
+    setLoading(true);
+    const inactiveJobsResponse = await axios.get(`${apiUrl}/job/${user.id}/inactive`);
+    const sortedInactiveJobs = inactiveJobsResponse.data.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+    setJobs(sortedInactiveJobs);
+    setLoading(false);
+  } catch (error) {
+    console.error('Error fetching inactive jobs:', error);
+    setLoading(false);
+  }
+};
 
   const handleStatusChange = async (jobId, newStatus) => {
     try {
@@ -101,6 +131,43 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
+
+  const handleActiveButtonClick = () => {
+    setActiveButton('active'); // Set active button state to 'active'
+    fetchActiveJobs();
+  };
+
+  const handleInactiveButtonClick = () => {
+    setActiveButton('inactive'); // Set active button state to 'inactive'
+    getInactiveJobs();
+  };
+
+  const activeButtonStyles = {
+    color: activeButton === 'active' ? '#FFFFFF' : '#FFFFFF',
+    backgroundColor: '#f97316',
+    border: '1px solid #f97316',
+    padding: '12px 24px',
+    borderRadius: '37px',
+    display: 'inline-flex',
+    width: '160px',
+    justifyContent: 'center',
+    marginRight: '10px',
+    gap: '10px'
+  };
+
+  const inactiveButtonStyles = {
+    color: activeButton === 'inactive' ? 'gray' : 'gray',
+    backgroundColor: 'white',
+    border: '1px solid 	#D3D3D3',
+    padding: '12px 24px',
+    borderRadius: '37px',
+    display: 'inline-flex',
+    width: '170px',
+    justifyContent: 'center',
+    marginRight: '10px',
+    gap: '10px'
+  };
+
   return (
     <div>
       <div className="dashboard__content">
@@ -114,11 +181,25 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                     <img src={leftArrow} alt="Back"  />BACK
                   </Link>
                 </div>
-                  <div className="title-dash flex2">Job Openings</div>
+                <div className="title-dash flex2">Posted Jobs</div> 
+                   <br></br>
+                   <br></br>
+                   
+                   
+                    <button style={activeButton === 'active' ? activeButtonStyles : inactiveButtonStyles} onClick={handleActiveButtonClick}>
+        Active Jobs
+      </button>
+      &nbsp;&nbsp;
+      <button style={activeButton === 'inactive' ? activeButtonStyles : inactiveButtonStyles} onClick={handleInactiveButtonClick}>
+        Closed Jobs
+      </button>
+                  
+                  </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+        
+
         </section>
         <section className="flat-dashboard-setting flat-dashboard-setting2">
           <div className="themes-container">
@@ -126,7 +207,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
               <div className="inner">
                 <div className="group-col-2">
                   {jobs.map((job) => (
-                    <div className={`features-job cl2 bg-white ${job.status === 'Inactive' ? 'inactive-job' : ''}`} key={job.id}>
+                     <div className={`features-job cl2 bg-white ${job.status.toLowerCase() === 'inactive' ? 'inactive-job' : ''}`} key={job.id}>
                       
                       <div className="job-archive-header">
                         <div className="inner-box">
@@ -154,18 +235,18 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                                  &nbsp;{formatDate(job.creationDate)}
                               </li> */}
                             </ul>
-                            <span class="tog-but">
+                            {/* <span class="tog-but">
                             <Toggle
-                        checked={job.status === 'Active'}
+                        checked={job.status.toLowerCase() === 'active'}
                         onChange={(e) => {
-                          const newStatus = e.target.checked ? 'Active' : 'Inactive';
+                          const newStatus = e.target.checked ? 'active' : 'inactive';
                           handleStatusChange(job.id, newStatus);
                         }}
                         icons={false}
                        // disabled={loading || job.status === 'Inactive'}
                       /><br />
                       <span style={{color:'#656060'}}>{job.status}</span>
-                            </span>
+                            </span> */}
                           </div>
                         </div>
                       </div>
@@ -196,12 +277,12 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                           <span>
 <span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                           </div>
-                          <div style={{marginTop:'8px',marginLeft:'25px'}}>
+                          {/* <div style={{marginTop:'8px',marginLeft:'25px'}}>
                           <Link to={`/recruiter-edit-job/${job.id}`}>
                             <img src={editlogo}  title="Edit Job" />&nbsp;
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
-                          </div>
+                          </div> */}
                           <Link to="/recruiter-appliedapplicants" onClick={() => setSelectedJobId(job.id)}>
                             <button
                               type="button"
@@ -212,7 +293,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                               className={`button-status ${job.status === 'Inactive' ? 'disabled-button' : ''}`}
                               // disabled={job.status === 'Inactive'}
                             >
-                              View Applicants
+                              View Job Details
                             </button>
                           </Link>
                         </div>
