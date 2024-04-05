@@ -29,7 +29,19 @@ function RecruiterAllApplicants() {
   const [skillName, setSkillName] = useState(null);
   const [minimumExperience, setMinimumExperience] = useState(0);
   const [location, setLocation] = useState(null);
+  const [minimumQualification, setMinimumQualification] = useState(null);
   const [count, setCount] = useState(0);
+  const [selectedApplicants, setSelectedApplicants] = useState([]);
+
+  const handleCheckboxChange2 = (applyjobid) => {
+   // const index = selectedApplicants.indexOf(applyjobid);
+      console.log(applyjobid);
+   
+      setSelectedApplicants([...selectedApplicants, applyjobid]);
+    
+  };
+
+  
  
   const [filterOptions, setFilterOptions] = useState({
     nameFilter: false,
@@ -39,7 +51,10 @@ function RecruiterAllApplicants() {
     statusFilter: false,
     skillFilter: false,
     experienceFilter: false,
-    locationFilter: false
+    locationFilter: false,
+    minimumQualification: false
+    
+
   });
  
   const handleCheckboxChange = (event) => {
@@ -56,7 +71,7 @@ function RecruiterAllApplicants() {
   const applyFilter = () => {
     // Construct the URL with filter options
     // let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}`;
-    let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}`;
+    let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
    
    // Construct object for body
 const body = {
@@ -67,7 +82,8 @@ const body = {
   "applicantStatus": filterOptions.statusFilter === "contains" ? "contains" : filterOptions.statusFilter === "is" ? "is" : null,
   "skillName": filterOptions.skillFilter === "contains" ? "contains" : filterOptions.skillFilter === "is" ? "is" : null,
   "minimumExperience": filterOptions.experienceFilter === "greaterThan" ? "greaterThan":filterOptions.experienceFilter === "lessThan" ? "lessThan" : filterOptions.experienceFilter === "is" ? "is" : null,
-  "location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null
+  "location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null,
+  "minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
 };
     console.log(filterOptions);
     // Add your JWT token here
@@ -160,6 +176,9 @@ const handleTextFieldChange = (e) => {
       break;
     case "location": // Assuming you have an input field with id "location"
       setLocation(value);
+      break;
+      case "minimumQualification": // Assuming you have an input field with id "minimumQualification"
+      setMinimumQualification(value);
       break;
     default:
       break;
@@ -290,37 +309,62 @@ const handleTextFieldChange = (e) => {
         locationFilter: value
       }));
       break;
+      case "minimumQualification":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          minimumQualification: value
+        }));
+        break;  
     default:
       break;
   }
 };
-    const handleSelectChange = async (e) => {
-      const newStatus = e.target.value;
-     
-      try {
-        if (selectedApplicant && newStatus) {
-          const applyJobId = selectedApplicant.applyjobid;
-          const response = await axios.put(
-            `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
-          );
-          if (isMounted.current) {
-            const updatedApplicants = applicants.map((application) => {
-              if (application.applyjobid === applyJobId) {
-                return { ...application, applicantStatus: newStatus };
-              }
-              return application;
-            });
-            setApplicants(updatedApplicants);
-            setSelectedStatus(newStatus);
-            setSelectedApplicant(null);
-          }
-          alert(`Status changed to ${newStatus}`);
-          window.location.reload();
+const handleSelectChange = async (e) => {
+  const newStatus = e.target.value;
+ 
+  try {
+    if (selectedApplicants.length > 0 && newStatus) {
+      console.log("Selected Applicants:", selectedApplicants);
+      const updatePromises = selectedApplicants.map(async (selectedApplicant) => {
+        const applyJobId = selectedApplicant;
+        console.log("Apply Job ID:", applyJobId);
+        if (!applyJobId) {
+          console.error("applyjobid is undefined or null for:", selectedApplicant);
+          return null; // Skip this iteration if applyjobid is undefined or null
         }
-      } catch (error) {
-        console.error('Error updating status:', error);
+
+        const response = await axios.put(
+          `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
+        );
+        return { applyJobId, newStatus };
+      });
+
+      const updatedResults = await Promise.all(updatePromises);
+
+      // Filter out null values in case applyjobid was undefined or null
+      const filteredResults = updatedResults.filter(result => result !== null);
+      
+      if (isMounted.current) {
+        const updatedApplicants = applicants.map((application) => {
+          const updatedResult = filteredResults.find(result => result.applyJobId === application.applyjobid);
+          if (updatedResult) {
+            return { ...application, applicantStatus: updatedResult.newStatus };
+          }
+          return application;
+        });
+        setApplicants(updatedApplicants);
+        setSelectedStatus(newStatus);
+        setSelectedApplicants([]);
       }
-    };
+      
+      alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
+      window.location.reload();
+    }
+  } catch (error) {
+    console.error('Error updating status:', error);
+  }
+};
+
  
     const exportCSV = () => {
       // Extracting headers from the table, excluding the "Schedule Interview" column
@@ -376,19 +420,21 @@ const handleTextFieldChange = (e) => {
         <div className="container">
   <h4 className="total-applicants">Total Applicants: {count}</h4>
   <div className="controls">
-    <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
-      <option value="" disabled>
-        Change Status
-      </option>
-      <option value="Screening">Screening</option>
-      <option value="Shortlisted">Shortlisted</option>
-      <option value="Interviewing">Interviewing</option>
-      <option value="Selected">Selected</option>
-      <option value="selected">All the applicants</option>
-    </select>
-    <button className="export-buttonn" onClick={exportCSV}>
+    
+  <button className="export-buttonn" onClick={exportCSV}>
       ExportCSV
     </button>
+    <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
+    <option value="" disabled>
+        Change Status
+      </option>
+      <option  value="Screening">Screening</option>
+      <option  value="Shortlisted">Shortlisted</option>
+      <option  value="Interviewing">Interviewing</option>
+      <option  value="Selected">Selected</option>
+      
+    </select>
+    
   </div>
 </div>
        
@@ -413,7 +459,7 @@ const handleTextFieldChange = (e) => {
     onChange={handleCheckboxChange}
     style={{ width: 'auto' }} // Adjust the width of the checkbox
   />
-  <label className="label" htmlFor="nameFilter">Name</label>
+  <label className="label" htmlFor="nameFilter">&nbsp;Name</label>
   {filterOptions.nameFilter && (
     <>
     <div className="dropdown-container1">
@@ -441,7 +487,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.emailFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="emailFilter">Email</label>
+  <label className="label" htmlFor="emailFilter">&nbsp;Email</label>
   {filterOptions.emailFilter && (
     <>
       <div className="dropdown-container1">
@@ -466,7 +512,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.mobileFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="mobileFilter">MobileNumber</label>
+  <label className="label" htmlFor="mobileFilter">&nbsp;MobileNumber</label>
   {filterOptions.mobileFilter && (
     <>
       <div className="dropdown-container1">
@@ -491,7 +537,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.jobFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="jobFilter">Job Title</label>
+  <label className="label" htmlFor="jobFilter">&nbsp;Job Title</label>
   {filterOptions.jobFilter && (
     <>
       <div className="dropdown-container1">
@@ -516,7 +562,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.statusFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="statusFilter">ApplicantStatus</label>
+  <label className="label" htmlFor="statusFilter">&nbsp;ApplicantStatus</label>
   {filterOptions.statusFilter && (
     <>
       <div className="dropdown-container1">
@@ -566,7 +612,7 @@ const handleTextFieldChange = (e) => {
     checked={filterOptions.experienceFilter}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="experienceFilter">Experience</label>
+  <label className="label" htmlFor="experienceFilter">&nbsp;Experience</label>
   {filterOptions.experienceFilter && (
     <>
       <div className="dropdown-container1">
@@ -585,32 +631,32 @@ const handleTextFieldChange = (e) => {
   )}
 </div>
  
-{/* <div className="filter-option">
+<div className="filter-option">
   <input
     type="checkbox"
-    id="locationFilter"
-    checked={filterOptions.locationFilter}
+    id="minimumQualification"
+    checked={filterOptions.minimumQualification}
     onChange={handleCheckboxChange}
   />
-  <label className="label" htmlFor="locationFilter">Location</label>
-  {filterOptions.locationFilter && (
+  <label className="label" htmlFor="minimumQualification">&nbsp;Qualification</label>
+  {filterOptions.minimumQualification && (
     <>
       <div className="dropdown-container1">
       <select
                       className="checkbox"
-                      id="locationFilter"
-                      value={filterOptions.locationFilter || 'null'}
+                      id="minimumQualification"
+                      value={filterOptions.minimumQualification || 'null'}
                       onChange={handleSelectChange1}
                     >
         <option value="is">is</option>
         <option value="contains">contains</option>
       </select>
-      <input type="text" id="location" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
+      <input type="text" id="minimumQualification" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
       </div>
     </>
   )}
  
-</div> */}
+</div>
 <div>
   <button className="apply-button1" onClick={applyFilter}>Apply</button>
   <button className="reset-button1" onClick={resetFilter}>Reset</button>
@@ -650,18 +696,15 @@ const handleTextFieldChange = (e) => {
                       </thead>
                       <tbody>
                       {Array.isArray(applicants) && applicants.map((application) => (
-                          <tr key={application.email}>
+                          <tr key={application.applyjobid}>
                             <td>
-                              <input
-                                type="radio"
-                                value={application.applyjobid}
-                                checked={
-                                  selectedApplicant &&
-                                  selectedApplicant.applyjobid === application.applyjobid
-                                }
-                                onChange={() => setSelectedApplicant(application)}
-                                name={`applicantRadio-${application.applyjobid}`}
-                              />
+                            <input
+  type="checkbox"
+  value={application.applyjobid}
+  checked={selectedApplicants.includes(application.applyjobid)}
+  onChange={() => handleCheckboxChange2(application.applyjobid)} // Pass only the application ID to the handler function
+  name={`applicantCheckbox-${application.applyjobid}`}
+/>
                             </td>
                             {/* <td><Link to={`/viewapplicant/${application.id}`} >View applicant</Link></td> */}
                             {/* <td>
