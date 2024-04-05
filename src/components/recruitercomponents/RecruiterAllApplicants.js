@@ -40,7 +40,15 @@ function RecruiterAllApplicants() {
       setSelectedApplicants([...selectedApplicants, applyjobid]);
     
   };
-
+  const handleSelectAll = (event) => {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      const allIds = applicants.map(application => application.applyjobid);
+      setSelectedApplicants(allIds);
+    } else {
+      setSelectedApplicants([]);
+    }
+  };
   
  
   const [filterOptions, setFilterOptions] = useState({
@@ -124,9 +132,24 @@ const body = {
                 ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
             }
           },
-            { data: 'name' },
-            { data: 'email' },
-            { data: 'mobilenumber' },
+          { 
+            data: 'name',
+            render: function(data, type, row) {
+              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+            }
+          },
+          { 
+            data: 'email',
+            render: function(data, type, row) {
+              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+            }
+          },
+          { 
+            data: 'mobilenumber',
+            render: function(data, type, row) {
+              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+            }
+          },
             { data: 'jobTitle' },
             { data: 'applicantStatus' },
             { data: 'experience' },
@@ -679,8 +702,13 @@ const handleSelectChange = async (e) => {
                     <table ref={tableref} className="responsive-table">
                       <thead>
                         <tr>
-                          <th></th>
-                          {/* <th >Verify </th> */}
+                          <th>
+                            <input
+                              type="checkbox"
+                              onChange={handleSelectAll}
+                              checked={selectedApplicants.length === applicants.length}
+                            />
+                          </th>
                  
                           <th>Name</th>
                           <th>Email</th>

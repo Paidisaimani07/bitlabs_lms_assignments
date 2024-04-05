@@ -53,8 +53,8 @@ export default function JobApplicantAlerts() {
             <ul>
               {jobAlerts.map(alert => (
                 <li key={alert.alertsId} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
-                  <Link to="/recruiter-allapplicants" className="tf-effect">
-                  {/* <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link"> */}
+                  {/* <Link to="/recruiter-allapplicants" className="tf-effect"> */}
+                  <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link">
                   {/* <Link to={`/appliedapplicantsbasedonjob/1`} className="custom-link"> */}
                   <h4>
                         <a className="noti-icon">
