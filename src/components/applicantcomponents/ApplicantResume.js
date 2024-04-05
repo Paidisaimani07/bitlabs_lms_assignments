@@ -20,7 +20,7 @@ const ApplicantResume = () => {
     console.log("1")
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const response = await fetch(`${apiUrl}/applicant-pdf/getresume/${user.id}`, {
+      const response = await fetch(`${apiUrl}/resume/pdf/${user.id}`, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
         },

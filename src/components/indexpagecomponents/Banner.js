@@ -19,11 +19,69 @@ export default function Banner() {
               registrations daily, with no subscriptions or user licences.
             </p>
           </div>
+          {/* Added buttons */}
+          <div>
+            <a
+              href="/candidate"
+              style={{
+                color: '#FFFFFF',
+                backgroundColor: '#f97316',
+                border: '1px solid #f97316',
+                padding: '10px 10px 10px 30px',
+                borderRadius: '8px',
+                display: 'inline-flex',
+                width: '130px',
+                textAlign: window.innerWidth >= 320 && window.innerWidth <= 462 ? 'center' : '',
+                marginRight: '10px', // Added margin between buttons
+              }}
+              onMouseOver={(e) => {
+                e.target.style.color = '#FFFFFF';
+                e.target.style.backgroundColor = '#EE6D12';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.color = '#FFFFEF';
+                e.target.style.backgroundColor = '#f97316';
+              }}
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              <div class="btn-dowload">
+                Find Jobs
+              </div>
+            </a>
+            <a
+              href="/recruiter"
+              style={{
+                color: '#f97316',
+                backgroundColor: 'white',
+                border: '1px solid #f97316',
+                padding: '10px 10px 10px 30px',
+                borderRadius: '8px',
+                display: 'inline-flex',
+                textAlign: 'center',
+                width: '170px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.color = '#FFFFFF';
+                e.target.style.backgroundColor = '#f97316';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.color = '#f97316';
+                e.target.style.backgroundColor = 'white';
+              }}
+              onClick={() => {
+                localStorage.clear();
+              }}
+            >
+              Find Candidates
+            </a>
+          </div>
         </div>
       </div>
       <div className="col-lg-5">
         <div className="wd-review-job widget-counter sl7">
-          <div className="thumb3">
+        <div className="thumb3">
             <div className="trader-box sl7">
               <div className="content">
                 <h3 className="number wrap-counter">
@@ -81,12 +139,13 @@ export default function Banner() {
             <div className="icon4 ani6">
               <img src="images/review/icon2.png" alt="images" />
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
     <section>
       <div className="bg-pri1 wrap-count">
         <div className="tf-container">

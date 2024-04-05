@@ -256,6 +256,14 @@ useEffect(() => {
         <div className="col-md-12">
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
+            {window.innerWidth < 768 && (
+              <div className="hamburger-icon" onClick={handleToggleMenu}>
+                <span />
+                <span />
+                <span />
+              </div>
+            )}
+            <span style={{width:'20px',height:'2px'}}></span>
               <div id="logo" className="logo">
                 <a href="/applicanthome">
                   <img
@@ -318,7 +326,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
-    <div className="btn header-item " id="left-menu-btn">
+    {/* <div className="btn header-item " id="left-menu-btn">
     {window.innerWidth < 768 && (
             <span className="hamburger-icon" onClick={handleToggleMenu}>
               <span />
@@ -326,7 +334,7 @@ useEffect(() => {
               <span />
             </span>
           )}
-    </div>
+    </div> */}
   </header>
   {(isOpen &&
   <div className="left-menu" >
@@ -385,12 +393,12 @@ useEffect(() => {
         <span className="dash-titles">Job Alerts</span>
       </Link>
     </li>
-          <li>
+          {/* <li>
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
             </Link>
-          </li>
+          </li> */}
           <li>
           {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
     Build Your Resume
@@ -398,9 +406,9 @@ useEffect(() => {
 <ResumeBuilder loginUrl={loginUrl} /> */}
 </li>
 <li>
-            <Link to="#" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+            <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
-              <span className="dash-titles">Build Your Resume</span>
+              <span className="dash-titles">My Resume</span>
             </Link>
           </li>
         </ul>
