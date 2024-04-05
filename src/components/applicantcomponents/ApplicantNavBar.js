@@ -398,7 +398,7 @@ useEffect(() => {
 <ResumeBuilder loginUrl={loginUrl} /> */}
 </li>
 <li>
-            <Link to="#" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+            <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">Build Your Resume</span>
             </Link>
