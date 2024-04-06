@@ -25,7 +25,7 @@ function RecruiterPostJob() {
   // ]);
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [skillsRequired, setSkillsRequired] = useState([]);
-  const [jobHighlights, setJobHighlights] = useState("");
+  // const [jobHighlights, setJobHighlights] = useState("");
   const [description, setDescription] = useState("");
   const [uploadDocument, setUploadDocument] = useState(null);
   const [image, setImage] = useState(null);
@@ -50,8 +50,8 @@ function RecruiterPostJob() {
       industryType,
       minimumQualification,
       specialization,
-      skillsRequired,
-      jobHighlights,
+      skillsRequired: formattedSkillsRequired,
+      // jobHighlights,
       description,
       uploadDocument,
     };
@@ -101,9 +101,9 @@ function RecruiterPostJob() {
     location: '',
     minimumQualification: '',
     description: '',
-    skills:'',
+    skills: '',
     skillsRequired: [],
-    jobHighlights: '',
+    // jobHighlights: '',
     description: '',
     uploadDocument: '',
     specialization: '',
@@ -120,7 +120,7 @@ function RecruiterPostJob() {
     setMinimumQualification('');
     setSpecialization('');
     setSkillsRequired([]);
-    setJobHighlights('');
+    // setJobHighlights('');
     setDescription('');
     setUploadDocument(null);
     setFileName('No selected file');
@@ -136,9 +136,12 @@ function RecruiterPostJob() {
       errors.jobTitle = '';
     }
     if (!minimumExperience.trim()) {
+     // alert(minimumExperience);
+      setMinimumExperience('');
       isValid = false;
       errors.minimumExperience = 'Minimum experience is required.';
     } else {
+      //alert(minimumExperience);
       errors.minimumExperience = '';
     }
     if (!maximumExperience.trim()) {
@@ -192,9 +195,9 @@ function RecruiterPostJob() {
       errors.skills = 'Skills are required';
       isValid = false;
     } else {
-      errors.skills=""; // Clear the error message if skills are filled
+      errors.skills = ""; // Clear the error message if skills are filled
     }
-  
+
 
     if (industryType && industryType.trim().length < 2) {
       isValid = false;
@@ -212,14 +215,14 @@ function RecruiterPostJob() {
       }));
       return isValid;
     }
-    if (jobHighlights && jobHighlights.trim().length < 3) {
-      isValid = false;
-      setFormErrors((prevErrors) => ({
-        ...prevErrors,
-        jobHighlights: 'Job highlights must be at least 3 characters long.',
-      }));
-      return isValid;
-    }
+    // if (jobHighlights && jobHighlights.trim().length < 3) {
+    //   isValid = false;
+    //   setFormErrors((prevErrors) => ({
+    //     ...prevErrors,
+    //     jobHighlights: 'Job highlights must be at least 3 characters long.',
+    //   }));
+    //   return isValid;
+    // }
     if (!description.trim() || description.trim().length < 15) {
       errors.description = 'Description is required and must be at least 15 characters long.';
       isValid = false;
@@ -238,25 +241,79 @@ function RecruiterPostJob() {
     }));
   };
   const handleMinimumExperienceChange = (e) => {
-    setMinimumExperience(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      minimumExperience: '',
-    }));
+    const value = e.target.value;  
+    // Check if the input value contains only numeric characters
+    if (/^\d*$/.test(value)) {
+      setMinimumExperience(value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        minimumExperience: '',
+      }));
+    } else {
+      setMinimumExperience('');
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        minimumExperience: 'Minimum experience must be a valid number.',
+      }));
+    }
   };
   const handleMaximumExperienceChange = (e) => {
-    setMaximumExperience(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      maximumExperience: '',
-    }));
+    const value = e.target.value;  
+    // Check if the input value contains only numeric characters
+    if (/^\d*$/.test(value)) {
+      setMaximumExperience(value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        maximumExperience: '',
+      }));
+    } else {
+      setMaximumExperience('');
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        maximumExperience: 'Maximum experience must be a valid number.',
+      }));
+    }
   };
+  const handleMaxSalaryChange = (e) => {
+    const value = e.target.value;
+  
+  //  console.log('Input value:', value);
+  
+    // Check if the input value contains only numeric characters and at most one decimal point
+    if (/^\d*\.?\d*$/.test(value)) {
+      setMaxSalary(value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        maxSalary: '',
+      }));
+    } else {
+      setMaxSalary('');
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        maxSalary: 'Max salary must be a valid number.',
+      }));
+    }
+  };
+  
   const handleMinSalaryChange = (e) => {
-    setMinSalary(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      minSalary: '',
-    }));
+    const value = e.target.value;
+  
+  //  console.log('Input value:', value);
+  
+    // Check if the input value contains only numeric characters and at most one decimal point
+    if (/^\d*\.?\d*$/.test(value)) {
+      setMinSalary(value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        minSalary: '',
+      }));
+    } else {
+      setMinSalary('');
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        minSalary: 'Min salary must be a valid number.',
+      }));
+    }
   };
   const handleLocationChange = (e) => {
     setLocation(e.target.value);
@@ -293,30 +350,22 @@ function RecruiterPostJob() {
       specialization: '',
     }));
   };
- 
-  const handleJobHighlightsChange = (e) => {
-    setJobHighlights(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      jobHighlights: '',
-    }));
-  };
+
+  // const handleJobHighlightsChange = (e) => {
+  //   setJobHighlights(e.target.value);
+  //   setFormErrors((prevErrors) => ({
+  //     ...prevErrors,
+  //     jobHighlights: '',
+  //   }));
+  // };
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
     setFormErrors((prevErrors) => ({
       ...prevErrors,
       description: '',
     }));
-  };
+  }; 
 
-  const handleMaxSalaryChange = (e) => {
-    setMaxSalary(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      maxSalary: '',
-    }));
-  };
-  
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {
       case 'B.Tech':
@@ -437,7 +486,7 @@ function RecruiterPostJob() {
   const handleSkillsChange = (selected) => {
     const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
     setSkillsRequired(skillsWithNames);
-  
+
     if (skillsWithNames.length > 0) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
@@ -531,9 +580,9 @@ function RecruiterPostJob() {
                     <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <div id="item_category" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Minimum Experience<span className="color-red">*</span></label>
-                          <input type="number"
-                            placeholder="Min"
+                          <label className="title-user fw-7">Minimum Experience (in Years)<span className="color-red">*</span></label>
+                          <input type="text"
+                            placeholder="4"
                             className="input-form"
                             value={minimumExperience}
                             onChange={handleMinimumExperienceChange}
@@ -546,9 +595,9 @@ function RecruiterPostJob() {
                       </div>
                       <div className="col-lg-6 col-md-6">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Maximum Experience<span className="color-red">*</span></label>
-                          <input type="number"
-                            placeholder="Max"
+                          <label className="title-user fw-7">Maximum Experience (in Years)<span className="color-red">*</span></label>
+                          <input type="text"
+                            placeholder="6"
                             className="input-form"
                             value={maximumExperience}
                             onChange={handleMaximumExperienceChange}
@@ -563,9 +612,9 @@ function RecruiterPostJob() {
 
                       <div className="col-lg-6 col-md-12">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Minimum Salary<span className="color-red">*</span></label>
+                          <label className="title-user fw-7">Minimum Salary (in LPA)<span className="color-red">*</span></label>
                           <input type="text"
-                            placeholder="Min"
+                            placeholder="2.4"
                             className="input-form"
                             value={minSalary}
                             onChange={handleMinSalaryChange}
@@ -578,10 +627,10 @@ function RecruiterPostJob() {
                       </div>
                       <div className="col-lg-6 col-md-12">
                         <div id="item_2" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Maximum Salary<span className="color-red">*</span></label>
+                          <label className="title-user fw-7">Maximum Salary (in LPA)<span className="color-red">*</span></label>
                           <input
                             type="text"
-                            placeholder="Max"
+                            placeholder="6.5"
                             className="input-form"
                             value={maxSalary}
                             onChange={handleMaxSalaryChange}
@@ -681,17 +730,17 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      {/* <div className="col-lg-6 col-md-12">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Job Highlights</label>
-                          {/* <input type="text"
+                          <label className="title-user fw-7">Job Highlights</label> */}
+                      {/* <input type="text"
                          className="input-form"
                          placeholder="Job key points"
                          value={jobHighlights}
                          onChange={handleJobHighlightsChange}
                        
                   /> */}
-                          <textarea
+                      {/* <textarea
                             className="input-form"
                             placeholder="Job Highlights"
                             value={jobHighlights}
@@ -702,7 +751,7 @@ function RecruiterPostJob() {
                           )}
 
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-lg-6 col-md-12">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">
@@ -723,7 +772,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                 
+
                       <div className="col-lg-6 col-md-12">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">
@@ -752,17 +801,17 @@ function RecruiterPostJob() {
 
                       </div>
                     </div>
-                  </div>
-                  <div className="form-infor flex flat-form">
-                    <div className="info-box info-wd">
+
+                    <div className="form-infor flex flat-form">
+                      <div className="info-box info-wd">
+                      </div>
                     </div>
-                  </div>
-                  <div className="form-group">
-                    <button type="submit" onClick={handleSubmit} className='button-status'>Post Job</button>
+                    <div className="form-group">
+                      <button type="submit" onClick={handleSubmit} className='button-status'>Post Job</button>
+                    </div>
                   </div>
                 </div>
               </div>
-              {/* </div> */}
             </div>
           </form>
         </section>
