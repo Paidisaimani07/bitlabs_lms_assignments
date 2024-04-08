@@ -136,7 +136,7 @@ const Nav = () => {
              <div className="header-ct-right st-1">
   <div className="header-customize-item1 account">
   <div className="sub-account-item1 ">
-    
+{/*     
       <a
         href="/candidate"
         
@@ -166,12 +166,12 @@ const Nav = () => {
         <div class="btn-dowload">
         Find Jobs
         </div>
-      </a>
+      </a> */}
     </div>
     </div>
     <div className="header-customize-item2 account2">
     <div className="sub-account-item">
-      <a
+      {/* <a
         href="/recruiter"
         style={{
           color: '#f97316',
@@ -197,7 +197,7 @@ const Nav = () => {
         }}
       >
         Find Candidates
-      </a>
+      </a> */}
     </div>
   </div>
 </div>
