@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import leftArrow from '../../images/arrow-left.png';
 export default function JobApplicantAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();
@@ -32,6 +33,11 @@ export default function JobApplicantAlerts() {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
+                <div className="back-to-previous pb-4">
+                  <Link to="/recruiterhome" className="back-link" >
+                    <img src={leftArrow} alt="Back"  />BACK
+                  </Link>
+                </div>
                 <div className="title-dash flex2">Your Job Alerts</div>
               </div>
             </div>
@@ -47,8 +53,8 @@ export default function JobApplicantAlerts() {
             <ul>
               {jobAlerts.map(alert => (
                 <li key={alert.alertsId} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
-                  <Link to="/recruiter-allapplicants" className="tf-effect">
-                  {/* <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link"> */}
+                  {/* <Link to="/recruiter-allapplicants" className="tf-effect"> */}
+                  <Link to={`/appliedapplicantsbasedonjob/${alert.id}`} className="custom-link">
                   {/* <Link to={`/appliedapplicantsbasedonjob/1`} className="custom-link"> */}
                   <h4>
                         <a className="noti-icon">

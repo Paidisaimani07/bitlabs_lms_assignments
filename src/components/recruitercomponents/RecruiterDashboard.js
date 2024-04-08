@@ -3,6 +3,11 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { useNavigate } from "react-router-dom";
+import { Link, useLocation } from 'react-router-dom';
+import Postjobimg from '../../images/user/avatar/Postjobimg.png';
+
+
 
 function RecruiterDashboard() {
     const [token, setToken] = useState('');
@@ -12,7 +17,9 @@ function RecruiterDashboard() {
     const [contJobHires, setJobHires] = useState(0);
     const [countInterviews, setInterviews] = useState(0);
     const [applicants, setApplicants] = useState([]);
-
+    const navigate = useNavigate();
+    const location = useLocation();
+   
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
@@ -100,6 +107,18 @@ function RecruiterDashboard() {
         const todayTimestamp = new Date().setHours(0, 0, 0, 0);
         return interviewTimestamp >= todayTimestamp && interviewTimestamp < todayTimestamp + 24 * 60 * 60 * 1000;
       });
+      const jobopenings = () => {
+    
+        navigate("/recruiter-jobopenings");
+      };
+      const allapplicants = () => {
+        navigate("/recruiter-allapplicants");
+      };
+      const interviews = () => {
+        navigate("/recruiter-applicantinterviews");
+      };
+      
+
   return (
     <div>
 <div className="dashboard__content">
@@ -119,7 +138,7 @@ function RecruiterDashboard() {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="wrap-icon widget-counter">
-            <div className="box-icon wrap-counter flex">
+            <div className="box-icon wrap-counter flex" onClick={jobopenings}>
               <div className="icon style1">
                 <span className="icon-bag">
                   <svg
@@ -146,10 +165,17 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3>{contActiveJobs}</h3>
-                <h4 className="title-count">Active Jobs</h4>
+              <h4
+        className="title-count"
+        onClick={jobopenings}
+        style={{ cursor: "pointer" }}
+      >
+        Active Jobs
+      </h4>
+                {/* <h4 className="title-count">Active Jobs</h4> */}
               </div>
             </div>
-            <div className="box-icon wrap-counter flex">
+            <div className="box-icon wrap-counter flex" onClick={allapplicants}>
               <div className="icon style2">
                 <span className="icon-bag">
                   <svg
@@ -184,10 +210,17 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3>{contJobApplicants}</h3>
-                <h4 className="title-count">Job Applicants</h4>
+              <h4
+        className="title-count"
+        onClick={allapplicants}
+        style={{ cursor: "pointer" }}
+      >
+        Applicants
+      </h4>
+                {/* <h4 className="title-count">Applicants</h4> */}
               </div>
             </div>
-            <div className="box-icon wrap-counter flex">
+            {/* <div className="box-icon wrap-counter flex">
               <div className="icon style3">
                 <span className="icon-bag">
                   <svg
@@ -210,8 +243,8 @@ function RecruiterDashboard() {
               <h3>{contJobHires}</h3>
                 <h4 className="title-count">Hires</h4>
               </div>
-            </div>
-            <div className="box-icon wrap-counter flex">
+            </div> */}
+            {/* <div className="box-icon wrap-counter flex" onClick={interviews}>
               <div className="icon style4">
                 <span className="icon-bag">
                   <svg
@@ -230,15 +263,58 @@ function RecruiterDashboard() {
               </div>
               <div className="content">
               <h3> {countInterviews}</h3>
-                <h4 className="title-count">Interviews</h4>
+              <h4
+        className="title-count"
+        onClick={interviews}
+        style={{ cursor: "pointer" }}
+      >
+        Interviews
+      </h4>
+                
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
     </div>
+    {/*New Change In the Dash Board*/}
+    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }}>
+    <div>
+        <h2 className="heading" style={{ fontFamily: "Plus Jakarta Sans", fontSize: "30px", fontWeight: "500", lineHeight: "25px", textAlign: "left", marginBottom: "20px" }}>Find the right candidate</h2>
+        <div className="">
+            <span className=""></span>
+        </div>
+        <div className="content">
+          
+            <h4 className="title-count1" style={{paddingRight:"80px",color: "#8D8D8D"}}>
+            Get access to certified entry-level candidates for your hiring requirements.
+            </h4>
+            
+        </div>
+        
+        <Link
+  to="/recruiter-postjob"
+  className={`button-link ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+>
+
+            <span className=""></span>
+            <span className="button button-custom">Post <span className="lowercase">a</span> Job</span>
+
+        </Link>
+    </div>
+    {/* <img src={Postjobimg} alt="Post Job Image" width="200" height="300" style={{ marginLeft: "auto" }} /> */}
+    <img 
+  src={Postjobimg}
+  alt="Post Job Image"
+  className='Post-Job-Image'
+  width="200"
+  height="300"
+/>
+</div>
+
+
   </section>
-  <section className="flat-dashboard-applicants">
+  {/* <section className="flat-dashboard-applicants">
         <div className="themes-container">
           <div className="row">
             <div className="col-lg-12 col-md-12">
@@ -254,7 +330,7 @@ function RecruiterDashboard() {
                           <th>Job Title</th>
                           <th>Interview Date and Time</th>
                           <th>Location</th>
-                          {/* <th>Interview Link</th> */}
+                          
                         </tr>
                       </thead>
                       <tbody>
@@ -267,11 +343,7 @@ function RecruiterDashboard() {
                             <td style={{ paddingBottom: '10px' }}> <h6>{interview.jobTitle}</h6></td>
                             <td>{formatDateTime(interview.timeAndDate)}</td>
                             <td className="map color-4">{interview.location}</td>
-                            {/* <td>
-                              <a href={interview.interviewLink} target="_blank" rel="noopener noreferrer">
-                                {interview.interviewLink}
-                              </a>
-                            </td> */}
+                            
                           </tr>
                         ))}
                       </tbody>
@@ -285,9 +357,9 @@ function RecruiterDashboard() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <br />
-  <section className="flat-dashboard-applicants">
+  {/* <section className="flat-dashboard-applicants">
         <div className="themes-container">
           <div className="row">
             <div className="col-lg-12 col-md-12">
@@ -303,7 +375,7 @@ function RecruiterDashboard() {
                           <th>Job Title</th>
                           <th>Interview Date and Time</th>
                           <th>Location</th>
-                          {/* <th>Interview Link</th> */}
+                          
                         </tr>
                       </thead>
                       <tbody>
@@ -316,11 +388,7 @@ function RecruiterDashboard() {
                             <td> <h6>{interview.jobTitle}</h6></td>
                             <td>{formatDateTime(interview.timeAndDate)}</td>
                             <td className="map color-4">{interview.location}</td>
-                            {/* <td>
-                              <a href={interview.interviewLink} target="_blank" rel="noopener noreferrer">
-                                {interview.interviewLink}
-                              </a>
-                            </td> */}
+
                           </tr>
                         ))}
                       </tbody>
@@ -335,7 +403,7 @@ function RecruiterDashboard() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 <br />
 </div>
 

@@ -229,7 +229,7 @@ input::-moz-focus-inner {
 body {
   font: 14px/25px "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
-  background-color: #fff;
+  background:#fff;
   color: #202020;
 }
 
@@ -1505,7 +1505,7 @@ input[type="color"],
   display: flex;
   gap: 9px;
   align-items: center;
-  padding-right: 21px;
+  padding-right: -50px;
   position: relative;
   cursor: pointer;
   height: 80px;
@@ -1552,7 +1552,7 @@ input[type="color"],
 
 .sticky-area-wrap .header-ct-right .account .sub-account-item {
   width: 100%;
-  padding: 12px;
+  padding: 5px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-weight: 500;
   font-size: 16px;
@@ -3054,6 +3054,7 @@ input[type="color"],
   z-index: 9999;
 }
 
+
 #scroll-top:hover {
   transform: translateY(-3px);
 }
@@ -3302,16 +3303,17 @@ input[type="color"],
   font-size: 14px;
   text-align: center;
   padding: 10px 20px;
-  border-radius: 4px;
+  border-radius: 8px;
  
 }
 .table-container .reset-button1 {
-  background-color: #F97316;
-  color: white;
+  background-color: #FFFFFF;
+  color: #F97316;
   font-size: 14px;
   text-align: center;
   padding: 10px 20px;
-  border-radius: 4px;
+  border-radius: 8px;
+  border-color: #F97316;
  
 }
  
@@ -3335,6 +3337,7 @@ input[type="color"],
   background-color: #F97316; /* Darker Green */
   color: white;
 }
+
  
 .container {
   display: flex;
@@ -3357,33 +3360,70 @@ input[type="color"],
 }
  
 .dashboard__content .status-select {
-  margin-right: 8px;
+  margin-left: 8px;
   background-color: #F97316;
   height: 40px;
-  color: #fff;
-  border: none;
+  color: #FFFFFF;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 16px;
   font-family: sans-serif;
-
+  border-color: #F97316;
   width: 150px;
+  stroke: 1px;
 
+}
+/* Style options */
+.dashboard__content .status-select option {
+  background-color: white; /* Set background color to white */
+  color: black; /* Set text color */
+}
+
+/* Hover effect on options */
+.dashboard__content .status-select option:hover {
+  background-color: #F97316; /* Change background color to orange on hover */
+  color: white; /* Change text color to white on hover */
 }
  
 .dashboard__content .export-buttonn {
-  background-color: #F97316;
-  color: #fff;
-  border: none;
+  background-color: #FFFFFF;
+  color: #F97316;
   height: 40px;
   padding: 8px 12px;
-  border-radius: 4px;
+  border-radius: 8px;
   font-size: 16px;
   font-weight: 400;
+  border-color: #F97316;
   font-family: sans-serif;
-
   width: 150px;
+  stroke: 1px;
 
+}
+.dashboard__content .status-select:hover,
+.dashboard__content .export-buttonn:hover {
+  background-color: #F97316; /* Background orange on hover */
+  color: #FFFFFF; /* White text color on hover */
+}
+.profile-status-toggle .job-looking-status {
+  font: 16px/28px "Plus Jakarta Sans", sans-serif;
+  font-style: normal;
+  font-variant-numeric: normal;
+  font-variant-east-asian: normal;
+  font-kerning: auto;
+  font-optical-sizing: auto;
+  font-feature-settings: normal;
+  font-variation-settings: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 28px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+@media screen and (max-width: 465px) {
+  .sub-account .profile-status-toggle span {
+    font-size: 14px; /* Decrease the font size to 14px */
+    /* line-height: 24px; */
+  } 
 }
 
 @media (max-width: 455px) {
@@ -3395,6 +3435,26 @@ input[type="color"],
 
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
-    font-size: 14px;
+
+    font-size: 12px;
+    line-height: 30px;
+
   }
 }
+
+.title-dashboard .back-to-previous {
+  margin-top: 1px;  
+  align-items: center;
+  display: flex;
+}
+.title-dashboard .back-to-previous .back-link { 
+  font-size: 12px;
+  line-height: 30px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: #0073dd;
+  font-weight: bold;
+  align-items: center;
+  display: flex;
+  align-items: center;
+}
+ 

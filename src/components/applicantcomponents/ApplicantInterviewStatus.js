@@ -3,10 +3,13 @@ import axios from 'axios';
 import logoCompany1 from '../../images/cty12.png';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-calendar-timeline';
 import 'react-calendar-timeline/lib/Timeline.css';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import leftArrow from '../../images/arrow-left.png';
+
+
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStatus, setJobStatus] = useState([]);
@@ -14,6 +17,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const { user } = useUserContext();
   const applicantId = user.id;
   const location = useLocation();
+  const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId');
   useEffect(() => {
     const fetchData = async () => {
@@ -91,6 +95,32 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+
+  const handleApplyNowClick = () => {
+    if (jobDetails && jobDetails.id) {
+      // Construct the API URL
+      const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
+      console.log('API Endpoint:', apiEndpoint); // Log API endpoint
+      // Call your API using fetch or any other method (e.g., axios)
+      axios.get(apiEndpoint)
+        .then(response => {
+          // Handle response if needed
+          console.log('API Response:', response);
+          const { body } = response.data;
+        setLoading(false);
+        if (body) {
+          setJobDetails(body);
+        }
+        })
+        .catch(error => {
+          // Handle error if needed
+          console.error('API Error:', error);
+        });
+    } else {
+      console.error('No job details or jobId available');
+    }
+  };
+
   // const handleApplyNowClick = () => {
   //   if (jobDetails && jobDetails.id) {
   //     // Construct the API URL
@@ -119,6 +149,12 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
 
+  const handleViewJobDetails = () => {
+    setSelectedJobId(selectedJobId);
+    // Navigate to the job details page programmatically
+    navigate(`/applicant-view-job?jobId=${jobId}`);
+  };
+
   return (
 <div>
       {loading ? null : (
@@ -128,6 +164,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
+<div className="back-to-previous pb-4">
+      <Link to="/applicant-applied-jobs" className="back-link" >
+          <img src={leftArrow} alt="Back"  />BACK
+      </Link>
+  </div>
 <div className="title-dash flex2">Job Status</div>
 </div>
 </div>
@@ -138,7 +179,6 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="themes-container">
 <div className="content-tab">
 <div className="inner">
-<br />
 <article className="job-article">
                     {jobDetails && (
 <div className="top-content">
@@ -151,10 +191,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div> */}
 <div className="box-content">
 <h4>
-<a href="#">{jobDetails.companyname}</a>
+<a href="javascript:void(0);">{jobDetails.companyname}</a>
 </h4>
 <h3>
-<a href="#">{jobDetails.jobTitle}</a>
+<a href="javascript:void(0);">{jobDetails.jobTitle}</a>
 </h3>
 <ul>
 <li>
@@ -199,15 +239,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <ul className="job-tag">
 <li>
       {jobDetails && (
-<Link
-          to="/applicant-view-job?jobId=${job.id}"
-          onClick={() => setSelectedJobId(selectedJobId)}
-          className="button-status"
->
+        <button onClick={handleViewJobDetails} className="button-status">
           View Job Details
-</Link>
+        </button>
       )}
-</li>
+    </li>
 </ul>
 </div>
 </div>
@@ -241,5 +277,5 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
   );
 };
-export default ApplicantInterviewStatus;
 
+export default ApplicantInterviewStatus;

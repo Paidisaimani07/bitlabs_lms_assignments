@@ -20,18 +20,48 @@ function ApplicantNavBar() {
   const location = useLocation();
   const [url, setUrl] = useState('');
   const [loginUrl, setLoginUrl] = useState('');
-  
-  
+  const [loading, setLoading] = useState(true);
  
-  const toggleProfileStatus = async checked => {
+  useEffect(() => {
+    const fetchProfileStatus = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/applicant/${user.id}/profilestatus`);
+        setProfileStatus(response.data === 'active'); // Assuming the API returns 'active' or 'inactive'
+      } catch (error) {
+        console.error('Error fetching profile status:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileStatus();
+  }, [apiUrl, user.id]);
+
+  const toggleProfileStatus = async (checked) => {
     try {
-      // Make API call to update status in backend
-      await axios.post(`${apiUrl}/applicant/changeStatus/${user.id}`, { isActive: checked });
+      const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+      const response = await axios.post(
+        `${apiUrl}/applicant/changeStatus/${user.id}`,
+        { isActive: checked },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`, // Add authorization header with JWT token
+          },
+        }
+      );
+      
       setProfileStatus(checked);
+      localStorage.setItem('profileStatus', checked.toString());
+      window.location.reload();
     } catch (error) {
       console.error('Error updating profile status:', error);
+      // Rollback the change in UI if there's an error
+      setProfileStatus(!checked);
     }
   };
+
+
+
   const [requestData, setRequestData] = useState(null);
 
     useEffect(() => {
@@ -151,30 +181,55 @@ function ApplicantNavBar() {
       }
     }
   };
- const fetchAlertCount = async () => {
+//  const fetchAlertCount = async () => {
+//   try {
+//     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+//     setAlertCount(response.data);
+//     //window.location.reload();
+//   } catch (error) {
+//     console.error('Error fetching alert count:', error);
+//   }
+// };
+// useEffect(() => {
+//   const fetchAlertCount = async () => {
+//     try {
+//       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+//         headers: {
+//           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+//         },
+//       });
+//       setAlertCount(response.data);
+//     } catch (error) {
+//       console.error('Error fetching alert count:', error);
+//     }
+//   };
+//   fetchAlertCount();
+// }, [user.id]);
+
+const fetchAlertCount = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+      },
+    });
     setAlertCount(response.data);
-    window.location.reload();
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
 };
+
 useEffect(() => {
-  const fetchAlertCount = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
-      setAlertCount(response.data);
-    } catch (error) {
-      console.error('Error fetching alert count:', error);
-    }
-  };
+  // Fetch initial alert count
   fetchAlertCount();
+
+  // Set up polling interval
+  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+
+  // Clean up function to clear interval when component unmounts
+  return () => clearInterval(intervalId);
 }, [user.id]);
+
   return (
     <div>
   <div className="menu-mobile-popup">
@@ -201,6 +256,14 @@ useEffect(() => {
         <div className="col-md-12">
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
+            {window.innerWidth < 768 && (
+              <div className="hamburger-icon" onClick={handleToggleMenu}>
+                <span />
+                <span />
+                <span />
+              </div>
+            )}
+            <span style={{width:'20px',height:'2px'}}></span>
               <div id="logo" className="logo">
                 <a href="/applicanthome">
                   <img
@@ -224,31 +287,17 @@ useEffect(() => {
                
                   {/* <h4>Welcome {user.username}</h4> */}
                  
-                  <div className="profile-status-toggle" >
-                      <span style={{
-                          font: '16px/28px "Plus Jakarta Sans", sans-serif',
-                          fontStyle: 'normal',
-                          fontVariantNumeric: 'normal',
-                          fontVariantEastAsian: 'normal',
-                          fontKerning: 'auto',
-                          fontOpticalSizing: 'auto',
-                          fontFeatureSettings: 'normal',
-                          fontVariationSettings: 'normal',
-                          fontWeight: 500,
-                          fontSize: '16px',
-                          lineHeight: '28px',
-                          fontFamily: '"Plus Jakarta Sans", sans-serif',
-                      }}>
-                          {profileStatus ? 'Job Looking Status: Active' : 'Job Looking Status: Inactive'}
-                      </span>
- 
-                  {/* <span style={{ fontSize: '14px', fontWeight: 'bold', verticalAlign: 'middle' }}>Job Looking Status: {profileStatus ? 'Active' : 'Inactive'}</span> */}
-                      <Switch
-                      checked={profileStatus}
-                      onChange={toggleProfileStatus}
-                      size="small" // Set the size to "small"
-                      style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }} />
-                  </div>
+                  <div className="profile-status-toggle">
+                    <span className="job-looking-status">
+                    {profileStatus ? 'Job Looking Status: Active' : 'Job Looking Status: Inactive'}
+                   </span>
+                    <Switch
+                    checked={profileStatus}
+                    onChange={toggleProfileStatus}
+                    size="small"
+                    style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }}
+                    />
+                    </div>
                
                   <div className="sub-account-item">
                     <a href="/applicant-view-profile">
@@ -277,7 +326,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
-    <div className="btn header-item " id="left-menu-btn">
+    {/* <div className="btn header-item " id="left-menu-btn">
     {window.innerWidth < 768 && (
             <span className="hamburger-icon" onClick={handleToggleMenu}>
               <span />
@@ -285,7 +334,7 @@ useEffect(() => {
               <span />
             </span>
           )}
-    </div>
+    </div> */}
   </header>
   {(isOpen &&
   <div className="left-menu" >
@@ -344,12 +393,12 @@ useEffect(() => {
         <span className="dash-titles">Job Alerts</span>
       </Link>
     </li>
-          <li>
+          {/* <li>
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
             </Link>
-          </li>
+          </li> */}
           <li>
           {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
     Build Your Resume
@@ -357,9 +406,9 @@ useEffect(() => {
 <ResumeBuilder loginUrl={loginUrl} /> */}
 </li>
 <li>
-            <Link to="#" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+            <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
-              <span className="dash-titles">Build Your Resume</span>
+              <span className="dash-titles">My Resume</span>
             </Link>
           </li>
         </ul>

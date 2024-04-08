@@ -216,6 +216,117 @@
     transition: all 0.4s;
 }
 
+.flat-icon-dashboard .box-icon1 {
+    background-color: #fff;
+    width: 1000px; /* width: 1905px; */
+    height: 170px; /* height: 988px; */
+    gap: 0px; /* gap: 0px; */
+    opacity: 0px; /* opacity: 0px; */
+    margin-left: 20px;
+    margin-top: 20px;
+    padding: 21px 20px 19px 20px;
+    align-items: center;
+    border-radius: 8px;
+    transition: all 0.4s;
+}
+
+@media screen and (max-width: 1029px) and (min-width: 320px) {
+    .box-icon1 img {
+      width: 150px; /* Adjust the width as needed */
+      height: auto; /* Maintain aspect ratio */
+      margin-right:20px !important;
+    }
+    .box-icon1 {
+        width: 650px !important; /* width: 1905px; */
+    }
+  }
+   @media (max-width: 699px) {
+    .box-icon1 {
+        width: 550px !important; 
+        height: 250px !important; 
+    }
+    .Post-Job-Image{
+        display: block;
+        margin-top:180px !important;
+        position: absolute;
+        margin-left:200px !important;
+        
+       
+    }
+    .title-count1{
+        text-align: center !important;
+        margin-left: 30px !important;
+        font-size: 18px !important;
+    }
+  } 
+  @media (max-width: 578px) {
+    .box-icon1 {
+        width: 400px !important; 
+        height: 250px !important; 
+    }
+}
+@media screen and (max-width: 699px) and (min-width: 320px) {
+    .box-icon1 {
+        width: 380px !important; /* width: 1905px; */
+        height: 400px !important; /* height: 988px; */
+    }
+     .Post-Job-Image{
+        margin-left:100px !important;
+        width: 150px !important;
+        height:130px !important;
+        margin-top:80px !important;
+
+    }
+    .button-link {
+        background-color: #F97316;
+        padding-right: 0px;
+        display: inline-block;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 180px !important;
+        width:330px !important;
+        
+      }
+      .button-custom {
+    color: white;
+    font-family: "Plus Jakarta Sans";
+    font-size: 25px !important;
+    font-weight: 500 !important;
+    line-height: 50px !important;
+    text-align: center;
+    height: 50px; 
+    word-spacing: 10px; 
+}
+
+}
+.button-custom {
+    color: white;
+    font-family: "Plus Jakarta Sans";
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 35px;
+    text-align: center;
+    width: 1000px; 
+    height: 50px; 
+}
+
+  
+  .lowercase {
+    text-transform: lowercase;
+  }
+
+  .button-link {
+    background-color: #F97316;
+    padding-right: 0px;
+    display: inline-block;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 10px;
+    width:100px;
+  }
+  
+  
+
 .flat-icon-dashboard .box-icon:hover {
     -webkit-transform: translateY(calc(-1.5rem / 5));
     transform: translateY(calc(-1.5rem / 5));
@@ -318,6 +429,25 @@
 .flat-dashboard-dyagram .box-notifications .inner p {
     margin-right: 5px;
 }
+.filter-button {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 37px;
+    font-size: 15px;
+    border: 1px solid #000000; /* default stroke for secondary button */
+  }
+  
+  .filter-button.active {
+    background-color: #F97316; /* Primary button background color */
+    border: none; /* No border for primary button */
+  }
+  
+  .filter-button.inactive {
+    background-color: #FFFFFF; /* Secondary button background color */
+  }
 
 table {
     table-layout: auto;
@@ -558,6 +688,10 @@ tbody tr td:nth-child(2) {
     gap: 4px;
 }
 
+.dashboard .button-status1:hover {
+    background-color: #EE6D12;
+}
+
 .dashboard .button-status2 {
     background-color: #FFFFFF;
     font-weight: 700;
@@ -568,7 +702,7 @@ tbody tr td:nth-child(2) {
     height: 40px;
     align-items: center;
     height: 34px;
-    color:#292929;
+    color:#F97316;
     font-size:15px;
     line-height: 16px;
     font-weight: 500;
@@ -578,12 +712,13 @@ tbody tr td:nth-child(2) {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    /* border:1px solid #F97316; */
+    border:1px solid #F97316;
+    font-family: "Plus Jakarta Sans", sans-serif;
 }    
    
 
 .dashboard .button-status2:hover {
-    background-color: #f3f4f6;
+    background-color: #EE6D12;
     font-weight: 700;
     border-radius: 8px;
     display: inline-flex;
@@ -592,8 +727,8 @@ tbody tr td:nth-child(2) {
     height: 40px;
     align-items: center;
     height: 34px;
-    color:#292929;
-    font-size:15px;
+    color:#fff;
+    font-size:12px;
     line-height: 16px;
     font-weight: 500;
     padding: 8px 16px;
@@ -734,7 +869,7 @@ tbody tr td:nth-child(2) {
 @media screen and (min-width: 450px) and (max-width: 1400px) {
     .hamburger-icon {
         width: 15px;
-        height: 10px;
+        height: 25px;
     }
     .dashboard .btn {
         left: 240px;
@@ -4472,7 +4607,7 @@ font-size: 14px;
     background-color: #2980b9;
   }
 
-  @media (max-width: 379px) and (min-width: 320px) {
+@media (max-width: 379px) and (min-width: 320px) {
     .dashboard .button-status1 {
         width: calc(130px - 30px); /* Reduce the width by 30px */
         font-size:11px;
@@ -4482,6 +4617,19 @@ font-size: 14px;
     .dashboard .button-status1 {
         width: calc(130px - 30px); /* Reduce the width by 30px */
         font-size:11px;
+    }
+}
+
+@media (max-width: 379px) and (min-width: 320px) {
+    .dashboard .button-status2 {
+        width: calc(130px - 30px); /* Reduce the width by 30px */
+        font-size:12px;
+    }
+}
+@media (max-width: 1950px) and (min-width: 1025px) {
+    .dashboard .button-status2 {
+        width: calc(130px - 30px); /* Reduce the width by 30px */
+        font-size:12px;
     }
 }
 

@@ -96,10 +96,15 @@ export default function Footer() {
           </div>
           <div class="bottom">
         <div class="tf-container" align="center">
-                <div class="copyright">
+                {/* <div class="copyright">
                   <br /><br />
                   ©2023 TekWorks. All Rights Reserved.
-                </div>
+                </div> */}
+                <div className="copyright" style={{ marginLeft: '-25px' }}> {/* Adjust the value as needed */}
+  <br /><br />
+  ©2023 TekWorks. All Rights Reserved.
+</div>
+
         </div>
       </div>
         </div>
