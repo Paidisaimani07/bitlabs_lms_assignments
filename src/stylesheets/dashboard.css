@@ -429,6 +429,25 @@
 .flat-dashboard-dyagram .box-notifications .inner p {
     margin-right: 5px;
 }
+.filter-button {
+    display: inline-flex;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 37px;
+    font-size: 15px;
+    border: 1px solid #000000; /* default stroke for secondary button */
+  }
+  
+  .filter-button.active {
+    background-color: #F97316; /* Primary button background color */
+    border: none; /* No border for primary button */
+  }
+  
+  .filter-button.inactive {
+    background-color: #FFFFFF; /* Secondary button background color */
+  }
 
 table {
     table-layout: auto;
@@ -669,6 +688,10 @@ tbody tr td:nth-child(2) {
     gap: 4px;
 }
 
+.dashboard .button-status1:hover {
+    background-color: #EE6D12;
+}
+
 .dashboard .button-status2 {
     background-color: #FFFFFF;
     font-weight: 700;
@@ -679,7 +702,7 @@ tbody tr td:nth-child(2) {
     height: 40px;
     align-items: center;
     height: 34px;
-    color:#292929;
+    color:#F97316;
     font-size:15px;
     line-height: 16px;
     font-weight: 500;
@@ -689,12 +712,13 @@ tbody tr td:nth-child(2) {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    /* border:1px solid #F97316; */
+    border:1px solid #F97316;
+    font-family: "Plus Jakarta Sans", sans-serif;
 }    
    
 
 .dashboard .button-status2:hover {
-    background-color: #f3f4f6;
+    background-color: #EE6D12;
     font-weight: 700;
     border-radius: 8px;
     display: inline-flex;
@@ -703,8 +727,8 @@ tbody tr td:nth-child(2) {
     height: 40px;
     align-items: center;
     height: 34px;
-    color:#292929;
-    font-size:15px;
+    color:#fff;
+    font-size:12px;
     line-height: 16px;
     font-weight: 500;
     padding: 8px 16px;
@@ -845,7 +869,7 @@ tbody tr td:nth-child(2) {
 @media screen and (min-width: 450px) and (max-width: 1400px) {
     .hamburger-icon {
         width: 15px;
-        height: 10px;
+        height: 25px;
     }
     .dashboard .btn {
         left: 240px;
@@ -4583,7 +4607,7 @@ font-size: 14px;
     background-color: #2980b9;
   }
 
-  @media (max-width: 379px) and (min-width: 320px) {
+@media (max-width: 379px) and (min-width: 320px) {
     .dashboard .button-status1 {
         width: calc(130px - 30px); /* Reduce the width by 30px */
         font-size:11px;
@@ -4593,6 +4617,19 @@ font-size: 14px;
     .dashboard .button-status1 {
         width: calc(130px - 30px); /* Reduce the width by 30px */
         font-size:11px;
+    }
+}
+
+@media (max-width: 379px) and (min-width: 320px) {
+    .dashboard .button-status2 {
+        width: calc(130px - 30px); /* Reduce the width by 30px */
+        font-size:12px;
+    }
+}
+@media (max-width: 1950px) and (min-width: 1025px) {
+    .dashboard .button-status2 {
+        width: calc(130px - 30px); /* Reduce the width by 30px */
+        font-size:12px;
     }
 }
 

@@ -193,7 +193,9 @@ useEffect(() => {
           <li>
             <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
               <span className="icon-submit dash-icon"></span>
-              <span className="dash-titles">Posted jobs</span>
+
+              <span className="dash-titles">Posted Jobs</span>
+
             </Link>
           </li>
           <li>
