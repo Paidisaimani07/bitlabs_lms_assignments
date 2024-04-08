@@ -76,7 +76,7 @@ const fetchAlertCount = async () => {
   try {
     const response = await axios.get(`${apiUrl}/recuriters/appledjobs/${user.id}/unread-alert-count`);
     setAlertCount(response.data);
-   // window.location.reload();
+    window.location.reload();
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
@@ -96,18 +96,6 @@ useEffect(() => {
   };
   fetchAlertCount();
 }, [user.id]);
-
-useEffect(() => {
-  // Fetch initial alert count
-  fetchAlertCount();
-
-  // Set up polling interval
-  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
-
-  // Clean up function to clear interval when component unmounts
-  return () => clearInterval(intervalId);
-}, [user.id]);
-
   return (
 <div>
   <div className="menu-mobile-popup">
@@ -196,16 +184,18 @@ useEffect(() => {
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}>
               <span className="icon-work dash-icon"></span>
               <span className="dash-titles">Post Job</span>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
               <span className="icon-submit dash-icon"></span>
+
               <span className="dash-titles">Posted Jobs</span>
+
             </Link>
           </li>
           <li>
@@ -214,12 +204,12 @@ useEffect(() => {
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
-          <li>
+          {/* <li>
             <Link to="/recruiter-applicantinterviews" className={location.pathname === "/recruiter-applicantinterviews" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">Interviews</span>
             </Link>
-          </li>
+          </li> */}
           {/* <li>
             <Link to="/recruiter-team-member" className="tf-effect">
               <span className="icon-meeting dash-icon"></span>
@@ -254,6 +244,14 @@ useEffect(() => {
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
+          </li>
+          <li>
+          <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""} style={{ backgroundColor: "#F97316", paddingRight: "0px", display: "inline-block",borderRadius:"10px", textAlign: "center",marginTop:"20px",width:"250px" }}>
+  <span className=""></span>
+  <span className="" style={{ color: "white", fontFamily: "Plus Jakarta Sans", fontSize: "15px", fontWeight: "600", lineHeight: "25px", textAlign: "center" }}> Post <span style={{textTransform: "lowercase"}}>a</span> Job </span>
+ <span style={{ marginLeft: "50px",color:"white",fontWeight: 10 }}>➔</span>
+</Link>
+
           </li>
         </ul>
       </div>
