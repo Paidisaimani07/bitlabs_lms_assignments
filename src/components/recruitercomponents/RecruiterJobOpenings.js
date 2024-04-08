@@ -282,8 +282,9 @@ const getInactiveJobs = async () => {
                             <img src={editlogo}  title="Edit Job" />&nbsp;
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
-                          </div> */}
-                          <Link to="/recruiter-appliedapplicants" onClick={() => setSelectedJobId(job.id)}>
+
+                          </div>
+                          <Link to={`/appliedapplicantsbasedonjob/${job.id}`} className="custom-link">
                             <button
                               type="button"
                               // style={{
