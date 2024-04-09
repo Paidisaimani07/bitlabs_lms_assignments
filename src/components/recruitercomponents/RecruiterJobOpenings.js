@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import leftArrow from '../../images/arrow-left.png';
+import BackButton from '../common/BackButton';
 
 function RecruiterJobOpenings({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -176,11 +176,7 @@ const getInactiveJobs = async () => {
             <div className="row">
               <div className="col-lg-12 col-md-12 ">
                 <div className="title-dashboard">
-                <div className="back-to-previous pb-4">
-                  <Link to="/recruiterhome" className="back-link" >
-                    <img src={leftArrow} alt="Back"  />BACK
-                  </Link>
-                </div>
+                <BackButton />
                 <div className="title-dash flex2">Posted Jobs</div> 
                    <br></br>
                    <br></br>
@@ -277,13 +273,13 @@ const getInactiveJobs = async () => {
                           <span>
 <span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                           </div>
-                          {/* <div style={{marginTop:'8px',marginLeft:'25px'}}>
+                          /* <div style={{marginTop:'8px',marginLeft:'25px'}}>
                           <Link to={`/recruiter-edit-job/${job.id}`}>
                             <img src={editlogo}  title="Edit Job" />&nbsp;
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
 
-                          </div>
+                          </div> 
                           <Link to={`/appliedapplicantsbasedonjob/${job.id}`} className="custom-link">
                             <button
                               type="button"
