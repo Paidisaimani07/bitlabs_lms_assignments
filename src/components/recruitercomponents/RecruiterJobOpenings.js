@@ -277,7 +277,7 @@ const getInactiveJobs = async () => {
                           <span>
 <span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                           </div>
-                          {/* <div style={{marginTop:'8px',marginLeft:'25px'}}>
+                           <div style={{marginTop:'8px',marginLeft:'25px'}}>
                           <Link to={`/recruiter-edit-job/${job.id}`}>
                             <img src={editlogo}  title="Edit Job" />&nbsp;
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
