@@ -211,7 +211,7 @@ const getInactiveJobs = async () => {
                       
                       <div className="job-archive-header">
                         <div className="inner-box">
-                          {/* <div className="logo-company">
+                           <div className="logo-company">
                             {job.logoFile ? (
                               <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                             ) : (
