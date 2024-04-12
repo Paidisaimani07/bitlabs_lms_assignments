@@ -8,6 +8,7 @@ export const apiUrl = 'https://kqryamxpv3.ap-south-1.awsapprunner.com';
 
 
 
+
 const ApplicantAPIService = {
 }
 export default ApplicantAPIService;
