@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from "axios";
+import BackButton from '../common/BackButton';
 
 function ResumeBuilder() {
   const location = useLocation();
@@ -74,6 +75,7 @@ function ResumeBuilder() {
           <div className="row">
             <div className="col-lg-12 col-md-12 ">
               <div className="title-dashboard">
+              <BackButton />
                 <div className="title-dash flex2">Build Your Resume</div>
               </div>
             </div>
