@@ -276,9 +276,6 @@ function RecruiterPostJob() {
   };
   const handleMaxSalaryChange = (e) => {
     const value = e.target.value;
-  
-  //  console.log('Input value:', value);
-  
     // Check if the input value contains only numeric characters and at most one decimal point
     if (/^\d*\.?\d*$/.test(value)) {
       setMaxSalary(value);
