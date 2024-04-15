@@ -270,55 +270,55 @@ document.addEventListener("click", handleOutsideClick);
           </div>
         </div>
       </div>
-      <header id="header" className="header header-default ">
-        <div className="tf-container ct2">
-          <div className="row">
-            <div className="col-md-12">
-              <div className="sticky-area-wrap">
-                <div className="header-ct-left">
-                  {window.innerWidth < 768 && (
-                    <div className="hamburger-icon" onClick={handleToggleMenu}>
-                      <span />
-                      <span />
-                      <span />
-                    </div>
-                  )}
-                  <span style={{ width: '20px', height: '2px' }}></span>
-                  <div id="logo" className="logo">
-                    <a href="/applicanthome">
-                      <img
-                        className="site-logo"
-                        src="../images/logo.png"
-                        alt="Image"
-                      />
-                    </a>
-                  </div>
+  <header id="header" className="header header-default ">
+    <div className="tf-container ct2">
+      <div className="row">
+        <div className="col-md-12">
+          <div className="sticky-area-wrap">
+            <div className="header-ct-left">
+            {window.innerWidth < 768 && (
+              <div className="hamburger-icon" onClick={handleToggleMenu}>
+                <span />
+                <span />
+                <span />
+              </div>
+            )}
+            <span style={{width:'20px',height:'2px'}}></span>
+              <div id="logo" className="logo">
+                <a href="/applicanthome">
+                  <img
+                    className="site-logo"
+                    src="../images/logo.png"
+                    alt="Image"
+                  />
+                </a>
+                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
+              </div>
+            </div>
+            <div className="header-ct-center"></div>
+            <div className="header-ct-right">
+               
+              <div className="header-customize-item account">
+               
+              <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+                <div className="name">
+                  {/* <span className="icon-keyboard_arrow_down" /> */}
                 </div>
-                <div className="header-ct-center"></div>
-                <div className="header-ct-right">
-
-                  <div className="header-customize-item account" onClick={toggleSubAccount}>
-
-                    <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
-                    <div className="name">
-                      {/* <span className="icon-keyboard_arrow_down" /> */}
+                <div className="sub-account">
+               
+                  {/* <h4>Welcome {user.username}</h4> */}
+                 
+                  <div className="profile-status-toggle">
+                    <span className="job-looking-status">
+                    {profileStatus ? 'Job Looking Status: Active' : 'Job Looking Status: Inactive'}
+                   </span>
+                    <Switch
+                    checked={profileStatus}
+                    onChange={toggleProfileStatus}
+                    size="small"
+                    style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }}
+                    />
                     </div>
-                    <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
-
-                      {/* <h4>Welcome {user.username}</h4> */}
-
-                      <div className="profile-status-toggle">
-                        <span className="job-looking-status">
-                          {profileStatus ? 'Job Looking Status: Active' : 'Job Looking Status: Inactive'}
-                        </span>
-                        <Switch
-                          checked={profileStatus}
-                          onChange={toggleProfileStatus}
-                          size="small"
-                          style={{ backgroundColor: '#F97316', marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }}
-                        />
-                      </div>
-
                       <div className="sub-account-item">
                         <a href="/applicant-view-profile">
                           <span className="icon-profile" />View Profile
