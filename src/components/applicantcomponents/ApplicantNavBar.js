@@ -272,6 +272,7 @@ useEffect(() => {
                     alt="Image"
                   />
                 </a>
+                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
               </div>
             </div>
             <div className="header-ct-center"></div>

@@ -211,13 +211,13 @@ const getInactiveJobs = async () => {
                       
                       <div className="job-archive-header">
                         <div className="inner-box">
-                           <div className="logo-company">
+                          {/* <div className="logo-company">
                             {job.logoFile ? (
                               <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                             ) : (
                               <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
                             )}
-                          </div> */}
+                          </div>*/}
                           <div className="box-content">
                             {/* <h4>
                               <a>{job.companyname}</a>
@@ -277,13 +277,13 @@ const getInactiveJobs = async () => {
                           <span>
 <span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
                           </div>
-                           <div style={{marginTop:'8px',marginLeft:'25px'}}>
+                           {/* <div style={{marginTop:'8px',marginLeft:'25px'}}>
                           <Link to={`/recruiter-edit-job/${job.id}`}>
                             <img src={editlogo}  title="Edit Job" />&nbsp;
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
 
-                          </div>
+                          </div> */}
                           <Link to={`/appliedapplicantsbasedonjob/${job.id}`} className="custom-link">
                             <button
                               type="button"
