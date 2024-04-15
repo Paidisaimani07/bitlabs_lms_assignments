@@ -1589,7 +1589,7 @@ input[type="color"],
   vertical-align: middle;
 }
 
-.sticky-area-wrap .header-ct-right .account:hover .sub-account {
+.sticky-area-wrap .header-ct-right .account .sub-account.show {
   opacity: 1;
   visibility: visible;
   pointer-events: all;

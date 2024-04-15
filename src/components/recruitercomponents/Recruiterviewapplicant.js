@@ -3,7 +3,7 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { Link,useParams } from 'react-router-dom';
-import leftArrow from '../../images/arrow-left.png';
+import BackButton from '../common/BackButton';
 const Recruiterviewapplicant = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -83,11 +83,7 @@ const Recruiterviewapplicant = () => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-  <div className="back-to-previous pb-4">
-    <Link to="/recruiter-allapplicants" className="back-link" >
-        <img src={leftArrow} alt="Back"  />BACK
-    </Link>
-  </div>
+<BackButton />
 <div className="title-dash flex2">Applicant Profile</div>
 </div>
 </div>

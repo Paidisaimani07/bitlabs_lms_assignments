@@ -349,9 +349,7 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
 <Modal.Title style={{ color: 'blue' }}>Schedule Interview</Modal.Title>
 </Modal.Header>
 <Modal.Body>
-<Form onSubmit={handleFormSubmit}>
- 
- 
+<Form onSubmit={handleFormSubmit}> 
   <div className="row">
     <div className="col-lg-12">
     <div>
