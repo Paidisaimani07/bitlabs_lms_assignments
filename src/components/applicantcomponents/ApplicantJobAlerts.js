@@ -124,9 +124,15 @@ export default function ApplicantJobAlerts() {
             <span className="icon-bag"></span>
           </div>
           <div className="content">
-            <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
-              {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-            </h4>
+          <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
+  {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
+</h4>
+
+<style jsx>{`
+  .title-count:hover {
+    color: green;
+  }
+`}</style>
           </div>
         </div>
         <div className="themes-container">

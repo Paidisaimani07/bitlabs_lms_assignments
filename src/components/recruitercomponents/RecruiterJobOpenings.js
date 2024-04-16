@@ -280,6 +280,7 @@ const getInactiveJobs = async () => {
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
 
+
                           </div> */}
 
                           <Link to={`/recruiter-view-job`} className="custom-link">
