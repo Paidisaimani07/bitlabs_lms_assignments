@@ -239,6 +239,7 @@ const ApplicantDashboard = () =>
     </div>
   </div>
   {/*New palet in application dashboard*/}
+  
   {/* <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} > */}
   <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
 
