@@ -7,7 +7,7 @@ import { useLocation,useNavigate } from 'react-router-dom';
 import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-calendar-timeline';
 import 'react-calendar-timeline/lib/Timeline.css';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
-import leftArrow from '../../images/arrow-left.png';
+import BackButton from '../common/BackButton';
 
 
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
@@ -164,11 +164,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-<div className="back-to-previous pb-4">
-      <Link to="/applicant-applied-jobs" className="back-link" >
-          <img src={leftArrow} alt="Back"  />BACK
-      </Link>
-  </div>
+<BackButton />
 <div className="title-dash flex2">Job Status</div>
 </div>
 </div>

@@ -4,15 +4,77 @@ import axios from 'axios';
 import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from 'react-router-dom';
-import leftArrow from '../../images/arrow-left.png';
+
+import { Typeahead } from 'react-bootstrap-typeahead';
+
+
+
+import BackButton from '../common/BackButton';
+
 const RecruiterEditJob = ({selectedJobId}) => {
- 
+  const [skillsRequired, setSkillsRequired] = useState([
+    { skillName: "", minimumExperience: "" },
+  ]);
+
+  const skillsOptions = [
+    'Java',
+    'C',
+    'C+',
+    'C Sharp',
+    'Python',
+    'HTML',
+    'CSS',
+    'JavaScript',
+    'TypeScript',
+    'Angular',
+    'React',
+    'Vue',
+    'JSP',
+    'Servlets',
+    'Spring',
+    'Spring Boot',
+    'Hibernate',
+    '.Net',
+    'Django',
+    'Flask',
+    'SQL',
+    'MySQL',
+    'SQL-Server',
+    'Mongo DB',
+    'Selenium',
+    'Regression Testing',
+    'Manual Testing'
+  ];
+  const handleSkillsChange = (selected) => {
+    const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
+    setSkillsRequired(skillsWithNames);
+
+    if (skillsWithNames.length > 0) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skills: '', // Clear the error message for skills
+      }));
+    } else {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skills: 'Please select at least one skill.',
+      }));
+    }
+  };
+
+  const formattedSkillsRequired = skillsRequired.map((skill) => ({
+    skillName: skill.skillName.toLowerCase(),
+  }));
+
+  const filterOutSelectedSkills = (options, selectedSkills) => {
+    const selectedSkillNames = selectedSkills.map((skill) => skill.skillName.toLowerCase());
+    return options.filter((option) => !selectedSkillNames.includes(option.skillName.toLowerCase()));
+  };
+
+  const skillsOptionsWithStructure = skillsOptions.map(skill => ({ skillName: skill }));
     const navigate=useNavigate();
 
-    const [skillsRequired, setSkillsRequired] = useState([
-      { skillName: "", minimumExperience: "" },
-    ]);
-   
+    
     const user1 = useUserContext();
     const user = user1.user;
     const [loading, setLoading] = useState(true);
@@ -46,6 +108,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
           jobHighlights: "",
           description: "",
         });
+
        
    
         useEffect(() => {
@@ -237,17 +300,17 @@ skillsRequired.forEach((skill, index) => {
     skillErrors.skillName = '';
   }
  
-  const minExperience = String(skill.minimumExperience);
+//   const minExperience = String(skill.minimumExperience);
  
-if (!minExperience.trim()) {
-  skillErrors.minimumExperience = 'Experience is required.';
-  isValid = false;
-} else if (typeof minExperience !== 'string' || isNaN(parseInt(minExperience, 10))) {
-  skillErrors.minimumExperience = 'Experience should be a valid number.';
-  isValid = false;
-} else {
-  skillErrors.minimumExperience = '';
-}
+// if (!minExperience.trim()) {
+//   skillErrors.minimumExperience = 'Experience is required.';
+//   isValid = false;
+// } else if (typeof minExperience !== 'string' || isNaN(parseInt(minExperience, 10))) {
+//   skillErrors.minimumExperience = 'Experience should be a valid number.';
+//   isValid = false;
+// } else {
+//   skillErrors.minimumExperience = '';
+// }
  
   skillsErrors[index] = skillErrors;
 });
@@ -416,6 +479,7 @@ errors.skillsRequired = skillsErrors;
           return [];
       }
     };
+    
 
     return (
         <div>
@@ -425,11 +489,7 @@ errors.skillsRequired = skillsErrors;
           <div className="row">
             <div className="col-lg-12 col-md-12 ">
               <div className="title-dashboard">
-              <div className="back-to-previous pb-4">
-                  <Link to="/recruiter-jobopenings" className="back-link" >
-                    <img src={leftArrow} alt="Back"  />BACK
-                  </Link>
-              </div>
+              <BackButton />
                 <div className="title-dash flex2">Edit Job</div>
               </div>
             </div>
@@ -476,24 +536,42 @@ errors.skillsRequired = skillsErrors;
                 <div className="row">
                     <div className="col-lg-6 col-md-6">
                     <div id="item_category" className="dropdown titles-dropdown info-wd">
-                     <label className="title-user fw-7">Minimum Experience<span className="color-red">*</span></label>
-                      <input  type="number"
-                              placeholder="Min"
-                              className="input-form"
-                              value={jobData.minimumExperience}
-          onChange={(e) => setJobData({ ...jobData, minimumExperience: e.target.value })}
-                              required
-                      />
-                      {formErrors.minimumExperience && (
-                      <div className="error-message">{formErrors.minimumExperience}</div>
-                    )}
-                    </div>
+  <label className="title-user fw-7">Minimum Experience (in Years)<span className="color-red">*</span></label>
+  <input  
+    type="number"
+    placeholder="2"
+    className="input-form"
+    value={jobData.minimumExperience}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d*$/.test(value)) {
+        setJobData({ ...jobData, minimumExperience: value });
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          minimumExperience: '',
+        }));
+      } else {
+        setJobData({ ...jobData, minimumExperience: '' }); // Clear the value
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          minimumExperience: 'Minimum experience must be a valid number.',
+        }));
+      }
+    }}
+    required
+  />
+  {formErrors.minimumExperience && (
+    <div className="error-message">{formErrors.minimumExperience}</div>
+  )}
+</div>
+
+
                     </div>
                     <div className="col-lg-6 col-md-6">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
-                      <label className="title-user fw-7">Maximum Experience<span className="color-red">*</span></label>
+                      <label className="title-user fw-7">Maximum Experience (in Years)<span className="color-red">*</span></label>
                       <input type="number"
-                             placeholder="Max"
+                             placeholder="4"
                              className="input-form"
                              value={jobData.maximumExperience}
           onChange={(e) => setJobData({ ...jobData, maximumExperience: e.target.value })}
@@ -508,34 +586,67 @@ errors.skillsRequired = skillsErrors;
    
                     <div className="col-lg-6 col-md-12">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
-                      <label className="title-user fw-7">Minimum Salary<span className="color-red">*</span></label>
-                      <input type="text"
-                             placeholder="Min"
-                             className="input-form"
-                             value={jobData.minSalary}
-        onChange={(e) => setJobData({ ...jobData, minSalary: e.target.value })}
-                             required
-                     />
-                     {formErrors.minSalary && (
-                      <div className="error-message">{formErrors.minSalary}</div>
-                    )}
-                    </div>
+  <label className="title-user fw-7">Minimum Salary (in LPA)<span className="color-red">*</span></label>
+  <input
+    type="text"
+    placeholder="2.4"
+    className="input-form"
+    value={jobData.minSalary}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d*\.?\d*$/.test(value)) {
+        setJobData({ ...jobData, minSalary: value });
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          minSalary: '',
+        }));
+      } else {
+        setJobData({ ...jobData, minSalary: '' });
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          minSalary: 'Min salary must be a valid number.',
+        }));
+      }
+    }}
+    required
+  />
+  {formErrors.minSalary && (
+    <div className="error-message">{formErrors.minSalary}</div>
+  )}
+</div>
+
                     </div>
                     <div className="col-lg-6 col-md-12">
                     <div id="item_2" className="dropdown titles-dropdown info-wd">
-                      <label className="title-user fw-7">Maximum Salary<span className="color-red">*</span></label>
-                      <input
-                                 type="text"
-                                 placeholder="Max"
-                                 className="input-form"
-                                 value={jobData.maxSalary}
-                                 onChange={(e) => setJobData({ ...jobData, maxSalary: e.target.value })}
-                                 required
-                      />
-                      {formErrors.maxSalary && (
-                      <div className="error-message">{formErrors.maxSalary}</div>
-                    )}
-                    </div>
+  <label className="title-user fw-7">Maximum Salary (in LPA)<span className="color-red">*</span></label>
+  <input
+    type="text"
+    placeholder="6.5"
+    className="input-form"
+    value={jobData.maxSalary}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d*\.?\d*$/.test(value)) {
+        setJobData({ ...jobData, maxSalary: value });
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          maxSalary: '',
+        }));
+      } else {
+        setJobData({ ...jobData, maxSalary: '' });
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          maxSalary: 'Max salary must be a valid number.',
+        }));
+      }
+    }}
+    required
+  />
+  {formErrors.maxSalary && (
+    <div className="error-message">{formErrors.maxSalary}</div>
+  )}
+</div>
+
                     </div>
                     <div className="col-lg-6 col-md-12">
                     <div id="item_3" className="dropdown titles-dropdown info-wd">
@@ -625,7 +736,7 @@ errors.skillsRequired = skillsErrors;
                     )}
                     </div>
                     </div>
-                    <div className="col-lg-6 col-md-12">
+                    {/* <div className="col-lg-6 col-md-12">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">Job Highlights</label>
                        <textarea
@@ -640,7 +751,7 @@ errors.skillsRequired = skillsErrors;
                     )}
                     
                     </div>
-                    </div>
+                    </div> */}
                     <div className="col-lg-6 col-md-12">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">
@@ -662,47 +773,28 @@ errors.skillsRequired = skillsErrors;
                     </div>
                     </div>
                     <div className="col-lg-6 col-md-12">
-        <div id="item_1" className="dropdown titles-dropdown info-wd">
-          <label className="title-user fw-7">Skills<span className="color-red">*</span></label>
-          {skillsRequired.map((skill, index) => (
-            <div key={index} className="experience-table">
-              <div>
-                <input
-                  type="text"
-                  placeholder="Skill"
-                  className="input-form"
-                  value={skill.skillName}
-                  onChange={(e) => handleSkillChange(e, index, 'skillName')}
-                />
-                {formErrors.skillsRequired && formErrors.skillsRequired[index] && formErrors.skillsRequired[index].skillName && (
-                  <div className="error-message">{formErrors.skillsRequired[index].skillName}</div>
-                )}
-              </div><br />
-              <div>
-                <input
-                  type="text"
-                  placeholder="Experience"
-                  className="input-form"
-                  value={skill.minimumExperience}
-                  onChange={(e) => handleExperienceChange(e, index, 'minimumExperience')}
-                />
-                {formErrors.skillsRequired && formErrors.skillsRequired[index] && formErrors.skillsRequired[index].minimumExperience && (
-                  <div className="error-message">{formErrors.skillsRequired[index].minimumExperience}</div>
-                )}
-              </div>
-              {index === skillsRequired.length - 1 && (
-                <button type="button" onClick={addExperience} style={{ 'color': '#FFFFFF', 'backgroundColor': '#1967d2' }}>
-                  +
-                </button>
-              )} &nbsp;
-              {index === skillsRequired.length - 1 && (
-                <button type="button" onClick={removeExperience} style={{ 'color': '#FFFFFF', 'backgroundColor': '#FF0000' }}>
-                  -
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
+                    <div id="item_1" className="dropdown titles-dropdown info-wd">
+  <label className="title-user fw-7">Skills<span className="color-red">*</span></label>
+  <Typeahead
+    id="skillsTypeahead"
+    labelKey={(option) => option.skillName}
+    multiple
+    placeholder="*Skills"
+    options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
+    onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
+    selected={skillsRequired}
+    inputProps={{
+      className: 'input-form placeholder-light-grey',
+    }}
+    allowNew={false} // Prevent new entries
+    filterBy={(option, props) =>
+      option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
+    }
+  />
+  {formErrors.skills && (
+    <div className="error-message">{formErrors.skills}</div>
+  )}
+</div>
       </div>
                   </div>
                 <div className="form-infor flex flat-form">

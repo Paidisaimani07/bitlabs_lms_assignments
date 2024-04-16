@@ -1746,7 +1746,7 @@
     text-align: center;
   }
 
-  .footer-logo,
+  .footer-logo,.footer-logo .para1,
   .wd-job-author2 .content-left {
     margin-bottom: 30px;
     flex: unset;
@@ -2157,7 +2157,7 @@
 
 
   .dashboard #header .btn {
-    left: 145px;
+    left: 125px;
   }
   @media only screen and (min-width: 50px) and (max-width: 300px) {
     .dashboard #header .btn {
@@ -2177,7 +2177,7 @@
       cursor: pointer;
       transition: left 0.4s ease;
   }
-}
+ }
 
 
   .dashboard .sticky-area-wrap .header-ct-right .header-customize-item.help {
@@ -2203,6 +2203,11 @@
     display: block;
     margin-top:5px;
   }
+
+  #header .sticky-area-wrap .header-ct-left .logo .para1 {
+    margin-left:85px;
+  }
+
   @media only screen and (min-width: 50px) and (max-width: 300px) {
     #header .sticky-area-wrap .header-ct-left .logo .site-logo {
         width: 100px;
@@ -2210,7 +2215,17 @@
         margin-top:10px;
         
     }
-}
+   }
+
+   @media only screen and (min-width: 50px) and (max-width: 560px) {
+    #header .sticky-area-wrap .header-ct-left .logo .para1 {
+        /* width: 100px;
+        display: block;
+        margin-top:10px; */
+        font-size: 10px !important;
+        margin-left: 20px;
+    }
+   }
 
   #header .sticky-area-wrap .header-ct-right .account .sub-account {
     /* width: 264px; */
@@ -2239,7 +2254,7 @@
     #header .sticky-area-wrap .header-ct-right .account {
         margin-right: 5px;
     }
-}
+ }
 
 
   .sticky-area-wrap .header-ct-right .header-customize-item.help,

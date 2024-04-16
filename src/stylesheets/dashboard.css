@@ -229,18 +229,34 @@
     border-radius: 8px;
     transition: all 0.4s;
 }
-
+.heading {
+    font-family: "Plus Jakarta Sans";
+    font-size: 30px !important;
+    font-weight: 300 !important;
+    line-height: 25px !important;
+    text-align: left;
+    margin-bottom: 20px;
+}
+.heading1 {
+    font-family: "Plus Jakarta Sans";
+    font-size: 30px !important;
+    font-weight: 300 !important;
+    line-height: 25px !important;
+    text-align: left;
+    margin-bottom: 10px;
+}
 @media screen and (max-width: 1029px) and (min-width: 320px) {
     .box-icon1 img {
       width: 150px; /* Adjust the width as needed */
       height: auto; /* Maintain aspect ratio */
       margin-right:20px !important;
     }
+    
     .box-icon1 {
         width: 650px !important; /* width: 1905px; */
     }
   }
-   @media (max-width: 699px) {
+   @media (max-width: 676px) {
     .box-icon1 {
         width: 550px !important; 
         height: 250px !important; 
@@ -250,13 +266,39 @@
         margin-top:180px !important;
         position: absolute;
         margin-left:200px !important;
-        
-       
     }
     .title-count1{
         text-align: center !important;
         margin-left: 30px !important;
         font-size: 18px !important;
+    }
+    .title-count2{
+        text-align: center !important;
+        margin-left: 5px !important;
+        font-size: 15px !important;
+    }
+    @media screen and (max-width: 404px) and (min-width: 320px) {
+        .title-count1 {
+            font-size: 15px !important; /* Adjust font size for smaller screens */
+            text-align: center !important;
+            margin-left: 5px !important;
+            margin-right: 5px !important;
+        }
+        .title-count2 {
+            font-size: 15px !important; /* Adjust font size for smaller screens */
+            text-align: center !important;
+            margin-left: 5px !important;
+            margin-right: 5px !important;
+            
+        }
+    }
+    @media screen and (max-width: 404px) and (min-width: 320px) {
+        .title-count1 {
+            padding-right: 50px !important; /* Adjust padding for smaller screens */
+        }
+        .title-count2 {
+            padding-right: 20px !important; /* Adjust padding for smaller screens */
+        }
     }
   } 
   @media (max-width: 578px) {
@@ -265,10 +307,35 @@
         height: 250px !important; 
     }
 }
-@media screen and (max-width: 699px) and (min-width: 320px) {
+@media screen and (max-width: 676px) and (min-width: 320px) {
+    @media screen and (max-width: 404px) and (min-width: 320px) {
+        .heading {
+            font-family: "Plus Jakarta Sans";
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    line-height: 35px !important;
+    text-align: left;
+    margin-bottom: 20px;
+        }
+        .heading1 {
+            font-family: "Plus Jakarta Sans";
+    font-size: 20px !important;
+    font-weight: 500 !important;
+    line-height: 35px !important;
+    text-align: left;
+    margin-bottom:0px;
+        }
+        
+    }
     .box-icon1 {
         width: 380px !important; /* width: 1905px; */
         height: 400px !important; /* height: 988px; */
+    }
+    @media screen and (max-width: 404px) and (min-width: 320px) {
+        .box-icon1 {
+            width: 290px !important; /* Adjust width for smaller screens */
+            height: 420px !important; /* Adjust height for smaller screens */
+        }
     }
      .Post-Job-Image{
         margin-left:100px !important;
@@ -276,6 +343,15 @@
         height:130px !important;
         margin-top:80px !important;
 
+    }
+    
+    @media screen and (max-width: 404px) and (min-width: 320px) {
+        .Post-Job-Image {
+            margin-left: 50px !important; /* Adjust margin-left for smaller screens */
+            width: 120px !important; /* Adjust width for smaller screens */
+            height: 100px !important; /* Adjust height for smaller screens */
+            margin-top: 110px !important; /* Adjust margin-top for smaller screens */
+        }
     }
     .button-link {
         background-color: #F97316;
@@ -287,6 +363,23 @@
         width:330px !important;
         
       }
+      .button-link1 {
+        background-color: #F97316;
+        padding-right: 0px;
+        display: inline-block;
+        border-radius: 8px;
+        text-align: center;
+        margin-top: 30px !important;
+        width:250px !important;
+        
+      }
+      
+      @media screen and (max-width: 404px) and (min-width: 320px) {
+        .button-link {
+            width: 250px !important; /* Adjust width for smaller screens */
+            margin-top: 140px !important;
+        }
+    }
       .button-custom {
     color: white;
     font-family: "Plus Jakarta Sans";
@@ -324,6 +417,16 @@
     margin-top: 10px;
     width:100px;
   }
+
+  .button-link1 {
+    background-color: #F97316;
+    padding-right: 0px;
+    display: inline-block;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 10px;
+    width:100px;
+  } 
   
   
 
@@ -838,6 +941,7 @@ tbody tr td:nth-child(2) {
     position: relative;
     cursor: pointer;
     display: inline-block;
+    margin-top: 12px;
 }
 
 .hamburger-icon span {
@@ -868,9 +972,10 @@ tbody tr td:nth-child(2) {
 
 @media screen and (min-width: 450px) and (max-width: 1400px) {
     .hamburger-icon {
-        width: 15px;
-        height: 25px;
+        width: 20px;
+        height: 14px;
     }
+    
     .dashboard .btn {
         left: 240px;
     }
@@ -4642,3 +4747,41 @@ font-size: 14px;
     background-color: #f2f2f2; /* Change this to the desired gray color */
   }
   
+  .three-dots-menu {
+    position: relative;
+  }
+  
+  .three-dots {
+    cursor: pointer;
+    font-size: 24px;
+  }
+  
+  .menu-options{
+    position: absolute;
+    top: 20px; /* Adjust as needed */
+    right: 0;
+    width: 100px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure menu appears above other content */
+  }
+  
+  .menu-options a {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    border: none;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  
+  .menu-options a:hover {
+    background-color: #FEF1E8;
+    color: #EE6D12;
+  }
+
+  .menu-options button:hover {
+    background-color: #f0f0f0;
+  }

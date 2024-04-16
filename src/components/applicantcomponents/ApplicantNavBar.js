@@ -10,7 +10,7 @@ import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
- 
+
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
   const { user } = useUserContext();
@@ -22,7 +22,7 @@ function ApplicantNavBar() {
   const [loginUrl, setLoginUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
- 
+
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
@@ -39,7 +39,7 @@ function ApplicantNavBar() {
 
 // Event listener to detect clicks outside the account element
 document.addEventListener("click", handleOutsideClick);
- 
+
   useEffect(() => {
     const fetchProfileStatus = async () => {
       try {
@@ -67,7 +67,7 @@ document.addEventListener("click", handleOutsideClick);
           },
         }
       );
-      
+
       setProfileStatus(checked);
       localStorage.setItem('profileStatus', checked.toString());
       window.location.reload();
@@ -82,27 +82,27 @@ document.addEventListener("click", handleOutsideClick);
 
   const [requestData, setRequestData] = useState(null);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Make API call to update status in backend
-                const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
-                
-                // Construct requestData
-                const newData = {
-                    identifier: response.data.email,
-                    password: response.data.password
-                };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Make API call to update status in backend
+        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
 
-                setRequestData(newData);
-            } catch (error) {
-                console.error('Error updating profile status:', error);
-            }
+        // Construct requestData
+        const newData = {
+          identifier: response.data.email,
+          password: response.data.password
         };
-        fetchData();
-      }, []); // Empty dependency array to run the effect only once
-      
-      
+
+        setRequestData(newData);
+      } catch (error) {
+        console.error('Error updating profile status:', error);
+      }
+    };
+    fetchData();
+  }, []); // Empty dependency array to run the effect only once
+
+
   const handleClick = () => {
     // API endpoint URL
     const apiUrl = 'http://localhost:5173/api/auth/login';
@@ -128,7 +128,7 @@ document.addEventListener("click", handleOutsideClick);
       .then(data => {
         // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
         const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
-       window.open(loginUrl, '_blank');
+        window.open(loginUrl, '_blank');
         //setUrl(loginUrl);
         setLoginUrl(loginUrl);
       })
@@ -137,9 +137,8 @@ document.addEventListener("click", handleOutsideClick);
         console.error('There was a problem with the fetch operation:', error);
       });
   };
- 
- 
- 
+
+
   const handleToggleMenu = e => {
     e.stopPropagation(); // Stop event propagation
     setIsOpen(!isOpen);
@@ -149,8 +148,8 @@ document.addEventListener("click", handleOutsideClick);
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 768);
     };
-     window.addEventListener('resize', handleResize);
-    $("#left-menu-btn").on("click", function(e) {
+    window.addEventListener('resize', handleResize);
+    $("#left-menu-btn").on("click", function (e) {
       e.preventDefault();
       if ($("body").hasClass("sidebar-enable") == true) {
         $("body").removeClass("sidebar-enable");
@@ -184,9 +183,9 @@ document.addEventListener("click", handleOutsideClick);
         console.error('Error fetching image URL:', error);
         setImageSrc(null);
       });
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, [user.id]);
   const logout = () => {
     const confirmLogout = window.confirm("Do you want to logout?");
@@ -199,75 +198,78 @@ document.addEventListener("click", handleOutsideClick);
       }
     }
   };
-//  const fetchAlertCount = async () => {
-//   try {
-//     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
-//     setAlertCount(response.data);
-//     //window.location.reload();
-//   } catch (error) {
-//     console.error('Error fetching alert count:', error);
-//   }
-// };
-// useEffect(() => {
-//   const fetchAlertCount = async () => {
-//     try {
-//       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-//         },
-//       });
-//       setAlertCount(response.data);
-//     } catch (error) {
-//       console.error('Error fetching alert count:', error);
-//     }
-//   };
-//   fetchAlertCount();
-// }, [user.id]);
+  //  const fetchAlertCount = async () => {
+  //   try {
+  //     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
+  //     setAlertCount(response.data);
+  //     //window.location.reload();
+  //   } catch (error) {
+  //     console.error('Error fetching alert count:', error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   const fetchAlertCount = async () => {
+  //     try {
+  //       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+  //         },
+  //       });
+  //       setAlertCount(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching alert count:', error);
+  //     }
+  //   };
+  //   fetchAlertCount();
+  // }, [user.id]);
 
-const fetchAlertCount = async () => {
-  try {
-    const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-      },
-    });
-    setAlertCount(response.data);
-  } catch (error) {
-    console.error('Error fetching alert count:', error);
-  }
-};
 
-useEffect(() => {
-  // Fetch initial alert count
-  fetchAlertCount();
 
-  // Set up polling interval
-  const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
 
-  // Clean up function to clear interval when component unmounts
-  return () => clearInterval(intervalId);
-}, [user.id]);
+  const fetchAlertCount = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      });
+      setAlertCount(response.data);
+    } catch (error) {
+      console.error('Error fetching alert count:', error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch initial alert count
+    fetchAlertCount();
+
+    // Set up polling interval
+    const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+
+    // Clean up function to clear interval when component unmounts
+    return () => clearInterval(intervalId);
+  }, [user.id]);
 
   return (
     <div>
-  <div className="menu-mobile-popup">
-    <div className="modal-menu__backdrop" />
-    <div className="widget-filter">
-      <div className="mobile-header">
-        <div id="logo" className="logo">
-          <a href="/applicanthome">
-            <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
-          </a>
+      <div className="menu-mobile-popup">
+        <div className="modal-menu__backdrop" />
+        <div className="widget-filter">
+          <div className="mobile-header">
+            <div id="logo" className="logo">
+              <a href="/applicanthome">
+                <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+              </a>
+            </div>
+            <a className="title-button-group">
+              <i className="icon-close" />
+            </a>
+          </div>
+          <div className="header-customize-item button">
+            <a href="/applicant-update-profile">Upload Resume</a>
+          </div>
         </div>
-        <a className="title-button-group">
-          <i className="icon-close" />
-        </a>
       </div>
-      <div className="header-customize-item button">
-        <a href="/applicant-update-profile">Upload Resume</a>
-      </div>
-    </div>
-  </div>
   <header id="header" className="header header-default ">
     <div className="tf-container ct2">
       <div className="row">
@@ -290,6 +292,7 @@ useEffect(() => {
                     alt="Image"
                   />
                 </a>
+                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
               </div>
             </div>
             <div className="header-ct-center"></div>
@@ -316,35 +319,34 @@ useEffect(() => {
                     style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }}
                     />
                     </div>
-               
-                  <div className="sub-account-item">
-                    <a href="/applicant-view-profile">
-                      <span className="icon-profile" />View Profile
-                    </a>
-                  </div>
-                  <div className="sub-account-item">
-                    <a href="/applicant-change-password">
-                      <span className="icon-change-passwords" /> Change Password
-                    </a>
-                  </div>
-                  <div className="sub-account-item">
-                    <a onClick={logout}>
-                      <span className="icon-log-out" /> Log Out
-                    </a>
+                      <div className="sub-account-item">
+                        <a href="/applicant-view-profile">
+                          <span className="icon-profile" />View Profile
+                        </a>
+                      </div>
+                      <div className="sub-account-item">
+                        <a href="/applicant-change-password">
+                          <span className="icon-change-passwords" /> Change Password
+                        </a>
+                      </div>
+                      <div className="sub-account-item">
+                        <a onClick={logout}>
+                          <span className="icon-log-out" /> Log Out
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            {/* <div className="nav-filter">
+                {/* <div className="nav-filter">
               <div className="nav-mobile">
                 <span />
               </div>
             </div> */}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    {/* <div className="btn header-item " id="left-menu-btn">
+        {/* <div className="btn header-item " id="left-menu-btn">
     {window.innerWidth < 768 && (
             <span className="hamburger-icon" onClick={handleToggleMenu}>
               <span />
@@ -353,87 +355,87 @@ useEffect(() => {
             </span>
           )}
     </div> */}
-  </header>
-  {(isOpen &&
-  <div className="left-menu" >
-      <div id="sidebar-menu">
-        <ul className="downmenu list-unstyled" id="side-menu">
-          <li>
-            <Link to="/applicanthome"  className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
-              <span className="icon-dashboard dash-icon"></span>
-              <span className="dash-titles">Dashboard</span>
-            </Link>
-          </li>
-          {/* <li>
+      </header>
+      {(isOpen &&
+        <div className="left-menu" >
+          <div id="sidebar-menu">
+            <ul className="downmenu list-unstyled" id="side-menu">
+              <li>
+                <Link to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
+                  <span className="icon-dashboard dash-icon"></span>
+                  <span className="dash-titles">Dashboard</span>
+                </Link>
+              </li>
+              {/* <li>
             <Link to="/applicant-update-profile">
               <span className="icon-profile dash-icon"></span>
               <span className="dash-titles">Update Profile</span>
             </Link>
           </li> */}
-          <li>
-            <Link to="/applicant-find-jobs"  className={location.pathname === "/applicant-find-jobs" || location.pathname === "/applicant-view-job" ? "tf-effect active" : ""}>
-              <span className="icon-resumes dash-icon"></span>
-              <span className="dash-titles">Recommended Jobs</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
-              <span className="icon-my-apply dash-icon"></span>
-              <span className="dash-titles">Applied Jobs</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" ? "tf-effect active" : ""}>
-              <span className="icon-work dash-icon"></span>
-              <span className="dash-titles">Saved Jobs</span>
-            </Link>
-          </li>
-          <li>
-      <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
-          <span className="icon-bell1 dash-icon">
-            <sup
-              style={{
-                background: 'red',
-                borderRadius: '50%',
-                padding: '2px 5px',
-                color: 'white',
-                fontSize: '10px',
-                textAlign: 'center',
-                lineHeight: '1',
-                marginLeft: '-10px',
-              }}
-            >
-              {alertCount}
-            </sup>
-          </span>
-        </div>
-        <span className="dash-titles">Job Alerts</span>
-      </Link>
-    </li>
-          {/* <li>
+              <li>
+                <Link to="/applicant-find-jobs" className={location.pathname === "/applicant-find-jobs" || location.pathname === "/applicant-view-job" ? "tf-effect active" : ""}>
+                  <span className="icon-resumes dash-icon"></span>
+                  <span className="dash-titles">Recommended Jobs</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
+                  <span className="icon-my-apply dash-icon"></span>
+                  <span className="dash-titles">Applied Jobs</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" ? "tf-effect active" : ""}>
+                  <span className="icon-work dash-icon"></span>
+                  <span className="dash-titles">Saved Jobs</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
+                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                    <span className="icon-bell1 dash-icon">
+                      <sup
+                        style={{
+                          background: 'red',
+                          borderRadius: '50%',
+                          padding: '2px 5px',
+                          color: 'white',
+                          fontSize: '10px',
+                          textAlign: 'center',
+                          lineHeight: '1',
+                          marginLeft: '-10px',
+                        }}
+                      >
+                        {alertCount}
+                      </sup>
+                    </span>
+                  </div>
+                  <span className="dash-titles">Job Alerts</span>
+                </Link>
+              </li>
+              {/* <li>
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
             </Link>
           </li> */}
-          <li>
-          {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
+              <li>
+                {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
     Build Your Resume
 </button>
 <ResumeBuilder loginUrl={loginUrl} /> */}
-</li>
-<li>
-            <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
-              <span className="icon-chat dash-icon"></span>
-              <span className="dash-titles">My Resume</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
+              </li>
+              <li>
+                <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
+                  <span className="icon-chat dash-icon"></span>
+                  <span className="dash-titles">My Resume</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
-  )}
-</div>
   )
 }
 export default ApplicantNavBar;

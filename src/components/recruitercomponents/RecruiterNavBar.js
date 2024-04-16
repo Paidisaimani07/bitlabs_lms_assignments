@@ -123,6 +123,7 @@ useEffect(() => {
           <a href="/recruiterhome">
             <img className="site-logo" src="../images/logo.png" alt="Image" />
           </a>
+          <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
         </div>
         <a className="title-button-group">
           <i className="icon-close" />
@@ -139,6 +140,13 @@ useEffect(() => {
         <div className="col-md-12">
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
+            {window.innerWidth < 768 && (
+              <div className="hamburger-icon" onClick={handleToggleMenu}>
+                <span />
+                <span />
+                <span />
+              </div>
+            )}
               <div id="logo" className="logo">
                 <a href="/recruiterhome">
                   <img
@@ -147,6 +155,7 @@ useEffect(() => {
                     alt="Image"
                   />
                 </a>
+                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
               </div>
             </div>
             <div className="header-ct-center"></div>
@@ -181,7 +190,7 @@ useEffect(() => {
         </div>
       </div>
     </div>
-    <div className="btn header-item " id="left-menu-btn">
+    {/* <div className="btn header-item " id="left-menu-btn">
       {window.innerWidth < 768 && (
             <span className="hamburger-icon" onClick={handleToggleMenu}>
               <span />
@@ -189,7 +198,7 @@ useEffect(() => {
               <span />
             </span>
           )}
-    </div>
+    </div> */}
   </header>
   {(isOpen &&
   <div className="left-menu">

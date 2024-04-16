@@ -74,7 +74,8 @@ const login = useGoogleLogin({
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
  
-        navigate('/applicant-find-jobs');
+        //navigate('/applicant-find-jobs');
+        navigate('/applicanthome');
       }
     } catch (err) {
       console.log(err);
@@ -141,6 +142,7 @@ const login = useGoogleLogin({
         // Navigate to the applicant home page
         
         navigate('/applicant-find-jobs');
+        navigate('/applicanthome');
             }
  
     } catch (error) {
