@@ -282,8 +282,9 @@ const getInactiveJobs = async () => {
 
                           </div> */}
 
-                          <Link to={`/appliedapplicantsbasedonjob/${job.id}`} className="custom-link">
+                          <Link to={`/recruiter-view-job`} className="custom-link">
                             <button
+                              onClick={() => setSelectedJobId(job.id)}
                               type="button"
                               // style={{
                               //   backgroundColor: job.status === 'Inactive' ? '#f2f2f2' : '',
