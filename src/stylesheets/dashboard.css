@@ -243,8 +243,15 @@
     font-weight: 300 !important;
     line-height: 25px !important;
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
 }
+
+@media screen and (max-width: 670px) and (min-width: 320px) {
+    .heading1 {
+        margin-bottom: 10px !important;
+    }
+}
+
 @media screen and (max-width: 1029px) and (min-width: 320px) {
     .box-icon1 img {
       width: 150px; /* Adjust the width as needed */
@@ -256,12 +263,18 @@
         width: 650px !important; /* width: 1905px; */
     }
   }
-   @media (max-width: 676px) {
+   @media (max-width: 670px) {
     .box-icon1 {
         width: 550px !important; 
         height: 250px !important; 
     }
     .Post-Job-Image{
+        display: block;
+        margin-top:180px !important;
+        position: absolute;
+        margin-left:200px !important;
+    }
+    .resume{
         display: block;
         margin-top:180px !important;
         position: absolute;
@@ -276,6 +289,7 @@
         text-align: center !important;
         margin-left: 5px !important;
         font-size: 15px !important;
+        margin-bottom:30px !important;
     }
     @media screen and (max-width: 404px) and (min-width: 320px) {
         .title-count1 {
@@ -307,7 +321,7 @@
         height: 250px !important; 
     }
 }
-@media screen and (max-width: 676px) and (min-width: 320px) {
+@media screen and (max-width: 670px) and (min-width: 320px) {
     @media screen and (max-width: 404px) and (min-width: 320px) {
         .heading {
             font-family: "Plus Jakarta Sans";
@@ -344,6 +358,13 @@
         margin-top:80px !important;
 
     }
+    .resume{
+        margin-left:50px !important;
+        width: 150px !important;
+        height:100px !important;
+        margin-top:150px !important;
+
+    }
     
     @media screen and (max-width: 404px) and (min-width: 320px) {
         .Post-Job-Image {
@@ -351,6 +372,12 @@
             width: 120px !important; /* Adjust width for smaller screens */
             height: 100px !important; /* Adjust height for smaller screens */
             margin-top: 110px !important; /* Adjust margin-top for smaller screens */
+        }
+        .resume{
+            margin-left: 50px !important; /* Adjust margin-left for smaller screens */
+            width: 120px !important; /* Adjust width for smaller screens */
+            height: 100px !important; /* Adjust height for smaller screens */
+            margin-top: 200px !important; /* Adjust margin-top for smaller screens */
         }
     }
     .button-link {
@@ -369,7 +396,7 @@
         display: inline-block;
         border-radius: 8px;
         text-align: center;
-        margin-top: 30px !important;
+        margin-top: 80px !important;
         width:250px !important;
         
       }
