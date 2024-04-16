@@ -475,7 +475,7 @@
   ------------------------------------------------------------------------------------- */
   var btnmenu = function () {
     $(document).on("click", ".menu-item-has-children-mobile", function () {
-      alert("Clicked");
+      
       var args = { duration: 600 };
       if ($(this).hasClass("active")) {
         $(this).children(".sub-menu-mobile").slideUp(args);
