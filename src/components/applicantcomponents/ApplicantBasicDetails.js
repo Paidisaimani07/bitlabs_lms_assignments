@@ -9,7 +9,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
-
+import BackButton from '../common/BackButton';
 
  
 const ApplicantBasicDetails = () => {
@@ -409,6 +409,7 @@ const ApplicantBasicDetails = () => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
+          <BackButton />
             <div className="title-dash flex2">Profile Details</div>
           </div>
         </div>

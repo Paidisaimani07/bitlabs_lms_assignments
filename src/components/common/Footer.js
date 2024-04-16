@@ -11,6 +11,7 @@ export default function Footer() {
             <div class="col-lg-2 col-md-4">
               <div class="footer-logo">
                 <img src="images/logo.png" alt="images" />
+                <p className="para1" style={{marginLeft:'80px',marginTop:'-10px'}}>A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
               </div>
             </div>
             <div class="col-lg-10 col-md-8">

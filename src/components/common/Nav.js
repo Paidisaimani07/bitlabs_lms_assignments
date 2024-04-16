@@ -105,8 +105,14 @@ const Nav = () => {
                       className="site-logo"
                       src="images/logo.png"
                       alt="Image"
+                      usemap="#image-map"
                     />
+                    
                   </a>
+                  {/* <map name="image-map">
+    <area target="_blank" alt="" title="" href="https://www.tekworks.in/" coords="160,69,100,31" shape="rect" />
+</map> */}
+                   <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
                 </div>
               </div>
               {/* <div className="header-ct-center">

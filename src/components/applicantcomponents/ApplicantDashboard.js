@@ -5,6 +5,9 @@ import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Resume from '../../images/user/avatar/Resume.png';
+import { useLocation } from "react-router-dom";
+
 const ApplicantDashboard = () => 
 {
   const [token, setToken] = useState('');
@@ -91,6 +94,8 @@ const ApplicantDashboard = () =>
     navigate("/applicant-saved-jobs");
   };
   
+  const location = useLocation();
+
   return (
     <div>
     {loading ? null : (
@@ -196,7 +201,7 @@ const ApplicantDashboard = () =>
               {/* <h4 className="title-count"></h4> */}
             </div>
           </div>
-          <div className="box-icon wrap-counter flex" onClick={handleRedirect2}>
+          <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
             <div className="icon style4">
               <span className="icon-bag">
                 <svg
@@ -229,7 +234,45 @@ const ApplicantDashboard = () =>
       </div>
     </div>
   </div>
+  {/*New palet in application dashboard*/}
+  {/* <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} > */}
+  <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
+
+
+      <div>
+      <h2 className="heading1">Build your professional resume for free</h2>
+  
+          <div className="">
+              <span className=""></span>
+          </div>
+          <div className="content">
+             
+              <h4 className="title-count2" style={{paddingRight:"80px",color: "#8D8D8D"}}>
+              Resume builder banner-Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
+              </h4>
+              
+          </div>
+          
+          <Link
+    to="/applicant-resume-builder"
+    className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+  >
+              <span className=""></span>
+              <span className="button button-custom">Create Now</span>
+  
+          </Link>
+      </div>
+      
+      <img
+  src={Resume}
+  alt="Resume"
+  className='resume'
+  style={{ width: "200px", height: "150px" }} 
+/>
+
+  </div>
 </section>
+
 </div>
     )
 }

@@ -265,6 +265,7 @@ img {
   height: auto;
 }
 
+
 b,
 strong {
   font-weight: 900;
@@ -582,6 +583,7 @@ input[type="color"],
   width: 100%;
   position: relative;
   justify-content: center;
+  margin-top:-5px;
 }
 
 .sticky-area-wrap .header-ct-left {
@@ -594,6 +596,12 @@ input[type="color"],
 .sticky-area-wrap .header-ct-left .logo .site-logo {
   width: 220px;
   display: block;
+}
+
+.sticky-area-wrap .header-ct-left .logo .para1 {
+  margin-left:85px;
+  margin-top: -14px;
+
 }
 
 @media only screen and (min-width: 991px) and (max-width: 1092px) {
@@ -1582,7 +1590,7 @@ input[type="color"],
   vertical-align: middle;
 }
 
-.sticky-area-wrap .header-ct-right .account:hover .sub-account {
+.sticky-area-wrap .header-ct-right .account .sub-account.show {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
