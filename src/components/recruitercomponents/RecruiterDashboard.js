@@ -117,7 +117,9 @@ function RecruiterDashboard() {
       const interviews = () => {
         navigate("/recruiter-applicantinterviews");
       };
-      
+      const Postajob = () => {
+        navigate("/recruiter-postjob");
+      };
 
   return (
     <div>
@@ -278,14 +280,16 @@ function RecruiterDashboard() {
       </div>
     </div>
     {/*New Change In the Dash Board*/}
-    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }}>
+    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} onClick={Postajob}>
+      
     <div>
-        <h2 className="heading" style={{ fontFamily: "Plus Jakarta Sans", fontSize: "30px", fontWeight: "500", lineHeight: "25px", textAlign: "left", marginBottom: "20px" }}>Find the right candidate</h2>
+    <h2 className="heading">Find the right candidate</h2>
+
         <div className="">
             <span className=""></span>
         </div>
         <div className="content">
-          
+           
             <h4 className="title-count1" style={{paddingRight:"80px",color: "#8D8D8D"}}>
             Get access to certified entry-level candidates for your hiring requirements.
             </h4>
@@ -296,13 +300,12 @@ function RecruiterDashboard() {
   to="/recruiter-postjob"
   className={`button-link ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
 >
-
             <span className=""></span>
             <span className="button button-custom">Post <span className="lowercase">a</span> Job</span>
 
         </Link>
     </div>
-    {/* <img src={Postjobimg} alt="Post Job Image" width="200" height="300" style={{ marginLeft: "auto" }} /> */}
+    
     <img 
   src={Postjobimg}
   alt="Post Job Image"

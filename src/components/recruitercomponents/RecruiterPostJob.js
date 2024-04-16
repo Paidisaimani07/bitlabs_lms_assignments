@@ -4,6 +4,7 @@ import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import BackButton from '../common/BackButton';
 import axios from 'axios';
 
 function RecruiterPostJob() {
@@ -276,9 +277,6 @@ function RecruiterPostJob() {
   };
   const handleMaxSalaryChange = (e) => {
     const value = e.target.value;
-  
-  //  console.log('Input value:', value);
-  
     // Check if the input value contains only numeric characters and at most one decimal point
     if (/^\d*\.?\d*$/.test(value)) {
       setMaxSalary(value);
@@ -535,6 +533,7 @@ function RecruiterPostJob() {
             <div className="row">
               <div className="col-lg-12 col-md-12 ">
                 <div className="title-dashboard">
+                <BackButton />
                   <div className="title-dash flex2">Post Job</div>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import $ from 'jquery';
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
 import { Link } from 'react-router-dom';
+import BackButton from '../common/BackButton';
 $.DataTable = require('datatables.net')
  
 function RecruiterAllApplicants() {
@@ -432,6 +433,7 @@ const handleSelectChange = async (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
+                <BackButton />
                   <div className="title-dash flex2">All Applicants</div>
                 </div>
               </div>

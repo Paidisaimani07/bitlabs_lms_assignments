@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 
-function ApplicantViewJob({ selectedJobId }) {
+function RecruiterViewJob({ selectedJobId }) {
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applied, setApplied] = useState(false);
@@ -16,6 +16,7 @@ function ApplicantViewJob({ selectedJobId }) {
   const applicantId = user.id;
   const location = useLocation();
   const jobId = new URLSearchParams(location.search).get('jobId');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const fetchJobDetails = async () => {
     try {
@@ -24,7 +25,7 @@ function ApplicantViewJob({ selectedJobId }) {
 
         // `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
 
-        `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
+        `${apiUrl}/viewjob/recruiter/viewjob/${selectedJobId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -111,6 +112,32 @@ function ApplicantViewJob({ selectedJobId }) {
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
+  const handleStatusChange = async (jobId, newStatus) => {
+    try {
+      await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
+  
+      setJobDetails((prevJobDetails) => ({
+        ...prevJobDetails,
+        status: newStatus
+      }));
+  
+      localStorage.setItem(`jobStatus-${jobId}`, newStatus);
+      window.alert('Job closed successfully.');
+      navigate('/recruiter-jobopenings');
+    } catch (error) {
+      console.error('Error updating job status:', error);
+    }
+  };
+
   return (
     <div>
       {loading ? null : (
@@ -162,7 +189,24 @@ function ApplicantViewJob({ selectedJobId }) {
                                     &nbsp;{formatDate(jobDetails.creationDate)}
                                   </li> */}
                                 </ul>
-                                <div className="button-readmore"></div>
+                            
+                                <div className="button-readmore">
+                                
+                                <div className="three-dots-menu">
+      <span className="three-dots" onClick={toggleMenu}>&#x22EE;</span>
+      {menuOpen && (
+        <div className="menu-options">
+           <Link to={`/recruiter-edit-job/${selectedJobId}`}>
+            Edit Job
+          </Link>
+          <Link onClick={() => handleStatusChange(selectedJobId, jobDetails.status === 'Active' ? 'Inactive' : 'Active')}>
+           {jobDetails.status === 'Active' ? 'Repost Job' : 'Close Job'}
+         </Link>
+
+        </div>
+      )}
+    </div>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -194,46 +238,19 @@ function ApplicantViewJob({ selectedJobId }) {
 <span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
                               </div>
                               <div className="button-readmore">
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <button
-                                    className={`btn-apply btn-popup ${applied ? 'applied' : ''}`}
-                                    onClick={handleApplyNow}
-                                    disabled={jobDetails.jobStatus === 'Already Applied'}
-                                    style={{
-                                      backgroundColor:
-                                        jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
-                                      cursor: 'pointer',
-                                      height: '40px',
-                                      color: '#F97316',
-                                      borderRadius: '8px',
-                                      backgroundColor: '#FFFFFF',
-                                      opacity:'80%',
-                                      borderColor:'#F97316'
-                                    }}
-                                  >
-                                    <span className="icon-send"></span>&nbsp;
-                                    {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
-                                  </button>
-                                  
-                                  {/* <a
-                                    href="/applicant-find-jobs"
-                                    className="btn-apply btn-popup"
-                                    style={{
-                                      display: 'inline-block',
-                                      marginLeft: '10px',
-                                      padding: '5px 20px',
-                                      backgroundColor: '#F97316',
-                                      color: 'white',
-                                      height: '40px',
-                                      textDecoration: 'none',
-                                      borderRadius: '8px',
-                                      cursor: 'pointer',
-                                      fontWeight: 'bold',
-                                    }}
-                                  >
-                                    Cancel
-                                  </a> */}
-                                </div>
+                              <Link to={`/appliedapplicantsbasedonjob/${selectedJobId}`} className="custom-link">
+                            <button
+                              type="button"
+                              // style={{
+                              //   backgroundColor: job.status === 'Inactive' ? '#f2f2f2' : '',
+                              //   color: job.status === 'Inactive' ? '#808080' : ''
+                              // }}
+                              className={`button-status ${jobDetails.status === 'Inactive' ? 'disabled-button' : ''}`}
+                              // disabled={job.status === 'Inactive'}
+                            >
+                              View Applicants
+                            </button>
+                          </Link>
                               </div>
                             </div>
                           </div>
@@ -257,5 +274,5 @@ function ApplicantViewJob({ selectedJobId }) {
   );
 }
 
-export default ApplicantViewJob;
+export default RecruiterViewJob;
 
