@@ -9,6 +9,7 @@ import BackButton from '../common/BackButton';
 
 function RecruiterViewJob({ selectedJobId }) {
   const [jobDetails, setJobDetails] = useState(null);
+  const [jobStatus, setJobStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applied, setApplied] = useState(false);
   const navigate = useNavigate();
@@ -104,6 +105,21 @@ function RecruiterViewJob({ selectedJobId }) {
     }
   };
 
+  useEffect(() => {
+    const getStatus = async () => {
+      try {
+        const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${selectedJobId}`);
+        // Handle the response to update job status as needed
+        // For example:
+        setJobStatus(statusResponse.data);
+        console.log('Job status:', statusResponse.data);
+      } catch (error) {
+        console.error('Error fetching job status:', error);
+      }
+    };
+    getStatus();
+  }, [jobId]);
+
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
@@ -121,22 +137,46 @@ function RecruiterViewJob({ selectedJobId }) {
     setMenuOpen(false);
   };
 
-  const handleStatusChange = async (jobId, newStatus) => {
+//   const handleStatusChange = async (jobId, newStatus) => {
+//     try {
+//       await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
+  
+//       setJobDetails((prevJobDetails) => ({
+//         ...prevJobDetails,
+//         status: newStatus
+//       }));
+  
+//       localStorage.setItem(`jobStatus-${jobId}`, newStatus);
+//       window.alert('Job closed successfully.');
+//       navigate('/recruiter-jobopenings');
+//     } catch (error) {
+//       console.error('Error updating job status:', error);
+//     }
+//   };
+   
+
+const handleStatusChange = async (jobId, newStatus, action) => {
     try {
-      await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
-  
-      setJobDetails((prevJobDetails) => ({
-        ...prevJobDetails,
-        status: newStatus
-      }));
-  
-      localStorage.setItem(`jobStatus-${jobId}`, newStatus);
-      window.alert('Job closed successfully.');
+      if (action === 'Repost') {
+        const response = await axios.post(`${apiUrl}/job/recruiters/cloneJob/${jobId}/${applicantId}`);
+        const message = response.data.message; // Access the message from the response
+        window.alert(message);
+      } else {
+        // Handle closing the job as before
+        await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
+        setJobDetails((prevJobDetails) => ({
+          ...prevJobDetails,
+          status: newStatus
+        }));
+        localStorage.setItem(`jobStatus-${jobId}`, newStatus);
+        window.alert('Job closed successfully.');
+      }
       navigate('/recruiter-jobopenings');
     } catch (error) {
       console.error('Error updating job status:', error);
     }
   };
+  
 
   return (
     <div>
@@ -196,12 +236,29 @@ function RecruiterViewJob({ selectedJobId }) {
       <span className="three-dots" onClick={toggleMenu}>&#x22EE;</span>
       {menuOpen && (
         <div className="menu-options">
+            {jobStatus === 'active' ? (
            <Link to={`/recruiter-edit-job/${selectedJobId}`}>
             Edit Job
           </Link>
-          <Link onClick={() => handleStatusChange(selectedJobId, jobDetails.status === 'Active' ? 'Inactive' : 'Active')}>
+          ) : (
+            <Link to={`/recruiter-repost-job/${selectedJobId}`}>
+            Edit Job
+          </Link>
+          )}
+          {/* <Link onClick={() => handleStatusChange(selectedJobId, jobDetails.status === 'Active' ? 'Inactive' : 'Active')}>
            {jobDetails.status === 'Active' ? 'Repost Job' : 'Close Job'}
-         </Link>
+         </Link> */}
+
+{jobStatus === 'active' ? (
+  <Link onClick={() => handleStatusChange(selectedJobId, 'inactive', 'Close')}>
+    Close Job
+  </Link>
+) : (
+  <Link onClick={() => handleStatusChange(selectedJobId, 'active', 'Repost')}>
+    Repost Job
+  </Link>
+)}
+
 
         </div>
       )}
