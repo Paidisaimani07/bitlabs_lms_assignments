@@ -19,6 +19,7 @@ import Recruiterviewapplicant from '../../components/recruitercomponents/Recruit
 import AppliedApplicantsBasedOnJobs from '../../components/recruitercomponents/AppliedApplicantsBasedOnJobs';
 import ViewApplicantResume from '../../components/recruitercomponents/ViewApplicantResume';
 import RecruiterViewJob from '../../components/recruitercomponents/RecruiterViewJob';
+import RecruiterRepostJob from '../../components/recruitercomponents/RecruiterRepostJob';
 
 function RecruiterHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -75,6 +76,9 @@ function RecruiterHomePage() {
                      case '/recruiter-view-job':
                     setActiveRoute('recviewjob');
                     break;
+                    case `/recruiter-repost-job/${id}`:
+                    setActiveRoute(`RecruiterRepostJob-${id}`);
+                    break;
 
       default:
         setActiveRoute('');
@@ -98,6 +102,7 @@ function RecruiterHomePage() {
      {activeRoute === 'teammember' && <TeamMember />}
      {activeRoute === 'recviewjob' && <RecruiterViewJob selectedJobId={selectedJobId} />}
     {activeRoute.startsWith('RecruiterEditJob-') && id && <RecruiterEditJob selectedJobId={id}/>}
+    {activeRoute.startsWith('RecruiterRepostJob-') && id && <RecruiterRepostJob selectedJobId={id}/>}
     {activeRoute === 'alerts' && <JobApplicantAlerts />}
     {activeRoute.startsWith('viewapplicant-')  && id && <Recruiterviewapplicant id={id} />}
     {activeRoute.startsWith('appliedapplicantsbasedonjob-')  && id && <AppliedApplicantsBasedOnJobs id={id} />}
