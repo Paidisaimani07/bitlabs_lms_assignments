@@ -374,10 +374,10 @@
             margin-top: 110px !important; /* Adjust margin-top for smaller screens */
         }
         .resume{
-            margin-left: 50px !important; /* Adjust margin-left for smaller screens */
-            width: 120px !important; /* Adjust width for smaller screens */
-            height: 100px !important; /* Adjust height for smaller screens */
-            margin-top: 200px !important; /* Adjust margin-top for smaller screens */
+            margin-left: 50px !important;
+            width: 120px !important; 
+            height: 100px !important;
+            margin-top: 200px !important; 
         }
     }
     .button-link {
