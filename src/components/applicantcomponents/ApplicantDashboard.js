@@ -94,6 +94,10 @@ const ApplicantDashboard = () =>
     navigate("/applicant-saved-jobs");
   };
   
+  const Buildresume = () => {
+    navigate("/applicant-resume-builder");
+  };
+
   const location = useLocation();
 
   return (
@@ -227,16 +231,16 @@ const ApplicantDashboard = () =>
       >
         Saved Jobs
       </h4>
-              {/* <h4 className="title-count"></h4> */}
+              
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   {/*New palet in application dashboard*/}
-  {/* <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} > */}
-  <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
+  <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
 
 
       <div>
