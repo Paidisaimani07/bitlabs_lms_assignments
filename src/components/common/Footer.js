@@ -87,7 +87,7 @@ export default function Footer() {
                   </div>
                   <div class="content">
                     <p>Need help? 24/7</p>
-                    <h6><a href="tel:9966662524">+91-9966662524</a></h6>
+                    <h6><a href="tel:9966662524" style={{ fontFamily: 'inherit' }}>+91-9966662524</a></h6>
                   </div>
                 </div>
                 <div class="ft-icon">
@@ -101,7 +101,7 @@ export default function Footer() {
                   <br /><br />
                   ©2023 TekWorks. All Rights Reserved.
                 </div> */}
-                <div className="copyright" style={{ marginLeft: '-25px' }}> {/* Adjust the value as needed */}
+                <div className="copyright" style={{ marginLeft: '-25px',fontFamily:'inherit' }}> {/* Adjust the value as needed */}
   <br /><br />
   ©2023 TekWorks. All Rights Reserved.
 </div>

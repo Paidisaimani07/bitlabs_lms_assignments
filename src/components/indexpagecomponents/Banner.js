@@ -12,12 +12,13 @@ export default function Banner() {
       <div className="col-lg-7 col-md-12">
         <div className="content wow fadeInUp">
           <div className="heading">
-            <h2>Find the job that fits your life</h2>
-            <p>
-              Resume-Library is a true performance-based job board. Enjoy custom
-              hiring products and access to up to 10,000 new resume
-              registrations daily, with no subscriptions or user licences.
-            </p>
+            <h2 style={{ fontFamily: 'inherit' }}>Find the job that fits your life</h2>
+            <p style={{ fontFamily: 'inherit' }}>
+  Resume-Library is a true performance-based job board. Enjoy custom hiring
+  products and access to up to 10,000 new resume registrations daily, with no
+  subscriptions or user licenses.
+</p>
+
           </div>
           {/* Added buttons */}
           <div>
@@ -94,7 +95,7 @@ export default function Banner() {
                   </span> */}
                   <span>25M+</span>
                 </h3>
-                <div className="des">Jobs Available</div>
+                <div className="des" >Jobs Available</div>
               </div>
               <div className="shape ani7">
                 <img src="images/review/shape6.png" alt="images" />
@@ -118,7 +119,7 @@ export default function Banner() {
                     4800
                   </span>
                 </h6>
-                <p>Employers get benefits</p>
+                <p >Employers get benefits</p>
               </div>
             </div>
             <div className="group-thumb">
