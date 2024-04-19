@@ -60,7 +60,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     return formattedDate;
   }
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
 
   const handleApplyNowClick = (jobId) => {
