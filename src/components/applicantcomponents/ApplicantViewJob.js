@@ -23,6 +23,10 @@ function ApplicantViewJob({ selectedJobId }) {
       const response = await axios.get(
 
         `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
+
+        // `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
+
+    
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,

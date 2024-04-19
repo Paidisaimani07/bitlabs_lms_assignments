@@ -22,7 +22,7 @@ function ApplicantNavBar() {
   const [loginUrl, setLoginUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
-  
+
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
@@ -298,13 +298,13 @@ document.addEventListener("click", handleOutsideClick);
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
                
-              <div className="header-customize-item account">
+              <div className="header-customize-item account" onClick={toggleSubAccount}>
                
               <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
                   {/* <span className="icon-keyboard_arrow_down" /> */}
                 </div>
-                <div className="sub-account">
+                <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
                
                   {/* <h4>Welcome {user.username}</h4> */}
                  
