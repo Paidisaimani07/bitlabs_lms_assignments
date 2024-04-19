@@ -99,6 +99,7 @@ function App() {
                 <Route path="/appliedapplicantsbasedonjob/:id" element={<RecruiterHomePage />} />
                 <Route path="/view-resume/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-job" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />

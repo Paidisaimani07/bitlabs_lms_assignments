@@ -683,6 +683,7 @@
     font-size: 16px;
     line-height: 26px;
     color: #64666c;
+    font-family: inherit;
   }
   
   .wd-review-job.thumb1 .user-tag {
@@ -777,11 +778,13 @@
     font-size: 18px;
     line-height: 28px;
     margin-bottom: 30px;
+    font-family: inherit;
   }
   
   .wd-list-icon li {
     font-size: 20px;
     margin-bottom: 21px;
+    font-family: inherit;
   }
   
   .wd-list-icon li:last-child {
@@ -1219,6 +1222,7 @@
   .wd-counter.style-light p {
     color: #ffffff;
     opacity: 0.5;
+    font-family: inherit;
   }
   
   /* widget testimonials */
@@ -1461,9 +1465,10 @@
   
   .trader-box.sl7 .content .des {
     font-weight: 400;
-    font-size: 16px;
-    line-height: 26px;
+    font-size: 12px;
+    line-height: 16px;
     color: #64666c;
+    font-family: inherit;
   }
   
   .trader-box.sl7 .shape {
@@ -2029,10 +2034,11 @@
   }
   
   .wd-review-job.sl7 .thumb3 .group-user .content p {
-    font-weight: 500;
+    font-weight: 400;
     font-size: 12px;
     line-height: 16px;
-    color: #121212;
+    color: #64666c;
+    font-family: inherit;
   }
   
   .wd-review-job.sl7 .thumb3 .group-user .user-box img:not(:first-child) {
@@ -8816,6 +8822,7 @@
     font-size: 16px;
     line-height: 24px;
     text-transform: capitalize;
+    font-family: inherit;
   }
   
   .title-iconbox.style-2,
