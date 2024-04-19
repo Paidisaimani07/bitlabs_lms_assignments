@@ -580,7 +580,7 @@
   .job-search-form.style2 .form-group.location,
   .cv-form-details.stc2,
   .job-article.single-employer .related-job {
-    margin: 0;
+    margin: 20px;
   }
 
   .job-search-form.style2 .form-group.location {

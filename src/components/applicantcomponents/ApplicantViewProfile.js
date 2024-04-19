@@ -159,7 +159,7 @@ const ApplicantViewProfile = () => {
                     </div>
                     <div className="row">
   <div className="col">
-    <div className="heading">University:<br/> {(profileData.graduationDetails && profileData.graduationDetails.gboard) || ''}</div>
+    <div className="subtitle-1 fw-7">University:<br/> {(profileData.graduationDetails && profileData.graduationDetails.gboard) || ''}</div>
   </div>
   <div className="col">
     <div className="subtitle-1 fw-7">
