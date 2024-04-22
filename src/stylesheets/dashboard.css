@@ -85,8 +85,11 @@
 }
 
 .dashboard .fw-7 {
-    font-weight: 700;
-    font-size:15px;
+font-weight: 400;
+font-size: 16px;
+line-height: 26px;
+color: #64666c;
+font-style: inherit;
 }
 
 .dashboard .fs-16 {
@@ -231,9 +234,9 @@
 }
 .heading {
     font-family: "Plus Jakarta Sans";
-    font-size: 30px !important;
+    font-size: 24px !important;
     font-weight: 300 !important;
-    line-height: 25px !important;
+    line-height: 24px !important;
     text-align: left;
     margin-bottom: 20px;
 }
