@@ -146,13 +146,13 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   //   }
   // };
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
 
   const handleViewJobDetails = () => {
-    setSelectedJobId(selectedJobId);
+    setSelectedJobId(jobId);
     // Navigate to the job details page programmatically
-    navigate(`/applicant-view-job?jobId=${jobId}`);
+    navigate(`/applicant-view-job`);
   };
 
   return (
