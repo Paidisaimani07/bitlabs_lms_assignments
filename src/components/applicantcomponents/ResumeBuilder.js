@@ -33,7 +33,7 @@ function ResumeBuilder() {
   }, []); // Empty dependency array to run the effect only once
 
   useEffect(() => {
-    const apiUrl1 = 'http://localhost:5173/api/auth/login';
+    const apiUrl1 = 'http://43.204.125.6:5173/api/auth/login';
 
     // Check if requestData is not null before making the API call
     if (requestData) {
@@ -56,8 +56,9 @@ function ResumeBuilder() {
           return response.json();
         })
         .then(data => {
-          const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          const loginUrl = `http://43.204.125.6:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
+          window.open(loginUrl, '_blank');
         })
         .catch(error => {
           // Handle errors here
