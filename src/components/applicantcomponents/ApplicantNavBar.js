@@ -105,7 +105,7 @@ document.addEventListener("click", handleOutsideClick);
 
   const handleClick = () => {
     // API endpoint URL
-    const apiUrl = 'http://localhost:5173/api/auth/login';
+    const apiUrl = 'http://43.204.125.6:5173/api/auth/login';
 
     // Options for the fetch request
     const requestOptions = {
@@ -127,7 +127,7 @@ document.addEventListener("click", handleOutsideClick);
       })
       .then(data => {
         // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
-        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+        const loginUrl = `http://43.204.125.6:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
         window.open(loginUrl, '_blank');
         //setUrl(loginUrl);
         setLoginUrl(loginUrl);
