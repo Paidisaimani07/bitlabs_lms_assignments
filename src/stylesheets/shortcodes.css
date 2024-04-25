@@ -5485,7 +5485,7 @@
     margin-left: 20px;
     padding: 12px 16px; /* Adjusted padding for smaller screens */
     box-sizing: border-box; /* Include padding and border in the element's total width and height */
-    background: #f5f5f2;
+    background:#fff;
     border-radius: 4px;
     font-weight: 700;
     font-size: 16px;
@@ -5498,7 +5498,9 @@
     -ms-transition: all 0.3s ease 0s;
     -o-transition: all 0.3s ease 0s;
     transition: all 0.3s ease 0s;
-  }
+    border: 2px solid orange; /* Added border property */
+}
+
  
   @media screen and (max-width: 245px) {
     .wd-form-login .menu-tab li {
