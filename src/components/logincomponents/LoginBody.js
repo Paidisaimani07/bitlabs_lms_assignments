@@ -600,7 +600,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
     value={candidateMobileNumber}
     onChange={(e) => {
         const inputValue = e.target.value;
-        // Remove non-numeric characters
+        
         const numericValue = inputValue.replace(/\D/g, '');
         // Limit to 10 digits
         const truncatedValue = numericValue.slice(0, 10);
