@@ -5,6 +5,7 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
+
 function ApplicantForgotPassword() {
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
@@ -22,6 +23,17 @@ function ApplicantForgotPassword() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const user1 = useUserContext();
   const user = user1.user;
+  const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFieldDisabled(true);
+  };
+
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -98,6 +110,10 @@ function ApplicantForgotPassword() {
     }
   };
   const handleResetPassword = async () => {
+
+    // console.log("Reset password button clicked");
+    setShowMessage(true);
+   
     if (password !== confirmedPassword) {
       setResetSuccess(false);
       setResetError('Passwords do not match. Please make sure the passwords match.');
@@ -122,11 +138,10 @@ function ApplicantForgotPassword() {
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
-
-        // Redirect to login page after password reset
-        navigate('/candidate');
+        
 
       } else {
+        
         setResetSuccess(false);
         setResetError('Password reset failed. Please try again later.');
       }
@@ -144,23 +159,25 @@ function ApplicantForgotPassword() {
             <div className="row">
               <div className="wd-form-login">
                 {resetSuccess ? (
-                  <div className="success-message">
-                    <h5>Password reset was done successfully. Please click on <a href="/candidate" style={{color:'blue'}}>Login</a> to continue</h5>
-                  </div>
+                  <div className="message-window">
+          <h5>Password reset was done successfully. Please click on <a href="/candidate" style={{color:'blue'}}>Login</a> to continue</h5>
+        </div>
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
                       <div className="ip">
-                      <label>
-                    Email Address<span>*</span>
-                  </label>
-                  <input
-              type="email"
-              placeholder="Enter your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-                      </div>
+      <label>
+        Email Address<span>*</span>
+      </label>
+      <input
+        type="email"
+        placeholder="Enter your Email"
+        value={email}
+        onChange={handleEmailChange}
+        onBlur={handleEmailBlur}
+        disabled={isEmailFieldDisabled}
+      />
+    </div>
                       {otpSent ? (
                         otpVerified ? (
                           <div className="ip">
