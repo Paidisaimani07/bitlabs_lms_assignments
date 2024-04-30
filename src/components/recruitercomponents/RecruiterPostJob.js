@@ -534,7 +534,7 @@ function RecruiterPostJob() {
               <div className="col-lg-12 col-md-12 ">
                 <div className="title-dashboard">
                 <BackButton />
-                  <div className="title-dash flex2">Post Job</div>
+                  <div className="title-dash flex2">Post a Job</div>
                 </div>
               </div>
             </div>
@@ -781,7 +781,7 @@ function RecruiterPostJob() {
                             id="skillsTypeahead"
                             labelKey={(option) => option.skillName}
                             multiple
-                            placeholder="*Skills"
+                            placeholder="Skills*"
                             options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
                             onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
                             selected={skillsRequired}
