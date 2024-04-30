@@ -105,7 +105,7 @@ document.addEventListener("click", handleOutsideClick);
 
   const handleClick = () => {
     // API endpoint URL
-    const apiUrl = 'http://localhost:5173/api/auth/login';
+    const apiUrl = 'http://43.204.125.6:5173/api/auth/login';
 
     // Options for the fetch request
     const requestOptions = {
@@ -127,7 +127,7 @@ document.addEventListener("click", handleOutsideClick);
       })
       .then(data => {
         // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
-        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+        const loginUrl = `http://43.204.125.6:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
         window.open(loginUrl, '_blank');
         //setUrl(loginUrl);
         setLoginUrl(loginUrl);
@@ -393,21 +393,24 @@ document.addEventListener("click", handleOutsideClick);
               <li>
                 <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
                   <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <span className="icon-bell1 dash-icon">
-                      <sup
-                        style={{
-                          background: 'red',
-                          borderRadius: '50%',
-                          padding: '2px 5px',
-                          color: 'white',
-                          fontSize: '10px',
-                          textAlign: 'center',
-                          lineHeight: '1',
-                          marginLeft: '-10px',
-                        }}
-                      >
-                        {alertCount}
-                      </sup>
+                  <span className="icon-bell1 dash-icon">
+                    {alertCount > 0 && (
+  <sup
+    style={{
+      background: 'red',
+      borderRadius: '50%',
+      padding: '2px 5px',
+      color: 'white',
+      fontSize: '10px',
+      textAlign: 'center',
+      lineHeight: '1',
+      marginLeft: '-10px',
+    }}
+  >
+    {alertCount}
+  </sup>
+)}
+
                     </span>
                   </div>
                   <span className="dash-titles">Job Alerts</span>
