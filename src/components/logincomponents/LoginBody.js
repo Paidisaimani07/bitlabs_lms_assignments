@@ -148,7 +148,7 @@ const login = useGoogleLogin({
     } catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
-        setErrorMessage('Incorrect password.');
+        setErrorMessage('enter a correct password or password is incorrect try again');
         console.error('login failed');
       }
       else if(error.response.data==="No account found with this email address") {
@@ -281,7 +281,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
     } else if (error.response.data === 'Mobile number is already registered as a Recruiter.') {
       window.alert('Mobile number already existed as recruiter');
     } else if (error.response.data === 'Mobile number is already registered as an Applicant.') {
-      window.alert('Mobile number already existed as candidate');
+      window.alert('mobile number already exists, please provide a new mobile number');
     } else {
       window.alert('Email is already registered.'); // Default message for other 400 errors
     }
@@ -341,9 +341,9 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        console.error('Registration failed', error);
        if (error.response && error.response.status === 400) {
          if (error.response.data === 'Email already registered') {
-           window.alert('Registration failed! User with this email already exists');
+           window.alert('email already exists, please provide a new email ID');
          } else if (error.response.data === 'Mobile number already existed') {
-           window.alert('Registration failed! Mobile number already exists');
+           window.alert('mobile number already exists, please provide a new mobile number');
          }
        }
    }
@@ -410,13 +410,13 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  };
  const isMobileNumberValid = (mobilenumber) => {
    if (!mobilenumber.trim()) {
-     return 'Mobile number is required.';
+     return 'Please enter a valid 10 digit mobile number';
    }
    if (!/^\d+$/.test(mobilenumber)) {
      return 'Mobile number must contain only numeric digits.';
    }
    if (mobilenumber.length !== 10) {
-     return 'Mobile number must have a specific length (e.g., 10 digits).';
+     return 'Please enter a valid 10 digit mobile number';
    }
    if (/\s/.test(mobilenumber)) {
      return 'Mobile number cannot contain spaces.';
@@ -560,15 +560,21 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                 <div className="ip">
                     {/* <label>Full Name<span>*</span></label> */}
                     <input
-                      type="text"
-                      placeholder="Name"
-                      onChange={(e) => {
-                        setCandidateName(e.target.value);
-                        setCandidateNameError('');
-                      }}
-                      required
-                      disabled={allFieldsDisabled}
-                    />
+    type="text"
+    placeholder="Name"
+    onChange={(e) => {
+        const inputValue = e.target.value;
+        if (/^[a-zA-Z\s]*$/.test(inputValue)) {
+            setCandidateName(inputValue);
+            setCandidateNameError('');
+        } else {
+            setCandidateNameError('Name should only contain alphabetic characters');
+        }
+    }}
+    required
+    disabled={allFieldsDisabled}
+/>
+
                     {candidateNameError && <div className="error-message">{candidateNameError}</div>}
                   </div>
                   <div className="ip">
@@ -588,17 +594,29 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                   </div>
                   <div className="ip">
                     {/* <label>Mobile Number<span>*</span></label> */}
-                  <input
-                    type="text"
-                    placeholder="Mobile Number"
-                    value={candidateMobileNumber}
-                    onChange={(e) => {
-                      setCandidateMobileNumber(e.target.value);
-                      setCandidateMobileNumberError('');
-                      }}
-                      required
-                      disabled={allFieldsDisabled}
-                    />
+                    <input
+    type="text"
+    placeholder="Mobile Number"
+    value={candidateMobileNumber}
+    onChange={(e) => {
+        const inputValue = e.target.value;
+        
+        const numericValue = inputValue.replace(/\D/g, '');
+        // Limit to 10 digits
+        const truncatedValue = numericValue.slice(0, 10);
+        
+        if (/[^0-9]/.test(inputValue)) {
+            setCandidateMobileNumberError('Mobile number should contain only digits');
+        } else {
+            setCandidateMobileNumber(truncatedValue);
+            setCandidateMobileNumberError('');
+        }
+    }}
+    required
+    disabled={allFieldsDisabled}
+/>
+
+
                     {candidateMobileNumberError && <div className="error-message">{candidateMobileNumberError}</div>}
                   </div>
                   <div className="ip">

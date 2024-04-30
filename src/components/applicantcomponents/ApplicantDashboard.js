@@ -249,8 +249,10 @@ const ApplicantDashboard = () =>
           <div className="content">
              
               <h4 className="title-count2" style={{paddingRight:"80px",color: "#8D8D8D"}}>
-              Resume builder banner-Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
-              </h4>  
+              Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
+              </h4>
+              
+
           </div>
           <Link
     to="/applicant-resume-builder"
