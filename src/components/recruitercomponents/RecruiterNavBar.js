@@ -245,22 +245,25 @@ useEffect(() => {
           <li>
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
-          <span className="icon-bell1 dash-icon">
-            <sup
-              style={{
-                background: 'red',
-                borderRadius: '50%',
-                padding: '2px 5px',
-                color: 'white',
-                fontSize: '10px',
-                textAlign: 'center',
-                lineHeight: '1',
-                marginLeft: '-10px',
-              }}
-            >
-              {alertCount}
-            </sup>
-          </span>
+        <span className="icon-bell1 dash-icon">
+                    {alertCount > 0 && (
+  <sup
+    style={{
+      background: 'red',
+      borderRadius: '50%',
+      padding: '2px 5px',
+      color: 'white',
+      fontSize: '10px',
+      textAlign: 'center',
+      lineHeight: '1',
+      marginLeft: '-10px',
+    }}
+  >
+    {alertCount}
+  </sup>
+)}
+
+                    </span>
         </div>
         <span className="dash-titles">Alerts</span>
       </Link>

@@ -393,21 +393,24 @@ document.addEventListener("click", handleOutsideClick);
               <li>
                 <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
                   <div style={{ position: 'relative', display: 'inline-block' }}>
-                    <span className="icon-bell1 dash-icon">
-                      <sup
-                        style={{
-                          background: 'red',
-                          borderRadius: '50%',
-                          padding: '2px 5px',
-                          color: 'white',
-                          fontSize: '10px',
-                          textAlign: 'center',
-                          lineHeight: '1',
-                          marginLeft: '-10px',
-                        }}
-                      >
-                        {alertCount}
-                      </sup>
+                  <span className="icon-bell1 dash-icon">
+                    {alertCount > 0 && (
+  <sup
+    style={{
+      background: 'red',
+      borderRadius: '50%',
+      padding: '2px 5px',
+      color: 'white',
+      fontSize: '10px',
+      textAlign: 'center',
+      lineHeight: '1',
+      marginLeft: '-10px',
+    }}
+  >
+    {alertCount}
+  </sup>
+)}
+
                     </span>
                   </div>
                   <span className="dash-titles">Job Alerts</span>
