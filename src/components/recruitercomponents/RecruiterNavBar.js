@@ -277,8 +277,8 @@ useEffect(() => {
           <li>
           <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""} style={{ backgroundColor: "#F97316", paddingRight: "0px", display: "inline-block",borderRadius:"10px", textAlign: "center",marginTop:"20px",width:"250px" }}>
   <span className=""></span>
-  <span className="" style={{ color: "white", fontFamily: "Plus Jakarta Sans", fontSize: "15px", fontWeight: "600", lineHeight: "25px", textAlign: "center" }}> Post <span style={{textTransform: "lowercase"}}>a</span> Job </span>
- <span style={{ marginLeft: "50px",color:"white",fontWeight: 10 }}>➔</span>
+  <span className="" style={{ color: "white", fontFamily: "Plus Jakarta Sans", fontSize: "22px", fontWeight: "500", lineHeight: "25px", textAlign: "center" }}> Post <span style={{textTransform: "lowercase"}}>a</span> Job </span>
+ <span style={{ marginLeft: "10px",color:"white",fontWeight: 150, fontSize: "25px" }}>➔</span>
 </Link>
 
           </li>
