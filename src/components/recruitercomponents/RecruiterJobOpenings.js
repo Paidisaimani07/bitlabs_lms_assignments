@@ -152,7 +152,8 @@ const getInactiveJobs = async () => {
     width: '160px',
     justifyContent: 'center',
     marginRight: '10px',
-    gap: '10px'
+    gap: '10px',
+    marginBottom: '5px'
   };
 
   const inactiveButtonStyles = {
@@ -165,7 +166,8 @@ const getInactiveJobs = async () => {
     width: '170px',
     justifyContent: 'center',
     marginRight: '10px',
-    gap: '10px'
+    gap: '10px',
+    marginBottom: '5px'
   };
 
   return (

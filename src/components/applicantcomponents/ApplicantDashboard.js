@@ -202,7 +202,6 @@ const ApplicantDashboard = () =>
       >
         Applied Jobs
       </h4>
-              {/* <h4 className="title-count"></h4> */}
             </div>
           </div>
           <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
@@ -241,8 +240,6 @@ const ApplicantDashboard = () =>
 
   {/*New palet in application dashboard*/}
   <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
-
-
       <div>
       <h2 className="heading1">Build your professional resume for free</h2>
   
@@ -255,25 +252,23 @@ const ApplicantDashboard = () =>
               Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
               </h4>
               
+
           </div>
-          
           <Link
     to="/applicant-resume-builder"
     className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
   >
               <span className=""></span>
               <span className="button button-custom">Create Now</span>
-  
+              {/* <span className="button button-custom">Create Now</span> */}
           </Link>
       </div>
-      
       <img
   src={Resume}
   alt="Resume"
   className='resume'
   style={{ width: "200px", height: "150px" }} 
 />
-
   </div>
 </section>
 
