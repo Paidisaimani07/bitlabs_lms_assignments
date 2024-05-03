@@ -137,6 +137,7 @@ function RecruiterPostJob() {
       errors.jobTitle = '';
     }
     if (!minimumExperience.trim()) {
+      
      // alert(minimumExperience);
       setMinimumExperience('');
       isValid = false;

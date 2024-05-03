@@ -16,7 +16,7 @@ import '../../stylesheets/jquery.dataTables.min.css';
  
 const Nav = () => {
  
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1301);
  
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
@@ -24,7 +24,7 @@ const Nav = () => {
  
   useEffect(() => {
     const handleResize = () => {
-      setIsOpen(window.innerWidth >= 768);
+      setIsOpen(window.innerWidth >= 1301);
     };
  
     window.addEventListener('resize', handleResize);
