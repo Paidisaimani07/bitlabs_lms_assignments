@@ -34,10 +34,11 @@ export default function Banner() {
                 width: '130px',
                 textAlign: window.innerWidth >= 320 && window.innerWidth <= 462 ? 'center' : '',
                 marginRight: '10px', // Added margin between buttons
+                marginBottom: '10px'
               }}
               onMouseOver={(e) => {
                 e.target.style.color = '#FFFFFF';
-                e.target.style.backgroundColor = '#EE6D12';
+                e.target.style.backgroundColor = '#F97316';
               }}
               onMouseOut={(e) => {
                 e.target.style.color = '#FFFFEF';

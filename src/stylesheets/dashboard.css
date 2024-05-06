@@ -16,7 +16,7 @@
 }
 
 .dashboard a:hover {
-    color: #14a077;
+    color: #fff;
 }
 
 .dashboard .color-1 {
@@ -418,7 +418,7 @@ font-style: inherit;
     line-height: 50px !important;
     text-align: center;
     height: 50px; 
-    word-spacing: 10px; 
+    word-spacing: 5px; 
 }
 
 }
