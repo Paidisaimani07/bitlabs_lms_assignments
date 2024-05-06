@@ -5,7 +5,6 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
-import { Router } from 'react-router'; // Import Router from react-router
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
