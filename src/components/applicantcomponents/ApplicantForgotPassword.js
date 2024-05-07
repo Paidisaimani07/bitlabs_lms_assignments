@@ -35,7 +35,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   useEffect(() => {
     if (resetSuccess) {
       // Show alert window
-      window.alert("Password reset was done successfully. Click OK to continue to login.");
+      window.alert("Password has been reset successfully. Click OK to continue.");
       
       // Redirect after clicking OK
       window.location.href = '/candidate';
