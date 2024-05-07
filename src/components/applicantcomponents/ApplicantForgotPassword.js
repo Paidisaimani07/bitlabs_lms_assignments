@@ -5,6 +5,9 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate} from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
+import { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+
 
 function ApplicantForgotPassword() {
   const [email, setEmail] = useState('');
@@ -24,7 +27,23 @@ function ApplicantForgotPassword() {
   const user1 = useUserContext();
   const user = user1.user;
   const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
+  // Define a state to control whether to show the success message or not
+const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+
+
+  useEffect(() => {
+    if (resetSuccess) {
+      // Show alert window
+      window.alert("Password has been reset successfully. Click OK to continue.");
+      
+      // Redirect after clicking OK
+      window.location.href = '/candidate';
+      // Set showSuccessMessage to true to prevent rendering the message in the UI
+    setShowSuccessMessage(true);
+    }
+  }, [resetSuccess]);
+ 
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -112,7 +131,7 @@ function ApplicantForgotPassword() {
   const handleResetPassword = async () => {
 
     // console.log("Reset password button clicked");
-    setShowMessage(true);
+    // setShowMessage(true);
    
     if (password !== confirmedPassword) {
       setResetSuccess(false);
@@ -138,7 +157,8 @@ function ApplicantForgotPassword() {
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
-        
+         // Redirect to login page after password reset
+        //  window.location.href = '/candidate';
 
       } else {
         
@@ -159,9 +179,12 @@ function ApplicantForgotPassword() {
             <div className="row">
               <div className="wd-form-login">
                 {resetSuccess ? (
-                  <div className="message-window">
-          <h5>Password reset was done successfully. Please click on <a href="/candidate" style={{color:'blue'}}>Login</a> to continue</h5>
-        </div>
+                 
+                 
+               <div className="success-message">
+    {/* {showSuccessMessage && <h5>Password reset was done successfully.</h5>} */}
+  </div>
+                 
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />

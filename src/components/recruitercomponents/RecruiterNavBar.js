@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
 
 function RecruiterNavBar() {
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
+  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(1);
@@ -32,7 +32,7 @@ function RecruiterNavBar() {
 document.addEventListener("click", handleOutsideClick);
   useEffect(() => {
     const handleResize = () => {
-      setIsOpen(window.innerWidth >= 768);
+      setIsOpen(window.innerWidth >= 1302);
     };
      window.addEventListener('resize', handleResize);
     $("#left-menu-btn").on("click", function(e) {
@@ -140,7 +140,7 @@ useEffect(() => {
         <div className="col-md-12">
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
-            {window.innerWidth < 768 && (
+            {window.innerWidth < 1400 && (
               <div className="hamburger-icon" onClick={handleToggleMenu}>
                 <span />
                 <span />
