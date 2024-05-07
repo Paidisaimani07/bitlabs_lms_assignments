@@ -4,13 +4,44 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from "axios";
 import BackButton from '../common/BackButton';
+import { useNavigate } from "react-router-dom";
+
 
 function ResumeBuilder() {
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const { user } = useUserContext();
   const [loginUrl, setLoginUrl] = useState('');
   const [requestData, setRequestData] = useState(null);
   const iframeRef = useRef(null);
+  const navigate = useNavigate();
+
+  const userId = user.id;
+
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+        
+        // Navigate based on profile ID
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
+        } else {
+          setLoading(false); // No need to navigate, stay on this page
+        }
+      } catch (error) {
+        console.error('Error fetching profile ID:', error);
+      }
+    };
+  
+    checkUserProfile();
+  }, [userId, navigate]);
 
   useEffect(() => {
     const fetchData = async () => {

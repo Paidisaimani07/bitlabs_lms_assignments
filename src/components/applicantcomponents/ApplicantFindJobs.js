@@ -60,6 +60,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchJobs();
   }, [userId]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -186,7 +187,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
     <BackButton />
-<div className="title-dash flex2">Recommended Jobs</div>
+    <div className="title-dash flex2">
+  {profileid1 === 0 ? "Suggested jobs" : "Recommended Jobs"}
+</div>
 </div>
 </div>
 </div>
