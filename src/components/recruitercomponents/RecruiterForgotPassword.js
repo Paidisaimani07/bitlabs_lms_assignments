@@ -18,7 +18,18 @@ function RecruiterForgotPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [otpResendTimer, setOTPTimerResend] = useState(0);
     const [resendButtonDisabled, setResendButtonDisabled] = useState(false);
- 
+
+    
+    const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
+  
+    const handleEmailChange = (e) => {
+      setEmail(e.target.value);
+    };
+  
+    const handleEmailBlur = () => {
+      setIsEmailFieldDisabled(true);
+    };
+
     const handleTogglePassword = () => {
       setShowPassword(!showPassword);
     };
@@ -138,17 +149,19 @@ function RecruiterForgotPassword() {
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
-                      <div className="ip">
-                      <label>
-                    Email Address<span>*</span>
-                  </label>
-                  <input
-              type="email"
-              placeholder="Enter your Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-                      </div>
+                    <div className="ip">
+      <label>
+        Email Address<span>*</span>
+      </label>
+      <input
+        type="email"
+        placeholder="Enter your Email"
+        value={email}
+        onChange={handleEmailChange}
+        onBlur={handleEmailBlur}
+        disabled={isEmailFieldDisabled}
+      />
+    </div>
                       {otpSent ? (
                         otpVerified ? (
                           <div className="ip">

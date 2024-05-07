@@ -255,7 +255,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
         if(response.data === ('Email is already registered as an Applicant.')){
        setCandidateOTPSent(false);
    
-       window.alert('Email already registered as candidate, please try to login');
+       window.alert('email already exists, please provide a new email ID');
       }
       // if(response.data === "Mobile number already existed in recruiter"){
         if(response.data === "Mobile number is already registered as a Recruiter."){
@@ -277,7 +277,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
     if (error.response.data === 'Email is already registered as a Recruiter.') {
       window.alert('Email already registered as recruiter, please try to login');
     } else if (error.response.data === 'Email is already registered as an Applicant.') {
-      window.alert('Email already registered as candidate, please try to login');
+      window.alert('email already exists, please provide a new email ID');
     } else if (error.response.data === 'Mobile number is already registered as a Recruiter.') {
       window.alert('Mobile number already existed as recruiter');
     } else if (error.response.data === 'Mobile number is already registered as an Applicant.') {
