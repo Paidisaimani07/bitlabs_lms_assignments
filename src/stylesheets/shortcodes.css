@@ -7752,7 +7752,7 @@
   
   .features-job .job-archive-header h3 a:hover,
   .features-job.style-3 .box-content h3 a:hover {
-    color: #EE6D12;
+    /* color: #EE6D12; */
   }
   
   h3 span.icon-bolt {
