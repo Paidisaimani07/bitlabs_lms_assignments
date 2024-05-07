@@ -27,22 +27,23 @@ function ApplicantForgotPassword() {
   const user1 = useUserContext();
   const user = user1.user;
   const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
-  // const [showMessage, setShowMessage] = useState(false);
-  
+  // Define a state to control whether to show the success message or not
+const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
 
 
   useEffect(() => {
-    let redirectTimer;
-
     if (resetSuccess) {
-      redirectTimer = setTimeout(() => {
-        window.location.href = '/candidate'; // Redirect after 1 minute
-      }, 3000); // 1 minute = 60,000 milliseconds
+      // Show alert window
+      window.alert("Password reset was done successfully. Click OK to continue to login.");
+      
+      // Redirect after clicking OK
+      window.location.href = '/candidate';
+      // Set showSuccessMessage to true to prevent rendering the message in the UI
+    setShowSuccessMessage(true);
     }
-
-    return () => clearTimeout(redirectTimer); // Cleanup timer
-
   }, [resetSuccess]);
+ 
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -179,10 +180,10 @@ function ApplicantForgotPassword() {
               <div className="wd-form-login">
                 {resetSuccess ? (
                  
-                  <div className="success-message">
-                    {resetSuccess && <h5>Password reset was done successfully.</h5>}
-                    {/* <h5>Password reset was done successfully. Please click on <a href="/candidate" style={{color:'blue'}}>Login</a> to continue</h5> */}
-                  </div>
+                 
+               <div className="success-message">
+    {/* {showSuccessMessage && <h5>Password reset was done successfully.</h5>} */}
+  </div>
                  
                 ) : (
                   <div>
