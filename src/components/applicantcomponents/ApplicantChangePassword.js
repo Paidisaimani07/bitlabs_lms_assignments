@@ -15,7 +15,6 @@ function ApplicantChangePassword() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [loading, setLoading] = useState(true);
-  const userId = user.id;
   const navigate = useNavigate();
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({
@@ -70,30 +69,6 @@ function ApplicantChangePassword() {
     }
   };
 
-  useEffect(() => {
-    const checkUserProfile = async () => {
-      try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        const profileId = profileIdResponse.data;
-        
-        // Navigate based on profile ID
-        if (profileId === 0) {
-          navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
-        } else {
-          setLoading(false); // No need to navigate, stay on this page
-        }
-      } catch (error) {
-        console.error('Error fetching profile ID:', error);
-      }
-    };
-  
-    checkUserProfile();
-  }, [userId, navigate]);
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
