@@ -16,14 +16,12 @@ export default function ApplicantJobAlerts() {
   const [jobDetails, setJobDetails] = useState(null);
   const [selectedJobId, setSelectedJobId] = useState(null); // Define setSelectedJobId
   const [jobId, setJobId] = useState(null); 
-  const userId = user.id;
 
   useEffect(() => {
     if (jobIdParam) {
       setJobId(jobIdParam);
     }
   }, [location, jobIdParam]);
-
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -91,6 +89,32 @@ export default function ApplicantJobAlerts() {
       });
   }, [user.id]);
 
+  //handleJobAlertClick 
+  
+  const handleJobAlertClick = async (alert) => {
+    try {
+      // Call the backend API to mark the alert as seen
+      await axios.put(`${apiUrl}/applyjob/applicant/mark-alert-as-seen/${alert.alertsId}`);
+      
+      // Update the "seen" status of the clicked alert in the frontend
+      const updatedJobAlerts = jobAlerts.map(alert => {
+        if (alert.alertsId === alert.alertsId) {
+          return { ...alert, seen: true };
+        }
+        return alert;
+      });
+      setJobAlerts(updatedJobAlerts);
+  
+      // Show job details
+      // const jobId = alert.applyJob && alert.applyJob.job && alert.applyJob.job.id;
+      // setSelectedJobId(jobId);
+      // console.log('Selected job ID:', jobId);
+      // navigate('/applicant-interview-status?jobId=${alert.applyJob.job.id}');
+    } catch (error) {
+      console.error('Error marking alert as seen:', error);
+    }
+  };
+
   const RecommendJobs = () => {
     navigate("/applicant-find-jobs");
   };
@@ -143,39 +167,54 @@ export default function ApplicantJobAlerts() {
               <div className="box-notifications">
                 {jobAlerts.length > 0 ? (
                   <ul>
-                    {jobAlerts.map(alert => (
-                      <li key={alert.alertsId} className='inner bg-white' style={{ width: '100%', padding: '2%', borderRadius: '10px' }}>
-                        <a className="noti-icon"><span className="icon-bell1"></span></a>
-                        <h4>
-                          {alert.status === 'New' || alert.status === null ? (
-                            <> 
-                              <Link
-  to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
-  
+                  {jobAlerts.map(alert => (
+   <li key={alert.alertsId} onClick={() => handleJobAlertClick(alert)} className='inner bg-white' style={{ width: '100%', padding: '2%', borderRadius: '10px', position: 'relative', backgroundColor: alert.seen ? '#F0F0F0' : '#FFFFFF' }}>
+                   <div style={{ position: 'relative' }}>
+                       {!alert.seen && <div style={{ width: '10px', height: '10px', backgroundColor: 'orange', borderRadius: '50%', position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '-15px' }}></div>} 
+                      </div>
+                      <h4>
+                        {alert.status === 'New' || alert.status === null ? (
+                          <> 
+                            <Link
+to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+style={{
+  textDecoration: 'none',
+  color: 'black', // Default font color
+  transition: 'color 0.3s ease', // Add transition for smooth effect
+}}
+onMouseOver={(e) => { e.target.style.color = 'green'; }}
+onMouseOut={(e) => { e.target.style.color = 'black'; }}
 >
 Your application has been successfully submitted to &nbsp;{alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '} on {' '} {formatDate(alert.changeDate)}.
 </Link>
- 
-                              </>
-                          ) : (
-                            <>
-                              <Link
-  to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+
+                            </>
+                        ) : (
+                          <>
+                            <Link
+to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+style={{
+  textDecoration: 'none',
+  color: 'black', // Default font color
+  transition: 'color 0.3s ease', // Add transition for smooth effect
+}}
+onMouseOver={(e) => { e.target.style.color = 'green'; }}
+onMouseOut={(e) => { e.target.style.color = 'black'; }}
 >
 Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '} on {' '} {formatDate(alert.changeDate)}.
 </Link>
- 
-                              </>
-                          )}
-                        </h4>
 
-                        {alert.applyJob && (
-                          <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
+
+                            </>
                         )}
-                      </li>
-                    ))}
+                      </h4>
 
-                  </ul>
+                      {alert.applyJob && (
+                        <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
                 ) : (
                   <h3>No alerts are found.</h3>
                 )}
