@@ -5,12 +5,17 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import leftArrow from '../../images/arrow-left.png';
+import { useNavigate } from "react-router-dom";
+
 function ApplicantAppliedJobs({setSelectedJobId}) {
     const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const applicantId = user.id;
-  useEffect(() => {
+  const userId = user.id;
+  const navigate = useNavigate();
+
+   useEffect(() => {
     const fetchData = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 50));

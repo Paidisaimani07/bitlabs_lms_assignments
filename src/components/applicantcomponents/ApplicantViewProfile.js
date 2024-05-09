@@ -4,6 +4,7 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import { useNavigate } from "react-router-dom";
 const ApplicantViewProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -14,8 +15,10 @@ const ApplicantViewProfile = () => {
    const[qualification,setQualification]=useState();
    const[specialization,setSpecialization]=useState();
    const[preferredJobLocations,setpreferredJobLocations]=useState([]);
+   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
+  const userId = user.id;
   
   const checkAndShowAlert = (message) => {
     const alertShownBefore = localStorage.getItem('alertShown');
@@ -27,7 +30,9 @@ const ApplicantViewProfile = () => {
       }
     }
   };
-  useEffect(() => {
+
+
+   useEffect(() => {
     let count = 0;
     let profileResponse = null;
     let isMounted = true;

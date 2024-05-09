@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import { useNavigate } from "react-router-dom";
+
 function ApplicantChangePassword() {
   const { user } = useUserContext();
   const [oldPassword, setOldPassword] = useState('');
@@ -12,6 +14,8 @@ function ApplicantChangePassword() {
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({
     oldPassword: '',
@@ -64,6 +68,8 @@ function ApplicantChangePassword() {
         break;
     }
   };
+
+
   const handleChangePassword = async (e) => {
     e.preventDefault();
  

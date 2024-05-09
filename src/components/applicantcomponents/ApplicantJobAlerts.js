@@ -16,12 +16,14 @@ export default function ApplicantJobAlerts() {
   const [jobDetails, setJobDetails] = useState(null);
   const [selectedJobId, setSelectedJobId] = useState(null); // Define setSelectedJobId
   const [jobId, setJobId] = useState(null); 
+  const userId = user.id;
 
   useEffect(() => {
     if (jobIdParam) {
       setJobId(jobIdParam);
     }
   }, [location, jobIdParam]);
+
 
   useEffect(() => {
     const fetchJobDetails = async () => {
