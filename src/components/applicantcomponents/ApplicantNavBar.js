@@ -245,7 +245,7 @@ document.addEventListener("click", handleOutsideClick);
     fetchAlertCount();
 
     // Set up polling interval
-    const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+    const intervalId = setInterval(fetchAlertCount, 100); // Fetch every minute
 
     // Clean up function to clear interval when component unmounts
     return () => clearInterval(intervalId);
@@ -298,7 +298,32 @@ document.addEventListener("click", handleOutsideClick);
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
-               
+            <div>
+            <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
+  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
+    <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}>
+      {alertCount > 0 && (
+        <sup
+          style={{
+            background: 'red',
+            borderRadius: '50%',
+            padding: '2px 5px',
+            color: 'white',
+            fontSize: '10px',
+            textAlign: 'center',
+            lineHeight: '1',
+            marginLeft: '-10px',
+          }}
+        >
+          {alertCount}
+        </sup>
+      )}
+    </span>
+  </div>
+  <span className="dash-titles"></span>
+</Link>
+
+            </div>
               <div className="header-customize-item account" onClick={toggleSubAccount}>
                
               <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
@@ -392,10 +417,10 @@ document.addEventListener("click", handleOutsideClick);
                 </Link>
               </li>
               <li>
-                <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
+                {/* <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
                   <div style={{ position: 'relative', display: 'inline-block' }}>
                   <span className="icon-bell1 dash-icon">
-                    {alertCount > 0 && (
+                  {alertCount > 0 && (
   <sup
     style={{
       background: 'red',
@@ -415,7 +440,7 @@ document.addEventListener("click", handleOutsideClick);
                     </span>
                   </div>
                   <span className="dash-titles">Job Alerts</span>
-                </Link>
+                </Link> */}
               </li>
               {/* <li>
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>

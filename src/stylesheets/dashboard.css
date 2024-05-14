@@ -4625,6 +4625,14 @@ input[type="radio"]:checked:after {
     transition: margin-left 0.3s ease; 
   }
 
+  .dash-icon1 {
+    right: 12px;
+    font-size: 24px;
+    position: absolute;
+    top:-15px;
+    /* bottom: 15px; */
+  }
+  
   @media only screen and (max-width: 1400px) {
     .btn.header-item {
       cursor: pointer;
