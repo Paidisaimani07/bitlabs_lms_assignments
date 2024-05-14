@@ -161,9 +161,6 @@ useEffect(() => {
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
-              
-              
-
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
           <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
           <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}>

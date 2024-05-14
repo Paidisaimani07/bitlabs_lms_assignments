@@ -245,7 +245,7 @@ document.addEventListener("click", handleOutsideClick);
     fetchAlertCount();
 
     // Set up polling interval
-    const intervalId = setInterval(fetchAlertCount, 60000); // Fetch every minute
+    const intervalId = setInterval(fetchAlertCount, 100); // Fetch every minute
 
     // Clean up function to clear interval when component unmounts
     return () => clearInterval(intervalId);
