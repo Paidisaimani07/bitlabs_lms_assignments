@@ -13,6 +13,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const applicantId = user.id;
   const navigate = useNavigate();
+  const userId = user.id;
 
   useEffect(() => {
     const fetchData = async () => {

@@ -454,7 +454,7 @@ const ApplicantBasicDetails = () => {
     value={applicant.email}
     className="input-form"
     onChange={(e) => setEmail(e.target.value)}
-    style={{ color: email ? 'black' : 'black', maxWidth: '600px', fontSize: '15px' }} // Adjust the width as needed
+    style={{ color: email ? 'black' : 'black', fontSize: '15px' }} // Adjust the width as needed
 />
 
                   {errors.email && (

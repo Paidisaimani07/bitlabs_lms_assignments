@@ -17,7 +17,7 @@ function ApplicantNavBar() {
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
-  const [profileStatus, setProfileStatus] = useState(true); // Define profileStatus state
+  //const [profileStatus, setProfileStatus] = useState(true); // Define profileStatus state
   const location = useLocation();
   const [url, setUrl] = useState('');
   const [loginUrl, setLoginUrl] = useState('');
@@ -41,43 +41,43 @@ function ApplicantNavBar() {
 // Event listener to detect clicks outside the account element
 document.addEventListener("click", handleOutsideClick);
 
-  useEffect(() => {
-    const fetchProfileStatus = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/applicant/${user.id}/profilestatus`);
-        setProfileStatus(response.data === 'active'); // Assuming the API returns 'active' or 'inactive'
-      } catch (error) {
-        console.error('Error fetching profile status:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchProfileStatus = async () => {
+  //     try {
+  //       const response = await axios.get(`${apiUrl}/applicant/${user.id}/profilestatus`);
+  //       setProfileStatus(response.data === 'active'); // Assuming the API returns 'active' or 'inactive'
+  //     } catch (error) {
+  //       console.error('Error fetching profile status:', error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchProfileStatus();
-  }, [apiUrl, user.id]);
+  //   fetchProfileStatus();
+  // }, [apiUrl, user.id]);
 
-  const toggleProfileStatus = async (checked) => {
-    try {
-      const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
-      const response = await axios.post(
-        `${apiUrl}/applicant/changeStatus/${user.id}`,
-        { isActive: checked },
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`, // Add authorization header with JWT token
-          },
-        }
-      );
+  // const toggleProfileStatus = async (checked) => {
+  //   try {
+  //     const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+  //     const response = await axios.post(
+  //       `${apiUrl}/applicant/changeStatus/${user.id}`,
+  //       { isActive: checked },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${authToken}`, // Add authorization header with JWT token
+  //         },
+  //       }
+  //     );
 
-      setProfileStatus(checked);
-      localStorage.setItem('profileStatus', checked.toString());
-      window.location.reload();
-    } catch (error) {
-      console.error('Error updating profile status:', error);
-      // Rollback the change in UI if there's an error
-      setProfileStatus(!checked);
-    }
-  };
+  //     setProfileStatus(checked);
+  //     localStorage.setItem('profileStatus', checked.toString());
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error('Error updating profile status:', error);
+  //     // Rollback the change in UI if there's an error
+  //     setProfileStatus(!checked);
+  //   }
+  // };
 
 
 
@@ -309,7 +309,7 @@ document.addEventListener("click", handleOutsideClick);
                
                   {/* <h4>Welcome {user.username}</h4> */}
                  
-                  <div className="profile-status-toggle">
+                  {/* <div className="profile-status-toggle">
                     <span className="job-looking-status">
                     {profileStatus ? 'Job Looking Status: Active' : 'Job Looking Status: Inactive'}
                    </span>
@@ -319,7 +319,7 @@ document.addEventListener("click", handleOutsideClick);
                     size="small"
                     style={{ backgroundColor:'#F97316',marginLeft: '10px', width: '40px', height: '20px', borderRadius: '16px' }}
                     />
-                    </div>
+                    </div> */}
                       <div className="sub-account-item">
                         <a href="/applicant-view-profile">
                           <span className="icon-profile" />View Profile

@@ -4,13 +4,17 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from "axios";
 import BackButton from '../common/BackButton';
+import { useNavigate } from "react-router-dom";
+
 
 function ResumeBuilder() {
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
   const { user } = useUserContext();
   const [loginUrl, setLoginUrl] = useState('');
   const [requestData, setRequestData] = useState(null);
   const iframeRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {

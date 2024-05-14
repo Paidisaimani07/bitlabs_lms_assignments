@@ -60,6 +60,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchJobs();
   }, [userId]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -186,7 +187,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
     <BackButton />
-<div className="title-dash flex2">Recommended Jobs</div>
+    <div className="title-dash flex2">
+  {profileid1 === 0 ? "Suggested jobs" : "Recommended Jobs"}
+</div>
 </div>
 </div>
 </div>
@@ -203,7 +206,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
                     ) : (
                       jobs.map((job) => (
-<div className="features-job cl2  bg-white" key={job.id}>
+<div className="features-job cl2  bg-white " key={job.id} onClick={() => handleApplyNowClick(job.id)}>
 <div className="job-archive-header">
 <div className="inner-box">
 {/* <div className="logo-company">                            
@@ -267,24 +270,21 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
 <ul className="job-tag">
 
-<li>
-        {job.isSaved==='saved' ? (
-<button
-            disabled
-            className="button-status2"
-            style={{ backgroundColor: '#FFFFFF', color: '#F97316',borderColor:'#F97316',opacity:'30%' }}
->
-            Saved
-</button>
-           ) : (
-<button
-              onClick={() => handleSaveJob(job.id)}
-              className="button-status2"
->
-              Save Job
-</button>
-          )}
-</li>
+<li onClick={(e) => e.stopPropagation()}>
+    {job.isSaved === 'saved' ? (
+      <button
+        disabled
+        className="button-status2"
+        style={{ backgroundColor: '#FFFFFF', color: '#F97316', borderColor: '#F97316', opacity: '30%' }}
+      >
+        Saved
+      </button>
+    ) : (
+      <button onClick={() => handleSaveJob(job.id)} className="button-status2">
+        Save Job
+      </button>
+    )}
+  </li>
 {/* <li>
       {job && (
 <Link
@@ -302,7 +302,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
           onClick={() => handleApplyNowClick(job.id)}
           className="button-status1"
         >
-          Apply Now
+          View Job
         </button>
       )}
     </li>
