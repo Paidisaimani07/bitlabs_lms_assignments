@@ -225,7 +225,9 @@ document.addEventListener("click", handleOutsideClick);
   // }, [user.id]);
 
 
-
+  useEffect(() => {
+    fetchAlertCount(); // Fetch alert count when component mounts
+  }, []);
 
   const fetchAlertCount = async () => {
     try {
@@ -240,16 +242,11 @@ document.addEventListener("click", handleOutsideClick);
     }
   };
 
-  useEffect(() => {
-    // Fetch initial alert count
-    fetchAlertCount();
+  const handleBellClick = () => {
+    // Reset the alert count
+    setAlertCount(0);
+  };
 
-    // Set up polling interval
-    const intervalId = setInterval(fetchAlertCount, 100); // Fetch every minute
-
-    // Clean up function to clear interval when component unmounts
-    return () => clearInterval(intervalId);
-  }, [user.id]);
 
   return (
     <div>
@@ -299,29 +296,29 @@ document.addEventListener("click", handleOutsideClick);
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
             <div>
-            <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
-  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
-    <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}>
-      {alertCount > 0 && (
-        <sup
-          style={{
-            background: 'red',
-            borderRadius: '50%',
-            padding: '2px 5px',
-            color: 'white',
-            fontSize: '10px',
-            textAlign: 'center',
-            lineHeight: '1',
-            marginLeft: '-10px',
-          }}
-        >
-          {alertCount}
-        </sup>
-      )}
-    </span>
-  </div>
-  <span className="dash-titles"></span>
-</Link>
+            <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
+      <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
+        <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} >
+          {alertCount > 0 && (
+            <sup
+              style={{
+                background: 'red',
+                borderRadius: '50%',
+                padding: '2px 5px',
+                color: 'white',
+                fontSize: '10px',
+                textAlign: 'center',
+                lineHeight: '1',
+                marginLeft: '-10px',
+              }}
+            >
+              {alertCount}
+            </sup>
+          )}
+        </span>
+      </div>
+      <span className="dash-titles"></span>
+    </Link>
 
             </div>
               <div className="header-customize-item account" onClick={toggleSubAccount}>

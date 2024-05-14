@@ -89,6 +89,9 @@ document.addEventListener("click", handleOutsideClick);
   console.log("function called..")
   setIsOpen(!isOpen);
 };
+useEffect(() => {
+  fetchAlertCount(); // Fetch alert count when component mounts
+}, []);
 
 const fetchAlertCount = async () => {
   try {
@@ -114,6 +117,12 @@ useEffect(() => {
   };
   fetchAlertCount();
 }, [user.id]);
+
+const handleBellClick = () => {
+  // Reset the alert count
+  setAlertCount(0);
+};
+
   return (
 <div>
   <div className="menu-mobile-popup">
@@ -163,7 +172,7 @@ useEffect(() => {
             <div className="header-ct-right">
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
           <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
-          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}>
+          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick}>
   {alertCount > 0 ? (
     <sup
       style={{
