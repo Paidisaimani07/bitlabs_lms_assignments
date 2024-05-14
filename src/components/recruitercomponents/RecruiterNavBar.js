@@ -10,10 +10,11 @@ function RecruiterNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
-  const [alertCount, setAlertCount] = useState(1);
+  const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
- 
+  // const [alertCount, setAlertCount] = useState(0);
+
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
@@ -160,6 +161,30 @@ useEffect(() => {
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
+          <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
+          <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
+          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}>
+  {alertCount > 0 ? (
+    <sup
+      style={{
+        background: 'red',
+        borderRadius: '50%',
+        padding: '2px 5px',
+        color: 'white',
+        fontSize: '10px',
+        textAlign: 'center',
+        lineHeight: '1',
+        marginLeft: '-10px',
+      }}
+    >
+      {alertCount}
+    </sup>
+  ) : null}
+</span>
+  </div>
+        {/* <span className="dash-titles"></span> */}
+      </Link>
+      
               <div className="header-customize-item account" onClick={toggleSubAccount}>
                 <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
@@ -242,7 +267,7 @@ useEffect(() => {
               <span className="dash-titles">Team Members</span>
             </Link>
           </li> */}
-          <li>
+          {/* <li>
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
         <div style={{ position: 'relative', display: 'inline-block' }}>
         <span className="icon-bell1 dash-icon">
@@ -267,7 +292,7 @@ useEffect(() => {
         </div>
         <span className="dash-titles">Alerts</span>
       </Link>
-      </li>
+      </li> */}
           <li>
             <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
               <span className="icon-mypackage dash-icon"></span>
