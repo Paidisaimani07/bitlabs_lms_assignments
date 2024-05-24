@@ -711,6 +711,7 @@ const getTabStyle = (tab) => ({
           type="button"
           onClick={handleSendOTP}
           disabled={candidateOTPSent || candidateRegistrationSuccess || candidateOTPSendingInProgress}
+          style={{ marginBottom: '20px' }}
         >
           {candidateOTPSendingInProgress ? (
              <div className="status-container">

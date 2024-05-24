@@ -14,6 +14,7 @@ function RecruiterNavBar() {
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   // const [alertCount, setAlertCount] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -122,6 +123,33 @@ const handleBellClick = () => {
   // Reset the alert count
   setAlertCount(0);
 };
+const linkStyle = {
+  backgroundColor: isHovered ? '#ea670c' : '#F97316',
+  paddingRight: '0px',
+  display: 'inline-block',
+  borderRadius: '10px',
+  textAlign: 'center',
+  marginTop: '20px',
+  width: '230px',
+  transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+};
+
+const textStyle = {
+  color: 'white',
+  fontFamily: 'Plus Jakarta Sans',
+  fontSize: '18px',
+  fontWeight: '500',
+  lineHeight: '25px',
+  textAlign: 'center',
+};
+
+const iconStyle = {
+  marginLeft: '10px',
+  color: 'white',
+  fontWeight: '50',
+  fontSize: '15px',
+};
+
 
   return (
 <div>
@@ -309,11 +337,19 @@ const handleBellClick = () => {
             </Link>
           </li>
           <li>
-          <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""} style={{ backgroundColor: "#F97316", paddingRight: "0px", display: "inline-block",borderRadius:"10px", textAlign: "center",marginTop:"20px",width:"250px" }}>
-  <span className=""></span>
-  <span className="" style={{ color: "white", fontFamily: "Plus Jakarta Sans", fontSize: "22px", fontWeight: "500", lineHeight: "25px", textAlign: "center" }}> Post <span style={{textTransform: "lowercase"}}>a</span> Job </span>
- <span style={{ marginLeft: "10px",color:"white",fontWeight: 150, fontSize: "25px" }}>➔</span>
-</Link>
+          <Link
+      to="/recruiter-postjob"
+      className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}
+      style={linkStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span className=""></span>
+      <span style={textStyle}>
+        Post <span style={{ textTransform: 'lowercase' }}>a</span> Job
+      </span>
+      <span style={iconStyle}>➔</span>
+    </Link>
 
           </li>
         </ul>

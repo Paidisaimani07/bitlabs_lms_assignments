@@ -19,7 +19,8 @@ function RecruiterDashboard() {
     const [applicants, setApplicants] = useState([]);
     const navigate = useNavigate();
     const location = useLocation();
-   
+    const [isHovered, setIsHovered] = useState(false);
+
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
@@ -119,6 +120,13 @@ function RecruiterDashboard() {
       };
       const Postajob = () => {
         navigate("/recruiter-postjob");
+      };
+      const handleMouseEnter = () => {
+        setIsHovered(true);
+      };
+    
+      const handleMouseLeave = () => {
+        setIsHovered(false);
       };
 
   return (
@@ -297,11 +305,18 @@ function RecruiterDashboard() {
         </div>
         
         <Link
-  to="/recruiter-postjob"
+  to="/recruiter-postjob"style={{ backgroundColor: isHovered ? '#ea670c' : '#f97316' }}
+  onMouseEnter={handleMouseEnter}
+  onMouseLeave={handleMouseLeave}
   className={`button-link ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
 >
             <span className=""></span>
-            <span className="button button-custom">Post <span className="lowercase">a</span> Job</span>
+            <span
+      className="button button-custom"
+      
+    >
+      Post <span className="lowercase">a</span> Job
+    </span>
 
         </Link>
     </div>
