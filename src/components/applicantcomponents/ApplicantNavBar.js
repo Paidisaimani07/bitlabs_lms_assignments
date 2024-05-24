@@ -23,6 +23,9 @@ function ApplicantNavBar() {
   const [loginUrl, setLoginUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const id = user.id;
+  
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -247,7 +250,30 @@ document.addEventListener("click", handleOutsideClick);
     setAlertCount(0);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`);
+        setProfileData(profileResponse.data);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+      }
+    };
 
+    fetchData();
+  }, []);
+
+  const nameStyle = {
+    marginRight:'5px',
+    whiteSpace: 'nowrap', // Ensures the name is displayed on a single line
+  };
+
+  const linkStyle = {
+    textDecoration: 'none',
+    color: 'inherit', // Inherit color from parent
+    transition: 'color 0.3s', // Smooth transition for color change
+  };
+  
   return (
     <div>
       <div className="menu-mobile-popup">
@@ -321,12 +347,15 @@ document.addEventListener("click", handleOutsideClick);
     </Link>
 
             </div>
+            <div className="name" style={nameStyle}>
+        {profileData && (
+          <a href="#" style={linkStyle}>{profileData.applicant.name}</a>
+        )}
+      </div>
               <div className="header-customize-item account" onClick={toggleSubAccount}>
-               
+              
               <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
-                <div className="name">
-                  {/* <span className="icon-keyboard_arrow_down" /> */}
-                </div>
+              
                 <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
                
                   {/* <h4>Welcome {user.username}</h4> */}
