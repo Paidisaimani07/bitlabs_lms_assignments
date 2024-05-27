@@ -347,11 +347,11 @@ document.addEventListener("click", handleOutsideClick);
     </Link>
 
             </div>
-            <div className="name" style={nameStyle}>
+            {/* <div className="name" style={nameStyle}>
         {profileData && (
           <a href="#" style={linkStyle}>{profileData.applicant.name}</a>
         )}
-      </div>
+      </div> */}
               <div className="header-customize-item account" onClick={toggleSubAccount}>
               
               <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
