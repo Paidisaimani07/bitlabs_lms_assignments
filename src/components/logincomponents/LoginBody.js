@@ -190,18 +190,18 @@ const login = useGoogleLogin({
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
  
@@ -673,6 +673,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
           type="button"
           onClick={handleSendOTP}
           disabled={candidateOTPSent || candidateRegistrationSuccess || candidateOTPSendingInProgress}
+          style={{ marginBottom: '20px' }}
         >
           {candidateOTPSendingInProgress ? (
              <div className="status-container">
