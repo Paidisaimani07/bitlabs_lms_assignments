@@ -37,7 +37,7 @@ function ResumeBuilder() {
   }, []); // Empty dependency array to run the effect only once
 
   useEffect(() => {
-    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
+    const apiUrl1 = 'https://resume.bitlabs.in/api/auth/login';
 
     // Check if requestData is not null before making the API call
     if (requestData) {
@@ -60,7 +60,7 @@ function ResumeBuilder() {
           return response.json();
         })
         .then(data => {
-          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          const loginUrl = `https://resume.bitlabs.in/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
           window.open(loginUrl, '_blank');
         })
