@@ -19,6 +19,7 @@ const ApplicantDashboard = () =>
   const navigate = useNavigate();
   const [profileid1, setprofileid] = useState();
   const userId = user.id;
+const [isHovered, setIsHovered] = useState(false);
 
 
 useEffect(() => {
@@ -127,6 +128,19 @@ useEffect(() => {
   };
 
   const location = useLocation();
+  const linkStyle = {
+    backgroundColor: isHovered ? '#ea670c' : '#F97316',
+    display: 'inline-block',
+  };
+
+  const spanStyle = {
+    color: 'white',
+    fontFamily: 'Plus Jakarta Sans',
+    fontSize: '13px',
+    fontWeight: '500',
+    // lineHeight: '25px',
+  };
+
 
   return (
     <div>
@@ -283,13 +297,15 @@ useEffect(() => {
 
           </div>
           <Link
-    to="/applicant-resume-builder"
-    className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
-  >
-              <span className=""></span>
-              <span className="button button-custom">Create Now</span>
-              {/* <span className="button button-custom">Create Now</span> */}
-          </Link>
+      to="/applicant-resume-builder"
+      className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+      style={linkStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span className=""></span>
+      <span className="button button-custom" style={spanStyle}>Create Now</span>
+    </Link>
       </div>
       <img
   src={Resume}

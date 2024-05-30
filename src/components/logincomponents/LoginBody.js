@@ -461,6 +461,23 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
   window.alert('Failed to Resend OTP. Please try again.');
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+ const handleTabClick1 = (tab) => {
+  setActiveTab(tab);
+};
+
+const getTabStyle = (tab) => ({
+  padding: '10px 20px',
+  cursor: 'pointer',
+  backgroundColor: activeTab === tab ? '#F97316' : 'transparent', // Change active background color as needed
+  color: activeTab === tab ? '#fff' : '#000', // Optional: change text color for better contrast
+  transition: 'background-color 1s ease;', 
+  display: 'inline-block', // Display tabs side by side
+  textAlign: 'center',
+  borderRadius: '4px',
+  marginRight: tab === 'Candidate' ? '0px' : '0', // Add right margin to the first tab
+  flex: 1, // Each button takes up half of the container
+});
+
  
   return (
     <div>
@@ -476,14 +493,35 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                 )}
                 <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
                
-                <ul className="menu-tab">
-                  <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
-                    Login
-                  </li>
-                  <li className={`ct-tab ${activeTab === 'Employer' ? 'active' : ''}`} onClick={() => handleTabClick('Employer')}>
-                    Sign Up
-                  </li>
-                </ul>
+                <div style={{
+      display: 'flex',
+      marginBottom: '18px',
+      border: '1.8px solid lightgrey',
+      borderRadius: '8px',
+      overflow: 'hidden',
+     
+    }}>
+      <div
+  style={{
+    ...getTabStyle('Candidate'),
+    fontWeight: 'bold' // Add font weight inline
+  }}
+  onClick={() => handleTabClick1('Candidate')}
+>
+  Login
+</div>
+
+<div
+  style={{
+    ...getTabStyle('Employer'),
+    fontWeight: 'bold' // Apply font weight inline
+  }}
+  onClick={() => handleTabClick1('Employer')}
+>
+  Sign Up
+</div>
+
+    </div>
                 <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a>
                     <br />
                    
@@ -673,6 +711,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
           type="button"
           onClick={handleSendOTP}
           disabled={candidateOTPSent || candidateRegistrationSuccess || candidateOTPSendingInProgress}
+          style={{ marginBottom: '20px' }}
         >
           {candidateOTPSendingInProgress ? (
              <div className="status-container">

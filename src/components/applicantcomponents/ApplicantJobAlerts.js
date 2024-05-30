@@ -150,9 +150,9 @@ export default function ApplicantJobAlerts() {
             <span className="icon-bag"></span>
           </div>
           <div className="content">
-          <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
+          {/* <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
   {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-</h4>
+</h4> */}
 
 <style jsx>{`
   .title-count:hover {
@@ -163,8 +163,13 @@ export default function ApplicantJobAlerts() {
         </div>
         <div className="themes-container">
           <div className="row">
+          <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
+  {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
+</h4>
             <div className="col-lg-12 col-md-12">
+           
               <div className="box-notifications">
+             
                 {jobAlerts.length > 0 ? (
                   <ul>
                   {jobAlerts.map(alert => (

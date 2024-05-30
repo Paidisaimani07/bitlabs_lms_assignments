@@ -828,11 +828,11 @@ tbody tr td:nth-child(2) {
 }
 
 .dashboard .button-status1:hover {
-    background-color: #EE6D12;
+    background-color: #EA670C;
 }
 
 .dashboard .button-status2 {
-    background-color: #FFFFFF;
+    background-color:'none';
     font-weight: 700;
     border-radius: 8px;
     display: inline-flex;
@@ -857,16 +857,17 @@ tbody tr td:nth-child(2) {
    
 
 .dashboard .button-status2:hover {
-    background-color: #EE6D12;
+    /* background-color: ; */
     font-weight: 700;
     border-radius: 8px;
+    border-color: #c2570c;
     display: inline-flex;
     justify-content: center;
     width: 100px;
     height: 40px;
     align-items: center;
     height: 34px;
-    color:#fff;
+    color:#c2570c;
     font-size:12px;
     line-height: 16px;
     font-weight: 500;

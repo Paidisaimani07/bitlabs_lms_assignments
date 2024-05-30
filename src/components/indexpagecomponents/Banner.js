@@ -27,7 +27,7 @@ export default function Banner() {
               style={{
                 color: '#FFFFFF',
                 backgroundColor: '#f97316',
-                border: '1px solid #f97316',
+                // border: '1px solid #f97316',
                 padding: '10px 10px 10px 30px',
                 borderRadius: '8px',
                 display: 'inline-flex',
@@ -37,26 +37,26 @@ export default function Banner() {
                 marginBottom: '10px'
               }}
               onMouseOver={(e) => {
-                e.target.style.color = '#FFFFFF';
-                e.target.style.backgroundColor = '#F97316';
+                e.target.style.backgroundColor = '#EA670C';
               }}
               onMouseOut={(e) => {
-                e.target.style.color = '#FFFFEF';
                 e.target.style.backgroundColor = '#f97316';
               }}
               onClick={() => {
                 localStorage.clear();
               }}
-            >
-              <div class="btn-dowload">
-                Find Jobs
-              </div>
+              
+  >
+    Find Jobs
+  
+            
+              
             </a>
             <a
               href="/recruiter"
               style={{
                 color: '#f97316',
-                backgroundColor: 'white',
+                backgroundColor: 'none',
                 border: '1px solid #f97316',
                 padding: '10px 10px 10px 30px',
                 borderRadius: '8px',
@@ -65,12 +65,14 @@ export default function Banner() {
                 width: '170px',
               }}
               onMouseOver={(e) => {
-                e.target.style.color = '#FFFFFF';
-                e.target.style.backgroundColor = '#f97316';
+                e.target.style.color = '#C2570C';
+                e.target.style.backgroundColor = 'none';
+                e.target.style.border= '1px solid #C2570C';
               }}
               onMouseOut={(e) => {
                 e.target.style.color = '#f97316';
-                e.target.style.backgroundColor = 'white';
+                e.target.style.backgroundColor = 'none';
+                e.target.style.border= '1px solid #f97316';
               }}
               onClick={() => {
                 localStorage.clear();
