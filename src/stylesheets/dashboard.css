@@ -172,7 +172,7 @@ font-style: inherit;
     font-weight: 700;
 }
 
-.page-title-dashboard .title-dash::before {
+/* .page-title-dashboard .title-dash::before {
     content: "";
     width: 8px;
     height: 32px;
@@ -180,7 +180,7 @@ font-style: inherit;
     margin-right: 8px;
     display: inline-block;
     border-radius: 100px;
-}
+} */
 
 .page-title-dashboard svg {
     margin-right: 12px;

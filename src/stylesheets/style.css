@@ -3492,19 +3492,20 @@ input[type="color"],
   }
 }
 
-.title-dashboard .back-to-previous {
-  margin-top: 1px;  
+.back-to-previous {
+  margin-top: 24px;  
   align-items: center;
   display: flex;
 }
-.title-dashboard .back-to-previous .back-link { 
+/* .back-to-previous .back-link { 
   font-size: 12px;
-  line-height: 30px;
+ 
   font-family: "Plus Jakarta Sans", sans-serif;
   color: #0073dd;
   font-weight: bold;
   align-items: center;
   display: flex;
   align-items: center;
-}
+  
+} */
  

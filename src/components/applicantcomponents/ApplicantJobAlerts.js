@@ -137,7 +137,7 @@ export default function ApplicantJobAlerts() {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
-              <BackButton />
+              {/* <BackButton /> */}
                 <div className="title-dash flex2">Your Job Alerts</div>
               </div>
             </div>

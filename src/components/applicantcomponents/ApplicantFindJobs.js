@@ -186,7 +186,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-    <BackButton />
+    {/* <BackButton /> */}
     <div className="title-dash flex2">
   {profileid1 === 0 ? "Suggested jobs" : "Recommended Jobs"}
 </div>
