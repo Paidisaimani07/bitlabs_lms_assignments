@@ -64,11 +64,11 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
-                  <div className="back-to-previous pb-4">
+                  {/* <div className="back-to-previous pb-4">
                   <Link to="/applicanthome" className="back-link" >
                   <img src={leftArrow} alt="Back"  />BACK
                   </Link>
-                  </div>
+                  </div> */}
                     <div className="title-dash flex2">My Applied Jobs</div>
                   </div>
                 </div>
