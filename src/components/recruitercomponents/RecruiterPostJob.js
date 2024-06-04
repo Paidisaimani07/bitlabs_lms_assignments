@@ -5,6 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+
 import axios from 'axios';
 
 function RecruiterPostJob() {
@@ -32,6 +35,8 @@ function RecruiterPostJob() {
   const [image, setImage] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [fileName, setFileName] = useState("No selected file")
+
+  const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
   const user1 = useUserContext();
   const user = user1.user;
@@ -357,14 +362,29 @@ function RecruiterPostJob() {
   //     jobHighlights: '',
   //   }));
   // };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      description: '',
-    }));
-  }; 
 
+
+
+
+  // const handleDescriptionChange = (e) => {
+  //   setDescription(e.target.value);
+  //   setFormErrors((prevErrors) => ({
+  //     ...prevErrors,
+  //     description: '',
+  //   }));
+  // }; 
+  const handleDescriptionChange = (content) => {
+    setDescription(content);
+  
+    // Validate description after updating state
+    const newErrors = { ...formErrors }; // Copy errors object
+    if (!content.trim() || content.trim().length < 15) {
+      newErrors.description = 'Description is required and must be at least 15 characters long.';
+    } else {
+      newErrors.description = ''; // Clear error if valid
+    }
+    setFormErrors(newErrors);
+  };
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {
       case 'B.Tech':
@@ -526,6 +546,14 @@ function RecruiterPostJob() {
     }
 
   };
+  const handleFocus = () => {
+    setIsActive(true);
+  };
+
+  const handleBlur = () => {
+    setIsActive(false);
+  };
+
   return (
     <div>
       <div className="dashboard__content">
@@ -562,21 +590,24 @@ function RecruiterPostJob() {
                         )}
                       </fieldset>
                     </div>
-                    <div className="text-editor-wrap">
-                      <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                      <div className="text-editor-main">
-                        <textarea
-                          className="input-form"
-                          placeholder="Job Description at least 15 characters"
-                          value={description}
-                          onChange={handleDescriptionChange}
-                          required
-                        />
-                        {formErrors.description && (
-                          <div className="error-message">{formErrors.description}</div>
-                        )}
-                      </div>
-                    </div>
+                   <div className="text-editor-wrap">
+                          <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
+                         <div className="text-editor-main">
+                         <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
+                           <ReactQuill 
+                            theme="snow" 
+                            value={description} // Set initial content from description state
+                            onChange={handleDescriptionChange} // Update state on content change
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                           required
+                         /> 
+                       </div>
+                   {formErrors.description && (
+                  <   div className="error-message">{formErrors.description}</div>
+                    )}
+                  </div>
+                 </div>
                     <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <div id="item_category" className="dropdown titles-dropdown info-wd">

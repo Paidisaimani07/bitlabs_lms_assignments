@@ -5,6 +5,8 @@ import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 const RecruiterRepostJob = ({selectedJobId}) => {
  
     const navigate=useNavigate();
