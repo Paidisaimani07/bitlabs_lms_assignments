@@ -5460,7 +5460,7 @@
   .wd-form-login .ip {
     text-align: left;
     margin-bottom: 15px;
-    width: 400px !important;
+   
   }
   
   .wd-form-login .ip .name {
@@ -11829,6 +11829,7 @@
   height: 247px;
   width: 100%;
   margin-left:23px;
+  object-fit: cover;
 }
 
 @media (min-width: 526px) {
@@ -11840,6 +11841,7 @@
 .responsive-image {
   width: 720px;
   height: 850px;
+  object-fit: cover;
 }
 /* Media query to hide the image for screens below 525px */
 @media (max-width: 526px) {
@@ -11853,6 +11855,7 @@
   .responsive-image {
     width: 600px; /* Adjust the width as needed */
     height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }
 
@@ -11861,6 +11864,7 @@
   .responsive-image {
     width: 550px; /* Adjust the width as needed */
     height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }  
 
@@ -11869,6 +11873,7 @@
   .responsive-image {
     width: 500px; /* Adjust the width as needed */
     height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }   
 
@@ -11877,6 +11882,7 @@
   .responsive-image {
     width: 470px; /* Adjust the width as needed */
     height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }  
 
@@ -11885,6 +11891,7 @@
   .responsive-image {
     width: 430px; /* Adjust the width as needed */
     height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }  
 
@@ -11892,6 +11899,7 @@
   .responsive-image {
     width: 420px; /* Adjust the width as needed */
     height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }
 
@@ -11899,12 +11907,14 @@
   .responsive-image {
     width: 400px; /* Adjust the width as needed */
     height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }
 @media (max-width: 740px) and (min-width: 650px) {
   .responsive-image {
     width: 380px; /* Adjust the width as needed */
     height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }
 
@@ -11912,6 +11922,7 @@
   .responsive-image {
     width: 330px; /* Adjust the width as needed */
     height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
   }
 }
 
@@ -12091,6 +12102,7 @@
     width: 161px;
     height: 40px;
     left: 150px;
+    
   }
 }
 
