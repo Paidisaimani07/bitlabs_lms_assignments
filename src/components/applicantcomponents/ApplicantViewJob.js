@@ -114,6 +114,7 @@ function ApplicantViewJob({ selectedJobId }) {
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
+  
   return (
     <div>
       {loading ? null : (
@@ -260,6 +261,14 @@ function ApplicantViewJob({ selectedJobId }) {
                         <p>{jobDetails.description}</p>
                       </div>
                     )}
+                  {jobDetails && (
+  // <div className="inner-content">
+  <div>
+    <h5>Full Job Description</h5>
+    <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
+   
+  </div>
+)}
                   </article>
                 </div>
               </div>
