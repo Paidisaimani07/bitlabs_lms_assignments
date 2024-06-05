@@ -230,15 +230,15 @@ function RecruiterPostJob() {
     //   }));
     //   return isValid;
     // }
-    if (!description.trim() || description.trim().length < 15) {
-      errors.description = 'Description is required and must be at least 15 characters long.';
-      isValid = false;
-    } else {
-      errors.description = '';
-    }
-    setFormErrors(errors);
-    return isValid;
-  };
+      if (!description.trim() || description.trim().length < 15) {
+        errors.description = 'Description is required and must be at least 15 characters long.';
+        isValid = false;
+      } else {
+        errors.description = '';
+      }
+      setFormErrors(errors);
+      return isValid;
+    };
 
   const handleJobTitleChange = (e) => {
     setJobTitle(e.target.value);
@@ -363,9 +363,6 @@ function RecruiterPostJob() {
   //   }));
   // };
 
-
-
-
   // const handleDescriptionChange = (e) => {
   //   setDescription(e.target.value);
   //   setFormErrors((prevErrors) => ({
@@ -375,15 +372,10 @@ function RecruiterPostJob() {
   // }; 
   const handleDescriptionChange = (content) => {
     setDescription(content);
-  
-    // Validate description after updating state
-    const newErrors = { ...formErrors }; // Copy errors object
-    if (!content.trim() || content.trim().length < 15) {
-      newErrors.description = 'Description is required and must be at least 15 characters long.';
-    } else {
-      newErrors.description = ''; // Clear error if valid
-    }
-    setFormErrors(newErrors);
+    setFormErrors((prevErrors) => ({
+         ...prevErrors,
+          description: '',
+         }));
   };
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {

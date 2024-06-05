@@ -2556,6 +2556,10 @@ textarea:focus,
     margin-right: 5px;
 }
 
+.description-preview ol,
+.description-preview ul {
+  list-style: auto;
+}
 .flat-saved-candidates .applicants .wrap-applicants {
     padding: 0px 32px 25px 32px;
 }
