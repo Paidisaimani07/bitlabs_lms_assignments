@@ -5276,11 +5276,157 @@
     margin-bottom: 12px;
   }
   
+  
   .wd-form-login {
-    max-width: 472px;
+    max-width: 572px;
     margin: 0 auto;
     text-align: center;
-    margin-top: 60px;
+    margin-top: 30px;
+    margin-right:200px;
+  }
+  @media(max-width: 526px) and (min-width: 499px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-200px !important;
+      
+    }
+  }
+
+  @media(max-width: 499px) and (min-width: 475px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-200px !important;
+      
+    }
+  }
+  
+  @media(max-width: 475px) and (min-width: 450px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-220px !important;
+      
+    }
+  }
+
+  @media(max-width: 450px) and (min-width: 420px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-240px !important;
+      
+    }
+  }
+
+  @media(max-width: 420px) and (min-width: 385px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-260px !important;
+      
+    }
+  }
+
+  @media(max-width: 385px) and (min-width: 365px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-280px !important;
+      
+    }
+  }
+
+  @media(max-width: 365px) and (min-width: 340px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-290px !important;
+      
+    }
+  }
+
+  @media(max-width: 340px) and (min-width: 320px){
+    .wd-form-login {
+      width: 480px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 10px !important;
+      margin-left:-300px !important;
+      
+    }
+  }
+ 
+  @media (max-width: 840px) and (min-width: 767px) {
+    .wd-form-login {
+      max-width: 500px;
+      margin-right: 15px;
+    }
+  }
+  @media (max-width: 767px) and (min-width: 665px) {
+    .wd-form-login {
+      max-width: 450px;
+      margin-right: 15px;
+    }
+  }
+
+  @media (max-width: 665px) and (min-width: 526px) {
+    .wd-form-login {
+      max-width: 430px;
+      margin-right: 10px;
+    }
+  }
+
+
+  @media (max-width: 1340px) and (min-width: 1220px) {
+    .wd-form-login {
+      margin-right: 100px;
+    }
+  }
+  @media (max-width: 1220px) and (min-width: 1100px) {
+    .wd-form-login {
+      margin-right: 80px;
+    }
+  }
+  @media (max-width: 1110px) and (min-width: 1024px) {
+    .wd-form-login {
+      margin-right: 25px;
+    }
+  }
+  @media (max-width: 1024px) and (min-width: 970px) {
+    .wd-form-login {
+      margin-right: 20px;
+    }
+  }
+  @media (max-width: 970px) and (min-width: 890px) {
+    .wd-form-login {
+      margin-right: 18px;
+    }
+  }
+  @media (max-width: 890px) and (min-width: 850px) {
+    .wd-form-login {
+      margin-right: 18px;
+    }
+  }
+  @media (max-width: 850px) and (min-width: 815px) {
+    .wd-form-login {
+      margin-right: 15px;
+    }
   }
   
   .wd-form-login .nofi-form {
@@ -5313,8 +5459,17 @@
   
   .wd-form-login .ip {
     text-align: left;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
+   
   }
+  
+  .wd-form-login .ip .name {
+    width: 500px !important; /* You can adjust this value to your preference */
+    padding: 5px; /* Optional: Add some padding for better appearance */
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    
+  }
+  
   
   .wd-form-login .ip label {
     font-weight: 400;
@@ -5337,6 +5492,7 @@
     font-size: 16px;
     line-height: 26px;
     color: #121212;
+    width: 300px;
   }
   
   .wd-form-login .ip input:focus {
@@ -5430,6 +5586,14 @@
     color: #121212;
     margin-bottom: 11px;
   }
+
+  /* Media query for screens below 579px */
+@media (max-width: 579px) {
+  .wd-form-login .btn-social {
+    font-size: 11px; /* Reduced font size */
+   
+  }
+}
   
   .wd-form-login .btn-social:hover {
     
@@ -5488,7 +5652,7 @@
     background:#fff;
     border-radius: 4px;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
     line-height: 26px;
     text-transform: capitalize;
     color: #121212;
@@ -10709,6 +10873,8 @@
   
   .account-section {
     /* padding: 61px 0px 68px; */
+    margin-left:150px;
+    
   }
   
   .inner-news-section {
@@ -11657,3 +11823,301 @@
           margin-top: -25px !important; 
         }
       }
+
+/* Default styles */
+.responsive-image1 {
+  height: 247px;
+  width: 100%;
+  margin-left:23px;
+  object-fit: cover;
+}
+
+@media (min-width: 526px) {
+  .responsive-image1 {
+    display: none;
+  }
+}
+/* Default styles */
+.responsive-image {
+  width: 720px;
+  height: 850px;
+  object-fit: cover;
+}
+/* Media query to hide the image for screens below 525px */
+@media (max-width: 526px) {
+  .responsive-image {
+    display: none;
+  }
+}
+
+/* Media query for screen widths between 1024px and 1220px */
+@media (max-width: 1220px) and (min-width: 1024px) {
+  .responsive-image {
+    width: 600px; /* Adjust the width as needed */
+    height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}
+
+ /* Media query for screen widths between 768px and 1024px */
+@media (max-width: 1024px) and (min-width: 970px) {
+  .responsive-image {
+    width: 550px; /* Adjust the width as needed */
+    height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}  
+
+ /* Media query for screen widths between 768px and 1024px */
+ @media (max-width: 970px) and (min-width: 915px) {
+  .responsive-image {
+    width: 500px; /* Adjust the width as needed */
+    height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}   
+
+/* Media query for screen widths between 768px and 1024px */
+@media (max-width: 915px) and (min-width: 890px) {
+  .responsive-image {
+    width: 470px; /* Adjust the width as needed */
+    height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}  
+
+/* Media query for screen widths between 768px and 1024px */
+@media (max-width: 890px) and (min-width: 850px) {
+  .responsive-image {
+    width: 430px; /* Adjust the width as needed */
+    height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}  
+
+@media (max-width: 850px) and (min-width: 767px) {
+  .responsive-image {
+    width: 420px; /* Adjust the width as needed */
+    height: 740px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 740px) {
+  .responsive-image {
+    width: 400px; /* Adjust the width as needed */
+    height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}
+@media (max-width: 740px) and (min-width: 650px) {
+  .responsive-image {
+    width: 380px; /* Adjust the width as needed */
+    height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 650px) and (min-width: 525px) {
+  .responsive-image {
+    width: 330px; /* Adjust the width as needed */
+    height: 650px; /* Adjust the height as needed */
+    object-fit: cover;
+  }
+}
+
+.find-your {
+  position: fixed;
+  top: 600px; /* Adjust this to position the text vertically */
+  left: 85px; /* Adjust this to position the text horizontally */
+  color: #FFF;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 97px;
+  text-transform: capitalize;
+}
+
+.dream-job {
+  position: fixed;
+  top: 660px; /* Adjust this to position the text vertically */
+  left: 85px; /* Adjust this to position the text horizontally */
+  color: #F97316;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 60px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 97px;
+  text-transform: capitalize;
+}
+
+@media (max-width: 526px) and (min-width: 360px) {
+  .find-your{
+    position: fixed;
+    color: #FFF;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 25px;
+  text-transform: capitalize;
+  top: 190px;
+  margin-left:-50px;
+  }
+  .dream-job{
+    position: fixed;
+    color:  #F97316;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 25px;
+  text-transform: capitalize;
+  top: 190px;
+  margin-left:100px;
+
+  }
+}
+
+@media (max-width: 360px) and (min-width: 320px) {
+  .find-your{
+    position: fixed;
+    color: #FFF;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 25px;
+  text-transform: capitalize;
+  top: 190px;
+  margin-left:-50px;
+  }
+  .dream-job{
+    position: fixed;
+    color:  #F97316;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 25px;
+  text-transform: capitalize;
+  top: 190px;
+  margin-left:70px;
+
+  }
+}
+
+/* Media query to hide the image for screens below 525px */
+@media (max-width: 525px) and (min-width: 525px){
+  .find-your {
+    display: none;
+  }
+  .dream-job{
+    display: none;
+  }
+}
+
+/* Media query for screen widths between 1025px and 767px */
+@media (max-width: 1200px) and (min-width: 767px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 50px; /* Adjust the font size as needed */
+    top: 500px;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 50px; /* Adjust the font size as needed */
+    top: 550px;
+  }
+}
+
+@media (max-width: 767px) and (min-width: 700px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 50px; /* Adjust the font size as needed */
+    top: 500px;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 50px; /* Adjust the font size as needed */
+    top: 550px;
+  }
+}
+
+@media (max-width: 700px) and (min-width: 600px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 460px;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 500px;
+  }
+}
+
+@media (max-width: 600px) and (min-width: 526px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 35px; /* Adjust the font size as needed */
+    top: 480px;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 35px; /* Adjust the font size as needed */
+    top: 520px;
+  }
+}
+.logo-image {
+  position: fixed;
+  top: 12px;
+  left: 40px;
+  padding-right: 10px;
+  width: 250px;
+  height: 64px;
+}
+
+/* Media query to hide the image for screens below 525px */
+@media (max-width: 526px) and (min-width: 526px) {
+  .logo-image {
+    display: none;
+  }
+}
+
+@media (max-width: 526px) and (min-width: 320px) {
+  .logo-image {
+    position: fixed;
+    width: 161px;
+    height: 40px;
+    left: 150px;
+    
+  }
+}
+
+/* styles.css */
+.myComponent {
+  display: flex;
+  margin-bottom: 18px;
+  border: 1.8px solid lightgrey;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 100px;
+}
+
+@media (max-width: 526px) {
+  .myComponent {
+    margin-top: 280px !important;
+  }
+}
