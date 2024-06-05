@@ -222,14 +222,7 @@ function RecruiterPostJob() {
       }));
       return isValid;
     }
-    // if (jobHighlights && jobHighlights.trim().length < 3) {
-    //   isValid = false;
-    //   setFormErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     jobHighlights: 'Job highlights must be at least 3 characters long.',
-    //   }));
-    //   return isValid;
-    // }
+  
       if (!description.trim() || description.trim().length < 15) {
         errors.description = 'Description is required and must be at least 15 characters long.';
         isValid = false;
