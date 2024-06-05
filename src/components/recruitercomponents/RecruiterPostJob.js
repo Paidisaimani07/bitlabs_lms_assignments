@@ -363,13 +363,7 @@ function RecruiterPostJob() {
   //   }));
   // };
 
-  // const handleDescriptionChange = (e) => {
-  //   setDescription(e.target.value);
-  //   setFormErrors((prevErrors) => ({
-  //     ...prevErrors,
-  //     description: '',
-  //   }));
-  // }; 
+  
   const handleDescriptionChange = (content) => {
     setDescription(content);
     setFormErrors((prevErrors) => ({
