@@ -2068,6 +2068,7 @@ tbody tr td:nth-child(2) {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     border: 1px solid #e5e5e5 !important;
+    
    
   }
   .ql-toolbar,
@@ -2559,6 +2560,8 @@ textarea:focus,
 .description-preview ol,
 .description-preview ul {
   list-style: auto;
+  padding-left: 20px;
+  margin-left: 1px;
 }
 .flat-saved-candidates .applicants .wrap-applicants {
     padding: 0px 32px 25px 32px;
