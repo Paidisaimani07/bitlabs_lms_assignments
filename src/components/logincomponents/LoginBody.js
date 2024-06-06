@@ -14,6 +14,7 @@ import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobi
 import Snackbar from '../common/Snackbar';
 
 
+
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidatePassword, setCandidatePassword] = useState('');
@@ -31,6 +32,9 @@ function LoginBody({ handleLogin }) {
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+
+ const { user } = useUserContext();
+
  
  
 const login = useGoogleLogin({
@@ -79,8 +83,23 @@ const login = useGoogleLogin({
         setUser(userData);
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
- 
+        const userId = userData.id;
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+       
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form');
+        }
+      else{
         navigate('/applicant-find-jobs');
+        //navigate('/applicanthome');
+      }
         //navigate('/applicanthome');
       }
     } catch (err) {
@@ -117,7 +136,7 @@ const login = useGoogleLogin({
         console.log('this is response ', userData);
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
- 
+        const userId = userData.id;
        
  
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -146,12 +165,28 @@ const login = useGoogleLogin({
         // }
  
         // Navigate to the applicant home page
+
+         // Check the profile ID
+         const jwtToken = localStorage.getItem('jwtToken');
+         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+           headers: {
+             Authorization: `Bearer ${jwtToken}`,
+           },
+         });
+         const profileId = profileIdResponse.data;
         
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
-            }
- 
-    } catch (error) {
+         if (profileId === 0) {
+           navigate('/applicant-basic-details-form');
+         }
+       else{
+         navigate('/applicant-find-jobs');
+         //navigate('/applicanthome');
+       }
+      }     
+
+    }
+    
+    catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
         setErrorMessage('enter a correct password or password is incorrect try again');
@@ -482,8 +517,15 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  setSnackbar({ open: true, message: 'Failed to Resend OTP. Please try again.', type: 'error' });
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+ const [message,setMessage]=useState();
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
+  if (tab === 'Candidate') {
+    setMessage('Welcome Back');
+    console.log("login");
+  } else if (tab === 'Employer') {
+    setMessage('Create Account');
+  }
 };
 
 const getTabStyle = (tab) => ({
@@ -505,6 +547,15 @@ const handleCloseSnackbar = () => {
 
   return (
     <div>
+      <img
+        src={Backgroundimagemobile}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+        //  height:"400px",
+        //  margintop:"10px"
+        }}
+      />
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
@@ -515,26 +566,21 @@ const handleCloseSnackbar = () => {
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                 <img
-  src={Backgroundimagemobile}
-  alt="Background"
-  className="responsive-image1"
-  style={{
-    position: "fixed",
-    top: "0px",
-    left: "-20px",
-    paddingRight: "10px"
-  }}
-/>
-                {/* <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4> */}
-               
+                 
+      
+   
+    <div className="custom-div-style">
+      {message}
+    </div>
                 <div className="myComponent">
+                
       <div
   style={{
     ...getTabStyle('Candidate'),
     fontWeight: 'bold' // Add font weight inline
   }}
   onClick={() => handleTabClick1('Candidate')}
+  
 >
   Login
 </div>

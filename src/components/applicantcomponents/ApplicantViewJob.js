@@ -1,34 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import logoCompany1 from '../../images/cty12.png';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
+import { apiUrl } from '../../services/ApplicantAPIService';
 
 
-function ApplicantViewJob({ selectedJobId }) {
+const ApplicantViewJob = ({ selectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [applied, setApplied] = useState(false);
-  const navigate = useNavigate();
   const { user } = useUserContext();
-  const applicantId = user.id;
   const location = useLocation();
-  const jobId = new URLSearchParams(location.search).get('jobId');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+  const navigate = useNavigate();
+  const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
 
 
   const fetchJobDetails = async () => {
     try {
-      console.log(jobId);
       const response = await axios.get(
-
-         //`${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
-
-        `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
+        `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -39,7 +33,7 @@ function ApplicantViewJob({ selectedJobId }) {
       setLoading(false);
       if (body) {
         setJobDetails(body);
-        const appliedStatus = localStorage.getItem(`appliedStatus-${selectedJobId}`);
+        const appliedStatus = localStorage.getItem(`appliedStatus-${jobId}`);
         if (appliedStatus) {
           setApplied(appliedStatus === 'true');
         }
@@ -52,26 +46,11 @@ function ApplicantViewJob({ selectedJobId }) {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    fetchJobDetails();
+  }, [jobId]);
 
-  useEffect(() => {
-    fetchJobDetails(); // Call the function directly when the component mounts
-  }, [selectedJobId]); 
-
-  
   const handleApplyNow = async () => {
     try {
-      // Check the profile ID
       const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -80,13 +59,12 @@ function ApplicantViewJob({ selectedJobId }) {
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
-        // If profile ID is "0", fetch promoted jobs
         navigate('/applicant-basic-details-form');
         return;
       } else {
         setApplied(true);
         const response = await axios.post(
-          `${apiUrl}/applyjob/applicants/applyjob/${applicantId}/${selectedJobId}`,
+          `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
           {},
           {
             headers: {
@@ -95,10 +73,12 @@ function ApplicantViewJob({ selectedJobId }) {
           }
         );
         const { applied } = response.data;
+
         // window.alert('Job applied successfully');
         // setSnackbar({ open: true, message: 'Job Applied Successfully.<a href="/applicant-applied-jobs">View Applied Jobs</a>', type: 'success' });
         setSnackbar({ open: true, message: 'Job Applied Successfully.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'success' });
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
+
         setApplied(applied);
         fetchJobDetails();
       }
@@ -109,17 +89,25 @@ function ApplicantViewJob({ selectedJobId }) {
     }
   };
 
-  function formatDate(dateString) {
+  const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-    return formattedDate;
-  }
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
 
+
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
+  };
+
+
+
+  const handleBackClick = (e) => {
+    e.preventDefault();
+    navigate(-1); // Navigate back to the previous page
   };
 
   return (
@@ -129,7 +117,7 @@ function ApplicantViewJob({ selectedJobId }) {
           <section className="page-title-dashboard">
             <div className="themes-container">
               <div className="row">
-                <div className="col-lg-12 col-md-12 ">
+                <div className="col-lg-12 col-md-12">
                   <div className="title-dashboard">
                     <div className="title-dash flex2"> <BackButton />Full Job Details</div>
                   </div>
@@ -141,20 +129,12 @@ function ApplicantViewJob({ selectedJobId }) {
             <div className="themes-container">
               <div className="content-tab">
                 <div className="inner">
-                  
                   <article className="job-article">
                     {jobDetails && (
                       <div className="top-content">
-                        <div className="features-job style-2 stc-apply  bg-white">
+                        <div className="features-job style-2 stc-apply bg-white">
                           <div className="job-archive-header">
                             <div className="inner-box">
-                              {/* <div className="logo-company">
-                                {jobDetails.logoFile ? (
-                                  <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" />
-                                ) : (
-                                  <img src="images/logo-company/cty12.png" alt={`Default Company Logo`} />
-                                )}
-                              </div> */}
                               <div className="box-content">
                                 <h4>
                                   <a href="#">{jobDetails.companyname}</a>
@@ -167,12 +147,7 @@ function ApplicantViewJob({ selectedJobId }) {
                                     <span className="icon-map-pin"></span>
                                     &nbsp;{jobDetails.location}
                                   </li>
-                                  {/* <li>
-                                    <span className="icon-calendar"></span>
-                                    &nbsp;{formatDate(jobDetails.creationDate)}
-                                  </li> */}
                                 </ul>
-                                <div className="button-readmore"></div>
                               </div>
                             </div>
                           </div>
@@ -186,11 +161,15 @@ function ApplicantViewJob({ selectedJobId }) {
                                   <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
                                 <li>
-<a href="javascript:void(0);"> Exp &nbsp;{jobDetails.minimumExperience} - {jobDetails.maximumExperience} years</a>
-</li>
-<li>
-<a href="javascript:void(0);">&#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA</a>
-</li>
+                                  <a href="javascript:void(0);">
+                                    Exp &nbsp;{jobDetails.minimumExperience} - {jobDetails.maximumExperience} years
+                                  </a>
+                                </li>
+                                <li>
+                                  <a href="javascript:void(0);">
+                                    &#x20B9; {convertToLakhs(jobDetails.minSalary)} - &#x20B9; {convertToLakhs(jobDetails.maxSalary)} LPA
+                                  </a>
+                                </li>
                               </ul>
                               <div className="star">
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
@@ -200,8 +179,9 @@ function ApplicantViewJob({ selectedJobId }) {
                             </div>
                             <div className="job-footer-right">
                               <div className="price">
-                              <span>
-<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
+                                <span>
+                                  <span style={{ fontSize: '12px' }}>Posted on {formatDate(jobDetails.creationDate)}</span>
+                                </span>
                               </div>
                               <div className="button-readmore">
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -210,39 +190,19 @@ function ApplicantViewJob({ selectedJobId }) {
                                     onClick={handleApplyNow}
                                     disabled={jobDetails.jobStatus === 'Already Applied'}
                                     style={{
-                                      backgroundColor:
-                                        jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
+                                      backgroundColor: jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
                                       cursor: 'pointer',
                                       height: '40px',
                                       color: '#F97316',
                                       borderRadius: '8px',
                                       backgroundColor: '#FFFFFF',
-                                      opacity:'80%',
-                                      borderColor:'#F97316'
+                                      opacity: '80%',
+                                      borderColor: '#F97316',
                                     }}
                                   >
                                     <span className="icon-send"></span>&nbsp;
                                     {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
                                   </button>
-                                  
-                                  {/* <a
-                                    href="/applicant-find-jobs"
-                                    className="btn-apply btn-popup"
-                                    style={{
-                                      display: 'inline-block',
-                                      marginLeft: '10px',
-                                      padding: '5px 20px',
-                                      backgroundColor: '#F97316',
-                                      color: 'white',
-                                      height: '40px',
-                                      textDecoration: 'none',
-                                      borderRadius: '8px',
-                                      cursor: 'pointer',
-                                      fontWeight: 'bold',
-                                    }}
-                                  >
-                                    Cancel
-                                  </a> */}
                                 </div>
                               </div>
                             </div>
@@ -250,16 +210,22 @@ function ApplicantViewJob({ selectedJobId }) {
                         </div>
                       </div>
                     )}
-                    {jobDetails && (
-                      <div className="inner-content">
-                        <h5>Full Job Description</h5>
-                        <p>{jobDetails.description}</p>
-                      </div>
-                    )}
+                    
+                  {jobDetails && (
+                    <div className="features-job style-2 stc-apply bg-white">
+   <div className="inner-content">
+   
+    <h5>Full Job Description</h5>
+    <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
+   
+  </div>
+  </div>
+)}
                   </article>
                 </div>
               </div>
             </div>
+            
           </section>
         </div>
       )}
@@ -274,7 +240,6 @@ function ApplicantViewJob({ selectedJobId }) {
       )}
     </div>
   );
-}
+};
 
 export default ApplicantViewJob;
-

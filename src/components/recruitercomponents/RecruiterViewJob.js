@@ -326,7 +326,8 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                     {jobDetails && (
                       <div className="inner-content">
                         <h5>Full Job Description</h5>
-                        <p>{jobDetails.description}</p>
+                        {/* <p>{jobDetails.description}</p> */}
+                        <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
                       </div>
                     )}
                   </article>

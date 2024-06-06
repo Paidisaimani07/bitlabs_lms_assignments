@@ -547,11 +547,14 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   return (
     <div>
       <a id="scroll-top" />
-    <section className="account-section">
-      <div className="tf-container">
+    <section className="account-section1">
+      <div className="tf-container1">
         <div className="row">
-          <div className="wd-form-login tf-tab">
-          <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
+          <div className="wd-form-login2 tf-tab">
+          <h4 style={{ marginBottom: "40px" }}>
+    <a href="/"><img src={logoCompany1} width="80px" height="80px" alt="Company Logo" /></a>
+</h4>
+
            
           <div style={{
       display: 'flex',
@@ -590,7 +593,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               <div style={{ color: 'green', marginBottom: '10px' }}>{registrationSuccessMessage}</div>
             )}</span></p>
               <form onSubmit={handleRecruiterSubmit}>
-                      <div className="ip">
+                      <div className="ip2">
                         {/* <label>Email Address<span>*</span></label> */}
                         <input
                           type="text"
@@ -605,7 +608,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       </div>
                       <div className="ip">
                         {/* <label>Password<span>*</span></label> */}
-                        <div className="inputs-group auth-pass-inputgroup">
+                        <div className="inputs-group2 auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Password"
@@ -616,14 +619,14 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                                 }}
                            
                        />
-                          <div className="password-toggle-icon" onClick={handleTogglePassword} id="password-addon">
-                            {showPassword ? <FaEye /> : <FaEyeSlash />}
-                          </div>
+                          <div className="new-password-icon" onClick={handleTogglePassword} id="password-addon">
+      {showPassword ? <FaEye /> : <FaEyeSlash />}
+    </div>
                         </div>
                         {recruiterPasswordError && <div className="error-message">{recruiterPasswordError}</div>}
                       </div>
                    
-                      <button type="submit">Login</button>
+                      <button type="submit" class="custom-button">Login</button>
                       <div className="group-ant-choice">
                         <div className="sub-ip"></div>
                         <a href="/recruiter-forgot-password" className="forgot"><br />

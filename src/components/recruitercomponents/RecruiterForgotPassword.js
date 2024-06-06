@@ -145,10 +145,10 @@ function RecruiterForgotPassword() {
   return (
     <div>
       <div>
-        <section className="account-section">
+        <section className="">
           <div className="tf-container">
             <div className="row">
-              <div className="wd-form-login">
+              <div className="wd-form-login1">
                 {resetSuccess ? (
                   <div className="success-message">
                     <h5>Password reset was done successfully. Please click on <a href="/recruiter" style={{color:'blue'}}>Login</a> to continue</h5>
@@ -156,18 +156,21 @@ function RecruiterForgotPassword() {
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
-                    <div className="ip">
-      <label>
-        Email Address<span>*</span>
-      </label>
+                    <div className="div-style">
+                      <label className="label-style">
+  Email Address<span>*</span>
+</label>
+
       <input
-        type="email"
-        placeholder="Enter your Email"
-        value={email}
-        onChange={handleEmailChange}
-        onBlur={handleEmailBlur}
-        disabled={isEmailFieldDisabled}
-      />
+  type="email"
+  placeholder="Enter your Email"
+  value={email}
+  onChange={handleEmailChange}
+  onBlur={handleEmailBlur}
+  disabled={isEmailFieldDisabled}
+  className="input-style"
+/>
+
     </div>
                       {otpSent ? (
                         otpVerified ? (
@@ -232,9 +235,9 @@ function RecruiterForgotPassword() {
                           </div>
                         )
                       ) : (
-                        <button type="button" onClick={handleSendOTP}>
-                          Send OTP
-                        </button>
+                        <button type="button" onClick={handleSendOTP} className="button-style">
+  Send OTP
+</button>
                       )}
                       {resetError && <div className="error-message">{resetError}</div>}
                    

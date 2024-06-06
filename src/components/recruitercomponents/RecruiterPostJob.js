@@ -5,6 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+
 import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 
@@ -33,6 +36,8 @@ function RecruiterPostJob() {
   const [image, setImage] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [fileName, setFileName] = useState("No selected file")
+
+  const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
@@ -221,23 +226,16 @@ function RecruiterPostJob() {
       }));
       return isValid;
     }
-    // if (jobHighlights && jobHighlights.trim().length < 3) {
-    //   isValid = false;
-    //   setFormErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     jobHighlights: 'Job highlights must be at least 3 characters long.',
-    //   }));
-    //   return isValid;
-    // }
-    if (!description.trim() || description.trim().length < 15) {
-      errors.description = 'Description is required and must be at least 15 characters long.';
-      isValid = false;
-    } else {
-      errors.description = '';
-    }
-    setFormErrors(errors);
-    return isValid;
-  };
+  
+      if (!description.trim() || description.trim().length < 15) {
+        errors.description = 'Description is required and must be at least 15 characters long.';
+        isValid = false;
+      } else {
+        errors.description = '';
+      }
+      setFormErrors(errors);
+      return isValid;
+    };
 
   const handleJobTitleChange = (e) => {
     setJobTitle(e.target.value);
@@ -361,14 +359,15 @@ function RecruiterPostJob() {
   //     jobHighlights: '',
   //   }));
   // };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      description: '',
-    }));
-  }; 
 
+  
+  const handleDescriptionChange = (content) => {
+    setDescription(content);
+    setFormErrors((prevErrors) => ({
+         ...prevErrors,
+          description: '',
+         }));
+  };
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {
       case 'B.Tech':
@@ -532,8 +531,17 @@ function RecruiterPostJob() {
 
   };
 
-  const handleCloseSnackbar = () => {
+   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
+  };
+  
+  const handleFocus = () => {
+    setIsActive(true);
+  };
+
+  const handleBlur = () => {
+    setIsActive(false);
+
   };
 
   return (
@@ -572,21 +580,24 @@ function RecruiterPostJob() {
                         )}
                       </fieldset>
                     </div>
-                    <div className="text-editor-wrap">
-                      <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                      <div className="text-editor-main">
-                        <textarea
-                          className="input-form"
-                          placeholder="Job Description at least 15 characters"
-                          value={description}
-                          onChange={handleDescriptionChange}
-                          required
-                        />
-                        {formErrors.description && (
-                          <div className="error-message">{formErrors.description}</div>
-                        )}
-                      </div>
-                    </div>
+                   <div className="text-editor-wrap">
+                          <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
+                         <div className="text-editor-main">
+                         <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
+                           <ReactQuill 
+                            theme="snow" 
+                            value={description} // Set initial content from description state
+                            onChange={handleDescriptionChange} // Update state on content change
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                           required
+                         /> 
+                       </div>
+                   {formErrors.description && (
+                  <   div className="error-message">{formErrors.description}</div>
+                    )}
+                  </div>
+                 </div>
                     <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <div id="item_category" className="dropdown titles-dropdown info-wd">

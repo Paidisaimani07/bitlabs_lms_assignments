@@ -4,7 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 const BackButton = () => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    console.log("Back button is clicked",e);
     navigate(-1); // Navigate back to the previous page
   };
 

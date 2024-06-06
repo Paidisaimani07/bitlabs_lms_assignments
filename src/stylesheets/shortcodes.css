@@ -62,6 +62,17 @@
     max-width: 100%;
  
   }
+
+  .tf-container1 {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 1440px;
+    max-width: 100%;
+ 
+  }
   
   /* widget menu link */
   .widget-menu-link {
@@ -5277,6 +5288,107 @@
   }
   
   
+  /* styles.css */
+.input-style {
+  background: #fff;
+  border: 1px solid #e5e5e5 !important;
+  border-radius: 4px !important;
+  color: #121212 !important;
+  font-size: 16px !important;
+  font-weight: 400;
+  line-height: 26px;
+  padding: 12px 16px !important;
+}
+
+.button-style {
+  background: #f97316;
+  border-color: #f97316;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 26px;
+  margin-top: 13px;
+  padding: 11px 32px;
+  text-align: center;
+  text-transform: capitalize;
+  width: 100%;
+}
+
+.wd-form-login1{
+  margin: 60px auto 0;
+    max-width: 472px;
+    text-align: center;
+}
+
+.label-style {
+  color: #121212;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  margin-bottom: 11px;
+  
+}
+.div-style {
+  margin-bottom: 25px;
+  text-align: left;
+}
+.label-style span {
+  color: #db4444;
+}
+
+.wd-form-login2 {
+  max-width: 472px;
+  margin: 60px auto;
+  text-align: center;
+  
+  
+}
+
+.inputs-group2.auth-pass-inputgroup {
+  position: relative; /* Ensure the parent element has this */
+}
+.wd-form-login2 .ip2 input {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  color: #121212;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  padding: 12px 16px;
+  margin-bottom:20px;
+}
+.wd-form-login2 .group-ant-choice a {
+  color: #f97316;
+}
+
+.new-password-icon {
+  cursor: pointer;
+  position: absolute;
+  top: 63%;
+  transform: translateY(-50%);
+  right: 10px; /* Adjust as needed for your layout */
+}
+
+
+
+.wd-form-login2 .custom-button {
+  background: #f97316;
+  border-color: #f97316;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 26px;
+  margin-top: 13px;
+  padding: 11px 32px;
+  text-align: center;
+  text-transform: capitalize;
+  width: 100%;
+}
+
+
   .wd-form-login {
     max-width: 572px;
     margin: 0 auto;
@@ -5286,88 +5398,88 @@
   }
   @media(max-width: 526px) and (min-width: 499px){
     .wd-form-login {
-      width: 480px !important;
+      width: 400px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-200px !important;
+      margin-left:40px !important;
       
     }
   }
 
   @media(max-width: 499px) and (min-width: 475px){
     .wd-form-login {
-      width: 480px !important;
+      width: 400px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-200px !important;
+      margin-left:30px !important;
       
     }
   }
   
   @media(max-width: 475px) and (min-width: 450px){
     .wd-form-login {
-      width: 480px !important;
+      width: 400px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-220px !important;
+      margin-left:2px !important;
       
     }
   }
 
   @media(max-width: 450px) and (min-width: 420px){
     .wd-form-login {
-      width: 480px !important;
+      width: 400px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-240px !important;
+      margin-left:1px !important;
       
     }
   }
 
   @media(max-width: 420px) and (min-width: 385px){
     .wd-form-login {
-      width: 480px !important;
+      width: 380px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-260px !important;
+      margin-left:-10px !important;
       
     }
   }
 
   @media(max-width: 385px) and (min-width: 365px){
     .wd-form-login {
-      width: 480px !important;
+      width: 370px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-280px !important;
+      margin-left:-20px !important;
       
     }
   }
 
   @media(max-width: 365px) and (min-width: 340px){
     .wd-form-login {
-      width: 480px !important;
+      width: 350px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-290px !important;
+      margin-left:-20px !important;
       
     }
   }
 
   @media(max-width: 340px) and (min-width: 320px){
     .wd-form-login {
-      width: 480px !important;
+      width: 330px !important;
       margin: 0 auto;
       text-align: center;
       margin-top: 10px !important;
-      margin-left:-300px !important;
+      margin-left:-20px !important;
       
     }
   }
@@ -6831,6 +6943,10 @@
     padding: 8px 24px;
   }
   
+
+
+
+
   .features-job.stc {
     margin-bottom: 31px;
   }
@@ -10876,6 +10992,12 @@
     margin-left:150px;
     
   }
+
+  @media (max-width: 526px) {
+    .account-section {
+      margin-left:10px; /* Adjust this value as needed */
+    }
+  }
   
   .inner-news-section {
     padding: 55px 0px;
@@ -11824,13 +11946,143 @@
         }
       }
 
+      .image-container {
+        position: absolute; /* Container for absolute positioning of the image */
+        width: 100%; /* Full width for the container */
+        height: 100%; /* Full height for the container */
+        overflow: hidden; /* Hide overflow to ensure the image fits well */
+        
+      }
+
 /* Default styles */
 .responsive-image1 {
-  height: 247px;
-  width: 100%;
-  margin-left:23px;
-  object-fit: cover;
+  width: 100% !important; /* Specific width for the image */
+ height:250px !important;
+  position: absolute; /* Absolute positioning */
+  margin: 0; /* Reset margins to avoid unwanted spacing */
+  padding: 0; /* Reset padding to avoid unwanted spacing */
+  z-index: -1; /* Send the image to the background if needed */
 }
+
+.custom-div-style {
+  margin-bottom: -80px;
+  margin-top: 100px;
+  font-size: 25px;
+  font-weight: 700;
+  margin-left: -200px;
+  color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+}
+
+@media (max-width: 841px)and (min-width: 767px) {
+  .custom-div-style {
+    margin-bottom: -80px; /* Adjusted value */
+    margin-top: 100px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -150px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 767px)and (min-width: 570px) {
+  .custom-div-style {
+    margin-bottom: -80px; /* Adjusted value */
+    margin-top: 100px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -100px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 570px)and (min-width: 540px) {
+  .custom-div-style {
+    margin-bottom: -80px; /* Adjusted value */
+    margin-top: 100px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -70px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 540px)and (min-width: 526px) {
+  .custom-div-style {
+    margin-bottom: -80px; /* Adjusted value */
+    margin-top: 100px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -50px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 526px)and (min-width: 450px) {
+  .custom-div-style {
+    margin-bottom: -260px; /* Adjusted value */
+    margin-top: 280px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -200px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 450px)and (min-width: 370px) {
+  .custom-div-style {
+    margin-bottom: -270px; /* Adjusted value */
+    margin-top: 260px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -200px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+@media (max-width: 370px)and (min-width: 320px) {
+  .custom-div-style {
+    margin-bottom: -270px; /* Adjusted value */
+    margin-top: 260px; /* Adjusted value */
+    font-size: 20px; /* Adjusted value */
+    margin-left: -150px; /* Adjusted value */
+    font-weight: 700;
+    color: #000;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-style: normal;
+  line-height: 26px;
+  text-transform: capitalize;
+  }
+}
+
+
 
 @media (min-width: 526px) {
   .responsive-image1 {
@@ -11839,8 +12091,8 @@
 }
 /* Default styles */
 .responsive-image {
-  width: 720px;
-  height: 850px;
+  width: 50%;
+  height: 100vh;
   object-fit: cover;
 }
 /* Media query to hide the image for screens below 525px */
@@ -11854,7 +12106,7 @@
 @media (max-width: 1220px) and (min-width: 1024px) {
   .responsive-image {
     width: 600px; /* Adjust the width as needed */
-    height: 740px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }
@@ -11863,7 +12115,7 @@
 @media (max-width: 1024px) and (min-width: 970px) {
   .responsive-image {
     width: 550px; /* Adjust the width as needed */
-    height: 650px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }  
@@ -11872,7 +12124,7 @@
  @media (max-width: 970px) and (min-width: 915px) {
   .responsive-image {
     width: 500px; /* Adjust the width as needed */
-    height: 740px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }   
@@ -11881,7 +12133,7 @@
 @media (max-width: 915px) and (min-width: 890px) {
   .responsive-image {
     width: 470px; /* Adjust the width as needed */
-    height: 740px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }  
@@ -11890,7 +12142,7 @@
 @media (max-width: 890px) and (min-width: 850px) {
   .responsive-image {
     width: 430px; /* Adjust the width as needed */
-    height: 740px; /* Adjust the height as needed */
+   
     object-fit: cover;
   }
 }  
@@ -11898,7 +12150,7 @@
 @media (max-width: 850px) and (min-width: 767px) {
   .responsive-image {
     width: 420px; /* Adjust the width as needed */
-    height: 740px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }
@@ -11906,14 +12158,14 @@
 @media (max-width: 767px) and (min-width: 740px) {
   .responsive-image {
     width: 400px; /* Adjust the width as needed */
-    height: 650px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }
 @media (max-width: 740px) and (min-width: 650px) {
   .responsive-image {
     width: 380px; /* Adjust the width as needed */
-    height: 650px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }
@@ -11921,15 +12173,15 @@
 @media (max-width: 650px) and (min-width: 525px) {
   .responsive-image {
     width: 330px; /* Adjust the width as needed */
-    height: 650px; /* Adjust the height as needed */
+    
     object-fit: cover;
   }
 }
 
 .find-your {
   position: fixed;
-  top: 600px; /* Adjust this to position the text vertically */
-  left: 85px; /* Adjust this to position the text horizontally */
+  top: 550px; /* Adjust this to position the text vertically */
+  left: 70px; /* Adjust this to position the text horizontally */
   color: #FFF;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11942,8 +12194,8 @@
 
 .dream-job {
   position: fixed;
-  top: 660px; /* Adjust this to position the text vertically */
-  left: 85px; /* Adjust this to position the text horizontally */
+  top: 620px; /* Adjust this to position the text vertically */
+  left: 70px; /* Adjust this to position the text horizontally */
   color: #F97316;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11954,9 +12206,9 @@
   text-transform: capitalize;
 }
 
-@media (max-width: 526px) and (min-width: 360px) {
+/* @media (max-width: 526px) and (min-width: 525px) {
   .find-your{
-    position: fixed;
+    position: absolute;
     color: #FFF;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11966,10 +12218,10 @@
   line-height: 25px;
   text-transform: capitalize;
   top: 190px;
-  margin-left:-50px;
+  margin-left:-180px;
   }
   .dream-job{
-    position: fixed;
+    position: absolute;
     color:  #F97316;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11979,14 +12231,14 @@
   line-height: 25px;
   text-transform: capitalize;
   top: 190px;
-  margin-left:100px;
+  margin-left:-20px;
 
   }
-}
+} */
 
-@media (max-width: 360px) and (min-width: 320px) {
+@media (max-width: 526px) and (min-width: 320px) {
   .find-your{
-    position: fixed;
+    position: absolute;
     color: #FFF;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -11999,7 +12251,7 @@
   margin-left:-50px;
   }
   .dream-job{
-    position: fixed;
+    position: absolute;
     color:  #F97316;
   text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -12025,31 +12277,31 @@
 }
 
 /* Media query for screen widths between 1025px and 767px */
-@media (max-width: 1200px) and (min-width: 767px) {
+@media (max-width: 1400px) and (min-width: 767px) {
   .find-your {
     left: 40px; /* Adjust the left position as needed */
-    font-size: 50px; /* Adjust the font size as needed */
-    top: 500px;
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 580px;
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
-    font-size: 50px; /* Adjust the font size as needed */
-    top: 550px;
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 620px;
   }
 }
 
 @media (max-width: 767px) and (min-width: 700px) {
   .find-your {
     left: 40px; /* Adjust the left position as needed */
-    font-size: 50px; /* Adjust the font size as needed */
-    top: 500px;
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 580px;
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
-    font-size: 50px; /* Adjust the font size as needed */
-    top: 550px;
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 620px;
   }
 }
 
@@ -12057,13 +12309,13 @@
   .find-your {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 460px;
+    top: 580px;
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 500px;
+    top: 620px;
   }
 }
 
@@ -12071,13 +12323,13 @@
   .find-your {
     left: 40px; /* Adjust the left position as needed */
     font-size: 35px; /* Adjust the font size as needed */
-    top: 480px;
+    top: 580px;
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
     font-size: 35px; /* Adjust the font size as needed */
-    top: 520px;
+    top: 620px;
   }
 }
 .logo-image {
@@ -12096,12 +12348,22 @@
   }
 }
 
-@media (max-width: 526px) and (min-width: 320px) {
+@media (max-width: 526px) and (min-width: 375px) {
   .logo-image {
-    position: fixed;
+    position:absolute;
     width: 161px;
     height: 40px;
     left: 150px;
+    
+  }
+}
+
+@media (max-width: 375px) and (min-width: 320px) {
+  .logo-image {
+    position:absolute;
+    width: 161px;
+    height: 40px;
+    left: 120px;
     
   }
 }
@@ -12121,3 +12383,10 @@
     margin-top: 280px !important;
   }
 }
+
+/* .message {
+  margin-bottom: -20px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top:20px;
+} */

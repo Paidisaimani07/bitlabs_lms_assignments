@@ -713,7 +713,7 @@ const handleCloseSnackbar = () => {
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
           {/* <BackButton /> */}
-            <div className="title-dash flex2">Edit Your Profile</div>
+            <div className="title-dash flex2"><BackButton />Edit Your Profile</div>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import logoCompany1 from '../../images/cty12.png';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 
+
  
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -18,9 +19,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const userId = user.id;
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
-  const getAuthToken = () => {
-    return localStorage.getItem('jwtToken');
-  };
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -75,23 +73,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchData();
   }, []);
-  // const handleSaveJob = async (jobId) => {
-  //   try {
-  //     const response = await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, {
-  //         headers: {
-  //           Authorization: `Bearer ${jwtToken}`,
-  //         },
-  //       });
-  //     const { message } = response.data;
-  //      if(response.status =200){
-  //       window.alert('Job Saved successfully');
-  //      }
-  //      fetchJobs();
-  //   } catch (error) {
-  //     window.alert('Job has already been saved by the applicant');
-  //     console.error('Error saving job:', error);
-  //   }
-  // };
  
   const handleSaveJob = async (jobId) => {
     try {
@@ -187,23 +168,22 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   };
 
   return (
-<div>
-      {loading ? null : (
-<div className="dashboard__content">
-<section className="page-title-dashboard">
-<div className="themes-container">
-<div className="row">
-<div className="col-lg-12 col-md-12 ">
-<div className="title-dashboard">
-    {/* <BackButton /> */}
-    <div className="title-dash flex2">
-  {profileid1 === 0 ? "Suggested jobs" : "Recommended Jobs"}
-</div>
-</div>
-</div>
-</div>
-</div>
-</section>
+    <div>
+    {loading ? null : (
+      <div className="dashboard__content">
+        <section className="page-title-dashboard">
+          <div className="themes-container">
+            <div className="row">
+              <div className="col-lg-12 col-md-12 ">
+                <div className="title-dashboard">
+                {/* <BackButton /> */}
+                  <div className="title-dash flex2"> {profileid1 === 0 ? "Suggested jobs" : "Recommended Jobs"}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
 <section className="flat-dashboard-setting flat-dashboard-setting2">
 <div className="themes-container">
 <div className="content-tab">
@@ -211,21 +191,13 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <div className="group-col-2">
                   {jobs.length === 0 ? (
 <div style={{marginLeft:30}}>
-                     {/* <h4>Kindly Update your profile, and as per your skill set, you will get job recommendations.</h4><br/> */}
 </div>
                     ) : (
                       jobs.map((job) => (
 <div className="features-job cl2  bg-white " key={job.id}>
 <div className="job-archive-header">
 <div className="inner-box">
-{/* <div className="logo-company">                            
-                               {job.logoFile ? ( <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" /> )
-                               : (<img src={logoCompany1} alt={`Default Company Logo ${job.id}`} /> )}
-</div> */}
 <div className="box-content">
-{/* <h4>
-<a href="javascript:void(0);">{job.companyname}</a>
-</h4> */}
 
 <h4>
   {job.companyname || (job.jobRecruiter && job.jobRecruiter.companyname) ? (<a href="javascript:void(0);">{job.companyname || job.jobRecruiter.companyname}</a>) : null}
@@ -240,10 +212,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 <span className="icon-map-pin"></span>
 &nbsp;{job.location}
 </li>
-{/* <li>
-<span className="icon-calendar"></span>
-&nbsp;
-</li> */}
 </ul>
 </div>
 </div>
@@ -294,17 +262,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       </button>
     )}
   </li>
-{/* <li>
-      {job && (
-<Link
-          to="/applicant-view-job"
-          onClick={() => setSelectedJobId(job.id)}
-          className="button-status1"
->
-          Apply Now
-</Link>
-      )}
-</li> */}
  <li>
       {job && (
         <button
