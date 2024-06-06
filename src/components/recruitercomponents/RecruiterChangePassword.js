@@ -113,7 +113,7 @@ function RecruiterChangePassword() {
         <div className="row">
           <div className="col-lg-12 col-md-12">
             <div className="title-dashboard">
-            <BackButton />
+            {/* <BackButton /> */}
               <div className="title-dash flex2">Change Password</div>
             </div>
           </div>
