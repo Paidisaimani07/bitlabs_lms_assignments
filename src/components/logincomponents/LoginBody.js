@@ -500,6 +500,12 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  };
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
+  if (tab === 'Candidate') {
+    setMessage('Welcome Back');
+    console.log("login");
+  } else if (tab === 'Employer') {
+    setMessage('Create Account');
+  }
 };
 
 const getTabStyle = (tab) => ({
@@ -517,6 +523,15 @@ const getTabStyle = (tab) => ({
 
   return (
     <div>
+      <img
+        src={Backgroundimagemobile}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+        //  height:"400px",
+        //  margintop:"10px"
+        }}
+      />
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
@@ -527,26 +542,21 @@ const getTabStyle = (tab) => ({
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                 <img
-  src={Backgroundimagemobile}
-  alt="Background"
-  className="responsive-image1"
-  style={{
-    position: "fixed",
-    top: "0px",
-    left: "-20px",
-    paddingRight: "10px"
-  }}
-/>
-                {/* <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4> */}
-               
+                 
+      
+   
+    <div className="custom-div-style">
+      {message}
+    </div>
                 <div className="myComponent">
+                
       <div
   style={{
     ...getTabStyle('Candidate'),
     fontWeight: 'bold' // Add font weight inline
   }}
   onClick={() => handleTabClick1('Candidate')}
+  
 >
   Login
 </div>
