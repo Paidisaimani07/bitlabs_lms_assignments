@@ -57,6 +57,12 @@
     width: 95%;
   }
 }
+@media (min-width: 1024px) {
+  .card {
+    padding: 20px;
+    width: 45%;
+  }
+}
 
   .header {
     margin-bottom: 20px;
