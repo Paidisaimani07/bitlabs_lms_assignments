@@ -394,6 +394,19 @@ const ApplicantBasicDetails = () => {
   
             <div className="input-wrapper">
               <Typeahead
+                id="skillsRequired"
+                multiple
+                options={skillsOptions}
+                placeholder="*Skills Required"
+                onChange={setSkillsRequired}
+                selected={skillsRequired}
+                className="input-form typeahead"
+              />
+              {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
+            </div>
+            
+            <div className="input-wrapper">
+              <Typeahead
                 id="preferredJobLocations"
                 multiple
                 options={cities}
@@ -405,18 +418,7 @@ const ApplicantBasicDetails = () => {
               {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
             </div>
   
-            <div className="input-wrapper">
-              <Typeahead
-                id="skillsRequired"
-                multiple
-                options={skillsOptions}
-                placeholder="*Skills Required"
-                onChange={setSkillsRequired}
-                selected={skillsRequired}
-                className="input-form typeahead"
-              />
-              {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
-            </div>
+           
           </div>
         );
       case 3:
