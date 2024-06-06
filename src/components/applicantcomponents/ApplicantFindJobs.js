@@ -6,6 +6,7 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
 
  
 function ApplicantFindJobs({ setSelectedJobId }) {
@@ -15,6 +16,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const userId = user.id;
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
   const getAuthToken = () => {
     return localStorage.getItem('jwtToken');
@@ -107,17 +109,20 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       );
  
       if (response.status === 200) {
-         window.alert('Job Saved successfully');
-       
+        // window.alert('Job Saved successfully');
+        setSnackbar({ open: true, message: 'Job Saved Successfully.', link: '/applicant-saved-jobs', linkText: 'View Saved Jobs', type: 'success' });  
       }
       fetchJobs();
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        window.alert('Access Denied. Please check your credentials.');
+       // window.alert('Access Denied. Please check your credentials.');
+       setSnackbar({ open: true, message: 'Access Denied. Please check your credentials.', type: 'error' });
       } else if (error.response && error.response.status === 401) {
-        window.alert('Unauthorized. Please log in.');
+        //window.alert('Unauthorized. Please log in.');
+        setSnackbar({ open: true, message: 'Unauthorized. Please log in.', type: 'error' });  
       } else {
-        window.alert('Error saving job. Please try again later.');
+       // window.alert('Error saving job. Please try again later.');
+       setSnackbar({ open: true, message: 'Error saving job. Please try again later.', type: 'error' });
         console.error('Error saving job:', error);
       }
     }
@@ -177,6 +182,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
   return (
 <div>
       {loading ? null : (
@@ -206,7 +215,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </div>
                     ) : (
                       jobs.map((job) => (
-<div className="features-job cl2  bg-white " key={job.id} onClick={() => handleApplyNowClick(job.id)}>
+<div className="features-job cl2  bg-white " key={job.id}>
 <div className="job-archive-header">
 <div className="inner-box">
 {/* <div className="logo-company">                            
@@ -325,7 +334,15 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </section>
 </div>
       )}
-      
+       {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
 </div>
   );
 }

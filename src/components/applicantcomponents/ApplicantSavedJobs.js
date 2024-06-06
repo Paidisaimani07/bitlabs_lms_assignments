@@ -6,6 +6,7 @@ import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import { useNavigate } from "react-router-dom";
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
 
 function ApplicantSavedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
@@ -14,6 +15,8 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const navigate = useNavigate();
   const userId = user.id;
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,7 +86,8 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       );
 
       if(response.status === 200){
-        window.alert('Job Successfully removed from Saved Jobs');
+        //window.alert('Job Successfully removed from Saved Jobs');
+        setSnackbar({ open: true, message: 'Job Removed', type: 'success' });
         }
      
       await fetchSavedJobs(); // Fetch jobs again after removal
@@ -92,6 +96,9 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
 
   return (
     <div>
@@ -213,6 +220,13 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
             </div>
           </section>
         </div>
+      )}
+       {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+        />
       )}
     </div>
   );
