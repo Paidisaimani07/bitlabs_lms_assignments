@@ -98,7 +98,7 @@ video {
   font-family: inherit;
   font-size: 100%;
   font-weight: inherit;
-  font-style: inherit;
+  /* font-style: inherit; */
   vertical-align: baseline;
   margin: 0;
   padding: 0;
@@ -3376,8 +3376,13 @@ input[type="color"],
   border-radius: 4px;
 }
  
-.apply-button1:hover,
 .reset-button1:hover {
+  border-color: #c2570c; /* Darker Green */
+  color: #c2570c;
+}
+
+.apply-button1:hover
+{
   background-color: #F97316; /* Darker Green */
   color: white;
 }
@@ -3440,13 +3445,14 @@ input[type="color"],
   border-color: #F97316;
   font-family: sans-serif;
   width: 150px;
-  stroke: 1px;
+  /* stroke: 1px; */
 
 }
 .dashboard__content .status-select:hover,
 .dashboard__content .export-buttonn:hover {
-  background-color: #F97316; /* Background orange on hover */
-  color: #FFFFFF; /* White text color on hover */
+ 
+  color:#c2570c; /* White text color on hover */
+  border-color: #c2570c;
 }
 .profile-status-toggle .job-looking-status {
   font: 16px/28px "Plus Jakarta Sans", sans-serif;
@@ -3486,19 +3492,20 @@ input[type="color"],
   }
 }
 
-.title-dashboard .back-to-previous {
-  margin-top: 1px;  
+.back-to-previous {
+  margin-top: 24px;  
   align-items: center;
   display: flex;
 }
-.title-dashboard .back-to-previous .back-link { 
+/* .back-to-previous .back-link { 
   font-size: 12px;
-  line-height: 30px;
+ 
   font-family: "Plus Jakarta Sans", sans-serif;
   color: #0073dd;
   font-weight: bold;
   align-items: center;
   display: flex;
   align-items: center;
-}
+  
+} */
  

@@ -22,6 +22,8 @@ import ApplicantResume from '../../components/applicantcomponents/ApplicantResum
 import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
 import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
+
+
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
   const [selectedJobId, setSelectedJobId] = useState('');
@@ -124,7 +126,6 @@ function ApplicantHomePage() {
      {activeRoute === 'profile' && <ApplicantUpdateProfile />}
      {activeRoute === 'viewprofile' && <ApplicantViewProfile />}
      {activeRoute === 'editprofile' && <ApplicantEditProfile />}
-     
      {activeRoute === 'viewjob' && (<ApplicantViewJob selectedJobId={selectedJobId} /> )}
      {activeRoute === 'appliedjobs' && <ApplicantAppliedJobs setSelectedJobId={setSelectedJobId}/>}
      {activeRoute === 'savedjobs' && <ApplicantSavedJobs setSelectedJobId={setSelectedJobId} />}

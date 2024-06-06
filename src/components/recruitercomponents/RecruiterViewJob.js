@@ -187,8 +187,8 @@ const handleStatusChange = async (jobId, newStatus, action) => {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
-                  <BackButton />
-                    <div className="title-dash flex2">Full Job Details</div>
+                  
+                    <div className="title-dash flex2"><BackButton />Full Job Details</div>
                   </div>
                 </div>
               </div>
@@ -317,7 +317,8 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                     {jobDetails && (
                       <div className="inner-content">
                         <h5>Full Job Description</h5>
-                        <p>{jobDetails.description}</p>
+                        {/* <p>{jobDetails.description}</p> */}
+                        <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
                       </div>
                     )}
                   </article>

@@ -8,7 +8,11 @@ import { useGoogleLogin } from '@react-oauth/google'; // Import GoogleLoginButto
 import jwt_decode from "jwt-decode";
 import OTPVerification from '../applicantcomponents/OTPVerification';
 import logoCompany1 from '../../images/bitlabs-logo.png';
- 
+import Background from '../../images/user/avatar/Backgroundimage.png';//logo
+import logo from '../../images/user/avatar/logo.png';
+import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
+
+
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidatePassword, setCandidatePassword] = useState('');
@@ -25,6 +29,8 @@ function LoginBody({ handleLogin }) {
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
+ const { user } = useUserContext();
+  
  
  
 const login = useGoogleLogin({
@@ -73,8 +79,23 @@ const login = useGoogleLogin({
         setUser(userData);
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
- 
+        const userId = userData.id;
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+       
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form');
+        }
+      else{
         navigate('/applicant-find-jobs');
+        //navigate('/applicanthome');
+      }
         //navigate('/applicanthome');
       }
     } catch (err) {
@@ -111,7 +132,7 @@ const login = useGoogleLogin({
         console.log('this is response ', userData);
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
- 
+        const userId = userData.id;
        
  
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -140,12 +161,28 @@ const login = useGoogleLogin({
         // }
  
         // Navigate to the applicant home page
+
+         // Check the profile ID
+         const jwtToken = localStorage.getItem('jwtToken');
+         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+           headers: {
+             Authorization: `Bearer ${jwtToken}`,
+           },
+         });
+         const profileId = profileIdResponse.data;
         
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
-            }
- 
-    } catch (error) {
+         if (profileId === 0) {
+           navigate('/applicant-basic-details-form');
+         }
+       else{
+         navigate('/applicant-find-jobs');
+         //navigate('/applicanthome');
+       }
+      }     
+
+    }
+    
+    catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
         setErrorMessage('enter a correct password or password is incorrect try again');
@@ -190,18 +227,18 @@ const login = useGoogleLogin({
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
  
@@ -461,9 +498,41 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
   window.alert('Failed to Resend OTP. Please try again.');
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
- 
+ const [message,setMessage]=useState();
+ const handleTabClick1 = (tab) => {
+  setActiveTab(tab);
+  if (tab === 'Candidate') {
+    setMessage('Welcome Back');
+    console.log("login");
+  } else if (tab === 'Employer') {
+    setMessage('Create Account');
+  }
+};
+
+const getTabStyle = (tab) => ({
+  padding: '10px 20px',
+  cursor: 'pointer',
+  backgroundColor: activeTab === tab ? '#F97316' : 'transparent', // Change active background color as needed
+  color: activeTab === tab ? '#fff' : '#000', // Optional: change text color for better contrast
+  transition: 'background-color 1s ease;', 
+  display: 'inline-block', // Display tabs side by side
+  textAlign: 'center',
+  borderRadius: '4px',
+  marginRight: tab === 'Candidate' ? '0px' : '0', // Add right margin to the first tab
+  flex: 1, // Each button takes up half of the container
+});
+
   return (
     <div>
+      <img
+        src={Backgroundimagemobile}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+        //  height:"400px",
+        //  margintop:"10px"
+        }}
+      />
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
@@ -474,16 +543,36 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
-               
-                <ul className="menu-tab">
-                  <li className={`ct-tab ${activeTab === 'Candidate' ? 'active' : ''}`} onClick={() => handleTabClick('Candidate')}>
-                    Login
-                  </li>
-                  <li className={`ct-tab ${activeTab === 'Employer' ? 'active' : ''}`} onClick={() => handleTabClick('Employer')}>
-                    Sign Up
-                  </li>
-                </ul>
+                 
+      
+   
+    <div className="custom-div-style">
+      {message}
+    </div>
+                <div className="myComponent">
+                
+      <div
+  style={{
+    ...getTabStyle('Candidate'),
+    fontWeight: 'bold' // Add font weight inline
+  }}
+  onClick={() => handleTabClick1('Candidate')}
+  
+>
+  Login
+</div>
+
+<div
+  style={{
+    ...getTabStyle('Employer'),
+    fontWeight: 'bold' // Apply font weight inline
+  }}
+  onClick={() => handleTabClick1('Employer')}
+>
+  Sign Up
+</div>
+
+    </div>
                 <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a>
                     <br />
                    
@@ -499,6 +588,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         {/* <label>Email Address<span>*</span></label> */}
                         <input
                   type="text"
+                  className="name"
                   placeholder="Email"
                   value={candidateEmail}
                   onChange={(e) => {
@@ -514,6 +604,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
+                            className="name"
                             placeholder="Password"
                             value={candidatePassword}
                             onChange={(e) => {
@@ -528,12 +619,6 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         </div>
                         {candidatePasswordError && <div className="error-message">{candidatePasswordError}</div>}
                       </div>
-                      {/* <div className="group-ant-choice">
-                        <div className="sub-ip"></div>
-                        <a href="/applicant-forgot-password" className="forgot">
-                          Forgot password?
-                        </a>
-                      </div> */}
                       <button type="submit">Login</button>
                       <div className="group-ant-choice">
                         <div className="sub-ip"></div>
@@ -542,25 +627,20 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                      {/* <div className="sign-up">
-                        Not registered yet? <a href="/register">Sign Up</a>
-                      </div> */}
        
                     </form>
                     <br></br>
-                    {/* <button onClick={() => login()}>Sign in with Google 🚀</button> */}
-                    {/* <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a> */}
-                    {/* <button onClick={googleLogin}>Sign in with Google</button> */}
+                  
                   </div>
  
                   <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
                   <p class="line-ip"><span>or Sign Up using</span></p>
                    
                   <form onSubmit={handleSubmit}>
-                <div className="ip">
-                    {/* <label>Full Name<span>*</span></label> */}
-                    <input
+                  <div className="ip">
+  <input
     type="text"
+    className="name"
     placeholder="Name"
     onChange={(e) => {
         const inputValue = e.target.value;
@@ -573,14 +653,14 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
     }}
     required
     disabled={allFieldsDisabled}
-/>
-
-                    {candidateNameError && <div className="error-message">{candidateNameError}</div>}
-                  </div>
+  />
+  {candidateNameError && <div className="error-message">{candidateNameError}</div>}
+</div>
                   <div className="ip">
                     {/* <label>Email Address<span>*</span></label> */}
                 <input
                   type="email"
+                  className="name"
                   placeholder="Email"
                   value={candidateEmail1}
                   onChange={(e) => {
@@ -596,6 +676,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                     {/* <label>Mobile Number<span>*</span></label> */}
                     <input
     type="text"
+    className="name"
     placeholder="Mobile Number"
     value={candidateMobileNumber}
     onChange={(e) => {
@@ -625,6 +706,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
                       <input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
+                        className="name"
                         value={candidatePassword1}
                          onChange={(e) => {
                          setCandidatePassword1(e.target.value);
@@ -667,12 +749,13 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
       </div>
     ) : (
       <div>
-        <div className="helpful-line">Click on send OTP to verify your email</div>
+        {/* <div className="">Click on send OTP to verify your email</div> */}
         {/* {isFormValidForOTP() && ( */}
         <button
           type="button"
           onClick={handleSendOTP}
           disabled={candidateOTPSent || candidateRegistrationSuccess || candidateOTPSendingInProgress}
+          style={{ marginBottom: '10px' }}
         >
           {candidateOTPSendingInProgress ? (
              <div className="status-container">
@@ -685,27 +768,45 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
          
         </button>
         {/* )} */}
+        {/* <div className="">To complete signup process please verify your email</div> */}
       </div>
     )}
   </div>
 )}
  
-{/* {candidateOTPVerified && (
-  <button type="submit" onClick={handleSubmit}>
-    {candidateRegistrationInProgress ? (
-       <div className="status-container">
-       <div className="spinner"></div>
-       <div className="status-text">Registering</div>
-     </div>
-    ) : (
-      'Register'
-    )}
-  </button>
-)} */}
                 </form>
+                
                   </div>
+                  
                 </div>
+
+                <img
+  src={Background}
+  alt="Background"
+  className="responsive-image"
+  style={{
+    position: "fixed",
+    top: "0px",
+    left: "-20px",
+    paddingRight: "10px"
+  }}
+/>
+
+<div className="find-your">
+  Find Your
+</div>
+<div className="dream-job">
+  Dream Job
+</div>
               </section>
+              <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+      />
+    </div>
+
             </div>
           </div>
         </div>

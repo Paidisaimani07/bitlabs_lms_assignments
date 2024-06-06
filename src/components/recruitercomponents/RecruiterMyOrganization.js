@@ -36,7 +36,19 @@ function RecruiterMyOrganization() {
  
     const user1 = useUserContext();
     const user = user1.user;
- 
+    const [isHovered, setIsHovered] = useState(false);
+    const buttonStyle = {
+      backgroundColor: isHovered ? '#ea670c' : '#F97316',
+      color: 'white',
+      padding: '10px 15px',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      marginLeft: '5px',
+      marginTop: '5px',
+      transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+    };
+
     useEffect(() => {
       const storedToken = localStorage.getItem('jwtToken');
       if (storedToken) {
@@ -264,7 +276,7 @@ function RecruiterMyOrganization() {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
-          <BackButton />
+          {/* <BackButton /> */}
             <div className="title-dash flex2">My Organization</div>
           </div>
         </div>
@@ -294,19 +306,13 @@ function RecruiterMyOrganization() {
       type="button"
       onClick={uploadPhoto}
       className="btn-3"
-      style={{
-        backgroundColor: '#F97316',
-        color: 'white',
-        padding: '10px 15px',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        marginLeft:'5px',
-        marginTop:'5px'
-      }}
+      style={buttonStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       Upload Photo
     </button>
+    
   </div>
               </div>
               <div className="wrap-img flex2">
