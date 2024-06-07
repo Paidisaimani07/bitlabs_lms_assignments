@@ -3,6 +3,7 @@
     width: 100%;
     height: 100%;
     background-color: #f3f4f6;
+    
     /* Other styles for the component */
   }
 
@@ -10,12 +11,14 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 200px;  /* Adjust as needed */
-    height: 50px; /* Adjust as needed */
+    width: 200px;  /* Fixed width */
+    height: 50px;  /* Fixed height */
     margin-top: 10px;  /* Adjust as needed */
     margin-left: 10px; /* Adjust as needed */
-    
+    object-fit: contain;  /* Ensures the image fits within the width/height */
   }
+  
+  
 .card-container {
     display: flex;
     justify-content: center;
@@ -31,6 +34,7 @@
     border-radius: 16px;
     background-color: #ffffff;
     width: 55%;
+    height: 652px;
     margin: 0 auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -38,7 +42,7 @@
 @media (min-width: 1024px) {
   .card {
     padding: 60px;
-    width: 75%;
+    width: 90%;
   }
 }
 
@@ -60,7 +64,7 @@
 @media (min-width: 1024px) {
   .card {
     padding: 20px;
-    width: 45%;
+    width: 60%;
   }
 }
 
@@ -75,30 +79,64 @@
   }
   
   .stepper-container {
-    margin-top: 40px;
-    margin-bottom: 60px;
+    margin-top: 52px;
+    margin-bottom: 50px;
     width: 80%; /* Adjust the width as needed */
     margin-left: auto;
     margin-right: auto;
 }
 
-@media (max-width: 767px) {
-    .stepper-container {
-        width: 90%; /* Adjust width for smaller screens like mobile */
-    }
+/* Smartphones */
+@media (max-width: 359px) {
+  .stepper-container {
+      width: 90%; /* Extra small smartphones */
+  }
 }
 
+@media (min-width: 360px) and (max-width: 411px) {
+  .stepper-container {
+      width: 90%; /* Small smartphones */
+  }
+}
+
+@media (min-width: 412px) and (max-width: 479px) {
+  .stepper-container {
+      width: 90%; /* Medium smartphones */
+  }
+}
+
+@media (min-width: 480px) and (max-width: 767px) {
+  .stepper-container {
+      width: 90%; /* Large smartphones */
+  }
+}
+
+/* Tablets */
 @media (min-width: 768px) and (max-width: 1023px) {
-    .stepper-container {
-        width: 90%; /* Adjust width for tablet screens */
-    }
+  .stepper-container {
+      width: 90%; /* Tablets */
+  }
 }
 
-@media (min-width: 1024px) {
-    .stepper-container {
-        width: 90%; /* Adjust width for desktop screens */
-    }
+/* Desktops/Laptops */
+@media (min-width: 1024px) and (max-width: 1365px) {
+  .stepper-container {
+      width: 90%; /* Small desktops/laptops */
+  }
 }
+
+@media (min-width: 1366px) and (max-width: 1919px) {
+  .stepper-container {
+      width: 90%; /* Medium desktops/laptops */
+  }
+}
+
+@media (min-width: 1920px) {
+  .stepper-container {
+      width: 90%; /* Large desktops/laptops */
+  }
+}
+
   
   
   .form-container {
@@ -115,28 +153,54 @@
   }
   
   .button-container {
-    /* position: absolute; */
+    position: absolute;
     bottom: 0;
     right: 0;
     display: flex;
     justify-content: flex-end; /* Align buttons to the right */
     gap: 10px; /* Optional: Add some space between buttons if needed */
-    /* margin-bottom: 40px; */
-    /* margin-right: 60px; */
+     margin-right: 20px;
+     margin-bottom: 20px;
+    
 }
 
 .form-button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
+    width:180px;
+    height: 40px;
     background-color: #F97316;
     color: white;
     cursor: pointer;
     font-size: 16px;
+    text-transform: none; /* This will show the text as it is */
+    margin-bottom: 20px;
 }
   
- 
-  
+ /* Media query for small screens */
+@media (max-width: 600px) {
+  .form-button {
+      width: 100%; /* Full width on small screens */
+      max-width: 150px; /* Decrease the max-width on small screens */
+  }
+}
+
+/* Media query for very small screens */
+@media (max-width: 400px) {
+  .form-button {
+      width: 100%; /* Full width on very small screens */
+      max-width: 120px; /* Further decrease the max-width */
+  }
+}
+  /* Media query for tablets */
+@media (min-width: 600px) and (max-width: 900px) {
+  .form-button {
+      width: 100%; /* Full width on tablets */
+      max-width: 160px; /* Adjust the max-width for tablets */
+      margin-right: 25px;
+  }
+}
   .form-button:disabled {
     background-color: #cbd5e1;
     cursor: not-allowed;
@@ -273,6 +337,11 @@
     box-sizing: border-box;
   }
 
+  .error-message {
+    font-size: 12px; /* Smaller font size */
+    color: red; /* Error message color */
+    margin-top: 5px; /* Margin to space it from other elements */
+}
   
   /* For large screens (desktops and laptops) */
 /*@media (min-width: 1024px) {
