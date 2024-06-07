@@ -458,7 +458,7 @@ const handleSelectChange = async (e) => {
   <div className="controls">
     
   <button className="export-buttonn" onClick={exportCSV}>
-      ExportCSV
+      Export CSV
     </button>
     <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
     <option value="" disabled>
