@@ -210,24 +210,22 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                         </div>
                       </div>
                     )}
-                    {jobDetails && (
-                      <div className="inner-content">
-                        <h5>Full Job Description</h5>
-                        <p>{jobDetails.description}</p>
-                      </div>
-                    )}
+                    
                   {jobDetails && (
-  // <div className="inner-content">
-  <div>
+                    <div className="features-job style-2 stc-apply bg-white">
+   <div className="inner-content">
+   
     <h5>Full Job Description</h5>
     <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
    
+  </div>
   </div>
 )}
                   </article>
                 </div>
               </div>
             </div>
+            
           </section>
         </div>
       )}
