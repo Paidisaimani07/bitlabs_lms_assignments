@@ -3115,7 +3115,54 @@
   .cv-form-details .list-partner li:not(:last-child) {
     margin-right: 16px;
   }
+  .details1 {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    flex-shrink: 0;
+    color: #FFF;
+    font-family: "Plus Jakarta Sans";
+   
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+    margin-bottom: 10px; /* Optional: Adjust spacing between items */
+  }
   
+  .details1 .icon {
+    margin-right: 8px; /* Space between icon and text */
+  }
+  .edit-icon {
+    position: absolute;
+    top: 10px; /* Adjust top position */
+    right: 10px; /* Adjust right position */
+    margin: 30px;
+  }
+  
+  .edit-icon img {
+    width: 20px; /* Adjust icon size */
+    height: auto; /* Maintain aspect ratio */
+  }
+  .profile-picture-container {
+    position: relative;
+    margin-right: 20px; /* Adjust as needed */
+  }
+  
+  .profile-picture-container img {
+    border-radius: 100px;
+  }
+  
+ .camera-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 34.5px;
+  height: 34.5px;
+  fill: #eee; /* Fill color */
+  stroke-width: 1px; /* Stroke width */
+  stroke: #fff; /* Stroke color */
+  z-index: 1; /* Ensure it's above the profile picture */
+}
   .cv-form-details .preview-cv {
     padding: 12px 24px 10px 12px;
     background: #ffffff;
@@ -3125,7 +3172,7 @@
     position: relative;
     margin-bottom: 16px;
   }
-  
+
   .cv-form-details .preview-cv.mgt-32 {
     margin-top: 32px;
   }
@@ -7809,6 +7856,27 @@
     border-radius: 16px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05) ;
   }
+  .features-job-view {
+    margin-bottom: 32px;
+    position: relative;   
+    gap: 32;
+    /* border: 1px solid #e5e5e5; */
+    padding: 24px;
+    -webkit-transition: all 0.3s ease 0s;
+    -moz-transition: all 0.3s ease 0s;
+    -ms-transition: all 0.3s ease 0s;
+    -o-transition: all 0.3s ease 0s;
+    transition: all 0.3s ease 0s;
+    position: relative;
+    cursor: pointer;
+    z-index: 1;
+    border-radius: 16px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05) ;
+    background-color: #00215E;
+    width: 954px;
+height: 203px;
+flex-shrink: 0;
+  }
   
   .jobtex-link-item {
     position: absolute;
@@ -9653,15 +9721,15 @@
   
   /* wd-author-page-title */
   .wrapper-author-page-title {
-    background-image: url("../images/page-title/bg-author-page-title.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding: 40px 0px;
+    /* background-image: url("../images/page-title/bg-author-page-title.jpg"); */
+    /* background-repeat: no-repeat; */
+    /* background-size: cover; */
+    padding: 10px; 
   }
   
   .wd-author-page-title .author-archive-header {
     display: flex;
-    margin-bottom: 28px;
+  align-items: center;
   }
   
   .wd-author-page-title .logo-company {

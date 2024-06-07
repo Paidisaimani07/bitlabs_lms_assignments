@@ -5,11 +5,6 @@ import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import { useNavigate } from "react-router-dom";
-import Phone from '../../images/icons/phone.png';
-import Mail from '../../images/icons/mail.png';
-import Edit from '../../images/icons/edit.png';
-import Camera from '../../images/icons/camera.png';
-import Ellipse from '../../images/icons/Ellipse.png';
 const ApplicantViewProfile = () => {
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
@@ -106,43 +101,49 @@ const ApplicantViewProfile = () => {
 </div>
 </div>
 </section>
-<div className="features-job-view">
-  <div className="wd-author-page-title">
-    <div className="author-archive-header">
-      <div className="profile-picture-container">
-        <img
-          width="100px"
-          height="100px"
-          src={imageSrc || '../images/user/avatar/profile-pic.png'}
-          alt="Profile"
-          onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
-          style={{ borderRadius: '100px', position: 'relative' }}
-        />
+   <section className="wrapper-author-page-title stc2 ">
+    <div className="tf-container">
+      <div className="wd-author-page-title">
+        <div className="author-archive-header">
+        <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')} style={{padding:'10px',borderRadius:'100px'}} />
+          <div className="content">
+            {/* <a href="#" className="tag-head">
+              Available now
+            </a> */}
+            <h4>
+              {/* <a href="#">Computer Systems Analyst</a> */}
+            </h4>
+            <h3>
+              <a href="#">{profileData.applicant.name}</a>
+            </h3>
+            <ul className="author-list">
+              <li>  {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
+  <React.Fragment key={skill.id}>
+    <span>
+      <a>
+        <ul className="tag">
+          <li>{skill.skillName}</li>
+        </ul>
+        </a>
+    </span>
+    {index < profileData.skillsRequired.length - 1 && ", "}
+  </React.Fragment>
+))}           </li>
+            </ul>
+          </div>
+        </div>
         
-        <img src={Camera} alt="Camera" className="camera-icon" />
-      </div>
-      <div className="content">
-        <h4>{/* Content here */}</h4>
-        <h3>
-          <a href="#">{profileData.applicant.name}</a>
-        </h3>
-        <div className="edit-icon">
-          {/* <Link to="/applicant-edit-profile"> */}
-            <img src={Edit} alt="Edit" className="edit-icon" />
-          {/* </Link> */}
-        </div>
-        <div className="details1">
-          <img src={Mail} alt="Email" className="icon" />
-          {profileData.applicant.email}
-        </div>
-        <div className="details1">
-          <img src={Phone} alt="Phone" className="icon" />
-          {profileData.applicant.mobilenumber}
+        <div className="author-archive-footer">
+          <div className="group-btn">
+            {/* <button className="tf-btn">Edit Profile</button> */}
+            <Link to="/applicant-edit-profile"  className="tf-btn">Edit Profile</Link>&nbsp;
+            {/* <button className="tf-btn btn-author">Message</button> */}
+            <Link to="#"  className="tf-btn btn-author">Download Resume</Link>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
   <section className="candidates-section">
     <div className="tf-container">
       <div className="row">
