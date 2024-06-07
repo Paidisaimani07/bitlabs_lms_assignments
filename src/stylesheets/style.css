@@ -1544,7 +1544,7 @@ input[type="color"],
 
 .sticky-area-wrap .header-ct-right .account {
   display: flex;
-  gap: 9px;
+  /* gap: 9px; */
   align-items: center;
   padding-right: -50px;
   position: relative;
@@ -3509,3 +3509,19 @@ input[type="color"],
   
 } */
  
+.username-text {
+  color: #5F5F5F;
+  font-family: "Plus Jakarta Sans" !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  text-transform: capitalize !important;
+}
+
+@media screen and (min-width: 991px) {
+  .dash-icon1 {
+    width: 18px !important;
+    height: 23px !important;
+  }
+}

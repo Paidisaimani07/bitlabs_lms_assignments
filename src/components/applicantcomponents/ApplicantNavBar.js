@@ -10,6 +10,7 @@ import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
+import logos from '../../images/logos2.png';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -82,7 +83,22 @@ document.addEventListener("click", handleOutsideClick);
   //   }
   // };
 
-
+  const handleProfileImageError = (event) => {
+    // Reset the image source to trigger a reload
+    event.target.src = `data:image/svg+xml,
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <g clip-path="url(#clip0_341_8986)">
+          <path d="M32 16C32 21.0701 29.6418 25.5894 25.9621 28.5207C23.229 30.6988 19.7664 32 16 32C12.2336 32 8.77097 30.6988 6.03788 28.5207C2.35823 25.5894 0 21.0701 0 16C0 7.16354 7.16354 0 16 0C24.8365 0 32 7.16354 32 16Z" fill="#D6D9DC"/>
+          <path d="M16.0001 19.1504C19.7146 19.1504 22.7257 16.1392 22.7257 12.4248C22.7257 8.71028 19.7146 5.6991 16.0001 5.6991C12.2856 5.6991 9.27441 8.71028 9.27441 12.4248C9.27441 16.1392 12.2856 19.1504 16.0001 19.1504Z" fill="#5F5F5F"/>
+          <path d="M25.9623 28.5207C23.2292 30.6987 19.7666 31.9999 16.0002 31.9999C12.2338 31.9999 8.77118 30.6987 6.03809 28.5207C7.33189 24.2453 11.3025 21.1327 16.0002 21.1327C20.6979 21.1327 24.6685 24.2453 25.9623 28.5207Z" fill="#5F5F5F"/>
+        </g>
+        <defs>
+          <clipPath id="clip0_341_8986">
+            <rect width="32" height="32" fill="white"/>
+          </clipPath>
+        </defs>
+      </svg>`;
+  };
 
   const [requestData, setRequestData] = useState(null);
 
@@ -312,36 +328,52 @@ document.addEventListener("click", handleOutsideClick);
                 <a href="/applicanthome">
                   <img
                     className="site-logo"
-                    src="../images/logo.png"
+                    // src="../images/logo.png"
+                    // src="../../images/logos2.png"
+                    src={logos}
                     alt="Image"
                   />
                 </a>
-                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
+                {/* <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p> */}
               </div>
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
             <div>
             <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-      <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
-        <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} >
+      <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px',paddingRight:'20px' }}>
+        {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
+        <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="23"
+      viewBox="0 0 18 23"
+      fill="none"
+      // onError={handleProfileImageError}
+      className={"dash-icon1" + (alertCount > 0 ? " dash-titles" : "")}
+      onClick={handleBellClick}
+      >
+      <path d="M1.21942 18.8525C0.993277 18.8525 0.801167 18.7735 0.643083 18.6154C0.485194 18.4573 0.40625 18.2651 0.40625 18.0388C0.40625 17.8125 0.485194 17.6195 0.643083 17.4598C0.801167 17.3002 0.993277 17.2204 1.21942 17.2204H2.39746V8.72733C2.39746 7.16206 2.88357 5.77664 3.85579 4.57109C4.82801 3.36553 6.07246 2.5896 7.58912 2.24329V1.56283C7.58912 1.17006 7.72592 0.838335 7.9995 0.567668C8.27308 0.296807 8.60617 0.161377 8.99875 0.161377C9.39153 0.161377 9.72519 0.296807 9.99975 0.567668C10.2741 0.838335 10.4113 1.17006 10.4113 1.56283V2.24329C11.9295 2.5896 13.1753 3.36553 14.1487 4.57109C15.1221 5.77664 15.6088 7.16206 15.6088 8.72733V17.2204H16.7836C17.0065 17.2204 17.1982 17.3004 17.3588 17.4604C17.5194 17.6203 17.5997 17.8133 17.5997 18.0397C17.5997 18.266 17.5198 18.4581 17.36 18.616C17.2001 18.7737 17.0071 18.8525 16.781 18.8525H1.21942ZM8.99817 22.025C8.42747 22.025 7.94146 21.8239 7.54012 21.4218C7.13899 21.0195 6.93842 20.5333 6.93842 19.9632H11.062C11.062 20.5353 10.8608 21.0219 10.4583 21.423C10.0557 21.8243 9.56905 22.025 8.99817 22.025Z" fill="#5F5F5F"/>
+      </svg>
           {alertCount > 0 && (
             <sup
               style={{
-                background: 'red',
+                // background: 'red',
+                background: '#f97316',
                 borderRadius: '50%',
                 padding: '2px 5px',
                 color: 'white',
-                fontSize: '10px',
+                fontSize: '8px',
                 textAlign: 'center',
-                lineHeight: '1',
+                lineHeight: '25px',
                 marginLeft: '-10px',
+                top: '-21px'
               }}
             >
               {alertCount}
             </sup>
           )}
-        </span>
+        {/* </span> */}
       </div>
       <span className="dash-titles"></span>
     </Link>
@@ -352,11 +384,77 @@ document.addEventListener("click", handleOutsideClick);
           <a href="#" style={linkStyle}>{profileData.applicant.name}</a>
         )}
       </div> */}
-              <div className="header-customize-item account" onClick={toggleSubAccount}>
+      
+      <div className="header-customize-item account">
+      {/* <h4 className="username-text">{user.username}</h4> */}
+      {/* <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 32 32"
+        fill="none"
+        onError={handleProfileImageError}
+      >
+        <g clipPath="url(#clip0_341_8986)">
+          <path
+            d="M32 16C32 21.0701 29.6418 25.5894 25.9621 28.5207C23.229 30.6988 19.7664 32 16 32C12.2336 32 8.77097 30.6988 6.03788 28.5207C2.35823 25.5894 0 21.0701 0 16C0 7.16354 7.16354 0 16 0C24.8365 0 32 7.16354 32 16Z"
+            fill="#D6D9DC"
+          />
+          <path
+            d="M16.0001 19.1504C19.7146 19.1504 22.7257 16.1392 22.7257 12.4248C22.7257 8.71028 19.7146 5.6991 16.0001 5.6991C12.2856 5.6991 9.27441 8.71028 9.27441 12.4248C9.27441 16.1392 12.2856 19.1504 16.0001 19.1504Z"
+            fill="#5F5F5F"
+          />
+          <path
+            d="M25.9623 28.5207C23.2292 30.6987 19.7666 31.9999 16.0002 31.9999C12.2338 31.9999 8.77118 30.6987 6.03809 28.5207C7.33189 24.2453 11.3025 21.1327 16.0002 21.1327C20.6979 21.1327 24.6685 24.2453 25.9623 28.5207Z"
+            fill="#5F5F5F"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_341_8986">
+            <rect width="32" height="32" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>        */}
+
+      {imageSrc ? (
+  // Render this if imageSrc is available (truthy)
+  <img
+    width="40px"
+    height="30px"
+    src={imageSrc}
+    alt="Profile"
+    onError={() => setImageSrc('')}
+  />
+) : (
+  // Render this if imageSrc is not available (falsy)
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="32"
+    height="32"
+    viewBox="0 0 32 32"
+    fill="none"
+    onError={handleProfileImageError}
+  >
+    {/* SVG content */}
+  </svg>
+)}
+        
+      <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+        <path
+        d="M11.9998 14.6038C11.8844 14.6038 11.7769 14.5833 11.6773 14.5423C11.5776 14.5013 11.4851 14.4365 11.3998 14.348L6.96602 9.91451C6.82769 9.77918 6.75894 9.61601 6.75977 9.42501C6.76077 9.23401 6.83211 9.07026 6.97377 8.93376C7.11544 8.79709 7.27894 8.72876 7.46427 8.72876C7.64944 8.72876 7.81027 8.79709 7.94677 8.93376L11.9998 12.9865L16.0528 8.93376C16.1828 8.80359 16.342 8.73693 16.5305 8.73376C16.719 8.73043 16.8841 8.79709 17.0258 8.93376C17.1674 9.07026 17.2404 9.23243 17.2445 9.42026C17.2487 9.60809 17.1799 9.77284 17.0383 9.91451L12.6045 14.348C12.516 14.4365 12.4219 14.5013 12.3223 14.5423C12.2226 14.5833 12.1151 14.6038 11.9998 14.6038Z"
+        fill="#5F6368"
+        />
+        </svg>
+      </div>
               
-              <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
-              
-                <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
+              <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
                
                   {/* <h4>Welcome {user.username}</h4> */}
                  
