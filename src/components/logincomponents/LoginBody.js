@@ -80,6 +80,7 @@ const login = useGoogleLogin({
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
         const userId = userData.id;
+
         // Check the profile ID
         const jwtToken = localStorage.getItem('jwtToken');
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
@@ -152,15 +153,6 @@ const login = useGoogleLogin({
         setUserType(userData.userType);
         console.log('Login successful', userData);
        
-        // console.log("candidateOTPSent:", candidateOTPSent); // Add this line
-        // console.log("candidateOTPVerified:", candidateOTPVerified); // Add this line
- 
-        // if (candidateOTPSent && candidateOTPVerified) {
-        //   await handleSubmit(); // Trigger registration after OTP verification
-        //   return; // Exit the function to prevent further execution
-        // }
- 
-        // Navigate to the applicant home page
 
          // Check the profile ID
          const jwtToken = localStorage.getItem('jwtToken');
@@ -172,9 +164,12 @@ const login = useGoogleLogin({
          const profileId = profileIdResponse.data;
         
          if (profileId === 0) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
            navigate('/applicant-basic-details-form');
          }
        else{
+       
          navigate('/applicant-find-jobs');
          //navigate('/applicanthome');
        }
@@ -498,6 +493,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
   window.alert('Failed to Resend OTP. Please try again.');
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+ const[message,setMessage]= useState();
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
   if (tab === 'Candidate') {

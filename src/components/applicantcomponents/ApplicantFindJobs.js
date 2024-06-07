@@ -18,34 +18,18 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     const fetchJobs = async () => {
       try {
         let jobData;
-        // Check the profile ID
-        const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        const profileId = profileIdResponse.data;
-        setprofileid(profileId);
-        if (profileId === 0) {
-          // If profile ID is "0", fetch promoted jobs
-          const promotedJobsResponse = await axios.get(`${apiUrl}/job/promote/${userId}/yes`, {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          });
-          jobData = promotedJobsResponse.data;
-          console.log(jobData.companyname);
-          console.log(jobData.jobTitle);
-        } else {
-          // If profile ID has any other value, fetch recommended jobs
+  
+       localStorage.setItem('jwtToken', user.data.jwt);
+        const jwtToken = user.data.jwt;
+        console.log(jwtToken);
+
           const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
             },
           });
           jobData = recommendedJobsResponse.data;
-        }
+        
         setJobs(jobData);
       } catch (error) {
         console.error('Error fetching job data:', error);

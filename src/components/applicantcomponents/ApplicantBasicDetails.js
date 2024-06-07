@@ -11,12 +11,15 @@ import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
-
+import Logo from '../../images/logos-copy1.png';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(1);
+  const [isNextDisabled, setIsNextDisabled] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const[imageSrc, setImageSrc]= useState();
 
   const [applicant, setApplicant] = useState({
     firstName: '',
@@ -37,33 +40,41 @@ const ApplicantBasicDetails = () => {
 
   const validateInput = (name, value) => {
     let error = '';
-    if (name === 'firstName' || name === 'lastName') {
-      if (!/^[a-zA-Z]+$/.test(value)) {
-        error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
-      }
-    } else if (name === 'mobilenumber') {
-      if (!/^[6789]\d{9}$/.test(value)) {
-        error = 'Mobile number should be 10 digits long and start with 9, 8, 7, or 6.';
-      }
-    }
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [name]: error,
-    }));
-  };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setApplicant((prevApplicant) => ({
+    if (name === 'firstName' || name === 'lastName') {
+        if (value.length < 3) {
+            error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters.`;
+        } else if (!/^[a-zA-Z]+$/.test(value)) {
+            error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
+        }
+    } else if (name === 'mobilenumber') {
+        if (!/^[6789]\d{9}$/.test(value)) {
+            error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
+        }
+    }
+
+    setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error,
+    }));
+};
+
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setApplicant((prevApplicant) => ({
       ...prevApplicant,
       [name]: value,
-    }));
-  };
+  }));
+  //setIsNextDisabled(!validateForm1());
+};
 
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    validateInput(name, value);
-  };
+const handleBlur = (e) => {
+  const { name, value } = e.target;
+  validateInput(name, value);
+  
+ //setIsNextDisabled(!validateForm1());
+  
+};
 
 
 
@@ -112,21 +123,26 @@ const ApplicantBasicDetails = () => {
     fetchData();
   }, [user.id]);
 
-  const validateForm1 = () => {
-    const newErrors = {};
-    const validFirstName = validateInput('firstName', applicant.firstName);
-    const validLastName = validateInput('lastName', applicant.lastName);
-    const validMobileNumber = validateInput('mobilenumber', applicant.mobilenumber);
+  useEffect(() => {
+    console.log(isFormValid);
+}, [isFormValid]);
 
-    if (!applicant.firstName) newErrors.firstName = "First name is required";
-    if (!applicant.lastName) newErrors.lastName = "Last name is required";
-    if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
+const validateForm1 = () => {
+  const newErrors = {};
+  const validFirstName = validateInput('firstName', applicant.firstName);
+  const validLastName = validateInput('lastName', applicant.lastName);
+  const validMobileNumber = validateInput('mobilenumber', applicant.mobilenumber);
 
-    setErrors(newErrors);
+  if (!applicant.firstName) newErrors.firstName = "First name is required";
+  if (!applicant.lastName) newErrors.lastName = "Last name is required";
+  if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
 
-    return validFirstName && validLastName && validMobileNumber && 
-           applicant.firstName && applicant.lastName && applicant.mobilenumber;
-  };
+  setErrors(newErrors);
+
+  return validFirstName && validLastName && validMobileNumber && 
+         applicant.firstName && applicant.lastName && applicant.mobilenumber;
+};
+
 
   const makeApiCall1 = async () => {
 
@@ -220,7 +236,9 @@ const ApplicantBasicDetails = () => {
   };
 
   const handleNext = async () => {
-    
+  //   if (!validateForm1()) {
+  //     return;
+  // }
   
     try {
       // Make the appropriate API call based on the current stage
@@ -520,9 +538,20 @@ const ApplicantBasicDetails = () => {
     );
   }
 
+
   return (
     <div class="component">
-      <img className="top-left-svg" src="images/logo.png" alt="Image" usemap="#image-map" />
+      
+      {/* <a href="/applicanthome">
+        <img 
+          src={imageSrc || '../images/user/avatar/image-01.jpg'} 
+          alt="Profile" 
+          onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} 
+        />
+      </a> */}
+      <img className="top-left-svg" src={Logo} alt="Image" usemap="#image-map" />
+
+    
     <div className="card-container">
     <div className="card">
       <div className="header">
@@ -542,7 +571,7 @@ const ApplicantBasicDetails = () => {
               <button type="button" onClick={handleBack} className="form-button">Back</button>
             )}
             {currentStage < 3 && (
-              <button type="button" onClick={handleNext} className="form-button">Next</button>
+              <button type="button" onClick={handleNext} className="form-button" >Next</button>
             )}
             {currentStage === 3 && (
               <button type="submit" className="form-button">Submit</button>
