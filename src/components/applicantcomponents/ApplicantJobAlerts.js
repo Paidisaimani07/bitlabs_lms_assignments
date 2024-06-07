@@ -138,7 +138,7 @@ export default function ApplicantJobAlerts() {
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
               {/* <BackButton /> */}
-                <div className="title-dash flex2">Your Job Alerts</div>
+                <div className="title-dash flex2">Notifications</div>
               </div>
             </div>
           </div>
@@ -163,9 +163,9 @@ export default function ApplicantJobAlerts() {
         </div>
         <div className="themes-container">
           <div className="row">
-          <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
-  {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-</h4>
+          <h4 className="title-count" onClick={RecommendJobs}>
+    {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
+  </h4>
             <div className="col-lg-12 col-md-12">
            
               <div className="box-notifications">
@@ -173,46 +173,57 @@ export default function ApplicantJobAlerts() {
                 {jobAlerts.length > 0 ? (
                   <ul>
                   {jobAlerts.map(alert => (
-   <li key={alert.alertsId} onClick={() => handleJobAlertClick(alert)} className='inner bg-white' style={{ width: '100%', padding: '2%', borderRadius: '10px', position: 'relative', backgroundColor: alert.seen ? '#F0F0F0' : '#FFFFFF' }}>
-                   <div style={{ position: 'relative' }}>
-                       {!alert.seen && <div style={{ width: '10px', height: '10px', backgroundColor: 'orange', borderRadius: '50%', position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '-15px' }}></div>} 
-                      </div>
-                      <h4>
-                        {alert.status === 'New' || alert.status === null ? (
-                          <> 
-                            <Link
-to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
-style={{
-  textDecoration: 'none',
-  color: 'black', // Default font color
-  transition: 'color 0.3s ease', // Add transition for smooth effect
-}}
-onMouseOver={(e) => { e.target.style.color = 'green'; }}
-onMouseOut={(e) => { e.target.style.color = 'black'; }}
->
-Your application has been successfully submitted to &nbsp;{alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '} on {' '} {formatDate(alert.changeDate)}.
-</Link>
-
-                            </>
-                        ) : (
-                          <>
-                            <Link
-to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
-style={{
-  textDecoration: 'none',
-  color: 'black', // Default font color
-  transition: 'color 0.3s ease', // Add transition for smooth effect
-}}
-onMouseOver={(e) => { e.target.style.color = 'green'; }}
-onMouseOut={(e) => { e.target.style.color = 'black'; }}
->
-Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '} on {' '} {formatDate(alert.changeDate)}.
-</Link>
-
-
-                            </>
-                        )}
-                      </h4>
+   <li key={alert.alertsId} onClick={() => handleJobAlertClick(alert)} className='inner bg-white' style={{ width: '100%', padding: '2%', borderRadius: '10px', position: 'relative', backgroundColor: alert.seen ? '#E5EAF5' : '#FFFFFF' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', position: 'relative', height: '50px' }}>
+  <div
+    style={{
+      width: '10px',
+      height: '10px',
+      backgroundColor: alert.seen ? 'transparent' : '#3384E3',
+      border: '2px solid #3384E3',
+      borderRadius: '50%',
+      marginRight: '10px', // Adjust the spacing as needed
+      position: 'absolute',
+      left: '0px',
+      top:'15px',
+    }}
+  ></div>
+  <h4 style={{ marginLeft: '25px' }}> {/* Adjust margin to position correctly */}
+    {alert.status === 'New' || alert.status === null ? (
+      <>
+        <Link
+          to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+          className="link"
+          onMouseOver={(e) => { e.target.style.color = 'green'; }}
+          onMouseOut={(e) => { e.target.style.color = 'black'; }}
+        >
+          Your application has been successfully submitted to &nbsp;
+          {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
+          <br /> {/* Line break to move the date to the second line */}
+          <span className="date-info">
+            {formatDate(alert.changeDate)}
+          </span>
+        </Link>
+        
+      </>
+    ) : (
+      <>
+        <Link
+          to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+          className="link"
+          onMouseOver={(e) => { e.target.style.color = 'green'; }}
+          onMouseOut={(e) => { e.target.style.color = 'black'; }}
+        >
+          Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
+          <br /> {/* Line break to move the date to the second line */}
+          <span className="date-info">
+            {formatDate(alert.changeDate)}
+          </span>
+        </Link>
+      </>
+    )}
+  </h4>
+</div>
 
                       {alert.applyJob && (
                         <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
