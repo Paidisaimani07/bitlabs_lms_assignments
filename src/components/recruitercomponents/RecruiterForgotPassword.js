@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import logoCompany1 from '../../images/bitlabs-logo.png';
+import Snackbar from '../common/Snackbar';
  
 function RecruiterForgotPassword() {
     const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ function RecruiterForgotPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [otpResendTimer, setOTPTimerResend] = useState(0);
     const [resendButtonDisabled, setResendButtonDisabled] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
     
     const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
@@ -82,7 +84,8 @@ function RecruiterForgotPassword() {
           clearInterval(timerInterval);
           setResendButtonDisabled(false);
         }, 60000);
-        window.alert('OTP Resent successfully');
+       // window.alert('OTP Resent successfully');
+       setSnackbar({ open: true, message: 'OTP Resent successfully', type: 'success' });
       } catch (error) {
         console.error('Error resending OTP:', error);
       }
@@ -133,6 +136,10 @@ function RecruiterForgotPassword() {
         setResetSuccess(false);
         setResetError('An error occurred. Please try again later.');
       }
+    };
+
+    const handleCloseSnackbar = () => {
+      setSnackbar({ open: false, message: '', type: '' });
     };
  
   return (
@@ -241,6 +248,15 @@ function RecruiterForgotPassword() {
           </div>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
  

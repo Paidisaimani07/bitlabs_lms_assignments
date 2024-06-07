@@ -6,7 +6,9 @@ import $ from 'jquery';
 import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
 import { Link } from 'react-router-dom';
+import Snackbar from '../common/Snackbar';
 import BackButton from '../common/BackButton';
+
 $.DataTable = require('datatables.net')
  
 function RecruiterAllApplicants() {
@@ -33,6 +35,8 @@ function RecruiterAllApplicants() {
   const [minimumQualification, setMinimumQualification] = useState(null);
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+
 
   const handleCheckboxChange2 = (applyjobid) => {
    // const index = selectedApplicants.indexOf(applyjobid);
@@ -65,6 +69,11 @@ function RecruiterAllApplicants() {
     
 
   });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+    window.location.reload();
+  };
  
   const handleCheckboxChange = (event) => {
     const { id, checked } = event.target;
@@ -381,8 +390,10 @@ const handleSelectChange = async (e) => {
         setSelectedApplicants([]);
       }
       
-      alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
-      window.location.reload();
+      //alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
+      const message1 = `Status changed to ${newStatus} for ${selectedApplicants.length} applicants`;
+      setSnackbar({ open: true, message: message1, type: 'success' });
+      
     }
   } catch (error) {
     console.error('Error updating status:', error);
@@ -822,6 +833,15 @@ const handleSelectChange = async (e) => {
             </div>
           </div>
         </section>
+        {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
       </div>
     );
   }

@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
+import { useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import { useLocation, useNavigate } from 'react-router-dom';
+
 
 const ApplicantViewJob = ({ selectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
@@ -10,8 +14,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const [applied, setApplied] = useState(false);
   const { user } = useUserContext();
   const location = useLocation();
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
+
 
   const fetchJobDetails = async () => {
     try {
@@ -67,15 +73,19 @@ const ApplicantViewJob = ({ selectedJobId }) => {
           }
         );
         const { applied } = response.data;
-        window.alert('Job applied successfully');
-        localStorage.setItem(`appliedStatus-${jobId}`, 'true');
+
+        // window.alert('Job applied successfully');
+        // setSnackbar({ open: true, message: 'Job Applied Successfully.<a href="/applicant-applied-jobs">View Applied Jobs</a>', type: 'success' });
+        setSnackbar({ open: true, message: 'Job Applied Successfully.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'success' });
+        localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
+
         setApplied(applied);
         fetchJobDetails();
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
-      window.alert('Job has already been applied by the applicant');
-      setApplied(false);
+     // window.alert('Job has already been applied by the applicant');
+     setSnackbar({ open: true, message: 'Job has already been applied by the applicant. ', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'error' });
     }
   };
 
@@ -89,11 +99,16 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   };
 
 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
+
+
   const handleBackClick = (e) => {
     e.preventDefault();
     navigate(-1); // Navigate back to the previous page
   };
-
 
   return (
     <div>
@@ -104,22 +119,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
               <div className="row">
                 <div className="col-lg-12 col-md-12">
                   <div className="title-dashboard">
-                    <div className="title-dash flex2">
-                      <button className="back-link" onClick={handleBackClick} style={{ border: 'none', background: 'none', cursor: 'pointer' }}>
-                        <svg width="20" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <g id="back 1">
-                            <g id="Group">
-                              <path
-                                id="Chevron_Right"
-                                d="M4.78645 10.7138L13.7804 19.7047C14.175 20.0983 14.8144 20.0983 15.21 19.7047C15.6047 19.311 15.6047 18.6716 15.21 18.278L6.92952 10.0005L15.209 1.72293C15.6037 1.32928 15.6037 0.689884 15.209 0.295238C14.8144 -0.0984125 14.174 -0.0984125 13.7794 0.295238L4.78545 9.28607C4.39687 9.67565 4.39687 10.3251 4.78645 10.7138Z"
-                                fill="black"
-                              />
-                            </g>
-                          </g>
-                        </svg>
-                      </button>
-                      Full Job Details
-                    </div>
+                    <div className="title-dash flex2"> <BackButton />Full Job Details</div>
                   </div>
                 </div>
               </div>
@@ -228,6 +228,15 @@ const ApplicantViewJob = ({ selectedJobId }) => {
             
           </section>
         </div>
+      )}
+       {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
       )}
     </div>
   );
