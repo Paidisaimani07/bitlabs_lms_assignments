@@ -540,6 +540,7 @@ input[type="color"],
 
 .tf-container.ct2 {
   width: 1830px;
+  padding-top: 5px;
 }
 
 /* #header {
@@ -555,7 +556,7 @@ input[type="color"],
   background-color: #fff;
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
-  height: 80px;
+  height: 90px;
   position: fixed;
   top: 0;
   left: 0;
