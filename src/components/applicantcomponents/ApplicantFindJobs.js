@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import logoCompany1 from '../../images/cty12.png';
+import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
+
 
  
 function ApplicantFindJobs({ setSelectedJobId }) {
@@ -13,39 +17,24 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const navigate = useNavigate();
   const { user } = useUserContext();
   const userId = user.id;
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         let jobData;
-        // Check the profile ID
-        const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        const profileId = profileIdResponse.data;
-        setprofileid(profileId);
-        if (profileId === 0) {
-          // If profile ID is "0", fetch promoted jobs
-          const promotedJobsResponse = await axios.get(`${apiUrl}/job/promote/${userId}/yes`, {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          });
-          jobData = promotedJobsResponse.data;
-          console.log(jobData.companyname);
-          console.log(jobData.jobTitle);
-        } else {
-          // If profile ID has any other value, fetch recommended jobs
+  
+       localStorage.setItem('jwtToken', user.data.jwt);
+        const jwtToken = user.data.jwt;
+        console.log(jwtToken);
+
           const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
             },
           });
           jobData = recommendedJobsResponse.data;
-        }
+        
         setJobs(jobData);
       } catch (error) {
         console.error('Error fetching job data:', error);
@@ -85,17 +74,20 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       );
  
       if (response.status === 200) {
-         window.alert('Job Saved successfully');
-       
+        // window.alert('Job Saved successfully');
+        setSnackbar({ open: true, message: 'Job Saved Successfully.', link: '/applicant-saved-jobs', linkText: 'View Saved Jobs', type: 'success' });  
       }
       fetchJobs();
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        window.alert('Access Denied. Please check your credentials.');
+       // window.alert('Access Denied. Please check your credentials.');
+       setSnackbar({ open: true, message: 'Access Denied. Please check your credentials.', type: 'error' });
       } else if (error.response && error.response.status === 401) {
-        window.alert('Unauthorized. Please log in.');
+        //window.alert('Unauthorized. Please log in.');
+        setSnackbar({ open: true, message: 'Unauthorized. Please log in.', type: 'error' });  
       } else {
-        window.alert('Error saving job. Please try again later.');
+       // window.alert('Error saving job. Please try again later.');
+       setSnackbar({ open: true, message: 'Error saving job. Please try again later.', type: 'error' });
         console.error('Error saving job:', error);
       }
     }
@@ -153,6 +145,10 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
   };
 
   return (
@@ -279,7 +275,15 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 </section>
 </div>
       )}
-      
+       {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
 </div>
   );
 }

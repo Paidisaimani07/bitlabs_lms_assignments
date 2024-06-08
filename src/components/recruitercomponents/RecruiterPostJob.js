@@ -9,6 +9,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 
 import axios from 'axios';
+import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
   const [jobTitle, setJobTitle] = useState("");
@@ -38,6 +39,7 @@ function RecruiterPostJob() {
 
   const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
   const user = user1.user;
   const handleSubmit = (e) => {
@@ -70,7 +72,8 @@ function RecruiterPostJob() {
       .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
       .then((response) => {
         console.log('API Response:', response.data);
-        window.alert('job saved successfully');
+       // window.alert('Job saved successfully');
+       setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
         clearForm();
       })
       .catch((error) => {
@@ -95,6 +98,7 @@ function RecruiterPostJob() {
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
       alert("Sorry, you can't post the job until your profile is verified");
+      //setSnackbar({ open: true, message: 'Sorry, you cant post the job until your profile is verified', type: 'error' });
       window.location.href = '/recruiter-my-organization';
     }
   }, [approvalStatus]);
@@ -512,7 +516,8 @@ function RecruiterPostJob() {
         setFileName(file.name);
         setImage(URL.createObjectURL(file));
       } else {
-        alert("Please select a valid PDF or DOC file.");
+        //alert("Please select a valid PDF or DOC file.");
+        setSnackbar({ open: true, message: 'Please select a valid PDF or DOC file.', type: 'error' });
         e.target.value = null;
       }
     }
@@ -525,12 +530,18 @@ function RecruiterPostJob() {
     }
 
   };
+
+   const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+  
   const handleFocus = () => {
     setIsActive(true);
   };
 
   const handleBlur = () => {
     setIsActive(false);
+
   };
 
   return (
@@ -826,6 +837,15 @@ function RecruiterPostJob() {
           </form>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   )
 }
