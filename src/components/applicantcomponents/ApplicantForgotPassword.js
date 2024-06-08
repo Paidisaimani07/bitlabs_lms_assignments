@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import Snackbar from '../common/Snackbar';
 
 
 function ApplicantForgotPassword() {
@@ -29,13 +30,16 @@ function ApplicantForgotPassword() {
   const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
   // Define a state to control whether to show the success message or not
 const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
 
 
   useEffect(() => {
     if (resetSuccess) {
       // Show alert window
-      window.alert("Password has been reset successfully. Click OK to continue.");
+     // window.alert("Password has been reset successfully. Click OK to continue.");
+
+      setSnackbar({ open: true, message: 'Password has been reset successfully', type: 'success' });
       
       // Redirect after clicking OK
       window.location.href = '/candidate';
@@ -123,7 +127,9 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
         clearInterval(timerInterval);
         setResendButtonDisabled(false);
       }, 60000);
-      window.alert('OTP Resent successfully');
+      //window.alert('OTP Resent successfully');
+      setSnackbar({ open: true, message: 'OTP Resent successfully', type: 'success' });
+
     } catch (error) {
       console.error('Error resending OTP:', error);
     }
@@ -171,13 +177,18 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
       setResetError('An error occurred. Please try again later.');
     }
   };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
   return (
     <div>
       <div>       
- <section className="account-section">
+ <section className="">
           <div className="tf-container">
             <div className="row">
-              <div className="wd-form-login">
+              <div className="wd-form-login1">
                 {resetSuccess ? (
                  
                  
@@ -188,18 +199,21 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
-                      <div className="ip">
-      <label>
-        Email Address<span>*</span>
-      </label>
+                      <div className="div-style">
+                      <label className="label-style">
+  Email Address<span>*</span>
+</label>
+
       <input
-        type="email"
-        placeholder="Enter your Email"
-        value={email}
-        onChange={handleEmailChange}
-        onBlur={handleEmailBlur}
-        disabled={isEmailFieldDisabled}
-      />
+  type="email"
+  placeholder="Enter your Email"
+  value={email}
+  onChange={handleEmailChange}
+  onBlur={handleEmailBlur}
+  disabled={isEmailFieldDisabled}
+  className="input-style"
+/>
+
     </div>
                       {otpSent ? (
                         otpVerified ? (
@@ -268,9 +282,10 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                           </div>
                         )
                       ) : (
-                        <button type="button" onClick={handleSendOTP}>
-                          Send OTP
-                        </button>
+                        <button type="button" onClick={handleSendOTP} className="button-style">
+  Send OTP
+</button>
+
                       )}
                       {resetError && <div className="error-message">{resetError}</div>}
                    
@@ -281,8 +296,18 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
           </div>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
  
 }
 export default ApplicantForgotPassword;
+

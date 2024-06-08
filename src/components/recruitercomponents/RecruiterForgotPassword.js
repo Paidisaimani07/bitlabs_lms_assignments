@@ -4,6 +4,7 @@ import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import logoCompany1 from '../../images/bitlabs-logo.png';
+import Snackbar from '../common/Snackbar';
  
 function RecruiterForgotPassword() {
     const [email, setEmail] = useState('');
@@ -18,6 +19,7 @@ function RecruiterForgotPassword() {
     const [showPassword, setShowPassword] = useState(false);
     const [otpResendTimer, setOTPTimerResend] = useState(0);
     const [resendButtonDisabled, setResendButtonDisabled] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
     
     const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
@@ -82,7 +84,8 @@ function RecruiterForgotPassword() {
           clearInterval(timerInterval);
           setResendButtonDisabled(false);
         }, 60000);
-        window.alert('OTP Resent successfully');
+       // window.alert('OTP Resent successfully');
+       setSnackbar({ open: true, message: 'OTP Resent successfully', type: 'success' });
       } catch (error) {
         console.error('Error resending OTP:', error);
       }
@@ -134,14 +137,18 @@ function RecruiterForgotPassword() {
         setResetError('An error occurred. Please try again later.');
       }
     };
+
+    const handleCloseSnackbar = () => {
+      setSnackbar({ open: false, message: '', type: '' });
+    };
  
   return (
     <div>
       <div>
-        <section className="account-section">
+        <section className="">
           <div className="tf-container">
             <div className="row">
-              <div className="wd-form-login">
+              <div className="wd-form-login1">
                 {resetSuccess ? (
                   <div className="success-message">
                     <h5>Password reset was done successfully. Please click on <a href="/recruiter" style={{color:'blue'}}>Login</a> to continue</h5>
@@ -149,18 +156,21 @@ function RecruiterForgotPassword() {
                 ) : (
                   <div>
                     <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4><br />
-                    <div className="ip">
-      <label>
-        Email Address<span>*</span>
-      </label>
+                    <div className="div-style">
+                      <label className="label-style">
+  Email Address<span>*</span>
+</label>
+
       <input
-        type="email"
-        placeholder="Enter your Email"
-        value={email}
-        onChange={handleEmailChange}
-        onBlur={handleEmailBlur}
-        disabled={isEmailFieldDisabled}
-      />
+  type="email"
+  placeholder="Enter your Email"
+  value={email}
+  onChange={handleEmailChange}
+  onBlur={handleEmailBlur}
+  disabled={isEmailFieldDisabled}
+  className="input-style"
+/>
+
     </div>
                       {otpSent ? (
                         otpVerified ? (
@@ -225,9 +235,9 @@ function RecruiterForgotPassword() {
                           </div>
                         )
                       ) : (
-                        <button type="button" onClick={handleSendOTP}>
-                          Send OTP
-                        </button>
+                        <button type="button" onClick={handleSendOTP} className="button-style">
+  Send OTP
+</button>
                       )}
                       {resetError && <div className="error-message">{resetError}</div>}
                    
@@ -238,6 +248,15 @@ function RecruiterForgotPassword() {
           </div>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
  

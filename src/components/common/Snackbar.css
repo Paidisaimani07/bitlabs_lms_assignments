@@ -1,0 +1,124 @@
+.snackbar {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-radius: 8px;
+    filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.15));
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    font-size: 16px;
+    width: 100%;
+    max-width: 491px;
+    background-color: #fff;
+    box-sizing: border-box;
+    flex-direction: row;
+  }
+  
+  @media (max-width: 768px) {
+    .snackbar {
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .snackbar {
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+  }
+  
+  .snackbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .message-container {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    flex-wrap: nowrap;
+  }
+  
+  .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; /* Larger icon size */
+    height: 32px; /* Larger icon size */
+    border-radius: 50%;
+    margin-right: 16px; /* Increased margin */
+  }
+  
+  @media (max-width: 480px) {
+    .icon {
+      width: 30px; /* Smaller icon size for mobile */
+      height: 24px; /* Smaller icon size for mobile */
+      margin-right: 8px; /* Smaller margin for mobile */
+    }
+  }
+  
+  .success-icon img,
+  .error-icon img {
+    width: 100%; /* Adjust to container size */
+    height: 100%; /* Adjust to container size */
+  }
+  
+  /* .snackbar-message {
+    text-align: left;
+    flex-grow: 1;
+    word-wrap: break-word;
+    margin-right: 10px;
+  } */
+  
+  .custom-close-button {
+    background: none !important;
+    border: none !important;
+    color: #333 !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+    margin-left: 16px !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .custom-close-button:hover,
+  .custom-close-button:focus,
+  .custom-close-button:active,
+  .snackbar-link:hover {
+    background: none !important;
+    color: #333 !important;
+    border: none !important;
+    outline: none !important;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .snackbar-link {
+    color: var(--link, #0E8CFF) !important;
+    font-family: "Plus Jakarta Sans";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 25px;
+    text-decoration: underline;
+    margin-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  

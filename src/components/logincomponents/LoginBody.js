@@ -11,6 +11,9 @@ import logoCompany1 from '../../images/bitlabs-logo.png';
 import Background from '../../images/user/avatar/Backgroundimage.png';//logo
 import logo from '../../images/user/avatar/logo.png';
 import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
+import Snackbar from '../common/Snackbar';
+
+
 
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
@@ -28,6 +31,10 @@ function LoginBody({ handleLogin }) {
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
+ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+
+ const { user } = useUserContext();
+
  
  
 const login = useGoogleLogin({
@@ -76,8 +83,24 @@ const login = useGoogleLogin({
         setUser(userData);
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
- 
+        const userId = userData.id;
+
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+       
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form');
+        }
+      else{
         navigate('/applicant-find-jobs');
+        //navigate('/applicanthome');
+      }
         //navigate('/applicanthome');
       }
     } catch (err) {
@@ -114,7 +137,7 @@ const login = useGoogleLogin({
         console.log('this is response ', userData);
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
- 
+        const userId = userData.id;
        
  
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -134,21 +157,31 @@ const login = useGoogleLogin({
         setUserType(userData.userType);
         console.log('Login successful', userData);
        
-        // console.log("candidateOTPSent:", candidateOTPSent); // Add this line
-        // console.log("candidateOTPVerified:", candidateOTPVerified); // Add this line
- 
-        // if (candidateOTPSent && candidateOTPVerified) {
-        //   await handleSubmit(); // Trigger registration after OTP verification
-        //   return; // Exit the function to prevent further execution
-        // }
- 
-        // Navigate to the applicant home page
+
+         // Check the profile ID
+         const jwtToken = localStorage.getItem('jwtToken');
+         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+           headers: {
+             Authorization: `Bearer ${jwtToken}`,
+           },
+         });
+         const profileId = profileIdResponse.data;
         
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
-            }
- 
-    } catch (error) {
+         if (profileId === 0) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form');
+         }
+       else{
+       
+         navigate('/applicant-find-jobs');
+         //navigate('/applicanthome');
+       }
+      }     
+
+    }
+    
+    catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
         setErrorMessage('enter a correct password or password is incorrect try again');
@@ -252,25 +285,29 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
       if (response.data === "Email is already registered as a Recruiter."){
        setCandidateOTPSent(false);
    
-       window.alert('Email already registered as recruiter, please try to login');
+      // window.alert('Email already registered as recruiter, please try to login');
+      setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
       }
       // if(response.data === ('Email already registered as applicant')){
         if(response.data === ('Email is already registered as an Applicant.')){
        setCandidateOTPSent(false);
    
-       window.alert('email already exists, please provide a new email ID');
+      // window.alert('email already exists, please provide a new email ID');
+      setSnackbar({ open: true, message: 'Email already exists,Please provide a new email ID', type: 'error' });
       }
       // if(response.data === "Mobile number already existed in recruiter"){
         if(response.data === "Mobile number is already registered as a Recruiter."){
        setCandidateOTPSent(false);
    
-       window.alert('Mobile number already existed as recruiter');
+       //window.alert('Mobile number already existed as recruiter');
+       setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
       }
       // if(response.data === 'Mobile number already existed in applicant'){
         if(response.data === 'Mobile number is already registered as an Applicant.'){
        setCandidateOTPSent(false);
    
-       window.alert('Mobile number already existed as candidate');
+       //window.alert('Mobile number already existed as candidate');
+       setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
       }
    } catch (error) {
      console.error('Error sending OTP:', error);
@@ -278,18 +315,24 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
       //  window.alert('Email is already registered.');
       // Server responded with a 400 status code
     if (error.response.data === 'Email is already registered as a Recruiter.') {
-      window.alert('Email already registered as recruiter, please try to login');
+      //window.alert('Email already registered as recruiter, please try to login');
+      setSnackbar({ open: true, message: 'Email already registered as recruiter, please try to login', type: 'error' });
     } else if (error.response.data === 'Email is already registered as an Applicant.') {
-      window.alert('email already exists, please provide a new email ID');
+      //window.alert('email already exists, please provide a new email ID');
+      setSnackbar({ open: true, message: 'Email already exists, please provide a new email ID', type: 'error' });
     } else if (error.response.data === 'Mobile number is already registered as a Recruiter.') {
-      window.alert('Mobile number already existed as recruiter');
+      //window.alert('Mobile number already existed as recruiter');
+      setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
     } else if (error.response.data === 'Mobile number is already registered as an Applicant.') {
-      window.alert('mobile number already exists, please provide a new mobile number');
+      //window.alert('mobile number already exists, please provide a new mobile number');
+      setSnackbar({ open: true, message: 'Mobile number already exists, please provide a new mobile number', type: 'error' });
     } else {
-      window.alert('Email is already registered.'); // Default message for other 400 errors
+      //window.alert('Email is already registered.'); // Default message for other 400 errors
+      setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
     }
      } else {
-       window.alert('An error occurred while sending OTP.');
+       //window.alert('An error occurred while sending OTP.');
+       setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
      }
      setCandidateOTPSendingInProgress(false);
    }
@@ -323,7 +366,8 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        password: candidatePassword1,
      });
     if (response.data === 'Email is already registered.') {
-       window.alert('Email is already registered.');
+      // window.alert('Email is already registered.');
+       setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
      }
      setErrorMessage('');
      setCandidateRegistrationSuccess(true);
@@ -344,9 +388,11 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        console.error('Registration failed', error);
        if (error.response && error.response.status === 400) {
          if (error.response.data === 'Email already registered') {
-           window.alert('email already exists, please provide a new email ID');
+           //window.alert('email already exists, please provide a new email ID');
+           setSnackbar({ open: true, message: 'Email already exists, please provide a new email ID', type: 'error' });
          } else if (error.response.data === 'Mobile number already existed') {
-           window.alert('mobile number already exists, please provide a new mobile number');
+           //window.alert('mobile number already exists, please provide a new mobile number');
+           setSnackbar({ open: true, message: 'Mobile number already exists, please provide a new mobile number', type: 'error' });
          }
        }
    }
@@ -457,15 +503,26 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
 };
  
  const handleOTPSendSuccess = () => {
-  window.alert('OTP Resend successfully');
+  //window.alert('OTP Resend successfully');
+  setSnackbar({ open: true, message: 'OTP Resend successfully', type: 'error' });
   setResendOtpMessage('OTP Resent successfully. Check your email.');
  };
  const handleOTPSendFail = () => {
-  window.alert('Failed to Resend OTP. Please try again.');
+ // window.alert('Failed to Resend OTP. Please try again.');
+ setSnackbar({ open: true, message: 'Failed to Resend OTP. Please try again.', type: 'error' });
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+
+ const[message,setMessage]= useState();
+
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
+  if (tab === 'Candidate') {
+    setMessage('Welcome Back');
+    console.log("login");
+  } else if (tab === 'Employer') {
+    setMessage('Create Account');
+  }
 };
 
 const getTabStyle = (tab) => ({
@@ -481,8 +538,21 @@ const getTabStyle = (tab) => ({
   flex: 1, // Each button takes up half of the container
 });
 
+const handleCloseSnackbar = () => {
+  setSnackbar({ open: false, message: '', type: '' });
+};
+
   return (
     <div>
+      <img
+        src={Backgroundimagemobile}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+        //  height:"400px",
+        //  margintop:"10px"
+        }}
+      />
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
@@ -493,26 +563,21 @@ const getTabStyle = (tab) => ({
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                 <img
-  src={Backgroundimagemobile}
-  alt="Background"
-  className="responsive-image1"
-  style={{
-    position: "fixed",
-    top: "0px",
-    left: "-20px",
-    paddingRight: "10px"
-  }}
-/>
-                {/* <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4> */}
-               
+                 
+      
+   
+    <div className="custom-div-style">
+      {message}
+    </div>
                 <div className="myComponent">
+                
       <div
   style={{
     ...getTabStyle('Candidate'),
     fontWeight: 'bold' // Add font weight inline
   }}
   onClick={() => handleTabClick1('Candidate')}
+  
 >
   Login
 </div>
@@ -766,6 +831,15 @@ const getTabStyle = (tab) => ({
           </div>
         </div>
       </section>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
 }
