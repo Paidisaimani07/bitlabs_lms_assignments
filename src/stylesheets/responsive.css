@@ -2839,3 +2839,75 @@
     
   }
 }
+/* Extra Large Devices (Desktops, 1920px and up) */
+@media (min-width: 1920px) {
+  .features-job-view {
+      width: 50%;
+  }
+
+  .edit-icon {
+      top: 40px;
+      right: 40px;
+  }
+}
+
+/* Large Devices (Desktops, 1200px and up) */
+@media (min-width: 1200px) and (max-width: 1919px) {
+  .features-job-view {
+      width: 60%;
+  }
+
+  .edit-icon {
+      top: 35px;
+      right: 35px;
+  }
+}
+
+/* Medium Devices (Tablets, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .features-job-view {
+      width: 70%;
+  }
+
+  .edit-icon {
+      top: 30px;
+      right: 30px;
+  }
+}
+
+/* Small Devices (Tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .features-job-view {
+      width: 80%;
+  }
+
+  .edit-icon {
+      top: 25px;
+      right: 25px;
+  }
+}
+
+/* Extra Small Devices (Phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .features-job-view {
+      width: 90%;
+  }
+
+  .edit-icon {
+      top: 20px;
+      right: 20px;
+  }
+}
+
+/* Very Small Devices (Phones, 320px and up) */
+@media (min-width: 360px) and(max-width: 575px)  {
+  .features-job-view {
+      width: 95%;
+      
+  }
+
+  .edit-icon {
+      top: 15px;
+      right: 15px;
+  }
+}

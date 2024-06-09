@@ -44,8 +44,10 @@ const UploadImageComponent = ({ id}) => {
 
   return (
     <div id="upload-profile">
-      <h6 >Upload your profile picture:</h6>
-      <h6>JPG or PNG</h6>
+      <div className='popup-heading'>Upload your profile picture:JPG or PNG
+      
+      </div>
+    
       <input
         className="up-file"
         id="tf-upload-img"
@@ -67,6 +69,7 @@ const UploadImageComponent = ({ id}) => {
           cursor: 'pointer',
           marginLeft: '5px',
           marginTop: '5px',
+          textTransform:'capitalize'
         }}
       >
         Upload Photo

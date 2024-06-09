@@ -83,8 +83,12 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
 
   return (
     <div className="basic-details-edit-popup">
+       <div className='popup-heading'>Personal Details
+      
+      </div>
       <div className="input-container">
         <div className="input-wrapper">
+       
           <input
             type="text"
             name="firstName"
@@ -134,7 +138,24 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           {errors.alternatePhoneNumber && <div className="error-message">{errors.alternatePhoneNumber}</div>}
         </div>
 
-        <button onClick={handleSubmit} className="save-button">Save</button>
+        <button
+        type="button"
+        onClick={handleSubmit}
+        className="btn-3"
+        style={{
+          backgroundColor: '#F97316',
+          color: 'white',
+          padding: '10px 15px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginLeft: '80%',
+          marginTop: '5px',
+           textTransform:'capitalize'
+        }}
+      >
+        Save Changes
+      </button>
       </div>
     </div>
   );

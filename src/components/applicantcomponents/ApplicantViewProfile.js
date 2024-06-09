@@ -157,7 +157,8 @@ const ApplicantViewProfile = () => {
         style={{
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background for better visibility
-            zIndex: 1000, // Ensure the overlay covers other content
+            zIndex: 1000,
+            borderRadius:'16px' // Ensure the overlay covers other content
           },
           content: {
             top: '50%',
@@ -175,23 +176,9 @@ const ApplicantViewProfile = () => {
         </div>
         <UploadImageComponent id={id}/> {/* Pass the actual userId */}
         
-      </Modal>
-
-         
-        
-          
-        
+      </Modal>  
       </div>
-      <div className="content">
-        <h4>{/* Content here */}</h4>
-        <div className='details1'>
-       
-  {profileData.basicDetails.firstName + ' ' + profileData.basicDetails.lastName}
- 
-  </div>
-       
-            
-            <img src={Edit} alt="Edit" className="edit-icon"  onClick={handleEditClick}  />
+       <img src={Edit} alt="Edit" className="edit-icon"  onClick={handleEditClick}  />
             <Modal
         isOpen={editModalIsOpen}
         RequestClose={closeEditModal}
@@ -199,10 +186,13 @@ const ApplicantViewProfile = () => {
         style={{
           overlay: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background for better visibility
-            zIndex: 1000, // Ensure the overlay covers other content
+            zIndex: 1000, 
+            borderRadius:'16px',// Ensure the overlay covers other content
+
           },
           content: {
-            top: '50%',
+            top: '70%',
+            width:'50%',
             left: '50%',
             right: 'auto',
             bottom: 'auto',
@@ -219,6 +209,16 @@ const ApplicantViewProfile = () => {
         
       </Modal>
       
+      <div className="content">
+        <h4>{/* Content here */}</h4>
+        <div className='details1'>
+       
+  {profileData.basicDetails.firstName + ' ' + profileData.basicDetails.lastName}
+ 
+  </div>
+       
+            
+           
         <div className="details1">
           <img src={Mail} alt="Email" className="icon" />
           {profileData.basicDetails.email}
