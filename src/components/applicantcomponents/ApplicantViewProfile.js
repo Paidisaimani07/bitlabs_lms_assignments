@@ -10,16 +10,25 @@ import Mail from '../../images/icons/mail.png';
 import Edit from '../../images/icons/edit.png';
 import Camera from '../../images/icons/camera.png';
 import Ellipse from '../../images/icons/Ellipse.png';
+import UploadImageComponent from './UploadImageComponent';
+import BasicDetailsEditPopup from './BasicDetailsEditPopup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import Modal from 'react-modal';
 const ApplicantViewProfile = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [alertShown, setAlertShown] = useState(false);
   const[experience,setExperience]=useState();
+  const[basicDetails,setBasicDetails]=useState();
    const[qualification,setQualification]=useState();
    const[specialization,setSpecialization]=useState();
    const[preferredJobLocations,setpreferredJobLocations]=useState([]);
+   const [cameraModalIsOpen, setCameraModalIsOpen] = useState(false);
+   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
    const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -41,11 +50,13 @@ const ApplicantViewProfile = () => {
     let count = 0;
     let profileResponse = null;
     let isMounted = true;
+   
   
     const fetchData = async () => {
       try {
         profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`);
         setProfileData(profileResponse.data);
+        setBasicDetails(profileResponse.data.basicDetails);
         setExperience(profileResponse.data.experience);
         setQualification(profileResponse.data.qualification);
         setSpecialization(profileResponse.data.specialization);
@@ -91,7 +102,22 @@ const ApplicantViewProfile = () => {
       </div>
     );
   }
- 
+  
+  const handleCameraClick = () => {
+    setCameraModalIsOpen(true);
+  };
+
+  const handleEditClick = () => {
+    setEditModalIsOpen(true);
+  };
+
+  const closeCameraModal = () => {
+    setCameraModalIsOpen(false);
+  };
+
+  const closeEditModal = () => {
+    setEditModalIsOpen(false);
+  };
   return (
     <div className="dashboard__content">
       <section className="page-title-dashboard">
@@ -118,26 +144,88 @@ const ApplicantViewProfile = () => {
           onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
           style={{ borderRadius: '100px', position: 'relative' }}
         />
+         
+         <img
+        src={Camera}
+        alt="Upload Profile Picture"
+        onClick={handleCameraClick}
+         className="camera-icon"/>
+           <Modal
+        isOpen={cameraModalIsOpen}
+        onRequestClose={closeCameraModal}
+        contentLabel="Upload Photo"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background for better visibility
+            zIndex: 1000, // Ensure the overlay covers other content
+          },
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1001, // Ensure the modal content is above the overlay
+          },
+        }}
+      >
+         <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <FontAwesomeIcon icon={faTimes} onClick={closeCameraModal} style={{ cursor: 'pointer', color: '#333' }} />
+        </div>
+        <UploadImageComponent id={id}/> {/* Pass the actual userId */}
         
-        <img src={Camera} alt="Camera" className="camera-icon" />
+      </Modal>
+
+         
+        
+          
+        
       </div>
       <div className="content">
         <h4>{/* Content here */}</h4>
-        <h3>
-          <a href="#">{profileData.applicant.name}</a>
-        </h3>
-        <div className="edit-icon">
-          {/* <Link to="/applicant-edit-profile"> */}
-            <img src={Edit} alt="Edit" className="edit-icon" />
-          {/* </Link> */}
+        <div className='details1'>
+       
+  {profileData.basicDetails.firstName + ' ' + profileData.basicDetails.lastName}
+ 
+  </div>
+       
+            
+            <img src={Edit} alt="Edit" className="edit-icon"  onClick={handleEditClick}  />
+            <Modal
+        isOpen={editModalIsOpen}
+        RequestClose={closeEditModal}
+        contentLabel="Upload Photo"
+        style={{
+          overlay: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark background for better visibility
+            zIndex: 1000, // Ensure the overlay covers other content
+          },
+          content: {
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1001, // Ensure the modal content is above the overlay
+          },
+        }}
+      >
+         <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+          <FontAwesomeIcon icon={faTimes} onClick={closeEditModal} style={{ cursor: 'pointer', color: '#333' }} />
         </div>
+        <BasicDetailsEditPopup applicantDetails={profileData.basicDetails} /> {/* Pass the actual userId */}
+        
+      </Modal>
+      
         <div className="details1">
           <img src={Mail} alt="Email" className="icon" />
-          {profileData.applicant.email}
+          {profileData.basicDetails.email}
         </div>
         <div className="details1">
           <img src={Phone} alt="Phone" className="icon" />
-          {profileData.applicant.mobilenumber}
+          {profileData.basicDetails.alternatePhoneNumber}
         </div>
       </div>
     </div>

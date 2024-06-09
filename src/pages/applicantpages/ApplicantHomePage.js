@@ -22,6 +22,7 @@ import ApplicantResume from '../../components/applicantcomponents/ApplicantResum
 import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
 import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
+import UploadImageComponent from '../../components/applicantcomponents/UploadImageComponent';
 
 
 function ApplicantHomePage() {
@@ -109,6 +110,9 @@ function ApplicantHomePage() {
         case '/applicant-basic-details-form':
           setActiveRoute('abdf');
         break;
+        case '/applicant-upload-image':
+          setActiveRoute('uploadimage');
+        break;
       default:
         setActiveRoute('');
         break;
@@ -136,6 +140,7 @@ function ApplicantHomePage() {
      {activeRoute === 'resume' && <ApplicantResume />}
      {activeRoute === 'resumebuilder' && <ResumeBuilder />}
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
+     {activeRoute === 'uploadimage' && <UploadImageComponent />}
       </div> 
   )
 }

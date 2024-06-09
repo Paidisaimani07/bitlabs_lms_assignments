@@ -86,6 +86,9 @@ const ApplicantViewProfile = () => {
       </div>
     );
   }
+  const handleCameraClick = () => {
+    navigate('/applicant-upload-image');
+  };
  
   return (
     <div className="dashboard__content">
@@ -106,6 +109,7 @@ const ApplicantViewProfile = () => {
       <div className="wd-author-page-title">
         <div className="author-archive-header">
         <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')} style={{padding:'10px',borderRadius:'100px'}} />
+
           <div className="content">
             {/* <a href="#" className="tag-head">
               Available now

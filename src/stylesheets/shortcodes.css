@@ -3145,9 +3145,8 @@
   }
   .edit-icon {
     position: absolute;
-    top: 10px; /* Adjust top position */
-    right: 10px; /* Adjust right position */
-    margin: 30px;
+    top: 30px; /* Adjust top position */
+    right: 30px; /* Adjust right position */
   }
   
   .edit-icon img {
