@@ -595,7 +595,7 @@ input[type="color"],
 }
 
 .sticky-area-wrap .header-ct-left .logo .site-logo {
-  width: 211 !important;
+  width: auto !important;
   height:57px !important;
   display: block;
   margin-left:45px;
@@ -624,7 +624,9 @@ input[type="color"],
 @media only screen and (min-width: 700px) and (max-width: 1400px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
       /* width: 160px;  */
-      max-width:100%;
+      /* max-width:100%; */
+      width:auto !important;
+      height: 57 !important;
       display: block;
       margin-left: -4px;
   }
@@ -636,8 +638,9 @@ input[type="color"],
 }
 @media only screen and (min-width: 900px) and (max-width: 1500px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      /* width: 160px;  */
-      max-width:100%;
+      width: auto !important;
+      height : 57px !important;
+      /* max-width:100%; */
       display: inline-block;
       margin-left: 15px !important;
   }
@@ -1529,7 +1532,8 @@ input[type="color"],
   margin-left: 2px!important;
   }
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-    width: 150px !important;
+    width: auto !important;
+    height: 45px !important;
     display: block!important;
   }
   #header .sticky-area-wrap .header-ct-right .account {
