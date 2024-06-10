@@ -145,7 +145,7 @@ const ApplicantDashboard = () => {
     <div>
       {loading ? null : (
         <div className="dashboard__content">
-          <div className="row mr-0">
+          <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
@@ -155,9 +155,9 @@ const ApplicantDashboard = () => {
             </div>
             <div className="col-lg-12 col-md-12">
               <div className="row">
-                <div className="col-4">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
                   <div className="card" onClick={handleRedirect}>
-                    <div className="row">
+                    <div className="container">
                       <div className="col-3">
                         <div className="icon style1">
                           <span className="icon-bag color-icon-1">
@@ -184,15 +184,15 @@ const ApplicantDashboard = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="col-9">
+                      <div className="col-9 pl-16">
                         <div className="content">
-                          <h4
+                          <span
                             className="title-count"
                             onClick={handleRedirect}
                             style={{ cursor: "pointer" }}
                           >
                             Recommended Jobs
-                          </h4>
+                          </span>
                           <h3>{contRecJobs}</h3>
 
                         </div>
@@ -201,9 +201,9 @@ const ApplicantDashboard = () => {
 
                   </div>
                 </div>
-                <div className="col-4">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
                   <div className="card" onClick={handleRedirect1}>
-                    <div className="row">
+                    <div className="container">
                       <div className="col-3">
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
 
@@ -244,104 +244,102 @@ const ApplicantDashboard = () => {
 
                         </div>
                       </div>
-                      <div className="col-9">
+                      <div className="col-9 pl-16">
                         <div className="content style3">
 
-                          <h4
+                          <span
                             className="title-count"
                             onClick={handleRedirect1}
                             style={{ cursor: "pointer" }}
                           >
                             Applied Jobs
-                          </h4>
+                          </span>
                           <h3>{contAppliedJob}</h3>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col-4">
-                <div className="card" onClick={handleRedirect1}>
-                    <div className="row">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
+                  <div className="card" onClick={handleRedirect1}>
+                    <div className="container">
                       <div className="col-3">
-                  <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
-                    <div className="icon style4">
-                      <span className="icon-bag color-icon-3">
-                        <svg
-                          width={36}
-                          height={48}
-                          viewBox="0 0 36 48"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
+                        <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
+                          <div className="icon style4">
+                            <span className="icon-bag color-icon-3">
+                              <svg
+                                width={36}
+                                height={48}
+                                viewBox="0 0 36 48"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M34.3496 0H2.34998C1.92564 0 1.51868 0.168569 1.21862 0.468623C0.918569 0.768678 0.75 1.17564 0.75 1.59998V46.3994C0.749887 46.7009 0.834958 46.9963 0.99541 47.2515C1.15586 47.5068 1.38517 47.7115 1.6569 47.8421C1.92863 47.9727 2.23173 48.0239 2.53128 47.9897C2.83082 47.9555 3.11462 47.8374 3.34997 47.649L18.3498 35.6476L33.3496 47.6474C33.5848 47.8357 33.8685 47.9538 34.1679 47.9881C34.4673 48.0223 34.7703 47.9712 35.0419 47.8408C35.3136 47.7104 35.5429 47.506 35.7035 47.2509C35.8641 46.9959 35.9494 46.7008 35.9496 46.3994V1.59998C35.9496 1.17564 35.781 0.768678 35.4809 0.468623C35.1809 0.168569 34.7739 0 34.3496 0Z"
+                                  fill="#FFB321"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div className="col-9 pl-16">
+                        <div className="content">
+                          <span
+                            className="title-count"
+                            onClick={handleRedirect2}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Saved Jobs
+                          </span>
+                          <h3>{contSavedJobs}</h3>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex">
+                  <div className="flat-icon-dashboard">
+                    {/*New palet in application dashboard*/}
+                    <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
+                      <div>
+                        <h2 className="heading1">Build your professional resume for free</h2>
+
+                        <div className="">
+                          <span className=""></span>
+                        </div>
+                        <div className="content">
+
+                          <h4 className="title-count2" style={{ paddingRight: "80px", color: "#8D8D8D" }}>
+                            Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
+                          </h4>
+
+
+                        </div>
+                        <Link
+                          to="/applicant-resume-builder"
+                          className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                          style={linkStyle}
+                          onMouseEnter={() => setIsHovered(true)}
+                          onMouseLeave={() => setIsHovered(false)}
                         >
-                          <path
-                            d="M34.3496 0H2.34998C1.92564 0 1.51868 0.168569 1.21862 0.468623C0.918569 0.768678 0.75 1.17564 0.75 1.59998V46.3994C0.749887 46.7009 0.834958 46.9963 0.99541 47.2515C1.15586 47.5068 1.38517 47.7115 1.6569 47.8421C1.92863 47.9727 2.23173 48.0239 2.53128 47.9897C2.83082 47.9555 3.11462 47.8374 3.34997 47.649L18.3498 35.6476L33.3496 47.6474C33.5848 47.8357 33.8685 47.9538 34.1679 47.9881C34.4673 48.0223 34.7703 47.9712 35.0419 47.8408C35.3136 47.7104 35.5429 47.506 35.7035 47.2509C35.8641 46.9959 35.9494 46.7008 35.9496 46.3994V1.59998C35.9496 1.17564 35.781 0.768678 35.4809 0.468623C35.1809 0.168569 34.7739 0 34.3496 0Z"
-                            fill="#FFB321"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    
-                  </div>
-                </div>
-                <div className="col-9">
-                <div className="content">
-                      <h4
-                        className="title-count"
-                        onClick={handleRedirect2}
-                        style={{ cursor: "pointer" }}
-                      >
-                        Saved Jobs
-                      </h4>
-                      <h3>{contSavedJobs}</h3>
+                          <span className=""></span>
+                          <span className="button button-custom" style={spanStyle}>Create Now</span>
+                        </Link>
+                      </div>
+                      <img
+                        src={Resume}
+                        alt="Resume"
+                        className='resume'
+                        style={{ width: "200px", height: "150px" }}
+                      />
                     </div>
                   </div>
-                </div>
-                </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-12 col-md-12">
-              <div className="flat-icon-dashboard">
-                {/*New palet in application dashboard*/}
-                <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
-                  <div>
-                    <h2 className="heading1">Build your professional resume for free</h2>
-
-                    <div className="">
-                      <span className=""></span>
-                    </div>
-                    <div className="content">
-
-                      <h4 className="title-count2" style={{ paddingRight: "80px", color: "#8D8D8D" }}>
-                        Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
-                      </h4>
-
-
-                    </div>
-                    <Link
-                      to="/applicant-resume-builder"
-                      className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
-                      style={linkStyle}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      <span className=""></span>
-                      <span className="button button-custom" style={spanStyle}>Create Now</span>
-                    </Link>
-                  </div>
-                  <img
-                    src={Resume}
-                    alt="Resume"
-                    className='resume'
-                    style={{ width: "200px", height: "150px" }}
-                  />
                 </div>
               </div>
             </div>
           </div>
-
-
         </div>
       )
       }
