@@ -67,9 +67,12 @@ const UploadImageComponent = ({ id}) => {
           border: 'none',
           borderRadius: '8px',
           cursor: 'pointer',
-          marginLeft: '5px',
-          marginTop: '5px',
-          textTransform:'capitalize'
+          marginLeft:'auto',
+          marginRight:'0',
+          marginTop: '15px',
+
+          textTransform:'capitalize',
+          
         }}
       >
         Upload Photo
