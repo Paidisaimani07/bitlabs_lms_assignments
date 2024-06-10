@@ -84,7 +84,6 @@ const login = useGoogleLogin({
         setUserType(userType1); // Change `userData.userType` to `userType1`
         console.log('Login successful', userData);
         const userId = userData.id;
-
         // Check the profile ID
         const jwtToken = localStorage.getItem('jwtToken');
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
@@ -118,6 +117,93 @@ const login = useGoogleLogin({
     setErrorMessage('');
   };
   let userType1;
+  // const handleCandidateSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!isCandidateFormValid()) {
+  //     return;
+  //   }
+ 
+  //   try {
+  //     let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
+  //     const response = await axios.post(loginEndpoint, {
+  //       email: candidateEmail,
+  //       password: candidatePassword,
+  //     });
+ 
+  //           if (response.status === 200) {
+  //       setErrorMessage('');
+  //       const userData = response.data;
+  //       console.log('this is response ', userData);
+  //       console.log('this is token ', userData.data.jwt);
+  //       localStorage.setItem('jwtToken', userData.data.jwt);
+  //       const userId = userData.id;
+       
+ 
+  //       if (userData.message.includes('ROLE_JOBAPPLICANT')) {
+  //         userType1 = 'jobseeker';
+  //       } else if (userData.message.includes('ROLE_JOBRECRUITER')) {
+  //         userType1 = 'employer';
+  //       } else {
+  //         userType1 = 'unknown';
+  //       }
+  //       console.log('this userType ', userType1);
+  //       localStorage.setItem('userType', userType1);
+ 
+  //       setErrorMessage('');
+  //       handleLogin();
+ 
+  //       setUser(userData);
+  //       setUserType(userData.userType);
+  //       console.log('Login successful', userData);
+       
+  //       // console.log("candidateOTPSent:", candidateOTPSent); // Add this line
+  //       // console.log("candidateOTPVerified:", candidateOTPVerified); // Add this line
+ 
+  //       // if (candidateOTPSent && candidateOTPVerified) {
+  //       //   await handleSubmit(); // Trigger registration after OTP verification
+  //       //   return; // Exit the function to prevent further execution
+  //       // }
+ 
+  //       // Navigate to the applicant home page
+
+  //        // Check the profile ID
+  //        const jwtToken = localStorage.getItem('jwtToken');
+  //        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+  //          headers: {
+  //            Authorization: `Bearer ${jwtToken}`,
+  //          },
+  //        });
+  //        const profileId = profileIdResponse.data;
+        
+  //        if (profileId === 0) {
+  //          navigate('/applicant-basic-details-form');
+  //        }
+  //      else{
+  //        navigate('/applicant-find-jobs');
+  //        //navigate('/applicanthome');
+  //      }
+  //     }     
+
+  //   }
+    
+  //   catch (error) {
+  //     console.log(error.response.data);
+  //     if(error.response.data==="Incorrect password") {
+  //       setErrorMessage('enter a correct password or password is incorrect try again');
+  //       console.error('login failed');
+  //     }
+  //     else if(error.response.data==="No account found with this email address") {
+  //       setErrorMessage('No account found with this email address.');
+  //       console.error('login failed');
+  //     }
+  //     else{
+  //       setErrorMessage('login failed. Please check your user name and password.');
+  //     }
+  //     console.error('Login failed', error);
+  //   }
+  // };
+
+
   const handleCandidateSubmit = async (e) => {
     e.preventDefault();
     if (!isCandidateFormValid()) {
@@ -137,7 +223,7 @@ const login = useGoogleLogin({
         console.log('this is response ', userData);
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
-        const userId = userData.id;
+ 
        
  
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -157,34 +243,24 @@ const login = useGoogleLogin({
         setUserType(userData.userType);
         console.log('Login successful', userData);
        
-
-         // Check the profile ID
-         const jwtToken = localStorage.getItem('jwtToken');
-         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-           headers: {
-             Authorization: `Bearer ${jwtToken}`,
-           },
-         });
-         const profileId = profileIdResponse.data;
+        // console.log("candidateOTPSent:", candidateOTPSent); // Add this line
+        // console.log("candidateOTPVerified:", candidateOTPVerified); // Add this line
+ 
+        // if (candidateOTPSent && candidateOTPVerified) {
+        //   await handleSubmit(); // Trigger registration after OTP verification
+        //   return; // Exit the function to prevent further execution
+        // }
+ 
+        // Navigate to the applicant home page
         
-         if (profileId === 0) {
-          console.log('checking ',jwtToken);
-          localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form');
-         }
-       else{
-       
-         navigate('/applicant-find-jobs');
-         //navigate('/applicanthome');
-       }
-      }     
-
-    }
-    
-    catch (error) {
+        navigate('/applicant-find-jobs');
+        navigate('/applicanthome');
+            }
+ 
+    } catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
-        setErrorMessage('enter a correct password or password is incorrect try again');
+        setErrorMessage('Incorrect password.');
         console.error('login failed');
       }
       else if(error.response.data==="No account found with this email address") {
@@ -325,7 +401,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
       setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
     } else if (error.response.data === 'Mobile number is already registered as an Applicant.') {
       //window.alert('mobile number already exists, please provide a new mobile number');
-      setSnackbar({ open: true, message: 'Mobile number already exists, please provide a new mobile number', type: 'error' });
+      setSnackbar({ open: true, message: 'Mobile number already exists,please provide a new mobile number', type: 'error' });
     } else {
       //window.alert('Email is already registered.'); // Default message for other 400 errors
       setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
@@ -389,10 +465,10 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        if (error.response && error.response.status === 400) {
          if (error.response.data === 'Email already registered') {
            //window.alert('email already exists, please provide a new email ID');
-           setSnackbar({ open: true, message: 'Email already exists, please provide a new email ID', type: 'error' });
+           setSnackbar({ open: true, message: 'Email already exists,please provide a new email ID', type: 'error' });
          } else if (error.response.data === 'Mobile number already existed') {
            //window.alert('mobile number already exists, please provide a new mobile number');
-           setSnackbar({ open: true, message: 'Mobile number already exists, please provide a new mobile number', type: 'error' });
+           setSnackbar({ open: true, message: 'Mobile number already exists,please provide a new mobile number', type: 'error' });
          }
        }
    }
@@ -504,17 +580,15 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  
  const handleOTPSendSuccess = () => {
   //window.alert('OTP Resend successfully');
-  setSnackbar({ open: true, message: 'OTP Resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
   setResendOtpMessage('OTP Resent successfully. Check your email.');
  };
  const handleOTPSendFail = () => {
  // window.alert('Failed to Resend OTP. Please try again.');
- setSnackbar({ open: true, message: 'Failed to Resend OTP. Please try again.', type: 'error' });
+ setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
-
- const[message,setMessage]= useState();
-
+ const [message,setMessage]=useState();
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
   if (tab === 'Candidate') {

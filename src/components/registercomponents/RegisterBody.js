@@ -92,13 +92,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         setCandidateOTPSent(false);
      
      //   window.alert('Email already registered as recruiter, please try to login');
-     setSnackbar({ open: true, message: 'Email already registered as recruiter, please try to login', type: 'error' });
+     setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
        }
        if(response.data === ('Email already registered as applicant')){
         setCandidateOTPSent(false);
      
         //window.alert('Email already registered as candidate, please try to login');
-        setSnackbar({ open: true, message: 'Email already registered as candidate, please try to login', type: 'error' });
+        setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' });
        }
        if(response.data === "Mobile number already existed in recruiter"){
         setCandidateOTPSent(false);
@@ -144,12 +144,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (response.data === "Email already registered recruiter") {
       setRecruiterOTPSent(false);
      // window.alert('Email already registered as recruiter, please try to login');
-     setSnackbar({ open: true, message: 'Email already registered as recruiter, please try to login', type: 'error' });
+     setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
 
     } else if (response.data === 'Email already registered as applicant') {
       setRecruiterOTPSent(false);
       //window.alert('Email already registered as candidate, please try to login');
-      setSnackbar({ open: true, message: 'Email already registered as candidate, please try to login', type: 'error' }); 
+      setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' }); 
     } else if (response.data === "Mobile number already existed in recruiter") {
       setRecruiterOTPSent(false);
       //window.alert('Mobile number already existed as recruiter');
@@ -269,10 +269,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         if (error.response && error.response.status === 400) {
           if (error.response.data === 'Email already registered') {
            // window.alert('Registration failed! User with this email already exists');
-           setSnackbar({ open: true, message: 'Registration failed! User with this email already exists', type: 'error' });
+           setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
           } else if (error.response.data === 'Mobile number already existed') {
            // window.alert('Registration failed! Mobile number already exists');
-            setSnackbar({ open: true, message: 'Registration failed! Mobile number already exists', type: 'error' });
+            setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
           }
         }
     }
@@ -455,16 +455,16 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     } catch (error) {
       setErrorMessage('Registration failed. Please try again later.');
       //window.alert('Registration failed! or User with this email already exists.');
-      setSnackbar({ open: true, message: 'Registration failed! or User with this email already exists.', type: 'error' });
+      setSnackbar({ open: true, message: 'Registration failed or User with this email already exists.', type: 'error' });
       console.error('Registration failed', error);
  
       if (error.response && error.response.status === 400) {
         if (error.response.data === 'Email already registered') {
          // window.alert('Registration failed! User with this email already exists');
-         setSnackbar({ open: true, message: 'Registration failed! User with this email already exists', type: 'error' });
+         setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
         } else if (error.response.data === 'Mobile number already existed') {
           //window.alert('Registration failed! Mobile number already exists');
-          setSnackbar({ open: true, message: 'Registration failed! Mobile number already exists', type: 'error' });
+          setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
         }
       }
       setRecruiterRegistrationInProgress(false);
@@ -472,12 +472,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
   const handleOTPSendSuccess = () => {
   // window.alert('OTP Resend successfully');
-  setSnackbar({ open: true, message: 'OTP Resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
   // window.alert('Failed to Resend OTP. Please try again.');
-  setSnackbar({ open: true, message: 'Failed to Resend OTP. Please try again.', type: 'error' });
+  setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
    setResendOtpMessage('Failed to Resent OTP. Please try again.');
   };
   const isRecruiterFormValid = () => {

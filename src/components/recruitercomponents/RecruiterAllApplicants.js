@@ -391,7 +391,7 @@ const handleSelectChange = async (e) => {
       }
       
       //alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
-      const message1 = `Status changed to ${newStatus} for ${selectedApplicants.length} applicants`;
+      const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
       setSnackbar({ open: true, message: message1, type: 'success' });
       
     }

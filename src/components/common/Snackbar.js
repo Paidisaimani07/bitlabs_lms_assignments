@@ -4,19 +4,19 @@ import { Link } from 'react-router-dom';
 import successIcon from '../../images/accept.png'; // Ensure the path is correct
 import errorIcon from '../../images/close.png'; // Ensure the path is correct
 
-const Snackbar = ({ message, link, linkText, type, onClose }) => {
+const Snackbar = ({ message, link, linkText, type, onClose, index }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      onClose();
+      onClose(index);
     }, 5000); // 5 seconds
 
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, [onClose, index]);
 
   return (
-    <div className={`snackbar ${type}`}>
+    <div className={`snackbar ${type}`} style={{ bottom: `${20 + (index * 80)}px` }}>
       <div className="snackbar-content">
-        <div className="message-container">
+        <div className="icon-container">
           {type === 'success' ? (
             <div className="icon success-icon">
               <img src={successIcon} alt="Success" />
@@ -26,6 +26,8 @@ const Snackbar = ({ message, link, linkText, type, onClose }) => {
               <img src={errorIcon} alt="Error" />
             </div>
           )}
+        </div>
+        <div className="message-container">
           <span className="snackbar-message">{message}</span>
           {link && (
             <Link to={link} className="snackbar-link">
@@ -33,7 +35,7 @@ const Snackbar = ({ message, link, linkText, type, onClose }) => {
             </Link>
           )}
         </div>
-        <button className="close-button custom-close-button" onClick={onClose}>
+        <button className="close-button custom-close-button" onClick={() => onClose(index)}>
           &#x2716;
         </button>
       </div>
