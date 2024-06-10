@@ -10,7 +10,7 @@ import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
-import logos from '../../images/logos2.png';
+import logos from '../../images/logofinal.png';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -345,7 +345,7 @@ function ApplicantNavBar() {
                 </div>
                 <div className="header-ct-center"></div>
                 <div className="header-ct-right">
-                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '30px' }}>
+                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '16px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
                       {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
                       <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
@@ -395,9 +395,8 @@ function ApplicantNavBar() {
         )}
       </div> */}
 
-                  {/* <h4 className="username-text">{user.username}</h4> */}
-
-                  <div className="header-customize-item account">
+                    <div id="specificDiv" className="header-customize-item account">
+                      <h4 className="username-text">{user.username}</h4>
                     <img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
 
                     <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>

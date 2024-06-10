@@ -540,7 +540,7 @@ input[type="color"],
 
 .tf-container.ct2 {
   width: 1830px;
-  padding-top: 5px;
+  /* padding-top: 5px; */
 }
 
 /* #header {
@@ -595,7 +595,8 @@ input[type="color"],
 }
 
 .sticky-area-wrap .header-ct-left .logo .site-logo {
-  width: 200px;
+  width: 211 !important;
+  height:57px !important;
   display: block;
   margin-left:45px;
 }
@@ -611,7 +612,7 @@ input[type="color"],
   .sticky-area-wrap .header-ct-left .logo .site-logo {
       width: 160px; 
       display: block;
-      margin-left: 0px !important;
+      margin-left: -13px !important;
   }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:35px;
@@ -622,9 +623,10 @@ input[type="color"],
 
 @media only screen and (min-width: 700px) and (max-width: 1400px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
+      /* width: 160px;  */
+      max-width:100%;
       display: block;
-      margin-left: 0px;
+      margin-left: -4px;
   }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:45px;
@@ -632,11 +634,12 @@ input[type="color"],
   
   }
 }
-@media only screen and (min-width: 900px) and (max-width: 1400px) {
+@media only screen and (min-width: 900px) and (max-width: 1500px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
-      display: block;
-      margin-left: 52px;
+      /* width: 160px;  */
+      max-width:100%;
+      display: inline-block;
+      margin-left: 15px !important;
   }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:65px;
@@ -1526,11 +1529,12 @@ input[type="color"],
   margin-left: 2px!important;
   }
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-    width: 115px!important;
+    width: 150px !important;
     display: block!important;
   }
   #header .sticky-area-wrap .header-ct-right .account {
     margin-right: 0.5px!important;
+    padding-right:0px;
 }
  
  
@@ -3510,7 +3514,7 @@ input[type="color"],
   
 } */
  
-.username-text {
+.sticky-area-wrap .header-ct-right .account .username-text {
   color: #5F5F5F;
   font-family: "Plus Jakarta Sans" !important;
   font-size: 15px !important;
@@ -3518,6 +3522,7 @@ input[type="color"],
   font-weight: 600 !important;
   line-height: 25px !important;
   text-transform: capitalize !important;
+  margin-right:7px;
 }
 
 @media screen and (min-width: 991px) {
@@ -3526,3 +3531,35 @@ input[type="color"],
     height: 23px !important;
   }
 }
+
+#header .sticky-area-wrap .header-ct-left .logo .site-profilelogo{
+  max-width: 100%;
+  display:block !important;
+  margin-left : -5px;
+}
+
+@media (min-width: 1024px) {
+  #header .sticky-area-wrap .header-ct-left #hamburger {
+      display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+ .username-text {
+      display: none !important;
+      
+  }
+}
+
+/* Ensure .username-text is visible on laptop screens and larger */
+/* @media (min-width: 1025px) {
+  #specificDiv .account .username-text {
+      display: inline; 
+  }
+} */
+
+/* @media (max-width: 767px) {
+  #hamburger {
+      margin-right: -2px; 
+  }
+} */
