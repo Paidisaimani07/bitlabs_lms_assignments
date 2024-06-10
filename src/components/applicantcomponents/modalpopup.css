@@ -19,24 +19,35 @@
     background: white !important;
     padding: 20px !important;
     max-width: 50% !important;
-    max-height: 90% !important;
+   
+    overflow-y: auto !important;
+}
+.modal-content1 {
+    border-radius: 16px !important;
+    z-index: 1001 !important;
+    position: relative !important;
+    background: white !important;
+    padding: 20px !important;
     overflow-y: auto !important;
 }
 
-@media (max-width: 767px) {
+@media(min-width: 320px) and (max-width: 450px) {
     .modal-content {
-        width: 95% !important; /* Adjust for smaller screens */
+        max-width: 95% !important; /* Adjust for smaller screens */
+    }
+    .modal-content1 {
+        max-width: 95% !important; /* Adjust for smaller screens */
     }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 451px) and (max-width: 1023px) {
     .modal-content {
-        width: 90% !important; /* Adjust for tablets */
+        max-width: 90% !important; /* Adjust for tablets */
     }
 }
 
 @media (min-width: 1024px) {
     .modal-content {
-        width: 50% !important; /* Adjust for larger screens (laptops) */
+        max-width: 50% !important; /* Adjust for larger screens (laptops) */
     }
 }

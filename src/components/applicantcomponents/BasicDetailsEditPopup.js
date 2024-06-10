@@ -20,13 +20,15 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
   const validateInput = (name, value) => {
     let error = '';
     if (!value) {
-      error = `${name} is required.`;
+      const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      error=`${formattedName} is required.`;
+      // error = `${name} is required.`;
     } else {
       if (name === 'firstName' || name === 'lastName') {
         if (value.length < 3) {
-          error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters.`;
+          error = `${name === 'firstName' ? 'First' : 'Last'}name should be at least 3 characters.`;
         } else if (!/^[a-zA-Z]+$/.test(value)) {
-          error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
+          error = `${name === 'firstName' ? 'First' : 'Last'}name should contain only letters.`;
         }
       } else if (name === 'alternatePhoneNumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
@@ -92,7 +94,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="text"
             name="firstName"
-            placeholder="*First Name"
+            placeholder="*Firstname"
             value={formValues.firstName}
             onChange={handleInputChange}
             className="input-form"
@@ -105,7 +107,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="text"
             name="lastName"
-            placeholder="*Last Name"
+            placeholder="*Lastname"
             value={formValues.lastName}
             onChange={handleInputChange}
             className="input-form"
@@ -129,7 +131,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="tel"
             name="alternatePhoneNumber"
-            placeholder="*WhatsApp Number"
+            placeholder="*Alternatephonenumber"
             value={formValues.alternatePhoneNumber}
             onChange={handleInputChange}
             className="input-form"

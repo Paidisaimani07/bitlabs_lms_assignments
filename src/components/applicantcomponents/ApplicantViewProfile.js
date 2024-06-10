@@ -146,7 +146,7 @@ const ApplicantViewProfile = () => {
                 isOpen={cameraModalIsOpen}
                 onRequestClose={closeCameraModal}
                 contentLabel="Upload Photo"
-                className="modal-content"
+                className="modal-content1"
                 overlayClassName="modal-overlay"
               >
                 <div style={{ position: 'absolute', top: '10px', right: '20px' }}>

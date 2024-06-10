@@ -2854,7 +2854,7 @@
 /* Large Devices (Desktops, 1200px and up) */
 @media (min-width: 1200px) and (max-width: 1919px) {
   .features-job-view {
-      width: 90%;
+      width: 70%;
   }
 
   .edit-icon {
@@ -2866,7 +2866,7 @@
 /* Medium Devices (Tablets, 992px and up) */
 @media (min-width: 992px) and (max-width: 1199px) {
   .features-job-view {
-      width: 90%;
+      width: 80%;
   }
 
   .edit-icon {
