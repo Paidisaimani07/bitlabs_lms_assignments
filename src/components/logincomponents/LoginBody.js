@@ -493,7 +493,9 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
   window.alert('Failed to Resend OTP. Please try again.');
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+
  const[message,setMessage]= useState();
+
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
   if (tab === 'Candidate') {
