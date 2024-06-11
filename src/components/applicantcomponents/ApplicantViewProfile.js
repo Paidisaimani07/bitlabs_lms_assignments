@@ -184,7 +184,107 @@ const ApplicantViewProfile = () => {
           </div>
         </div>
       </div>
-      <section className="candidates-section">
+      <div className="features-job-view1">
+        {/* <div className="wd-author-page-title">
+          <div className="author-archive-header"></div>
+          </div>  */}
+          <div className="content-tab">
+                  <div className="inner-content">
+                    <h3>Professional Details</h3>
+                    <div className="group-infor">
+                      <div className="inner">
+                        <div className="heading">Graduation Details</div>
+                        <div className="row">
+                          <div className="col">
+                            <div className="subtitle-1 fw-7">University:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Degree:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Year of Passing:</div>
+                          </div>
+                        </div>
+                        {profileData.graduationDetails && profileData.graduationDetails.map((graduation, index) => (
+                          <div className="row" key={index}>
+                            <div className="col">{graduation.university}</div>
+                            <div className="col">{graduation.degree}</div>
+                            <div className="col">{graduation.yearOfPassing}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="inner">
+                        <div className="heading">Intermediate Details</div>
+                        <div className="row">
+                          <div className="col">
+                            <div className="subtitle-1 fw-7">Board Name:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Percentage:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Year of Passing:</div>
+                          </div>
+                        </div>
+                        {profileData.intermediateDetails && profileData.intermediateDetails.map((intermediate, index) => (
+                          <div className="row" key={index}>
+                            <div className="col">{intermediate.boardName}</div>
+                            <div className="col">{intermediate.percentage}</div>
+                            <div className="col">{intermediate.yearOfPassing}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="inner">
+                        <div className="heading">Class X Details</div>
+                        <div className="row">
+                          <div className="col">
+                            <div className="subtitle-1 fw-7">Board Name:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Percentage:</div>
+                          </div>
+                          <div className="col">
+                            <div className="subtitle-2 fw-7">Year of Passing:</div>
+                          </div>
+                        </div>
+                        {profileData.xDetails && profileData.xDetails.map((x, index) => (
+                          <div className="row" key={index}>
+                            <div className="col">{x.boardName}</div>
+                            <div className="col">{x.percentage}</div>
+                            <div className="col">{x.yearOfPassing}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <h5>Experience</h5>
+                    <div className="group-infor">
+                      {profileData.experienceDetails && profileData.experienceDetails.map((experience, index) => (
+                        <div className="inner" key={index}>
+                          <div className="heading">Job {index + 1}</div>
+                          <div className="row">
+                            <div className="col">
+                              <div className="subtitle-1 fw-7">Company Name:</div>
+                            </div>
+                            <div className="col">
+                              <div className="subtitle-1 fw-7">Role:</div>
+                            </div>
+                            <div className="col">
+                              <div className="subtitle-2 fw-7">Duration:</div>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col">{experience.companyName}</div>
+                            <div className="col">{experience.role}</div>
+                            <div className="col">{experience.duration}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+          </div>
+          
+      {/* <section className="candidates-section">
         <div className="tf-container">
           <div className="row">
             <div className="col-lg-8">
@@ -290,7 +390,7 @@ const ApplicantViewProfile = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
