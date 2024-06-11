@@ -221,11 +221,11 @@ font-style: inherit;
 
 .flat-icon-dashboard .box-icon1 {
     background-color: #fff;
-    width: 100%; /* width: 1905px; */
+    width: 1000px; /* width: 1905px; */
     height: 170px; /* height: 988px; */
     gap: 0px; /* gap: 0px; */
     opacity: 0px; /* opacity: 0px; */
-    margin-left: 0px;
+    margin-left: 18px;
     margin-top: 20px;
     padding: 21px 20px 19px 20px;
     align-items: center;
@@ -237,10 +237,6 @@ font-style: inherit;
     .flat-icon-dashboard .box-icon1 {
     margin-left: 60px; 
     }
-  }
-
-  .mr-0{
-    margin-right: 0px !important;
   }
 .heading {
     font-family: "Plus Jakarta Sans";
@@ -1085,7 +1081,7 @@ tbody tr td:nth-child(2) {
 }
 
 .dashboard.show .dashboard__content {
-    margin-left: 340px;
+    margin-left: 289px;
     transition: all 0.2s ease-out;
 }
 
@@ -1117,9 +1113,6 @@ tbody tr td:nth-child(2) {
     overflow-y: auto;
     -webkit-box-shadow: 0 0 13px 0 rgba(236, 236, 241, 0.44);
     box-shadow: 0 0 13px 0 rgba(236, 236, 241, 0.44);
-    margin: 30px;
-    border-radius: 16px;
-    box-shadow: 0px 0px 13px 0px rgba(236, 236, 241, 0.44);
 }
 
 .left-menu::-webkit-scrollbar {
@@ -1229,7 +1222,6 @@ tbody tr td:nth-child(2) {
 #sidebar-menu ul li a:hover{
     color: #121212 !important;
     background-color: #FEF1E8;
-    border-radius: 8px;
 }
 
 .show-job #sidebar-menu ul li a.active,
@@ -4040,7 +4032,7 @@ input[type="radio"]:checked:after {
 
 @media only screen and (max-width: 1700px) {
     .dashboard.show .dashboard__content {
-        margin-left: 340px;
+        margin-left: 280px;
     }
 }
 
@@ -4952,21 +4944,3 @@ font-size: 14px;
   .menu-options button:hover {
     background-color: #f0f0f0;
   }
-
-  .icon-bag{
-    fill: #EFF2F6;
-    border-radius: 47px;
-display: flex;
-width: 80px;
-height: 80px;
-padding: 24px;
-justify-content: center;
-align-items: center;
-flex-shrink: 0;
-  }
-
-  .color-icon-1{background: rgba(39, 118, 237, 0.10);}
-  .color-icon-2{background:rgba(255, 102, 51, 0.10);}
-  .color-icon-3{background: rgba(255, 179, 33, 0.10);}
-
-  .active .dash-icon{ color: #F46F16;}
