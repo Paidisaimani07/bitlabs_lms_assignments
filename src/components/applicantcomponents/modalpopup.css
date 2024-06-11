@@ -44,6 +44,9 @@
     .modal-content {
         max-width: 90% !important; /* Adjust for tablets */
     }
+    .modal-content1 {
+        max-width: 85% !important; /* Adjust for smaller screens */
+    }
 }
 
 @media (min-width: 1024px) {

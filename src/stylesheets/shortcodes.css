@@ -8007,8 +8007,12 @@
     font-style: bold;
     font-weight: bold;
     line-height: 25px;
-    margin-bottom: 16px;
     margin-top: 16px;
+  }
+  .input-form.disabled-input {
+    opacity: 0.5; /* Reduce opacity */
+    pointer-events: none; /* Prevent interaction */
+    color: #000; /* Ensure text color remains consistent */
   }
   .savebut {
 flex-direction: column;
@@ -8033,6 +8037,7 @@ display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: flex-end;
+  margin-top: 20px;
 }
   
   .jobtex-link-item {

@@ -20,7 +20,10 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
   const validateInput = (name, value) => {
     let error = '';
     if (!value) {
-      const formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      var formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+      if (name === 'alternatePhoneNumber') {
+       formattedName = 'Mobile number';
+    }
       error=`${formattedName} is required.`;
       // error = `${name} is required.`;
     } else {
@@ -32,7 +35,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         }
       } else if (name === 'alternatePhoneNumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
-          error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
+          error = 'Mobile number should be 10 digits, starting with 6, 7, 8, or 9.';
         }
       } else if (name === 'email') {
         if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
@@ -121,8 +124,9 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
             type="email"
             placeholder="*Email"
             value={formValues.email}
-            className="input-form"
-            readOnly
+            // className="input-form"
+           className="input-form disabled-input"
+            disabled
           />
           {errors.email && <div className="error-message">{errors.email}</div>}
         </div>
@@ -131,7 +135,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="tel"
             name="alternatePhoneNumber"
-            placeholder="*Alternatephonenumber"
+            placeholder="*Mobilenumber"
             value={formValues.alternatePhoneNumber}
             onChange={handleInputChange}
             className="input-form"

@@ -9,10 +9,19 @@ Modal.setAppElement('#root'); // This is required by react-modal for accessibili
 const UploadImageComponent = ({ id}) => {
   const [photoFile, setPhotoFile] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(true);
+  const [error, setError] = useState('');
   
 
   const handleFileSelect = (event) => {
-    setPhotoFile(event.target.files[0]);
+    const file = event.target.files[0];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png') {
+      setPhotoFile(file);
+      setError('');
+    } else {
+      setError('Only JPEG and PNG files are allowed.');
+      setPhotoFile(null);
+    }
   };
 
   const uploadPhoto = async () => {
@@ -53,6 +62,7 @@ const UploadImageComponent = ({ id}) => {
         id="tf-upload-img"
         type="file"
         name="profile"
+        accept="image/jpeg, image/png" // Accept only JPEG and PNG files
         required=""
         onChange={handleFileSelect}
       />
@@ -77,6 +87,7 @@ const UploadImageComponent = ({ id}) => {
       >
         Upload Photo
       </button>
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };
