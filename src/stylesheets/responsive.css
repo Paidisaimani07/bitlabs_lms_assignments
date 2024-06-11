@@ -2844,6 +2844,9 @@
   .features-job-view {
       width: 60%;
   }
+  .features-job-view1 {
+    width: 60%;
+}
 
   .edit-icon {
       top: 40px;
@@ -2856,6 +2859,9 @@
   .features-job-view {
       width: 70%;
   }
+  .features-job-view1 {
+    width: 70%;
+}
 
   .edit-icon {
       top: 35px;
@@ -2868,7 +2874,9 @@
   .features-job-view {
       width: 80%;
   }
-
+  .features-job-view1 {
+    width: 80%;
+}
   .edit-icon {
       top: 30px;
       right: 30px;
@@ -2880,7 +2888,9 @@
   .features-job-view {
       width: 90%;
   }
-
+  .features-job-view1 {
+    width: 90%;
+}
   .edit-icon {
       top: 25px;
       right: 25px;
@@ -2892,7 +2902,9 @@
   .features-job-view {
       width: 90%;
   }
-
+  .features-job-view1 {
+    width: 90%;
+}
   .edit-icon {
       top: 20px;
       right: 20px;

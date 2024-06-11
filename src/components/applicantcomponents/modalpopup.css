@@ -33,7 +33,8 @@
 
 @media(min-width: 320px) and (max-width: 450px) {
     .modal-content {
-        max-width: 95% !important; /* Adjust for smaller screens */
+        max-width: 95% !important;
+        top:30px /* Adjust for smaller screens */
     }
     .modal-content1 {
         max-width: 95% !important; /* Adjust for smaller screens */
