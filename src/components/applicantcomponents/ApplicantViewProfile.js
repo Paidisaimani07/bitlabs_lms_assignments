@@ -9,13 +9,16 @@ import Phone from '../../images/icons/phone.png';
 import Mail from '../../images/icons/mail.png';
 import Edit from '../../images/icons/edit.png';
 import Camera from '../../images/icons/camera.png';
-import Ellipse from '../../images/icons/Ellipse.png';
+import mortarboard1 from '../../images/icons/mortarboard1.png';
+
+import pencil1 from '../../images/icons/pencil1.png';
 import UploadImageComponent from './UploadImageComponent';
 import BasicDetailsEditPopup from './BasicDetailsEditPopup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-modal';
 import './modalpopup.css'; // Import the CSS file
+import ProfessionalDetailsPopup from './ProfessionalDetailsPopup';
 
 const ApplicantViewProfile = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -31,6 +34,7 @@ const ApplicantViewProfile = () => {
   const [preferredJobLocations, setpreferredJobLocations] = useState([]);
   const [cameraModalIsOpen, setCameraModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
+  const [edit1ModalIsOpen, setEdit1ModalIsOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -111,6 +115,9 @@ const ApplicantViewProfile = () => {
   const handleEditClick = () => {
     setEditModalIsOpen(true);
   };
+  const handleEdit1Click = () => {
+    setEdit1ModalIsOpen(true);
+  };
 
   const closeCameraModal = () => {
     setCameraModalIsOpen(false);
@@ -118,6 +125,9 @@ const ApplicantViewProfile = () => {
 
   const closeEditModal = () => {
     setEditModalIsOpen(false);
+  };
+  const closeEdit1Modal = () => {
+    setEdit1ModalIsOpen(false);
   };
 
   return (
@@ -188,99 +198,81 @@ const ApplicantViewProfile = () => {
         {/* <div className="wd-author-page-title">
           <div className="author-archive-header"></div>
           </div>  */}
+           <div class="professional-details-container">
+    <span > <img src={mortarboard1} alt="mortarboard1" class="icon-prof"  /></span> 
+    <span class="text">Professional Details</span>
+    <span> <img src={pencil1} alt="pencil1" class="icon-prof" onClick={handleEdit1Click} /></span>
+    <Modal
+              isOpen={edit1ModalIsOpen}
+              onRequestClose={closeEdit1Modal}
+              contentLabel="Edit Details"
+              className="modal-content"
+              overlayClassName="modal-overlay"
+            >
+              <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
+                <FontAwesomeIcon icon={faTimes} onClick={closeEdit1Modal} style={{ cursor: 'pointer', color: '#333' }} />
+              </div>
+              <ProfessionalDetailsPopup applicantDetails={profileData.basicDetails} />
+            </Modal>
+</div>
           <div className="content-tab">
                   <div className="inner-content">
-                    <h3>Professional Details</h3>
-                    <div className="group-infor">
+                  
+                    <div className="inner-profdata">
+                   
                       <div className="inner">
-                        <div className="heading">Graduation Details</div>
-                        <div className="row">
-                          <div className="col">
-                            <div className="subtitle-1 fw-7">University:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Degree:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Year of Passing:</div>
-                          </div>
-                        </div>
-                        {profileData.graduationDetails && profileData.graduationDetails.map((graduation, index) => (
-                          <div className="row" key={index}>
-                            <div className="col">{graduation.university}</div>
-                            <div className="col">{graduation.degree}</div>
-                            <div className="col">{graduation.yearOfPassing}</div>
-                          </div>
-                        ))}
+                
+                        <div className="text-heading-profdata">Qualification</div>
+                          
+                        {profileData.qualification}
+                        
                       </div>
                       <div className="inner">
-                        <div className="heading">Intermediate Details</div>
-                        <div className="row">
-                          <div className="col">
-                            <div className="subtitle-1 fw-7">Board Name:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Percentage:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Year of Passing:</div>
-                          </div>
-                        </div>
-                        {profileData.intermediateDetails && profileData.intermediateDetails.map((intermediate, index) => (
-                          <div className="row" key={index}>
-                            <div className="col">{intermediate.boardName}</div>
-                            <div className="col">{intermediate.percentage}</div>
-                            <div className="col">{intermediate.yearOfPassing}</div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="inner">
-                        <div className="heading">Class X Details</div>
-                        <div className="row">
-                          <div className="col">
-                            <div className="subtitle-1 fw-7">Board Name:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Percentage:</div>
-                          </div>
-                          <div className="col">
-                            <div className="subtitle-2 fw-7">Year of Passing:</div>
-                          </div>
-                        </div>
-                        {profileData.xDetails && profileData.xDetails.map((x, index) => (
-                          <div className="row" key={index}>
-                            <div className="col">{x.boardName}</div>
-                            <div className="col">{x.percentage}</div>
-                            <div className="col">{x.yearOfPassing}</div>
-                          </div>
-                        ))}
-                      </div>
+                
+                <div className="text-heading-profdata">Specialization</div>
+                  
+                {profileData.specialization}
+                
+              </div>
+              <div className="inner">
+                
+                <div className="text-heading-profdata">Skills</div>
+                <ul className="author-list">
+              <li>  {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
+  <React.Fragment key={skill.id}>
+    <span>
+      <a>
+        <ul className="skill-but">
+          <li>{skill.skillName}</li>
+        </ul>
+        </a>
+    </span>
+    {index < profileData.skillsRequired.length - 1 && " "}
+  </React.Fragment>
+))}           </li>
+            </ul>
+                  
+             
+              </div>
+              
+              <div className="inner">
+                
+                <div className="text-heading-profdata">Experience</div>
+                  
+                {profileData.experience}
+                
+              </div>
+              <div className="inner">
+                
+                <div className="text-heading-profdata">preferred Locations</div>
+                  
+                {profileData.preferredJobLocations}
+                
+              </div>
+                    
                     </div>
-                    <h5>Experience</h5>
-                    <div className="group-infor">
-                      {profileData.experienceDetails && profileData.experienceDetails.map((experience, index) => (
-                        <div className="inner" key={index}>
-                          <div className="heading">Job {index + 1}</div>
-                          <div className="row">
-                            <div className="col">
-                              <div className="subtitle-1 fw-7">Company Name:</div>
-                            </div>
-                            <div className="col">
-                              <div className="subtitle-1 fw-7">Role:</div>
-                            </div>
-                            <div className="col">
-                              <div className="subtitle-2 fw-7">Duration:</div>
-                            </div>
-                          </div>
-                          <div className="row">
-                            <div className="col">{experience.companyName}</div>
-                            <div className="col">{experience.role}</div>
-                            <div className="col">{experience.duration}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                    
+                  </div> 
                 </div>
           </div>
           
