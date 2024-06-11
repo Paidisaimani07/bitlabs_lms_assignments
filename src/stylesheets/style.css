@@ -3483,6 +3483,7 @@ input[type="color"],
   }
 }
 
+
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
 
@@ -3508,4 +3509,15 @@ input[type="color"],
   align-items: center;
   
 } */
- 
+.dash-icon svg {
+  fill: #929698 !important; /* Default color for non-active state */
+}
+
+.tf-effect.active .dash-icon svg {
+  fill: #F46F16 !important; /* Color for active state */
+}
+.tf-effect {
+  display: flex;
+  align-items: center; /* Center vertically */
+  text-decoration: none; /* Remove underline from link */
+}
