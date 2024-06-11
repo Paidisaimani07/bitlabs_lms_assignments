@@ -5,7 +5,7 @@
     margin-right: auto;
     padding-right: 15px;
     padding-left: 15px;
-    width: 1200px;
+    width: 100%;
     max-width: 100%;
 }
 
@@ -251,12 +251,13 @@ font-style: inherit;
     margin-bottom: 20px;
 }
 .heading1 {
-    font-family: "Plus Jakarta Sans";
-    font-size: 30px !important;
-    font-weight: 300 !important;
-    line-height: 25px !important;
-    text-align: left;
-    margin-bottom: 10px !important;
+    color: #000;
+font-family: "Plus Jakarta Sans";
+font-size: 24px;
+font-style: normal;
+font-weight: 600;
+line-height: 25px; /* 104.167% */
+padding-bottom: 16px;
 }
 
 @media screen and (max-width: 670px) and (min-width: 320px) {
@@ -404,13 +405,14 @@ font-style: inherit;
         
       }
       .button-link1 {
-        background-color: #F97316;
+        /* background-color: #F97316; */
+        background: linear-gradient(90deg, #F97316 11.81%, #FAA729 100%);   
         padding-right: 0px;
         display: inline-block;
         border-radius: 8px;
         text-align: center;
-        margin-top: 80px !important;
-        width:250px !important;
+        margin-top: 40px !important;
+        width:100% !important;
         
       }
       
@@ -459,13 +461,14 @@ font-style: inherit;
   }
 
   .button-link1 {
-    background-color: #F97316;
+    /* background-color: #F97316; */
+    background: linear-gradient(90deg, #F97316 11.81%, #FAA729 100%);
     padding-right: 0px;
     display: inline-block;
     border-radius: 8px;
     text-align: center;
     margin-top: 10px;
-    width:100px;
+    width:127px;
   } 
   
   
@@ -1228,7 +1231,7 @@ tbody tr td:nth-child(2) {
 #sidebar-menu ul li a.active,
 #sidebar-menu ul li a:hover{
     color: #121212 !important;
-    background-color: #FEF1E8;
+    background-color: #F2F4F7;
     border-radius: 8px;
 }
 
@@ -1412,6 +1415,7 @@ tbody tr td:nth-child(2) {
 .downmenu li {
     display: block;
     width: 100%;
+    margin-bottom: 17px;
 }
 
 .downmenu .ff-collapse {
@@ -4391,7 +4395,7 @@ input[type="radio"]:checked:after {
     }
 
     .page-title-dashboard {
-        padding: 110px 0 30px;
+        margin: 0 20px;
     }
 
     .flat-icon-dashboard .box-icon {
@@ -4970,3 +4974,6 @@ flex-shrink: 0;
   .color-icon-3{background: rgba(255, 179, 33, 0.10);}
 
   .active .dash-icon{ color: #F46F16;}
+  @media (max-width: 900px) {
+  .resumecard .title-count{display: none;}
+  }

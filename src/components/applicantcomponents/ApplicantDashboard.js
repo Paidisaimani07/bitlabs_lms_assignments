@@ -149,16 +149,16 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
-                  <div className="title-dash flex2">Dashboard</div>
+                  <div className="title-dash flex2">Welcome, {user.username}</div>
                 </div>
               </div>
             </div>
             <div className="col-lg-12 col-md-12">
               <div className="row">
-                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
                   <div className="card" onClick={handleRedirect}>
                     <div className="container">
-                      <div className="col-3">
+                      <div className="col-3 col-lg-3 col-md-2">
                         <div className="icon style1">
                           <span className="icon-bag color-icon-1">
                             <svg
@@ -184,7 +184,7 @@ const ApplicantDashboard = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="col-9 pl-16">
+                      <div className="col-9 col-lg-9 col-md-10 pl-16">
                         <div className="content">
                           <span
                             className="title-count"
@@ -201,10 +201,10 @@ const ApplicantDashboard = () => {
 
                   </div>
                 </div>
-                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
                   <div className="card" onClick={handleRedirect1}>
                     <div className="container">
-                      <div className="col-3">
+                      <div className="col-3 col-lg-3 col-md-2">
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
 
                           <div className="icon style2">
@@ -244,7 +244,7 @@ const ApplicantDashboard = () => {
 
                         </div>
                       </div>
-                      <div className="col-9 pl-16">
+                      <div className="col-9 col-lg-9 col-md-10 pl-16">
                         <div className="content style3">
 
                           <span
@@ -260,10 +260,10 @@ const ApplicantDashboard = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-12 display-flex">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
                   <div className="card" onClick={handleRedirect1}>
                     <div className="container">
-                      <div className="col-3">
+                      <div className="col-3 col-lg-3 col-md-2">
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
                           <div className="icon style4">
                             <span className="icon-bag color-icon-3">
@@ -284,7 +284,7 @@ const ApplicantDashboard = () => {
 
                         </div>
                       </div>
-                      <div className="col-9 pl-16">
+                      <div className="col-9 col-lg-9 col-md-10 pl-16">
                         <div className="content">
                           <span
                             className="title-count"
@@ -300,23 +300,16 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex">
-                  <div className="flat-icon-dashboard">
+                  <div className="card resumecard">
                     {/*New palet in application dashboard*/}
-                    <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
-                      <div>
+                    <div className="row" onClick={Buildresume} style={{ display: "flex", alignItems: "center" }}>
+                      <div class="col-12 col-xxl-9 col-xl-9 col-lg-9 col-md-12 col-sm-12">
                         <h2 className="heading1">Build your professional resume for free</h2>
-
-                        <div className="">
-                          <span className=""></span>
-                        </div>
-                        <div className="content">
-
-                          <h4 className="title-count2" style={{ paddingRight: "80px", color: "#8D8D8D" }}>
+                        <div className="title-count">
                             Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
-                          </h4>
-
-
                         </div>
+                        <div>
+                      </div>
                         <Link
                           to="/applicant-resume-builder"
                           className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
@@ -324,16 +317,16 @@ const ApplicantDashboard = () => {
                           onMouseEnter={() => setIsHovered(true)}
                           onMouseLeave={() => setIsHovered(false)}
                         >
-                          <span className=""></span>
                           <span className="button button-custom" style={spanStyle}>Create Now</span>
                         </Link>
                       </div>
+                      <div className="col-12 col-xxls-3 col-xl-3 col-lg-3 col-md-12 col-sm-12">
                       <img
                         src={Resume}
                         alt="Resume"
-                        className='resume'
-                        style={{ width: "200px", height: "150px" }}
+                        style={{ width: "190px", height: "180px", marginTop:"10px" }}
                       />
+                      </div>
                     </div>
                   </div>
                 </div>
