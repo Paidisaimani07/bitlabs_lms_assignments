@@ -12,6 +12,7 @@ import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
+import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -20,18 +21,20 @@ const ApplicantBasicDetails = () => {
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
-
+  const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
     email: user.email || "",
     mobilenumber: "",
+   
   });
 
   const basicDetails = {
     firstName: applicant.firstName,
     lastName: applicant.lastName,
     alternatePhoneNumber: applicant.mobilenumber,
+    email: applicant.email,
   };
   const applicantProfileDTO = {
     basicDetails: basicDetails,
@@ -57,6 +60,8 @@ const ApplicantBasicDetails = () => {
         ...prevErrors,
         [name]: error,
     }));
+
+    return !error; // Returns true if no error, false if there's an error
 };
 
 const handleInputChange = (e) => {
@@ -65,6 +70,7 @@ const handleInputChange = (e) => {
       ...prevApplicant,
       [name]: value,
   }));
+
   //setIsNextDisabled(!validateForm1());
 };
 
@@ -76,6 +82,10 @@ const handleBlur = (e) => {
   
 };
 
+const handleSkillsChange = (selectedSkills) => {
+  const transformedSkills = selectedSkills.map(skill => ({ skillName: skill, experience: "" }));
+  setSkillsRequired(transformedSkills);
+};
 
 
   const [experience, setExperience] = useState('');
@@ -98,7 +108,9 @@ const handleBlur = (e) => {
   const steps = ['Personal Information', 'Professional Details', 'Upload Resume'];
 
 
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
+ // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
+
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
   const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada'];
@@ -138,14 +150,33 @@ const validateForm1 = () => {
   if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
 
   setErrors(newErrors);
-
   return validFirstName && validLastName && validMobileNumber && 
          applicant.firstName && applicant.lastName && applicant.mobilenumber;
 };
 
 
   const makeApiCall1 = async () => {
+    if (!validateForm1()) {
+      console.log(" returned in validation");
+      return false;
+    }
+   
+  };
 
+ 
+  
+  const makeApiCall2 = async () => {
+    // Implement your API call logic for stage 2
+
+    const applicantProfileDTO={
+      basicDetails: basicDetails,
+      skillsRequired: skillsRequired,
+      experience,
+      qualification,
+      specialization,
+      preferredJobLocations,
+    }
+  
     if (!validateForm1()) {
       console.log(" returned in validation");
       return false;
@@ -166,16 +197,11 @@ const validateForm1 = () => {
       console.log(" returned after api call");
 
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
-
+      setRequestData(true);
       window.alert('Profile saved successfully!');
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
-  };
-  
-  const makeApiCall2 = async () => {
-    // Implement your API call logic for stage 2
-    // ...
   };
 
   const handleResumeSelect = (e) => {
@@ -235,6 +261,21 @@ const validateForm1 = () => {
     }
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    
+    if (!qualification) newErrors.qualification = 'Qualification is required';
+    if (!specialization) newErrors.specialization = 'Specialization is required';
+    if (skillsRequired.length === 0) newErrors.skillsRequired = 'Skills are required';
+    if (!experience) newErrors.experience = 'Experience is required';
+    if (preferredJobLocations.length === 0) newErrors.preferredJobLocations = 'Preferred Job Locations are required';
+    
+    setErrors(newErrors);
+  
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  
   const handleNext = async () => {
   //   if (!validateForm1()) {
   //     return;
@@ -244,14 +285,21 @@ const validateForm1 = () => {
       // Make the appropriate API call based on the current stage
       switch (currentStage) {
         case 1:
-          const response1 = await makeApiCall1(); // Replace with your actual API call and handle response
+          if (!validateForm1()) {
+            console.log(" returned in validation");
+            return false;
+          }
           
-
           console.log('API call 1 response:');
           break;
         case 2:
+
+        if (validateFields()) {
           const response2 = await makeApiCall2(); // Replace with your actual API call and handle response
           console.log('API call 2 response:');
+        } else {
+          return false;
+        }
           break;
         default:
           console.warn('Unexpected stage:');
@@ -275,10 +323,9 @@ const validateForm1 = () => {
     e.preventDefault();
     const isFormValid = validateForm();
     if (!isFormValid) return;
-    // Handle final form submission logic here
-    // Reset form fields
+   
     resetForm();
-    navigate('/applicant-basic-details1');
+    navigate('/applicant-find-jobs');
   };
 
   const validateForm = () => {
@@ -411,17 +458,36 @@ const validateForm1 = () => {
             </div>
   
             <div className="input-wrapper">
-              <Typeahead
-                id="skillsRequired"
-                multiple
-                options={skillsOptions}
-                placeholder="*Skills Required"
-                onChange={setSkillsRequired}
-                selected={skillsRequired}
-                className="input-form typeahead"
-              />
-              {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
-            </div>
+  <Typeahead
+    id="skillsRequired"
+    multiple
+    options={skillsOptions}
+    placeholder="*Skills Required"
+    onChange={handleSkillsChange}
+    selected={skillsRequired.map(skill => skill.skillName)}
+    className="input-form typeahead"
+  />
+  {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
+</div>
+
+
+            <div className="input-wrapper">
+      <Typeahead
+        id="experience"
+        options={yearsOptions}
+        placeholder="*Experience"
+        onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
+        selected={yearsOptions.filter(option => option.label === experience)}
+        className="input-form typeahead"
+        single
+      />
+      {!experience && errors.experience && (
+        <div className="error-message">{errors.experience}</div>
+      )}
+    </div>
+ 
+ 
+              
             
             <div className="input-wrapper">
               <Typeahead
@@ -436,7 +502,7 @@ const validateForm1 = () => {
               {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
             </div>
   
-           
+            <div className="input-wrapper" ></div>
           </div>
         );
       case 3:
@@ -553,7 +619,7 @@ const validateForm1 = () => {
 
     
     <div className="card-container">
-    <div className="card">
+    <div className="card1">
       <div className="header">
         <p className="form-title">Complete Your Profile</p>
         <p>Fill the form fields to go to the next step</p>
@@ -567,7 +633,7 @@ const validateForm1 = () => {
             {renderStageFields()}
           </div>
           <div className="button-container">
-            {currentStage > 1 && (
+            {currentStage > 1  && (
               <button type="button" onClick={handleBack} className="form-button">Back</button>
             )}
             {currentStage < 3 && (

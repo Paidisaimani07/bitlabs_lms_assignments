@@ -19,16 +19,25 @@
   }
   
   
-.card-container {
+  .card-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 105vh;
     background-color: #f3f4f6; /* Light gray background */
+    padding-top: 40px;
   }
+  
+  /* Media query for small screens (mobile devices) */
+  @media (max-width: 767px) {
+    .card-container {
+      height: 120vh; /* Increase height for mobile screens */
+    }
+  }
+  
 
 
-.card {
+.card1 {
     padding: 60px;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
@@ -40,7 +49,7 @@
   }
   /* For large screens (desktops and laptops) */
 @media (min-width: 1024px) {
-  .card {
+  .card1 {
     padding: 60px;
     width: 90%;
   }
@@ -48,7 +57,7 @@
 
 /* For medium screens (tablets) */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .card {
+  .card1 {
     padding: 40px;
     width: 80%;
   }
@@ -56,15 +65,18 @@
 
 /* For small screens (mobile devices) */
 @media (max-width: 767px) {
-  .card {
+  .card1 {
+    margin-top: 40px;
     padding: 20px;
     width: 95%;
+    height: 90%;
   }
 }
 @media (min-width: 1024px) {
-  .card {
+  .card1 {
     padding: 20px;
     width: 60%;
+    
   }
 }
 
@@ -317,25 +329,59 @@
     width: 100%; /* Full width */
   }
 
-  .typeahead {
+  .input-wrapper .input-form.typeahead {
     border-radius: 8px; /* Rounded corners */
     border: 1px solid #E5E5E5; /* Light grey border */
     background: #F5F5F5; /* Light grey background */
-    padding: 10px; /* Padding for better appearance */
-    margin-bottom: 15px; /* Gap between input fields */
-    width: 100%; /* Full width */
+    padding: 0px; /* Padding for better appearance */
+    margin-bottom: 5px; /* Gapbetween input fields */
+    width: 100%; /* Full width */ 
   }
+
+  .rbt-input-multi.form-control.rbt-input {
+    height: 50px;
+    text-align: center;
+    border: 1px solid #E5E5E5; /* Light grey border */
+    background: #F5F5F5; /* Light grey background */
+    padding: 0px 30px;
+  
+}
+
+.input-wrapper.typeahead-hidden {
+  visibility: hidden; /* Hide the input wrapper without removing it from the layout flow */
+  border: 0; /* Remove border */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margin */
+}
+
   
   .input-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Gap between columns */
+    gap: 20px;
+    flex-direction: column; /* Default to single column for mobile */
+    width: 100%;
+    justify-content: flex-end;
   }
   
-  .input-wrapper {
-    flex: 1 1 calc(50% - 20px); /* Adjust width to fit two columns with gap */
+  .input-container {
+    flex: 1 1 100%; /* Default to full width for mobile */
     box-sizing: border-box;
   }
+  
+  /* Media query for tablet and larger screens */
+  @media (min-width: 768px) {
+    .input-container {
+      flex-direction: row; /* Change to row for larger screens */
+    justify-content: flex-start;
+    }
+  
+    .input-wrapper {
+      flex: 1 1 calc(50% - 20px); /* Adjust width to fit two columns with gap */
+    }
+  
+  }
+
 
   .error-message {
     font-size: 12px; /* Smaller font size */
