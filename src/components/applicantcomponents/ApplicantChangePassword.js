@@ -87,7 +87,7 @@ function ApplicantChangePassword() {
       const response = await axios.post(`${apiUrl}/applicant/authenticateUsers/${user.id}`, formData);
       if (response.data === 'Password updated and stored') {
        // window.alert('Password Changed Successfully');
-       setSnackbar({ open: true, message: 'Password Changed Successfully', type: 'success' });
+       setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
       }else if(response.data==='your new password should not be same as old password'){
         //window.alert('New password should not be same as old password.');
         setSnackbar({ open: true, message: 'New password should not be same as old password.', type: 'error' });

@@ -197,7 +197,7 @@ function RecruiterMyOrganization() {
             console.log('Success:', responseData);
             if (responseData === 'CompanyProfile was already updated.') {
              // window.alert('CompanyProfile was already updated.');
-             setSnackbar({ open: true, message: 'CompanyProfile was already updated.', type: 'error' });
+             setSnackbar({ open: true, message: 'Company profile was already updated.', type: 'error' });
               setCompanyName('');
               setWebsite('');
               setPhoneNumber('');

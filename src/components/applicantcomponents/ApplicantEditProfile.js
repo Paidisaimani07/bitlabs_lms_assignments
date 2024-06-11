@@ -623,7 +623,7 @@ if (!graduationDetails.gState) {
         console.log(response.body);
        // window.alert('Profile saved successfully!');
        
- setSnackbar({ open: true, message: 'Profile Saved Successfully', type: 'success' });
+ setSnackbar({ open: true, message: 'Profile saved successfully', type: 'success' });
         navigate('/applicanthome');
       }  else {
         console.error('An unexpected success response:', response.body);
