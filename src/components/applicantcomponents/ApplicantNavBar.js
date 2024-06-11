@@ -10,7 +10,7 @@ import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
-import logos from '../../images/logofinal.png';
+import logos from '../../images/profileIcon.svg';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
