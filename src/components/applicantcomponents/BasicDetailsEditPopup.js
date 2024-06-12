@@ -98,7 +98,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
             type="text"
             name="firstName"
             placeholder="*Firstname"
-            value={profileData.basicDetails &&formValues.firstName}
+            value={formValues &&formValues.firstName}
             onChange={handleInputChange}
             className="input-form"
             required
@@ -111,7 +111,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
             type="text"
             name="lastName"
             placeholder="*Lastname"
-            value={profileData.basicDetails &&formValues.lastName}
+            value={formValues &&formValues.lastName}
             onChange={handleInputChange}
             className="input-form"
             required
@@ -123,7 +123,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="email"
             placeholder="*Email"
-            value={profileData.basicDetails &&formValues.email}
+            value={formValues &&formValues.email}
             // className="input-form"
            className="input-form disabled-input"
             disabled
@@ -136,7 +136,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
             type="tel"
             name="alternatePhoneNumber"
             placeholder="*Mobilenumber"
-            value={profileData.basicDetails &&formValues.alternatePhoneNumber}
+            value={formValues &&formValues.alternatePhoneNumber}
             onChange={handleInputChange}
             className="input-form"
             required
