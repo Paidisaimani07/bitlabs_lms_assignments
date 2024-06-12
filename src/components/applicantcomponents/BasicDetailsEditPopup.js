@@ -37,11 +37,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         if (!/^[6789]\d{9}$/.test(value)) {
           error = 'Mobile number should be 10 digits, starting with 6, 7, 8, or 9.';
         }
-      } else if (name === 'email') {
-        if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
-          error = 'Invalid email address.';
-        }
-      }
+      } 
     }
     return error;
   };
@@ -123,7 +119,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           <input
             type="email"
             placeholder="*Email"
-            value={formValues &&formValues.email}
+            value={formValues.email}
             // className="input-form"
            className="input-form disabled-input"
             disabled
