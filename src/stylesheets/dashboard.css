@@ -4958,12 +4958,12 @@ font-size: 14px;
   }
 
   .icon-bag{
-    fill: #EFF2F6;
-    border-radius: 47px;
+fill: #EFF2F6;
+border-radius: 47px;
 display: flex;
-width: 80px;
-height: 80px;
-padding: 24px;
+width: 60px;
+height: 60px;
+padding: 18px;
 justify-content: center;
 align-items: center;
 flex-shrink: 0;
@@ -4973,7 +4973,12 @@ flex-shrink: 0;
   .color-icon-2{background:rgba(255, 102, 51, 0.10);}
   .color-icon-3{background: rgba(255, 179, 33, 0.10);}
 
-  .active .dash-icon{ color: #F46F16;}
-  @media (max-width: 900px) {
-  .resumecard .title-count{display: none;}
-  }
+  .active .dash-icon,.dash-icon:hover svg{ color: #F46F16;}
+
+  .downmenu a:hover .dash-icon svg{fill:#F46F16 !important;}
+
+  /* @media screen {
+    .dash-count .col-sm-12 .card{ margin: 0  10px 20px 20px !important;}
+  } */
+
+  

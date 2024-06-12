@@ -36,13 +36,14 @@
     width: 100% !important;
     padding: 22px !important;
     /* height: auto; */
-    margin: 0  10px 20px 20px !important;
+    /* margin: 0  10px 20px 20px !important; */
+    margin: 0  0px 20px 0px !important;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   .card .title-count{
     color: #6F6F6F;
 font-family: "Plus Jakarta Sans";
-font-size: 16px;
+font-size: 14px;
 font-style: normal;
 font-weight: 500;
 line-height: 28px; /* 175% */
@@ -50,7 +51,7 @@ line-height: 28px; /* 175% */
   .card .content h3{
     color: #121212;
 font-family: "Plus Jakarta Sans";
-font-size: 35px;
+font-size: 34px;
 font-style: normal;
 font-weight: 700;
 line-height: 28px; /* 80% */

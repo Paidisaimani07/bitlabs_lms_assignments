@@ -3553,10 +3553,36 @@ input[type="color"],
 .userName-title{
 color: #333;
 font-family: "Plus Jakarta Sans";
-font-size: 32px;
+font-size: 30px;
 font-style: normal;
-font-weight: 700;
+font-weight: 600;
 line-height: 25px; /* 78.125% */
 text-transform: capitalize;
-margin-left: 12px;
+margin-left: 0px;
+display: block;
+}
+
+/* @media screen {
+  .dash-count .col-sm-12 .card,
+  .dash-count .col-md-12 .card {
+    margin: 0 10px 20px 20px !important;
+  }
+} */
+
+@media (max-width: 768px) {
+  .dash-count .card {
+    margin: 0 10px 20px 20px !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .userName-title {
+    display: none;
+  }
+}
+
+@media (min-width: 1020px) and (max-width: 1450px) {
+  .dash-count .card {
+    margin: 0 0px 20px 10px !important;
+  }
 }
