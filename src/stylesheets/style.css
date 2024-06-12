@@ -3567,3 +3567,9 @@ input[type="color"],
       margin-right: -2px; 
   }
 } */
+
+@media (min-width: 1440px) {
+    .sticky-area-wrap {
+        margin-top: 5px;
+    }
+}
