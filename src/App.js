@@ -22,6 +22,7 @@ import TermsOfServices from './components/common/TermsOfServices';
 import Recruiterviewapplicant from './components/recruitercomponents/Recruiterviewapplicant';
 import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/AppliedApplicantsBasedOnJobs';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
+import UploadImageComponent from './components/applicantcomponents/UploadImageComponent';
 
 
 
@@ -101,6 +102,7 @@ function App() {
                 <Route path="/view-resume/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-job" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
+                {/* <Route path="/applicant-upload-image/:id" element={<ApplicantHomePage />} /> */}
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />

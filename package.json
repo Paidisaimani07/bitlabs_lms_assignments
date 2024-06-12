@@ -5,6 +5,8 @@
   "dependencies": {
     "@ant-design/colors": "^7.0.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@popperjs/core": "^2.11.8",
     "@react-oauth/google": "^0.12.1",
     "@react-pdf-viewer/default-layout": "^3.12.0",
@@ -29,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.12.0",
     "react-international-phone": "^4.2.5",
+    "react-modal": "^3.16.1",
     "react-pdf": "^7.6.0",
     "react-quill": "^2.0.0",
     "react-responsive": "^9.0.2",
