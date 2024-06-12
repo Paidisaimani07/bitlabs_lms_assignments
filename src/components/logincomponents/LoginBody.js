@@ -33,7 +33,7 @@ function LoginBody({ handleLogin }) {
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-
+ const [message, setMessage] = useState('Welcome Back');
  const { user } = useUserContext();
 
  
@@ -589,7 +589,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
- const [message,setMessage]=useState();
+ 
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
   if (tab === 'Candidate') {
