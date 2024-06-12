@@ -7,10 +7,10 @@ import { useUserContext } from '../common/UserProvider';
 
 const BasicDetailsEditPopup = ({ applicantDetails }) => {
   const [formValues, setFormValues] = useState({
-    firstName: applicantDetails.firstName || '',
-    lastName: applicantDetails.lastName || '',
-    email: applicantDetails.email || '',
-    alternatePhoneNumber: applicantDetails.alternatePhoneNumber || '',
+    firstName: applicantDetails&&applicantDetails.firstName || '',
+    lastName: applicantDetails&&applicantDetails.lastName || '',
+    email: applicantDetails&&applicantDetails.email || '',
+    alternatePhoneNumber: applicantDetails&&applicantDetails.alternatePhoneNumber || '',
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
