@@ -5394,7 +5394,20 @@
     margin: 0 auto;
     text-align: center;
     margin-top: 30px;
-    margin-right:200px;
+    margin-right:140px;
+  }
+
+ 
+
+  @media (width: 1920px) and (height: 1080px) {
+    .wd-form-login {
+      /* Add any styles you want to apply specifically for this screen size */
+      max-width: 572px; /* Adjust as needed */
+      margin: 0 auto; /* Adjust as needed */
+      text-align: center; /* Adjust as needed */
+      margin-top: 30px; /* Adjust as needed */
+      margin-right: 100px; /* Adjust as needed */
+    }
   }
   @media(max-width: 526px) and (min-width: 499px){
     .wd-form-login {
@@ -5407,13 +5420,28 @@
     }
   }
 
+
   @media(max-width: 499px) and (min-width: 475px){
     .wd-form-login {
       width: 400px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
-      margin-left:30px !important;
+      /* margin-top: 90px !important; */
+      margin-left:23px !important;
+      
+    }
+  }
+
+ 
+  
+
+  @media(max-width: 480px) and (min-width: 634px){
+    .wd-form-login {
+      width: 400px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 120px;
+      margin-left:23px !important;
       
     }
   }
@@ -5434,19 +5462,29 @@
       width: 400px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
+      margin-top: 10px ;
       margin-left:1px !important;
       
     }
   }
 
+  @media(max-width: 412px) and (min-width: 634px){
+    .wd-form-login {
+      width: 400px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 50px !important ;
+      margin-left:1px !important;
+      
+    }
+  }
   @media(max-width: 420px) and (min-width: 385px){
     .wd-form-login {
       width: 380px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
-      margin-left:-10px !important;
+      /* margin-top: 100px ; */
+      margin-left:-5px !important;
       
     }
   }
@@ -5456,19 +5494,21 @@
       width: 370px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
+      margin-top: -20px !important;
       margin-left:-20px !important;
       
     }
   }
+
+ 
 
   @media(max-width: 365px) and (min-width: 340px){
     .wd-form-login {
       width: 350px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
-      margin-left:-20px !important;
+      margin-top: -40px !important;
+      margin-left:-15px !important;
       
     }
   }
@@ -5486,10 +5526,22 @@
  
   @media (max-width: 840px) and (min-width: 767px) {
     .wd-form-login {
-      max-width: 500px;
-      margin-right: 15px;
+      margin-top: 320px !important;
+      max-width: 550px;
+      margin-right: 500px !important;
+      margin-left:-100px !important;
     }
   }
+
+  @media (max-width: 800px) and (min-width: 634px) {
+    .wd-form-login {
+      max-width: 450px;
+      margin-right: 15px;
+      margin-top: 320px !important;
+      max-width: 550px;
+    }
+  }
+
   @media (max-width: 767px) and (min-width: 665px) {
     .wd-form-login {
       max-width: 450px;
@@ -5512,7 +5564,10 @@
   }
   @media (max-width: 1220px) and (min-width: 1100px) {
     .wd-form-login {
-      margin-right: 80px;
+      margin-top: 550px !important;
+      max-width: 650px;
+      margin-right: 350px !important;
+      /* margin-left:-100px !important; */
     }
   }
   @media (max-width: 1110px) and (min-width: 1024px) {
@@ -5527,12 +5582,15 @@
   }
   @media (max-width: 970px) and (min-width: 890px) {
     .wd-form-login {
-      margin-right: 18px;
+      margin-right: 300px;
+      margin-top: 320px;
     }
   }
   @media (max-width: 890px) and (min-width: 850px) {
     .wd-form-login {
-      margin-right: 18px;
+      margin-right: 300px;
+      margin-top: 320px;
+     margin-left:-80px;
     }
   }
   @media (max-width: 850px) and (min-width: 815px) {
@@ -10990,6 +11048,7 @@
   .account-section {
     /* padding: 61px 0px 68px; */
     margin-left:150px;
+   
     
   }
 
@@ -11954,15 +12013,49 @@
         
       }
 
+
+      @media screen and (min-width: 360px) and (max-width: 634px) {
+        .responsive-image1 {
+          height: unset !important; /* Remove the height */
+        }
+      }
+
 /* Default styles */
 .responsive-image1 {
   width: 100% !important; /* Specific width for the image */
- height:250px !important;
+ height:400px;
   position: absolute; /* Absolute positioning */
   margin: 0; /* Reset margins to avoid unwanted spacing */
   padding: 0; /* Reset padding to avoid unwanted spacing */
   z-index: -1; /* Send the image to the background if needed */
+  object-fit: cover;
 }
+
+
+
+@media (min-width: 1200px) {
+  .responsive-image1 {
+    /* Add any styles you want to apply specifically for this screen size */
+    width: 100% !important; /* Specific width for the image */
+    height: 500px !important; /* Specific height for the image */
+    position: absolute; /* Absolute positioning */
+    margin: 0; /* Reset margins to avoid unwanted spacing */
+    padding: 0; /* Reset padding to avoid unwanted spacing */
+    z-index: -1; /* Send the image to the background if needed */
+    object-fit: cover; /* Maintain the cover behavior */
+  }
+}
+
+@media (width: 360px) and (height: 640px) {
+  .responsive-image1 {
+    width: 100% ;
+    height: 200px !important;
+    object-fit: cover !important;
+  }
+}
+
+
+
 
 .custom-div-style {
   margin-bottom: -80px;
@@ -12084,7 +12177,7 @@
 
 
 
-@media (min-width: 526px) {
+@media (min-width: 1201px) {
   .responsive-image1 {
     display: none;
   }
@@ -12095,8 +12188,17 @@
   height: 100vh;
   object-fit: cover;
 }
+
+@media (max-width: 640px) {
+  .responsive-image1 {
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+  }
+}
+
 /* Media query to hide the image for screens below 525px */
-@media (max-width: 526px) {
+@media (max-width: 1200px) {
   .responsive-image {
     display: none;
   }
@@ -12165,7 +12267,6 @@
 @media (max-width: 740px) and (min-width: 650px) {
   .responsive-image {
     width: 380px; /* Adjust the width as needed */
-    
     object-fit: cover;
   }
 }
@@ -12173,10 +12274,11 @@
 @media (max-width: 650px) and (min-width: 525px) {
   .responsive-image {
     width: 330px; /* Adjust the width as needed */
-    
     object-fit: cover;
   }
 }
+
+
 
 .find-your {
   position: fixed;
@@ -12204,6 +12306,36 @@
   font-weight: 700;
   line-height: 97px;
   text-transform: capitalize;
+}
+
+@media (width: 1920px) and (height: 1080px) {
+  .find-your {
+    position: fixed;
+    top: 850px; /* Adjust this to position the text vertically */
+    left: 70px; /* Adjust this to position the text horizontally */
+    color: #FFF;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 60px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 97px;
+    text-transform: capitalize;
+  }
+
+  .dream-job {
+    position: fixed;
+    top: 910px; /* Adjust this to position the text vertically */
+    left: 70px; /* Adjust this to position the text horizontally */
+    color: #F97316;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 60px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 97px;
+    text-transform: capitalize;
+  }
 }
 
 /* @media (max-width: 526px) and (min-width: 525px) {
@@ -12236,35 +12368,66 @@
   }
 } */
 
-@media (max-width: 526px) and (min-width: 320px) {
-  .find-your{
+@media (max-width: 526px) and (min-width: 359px) {
+  .find-your {
     position: absolute;
     color: #FFF;
-  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 25px;
-  text-transform: capitalize;
-  top: 190px;
-  margin-left:-50px;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 25px;
+    text-transform: capitalize;
+    top: 300px;
+    margin-left: -10px;
   }
-  .dream-job{
+  .dream-job {
     position: absolute;
-    color:  #F97316;
-  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 25px;
-  text-transform: capitalize;
-  top: 190px;
-  margin-left:70px;
-
+    color: #F97316;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 25px;
+    text-transform: capitalize;
+    top: 300px;
+    margin-left: 120px;
   }
 }
+
+
+@media (max-width: 634px) and (min-width: 360px) {
+  .find-your {
+    left: 40px;
+    font-size: 25px !important;
+    top: 150px !important;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 25px !important; /* Adjust the font size as needed */
+    top: 150px !important;
+  }
+}
+
+
+
+@media (max-width: 360px) and (min-width: 634px) {
+  .find-your {
+    left: 40px; 
+    font-size: 25px !important; 
+    top: 170px !important;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 25px !important; /* Adjust the font size as needed */
+    top: 170px !important;
+  }
+}
+
 
 /* Media query to hide the image for screens below 525px */
 @media (max-width: 525px) and (min-width: 525px){
@@ -12276,32 +12439,224 @@
   }
 }
 
-/* Media query for screen widths between 1025px and 767px */
+
+@media (width: 1080px) and (height: 2340px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 80px !important; /* Adjust the font size as needed */
+    top: 1870px !important;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 80px !important; /* Adjust the font size as needed */
+    top: 1980px !important;
+  }
+}
+
+@media (width: 1200px) and (height: 1920px) {
+  .find-your {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 70px !important; /* Adjust the font size as needed */
+    top: 1500px !important; /* Adjust the top position as needed */
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 70px !important; /* Adjust the font size as needed */
+    top: 1580px !important; /* Adjust the top position as needed */
+  }
+}
+
+@media (min-width: 1200px) {
+  .find-your {
+    left: 50px !important; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    /* top: 360px !important; */
+  }
+
+  .dream-job {
+    left: 50px !important; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    /* top: 360px !important; */
+  }
+}
+
+@media (min-width: 1366px) and (min-height: 768px) {
+  .find-your {
+    left: 70px !important; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 590px !important;
+    position:fixed !important;
+  }
+
+  .dream-job {
+    left: 70px !important; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 640px !important;
+    position:fixed !important;
+  }
+}
+
+
+
+@media (width: 1920px) and (height: 1080px) {
+  .find-your {
+    left: 70px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 850px !important;
+  }
+
+  .dream-job {
+    left: 70px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 900px !important;
+  }
+}
+
+@media (max-width: 1200px) and (min-width: 1920px) {
+  .find-your {
+     left: 280px !important; /*the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 10px !important;
+  }
+
+  .dream-job {
+    left: 550px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 350px !important;
+  }
+}
+
+@media (max-width: 1280px) and (min-width: 768px) {
+  .find-your {
+    position: fixed !important;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 600px !important;
+  }
+
+  .dream-job {
+    position: fixed !important;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 640px !important;
+  }
+}
+
+@media (max-width: 960px) and (min-width: 634px) {
+  .find-your {
+    position: absolute !important;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px !important;
+  }
+
+  .dream-job {
+    position: absolute !important;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 640px) {
+  .find-your {
+    position: absolute !important;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 250px !important;
+  }
+
+  .dream-job {
+    position: absolute !important;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 250px !important;
+  }
+}
+
+
+
+/* Media query for screen widths between 1400px and 767px */
 @media (max-width: 1400px) and (min-width: 767px) {
+  .find-your {
+    position: absolute;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px;
+  }
+
+  .dream-job {
+    position: absolute;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px;
+  }
+}
+
+/* Media query for screen widths between 1920px and 1200px */
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .find-your {
+    position: fixed;
+    left: 60px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 550px !important;
+  }
+
+  .dream-job {
+    position: fixed;
+    left: 60px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 600px !important;
+  }
+}
+
+/* Media query for screen widths between 1366px and 768px */
+@media (max-width: 1366px) and (min-width: 768px) {
+  .find-your {
+    left: 40px !important; /* Adjust the left position as needed */
+    font-size: 40px !important; /* Adjust the font size as needed */
+    top: 280px !important;
+  }
+
+  .dream-job {
+    left: 230px !important; /* Adjust the left position as needed */
+    font-size: 40px !important; /* Adjust the font size as needed */
+    top: 280px !important;
+  }
+}
+
+
+
+@media (max-width: 800px) and (min-width: 1280px) {
   .find-your {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 580px;
+    top: 1000px; /* Adjust the top position as needed */
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 620px;
+    top: 1050px; /* Adjust the top position as needed */
   }
 }
+
+
+
 
 @media (max-width: 767px) and (min-width: 700px) {
   .find-your {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 580px;
+    top: 480px;
   }
 
   .dream-job {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 620px;
+    top: 520px;
   }
 }
 
@@ -12333,12 +12688,93 @@
   }
 }
 .logo-image {
-  position: fixed;
+  position: absolute;
   top: 12px;
-  left: 40px;
+  left: 50px;
   padding-right: 10px;
-  width: 250px;
+  width: auto;
   height: 64px;
+}
+
+@media (width: 800px) and (height: 1280px) {
+  .logo-image {
+    position: fixed;
+    top: 12px;
+    left: 250px;
+    padding-right: 10px;
+    width: auto;
+    height: 64px;
+  }
+}
+
+
+@media (min-width: 1200px) {
+  .logo-image {
+    position: fixed;
+    top: 12px;
+    /* left: 450px; */
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
+
+@media (max-width: 960px) and (min-width: 634px) {
+  .logo-image {
+    position: absolute !important;
+    top: 12px;
+    left: 130px !important;
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
+
+@media (max-width: 1280px) and (min-width: 768px) {
+  .logo-image {
+    position: fixed;
+    top: 12px;
+    left: 30px;
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
+@media (width: 1200px) and (height: 1920px) {
+  .logo-image {
+    position: fixed;
+    top: 12px;
+    left: 450px; /* Uncomment and adjust the left position as needed */
+    padding-right: 10px;
+    width: auto;
+    height: 80px;
+  }
+}
+
+
+@media (min-width: 1366px) and (min-height: 768px) {
+  .logo-image {
+    position: fixed ;
+    top: 12px;
+    left: 10px;
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
+
+
+
+@media (width: 1080px) and (height: 2340px) {
+  .logo-image {
+    /* Add any styles you want to apply specifically for this screen size */
+    /* For example, you can adjust the position or size */
+    top: 12px; /* Adjust as needed */
+    left: 40px; /* Adjust as needed */
+    padding-right: 10px; /* Adjust as needed */
+    width: 280px; /* Adjust as needed */
+    height: 90px; /* Adjust as needed */
+  }
 }
 
 /* Media query to hide the image for screens below 525px */
@@ -12353,7 +12789,7 @@
     position:absolute;
     width: 161px;
     height: 40px;
-    left: 150px;
+    left: 120px;
     
   }
 }
@@ -12363,7 +12799,7 @@
     position:absolute;
     width: 161px;
     height: 40px;
-    left: 120px;
+    left: 100px;
     
   }
 }
