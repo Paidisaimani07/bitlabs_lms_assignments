@@ -5420,12 +5420,27 @@
     }
   }
 
+
   @media(max-width: 499px) and (min-width: 475px){
     .wd-form-login {
       width: 400px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 90px !important;
+      /* margin-top: 90px !important; */
+      margin-left:23px !important;
+      
+    }
+  }
+
+ 
+  
+
+  @media(max-width: 480px) and (min-width: 634px){
+    .wd-form-login {
+      width: 400px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 120px;
       margin-left:23px !important;
       
     }
@@ -5447,18 +5462,28 @@
       width: 400px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
+      margin-top: 10px ;
       margin-left:1px !important;
       
     }
   }
 
+  @media(max-width: 412px) and (min-width: 634px){
+    .wd-form-login {
+      width: 400px !important;
+      margin: 0 auto;
+      text-align: center;
+      margin-top: 50px !important ;
+      margin-left:1px !important;
+      
+    }
+  }
   @media(max-width: 420px) and (min-width: 385px){
     .wd-form-login {
       width: 380px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
+      /* margin-top: 100px ; */
       margin-left:-5px !important;
       
     }
@@ -5469,11 +5494,13 @@
       width: 370px !important;
       margin: 0 auto;
       text-align: center;
-      margin-top: 10px !important;
+      margin-top: -20px !important;
       margin-left:-20px !important;
       
     }
   }
+
+ 
 
   @media(max-width: 365px) and (min-width: 340px){
     .wd-form-login {
@@ -5499,12 +5526,22 @@
  
   @media (max-width: 840px) and (min-width: 767px) {
     .wd-form-login {
-      margin-top: 280px !important;
+      margin-top: 320px !important;
       max-width: 550px;
       margin-right: 500px !important;
       margin-left:-100px !important;
     }
   }
+
+  @media (max-width: 800px) and (min-width: 634px) {
+    .wd-form-login {
+      max-width: 450px;
+      margin-right: 15px;
+      margin-top: 320px !important;
+      max-width: 550px;
+    }
+  }
+
   @media (max-width: 767px) and (min-width: 665px) {
     .wd-form-login {
       max-width: 450px;
@@ -5545,12 +5582,15 @@
   }
   @media (max-width: 970px) and (min-width: 890px) {
     .wd-form-login {
-      margin-right: 18px;
+      margin-right: 300px;
+      margin-top: 320px;
     }
   }
   @media (max-width: 890px) and (min-width: 850px) {
     .wd-form-login {
-      margin-right: 18px;
+      margin-right: 300px;
+      margin-top: 320px;
+     margin-left:-80px;
     }
   }
   @media (max-width: 850px) and (min-width: 815px) {
@@ -11004,6 +11044,7 @@
   .account-section {
     /* padding: 61px 0px 68px; */
     margin-left:150px;
+   
     
   }
 
@@ -11968,16 +12009,25 @@
         
       }
 
+
+      @media screen and (min-width: 360px) and (max-width: 634px) {
+        .responsive-image1 {
+          height: unset !important; /* Remove the height */
+        }
+      }
+
 /* Default styles */
 .responsive-image1 {
   width: 100% !important; /* Specific width for the image */
- height:350px !important;
+ height:400px;
   position: absolute; /* Absolute positioning */
   margin: 0; /* Reset margins to avoid unwanted spacing */
   padding: 0; /* Reset padding to avoid unwanted spacing */
   z-index: -1; /* Send the image to the background if needed */
   object-fit: cover;
 }
+
+
 
 @media (min-width: 1200px) {
   .responsive-image1 {
@@ -12135,7 +12185,7 @@
   object-fit: cover;
 }
 
-@media (width: 360px) and (height: 640px) {
+@media (max-width: 640px) {
   .responsive-image1 {
     width: 100%;
     height: 100vh;
@@ -12223,6 +12273,8 @@
     object-fit: cover;
   }
 }
+
+
 
 .find-your {
   position: fixed;
@@ -12312,35 +12364,66 @@
   }
 } */
 
-@media (max-width: 526px) and (min-width: 320px) {
-  .find-your{
+@media (max-width: 526px) and (min-width: 359px) {
+  .find-your {
     position: absolute;
     color: #FFF;
-  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 25px;
-  text-transform: capitalize;
-  top: 160px;
-  margin-left:-20px;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 25px;
+    text-transform: capitalize;
+    top: 300px;
+    margin-left: -10px;
   }
-  .dream-job{
+  .dream-job {
     position: absolute;
-    color:  #F97316;
-  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 25px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 25px;
-  text-transform: capitalize;
-  top: 160px;
-  margin-left:100px;
-
+    color: #F97316;
+    text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 25px;
+    text-transform: capitalize;
+    top: 300px;
+    margin-left: 120px;
   }
 }
+
+
+@media (max-width: 634px) and (min-width: 360px) {
+  .find-your {
+    left: 40px;
+    font-size: 25px !important;
+    top: 150px !important;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 25px !important; /* Adjust the font size as needed */
+    top: 150px !important;
+  }
+}
+
+
+
+@media (max-width: 360px) and (min-width: 634px) {
+  .find-your {
+    left: 40px; 
+    font-size: 25px !important; 
+    top: 170px !important;
+  }
+
+  .dream-job {
+    left: 40px; /* Adjust the left position as needed */
+    font-size: 25px !important; /* Adjust the font size as needed */
+    top: 170px !important;
+  }
+}
+
 
 /* Media query to hide the image for screens below 525px */
 @media (max-width: 525px) and (min-width: 525px){
@@ -12400,12 +12483,14 @@
     left: 70px !important; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
     top: 590px !important;
+    position:fixed !important;
   }
 
   .dream-job {
     left: 70px !important; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
     top: 640px !important;
+    position:fixed !important;
   }
 }
 
@@ -12425,11 +12510,11 @@
   }
 }
 
-@media (width: 1200px) and (height: 1920px) {
+@media (max-width: 1200px) and (min-width: 1920px) {
   .find-your {
-    left: 280px !important; /* Adjust the left position as needed */
+     left: 280px !important; /*the left position as needed */
     font-size: 55px !important; /* Adjust the font size as needed */
-    top: 350px !important;
+    top: 10px !important;
   }
 
   .dream-job {
@@ -12439,27 +12524,108 @@
   }
 }
 
-
-
-
-/* Media query for screen widths between 1025px and 767px */
-@media (max-width: 1400px) and (min-width: 767px) {
+@media (max-width: 1280px) and (min-width: 768px) {
   .find-your {
-    left: 40px; /* Adjust the left position as needed */
+    position: fixed !important;
+    left: 100px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 570px;
+    top: 600px !important;
   }
 
   .dream-job {
-    left: 40px; /* Adjust the left position as needed */
+    position: fixed !important;
+    left: 300px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
-    top: 610px;
+    top: 640px !important;
+  }
+}
+
+@media (max-width: 960px) and (min-width: 634px) {
+  .find-your {
+    position: absolute !important;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px !important;
+  }
+
+  .dream-job {
+    position: absolute !important;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 640px) {
+  .find-your {
+    position: absolute !important;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 250px !important;
+  }
+
+  .dream-job {
+    position: absolute !important;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 250px !important;
   }
 }
 
 
 
-@media (width: 800px) and (height: 1280px) {
+/* Media query for screen widths between 1400px and 767px */
+@media (max-width: 1400px) and (min-width: 767px) {
+  .find-your {
+    position: absolute;
+    left: 100px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px;
+  }
+
+  .dream-job {
+    position: absolute;
+    left: 300px; /* Adjust the left position as needed */
+    font-size: 40px; /* Adjust the font size as needed */
+    top: 300px;
+  }
+}
+
+/* Media query for screen widths between 1920px and 1200px */
+@media (max-width: 1920px) and (min-width: 1200px) {
+  .find-your {
+    position: fixed;
+    left: 60px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 550px !important;
+  }
+
+  .dream-job {
+    position: fixed;
+    left: 60px !important; /* Adjust the left position as needed */
+    font-size: 55px !important; /* Adjust the font size as needed */
+    top: 600px !important;
+  }
+}
+
+/* Media query for screen widths between 1366px and 768px */
+@media (max-width: 1366px) and (min-width: 768px) {
+  .find-your {
+    left: 40px !important; /* Adjust the left position as needed */
+    font-size: 40px !important; /* Adjust the font size as needed */
+    top: 280px !important;
+  }
+
+  .dream-job {
+    left: 230px !important; /* Adjust the left position as needed */
+    font-size: 40px !important; /* Adjust the font size as needed */
+    top: 280px !important;
+  }
+}
+
+
+
+@media (max-width: 800px) and (min-width: 1280px) {
   .find-your {
     left: 40px; /* Adjust the left position as needed */
     font-size: 40px; /* Adjust the font size as needed */
@@ -12473,19 +12639,7 @@
   }
 }
 
-@media (width: 800px) and (height: 1280px) {
-  .find-your {
-    left: 100px; /* Adjust the left position as needed */
-    font-size: 40px; /* Adjust the font size as needed */
-    top: 250px; /* Adjust the top position as needed */
-  }
 
-  .dream-job {
-    left: 300px; /* Adjust the left position as needed */
-    font-size: 40px; /* Adjust the font size as needed */
-    top: 250px; /* Adjust the top position as needed */
-  }
-}
 
 
 @media (max-width: 767px) and (min-width: 700px) {
@@ -12530,9 +12684,9 @@
   }
 }
 .logo-image {
-  position: fixed;
+  position: absolute;
   top: 12px;
-  left: 40px;
+  left: 50px;
   padding-right: 10px;
   width: auto;
   height: 64px;
@@ -12561,6 +12715,27 @@
   }
 }
 
+@media (max-width: 960px) and (min-width: 634px) {
+  .logo-image {
+    position: absolute !important;
+    top: 12px;
+    left: 130px !important;
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
+
+@media (max-width: 1280px) and (min-width: 768px) {
+  .logo-image {
+    position: fixed;
+    top: 12px;
+    left: 30px;
+    padding-right: 10px;
+    width: auto;
+    height: 70px;
+  }
+}
 @media (width: 1200px) and (height: 1920px) {
   .logo-image {
     position: fixed;
@@ -12575,7 +12750,7 @@
 
 @media (min-width: 1366px) and (min-height: 768px) {
   .logo-image {
-    position: fixed;
+    position: fixed ;
     top: 12px;
     left: 10px;
     padding-right: 10px;
@@ -12610,7 +12785,7 @@
     position:absolute;
     width: 161px;
     height: 40px;
-    left: 160px;
+    left: 120px;
     
   }
 }
