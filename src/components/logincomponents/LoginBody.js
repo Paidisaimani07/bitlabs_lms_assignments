@@ -10,6 +10,7 @@ import OTPVerification from '../applicantcomponents/OTPVerification';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Background from '../../images/user/avatar/Backgroundimage.png';//logo
 import logo from '../../images/user/avatar/bitlabslogo.svg';
+
 import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
 
 function LoginBody({ handleLogin }) {
