@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import { apiUrl } from '../../services/ApplicantAPIService';
-
 
 const ApplicantViewJob = ({ selectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
@@ -14,10 +13,9 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const [applied, setApplied] = useState(false);
   const { user } = useUserContext();
   const location = useLocation();
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '', link: '', linkText: '' });
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
-
 
   const fetchJobDetails = async () => {
     try {
@@ -74,9 +72,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         );
         const { applied } = response.data;
 
-        // window.alert('Job applied successfully');
-        // setSnackbar({ open: true, message: 'Job Applied Successfully.<a href="/applicant-applied-jobs">View Applied Jobs</a>', type: 'success' });
-        setSnackbar({ open: true, message: 'Job Applied Successfully.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'success' });
+        setSnackbar({ open: true, message: 'Job applied successfully.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'success' });
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
 
         setApplied(applied);
@@ -84,8 +80,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
-     // window.alert('Job has already been applied by the applicant');
-     setSnackbar({ open: true, message: 'Job has already been applied by the applicant. ', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'error' });
+      setSnackbar({ open: true, message: 'Job has already been applied by the applicant.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'error' });
     }
   };
 
@@ -98,12 +93,9 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
 
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: '', type: '' });
+  const handleCloseSnackbar = (index) => {
+    setSnackbar({ open: false, message: '', type: '', link: '', linkText: '' });
   };
-
-
 
   const handleBackClick = (e) => {
     e.preventDefault();
@@ -119,7 +111,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
               <div className="row">
                 <div className="col-lg-12 col-md-12">
                   <div className="title-dashboard">
-                    <div className="title-dash flex2"> <BackButton />Full Job Details</div>
+                    <div className="title-dash flex2"><BackButton />Full Job Details</div>
                   </div>
                 </div>
               </div>
@@ -210,26 +202,23 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                         </div>
                       </div>
                     )}
-                    
-                  {jobDetails && (
-                    <div className="features-job style-2 stc-apply bg-white">
-   <div className="inner-content">
-   
-    <h5>Full Job Description</h5>
-    <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
-   
-  </div>
-  </div>
-)}
+
+                    {jobDetails && (
+                      <div className="features-job style-2 stc-apply bg-white">
+                        <div className="inner-content">
+                          <h5>Full Job Description</h5>
+                          <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
+                        </div>
+                      </div>
+                    )}
                   </article>
                 </div>
               </div>
             </div>
-            
           </section>
         </div>
       )}
-       {snackbar.open && (
+      {snackbar.open && (
         <Snackbar
           message={snackbar.message}
           type={snackbar.type}
