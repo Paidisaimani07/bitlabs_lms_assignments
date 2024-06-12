@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import OTPVerification from '../applicantcomponents/OTPVerification';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Background from '../../images/user/avatar/Backgroundimage.png';//logo
-import logo from '../../images/user/avatar/logo-fin-1.png';
+import logo from '../../images/user/avatar/bitlabslogo.svg';
 import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
 
 function LoginBody({ handleLogin }) {
@@ -494,10 +494,7 @@ const getTabStyle = (tab) => ({
         src={Backgroundimagemobile}
         alt="Background"
         className="responsive-image1"
-        style={{
-        //  height:"400px",
-        //  margintop:"10px"
-        }}
+       
       />
       <section className="account-section">
         <div className="tf-container">
