@@ -119,31 +119,33 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
       
       </div>
       <div className="input-container-basicdetails">
-      <div className="input-wrapper">
+      <div className="input-wrapper1">
               <Typeahead
                 id="qualification"
                 options={qualificationsOptions}
                 placeholder="*Qualification"
                 onChange={(selected) => setQualification(selected[0])}
                 selected={qualification ? [qualification] : []}
-                className="input-form.typeahead-profdata"
+                // className="input-form.typeahead-profdata"
+                 className="custom-typeahead"
               />
               {errors.qualification && <div className="error-message">{errors.qualification}</div>}
             </div>
   
-            <div className="input-wrapper">
+            <div className="input-wrapper1">
               <Typeahead
                 id="specialization"
                 options={qualification ? specializationsByQualification[qualification] : []}
                 placeholder="*Specialization"
                 onChange={(selected) => setSpecialization(selected[0])}
                 selected={specialization ? [specialization] : []}
-                className="input-form.typeahead-profdata"
+                // className="input-form.typeahead-profdata"
+                 className="custom-typeahead"
               />
               {errors.specialization && <div className="error-message">{errors.specialization}</div>}
             </div>
   
-            <div className="input-wrapper">
+            <div className="input-wrapper1">
               <Typeahead
                 id="skillsRequired"
                 multiple
@@ -151,25 +153,27 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
                 placeholder="*Skills Required"
                 onChange={setSkillsRequired}
                 selected={skillsRequired}
-                className="input-form.typeahead-profdata"
+                // className="input-form.typeahead-profdata"
+                 className="custom-typeahead"
               />
               {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
             </div>
-            <div className="input-wrapper">
+            <div className="input-wrapper1">
       <Typeahead
         id="experience"
         options={yearsOptions}
         placeholder="*Experience"
         onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
         selected={yearsOptions.filter(option => option.label === experience)}
-        className="input-form.typeahead-profdata"
+        // className="input-form.typeahead-profdata"
+         className="custom-typeahead"
         single
       />
       {!experience && errors.experience && (
         <div className="error-message">{errors.experience}</div>
       )}
     </div>
-            <div className="input-wrapper">
+            <div className="input-wrapper1">
               <Typeahead
                 id="preferredJobLocations"
                 multiple
@@ -177,7 +181,8 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
                 placeholder="*Preferred Job Locations"
                 onChange={setPreferredJobLocations}
                 selected={preferredJobLocations}
-                className="input-form.typeahead-profdata"
+                // className="input-form.typeahead-profdata"
+                 className="custom-typeahead1"
               />
               {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
             </div>

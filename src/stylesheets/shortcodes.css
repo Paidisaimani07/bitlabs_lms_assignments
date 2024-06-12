@@ -8044,6 +8044,12 @@
     margin-top: 20px;
 
   }
+  .input-wrapper1 {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: calc(50% - 20px);
+    box-sizing: border-box;
+}
  
  /* shortcodes.css */
 
@@ -8095,6 +8101,28 @@
   margin-bottom: 5px; /* Gapbetween input fields */
   width: 100%; /* Full width */
 }
+.custom-typeahead {
+  background-color: #f0f0f0; /* Gray background color */
+  border-radius: 8px; /* Rounded corners */
+  border: 1px solid #E5E5E5; /* Light grey border */
+  /* background: #F5F5F5; Light grey background */
+  padding: 0px; /* Padding for better appearance */
+  margin-bottom: 5px; /* Gapbetween input fields */
+
+  /* Add any other custom styles you need */
+}
+.input-row-prof {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px; /* Adjust the gap between rows */
+  margin-bottom: 10px; /* Optional: Adjust the margin between rows */
+}
+
+.input-col-prof{
+  flex: 1 1 45%; /* Adjust the column width as needed */
+}
+
 
 .rbt-input-multi.form-control.rbt-input{
   height: 50px;

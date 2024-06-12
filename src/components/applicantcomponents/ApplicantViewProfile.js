@@ -180,15 +180,15 @@ const ApplicantViewProfile = () => {
             </Modal>
             <div className="content">
               <h3 style={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
-                {profileData.basicDetails.firstName} {profileData.basicDetails.lastName}
+                {profileData.basicDetails.firstName || ' '} {profileData.basicDetails.lastName || ' '}
               </h3>
               <div className="details1">
                 <img src={Mail} alt="Email" className="icon1" />
-                {profileData.basicDetails.email}
+                {profileData.basicDetails.email || ' '}
               </div>
               <div className="details1">
                 <img src={Phone} alt="Phone" className="icon1" />
-                {profileData.basicDetails.alternatePhoneNumber}
+                {profileData.basicDetails.alternatePhoneNumber || ' '}
               </div>
             </div>
           </div>
