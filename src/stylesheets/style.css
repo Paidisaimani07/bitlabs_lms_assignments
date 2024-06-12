@@ -3516,8 +3516,47 @@ input[type="color"],
 .tf-effect.active .dash-icon svg {
   fill: #F46F16 !important; /* Color for active state */
 }
+
+.tf-effect.active .dash-icon svg:hover {
+  fill: #F46F16 !important;
+}
 .tf-effect {
   display: flex;
   align-items: center; /* Center vertically */
   text-decoration: none; /* Remove underline from link */
+}
+
+@media (max-width: 550px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (max-width: px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (min-width: 551px) and (max-width: 1290px) {
+  .left-menu {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+.userName-title{
+color: #333;
+font-family: "Plus Jakarta Sans";
+font-size: 32px;
+font-style: normal;
+font-weight: 700;
+line-height: 25px; /* 78.125% */
+text-transform: capitalize;
+margin-left: 12px;
 }

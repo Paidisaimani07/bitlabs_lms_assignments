@@ -149,7 +149,8 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
-                  <div className="title-dash flex2">Welcome, {user.username}</div>
+                  {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
+                  <div className="userName-title">Welcome {user.username}</div>
                 </div>
               </div>
             </div>
