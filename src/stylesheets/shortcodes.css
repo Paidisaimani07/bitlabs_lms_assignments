@@ -8108,6 +8108,18 @@
   /* background: #F5F5F5; Light grey background */
   padding: 0px; /* Padding for better appearance */
   margin-bottom: 5px; /* Gapbetween input fields */
+  /* width:50% */
+
+  /* Add any other custom styles you need */
+}
+.custom-typeahead1 {
+  background-color: #f0f0f0; /* Gray background color */
+  border-radius: 8px; /* Rounded corners */
+  border: 1px solid #E5E5E5; /* Light grey border */
+  /* background: #F5F5F5; Light grey background */
+   /* Padding for better appearance */
+  margin-bottom: 5px;
+  /* width: 49%; Gapbetween input fields */
 
   /* Add any other custom styles you need */
 }

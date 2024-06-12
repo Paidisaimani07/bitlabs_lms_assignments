@@ -143,7 +143,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           />
           {errors.alternatePhoneNumber && <div className="error-message">{errors.alternatePhoneNumber}</div>}
         </div>
-     <div className='savebut'>
+     <div >
         <button
         type="button"
         onClick={handleSubmit}
