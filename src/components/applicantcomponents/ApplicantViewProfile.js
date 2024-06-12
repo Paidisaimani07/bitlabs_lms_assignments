@@ -170,7 +170,7 @@ const ApplicantViewProfile = () => {
               isOpen={editModalIsOpen}
               onRequestClose={closeEditModal}
               contentLabel="Edit Details"
-              className="modal-content"
+              className="modal-content2"
               overlayClassName="modal-overlay"
             >
               <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
@@ -179,16 +179,17 @@ const ApplicantViewProfile = () => {
               <BasicDetailsEditPopup applicantDetails={profileData.basicDetails} />
             </Modal>
             <div className="content">
-              <h3 style={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
-                {profileData.basicDetails.firstName || 'null'} {profileData.basicDetails.lastName || 'null'}
+            <h3 style={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
+                {(profileData.basicDetails && profileData.basicDetails.firstName) || ''}{' '}
+                {(profileData.basicDetails && profileData.basicDetails.lastName) || ''}
               </h3>
               <div className="details1">
                 <img src={Mail} alt="Email" className="icon1" />
-                {profileData.basicDetails.email || 'null'}
+                {profileData.basicDetails && profileData.basicDetails.email || ''}
               </div>
               <div className="details1">
                 <img src={Phone} alt="Phone" className="icon1" />
-                {profileData.basicDetails.alternatePhoneNumber || 'null'}
+                {profileData.basicDetails && profileData.basicDetails.alternatePhoneNumber || ''}
               </div>
             </div>
           </div>

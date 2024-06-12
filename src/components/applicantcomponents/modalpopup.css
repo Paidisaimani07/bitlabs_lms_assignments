@@ -12,15 +12,25 @@
     justify-content: center !important;
 }
 
-.modal-content {
+.modal-content2 {
     border-radius: 16px !important;
     z-index: 1001 !important;
     position: relative !important;
     background: white !important;
     padding: 20px !important;
     max-width: 50% !important;
-    max-height: 60%!important;
    
+   
+    overflow-y: auto !important;
+}
+.modal-content {
+    border-radius: 16px !important;
+    z-index: 1001 !important;
+    position: relative !important;
+    background: white !important;
+    padding: 20px !important;
+    width: 70% !important;
+    /* height: 75% !important; */
     overflow-y: auto !important;
 }
 .modal-content1 {
@@ -33,26 +43,35 @@
 }
 
 @media(min-width: 320px) and (max-width: 450px) {
-    .modal-content {
+    .modal-content2 {
         max-width: 95% !important;
         top:30px /* Adjust for smaller screens */
     }
     .modal-content1 {
         max-width: 95% !important; /* Adjust for smaller screens */
     }
+    .modal-content {
+        max-width: 95% !important;
+        top:30px /* Adjust for smaller screens */
+    }
 }
 
 @media (min-width: 451px) and (max-width: 1023px) {
-    .modal-content {
+    .modal-content2 {
         max-width: 90% !important; /* Adjust for tablets */
     }
     .modal-content1 {
         max-width: 85% !important; /* Adjust for smaller screens */
     }
+    .modal-content {
+        max-width: 90% !important;
+        top:30px /* Adjust for smaller screens */
+    }
 }
 
 @media (min-width: 1024px) {
-    .modal-content {
+    .modal-content2 {
         max-width: 50% !important; /* Adjust for larger screens (laptops) */
     }
+   
 }

@@ -8041,7 +8041,7 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: flex-end;
-    margin-top: 20px;
+    margin-top: 35%;
 
   }
   .input-wrapper1 {
@@ -8120,7 +8120,7 @@
 }
 
 .input-col-prof{
-  flex: 1 1 45%; /* Adjust the column width as needed */
+  flex: 1 1 50%; /* Adjust the column width as needed */
 }
 
 
