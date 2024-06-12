@@ -3586,3 +3586,12 @@ display: block;
     margin: 0 0px 20px 10px !important;
   }
 }
+
+.resumecard-heading .heading1 {
+color: #000;
+font-family: "Plus Jakarta Sans";
+font-size: 20px !important;
+font-style: normal !important;
+font-weight: 600 !important;
+line-height: 25px !important; /* 125% */
+}
