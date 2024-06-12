@@ -28,16 +28,22 @@
     padding-top: 40px;
   }
   
-  /* Media query for small screens (mobile devices) */
-  @media (max-width: 767px) {
+  
+   @media (max-width: 767px) {
     .card-container {
-      height: 120vh; /* Increase height for mobile screens */
+      display: flex;
+    justify-content: center;
+    align-items: center;
+      height: 120vh; 
+      background-color: #f3f4f6; 
+    padding-top: 40px;
     }
   }
   
 
 
 .card1 {
+  position: relative; /* Ensures the button container is positioned relative to the card */
     padding: 60px;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
@@ -164,7 +170,7 @@
     margin-bottom: 20px;
   }
   
-  .button-container {
+ .form-container .button-container {
     position: absolute;
     bottom: 0;
     right: 0;
