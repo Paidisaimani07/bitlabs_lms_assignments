@@ -185,7 +185,7 @@
 .form-button {
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     width:180px;
     height: 40px;
     background-color: #F97316;
@@ -223,6 +223,44 @@
     background-color: #cbd5e1;
     cursor: not-allowed;
   }
+
+  .form-button1 {
+    padding: 10px 20px;
+    border: 1px solid #F97316;
+    border-radius: 8px;
+    width:180px;
+    height: 40px;
+    background-color: #fff;
+    color: #F97316;
+    cursor: pointer;
+    font-size: 16px;
+    text-transform: none; /* This will show the text as it is */
+    margin-bottom: 20px;
+}
+  
+ /* Media query for small screens */
+@media (max-width: 600px) {
+  .form-button1 {
+      width: 100%; /* Full width on small screens */
+      max-width: 150px; /* Decrease the max-width on small screens */
+  }
+}
+
+/* Media query for very small screens */
+@media (max-width: 400px) {
+  .form-button1 {
+      width: 100%; /* Full width on very small screens */
+      max-width: 120px; /* Further decrease the max-width */
+  }
+}
+  /* Media query for tablets */
+@media (min-width: 600px) and (max-width: 900px) {
+  .form-button1 {
+      width: 100%; /* Full width on tablets */
+      max-width: 160px; /* Adjust the max-width for tablets */
+      margin-right: 25px;
+  }
+}
   
   
   /* Add additional CSS styles for responsiveness as needed */

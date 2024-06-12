@@ -634,7 +634,7 @@ const validateForm1 = () => {
           </div>
           <div className="button-container">
             {currentStage > 1  && (
-              <button type="button" onClick={handleBack} className="form-button">Back</button>
+              <button type="button" onClick={handleBack} className="form-button1">Back</button>
             )}
             {currentStage < 3 && (
               <button type="button" onClick={handleNext} className="form-button" >Next</button>
