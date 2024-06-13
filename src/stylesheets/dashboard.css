@@ -412,7 +412,7 @@ padding-bottom: 16px;
         border-radius: 8px;
         text-align: center;
         margin-top: 40px !important;
-        width:100% !important;
+        width:100% !important
         
       }
       
@@ -4983,8 +4983,8 @@ flex-shrink: 0;
 
   .dash-count .card .icon{
     justify-content: flex-start;
-    margin-left: auto;
-    margin-right: auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
   }
   .dash-count .card .content{
     margin-left: 20px;
@@ -4997,7 +4997,7 @@ flex-shrink: 0;
 .resumecard > div > div { display: flex; flex-flow: column nowrap; flex: 1 1 1;}
 .resumecard > div > div > div { flex: 1 1 0; }
 
-  @media (max-width:900px) {
+  @media (max-width:767px) {
     .dash-count .card .pl-16{
         padding-left:0 !important;
     }
@@ -5011,9 +5011,15 @@ flex-shrink: 0;
       }
       .resumecard .resumecard-heading{
         order: 2;
+        padding-bottom : 0px !important;
       }
       .resumecard .resumecard-icon{
         order: 1 !important;
+        margin-left: auto;
+        margin-right:auto;
+      }
+      .resumecard-heading .heading1{
+        padding-bottom : 0px;
       }
       .resumecard .resumecard-button{
         order: 3;
@@ -5022,27 +5028,27 @@ flex-shrink: 0;
   }
   @media (min-width:320px) and (max-width:374px){
     .dash-count .card .content{
-        margin-left: 20px;
+        margin-left: 25px !important;
       }
     }
     @media (min-width:375px) and (max-width:767px){
         .dash-count .card .content{
-            margin-left: 0px;
+            margin-left: 20px !important;
           }
         }
-    @media (min-width:768px){
+    @media (min-width:768px) and (max-width:900px){
         .dash-count .card .content{
-            margin-left: 20px;
+            margin-left: 20px !important;
           }
         }
-        @media (min-width:901px){
-            .dash-count .card .content{
-                margin-left: 0px;
-              }
+        @media (min-width: 901px) and (max-width: 1365px) {
+            .dash-count .card .content {
+                margin-left: 30px !important;
             }
-        @media (min-width:1400px){
+        }
+        @media (min-width:1366px){
             .dash-count .card .content{
-                margin-left: 30px;
+                margin-left: 30px !important;
               }
             }
   @media (min-width:901px){
@@ -5051,7 +5057,7 @@ flex-shrink: 0;
       }
       .resumecard .resumecard-heading{
         order: 1;
-        flex: 80%;
+        flex: 80%;        
       }
       .resumecard .title-count{
         order: 2;
@@ -5059,11 +5065,16 @@ flex-shrink: 0;
       .resumecard .resumecard-icon{
         order: 3;
         flex:20%;
-        margin-top: 0;
+        margin-top: 0px;
+        width: 100% !important;
+        height : auto !important;
       }
       .resumecard .resumecard-button{
         order: 4;
       } 
+      .resumecard-heading .heading1{
+        padding-bottom : 10px;
+      }
   }
 
   .resumecard {
@@ -5091,6 +5102,7 @@ flex-shrink: 0;
     .resumecard-icon {
       margin-top: 0;
       margin-left: 20px;
+      /* text-align:center; */
     }
   }
   
@@ -5098,4 +5110,17 @@ flex-shrink: 0;
 .resumecard-icon .img{
     
     box-shadow: 1px 4px 4px 0px rgba(0, 0, 0, 0.15);
+    }
+
+/* .button-text{
+    color: #FFF;
+    font-family: "Plus Jakarta Sans";
+    font-size: 15px !important;
+    font-style: normal;
+    font-weight: 600 !important;
+    line-height: 25px !important;
+    } */
+
+    .card.resume-padding{
+        padding: 0px 22px 12px 22px !important;
     }

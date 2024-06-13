@@ -3562,6 +3562,11 @@ margin-left: 0px;
 display: block;
 }
 
+@media (min-width: 1021px) {
+  .userName-title {
+      margin-left: 5px;
+  }
+}
 /* @media screen {
   .dash-count .col-sm-12 .card,
   .dash-count .col-md-12 .card {

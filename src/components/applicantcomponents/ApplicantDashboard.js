@@ -242,7 +242,6 @@ const ApplicantDashboard = () => {
                               </svg>
                             </span>
                           </div>
-
                         </div>
                       </div>
                       <div className="col-9 col-xxl-11 col-xl-11 col-lg-9 col-md-11 pl-16">
@@ -261,7 +260,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex">
-                  <div className="card ">
+                  <div className="card resume-padding">
                     {/*New palet in application dashboard*/}
                     <div onClick={Buildresume} className="resumecard">
                       <div className="resumecard-content">
@@ -325,13 +324,11 @@ const ApplicantDashboard = () => {
                           <img
                             src={Certificate}
                             alt="Certificate"
-                            style={{ width: "206.521px", height: "height: 145.941px;", marginTop: "10px" }}
+                            style={{ width: "275px", height: "height: 192px;", marginTop: "10px" }}
                           />
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
               </div>
