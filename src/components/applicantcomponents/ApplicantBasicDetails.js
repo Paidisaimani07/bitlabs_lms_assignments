@@ -204,12 +204,18 @@ const validateForm1 = () => {
     }
   };
 
-  const handleResumeSelect = (e) => {
-    const file = e.target.files[0];
-    setResumeFile(file);
-    setSelectedFile(file);
+
+  const handleResumeSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setResumeFile(file);
+      setSelectedFile(file);
+    }
   };
 
+  const triggerFileInputClick = () => {
+    document.getElementById('tf-upload-img').click();
+  };
   const handleResumeUpload = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -234,7 +240,7 @@ const validateForm1 = () => {
   };
 
   const handleResumeBuilder = async () => {
-    const apiUrl1 = 'https://rb.chalowithcharan.com:5173/api/auth/login';
+    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
     if (requestData) {
       const requestOptions = {
         method: 'POST',
@@ -251,7 +257,7 @@ const validateForm1 = () => {
           return response.json();
         })
         .then(data => {
-          const loginUrl = `https://rb.chalowithcharan.com:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
           window.open(loginUrl, '_blank');
         })
@@ -321,9 +327,29 @@ const validateForm1 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isFormValid = validateForm();
-    if (!isFormValid) return;
+    // const isFormValid = validateForm();
+    // if (!isFormValid) return;
    
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      const response = await axios.post(
+        `${apiUrl}/resume/upload/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      window.alert(response.data);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      window.alert('Error uploading resume. Please try again.');
+    }
     resetForm();
     navigate('/applicant-find-jobs');
   };
@@ -509,40 +535,58 @@ const validateForm1 = () => {
         return (
           <div className="col-lg-12 col-md-12">
             <div className="post-new profile-setting bg-white">
-              <div className="wrap-img flex2" style={{ position: 'relative' }}>
-                <div id="upload-profile" style={{ display: 'flex', alignItems: 'center' }}>
-                  <input
-                    className="up-file"
-                    id="tf-upload-img"
-                    type="file"
-                    name="profile"
-                    required
-                    onChange={handleResumeSelect}
-                    style={{ marginRight: '5px' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleResumeUpload}
-                    className="btn-3"
-                    style={{
-                      backgroundColor: '#F97316',
-                      color: 'white',
-                      padding: '10px 15px',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      marginLeft: '5px',
-                      marginTop: '5px',
-                    }}
-                  >
-                    Upload Resume
-                  </button>
-                  {selectedFile && <p>Selected file: {selectedFile.name}</p>}
-                </div>
+              <div className="wrap-img flex2" >
+                <p><strong>Resume</strong></p>
+                <div id="upload-profile">
+      <input
+        className="up-file"
+        id="tf-upload-img"
+        type="file"
+        name="profile"
+        required
+        onChange={handleResumeSelect}
+        style={{ display: 'none' }}
+      />
+      <input
+        id="resume-text-input"
+        type="text"
+        placeholder="Upload your resume"
+        value={selectedFile ? selectedFile.name : ''}
+        readOnly
+        style={{
+          width: '418.25px',
+          height: '47px',
+          flexShrink: 0,
+          borderRadius: '8px',
+          border: '1px solid #E5E5E5',
+          background: '#F5F5F5',
+          padding: '10px',
+          boxSizing: 'border-box', // Ensures padding is included in the width and height
+        }}
+      />
+      <button
+        type="button"
+        onClick={triggerFileInputClick}
+        className="btn-3"
+        style={{
+          backgroundColor: '#F97316',
+          color: 'white',
+          padding: '10px 15px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginRight: '5px',
+        }}
+      >
+        Browse
+      </button>
+      
+    </div>
+
               </div>
-              <br />
+              
               <p style={{ marginRight: '5px' }}>Or</p>
-              <br />
+              
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"

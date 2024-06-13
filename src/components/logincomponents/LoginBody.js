@@ -302,7 +302,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        window.alert('Mobile number already existed as candidate');
       }
    } catch (error) {
-     console.error('Error sending OTP:', error);
+     console.error('Error sending OTP:', error.response.data);
      if (error.response && error.response.status === 400) {
       //  window.alert('Email is already registered.');
       // Server responded with a 400 status code
