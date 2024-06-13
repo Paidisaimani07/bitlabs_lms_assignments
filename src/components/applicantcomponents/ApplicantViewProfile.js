@@ -415,9 +415,9 @@ const ApplicantViewProfile = () => {
     </div>
      <div className='icon-prof'>
       <Link>
-     <img src={pencil1} alt="pencil1"  onClick={handleEdit1Click} /></Link>
+     <img src={pencil1} alt="pencil1"  onClick={''} /></Link>
      </div>
-    <Modal
+    {/* <Modal
               isOpen={edit1ModalIsOpen}
               onRequestClose={closeEdit1Modal}
               contentLabel="Edit Details"
@@ -428,7 +428,7 @@ const ApplicantViewProfile = () => {
                 <FontAwesomeIcon icon={faTimes} onClick={closeEdit1Modal} style={{ cursor: 'pointer', color: '#333' }} />
               </div>
               <ProfessionalDetailsPopup applicantDetails={profileData} />
-            </Modal>
+            </Modal> */}
             </div>
 
       </div>
