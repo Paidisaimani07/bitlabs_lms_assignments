@@ -290,7 +290,7 @@ const ApplicantViewProfile = () => {
                 <p style={{
                           color:'black',
                           fontWeight:'bold'
-                          }}> {profileData.preferredJobLocations}</p>
+                          }}> {profileData.preferredJobLocations.join(', ')}</p>
                 
               </div>
                     
