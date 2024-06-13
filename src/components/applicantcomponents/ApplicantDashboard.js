@@ -2,15 +2,14 @@ import React from "react";
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Resume from '../../images/user/avatar/Resume.png';
 import Certificate from '../../images/user/avatar/Certificate.svg';
 import { useLocation } from "react-router-dom";
 
-const ApplicantDashboard = () => 
-{
+const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
@@ -20,33 +19,33 @@ const ApplicantDashboard = () =>
   const navigate = useNavigate();
   const [profileid1, setprofileid] = useState();
   const userId = user.id;
-const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
 
-useEffect(() => {
-  const checkUserProfile = async () => {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      const profileId = profileIdResponse.data;
-      
-      // Navigate based on profile ID
-      if (profileId === 0) {
-        navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
-      } else {
-        setLoading(false); // No need to navigate, stay on this page
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+
+        // Navigate based on profile ID
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
+        } else {
+          setLoading(false); // No need to navigate, stay on this page
+        }
+      } catch (error) {
+        console.error('Error fetching profile ID:', error);
       }
-    } catch (error) {
-      console.error('Error fetching profile ID:', error);
-    }
-  };
+    };
 
-  checkUserProfile();
-}, [userId, navigate]);
+    checkUserProfile();
+  }, [userId, navigate]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
@@ -67,63 +66,63 @@ useEffect(() => {
     fetchData();
   }, []);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
-          .then((response) => {
-              setCountRecJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
+      .then((response) => {
+        setCountRecJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
-          .then((response) => {
-              setAppliedJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
+      .then((response) => {
+        setAppliedJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
-          .then((response) => {
-              setSavedJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
+      .then((response) => {
+        setSavedJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
 
   const handleRedirect = () => {
-    
+
     navigate("/applicant-find-jobs");
   };
 
   const handleRedirect1 = () => {
-    
+
     navigate("/applicant-applied-jobs");
   };
 
   const handleRedirect2 = () => {
-    
+
     navigate("/applicant-saved-jobs");
   };
-  
+
   const Buildresume = () => {
     navigate("/applicant-resume-builder");
   };
@@ -243,6 +242,7 @@ useEffect(() => {
                               </svg>
                             </span>
                           </div>
+
                         </div>
                       </div>
                       <div className="col-9 col-xxl-11 col-xl-11 col-lg-9 col-md-11 pl-16">
@@ -325,21 +325,22 @@ useEffect(() => {
                           <img
                             src={Certificate}
                             alt="Certificate"
-                            style={{ width: "275px", height: "height: 192px;", marginTop: "10px" }}
+                            style={{ width: "206.521px", height: "height: 145.941px;", marginTop: "10px" }}
                           />
                         </div>
                       </div>
                     </div>
+
+
                   </div>
                 </div>
-              </div>           
-      </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+      }
     </div>
-  </div>
-  
-    )
-}
-</div>
   );
 };
 export default ApplicantDashboard;
