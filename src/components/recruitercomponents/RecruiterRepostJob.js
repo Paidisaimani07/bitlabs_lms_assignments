@@ -144,7 +144,7 @@ const RecruiterRepostJob = ({selectedJobId}) => {
           if (response.status === 200) {
             console.log(response.body);
             //window.alert('Job Reposted successfully');
-            setSnackbar({ open: true, message: 'Job Reposted successfully', type: 'success' });
+            setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
             localStorage.setItem('jobs', JSON.stringify(''));
             //navigate('/recruiter-jobopenings');
             // You can perform additional actions after saving, such as redirecting to another page
