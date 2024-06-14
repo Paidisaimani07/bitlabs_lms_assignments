@@ -470,8 +470,8 @@ function ApplicantNavBar() {
           )}
     </div> */}
       </header>
-      {(isOpen &&
-        <div className="left-menu" >
+      {(
+        <div className={`left-menu ${isOpen ? 'open' : ''}`}>
           <div id="sidebar-menu">
             <ul className="downmenu list-unstyled" id="side-menu">
               {/* <li>
