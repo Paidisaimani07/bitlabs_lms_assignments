@@ -531,6 +531,7 @@ font-style: inherit;
 }
 
 .flat-dashboard-dyagram .box-notifications {
+    margin-top: -60px;
     width: 100%;
     padding: 25px 23px;
 }
@@ -4145,6 +4146,7 @@ input[type="radio"]:checked:after {
     }
 
     .flat-dashboard-dyagram .box-notifications {
+        margin-top: -60px;
         width: 100%;
         padding: 25px 15px;
     }
@@ -5194,3 +5196,4 @@ width: 24px;
     transition: transform 0.3s ease, opacity 0.3s ease;
     padding: 0 10px 0 0;
     margin-left:15px;
+  }
