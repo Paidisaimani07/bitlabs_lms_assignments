@@ -29,7 +29,7 @@
     position: relative !important;
     background: white !important;
     padding: 20px !important;
-    max-width: 50% !important;
+    /* max-width: 50% !important; */
    margin-bottom: 50px !important;
    
     overflow-y: auto !important;
@@ -126,6 +126,7 @@
   }
   .features-job-view1 {
     width: 80%;
+    margin:auto;
 }
   .edit-icon {
       top: 30px;
@@ -141,6 +142,7 @@
   }
   .features-job-view1 {
     width: 90%;
+    margin:auto;
 }
   .edit-icon {
       top: 25px;
@@ -156,6 +158,7 @@
   }
   .features-job-view1 {
     width: 90%;
+    margin:auto;
 }
   .edit-icon {
       top: 20px;
