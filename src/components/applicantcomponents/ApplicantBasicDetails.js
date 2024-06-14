@@ -13,6 +13,7 @@ import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
+import ModalComponent from './ModalComponent';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -22,6 +23,7 @@ const ApplicantBasicDetails = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
@@ -260,6 +262,7 @@ const validateForm1 = () => {
           const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
           window.open(loginUrl, '_blank');
+          setIsModalOpen(true);
         })
         .catch(error => {
           console.error('There was a problem with the fetch operation:', error);
@@ -562,6 +565,7 @@ const validateForm1 = () => {
           border: '1px solid #E5E5E5',
           background: '#F5F5F5',
           padding: '10px',
+          marginLeft: '20px',
           boxSizing: 'border-box', // Ensures padding is included in the width and height
         }}
       />
@@ -585,9 +589,9 @@ const validateForm1 = () => {
     </div>
 
               </div>
-              
+              <br></br>
               <p style={{ marginRight: '5px' }}>Or</p>
-              
+              <br></br>
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"
@@ -606,6 +610,13 @@ const validateForm1 = () => {
                   Build Your Resume
                 </button>
               </div>
+
+              
+              <ModalComponent
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          loginUrl={loginUrl}
+        />
             </div>
           </div>
         );
