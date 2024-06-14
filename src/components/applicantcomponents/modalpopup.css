@@ -91,6 +91,7 @@
 @media (min-width: 1920px) {
   .features-job-view {
       width: 60%;
+      
   }
   .features-job-view1 {
     width: 60%;
@@ -121,6 +122,7 @@
 @media (min-width: 992px) and (max-width: 1199px) {
   .features-job-view {
       width: 80%;
+      margin:auto;
   }
   .features-job-view1 {
     width: 80%;
@@ -135,6 +137,7 @@
 @media (min-width: 768px) and (max-width: 991px) {
   .features-job-view {
       width: 90%;
+      margin:auto;
   }
   .features-job-view1 {
     width: 90%;
@@ -149,6 +152,7 @@
 @media (min-width: 320px) and (max-width: 767px) {
   .features-job-view {
       width: 90%;
+      margin:auto;
   }
   .features-job-view1 {
     width: 90%;

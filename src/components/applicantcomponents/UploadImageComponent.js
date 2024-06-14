@@ -58,7 +58,7 @@ const UploadImageComponent = ({ id}) => {
       </div>
     
       <input
-        className="up-file"
+        className="up-file-edit"
         id="tf-upload-img"
         type="file"
         name="profile"
