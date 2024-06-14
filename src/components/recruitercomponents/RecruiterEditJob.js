@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from 'react-router-dom';
+import Snackbar from '../common/Snackbar';
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
@@ -15,7 +16,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
   const [skillsRequired, setSkillsRequired] = useState([
     { skillName: "", minimumExperience: "" },
   ]);
-
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const skillsOptions = [
     'Java',
     'C',
@@ -202,9 +203,10 @@ const RecruiterEditJob = ({selectedJobId}) => {
      
           if (response.status === 200) {
             console.log(response.body);
-            window.alert('Job updated successfully');
+            //window.alert('Job updated successfully');
+            setSnackbar({ open: true, message: 'Job updated successfully', type: 'success' });
             localStorage.setItem('jobs', JSON.stringify(''));
-            navigate('/recruiter-jobopenings');
+            //navigate('/recruiter-jobopenings');
             // You can perform additional actions after saving, such as redirecting to another page
           } else {
             console.error('An error occurred:', response.status, response.body);
@@ -479,7 +481,10 @@ errors.skillsRequired = skillsErrors;
           return [];
       }
     };
-    
+    const handleCloseSnackbar = () => {
+      setSnackbar({ open: false, message: '', type: '' });
+      navigate('/recruiter-jobopenings');
+    };
 
     return (
         <div>
@@ -489,8 +494,8 @@ errors.skillsRequired = skillsErrors;
           <div className="row">
             <div className="col-lg-12 col-md-12 ">
               <div className="title-dashboard">
-              <BackButton />
-                <div className="title-dash flex2">Edit Job</div>
+              
+                <div className="title-dash flex2"><BackButton />Edit Job</div>
               </div>
             </div>
           </div>
@@ -811,6 +816,15 @@ errors.skillsRequired = skillsErrors;
         </form>
       </section>
     </div>
+    {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
       )
 }
