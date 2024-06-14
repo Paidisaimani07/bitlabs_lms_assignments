@@ -12,6 +12,8 @@ import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
+import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
+import ModalComponent from './ModalComponent';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -20,18 +22,21 @@ const ApplicantBasicDetails = () => {
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
-
+  const [shouldBeHidden, setShouldBeHidden] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
     email: user.email || "",
     mobilenumber: "",
+   
   });
 
   const basicDetails = {
     firstName: applicant.firstName,
     lastName: applicant.lastName,
     alternatePhoneNumber: applicant.mobilenumber,
+    email: applicant.email,
   };
   const applicantProfileDTO = {
     basicDetails: basicDetails,
@@ -57,6 +62,8 @@ const ApplicantBasicDetails = () => {
         ...prevErrors,
         [name]: error,
     }));
+
+    return !error; // Returns true if no error, false if there's an error
 };
 
 const handleInputChange = (e) => {
@@ -65,6 +72,7 @@ const handleInputChange = (e) => {
       ...prevApplicant,
       [name]: value,
   }));
+
   //setIsNextDisabled(!validateForm1());
 };
 
@@ -76,6 +84,10 @@ const handleBlur = (e) => {
   
 };
 
+const handleSkillsChange = (selectedSkills) => {
+  const transformedSkills = selectedSkills.map(skill => ({ skillName: skill, experience: "" }));
+  setSkillsRequired(transformedSkills);
+};
 
 
   const [experience, setExperience] = useState('');
@@ -98,7 +110,9 @@ const handleBlur = (e) => {
   const steps = ['Personal Information', 'Professional Details', 'Upload Resume'];
 
 
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
+ // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
+
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
   const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada'];
@@ -138,14 +152,33 @@ const validateForm1 = () => {
   if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
 
   setErrors(newErrors);
-
   return validFirstName && validLastName && validMobileNumber && 
          applicant.firstName && applicant.lastName && applicant.mobilenumber;
 };
 
 
   const makeApiCall1 = async () => {
+    if (!validateForm1()) {
+      console.log(" returned in validation");
+      return false;
+    }
+   
+  };
 
+ 
+  
+  const makeApiCall2 = async () => {
+    // Implement your API call logic for stage 2
+
+    const applicantProfileDTO={
+      basicDetails: basicDetails,
+      skillsRequired: skillsRequired,
+      experience,
+      qualification,
+      specialization,
+      preferredJobLocations,
+    }
+  
     if (!validateForm1()) {
       console.log(" returned in validation");
       return false;
@@ -166,24 +199,25 @@ const validateForm1 = () => {
       console.log(" returned after api call");
 
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
-
+      setRequestData(true);
       window.alert('Profile saved successfully!');
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
   };
-  
-  const makeApiCall2 = async () => {
-    // Implement your API call logic for stage 2
-    // ...
+
+
+  const handleResumeSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setResumeFile(file);
+      setSelectedFile(file);
+    }
   };
 
-  const handleResumeSelect = (e) => {
-    const file = e.target.files[0];
-    setResumeFile(file);
-    setSelectedFile(file);
+  const triggerFileInputClick = () => {
+    document.getElementById('tf-upload-img').click();
   };
-
   const handleResumeUpload = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -208,7 +242,7 @@ const validateForm1 = () => {
   };
 
   const handleResumeBuilder = async () => {
-    const apiUrl1 = 'https://rb.chalowithcharan.com:5173/api/auth/login';
+    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
     if (requestData) {
       const requestOptions = {
         method: 'POST',
@@ -225,9 +259,10 @@ const validateForm1 = () => {
           return response.json();
         })
         .then(data => {
-          const loginUrl = `https://rb.chalowithcharan.com:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
-          window.open(loginUrl, '_blank');
+          // window.open(loginUrl, '_blank');
+          setIsModalOpen(true);
         })
         .catch(error => {
           console.error('There was a problem with the fetch operation:', error);
@@ -235,6 +270,21 @@ const validateForm1 = () => {
     }
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+    
+    if (!qualification) newErrors.qualification = 'Qualification is required';
+    if (!specialization) newErrors.specialization = 'Specialization is required';
+    if (skillsRequired.length === 0) newErrors.skillsRequired = 'Skills are required';
+    if (!experience) newErrors.experience = 'Experience is required';
+    if (preferredJobLocations.length === 0) newErrors.preferredJobLocations = 'Preferred Job Locations are required';
+    
+    setErrors(newErrors);
+  
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  
   const handleNext = async () => {
   //   if (!validateForm1()) {
   //     return;
@@ -244,14 +294,21 @@ const validateForm1 = () => {
       // Make the appropriate API call based on the current stage
       switch (currentStage) {
         case 1:
-          const response1 = await makeApiCall1(); // Replace with your actual API call and handle response
+          if (!validateForm1()) {
+            console.log(" returned in validation");
+            return false;
+          }
           
-
           console.log('API call 1 response:');
           break;
         case 2:
+
+        if (validateFields()) {
           const response2 = await makeApiCall2(); // Replace with your actual API call and handle response
           console.log('API call 2 response:');
+        } else {
+          return false;
+        }
           break;
         default:
           console.warn('Unexpected stage:');
@@ -273,12 +330,31 @@ const validateForm1 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isFormValid = validateForm();
-    if (!isFormValid) return;
-    // Handle final form submission logic here
-    // Reset form fields
+    // const isFormValid = validateForm();
+    // if (!isFormValid) return;
+   
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      const response = await axios.post(
+        `${apiUrl}/resume/upload/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      window.alert(response.data);
+      
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      window.alert('Error uploading resume. Please try again.');
+    }
     resetForm();
-    navigate('/applicant-basic-details1');
+    navigate('/applicant-find-jobs');
   };
 
   const validateForm = () => {
@@ -317,11 +393,27 @@ const validateForm1 = () => {
   };
 
   const specializationsByQualification = {
-    'B.Tech': ['CSE', 'ECE', 'EEE', 'MECH', 'CE', 'Aerospace Engineering', 'IT', 'Chemical Engineering', 'Biotechnology Engineering'],
-    'MCA': ['Software Engineering', 'Data Science', 'AI', 'ML', 'Information Security', 'Cloud Computing', 'Mobile Application Development', 'Web Development', 'Database Management', 'Network Administration', 'Cyber Security', 'IT Project Management'],
-    'Degree': ['Physics', 'Mathematics', 'Statistics', 'Computer Science', 'Electronics', 'Chemistry', 'Bachelor of Commerce'],
-    'Intermediate': ['MPC', 'BiPC', 'CEC', 'HEC'],
-    'Diploma': ['Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics and Communication Engineering', 'Computer Engineering', 'Automobile Engineering', 'Chemical Engineering', 'Information Technology', 'Instrumentation Engineering', 'Mining Engineering', 'Metallurgical Engineering', 'Agricultural Engineering', 'Textile Technology', 'Interior Designing', 'Fashion Designing', 'Hotel Management and Catering Technology', 'Pharmacy', 'Medical Laboratory Technology', 'Radiology and Imaging Technology']
+  'B.Tech': ['Computer Science and Engineering (CSE)',
+                'Electronics and Communication Engineering (ECE)',
+                'Electrical and Electronics Engineering (EEE)',
+                'Mechanical Engineering (ME)',
+                'Civil Engineering (CE)',
+                'Aerospace Engineering',
+                'Information Technology(IT)',
+                 'Chemical Engineering',
+                 'Biotechnology Engineering'],
+    'MCA': ['Software Engineering', 'Data Science','Artificial Intelligence','Machine Learning','Information Security',
+             'Cloud Computing','Mobile Application Development','Web Development','Database Management','Network Administration',
+            'Cyber Security','IT Project Management'],
+    'Degree': ['Bachelor of Science (B.Sc) Physics','Bachelor of Science (B.Sc) Mathematics','Bachelor of Science (B.Sc) Statistics',
+               'Bachelor of Science (B.Sc) Computer Science','Bachelor of Science (B.Sc) Electronics','Bachelor of Science (B.Sc) Chemistry',
+               'Bachelor of Commerce (B.Com)'],
+    'Intermediate': ['MPC','BiPC','CEC','HEC'],
+    'Diploma': ['Mechanical Engineering','Civil Engineering','Electrical Engineering','Electronics and Communication Engineering',
+                'Computer Engineering','Automobile Engineering','Chemical Engineering','Information Technology','Instrumentation Engineering',
+                 'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
+                  'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
+                 'Radiology and Imaging Technology'],  
   };
 
   const renderStageFields = () => {
@@ -362,6 +454,7 @@ const validateForm1 = () => {
           value={applicant.email}
           className="input-form"
           readOnly
+          style={{ color: '#ccc' }} 
         />
         {errors.email && <div className="error-message">{errors.email}</div>}
       </div>
@@ -411,17 +504,36 @@ const validateForm1 = () => {
             </div>
   
             <div className="input-wrapper">
-              <Typeahead
-                id="skillsRequired"
-                multiple
-                options={skillsOptions}
-                placeholder="*Skills Required"
-                onChange={setSkillsRequired}
-                selected={skillsRequired}
-                className="input-form typeahead"
-              />
-              {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
-            </div>
+  <Typeahead
+    id="skillsRequired"
+    multiple
+    options={skillsOptions}
+    placeholder="*Skills Required"
+    onChange={handleSkillsChange}
+    selected={skillsRequired.map(skill => skill.skillName)}
+    className="input-form typeahead"
+  />
+  {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
+</div>
+
+
+            <div className="input-wrapper">
+      <Typeahead
+        id="experience"
+        options={yearsOptions}
+        placeholder="*Experience"
+        onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
+        selected={yearsOptions.filter(option => option.label === experience)}
+        className="input-form typeahead"
+        single
+      />
+      {!experience && errors.experience && (
+        <div className="error-message">{errors.experience}</div>
+      )}
+    </div>
+ 
+ 
+              
             
             <div className="input-wrapper">
               <Typeahead
@@ -436,54 +548,75 @@ const validateForm1 = () => {
               {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
             </div>
   
-           
+            <div className="input-wrapper" ></div>
           </div>
         );
       case 3:
         return (
           <div className="col-lg-12 col-md-12">
             <div className="post-new profile-setting bg-white">
-              <div className="wrap-img flex2" style={{ position: 'relative' }}>
-                <div id="upload-profile" style={{ display: 'flex', alignItems: 'center' }}>
-                  <input
-                    className="up-file"
-                    id="tf-upload-img"
-                    type="file"
-                    name="profile"
-                    required
-                    onChange={handleResumeSelect}
-                    style={{ marginRight: '5px' }}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleResumeUpload}
-                    className="btn-3"
-                    style={{
-                      backgroundColor: '#F97316',
-                      color: 'white',
-                      padding: '10px 15px',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      marginLeft: '5px',
-                      marginTop: '5px',
-                    }}
-                  >
-                    Upload Resume
-                  </button>
-                  {selectedFile && <p>Selected file: {selectedFile.name}</p>}
-                </div>
+              <div className="wrap-img flex2" >
+                <p><strong>Resume</strong></p>
+                <div id="upload-profile">
+      <input
+        className="up-file"
+        id="tf-upload-img"
+        type="file"
+        name="profile"
+        required
+        onChange={handleResumeSelect}
+        style={{ display: 'none' }}
+      />
+       <input
+      id="resume-text-input"
+      type="text"
+      placeholder="Upload your resume"
+      value={selectedFile ? selectedFile.name : ''}
+      readOnly
+      style={{
+        width: '418.25px',
+        height: '47px',
+        flexShrink: 0,
+        borderRadius: '8px',
+        border: '1px solid #E5E5E5',
+        background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
+        backgroundSize: '16px 16px',
+        paddingLeft: '40px',
+        padding: '10px',
+        marginRight: '20px',
+        boxSizing: 'border-box',
+      }}
+    />
+      <button
+        type="button"
+        onClick={triggerFileInputClick}
+        className="btn-3"
+        style={{
+          backgroundColor: '#7E7E7E',
+          color: 'white',
+          padding: '10px 15px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          marginRight: '5px',
+        }}
+      >
+        Browse
+      </button>
+      
+    </div>
+
               </div>
-              <br />
-              <p style={{ marginRight: '5px' }}>Or</p>
-              <br />
+              <br></br>
+              <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
+              <br></br>
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"
                   onClick={handleResumeBuilder}
                   className="btn-3"
                   style={{
-                    backgroundColor: '#F97316',
+                    backgroundColor: '#7E7E7E',
                     color: 'white',
                     padding: '10px 15px',
                     border: 'none',
@@ -495,6 +628,13 @@ const validateForm1 = () => {
                   Build Your Resume
                 </button>
               </div>
+
+              
+              <ModalComponent
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          loginUrl={loginUrl}
+        />
             </div>
           </div>
         );
@@ -553,7 +693,7 @@ const validateForm1 = () => {
 
     
     <div className="card-container">
-    <div className="card">
+    <div className="card1">
       <div className="header">
         <p className="form-title">Complete Your Profile</p>
         <p>Fill the form fields to go to the next step</p>
@@ -567,8 +707,8 @@ const validateForm1 = () => {
             {renderStageFields()}
           </div>
           <div className="button-container">
-            {currentStage > 1 && (
-              <button type="button" onClick={handleBack} className="form-button">Back</button>
+            {currentStage > 1  && (
+              <button type="button" onClick={handleBack} className="form-button1">Back</button>
             )}
             {currentStage < 3 && (
               <button type="button" onClick={handleNext} className="form-button" >Next</button>
