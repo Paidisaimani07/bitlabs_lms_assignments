@@ -5074,7 +5074,8 @@ input[type="radio"]:checked:after {
 }
 
 .color-icon-3 {
-    background: rgba(255, 179, 33, 0.10);
+     background: rgba(255, 179, 33, 0.10);
+    /* background: rgba(255, 179, 33, 0.10); */
 }
 
 .active .dash-icon,
@@ -5289,3 +5290,20 @@ font-weight: 600;
 line-height: 25px; /* 166.667% */
     }
 }
+
+@media (min-width: 1302px) and (max-width: 1560px) {
+    .userName-title {
+      margin-left: 13px;
+    }
+  }
+
+
+  @media (min-width: 1021px) and (max-width: 1301px) {
+    .userName-title {
+      margin-left: 5px;
+    }
+  }
+  @media (min-width:1400px) and (max-width:1540px){
+    .col-xxl-9{width: 83.33333333% !important;}
+    .dash-count .col-xxl-3:first-child{width: 33.33333333% !important;}
+  }

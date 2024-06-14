@@ -262,7 +262,8 @@ const ApplicantDashboard = () => {
                           <div className="resumecard-button">
                             <Link
                               to="/applicant-resume-builder"
-                              className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                              // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                              className={'button-link1'}
                               style={linkStyle}
                               onMouseEnter={() => setIsHovered(true)}
                               onMouseLeave={() => setIsHovered(false)}
@@ -275,7 +276,7 @@ const ApplicantDashboard = () => {
                           <img
                             src={Resume}
                             alt="Resume"
-                            style={{ width: "190px", height: "180px", marginTop: "10px" }}
+                            style={{ width: "221px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
                           />
                         </div>
                       </div>
@@ -298,8 +299,8 @@ const ApplicantDashboard = () => {
                           </div>
                           <div className="resumecard-button">
                             <Link
-                              to="/applicant-resume-builder"
-                              className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                              to="https://www.bitlabs.in/"
+                              className={`button-link1`}
                               style={linkStyle}
                               onMouseEnter={() => setIsHovered(true)}
                               onMouseLeave={() => setIsHovered(false)}
@@ -312,7 +313,7 @@ const ApplicantDashboard = () => {
                           <img
                             src={Certificate}
                             alt="Certificate"
-                            style={{ width: "206.521px", height: "height: 145.941px;", marginTop: "10px" }}
+                            style={{ width: "273px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
                           />
                         </div>
                       </div>
