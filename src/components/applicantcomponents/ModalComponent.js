@@ -22,7 +22,7 @@ const ModalComponent = ({ isOpen, onRequestClose, loginUrl }) => {
         },
         content: {
           width: '1366px', // Set the width to typical laptop screen width
-          height: '768px', // Set the height to typical laptop screen height
+          height: '900px', // Set the height to typical laptop screen height
           maxWidth: '100%', // Ensure the modal doesn't exceed the screen width
           maxHeight: '100%', // Ensure the modal doesn't exceed the screen height
           top: '50%',

@@ -393,11 +393,27 @@ const validateForm1 = () => {
   };
 
   const specializationsByQualification = {
-    'B.Tech': ['CSE', 'ECE', 'EEE', 'MECH', 'CE', 'Aerospace Engineering', 'IT', 'Chemical Engineering', 'Biotechnology Engineering'],
-    'MCA': ['Software Engineering', 'Data Science', 'AI', 'ML', 'Information Security', 'Cloud Computing', 'Mobile Application Development', 'Web Development', 'Database Management', 'Network Administration', 'Cyber Security', 'IT Project Management'],
-    'Degree': ['Physics', 'Mathematics', 'Statistics', 'Computer Science', 'Electronics', 'Chemistry', 'Bachelor of Commerce'],
-    'Intermediate': ['MPC', 'BiPC', 'CEC', 'HEC'],
-    'Diploma': ['Mechanical Engineering', 'Civil Engineering', 'Electrical Engineering', 'Electronics and Communication Engineering', 'Computer Engineering', 'Automobile Engineering', 'Chemical Engineering', 'Information Technology', 'Instrumentation Engineering', 'Mining Engineering', 'Metallurgical Engineering', 'Agricultural Engineering', 'Textile Technology', 'Interior Designing', 'Fashion Designing', 'Hotel Management and Catering Technology', 'Pharmacy', 'Medical Laboratory Technology', 'Radiology and Imaging Technology']
+  'B.Tech': ['Computer Science and Engineering (CSE)',
+                'Electronics and Communication Engineering (ECE)',
+                'Electrical and Electronics Engineering (EEE)',
+                'Mechanical Engineering (ME)',
+                'Civil Engineering (CE)',
+                'Aerospace Engineering',
+                'Information Technology(IT)',
+                 'Chemical Engineering',
+                 'Biotechnology Engineering'],
+    'MCA': ['Software Engineering', 'Data Science','Artificial Intelligence','Machine Learning','Information Security',
+             'Cloud Computing','Mobile Application Development','Web Development','Database Management','Network Administration',
+            'Cyber Security','IT Project Management'],
+    'Degree': ['Bachelor of Science (B.Sc) Physics','Bachelor of Science (B.Sc) Mathematics','Bachelor of Science (B.Sc) Statistics',
+               'Bachelor of Science (B.Sc) Computer Science','Bachelor of Science (B.Sc) Electronics','Bachelor of Science (B.Sc) Chemistry',
+               'Bachelor of Commerce (B.Com)'],
+    'Intermediate': ['MPC','BiPC','CEC','HEC'],
+    'Diploma': ['Mechanical Engineering','Civil Engineering','Electrical Engineering','Electronics and Communication Engineering',
+                'Computer Engineering','Automobile Engineering','Chemical Engineering','Information Technology','Instrumentation Engineering',
+                 'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
+                  'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
+                 'Radiology and Imaging Technology'],  
   };
 
   const renderStageFields = () => {
@@ -551,30 +567,32 @@ const validateForm1 = () => {
         onChange={handleResumeSelect}
         style={{ display: 'none' }}
       />
-      <input
-        id="resume-text-input"
-        type="text"
-        placeholder="Upload your resume"
-        value={selectedFile ? selectedFile.name : ''}
-        readOnly
-        style={{
-          width: '418.25px',
-          height: '47px',
-          flexShrink: 0,
-          borderRadius: '8px',
-          border: '1px solid #E5E5E5',
-          background: '#F5F5F5',
-          padding: '10px',
-          marginLeft: '20px',
-          boxSizing: 'border-box', // Ensures padding is included in the width and height
-        }}
-      />
+       <input
+      id="resume-text-input"
+      type="text"
+      placeholder="Upload your resume"
+      value={selectedFile ? selectedFile.name : ''}
+      readOnly
+      style={{
+        width: '418.25px',
+        height: '47px',
+        flexShrink: 0,
+        borderRadius: '8px',
+        border: '1px solid #E5E5E5',
+        background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
+        backgroundSize: '16px 16px',
+        paddingLeft: '40px',
+        padding: '10px',
+        marginRight: '20px',
+        boxSizing: 'border-box',
+      }}
+    />
       <button
         type="button"
         onClick={triggerFileInputClick}
         className="btn-3"
         style={{
-          backgroundColor: '#F97316',
+          backgroundColor: '#7E7E7E',
           color: 'white',
           padding: '10px 15px',
           border: 'none',
@@ -590,7 +608,7 @@ const validateForm1 = () => {
 
               </div>
               <br></br>
-              <p style={{ marginRight: '5px' }}>Or</p>
+              <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
@@ -598,7 +616,7 @@ const validateForm1 = () => {
                   onClick={handleResumeBuilder}
                   className="btn-3"
                   style={{
-                    backgroundColor: '#F97316',
+                    backgroundColor: '#7E7E7E',
                     color: 'white',
                     padding: '10px 15px',
                     border: 'none',
