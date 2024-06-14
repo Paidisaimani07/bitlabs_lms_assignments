@@ -618,7 +618,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
               {/* <p class="line-ip"><span>or signup with</span></p> */}
                 <form onSubmit={handleSubmit1}>
-                <div className="ip">
+                <div className="ip2">
                     {/* <label>Company Name<span>*</span></label> */}
                     <input
                       type="text"
@@ -632,7 +632,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerNameError && <div className="error-message">{employerNameError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Email Address<span>*</span></label> */}
                     <input
                       type="email"
@@ -647,7 +647,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerEmailError && <div className="error-message">{employerEmailError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Mobile Number<span>*</span></label> */}
                     <input
                       type="text"
@@ -662,9 +662,9 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                     {employerMobileNumberError && <div className="error-message">{employerMobileNumberError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Password<span>*</span></label> */}
-                    <div className="inputs-group auth-pass-inputgroup">
+                    <div className="inputs-group2 auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
@@ -676,7 +676,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         }}
                         disabled={allFieldsDisabled}
                       />
-                        <div className="password-toggle-icon" onClick={handleTogglePassword} id="password-addon">
+                        <div className="new-password-icon" onClick={handleTogglePassword} id="password-addon">
         {showPassword ? <FaEye /> : <FaEyeSlash />}
       </div>
                     </div>
@@ -716,6 +716,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
          <div className="helpful-line">Click on send OTP to verify your email</div>
         <button
           type="button"
+          class="custom-button"
           onClick={handleSendOTP1}
           disabled={recruiterOTPSent || recruiterRegistrationInProgress || recruiterOTPSendingInProgress}
         >

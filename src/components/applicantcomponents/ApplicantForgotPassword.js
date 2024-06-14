@@ -207,23 +207,25 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                       {otpSent ? (
                         otpVerified ? (
                           <div className="ip">
-                             <div className="inputs-group auth-pass-inputgroup">
+                             <div className="inputs-group2 auth-pass-inputgroup">
                             <input
                               type={showPassword ? 'text' : 'password'}
                               placeholder="New Password"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
+                               className="input-style"
                             />
                             <div className="password-toggle-icon" onClick={handleTogglePassword} id="password-addon">
         {showPassword ? <FaEye /> : <FaEyeSlash />}
 </div>
                            </div><br />
-                           <div className="inputs-group auth-pass-inputgroup">
+                           <div className="inputs-group2 auth-pass-inputgroup">
                             <input
                               type={showConfirmPassword ? 'text' : 'password'}
                               placeholder="Confirm New Password"
                               value={confirmedPassword}
                               onChange={(e) => setConfirmedPassword(e.target.value)}
+                               className="input-style"
                             />
                            <div
                                 className="password-toggle-icon"
@@ -238,7 +240,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                               one lowercase letter, one number, one special character, and no spaces.
                             </div>
  
-                            <button type="button" onClick={handleResetPassword}>Reset Password</button>
+                            <button type="button" className="button-style" onClick={handleResetPassword}>Reset Password</button>
                             <p style={{ color: 'green',textAlign:'center' }}>OTP verified successfully!</p>
                           </div>
                         ) : (
@@ -249,7 +251,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                               value={otp}
                               onChange={(e) => setOtp(e.target.value)}
                             />
-                          <button type="button" onClick={() => {
+                          <button type="button"className="button-style" onClick={() => {
                                    handleVerifyOTP();
                                    setOTPTimerResend(0);
                                 }}>
@@ -261,7 +263,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                         </div>
                                     ) : (
                     <div>        
-                   <button type="button" onClick={() => { setResetError(null); // Set resetError to null
+                   <button type="button" className="button-style" onClick={() => { setResetError(null); // Set resetError to null
                                         handleResendOTP();  }} disabled={resendButtonDisabled}>
                                              Resend OTP
                      </button>

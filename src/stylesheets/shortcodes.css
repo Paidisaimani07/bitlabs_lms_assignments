@@ -5366,7 +5366,7 @@
 .new-password-icon {
   cursor: pointer;
   position: absolute;
-  top: 63%;
+  top: 33%;
   transform: translateY(-50%);
   right: 10px; /* Adjust as needed for your layout */
 }

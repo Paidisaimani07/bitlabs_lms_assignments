@@ -5154,3 +5154,26 @@ font-size: 14px;
       font-size: 8px !important; /* Adjust the font size as needed for small screens */
     }
   }
+  .sticky-area-wrap .header-ct-right .account .toggle-subaccount-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+    /* margin-left: 10px; */
+    /* margin-right: -20px; */
+  }
+  .notify-bell{
+    color: #5F5F5F;
+    font-size: 22px;
+  }
+.notify-count{
+    font-size: 12px;
+    background-color: #F98F11;
+}
+  #hamburger{
+    font-size: 20px;
+    color: #000000;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    padding: 0 10px 0 0;
+    margin-left:15px;
+  }
