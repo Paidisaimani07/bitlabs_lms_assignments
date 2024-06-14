@@ -8,7 +8,7 @@
   }
 
   .top-left-svg {
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     width: 200px;  /* Fixed width */
@@ -25,7 +25,7 @@
     align-items: center;
     height: 105vh;
     background-color: #f3f4f6; /* Light gray background */
-    padding-top: 40px;
+    padding-top: 100px;
   }
   
   
@@ -36,14 +36,14 @@
     align-items: center;
       height: 120vh; 
       background-color: #f3f4f6; 
-    padding-top: 40px;
+    padding-top: 100px;
     }
   }
   
 
 
 .card1 {
-  position: relative; /* Ensures the button container is positioned relative to the card */
+  position: relative;
     padding: 60px;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
@@ -75,7 +75,7 @@
     margin-top: 40px;
     padding: 20px;
     width: 95%;
-    height: 88%;
+    height: 140%;
   }
 }
 @media (min-width: 1024px) {

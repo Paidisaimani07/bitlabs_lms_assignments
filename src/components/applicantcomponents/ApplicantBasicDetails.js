@@ -435,6 +435,7 @@ const validateForm1 = () => {
           value={applicant.email}
           className="input-form"
           readOnly
+          style={{ color: '#ccc' }} 
         />
         {errors.email && <div className="error-message">{errors.email}</div>}
       </div>
