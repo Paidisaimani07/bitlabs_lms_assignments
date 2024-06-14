@@ -261,7 +261,7 @@ const validateForm1 = () => {
         .then(data => {
           const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
-          window.open(loginUrl, '_blank');
+          // window.open(loginUrl, '_blank');
           setIsModalOpen(true);
         })
         .catch(error => {
