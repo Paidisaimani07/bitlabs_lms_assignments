@@ -348,7 +348,7 @@ const validateForm1 = () => {
       );
       console.log(response.data);
       window.alert(response.data);
-      window.location.reload();
+      
     } catch (error) {
       console.error('Error uploading resume:', error);
       window.alert('Error uploading resume. Please try again.');
