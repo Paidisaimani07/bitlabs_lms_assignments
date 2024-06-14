@@ -3542,7 +3542,7 @@ input[type="color"],
   margin-left : -5px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1301px) {
   #header .sticky-area-wrap .header-ct-left #hamburger {
       display: none !important;
   }
