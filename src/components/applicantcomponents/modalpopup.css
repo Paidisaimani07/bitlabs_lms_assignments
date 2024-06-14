@@ -167,3 +167,77 @@
   }
    
 }
+#upload-resume-editprofile {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .popup-heading-editprofile {
+    display: flex;
+width: 398px;
+height: 25px;
+flex-direction: column;
+justify-content: center;
+color: #333;
+
+font-family: "Plus Jakarta Sans";
+font-size: 28px;
+font-style: normal;
+font-weight: 700;
+line-height: 25px; /* 89.286% */
+  }
+  
+  .file-upload-editprofile {
+    display: none;
+  }
+  
+  .buttons-editprofile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .btn-editprofile {
+    background-color: #F97316;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: capitalize;
+  }
+  .up-file {
+    display: none; /* Hide the file input */
+  }
+  
+  
+  .browse-btn, .build-btn {
+    background-color: #6C757D;
+  }
+  
+  .browse-btn:hover, .build-btn:hover {
+    background-color: #5A6268;
+  }
+  
+  .save-btn-editprofile {
+    background-color: #F97316;
+    margin-top: 20px;
+  }
+  
+ 
+  .row-editprofile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Add space between items */
+    margin-top: 20px;
+  }
+  
+  .file-name {
+    font-size: 16px;
+  }
+  
+  
+  

@@ -19,6 +19,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-modal';
 import './modalpopup.css'; // Import the CSS file
 import ProfessionalDetailsPopup from './ProfessionalDetailsPopup';
+import ResumeEditPopup from './ResumeEditPopup';
 
 const ApplicantViewProfile = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -35,6 +36,7 @@ const ApplicantViewProfile = () => {
   const [cameraModalIsOpen, setCameraModalIsOpen] = useState(false);
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
   const [edit1ModalIsOpen, setEdit1ModalIsOpen] = useState(false);
+  const [resumeModalIsOpen, setResumeModalIsOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -115,6 +117,11 @@ const ApplicantViewProfile = () => {
   const handleEditClick = () => {
     setEditModalIsOpen(true);
   };
+  const handleResumeClick = () => {
+    setResumeModalIsOpen(true);
+  };
+
+  
   const handleEdit1Click = () => {
     setEdit1ModalIsOpen(true);
   };
@@ -125,6 +132,9 @@ const ApplicantViewProfile = () => {
 
   const closeEditModal = () => {
     setEditModalIsOpen(false);
+  };
+  const closeResumeModal = () => {
+    setResumeModalIsOpen(false);
   };
   const closeEdit1Modal = () => {
     setEdit1ModalIsOpen(false);
@@ -415,20 +425,20 @@ const ApplicantViewProfile = () => {
     </div>
      <div className='icon-prof'>
       <Link>
-     <img src={pencil1} alt="pencil1"  onClick={''} /></Link>
+     <img src={pencil1} alt="pencil1"  onClick={handleResumeClick} /></Link>
      </div>
-    {/* <Modal
-              isOpen={edit1ModalIsOpen}
-              onRequestClose={closeEdit1Modal}
+     <Modal
+              isOpen={resumeModalIsOpen}
+              onRequestClose={closeResumeModal}
               contentLabel="Edit Details"
               className="modal-content3"
               overlayClassName="modal-overlay"
             >
               <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
-                <FontAwesomeIcon icon={faTimes} onClick={closeEdit1Modal} style={{ cursor: 'pointer', color: '#333' }} />
+                <FontAwesomeIcon icon={faTimes} onClick={closeResumeModal} style={{ cursor: 'pointer', color: '#333' }} />
               </div>
-              <ProfessionalDetailsPopup applicantDetails={profileData} />
-            </Modal> */}
+              <ResumeEditPopup  id={id} />
+            </Modal> 
             </div>
 
       </div>
