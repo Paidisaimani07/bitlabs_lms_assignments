@@ -3633,11 +3633,11 @@ display: block;
   }
 }
 
-@media (min-width: 1020px) and (max-width: 1450px) {
+/* @media (min-width: 1020px) and (max-width: 1450px) {
   .dash-count .card {
     margin: 0 0px 20px 10px !important;
   }
-}
+} */
 
 .resumecard-heading .heading1 {
 color: #000;

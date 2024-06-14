@@ -175,6 +175,7 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     const handleResize = () => {
+      setHamburgerClass('fa fa-bars');
       setIsOpen(window.innerWidth >= 1302);
     };
     window.addEventListener('resize', handleResize);
@@ -399,7 +400,7 @@ function ApplicantNavBar() {
         )}
       </div> */}
 
-                    <div id="specificDiv" className="header-customize-item account">
+                    <div id="specificDiv" className="header-customize-item account" onClick={toggleSubAccount}>
                       <h4 className="username-text">{user.username}</h4>
                     <img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
 
