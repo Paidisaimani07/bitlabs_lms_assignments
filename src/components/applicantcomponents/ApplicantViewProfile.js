@@ -9,6 +9,7 @@ import Phone from '../../images/icons/phone.png';
 import Mail from '../../images/icons/mail.png';
 import Edit from '../../images/icons/edit.png';
 import Camera from '../../images/icons/camera.png';
+import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
 
 import pencil1 from '../../images/icons/pencil1.png';
@@ -420,7 +421,7 @@ const ApplicantViewProfile = () => {
       <div className="features-job-view2">
       <div className='prof-container'>
            <div class="professional-details-container">
-    <span > <img src={mortarboard1} alt="mortarboard1" class="icon-prof"  /></span> 
+    <span > <img src={Resume} alt="mortarboard1" class="icon-prof"  /></span> 
     <span class="text">Resume</span>
     </div>
      <div className='icon-prof'>
