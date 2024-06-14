@@ -1,4 +1,5 @@
 
+
 .dashboard .themes-container {
     position: relative;
     margin-left: auto;
@@ -530,6 +531,7 @@ font-style: inherit;
 }
 
 .flat-dashboard-dyagram .box-notifications {
+    margin-top: -60px;
     width: 100%;
     padding: 25px 23px;
 }
@@ -4074,6 +4076,7 @@ input[type="radio"]:checked:after {
     .flat-dashboard-dyagram .box-notifications {
         width: 100%;
         padding: 25px 15px;
+        margin-top: -30px;
     }
 
     .flat-dashboard-dyagram .wrap-dyagram .box-dyagram {
@@ -4143,9 +4146,11 @@ input[type="radio"]:checked:after {
     }
 
     .flat-dashboard-dyagram .box-notifications {
+        margin-top: -60px;
         width: 100%;
         padding: 25px 15px;
     }
+    
 
     .flat-dashboard-dyagram .wrap-dyagram .box-dyagram {
         width: 100%;
@@ -4945,9 +4950,232 @@ font-size: 14px;
     background-color: #f0f0f0;
   }
 
+
+  .date-info {
+    display: block;
+    margin-top: 1px;
+    margin-left: 860px;
+    color: #848484;
+    font-family: "Plus Jakarta Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px; /* 178.571% */
+  }
   
-.sticky-area-wrap .header-ct-right .account .toggle-subaccount-icon {
-    width: 24px;
+  .date-info:hover {
+    color: #848484; /* Same color as the default state */
+  }
+  
+  @media screen and (max-width: 1440px) {
+    .date-info {
+      margin-left: 860px; /* Margin-left value for screens up to 1440px */
+      font-size: 14px;
+    }
+  }
+
+  @media screen and (max-width: 1367px) {
+    .date-info {
+      /* margin-left: 750px;  */
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    .date-info {
+      margin-left: 870px; /* Margin-left value for screens up to 1440px */
+    }
+  }
+
+  @media (max-width: 1104px) and (min-width: 884px) {
+    .date-info{
+        margin-left: 620px !important;
+    }
+}
+  
+  @media screen and (max-width: 1024px) {
+    .date-info {
+      margin-left: 750px; /* Margin-left value for screens up to 1024px */
+    }
+  }
+  @media screen and (max-width: 1080px) {
+    .date-info {
+      margin-left: 750px; /* Margin-left value for screens up to 1024px */
+    }
+  }
+
+  @media screen and (min-width: 834px) and (max-width: 1194px) {
+    .date-info {
+      margin-left: 540px !important; /* Center the element horizontally */
+      margin-top: 5px;
+    }
+  }
+
+  @media screen and (min-width: 800px) and (max-width: 1280px) {
+    .date-info {
+      margin-left: 500px; /* Center the element horizontally */
+      margin-top: 5px;
+    }
+  }
+
+  @media screen and (width: 800px) and (height: 1280px) {
+    .date-info {
+      margin-left: 500px; /* Center the element horizontally */
+      margin-top: 5px;
+    }
+  }
+
+  /* Media query for screen width 884px and height 1104px */
+@media screen and (width: 1280px) and (height: 800px) {
+    .date-info {
+      margin-left: 870px; /* Adjust the margin-left value as needed */
+    }
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .date-info {
+      margin-left: 470px; /* Margin-left value for screens up to 768px */
+      margin-top: 3px;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+  
+/* Media query for screens up to 486px in width */
+@media screen and (max-width: 486px) {
+    .date-info {
+      margin-left: 140px !important;
+      font-size: 12px;
+      margin-top: 10px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+  
+  /* Media query for screens up to 428px in width and 926px in height */
+  @media screen and (max-width: 428px) and (max-height: 926px) {
+    .date-info {
+      margin-left: 140px !important;
+      font-size: 12px;
+      margin-top: 10px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+  
+
+  @media screen and (max-width: 376px) {
+    .date-info {
+      margin-left: 120px !important; /* Margin-left value for screens up to 768px */
+      font-size: 10px;
+      margin-top: -1px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  @media screen and (max-width: 321px) {
+    .date-info {
+      margin-left: 80px; /* Margin-left value for screens up to 768px */
+      font-size: 10px;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  .link {
+    text-decoration: none;
+    color: black; /* Default font color */
+    transition: color 0.3s ease; /* Add transition for smooth effect */
+    margin-top: 25px;
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    .link {
+      font-size: 14px; /* Adjust the font size as needed for small screens */
+      margin-top: 30px;
+    }
+  }
+
+  @media (max-width: 486px) {
+    .link {
+        font-size: 13px !important; 
+        line-height: 1.6 !important;
+        font-family: "Plus Jakarta Sans";
+        font-style: normal;
+        font-weight: 600;
+        line-height: 25px;
+        color: #333 !important;
+        margin-top: 33px !important;
+
+    }
+  }
+  
+
+  @media (max-width: 376px) {
+    .link {
+      font-size: 13px !important; 
+      line-height: 1.6 !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 600;
+      line-height: 25px;
+      color: #333 !important;
+      margin-top: 25px;
+    }
+  }
+
+  
+  @media (max-width: 320px) {
+    .link {
+      font-size: 9px; /* Adjust the font size as needed for small screens */
+      line-height: 2;
+    }
+  }
+  .title-count {
+    cursor: pointer;
+    margin-left:30px;
+    color:#8F8F8F;
+    font-family: "Plus Jakarta Sans";
+    font-size: 16px;
+    font-weight: 500;
+    font-style: normal;
+  }
+  @media (max-width: 426px) {
+    .title-count {
+        margin-left: 30px;
+      font-size: 12px !important;
+      line-height: 1.5 !important;
+    }
+  }
+
+  @media (max-width: 376px) {
+    .title-count {
+        margin-left: 30px;
+      font-size: 12px !important; /* Adjust the font size as needed for small screens */
+      line-height: 1.5 !important;
+    }
+  }
+  
+  @media (max-width: 321px) {
+    .title-count {
+    margin-left: 3px;
+      font-size: 8px !important; /* Adjust the font size as needed for small screens */
+    }
+  }
+  .sticky-area-wrap .header-ct-right .account .toggle-subaccount-icon {
+width: 24px;
     height: 24px;
     flex-shrink: 0;
     cursor: pointer;
