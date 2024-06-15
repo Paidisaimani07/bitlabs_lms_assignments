@@ -107,106 +107,112 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     <div>
       {loading ? null : (
         <div className="dashboard__content">
-          <section className="page-title-dashboard">
-            <div className="themes-container">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 ">
-                  <div className="title-dashboard">
-                    {/* <BackButton /> */}
-                    <div className="title-dash flex2">My Saved Jobs</div>
+          <div className="row mr-0 ml-10">
+            <div className="col-lg-12 col-md-12">
+              <section className="page-title-dashboard">
+                <div className="themes-container">
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12 ">
+                      <div className="title-dashboard">
+                        {/* <BackButton /> */}
+                        <div className="title-dash flex2">My Saved Jobs</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </section>
-          <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container">
-              <div className="content-tab">
-                <div className="inner">
-                  <div className="group-col-2">
-                    {jobs.length === 0 ? (
-                      <div style={{ marginLeft: 30 }}>No Saved jobs available</div>
-                    ) : (
-                      jobs.map((job) => (
-                        <div className="features-job cl2 bg-white" key={job.id}>
-                          <div className="job-archive-header">
-                            <div className="inner-box">
-                              <div className="box-content">
-                                <h4>
-                                  <a href="#">{job.companyname}</a>
-                                </h4>
-                                <h3>
-                                  <a href="#">
-                                    {job.jobTitle}
-                                  </a>
-                                </h3>
-                                <ul>
-                                  <li>
-                                    <span className="icon-map-pin"></span>
-                                    &nbsp;{job.location}
-                                  </li>
-                                </ul>
+            <div className="col-lg-12 col-md-12">
+              <section className="flat-dashboard-setting flat-dashboard-setting2">
+                <div className="themes-container">
+                  <div className="content-tab">
+                    <div className="inner">
+                      <div className="group-col-2">
+                        {jobs.length === 0 ? (
+                          <div style={{ marginLeft: 30 }}>No Saved jobs available</div>
+                        ) : (
+                          jobs.map((job) => (
+                            <div className="features-job cl2 bg-white" key={job.id}>
+                              <div className="job-archive-header">
+                                <div className="inner-box">
+                                  <div className="box-content">
+                                    <h4>
+                                      <a href="#">{job.companyname}</a>
+                                    </h4>
+                                    <h3>
+                                      <a href="#">
+                                        {job.jobTitle}
+                                      </a>
+                                    </h3>
+                                    <ul>
+                                      <li>
+                                        <span className="icon-map-pin"></span>
+                                        &nbsp;{job.location}
+                                      </li>
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="job-archive-footer">
+                                <div className="job-footer-left">
+                                  <ul className="job-tag">
+                                    <li>
+                                      <a href="#">{job.employeeType}</a>
+                                    </li>
+                                    <li>
+                                      <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+                                    </li>
+                                  </ul>
+                                  <div className="star">
+                                    {Array.from({ length: job.starRating }).map((_, index) => (
+                                      <span key={index} className="icon-star-full"></span>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="job-footer-right">
+                                  <div className="price">
+                                    <span>
+                                      <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span>
+                                    </span>
+                                  </div>
+                                  <ul className="job-tag">
+                                    <li>
+                                      <button
+                                        className="button-status2"
+                                        onClick={() => handleRemoveJob(job.id)}
+                                      >
+                                        Remove
+                                      </button>
+                                    </li>
+                                    <li>
+                                      {job && (
+                                        <button
+                                          onClick={() => handleApplyNowClick(job.id)}
+                                          className="button-status1"
+                                        >
+                                          View Job
+                                        </button>
+                                      )}
+                                    </li>
+                                  </ul>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="job-archive-footer">
-                            <div className="job-footer-left">
-                              <ul className="job-tag">
-                                <li>
-                                  <a href="#">{job.employeeType}</a>
-                                </li>
-                                <li>
-                                  <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
-                                </li>
-                                <li>
-                                  <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
-                                </li>
-                                <li>
-                                  <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
-                                </li>
-                              </ul>
-                              <div className="star">
-                                {Array.from({ length: job.starRating }).map((_, index) => (
-                                  <span key={index} className="icon-star-full"></span>
-                                ))}
-                              </div>
-                            </div>
-                            <div className="job-footer-right">
-                              <div className="price">
-                                <span>
-                                  <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span>
-                                </span>
-                              </div>
-                              <ul className="job-tag">
-                                <li>
-                                  <button
-                                    className="button-status2"
-                                    onClick={() => handleRemoveJob(job.id)}
-                                  >
-                                    Remove
-                                  </button>
-                                </li>
-                                <li>
-                                  {job && (
-                                    <button
-                                      onClick={() => handleApplyNowClick(job.id)}
-                                      className="button-status1"
-                                    >
-                                      View Job
-                                    </button>
-                                  )}
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
+                          ))
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </section>
+          </div>
         </div>
       )}
       {snackbars.map((snackbar, index) => (

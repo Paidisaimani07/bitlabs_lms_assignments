@@ -41,7 +41,7 @@
     position: relative !important;
     background: white !important;
     padding: 20px !important;
-    /* max-width: 50% !important; */
+    width: 50% !important; 
     /* height: 75% !important; */
     width:50% !important;
     overflow-y: auto !important;
@@ -374,8 +374,7 @@ border-color:#7E7E7E !important
   .file-name {
     font-size: 16px;
   }
-  
-  
+ 
   .file-name-input-resume{
   /* width: 50% !important; */
   padding: 8px !important;
@@ -445,3 +444,4 @@ line-height: 15px !important;  /* 100% */
     font-weight: 500 !important;
     line-height: 15px !important; 
   }
+
