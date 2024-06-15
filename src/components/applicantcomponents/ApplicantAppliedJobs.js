@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';  
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import leftArrow from '../../images/arrow-left.png';
 import { useNavigate } from "react-router-dom";
 
-function ApplicantAppliedJobs({setSelectedJobId}) {
-    const [jobs, setJobs] = useState([]);
+function ApplicantAppliedJobs({ setSelectedJobId }) {
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const applicantId = user.id;
   const userId = user.id;
   const navigate = useNavigate();
 
-   useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         await new Promise(resolve => setTimeout(resolve, 50));
@@ -44,7 +44,7 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
         setLoading(false);
       }
     };
-  
+
     fetchAppliedJobs();
   }, []);
   function formatDate(dateString) {
@@ -57,110 +57,116 @@ function ApplicantAppliedJobs({setSelectedJobId}) {
   };
   return (
     <div>
-    {loading ? null : (
+      {loading ? null : (
         <div className="dashboard__content">
-          <section className="page-title-dashboard">
-            <div className="themes-container">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 ">
-                  <div className="title-dashboard">
-                  {/* <div className="back-to-previous pb-4">
+          <div className="row mr-0 ml-10">
+            <div className="col-lg-12 col-md-12">
+              <section className="page-title-dashboard">
+                <div className="themes-container">
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12 ">
+                      <div className="title-dashboard">
+                        {/* <div className="back-to-previous pb-4">
                   <Link to="/applicanthome" className="back-link" >
                   <img src={leftArrow} alt="Back"  />BACK
                   </Link>
                   </div> */}
-                    <div className="title-dash flex2">My Applied Jobs</div>
+                        <div className="title-dash flex2">My Applied Jobs</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </section>
-          <section className="flat-dashboard-setting flat-dashboard-setting2">
-            <div className="themes-container">
-              <div className="content-tab">
-                <div className="inner">
-                  
-                  <div className="group-col-2">
-                  {jobs.length === 0 ? (
-                      <div style={{marginLeft:30}}>No Applied jobs available</div>
-                    ) : (
-                    jobs.map((job) => (
-                      <div className="features-job cl2  bg-white" key={job.id}>
-                        <div className="job-archive-header">
-                          <div className="inner-box">
-                          {/* <div className="logo-company">
+            <div className="col-lg-12 col-md-12">
+              <section className="flat-dashboard-setting flat-dashboard-setting2">
+                <div className="themes-container">
+                  <div className="content-tab">
+                    <div className="inner">
+
+                      <div className="group-col-2">
+                        {jobs.length === 0 ? (
+                          <div style={{ marginLeft: 30 }}>No Applied jobs available</div>
+                        ) : (
+                          jobs.map((job) => (
+                            <div className="features-job cl2  bg-white" key={job.id}>
+                              <div className="job-archive-header">
+                                <div className="inner-box">
+                                  {/* <div className="logo-company">
                               {job.logoFile ? (
                                    <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
                               ) : (
                                     <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
                               )}
                              </div> */}
-                            <div className="box-content">
-                              <h4>
-                                <a href="javascript:void(0);">{job.companyname}</a>
-                              </h4>
-                              <h3>
-                                <a href="javascript:void(0);">
-                                  {job.jobTitle}                                  
-                                </a>
-                              </h3>
-                              <ul>
-                                <li>
-                                  <span className="icon-map-pin"></span>
-                                  &nbsp;{job.location}
-                                </li>
-                                {/* <li>
+                                  <div className="box-content">
+                                    <h4>
+                                      <a href="javascript:void(0);">{job.companyname}</a>
+                                    </h4>
+                                    <h3>
+                                      <a href="javascript:void(0);">
+                                        {job.jobTitle}
+                                      </a>
+                                    </h3>
+                                    <ul>
+                                      <li>
+                                        <span className="icon-map-pin"></span>
+                                        &nbsp;{job.location}
+                                      </li>
+                                      {/* <li>
                                   <span className="icon-calendar"></span>
                                   &nbsp;{formatDate(job.creationDate)}
                                 </li> */}
-                              </ul>                              
-                            </div>
-                          </div>
-                        </div>
-                        <div className="job-archive-footer">
-                            <div className="job-footer-left">
-                              <ul className="job-tag">
-                                <li>
-                                  <a href="javascript:void(0);">{job.employeeType}</a>
-                                </li>
-                                <li>
-                                  <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
-                                </li>
-                                <li>
-<a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
-</li>
-<li>
-<a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
-</li>
-                              </ul>
-                              <div className="star">
-                                {Array.from({ length: job.starRating }).map((_, index) => (
-                                  <span key={index} className="icon-star-full"></span>
-                                ))}
+                                    </ul>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="job-archive-footer">
+                                <div className="job-footer-left">
+                                  <ul className="job-tag">
+                                    <li>
+                                      <a href="javascript:void(0);">{job.employeeType}</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+                                    </li>
+                                  </ul>
+                                  <div className="star">
+                                    {Array.from({ length: job.starRating }).map((_, index) => (
+                                      <span key={index} className="icon-star-full"></span>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div className="job-footer-right">
+                                  <div className="price">
+                                    <span>
+                                      <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span></span>
+                                  </div>
+                                  <button class="button-status">
+                                    {job && (<Link to={`/applicant-interview-status?jobId=${job.id}`} style={{ color: 'white' }} onClick={() => setSelectedJobId(job.applyJobId)}>
+                                      Check Status
+                                    </Link>
+                                    )}
+                                  </button>
+                                </div>
                               </div>
                             </div>
-                            <div className="job-footer-right">
-                              <div className="price">
-                              <span>
-<span style={{fontSize:'12px'}}>Posted on {formatDate(job.creationDate)}</span></span>
-                              </div>
-                              <button class="button-status">
-                              {job && (<Link to={`/applicant-interview-status?jobId=${job.id}`} style={{ color: 'white' }} onClick={() => setSelectedJobId(job.applyJobId)}>
-  Check Status
-</Link>
- )}
-                              </button>
-                            </div>
-                          </div>
+                          )))}
                       </div>
-                    )))}
+                    </div>
                   </div>
                 </div>
-              </div>
+              </section>
             </div>
-          </section>
           </div>
-       )}
+        </div>
+      )}
     </div>
   );
 }
