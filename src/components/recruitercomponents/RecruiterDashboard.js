@@ -288,7 +288,7 @@ function RecruiterDashboard() {
       </div>
     </div>
     {/*New Change In the Dash Board*/}
-    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} onClick={Postajob}>
+    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center", marginLeft: '25px', width: '75%' }} onClick={Postajob}>
       
     <div>
     <h2 className="heading">Find the right candidate</h2>

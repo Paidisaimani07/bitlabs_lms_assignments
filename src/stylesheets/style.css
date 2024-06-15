@@ -613,6 +613,13 @@ input[type="color"],
       display: block;
       margin-left: -13px !important;
   }
+
+  @media only screen and (min-width: 320px) and (max-width: 700px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px !important;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:35px;
     margin-top: -14px;
@@ -629,6 +636,13 @@ input[type="color"],
       display: block;
       margin-left: -4px;
   }
+}
+  @media only screen and (min-width: 700px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:45px;
     margin-top: -10px;
@@ -643,13 +657,21 @@ input[type="color"],
       display: inline-block;
       margin-left: 15px !important;
   }
+}
+
+  @media only screen and (min-width: 900px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 52px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:65px;
     margin-top: -10px;
   
   }
 }
-
+}
 .custom-input {
   color: #8a8787 !important;
 }
@@ -767,6 +789,9 @@ input[type="color"],
   margin-left: 8px;
 }
 
+.header-style2 .logo .profile-site-logo {
+  max-width: 149px;
+}
 .header-style2 .sticky-area-wrap .header-ct-right .bell {
   margin-right: 28px;
 }
@@ -1509,6 +1534,15 @@ input[type="color"],
       padding-right: 10px; 
         height: auto; 
   }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+    width: 115px!important;
+    display: block!important;
+  }
+
+  .menu-mobile-popup .mobile-header .profile-site-logo {
+    width: 150px;
+  }
   .nav-filter .nav-mobile {
     display: none;
     position: relative;
@@ -1533,6 +1567,11 @@ input[type="color"],
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
     width: auto !important;
     height: 45px !important;
+    display: block!important;
+  }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+    width: 115px!important;
     display: block!important;
   }
   #header .sticky-area-wrap .header-ct-right .account {

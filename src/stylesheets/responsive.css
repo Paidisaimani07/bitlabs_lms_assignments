@@ -2205,6 +2205,13 @@
     margin-top:5px;
   }
 
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+    width: 110px !important;
+    height: 40px !important;
+    display: block;
+    margin-top:5px;
+  }
+
   #header .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:85px;
   }
@@ -2213,6 +2220,15 @@
     #header .sticky-area-wrap .header-ct-left .logo .site-logo {
         width: auto !important;
         height : 45px !important;
+        display: block;
+        margin-top:10px;
+        
+    }
+   }
+
+   @media only screen and (min-width: 50px) and (max-width: 300px) {
+    #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 100px;
         display: block;
         margin-top:10px;
         
