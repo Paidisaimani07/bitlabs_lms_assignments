@@ -54,6 +54,23 @@ const ApplicantViewProfile = () => {
       }
     }
   };
+  const fetchResumeFileName = async (id) => {
+    try {
+      const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`);
+      console.log('resumeResponse:', resumeResponse.data);
+  
+      if (resumeResponse.data) {
+        const resumeId = resumeResponse.data;
+        return resumeId;
+      } else {
+        console.error('No resume ID found:', resumeResponse.data);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching resume ID:', error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     let count = 0;
@@ -81,14 +98,15 @@ const ApplicantViewProfile = () => {
           )
         );
         setImageSrc(`data:${imageResponse.headers['content-type']};base64,${base64Image}`);
-        const resumeResponse = await axios.get(`${apiUrl}/resume/pdf/${id}`);
-          console.log('resumeResponse:', resumeResponse);
-
-          if (resumeResponse.data && resumeResponse.data.fileName) {
-            setResumeFileName(resumeResponse.data.fileName);
-          } else {
-            console.error('No resume fileName found:', resumeResponse.data);
-          }
+        const resumeId = await fetchResumeFileName(id);
+        if (resumeId) {
+          const firstName = profileResponse.data.basicDetails.firstName;
+          const lastName = profileResponse.data.basicDetails.lastName;
+          const fileName = `${firstName}_${lastName}.pdf`;
+          setResumeFileName(fileName);
+        } else {
+          console.error('No resume fileName found');
+        }
         
   
         setLoading(false);
@@ -121,6 +139,16 @@ const ApplicantViewProfile = () => {
     );
   }
   
+  const handleResumeClick1 = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/resume/pdf/${id}`, { responseType: 'blob' });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error fetching resume:', error);
+    }
+  };
   const handleCameraClick = () => {
     setCameraModalIsOpen(true);
   };
@@ -433,7 +461,7 @@ const ApplicantViewProfile = () => {
            <div class="professional-details-container">
     <span > <img src={Resume} alt="mortarboard1" class="icon-prof"  /></span> 
     <span class="text">Resume</span>
-    <div className="resume-text" onClick={handleResumeClick}>{resumeFileName || 'Resume'}</div>
+    
         
     </div>
      <div className='icon-prof'>
@@ -450,10 +478,10 @@ const ApplicantViewProfile = () => {
               <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
                 <FontAwesomeIcon icon={faTimes} onClick={closeResumeModal} style={{ cursor: 'pointer', color: '#333' }} />
               </div>
-              <ResumeEditPopup  id={id} />
+              <ResumeEditPopup  id={id} resumeFileName={resumeFileName} />
             </Modal> 
             </div>
-
+            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName}</span></div>
       </div>
     </div>
     

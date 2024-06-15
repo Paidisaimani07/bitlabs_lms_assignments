@@ -9,7 +9,7 @@ import { useUserContext } from '../common/UserProvider';
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
-const ResumeEditPopup = ({ id }) => {
+const ResumeEditPopup = ({ id,resumeFileName }) => {
   const [resumeFile, setResumeFile] = useState(null);
   const [fileName, setFileName] = useState(''); // New state for file name
   const [modalIsOpen, setModalIsOpen] = useState(true);
@@ -18,6 +18,14 @@ const ResumeEditPopup = ({ id }) => {
   const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUserContext();
+  const [resumeName, setResumeName] = useState('');
+  useState(() => {
+    setResumeName(resumeFileName);
+  }, [resumeFileName]);
+
+  const handleInputChange = (event) => {
+    setResumeName(event.target.value);
+  };
  
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
@@ -106,7 +114,7 @@ const ResumeEditPopup = ({ id }) => {
         <i className="file-icon"></i>
         <input
           type="text"
-          value={fileName}
+          value={resumeName} onChange={handleInputChange}
           readOnly
           className="file-name-input-resume"
           placeholder="No file selected"

@@ -91,6 +91,10 @@
         width: 95% !important;
         /* top:30px Adjust for smaller screens */
     }
+    .modal-content3 {
+      width: 90% !important; /* Adjust for tablets */
+  }
+  
 }
 
 @media (min-width: 451px) and (max-width: 1023px) {
@@ -106,6 +110,9 @@
         margin-bottom: 20px;
         /* top:30px Adjust for smaller screens */
     }
+    .modal-content3 {
+      width: 90% !important; /* Adjust for tablets */
+  }
 }
 
 @media (min-width: 1024px) {
@@ -165,6 +172,7 @@
       top: 30px;
       right: 30px;
   }
+
 }
 
 /* Small Devices (Tablets, 768px and up) */
@@ -186,6 +194,19 @@
   .edit-icon {
       top: 25px;
       right: 25px;
+  }
+  .row-editprofile{
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: column !important;
+  }
+  .file-name-input-resume{
+    width: 100% !important;
+  }
+  .save-resume{
+    justify-content:center!important ;
+    
+
   }
 }
 
@@ -215,6 +236,20 @@
     flex-direction: column;
     width: 100%;
     justify-content: flex-end;
+  }
+  .row-editprofile{
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: column !important;
+  }
+  .file-name-input-resume{
+    width: 100% !important;
+  }
+  .save-resume{
+   
+    justify-content:center!important ;
+    
+
   }
    
 }
@@ -342,7 +377,7 @@ border-color:#7E7E7E !important
   
   
   .file-name-input-resume{
-  width: 50% !important;
+  /* width: 50% !important; */
   padding: 8px !important;
   margin-top: 10px !important;
   margin-bottom: 10px !important;
@@ -364,7 +399,7 @@ line-height: 15px !important;  /* 100% */
   }
   .save-resume{
     display: flex;
-    justify-content: flex-end !important;
+    justify-content: flex-end ;
     
 
   }
@@ -400,4 +435,13 @@ line-height: 15px !important;  /* 100% */
     transform: translateY(-50%);
     width: 20px; /* Adjust size as needed */
     height: 20px; /* Adjust size as needed */
+  }
+  .file-name-input-resume1{
+    color: var(--link, #0E8CFF) !important;
+    text-align: left !important;
+    font-family: "Plus Jakarta Sans" !important;
+    font-size: 15px !important;
+    font-style: normal !important;
+    font-weight: 500 !important;
+    line-height: 15px !important; 
   }
