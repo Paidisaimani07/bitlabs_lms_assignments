@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Resume from '../../images/user/avatar/Resume.png';
 import Certificate from '../../images/user/avatar/Certificate.svg';
 import { useLocation } from "react-router-dom";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
@@ -20,7 +21,7 @@ const ApplicantDashboard = () => {
   const [profileid1, setprofileid] = useState();
   const userId = user.id;
   const [isHovered, setIsHovered] = useState(false);
-
+  const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     const checkUserProfile = async () => {
@@ -46,6 +47,29 @@ const ApplicantDashboard = () => {
 
     checkUserProfile();
   }, [userId, navigate]);
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Make API call to update status in backend
+        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`);
+        // Construct requestData
+        const newData = {
+          identifier: response.data.applicant.email,
+          password: response.data.applicant.password,
+          localResume: response.data.applicant.localResume,
+          firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
+        };
+
+        setUserData(newData);
+      } catch (error) {
+        console.error('Error updating profile status:', error);
+      }
+    };
+    fetchUserData();
+  }, []); // Empty dependency array to run the effect only once
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
@@ -151,7 +175,7 @@ const ApplicantDashboard = () => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
                   {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
-                  <div className="userName-title">Welcome {user.username}</div>
+                  <div className="userName-title">Welcome {userData && userData.firstName !== null ? userData.firstName : user.username}</div>
                 </div>
               </div>
             </div>
@@ -223,7 +247,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
-                  <div className="card" onClick={handleRedirect1}>
+                  <div className="card" onClick={handleRedirect2}>
                     <div className="container">
                       <div>
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
@@ -247,10 +271,12 @@ const ApplicantDashboard = () => {
                     </div>
                   </div>
                 </div>
+                {userData && userData.localResume == true && (
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
                   <div className="card">
                     {/*New palet in application dashboard*/}
-                    <div onClick={Buildresume} className="resumecard">
+                    {/* <div onClick={Buildresume} className="resumecard"> */}
+                    <div className="resumecard">
                       <div className="resumecard-content">
                         <div className="resumecard-text">
                           <div className="resumecard-heading">
@@ -261,7 +287,8 @@ const ApplicantDashboard = () => {
                           </div>
                           <div className="resumecard-button">
                             <Link
-                              to="/applicant-resume-builder"
+                              // to="/applicant-resume-builder"
+                              to="https://resume.bitlabs.in:5173"
                               // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
                               className={'button-link1'}
                               style={linkStyle}
@@ -285,6 +312,7 @@ const ApplicantDashboard = () => {
 
                   </div>
                 </div>
+                )}
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
                   <div className="card ">
                     {/*New palet in application dashboard*/}
