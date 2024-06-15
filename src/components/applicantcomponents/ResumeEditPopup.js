@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import File from '../../images/icons/file.png';
+import { useUserContext } from '../common/UserProvider';
+
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
@@ -15,11 +17,11 @@ const ResumeEditPopup = ({ id }) => {
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleFileSelect = (event) => {
+  const { user } = useUserContext();
+ 
+  const handleResumeSelect = (event) => {
     const file = event.target.files[0];
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    if (fileExtension === 'pdf') {
+    if (file) {
       setResumeFile(file);
       setFileName(file.name); // Set file name
       setError('');
@@ -29,6 +31,34 @@ const ResumeEditPopup = ({ id }) => {
       setFileName(''); // Clear file name if invalid file
     }
   };
+
+  const triggerFileInputClick = () => {
+    document.getElementById('tf-upload-resume').click();
+  };
+
+  const handleResumeUpload = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      const response = await axios.post(
+        `${apiUrl}/resume/upload/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      window.alert(response.data);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      window.alert('Error uploading resume. Please try again.');
+    }
+  };
+
   const handleResumeBuilder = async () => {
     const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
     if (requestData) {
@@ -57,32 +87,6 @@ const ResumeEditPopup = ({ id }) => {
         });
     }
   };
-  const uploadResume = async () => {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const formData = new FormData();
-      formData.append('resume', resumeFile);
-
-      const response = await axios.post(
-        `${apiUrl}/applicant-resume/${id}/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-
-      console.log('Resume uploaded successfully:', response.data);
-      window.alert('Resume uploaded successfully:');
-      window.location.reload();
-      // Handle the response as needed
-
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-      // Handle the error as needed
-    }
-  };
 
   return (
     <div id="upload-resume-editprofile">
@@ -95,22 +99,21 @@ const ResumeEditPopup = ({ id }) => {
           name="resume"
           accept="application/pdf" // Accept only PDF files
           required=""
-          onChange={handleFileSelect}
+          onChange={handleResumeSelect}
         />
       </div>
       <div className="row-editprofile">
-      <i className="file-icon"></i>
-       <input
+        <i className="file-icon"></i>
+        <input
           type="text"
           value={fileName}
           readOnly
           className="file-name-input-resume"
           placeholder="No file selected"
         />
-        
         <button
           type="button"
-          onClick={() => document.getElementById('tf-upload-resume').click()}
+          onClick={triggerFileInputClick}
           className="browse-btn-resume"
         >
           Browse
@@ -130,7 +133,7 @@ const ResumeEditPopup = ({ id }) => {
       <div className="save-resume">
         <button
           type="button"
-          onClick={handleResumeBuilder}
+          onClick={handleResumeUpload}
           className="save-btn-resume"
         >
           Save Changes

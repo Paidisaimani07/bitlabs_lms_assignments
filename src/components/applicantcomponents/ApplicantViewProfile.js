@@ -38,6 +38,7 @@ const ApplicantViewProfile = () => {
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
   const [edit1ModalIsOpen, setEdit1ModalIsOpen] = useState(false);
   const [resumeModalIsOpen, setResumeModalIsOpen] = useState(false);
+  const [resumeFileName, setResumeFileName] = useState('');
   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -80,6 +81,15 @@ const ApplicantViewProfile = () => {
           )
         );
         setImageSrc(`data:${imageResponse.headers['content-type']};base64,${base64Image}`);
+        const resumeResponse = await axios.get(`${apiUrl}/resume/pdf/${id}`);
+          console.log('resumeResponse:', resumeResponse);
+
+          if (resumeResponse.data && resumeResponse.data.fileName) {
+            setResumeFileName(resumeResponse.data.fileName);
+          } else {
+            console.error('No resume fileName found:', resumeResponse.data);
+          }
+        
   
         setLoading(false);
         
@@ -423,6 +433,8 @@ const ApplicantViewProfile = () => {
            <div class="professional-details-container">
     <span > <img src={Resume} alt="mortarboard1" class="icon-prof"  /></span> 
     <span class="text">Resume</span>
+    <div className="resume-text" onClick={handleResumeClick}>{resumeFileName || 'Resume'}</div>
+        
     </div>
      <div className='icon-prof'>
       <Link>
