@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation,useNavigate } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery.cookie';
 import 'metismenu';
@@ -11,6 +11,8 @@ import clearJWTToken from '../common/clearJWTToken';
 import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
+import ModalWrapper from './ModalWrapper';
+import Button from '@mui/material/Button';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -27,6 +29,11 @@ function ApplicantNavBar() {
   const [profileData, setProfileData] = useState(null);
   const id = user.id;
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -125,7 +132,7 @@ function ApplicantNavBar() {
 
   const handleClick = () => {
     // API endpoint URL
-    const apiUrl = 'http://43.204.125.6:5173/api/auth/login';
+    const apiUrl = 'http://localhost:5173/api/auth/login';
 
     // Options for the fetch request
     const requestOptions = {
@@ -147,7 +154,7 @@ function ApplicantNavBar() {
       })
       .then(data => {
         // window.location.href = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`; 
-        const loginUrl = `http://43.204.125.6:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
         window.open(loginUrl, '_blank');
         //setUrl(loginUrl);
         setLoginUrl(loginUrl);
@@ -293,6 +300,10 @@ function ApplicantNavBar() {
     textDecoration: 'none',
     color: 'inherit', // Inherit color from parent
     transition: 'color 0.3s', // Smooth transition for color change
+  };
+
+  const handleResumeClick = () => {
+    navigate('/applicant-resume-builder');
   };
 
   return (
@@ -526,24 +537,27 @@ function ApplicantNavBar() {
                   <span className="dash-titles">Job Alerts</span>
                 </Link> */}
               </li>
-              {/* <li>
+              <li>
             <Link to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
               <span className="icon-chat dash-icon"></span>
               <span className="dash-titles">My Resume</span>
             </Link>
-          </li> */}
-              <li>
-                {/* <button onClick={handleClick} className="tf-effect" style={{ backgroundColor: '#F97316' }}>
-    Build Your Resume
-</button>
-<ResumeBuilder loginUrl={loginUrl} /> */}
-              </li>
-              <li>
+          </li>
+              {/* <li>
                 <Link to="/applicant-resume-builder" className={location.pathname === "/applicant-resume-builder" ? "tf-effect active" : ""}>
                   <span className="icon-chat dash-icon"></span>
                   <span className="dash-titles">My Resume</span>
                 </Link>
-              </li>
+              </li> */}
+
+              {/* <li>
+<Button variant="contained" color="primary" onClick={openModal}>
+        Build Your Resume
+      </Button>
+      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
+              </li> */}
             </ul>
           </div>
         </div>
