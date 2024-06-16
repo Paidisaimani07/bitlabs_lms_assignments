@@ -24,11 +24,7 @@ const ApplicantBasicDetails = () => {
   const[imageSrc, setImageSrc]= useState();
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-<<<<<<< HEAD
   const [dragActive, setDragActive] = useState(false);
-=======
-
->>>>>>> bbb132102f401608ed1165725931c9425f014057
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',

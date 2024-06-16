@@ -256,7 +256,7 @@ const login = useGoogleLogin({
         setUser(userData);
         setUserType(userData.userType);
         console.log('Login successful', userData);
-       
+        const userId = userData.id;
 
          // Check the profile ID
          const jwtToken = localStorage.getItem('jwtToken');
