@@ -9,6 +9,7 @@ import Phone from '../../images/icons/phone.png';
 import Mail from '../../images/icons/mail.png';
 import Edit from '../../images/icons/edit.png';
 import Camera from '../../images/icons/camera.png';
+import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
 
 import pencil1 from '../../images/icons/pencil1.png';
@@ -37,6 +38,7 @@ const ApplicantViewProfile = () => {
   const [editModalIsOpen, setEditModalIsOpen] = useState(false);
   const [edit1ModalIsOpen, setEdit1ModalIsOpen] = useState(false);
   const [resumeModalIsOpen, setResumeModalIsOpen] = useState(false);
+  const [resumeFileName, setResumeFileName] = useState('');
   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -50,6 +52,23 @@ const ApplicantViewProfile = () => {
         localStorage.setItem('alertShown', 'true');
         setAlertShown(true);
       }
+    }
+  };
+  const fetchResumeFileName = async (id) => {
+    try {
+      const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`);
+      console.log('resumeResponse:', resumeResponse.data);
+  
+      if (resumeResponse.data) {
+        const resumeId = resumeResponse.data;
+        return resumeId;
+      } else {
+        console.error('No resume ID found:', resumeResponse.data);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching resume ID:', error);
+      return null;
     }
   };
 
@@ -79,6 +98,16 @@ const ApplicantViewProfile = () => {
           )
         );
         setImageSrc(`data:${imageResponse.headers['content-type']};base64,${base64Image}`);
+        const resumeId = await fetchResumeFileName(id);
+        if (resumeId) {
+          const firstName = profileResponse.data.basicDetails.firstName;
+          const lastName = profileResponse.data.basicDetails.lastName;
+          const fileName = `${firstName}_${lastName}.pdf`;
+          setResumeFileName(fileName);
+        } else {
+          console.error('No resume fileName found');
+        }
+        
   
         setLoading(false);
         
@@ -110,6 +139,16 @@ const ApplicantViewProfile = () => {
     );
   }
   
+  const handleResumeClick1 = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/resume/pdf/${id}`, { responseType: 'blob' });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error fetching resume:', error);
+    }
+  };
   const handleCameraClick = () => {
     setCameraModalIsOpen(true);
   };
@@ -154,7 +193,7 @@ const ApplicantViewProfile = () => {
                 src={imageSrc || '../images/user/avatar/profile-pic.png'}
                 alt="Profile"
                 onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
-                style={{ borderRadius: '100px', position: 'relative' }}
+                style={{ borderRadius: '100%', position: 'relative',width:'100px',height:'100px' }}
               />
               <Link>
               <img
@@ -420,8 +459,10 @@ const ApplicantViewProfile = () => {
       <div className="features-job-view2">
       <div className='prof-container'>
            <div class="professional-details-container">
-    <span > <img src={mortarboard1} alt="mortarboard1" class="icon-prof"  /></span> 
+    <span > <img src={Resume} alt="mortarboard1" class="icon-prof"  /></span> 
     <span class="text">Resume</span>
+    
+        
     </div>
      <div className='icon-prof'>
       <Link>
@@ -437,10 +478,10 @@ const ApplicantViewProfile = () => {
               <div style={{ position: 'absolute', top: '10px', right: '20px' }}>
                 <FontAwesomeIcon icon={faTimes} onClick={closeResumeModal} style={{ cursor: 'pointer', color: '#333' }} />
               </div>
-              <ResumeEditPopup  id={id} />
+              <ResumeEditPopup  id={id} resumeFileName={resumeFileName} />
             </Modal> 
             </div>
-
+            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName|| 'Not Available'}</span></div>
       </div>
     </div>
     

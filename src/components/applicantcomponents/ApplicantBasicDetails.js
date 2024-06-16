@@ -24,6 +24,7 @@ const ApplicantBasicDetails = () => {
   const[imageSrc, setImageSrc]= useState();
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',

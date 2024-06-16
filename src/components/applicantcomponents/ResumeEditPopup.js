@@ -3,19 +3,33 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import File from '../../images/icons/file.png';
+import { useUserContext } from '../common/UserProvider';
+
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
-const ResumeEditPopup = ({ id }) => {
+const ResumeEditPopup = ({ id,resumeFileName }) => {
   const [resumeFile, setResumeFile] = useState(null);
   const [fileName, setFileName] = useState(''); // New state for file name
   const [modalIsOpen, setModalIsOpen] = useState(true);
   const [error, setError] = useState('');
+  const [requestData, setRequestData] = useState(null);
+  const [loginUrl, setLoginUrl] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { user } = useUserContext();
+  const [resumeName, setResumeName] = useState('');
+  useState(() => {
+    setResumeName(resumeFileName);
+  }, [resumeFileName]);
 
-  const handleFileSelect = (event) => {
+  const handleInputChange = (event) => {
+    setResumeName(event.target.value);
+  };
+ 
+  const handleResumeSelect = (event) => {
     const file = event.target.files[0];
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    if (fileExtension === 'pdf') {
+    if (file) {
       setResumeFile(file);
       setFileName(file.name); // Set file name
       setError('');
@@ -26,14 +40,17 @@ const ResumeEditPopup = ({ id }) => {
     }
   };
 
-  const uploadResume = async () => {
+  const triggerFileInputClick = () => {
+    document.getElementById('tf-upload-resume').click();
+  };
+
+  const handleResumeUpload = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
       const formData = new FormData();
       formData.append('resume', resumeFile);
-
       const response = await axios.post(
-        `${apiUrl}/applicant-resume/${id}/upload`,
+        `${apiUrl}/resume/upload/${user.id}`,
         formData,
         {
           headers: {
@@ -41,21 +58,47 @@ const ResumeEditPopup = ({ id }) => {
           },
         }
       );
-
-      console.log('Resume uploaded successfully:', response.data);
-      window.alert('Resume uploaded successfully:');
+      console.log(response.data);
+      window.alert(response.data);
       window.location.reload();
-      // Handle the response as needed
-
     } catch (error) {
       console.error('Error uploading resume:', error);
-      // Handle the error as needed
+      window.alert('Error uploading resume. Please try again.');
+    }
+  };
+
+  const handleResumeBuilder = async () => {
+    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
+    if (requestData) {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      };
+      fetch(apiUrl1, requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          setLoginUrl(loginUrl);
+          // window.open(loginUrl, '_blank');
+          setIsModalOpen(true);
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
     }
   };
 
   return (
     <div id="upload-resume-editprofile">
-      <div className="popup-heading-editprofile">Resume</div>
+      <div className="popup-heading-editprofile1">Resume</div>
       <div className="file-upload">
         <input
           className="up-file"
@@ -64,33 +107,42 @@ const ResumeEditPopup = ({ id }) => {
           name="resume"
           accept="application/pdf" // Accept only PDF files
           required=""
-          onChange={handleFileSelect}
+          onChange={handleResumeSelect}
         />
       </div>
       <div className="row-editprofile">
-        {fileName && <div className="file-name"><a href="#">{fileName}</a></div>}
+        <i className="file-icon"></i>
+        <input
+          type="text"
+          value={resumeName} onChange={handleInputChange}
+          readOnly
+          className="file-name-input-resume"
+          placeholder="No file selected"
+        />
         <button
           type="button"
-          onClick={() => document.getElementById('tf-upload-resume').click()}
-          className="btn browse-btn"
+          onClick={triggerFileInputClick}
+          className="browse-btn-resume"
         >
           Browse
         </button>
         <span className="separator">Or</span>
         <button
           type="button"
-          onClick={uploadResume}
-          className="btn build-btn"
+          onClick={handleResumeBuilder}
+          className="build-btn-resume"
         >
           Build Your Resume
         </button>
       </div>
+
       {error && <div className="error-message">{error}</div>}
-      <div className="save-changes">
+      
+      <div className="save-resume">
         <button
           type="button"
-          onClick={uploadResume}
-          className="btn save-btn-editprofile"
+          onClick={handleResumeUpload}
+          className="save-btn-resume"
         >
           Save Changes
         </button>
