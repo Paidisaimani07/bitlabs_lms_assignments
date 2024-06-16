@@ -6,6 +6,7 @@ import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
 
 function RecruiterViewJob({ selectedJobId }) {
   const [jobDetails, setJobDetails] = useState(null);
@@ -18,6 +19,7 @@ function RecruiterViewJob({ selectedJobId }) {
   const location = useLocation();
   const jobId = new URLSearchParams(location.search).get('jobId');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
   const fetchJobDetails = async () => {
     try {
@@ -93,14 +95,16 @@ function RecruiterViewJob({ selectedJobId }) {
           }
         );
         const { applied } = response.data;
-        window.alert('Job applied successfully');
+        //window.alert('Job applied successfully');
+        setSnackbar({ open: true, message: 'Job applied successfully', type: 'success' });
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
         setApplied(applied);
         fetchJobDetails();
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
-      window.alert('Job has already been applied by the applicant');
+      //window.alert('Job has already been applied by the applicant');
+      setSnackbar({ open: true, message: 'Job has already been applied by the applicant', type: 'error' });
       setApplied(false);
     }
   };
@@ -160,7 +164,8 @@ const handleStatusChange = async (jobId, newStatus, action) => {
       if (action === 'Repost') {
         const response = await axios.post(`${apiUrl}/job/recruiters/cloneJob/${jobId}/${applicantId}`);
         const message = response.data.message; // Access the message from the response
-        window.alert(message);
+       // window.alert(message);
+       setSnackbar({ open: true, message: message, type: 'success' });
       } else {
         // Handle closing the job as before
         await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
@@ -169,14 +174,18 @@ const handleStatusChange = async (jobId, newStatus, action) => {
           status: newStatus
         }));
         localStorage.setItem(`jobStatus-${jobId}`, newStatus);
-        window.alert('Job closed successfully.');
+       // window.alert('Job closed successfully.');
+        setSnackbar({ open: true, message: 'Job closed successfully.', type: 'success' });
       }
-      navigate('/recruiter-jobopenings');
+      //navigate('/recruiter-jobopenings');
     } catch (error) {
       console.error('Error updating job status:', error);
     }
   };
-  
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+    navigate('/recruiter-jobopenings');
+  };
 
   return (
     <div>
@@ -327,6 +336,15 @@ const handleStatusChange = async (jobId, newStatus, action) => {
             </div>
           </section>
         </div>
+      )}
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
       )}
     </div>
   );

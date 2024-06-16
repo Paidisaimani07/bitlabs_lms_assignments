@@ -6,6 +6,8 @@ import { useUserContext } from '../common/UserProvider';
 import OTPVerification1 from '../recruitercomponents/OTPVerification1';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
+import Snackbar from '../common/Snackbar';
+
  
  function RegisterBody({handleLogin}) {
   const [activeTab, setActiveTab] = useState('Candidate');
@@ -43,6 +45,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [candidateRegistrationInProgress, setCandidateRegistrationInProgress] = useState(false);
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [resendOtpMessage, setResendOtpMessage] = useState('');
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
   // recruiter login
@@ -88,29 +91,35 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       if (response.data === "Email already registered recruiter"){
         setCandidateOTPSent(false);
      
-        window.alert('Email already registered as recruiter, please try to login');
+     //   window.alert('Email already registered as recruiter, please try to login');
+     setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
        }
        if(response.data === ('Email already registered as applicant')){
         setCandidateOTPSent(false);
      
-        window.alert('Email already registered as candidate, please try to login');
+        //window.alert('Email already registered as candidate, please try to login');
+        setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' });
        }
        if(response.data === "Mobile number already existed in recruiter"){
         setCandidateOTPSent(false);
      
-        window.alert('Mobile number already existed as recruiter');
+       // window.alert('Mobile number already existed as recruiter');
+        setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
        }
        if(response.data === 'Mobile number already existed in applicant'){
         setCandidateOTPSent(false);
      
-        window.alert('Mobile number already existed as candidate');
+        //window.alert('Mobile number already existed as candidate');
+        setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
        }
     } catch (error) {
       console.error('Error sending OTP:', error);
       if (error.response && error.response.status === 400) {
-        window.alert('Email is already registered.');
+       // window.alert('Email is already registered.');
+       setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
       } else {
-        window.alert('An error occurred while sending OTP.');
+       // window.alert('An error occurred while sending OTP.');
+       setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
       }
       setCandidateOTPSendingInProgress(false);
     }
@@ -134,16 +143,21 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
  
     if (response.data === "Email already registered recruiter") {
       setRecruiterOTPSent(false);
-      window.alert('Email already registered as recruiter, please try to login');
+     // window.alert('Email already registered as recruiter, please try to login');
+     setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
+
     } else if (response.data === 'Email already registered as applicant') {
       setRecruiterOTPSent(false);
-      window.alert('Email already registered as candidate, please try to login');
+      //window.alert('Email already registered as candidate, please try to login');
+      setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' }); 
     } else if (response.data === "Mobile number already existed in recruiter") {
       setRecruiterOTPSent(false);
-      window.alert('Mobile number already existed as recruiter');
+      //window.alert('Mobile number already existed as recruiter');
+      setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
     } else if (response.data === 'Mobile number already existed in applicant') {
       setRecruiterOTPSent(false);
-      window.alert('Mobile number already existed as candidate');
+      //window.alert('Mobile number already existed as candidate');
+      setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
     } else {
       // Proceed with registration since there's no separate OTP verification logic
       //handleSubmit1();
@@ -151,9 +165,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   } catch (error) {
     console.error('Error sending OTP:', error);
     if (error.response && error.response.status === 400) {
-      window.alert('Email is already registered.');
+     // window.alert('Email is already registered.');
+     setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
     } else {
-      window.alert('An error occurred while sending OTP.');
+      //window.alert('An error occurred while sending OTP.');
+      setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
     }
     setRecruiterOTPSendingInProgress(false);
   }
@@ -232,7 +248,8 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         password: candidatePassword,
       });
      if (response.data === 'Email is already registered.') {
-        window.alert('Email is already registered.');
+       // window.alert('Email is already registered.');
+       setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
       }
       setErrorMessage('');
       setCandidateRegistrationSuccess(true);
@@ -251,9 +268,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         console.error('Registration failed', error);
         if (error.response && error.response.status === 400) {
           if (error.response.data === 'Email already registered') {
-            window.alert('Registration failed! User with this email already exists');
+           // window.alert('Registration failed! User with this email already exists');
+           setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
           } else if (error.response.data === 'Mobile number already existed') {
-            window.alert('Registration failed! Mobile number already exists');
+           // window.alert('Registration failed! Mobile number already exists');
+            setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
           }
         }
     }
@@ -435,25 +454,30 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
    
     } catch (error) {
       setErrorMessage('Registration failed. Please try again later.');
-      window.alert('Registration failed! or User with this email already exists.');
+      //window.alert('Registration failed! or User with this email already exists.');
+      setSnackbar({ open: true, message: 'Registration failed or User with this email already exists.', type: 'error' });
       console.error('Registration failed', error);
  
       if (error.response && error.response.status === 400) {
         if (error.response.data === 'Email already registered') {
-          window.alert('Registration failed! User with this email already exists');
+         // window.alert('Registration failed! User with this email already exists');
+         setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
         } else if (error.response.data === 'Mobile number already existed') {
-          window.alert('Registration failed! Mobile number already exists');
+          //window.alert('Registration failed! Mobile number already exists');
+          setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
         }
       }
       setRecruiterRegistrationInProgress(false);
     }
   };
   const handleOTPSendSuccess = () => {
-   window.alert('OTP Resend successfully');
+  // window.alert('OTP Resend successfully');
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
-   window.alert('Failed to Resend OTP. Please try again.');
+  // window.alert('Failed to Resend OTP. Please try again.');
+  setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
    setResendOtpMessage('Failed to Resent OTP. Please try again.');
   };
   const isRecruiterFormValid = () => {
@@ -516,6 +540,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     flex: 1, // Each button takes up half of the container
   });
   
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
   return (
     <div>
       <a id="scroll-top" />
@@ -618,7 +646,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
               {/* <p class="line-ip"><span>or signup with</span></p> */}
                 <form onSubmit={handleSubmit1}>
-                <div className="ip">
+                <div className="ip2">
                     {/* <label>Company Name<span>*</span></label> */}
                     <input
                       type="text"
@@ -632,7 +660,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerNameError && <div className="error-message">{employerNameError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Email Address<span>*</span></label> */}
                     <input
                       type="email"
@@ -647,7 +675,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerEmailError && <div className="error-message">{employerEmailError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Mobile Number<span>*</span></label> */}
                     <input
                       type="text"
@@ -662,9 +690,9 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                     {employerMobileNumberError && <div className="error-message">{employerMobileNumberError}</div>}
                   </div>
-                  <div className="ip">
+                  <div className="ip2">
                     {/* <label>Password<span>*</span></label> */}
-                    <div className="inputs-group auth-pass-inputgroup">
+                    <div className="inputs-group2 auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
@@ -676,7 +704,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         }}
                         disabled={allFieldsDisabled}
                       />
-                        <div className="password-toggle-icon" onClick={handleTogglePassword} id="password-addon">
+                        <div className="new-password-icon" onClick={handleTogglePassword} id="password-addon">
         {showPassword ? <FaEye /> : <FaEyeSlash />}
       </div>
                     </div>
@@ -716,6 +744,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
          <div className="helpful-line">Click on send OTP to verify your email</div>
         <button
           type="button"
+          class="custom-button"
           onClick={handleSendOTP1}
           disabled={recruiterOTPSent || recruiterRegistrationInProgress || recruiterOTPSendingInProgress}
         >
@@ -751,6 +780,15 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         </div>
       </div>
     </section>
+    {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
   </div>
    
   );

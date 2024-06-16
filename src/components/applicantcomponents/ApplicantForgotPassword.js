@@ -7,6 +7,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import Snackbar from '../common/Snackbar';
 
 
 function ApplicantForgotPassword() {
@@ -29,13 +30,16 @@ function ApplicantForgotPassword() {
   const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
   // Define a state to control whether to show the success message or not
 const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
 
 
   useEffect(() => {
     if (resetSuccess) {
       // Show alert window
-      window.alert("Password has been reset successfully. Click OK to continue.");
+     // window.alert("Password has been reset successfully. Click OK to continue.");
+
+      setSnackbar({ open: true, message: 'Password has been reset successfully', type: 'success' });
       
       // Redirect after clicking OK
       window.location.href = '/candidate';
@@ -123,7 +127,9 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
         clearInterval(timerInterval);
         setResendButtonDisabled(false);
       }, 60000);
-      window.alert('OTP Resent successfully');
+      //window.alert('OTP Resent successfully');
+      setSnackbar({ open: true, message: 'OTP resent successfully', type: 'success' });
+
     } catch (error) {
       console.error('Error resending OTP:', error);
     }
@@ -171,6 +177,11 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
       setResetError('An error occurred. Please try again later.');
     }
   };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
   return (
     <div>
       <div>       
@@ -207,23 +218,25 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                       {otpSent ? (
                         otpVerified ? (
                           <div className="ip">
-                             <div className="inputs-group auth-pass-inputgroup">
+                             <div className="inputs-group2 auth-pass-inputgroup">
                             <input
                               type={showPassword ? 'text' : 'password'}
                               placeholder="New Password"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
+                               className="input-style"
                             />
                             <div className="password-toggle-icon" onClick={handleTogglePassword} id="password-addon">
         {showPassword ? <FaEye /> : <FaEyeSlash />}
 </div>
                            </div><br />
-                           <div className="inputs-group auth-pass-inputgroup">
+                           <div className="inputs-group2 auth-pass-inputgroup">
                             <input
                               type={showConfirmPassword ? 'text' : 'password'}
                               placeholder="Confirm New Password"
                               value={confirmedPassword}
                               onChange={(e) => setConfirmedPassword(e.target.value)}
+                               className="input-style"
                             />
                            <div
                                 className="password-toggle-icon"
@@ -238,7 +251,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                               one lowercase letter, one number, one special character, and no spaces.
                             </div>
  
-                            <button type="button" onClick={handleResetPassword}>Reset Password</button>
+                            <button type="button" className="button-style" onClick={handleResetPassword}>Reset Password</button>
                             <p style={{ color: 'green',textAlign:'center' }}>OTP verified successfully!</p>
                           </div>
                         ) : (
@@ -249,7 +262,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                               value={otp}
                               onChange={(e) => setOtp(e.target.value)}
                             />
-                          <button type="button" onClick={() => {
+                          <button type="button"className="button-style" onClick={() => {
                                    handleVerifyOTP();
                                    setOTPTimerResend(0);
                                 }}>
@@ -261,7 +274,7 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
                         </div>
                                     ) : (
                     <div>        
-                   <button type="button" onClick={() => { setResetError(null); // Set resetError to null
+                   <button type="button" className="button-style" onClick={() => { setResetError(null); // Set resetError to null
                                         handleResendOTP();  }} disabled={resendButtonDisabled}>
                                              Resend OTP
                      </button>
@@ -285,8 +298,18 @@ const [showSuccessMessage, setShowSuccessMessage] = useState(false);
           </div>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
  
 }
 export default ApplicantForgotPassword;
+

@@ -25,7 +25,7 @@
 
   .sticky-area-wrap .header-ct-right .account img {
     max-width: 40px;
-    height: 40px;
+    height: 32px;
   }
 
   @media only screen and (min-width: 50px) and (max-width: 300px) {
@@ -2198,8 +2198,9 @@
 
   /* -----------------header------------------------------= */
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-    width: 110px !important;
-    height: 40px !important;
+    width: auto !important;
+    height: 45px !important;
+    margin-left : -24px !important;
     display: block;
     margin-top:5px;
   }
@@ -2210,7 +2211,8 @@
 
   @media only screen and (min-width: 50px) and (max-width: 300px) {
     #header .sticky-area-wrap .header-ct-left .logo .site-logo {
-        width: 100px;
+        width: auto !important;
+        height : 45px !important;
         display: block;
         margin-top:10px;
         
@@ -2244,6 +2246,7 @@
 
   #header .sticky-area-wrap .header-ct-left .logo {
     margin-right: 0;
+    padding-left: 13px;
   }
 
   #header .sticky-area-wrap .header-ct-right .account {
