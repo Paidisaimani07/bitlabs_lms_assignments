@@ -158,9 +158,9 @@ export default function ApplicantJobAlerts() {
               <div className="title-dashboard">
               {/* <BackButton /> */}
                 <div className="title-dash flex2" style={{marginLeft: "30px",marginBottom:"10px" }}>Notifications</div>
-                <h4 className="title-count" onClick={RecommendJobs}>
+{/*<h4 className="title-count" onClick={RecommendJobs}>
     {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-  </h4>
+  </h4> */}
                 
               </div>
             </div>

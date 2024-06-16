@@ -2,14 +2,15 @@ import React from "react";
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Resume from '../../images/user/avatar/Resume.png';
+import Certificate from '../../images/user/avatar/Certificate.svg';
 import { useLocation } from "react-router-dom";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 
-const ApplicantDashboard = () => 
-{
+const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
@@ -19,33 +20,56 @@ const ApplicantDashboard = () =>
   const navigate = useNavigate();
   const [profileid1, setprofileid] = useState();
   const userId = user.id;
-const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [userData, setUserData] = useState(null);
 
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
 
-useEffect(() => {
-  const checkUserProfile = async () => {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      const profileId = profileIdResponse.data;
-      
-      // Navigate based on profile ID
-      if (profileId === 0) {
-        navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
-      } else {
-        setLoading(false); // No need to navigate, stay on this page
+        // Navigate based on profile ID
+        if (profileId === 0) {
+          navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
+        } else {
+          setLoading(false); // No need to navigate, stay on this page
+        }
+      } catch (error) {
+        console.error('Error fetching profile ID:', error);
       }
-    } catch (error) {
-      console.error('Error fetching profile ID:', error);
-    }
-  };
+    };
 
-  checkUserProfile();
-}, [userId, navigate]);
+    checkUserProfile();
+  }, [userId, navigate]);
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        // Make API call to update status in backend
+        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`);
+        // Construct requestData
+        const newData = {
+          identifier: response.data.applicant.email,
+          password: response.data.applicant.password,
+          localResume: response.data.applicant.localResume,
+          firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
+        };
+
+        setUserData(newData);
+      } catch (error) {
+        console.error('Error updating profile status:', error);
+      }
+    };
+    fetchUserData();
+  }, []); // Empty dependency array to run the effect only once
+
 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
@@ -66,63 +90,63 @@ useEffect(() => {
     fetchData();
   }, []);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
-          .then((response) => {
-              setCountRecJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
+      .then((response) => {
+        setCountRecJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
-          .then((response) => {
-              setAppliedJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
+      .then((response) => {
+        setAppliedJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
   useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
-          .then((response) => {
-              setSavedJobs(response.data);
-          })
-          .catch((error) => {
-              console.error('Error fetching team members:', error);
-          });
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    axios
+      .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
+      .then((response) => {
+        setSavedJobs(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching team members:', error);
+      });
   }, [user.id]);
 
   const handleRedirect = () => {
-    
+
     navigate("/applicant-find-jobs");
   };
 
   const handleRedirect1 = () => {
-    
+
     navigate("/applicant-applied-jobs");
   };
 
   const handleRedirect2 = () => {
-    
+
     navigate("/applicant-saved-jobs");
   };
-  
+
   const Buildresume = () => {
     navigate("/applicant-resume-builder");
   };
@@ -136,190 +160,204 @@ useEffect(() => {
   const spanStyle = {
     color: 'white',
     fontFamily: 'Plus Jakarta Sans',
-    fontSize: '13px',
-    fontWeight: '500',
+    fontSize: '15px',
+    fontWeight: '600',
     // lineHeight: '25px',
   };
 
 
   return (
     <div>
-    {loading ? null : (
-  <div className="dashboard__content">
-  <section className="page-title-dashboard">
-    <div className="themes-container">
-      <div className="row">
-        <div className="col-lg-12 col-md-12 ">
-          <div className="title-dashboard">
-            <div className="title-dash flex2">Dashboard</div>
+      {loading ? null : (
+        <div className="dashboard__content">
+          <div className="row mr-0 ml-10">
+            <div className="col-lg-12 col-md-12">
+              <div className="page-title-dashboard">
+                <div className="title-dashboard">
+                  {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
+                  <div className="userName-title">Welcome {userData && userData.firstName !== null ? userData.firstName : user.username}</div>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-12 col-md-12">
+              <div className="row dash-count">
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
+                  <div className="card" onClick={handleRedirect}>
+                    <div className="container">
+                      <div>
+                          <span className="icon-bag color-icon-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="33" viewBox="0 0 32 33" fill="none">
+                              <g clip-path="url(#clip0_778_1027)">
+                                <path d="M25.3333 5.83333H23.8667C23.5572 4.32855 22.7384 2.97646 21.5483 2.00496C20.3582 1.03345 18.8696 0.501939 17.3333 0.5L14.6667 0.5C13.1304 0.501939 11.6418 1.03345 10.4517 2.00496C9.26157 2.97646 8.4428 4.32855 8.13333 5.83333H6.66667C4.89921 5.83545 3.20474 6.53851 1.95496 7.78829C0.705176 9.03808 0.00211714 10.7325 0 12.5L0 16.5H32V12.5C31.9979 10.7325 31.2948 9.03808 30.045 7.78829C28.7953 6.53851 27.1008 5.83545 25.3333 5.83333ZM10.912 5.83333C11.1868 5.05612 11.695 4.38279 12.3671 3.90545C13.0392 3.42811 13.8423 3.17008 14.6667 3.16667H17.3333C18.1577 3.17008 18.9608 3.42811 19.6329 3.90545C20.305 4.38279 20.8132 5.05612 21.088 5.83333H10.912Z" fill="#2776ED" />
+                                <path d="M17.3333 20.5C17.3333 20.8536 17.1929 21.1927 16.9428 21.4428C16.6928 21.6928 16.3536 21.8333 16 21.8333C15.6464 21.8333 15.3072 21.6928 15.0572 21.4428C14.8071 21.1927 14.6667 20.8536 14.6667 20.5V19.1666H0V25.8333C0.00211714 27.6008 0.705176 29.2952 1.95496 30.545C3.20474 31.7948 4.89921 32.4978 6.66667 32.5H25.3333C27.1008 32.4978 28.7953 31.7948 30.045 30.545C31.2948 29.2952 31.9979 27.6008 32 25.8333V19.1666H17.3333V20.5Z" fill="#2776ED" />
+                              </g>
+                              <defs>
+                                <clipPath id="clip0_778_1027">
+                                  <rect width="32" height="32" fill="white" transform="translate(0 0.5)" />
+                                </clipPath>
+                              </defs>
+                            </svg>
+                          </span>
+                      </div>
+                        <div className="content">
+                          <span
+                            className="title-count"
+                            onClick={handleRedirect}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Recommended Jobs
+                          </span>
+                          <h3>{contRecJobs}</h3>
+
+                        </div>
+                    </div>
+
+                  </div>
+                </div>
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
+                  <div className="card" onClick={handleRedirect1}>
+                    <div className="container">
+                      <div>
+                        <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
+                            <span className="icon-bag color-icon-2">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="33" viewBox="0 0 32 33" fill="none">
+                                <g clip-path="url(#clip0_778_1032)">
+                                  <path d="M32 23.8333V24.5H16V23.8333C16 21.4893 17.744 19.5613 20 19.2347C20 17.764 21.196 16.5 22.6667 16.5H25.3333C26.804 16.5 28 17.764 28 19.2347C30.256 19.5613 32 21.4893 32 23.8333ZM13.3333 23.8333C13.3333 22.228 13.8813 20.732 14.7907 19.508C13.8933 19.2933 12.9613 19.1667 12 19.1667C5.39067 19.1667 0.0120022 24.5373 2.24782e-06 31.144C-0.00133109 31.8867 0.590669 32.5 1.33334 32.5H15.0147C13.9653 31.2307 13.3333 29.604 13.3333 27.8333V23.8333ZM12 16.5C16.412 16.5 20 12.912 20 8.5C20 4.088 16.412 0.5 12 0.5C7.588 0.5 4 4.088 4 8.5C4 12.912 7.588 16.5 12 16.5ZM24 28.5C23.264 28.5 22.6667 27.9027 22.6667 27.1667H16V27.8333C16 30.4067 18.0933 32.5 20.6667 32.5H27.3333C29.9067 32.5 32 30.4067 32 27.8333V27.1667H25.3333C25.3333 27.9027 24.736 28.5 24 28.5Z" fill="#FF6633" />
+                                </g>
+                                <defs>
+                                  <clipPath id="clip0_778_1032">
+                                    <rect width="32" height="32" fill="white" transform="translate(0 0.5)" />
+                                  </clipPath>
+                                </defs>
+                              </svg>
+                            </span>
+                        </div>
+                      </div>
+                        <div className="content">
+                          <span
+                            className="title-count"
+                            onClick={handleRedirect1}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Applied Jobs
+                          </span>
+                          <h3>{contAppliedJob}</h3>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
+                  <div className="card" onClick={handleRedirect2}>
+                    <div className="container">
+                      <div>
+                        <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
+                            <span className="icon-bag color-icon-3">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="37" viewBox="0 0 36 37" fill="none">
+                                <path d="M15.5263 29.3289L9.6028 31.8658C8.74705 32.2323 7.93568 32.1637 7.16868 31.6599C6.40193 31.1564 6.01855 30.4458 6.01855 29.528V11.4395C6.01855 10.7308 6.26755 10.1275 6.76555 9.62979C7.2633 9.13179 7.86668 8.88279 8.57568 8.88279H22.4769C23.1857 8.88279 23.7891 9.13179 24.2871 9.62979C24.7851 10.1275 25.0341 10.7308 25.0341 11.4395V29.528C25.0341 30.4458 24.6506 31.1564 23.8836 31.6599C23.1168 32.1637 22.3056 32.2323 21.4498 31.8658L15.5263 29.3289ZM28.9318 29.114C28.6448 29.114 28.3982 29.0125 28.1919 28.8095C27.9857 28.6068 27.8826 28.3597 27.8826 28.0682V6.49592C27.8826 6.38042 27.8344 6.27454 27.7382 6.17829C27.6419 6.08229 27.5362 6.03429 27.4209 6.03429H11.4201C11.1288 6.03429 10.8804 5.93279 10.6749 5.72979C10.4697 5.52704 10.3671 5.27992 10.3671 4.98842C10.3671 4.69717 10.4697 4.44892 10.6749 4.24367C10.8804 4.03842 11.1288 3.93579 11.4201 3.93579H27.4217C28.1322 3.93579 28.7363 4.18467 29.2341 4.68242C29.7321 5.18042 29.9811 5.78442 29.9811 6.49442V28.0682C29.9811 28.3597 29.8778 28.6068 29.6713 28.8095C29.4651 29.0125 29.2186 29.114 28.9318 29.114Z" fill="#FFB321" />
+                              </svg>
+                            </span>
+                        </div>
+                      </div>
+                        <div className="content">
+                          <span
+                            className="title-count"
+                            onClick={handleRedirect2}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Saved Jobs
+                          </span>
+                          <h3>{contSavedJobs}</h3>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                {userData && userData.localResume == true && (
+                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
+                  <div className="card">
+                    {/*New palet in application dashboard*/}
+                    {/* <div onClick={Buildresume} className="resumecard"> */}
+                    <div className="resumecard">
+                      <div className="resumecard-content">
+                        <div className="resumecard-text">
+                          <div className="resumecard-heading">
+                            <h2 className="heading1">Build your professional resume for free</h2>
+                            <div className="title-count">
+                              Land your dream job faster. Build a standout resume that captivates employers and propels you towards unparalleled opportunities.
+                            </div>
+                          </div>
+                          <div className="resumecard-button">
+                            <Link
+                              // to="/applicant-resume-builder"
+                              to="https://resume.bitlabs.in:5173"
+                              // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                              className={'button-link1'}
+                              style={linkStyle}
+                              onMouseEnter={() => setIsHovered(true)}
+                              onMouseLeave={() => setIsHovered(false)}
+                            >
+                              <span className="button button-custom" style={spanStyle}>Create Now</span>
+                            </Link>
+                          </div>
+                        </div>
+                        <div className="resumecard-icon">
+                          <img
+                            src={Resume}
+                            alt="Resume"
+                            style={{ width: "221px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+                </div>
+                )}
+                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
+                  <div className="card ">
+                    {/*New palet in application dashboard*/}
+                    {/* <div onClick={Buildresume} className="resumecard"> */}
+                    <div className="resumecard"> 
+                      <div className="resumecard-content">
+                        <div className="resumecard-text">
+                          <div className="resumecard-heading">
+                            <h2 className="heading1">Get Certified on Advanced Technologies </h2>
+                            <div className="title-count">
+                              Launch your career with confidence. Earn certifications in advanced skills to set yourself apart as a standout candidate in the competitive job market
+                            </div>
+                          </div>
+                          <div className="resumecard-button">
+                            <Link
+                              to="https://www.bitlabs.in/"
+                              className={`button-link1`}
+                              style={linkStyle}
+                              onMouseEnter={() => setIsHovered(true)}
+                              onMouseLeave={() => setIsHovered(false)}
+                            >
+                              <span className="button button-custom" style={spanStyle}>Start Learning</span>
+                            </Link>
+                          </div>
+                        </div>
+                        <div className="resumecard-icon">
+                          <img
+                            src={Certificate}
+                            alt="Certificate"
+                            style={{ width: "273px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      )
+      }
     </div>
-  </section>
-  <section className="flat-icon-dashboard">
-  <div className="themes-container">
-    <div className="row">
-      <div className="col-lg-12 col-md-12 ">
-        <div className="wrap-icon widget-counter">
-          <div className="box-icon wrap-counter flex" onClick={handleRedirect}>
-            <div className="icon style1">
-              <span className="icon-bag">
-                <svg
-                  width={49}
-                  height={43}
-                  viewBox="0 0 49 43"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M25.6562 29.5312C26.4328 29.5312 27.0625 28.9016 27.0625 28.125V22.5C27.0625 21.7235 26.4331 21.0938 25.6562 21.0938H22.8438C22.0672 21.0938 21.4375 21.7232 21.4375 22.5V28.125C21.4375 28.9015 22.0671 29.5312 22.8438 29.5312H25.6562Z"
-                    fill="#504CFE"
-                  />
-                  <path
-                    d="M44.0312 5.625H34.0938C34.0938 5.34178 34.0938 3.93553 34.0938 4.21875C34.0938 1.89244 32.2014 0 29.875 0C29.5697 0 18.2073 0 18.625 0C16.2987 0 14.4062 1.89234 14.4062 4.21875C14.4062 4.50197 14.4062 5.90822 14.4062 5.625H4.46875C2.14244 5.625 0.25 7.51734 0.25 9.84375C0.25 12.5978 0.5875 15.0097 1.25763 17.0652C1.92775 19.1207 2.93059 20.8198 4.26137 22.1484C6.50078 24.3848 9.35322 25.3125 12.5561 25.3125H18.625C18.625 25.0293 18.625 22.2168 18.625 22.5C18.625 20.1737 20.5173 18.2812 22.8438 18.2812C23.127 18.2812 25.9395 18.2812 25.6562 18.2812C27.9826 18.2812 29.875 20.1736 29.875 22.5C29.875 22.7832 29.875 25.5957 29.875 25.3125H32.9996C35.799 25.1962 40.378 26.0474 44.2372 22.2061C45.5687 20.8808 46.5718 19.1787 47.2422 17.1136C47.9126 15.0485 48.25 12.6205 48.25 9.84375C48.25 7.51744 46.3577 5.625 44.0312 5.625ZM17.2188 4.21875C17.2188 3.44287 17.849 2.8125 18.625 2.8125H29.875C30.6509 2.8125 31.2812 3.44278 31.2812 4.21875C31.2812 4.50197 31.2812 5.90822 31.2812 5.625H17.2188C17.2188 5.34178 17.2188 3.93553 17.2188 4.21875Z"
-                    fill="#504CFE"
-                  />
-                  <path
-                    d="M33.038 28.1219H29.875C29.875 30.4482 27.9827 32.3406 25.6562 32.3406C25.373 32.3406 22.5605 32.3406 22.8438 32.3406C20.5174 32.3406 18.625 30.4483 18.625 28.1219C18.3037 28.1219 12.2211 28.1219 12.5684 28.1219C8.55737 28.1219 5.03434 26.8911 2.27416 24.1353C1.49444 23.3568 0.828625 22.4804 0.25 21.543V40.7781C0.25 41.5554 0.878969 42.1844 1.65625 42.1844H46.8438C47.621 42.1844 48.25 41.5554 48.25 40.7781V21.6008C47.6636 22.5525 46.9951 23.4269 46.2216 24.197C41.7843 28.6111 37.0588 27.9319 33.038 28.1219Z"
-                    fill="#504CFE"
-                  />
-                </svg>
-              </span>
-            </div>
-            <div className="content">
-            
-              <h3>{contRecJobs}</h3>
-              <h4
-        className="title-count"
-        onClick={handleRedirect}
-        style={{ cursor: "pointer" }}
-      >
-        Recommended Jobs
-      </h4>
-            </div>
-          </div>
-          <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
-          
-          <div className="icon style2">
-              <span className="icon-bag">
-                <svg
-                  width={45}
-                  height={45}
-                  viewBox="0 0 45 45"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M27.3902 35.2336C32.1362 35.2336 35.9836 31.3862 35.9836 26.6402C35.9836 21.8943 32.1362 18.0469 27.3902 18.0469C22.6443 18.0469 18.7969 21.8943 18.7969 26.6402C18.7969 31.3862 22.6443 35.2336 27.3902 35.2336Z"
-                    fill="#EB4D4D"
-                  />
-                  <path
-                    d="M43.9986 39.6008L36.9017 32.5039C35.9862 33.9834 34.7354 35.2343 33.2559 36.1498L40.3528 43.2467C41.3596 44.2535 42.9919 44.2535 43.9986 43.2467C45.0054 42.2399 45.0054 40.6076 43.9986 39.6008Z"
-                    fill="#EB4D4D"
-                  />
-                  <path
-                    d="M9.34021 3.17984C9.34021 2.28893 8.26307 1.84277 7.6331 2.47273L3.20906 6.89677C2.5791 7.52674 3.02526 8.60388 3.91617 8.60388H8.34021C8.89249 8.60388 9.34021 8.15617 9.34021 7.60388V3.17984Z"
-                    fill="#EB4D4D"
-                  />
-                  <path
-                    d="M8.48438 22.3436H17.0782C17.7802 20.6653 18.8801 19.1935 20.2597 18.0469H8.48438V22.3436Z"
-                    fill="#EB4D4D"
-                  />
-                  <path
-                    d="M16.3503 24.9207H7.19502C6.48314 24.9207 5.90601 24.3436 5.90601 23.6317V16.757C5.90601 16.0452 6.48314 15.468 7.19502 15.468H27.3894C29.98 15.468 32.3671 16.3545 34.2641 17.8398V3.86701C34.2641 1.73474 32.5293 0 30.3971 0H11.9214V9.88236C11.9214 10.5942 11.3442 11.1714 10.6324 11.1714H0.75V40.131C0.75 42.2632 2.48474 43.998 4.61701 43.998H30.3971C32.317 43.998 33.9138 42.5913 34.213 40.7548L30.7516 37.2933C29.6899 37.629 28.5606 37.8108 27.3894 37.8108C24.6812 37.8108 22.1952 36.8418 20.2593 35.2328H7.19502C6.48314 35.2328 5.90601 34.6556 5.90601 33.9437C5.90601 33.2319 6.48314 32.6547 7.19502 32.6547H17.9795C17.4687 31.8585 17.0569 30.9932 16.7599 30.0767H7.19502C6.48314 30.0767 5.90601 29.4996 5.90601 28.7877C5.90601 28.0759 6.48314 27.4987 7.19502 27.4987H16.2508C16.1331 26.2121 16.3503 24.9207 16.3503 24.9207ZM27.8191 12.89H15.7884C15.0765 12.89 14.4994 12.3129 14.4994 11.601C14.4994 10.8892 15.0765 10.312 15.7884 10.312H27.8191C28.5309 10.312 29.1081 10.8892 29.1081 11.601C29.1081 12.3129 28.5309 12.89 27.8191 12.89ZM27.8191 7.73402H15.7884C15.0765 7.73402 14.4994 7.15689 14.4994 6.44502C14.4994 5.73314 15.0765 5.15601 15.7884 5.15601H27.8191C28.5309 5.15601 29.1081 5.73314 29.1081 6.44502C29.1081 7.15689 28.5309 7.73402 27.8191 7.73402Z"
-                    fill="#EB4D4D"
-                  />
-                </svg>
-              </span>
-              
-            </div>
-            
-            <div className="content style3">
-              <h3>{contAppliedJob}</h3>
-              <h4
-        className="title-count"
-        onClick={handleRedirect1}
-        style={{ cursor: "pointer" }}
-      >
-        Applied Jobs
-      </h4>
-            </div>
-          </div>
-          <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
-            <div className="icon style4">
-              <span className="icon-bag">
-                <svg
-                  width={36}
-                  height={48}
-                  viewBox="0 0 36 48"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M34.3496 0H2.34998C1.92564 0 1.51868 0.168569 1.21862 0.468623C0.918569 0.768678 0.75 1.17564 0.75 1.59998V46.3994C0.749887 46.7009 0.834958 46.9963 0.99541 47.2515C1.15586 47.5068 1.38517 47.7115 1.6569 47.8421C1.92863 47.9727 2.23173 48.0239 2.53128 47.9897C2.83082 47.9555 3.11462 47.8374 3.34997 47.649L18.3498 35.6476L33.3496 47.6474C33.5848 47.8357 33.8685 47.9538 34.1679 47.9881C34.4673 48.0223 34.7703 47.9712 35.0419 47.8408C35.3136 47.7104 35.5429 47.506 35.7035 47.2509C35.8641 46.9959 35.9494 46.7008 35.9496 46.3994V1.59998C35.9496 1.17564 35.781 0.768678 35.4809 0.468623C35.1809 0.168569 34.7739 0 34.3496 0Z"
-                    fill="#FFB321"
-                  />
-                </svg>
-              </span>
-            </div>
-            <div className="content">
-              <h3>{contSavedJobs}</h3>
-              <h4
-        className="title-count"
-        onClick={handleRedirect2}
-        style={{ cursor: "pointer" }}
-      >
-        Saved Jobs
-      </h4>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  {/*New palet in application dashboard*/}
-  <div className="box-icon1 wrap-counter" onClick={Buildresume} style={{ display: "flex", alignItems: "center", height: window.innerWidth >= 699 && window.innerWidth <= 1028 ? "250px" : "initial" }}>
-      <div>
-      <h2 className="heading1">Build your professional resume for free</h2>
-  
-          <div className="">
-              <span className=""></span>
-          </div>
-          <div className="content">
-             
-              <h4 className="title-count2" style={{paddingRight:"80px",color: "#8D8D8D"}}>
-              Transform your carrer trajectory with a meticulously crafted professional resume. Seize opportunities and stand out from the crowd!
-              </h4>
-              
-
-          </div>
-          <Link
-      to="/applicant-resume-builder"
-      className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
-      style={linkStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <span className=""></span>
-      <span className="button button-custom" style={spanStyle}>Create Now</span>
-    </Link>
-      </div>
-      <img
-  src={Resume}
-  alt="Resume"
-  className='resume'
-  style={{ width: "200px", height: "150px" }} 
-/>
-  </div>
-</section>
-
-</div>
-    )
-}
-</div>
   );
 };
 export default ApplicantDashboard;
