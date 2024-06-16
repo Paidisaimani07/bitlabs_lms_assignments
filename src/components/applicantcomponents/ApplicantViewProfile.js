@@ -193,7 +193,7 @@ const ApplicantViewProfile = () => {
                 src={imageSrc || '../images/user/avatar/profile-pic.png'}
                 alt="Profile"
                 onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
-                style={{ borderRadius: '100px', position: 'relative' }}
+                style={{ borderRadius: '100%', position: 'relative',width:'100px',height:'100px' }}
               />
               <Link>
               <img
@@ -481,7 +481,7 @@ const ApplicantViewProfile = () => {
               <ResumeEditPopup  id={id} resumeFileName={resumeFileName} />
             </Modal> 
             </div>
-            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName}</span></div>
+            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName|| 'Not Available'}</span></div>
       </div>
     </div>
     

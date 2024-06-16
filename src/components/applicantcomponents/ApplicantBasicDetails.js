@@ -24,7 +24,7 @@ const ApplicantBasicDetails = () => {
   const[imageSrc, setImageSrc]= useState();
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [dragActive, setDragActive] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
@@ -121,6 +121,38 @@ const handleSkillsChange = (selectedSkills) => {
   useEffect(() => {
     setLoading(false);
   }, []);
+  let resumeStatusCode;
+  let profileId;
+  useEffect(() => {
+    const fetchData1 = async () => {
+      try {
+      
+
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+         profileId = profileIdResponse.data;
+
+        try {
+         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       } catch (error) {
+        resumeStatusCode=error.response.status;
+          // Check conditions to navigate to the 3rd stepper
+          if (profileId !== 0 && resumeStatusCode === 404) {
+            setCurrentStage(3);
+          }
+       }
+       
+      } catch (error) {
+        console.error('Error fetching applicant data:', error);
+      }
+    };
+    fetchData1();
+  }, [user.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,6 +163,9 @@ const handleSkillsChange = (selectedSkills) => {
           password: response.data.password,
         };
         setRequestData(newData);
+
+      
+       
       } catch (error) {
         console.error('Error fetching applicant data:', error);
       }
@@ -219,6 +254,32 @@ const validateForm1 = () => {
   const triggerFileInputClick = () => {
     document.getElementById('tf-upload-img').click();
   };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(false);
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      setResumeFile(file);
+      setSelectedFile(file);
+      document.getElementById('tf-upload-img').files = event.dataTransfer.files;
+    }
+  };
+
   const handleResumeUpload = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -555,10 +616,10 @@ const validateForm1 = () => {
       case 3:
         return (
           <div className="col-lg-12 col-md-12">
-            <div className="post-new profile-setting bg-white">
+            <div className="post-new profile-setting bg-white" >
               <div className="wrap-img flex2" >
                 <p><strong>Resume</strong></p>
-                <div id="upload-profile">
+                <div id="upload-profile" style={{ display: 'flex', alignItems: 'center' }}>
       <input
         className="up-file"
         id="tf-upload-img"
@@ -568,26 +629,45 @@ const validateForm1 = () => {
         onChange={handleResumeSelect}
         style={{ display: 'none' }}
       />
-       <input
-      id="resume-text-input"
-      type="text"
-      placeholder="Upload your resume"
-      value={selectedFile ? selectedFile.name : ''}
-      readOnly
-      style={{
-        width: '418.25px',
-        height: '47px',
-        flexShrink: 0,
-        borderRadius: '8px',
-        border: '1px solid #E5E5E5',
-        background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
-        backgroundSize: '16px 16px',
-        paddingLeft: '40px',
-        padding: '10px',
-        marginRight: '20px',
-        boxSizing: 'border-box',
-      }}
-    />
+      <div
+        id="resume-text-input-container"
+        onClick={triggerFileInputClick}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '318.25px',
+          height: '47px',
+          borderRadius: '8px',
+          border: dragActive ? '2px dashed #000' : '1px solid #E5E5E5',
+          background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
+          backgroundSize: '16px 16px',
+          paddingLeft: '40px',
+          padding: '10px',
+          marginRight: '20px',
+          boxSizing: 'border-box',
+          cursor: 'pointer',
+        }}
+      >
+        <input
+          id="resume-text-input"
+          type="text"
+          placeholder="Upload your resume"
+          value={selectedFile ? selectedFile.name : ''}
+          readOnly
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            background: 'transparent',
+            paddingLeft: '40px',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+          }}
+        />
+      </div>
       <button
         type="button"
         onClick={triggerFileInputClick}
@@ -599,12 +679,11 @@ const validateForm1 = () => {
           border: 'none',
           borderRadius: '8px',
           cursor: 'pointer',
-          marginRight: '5px',
+          textTransform: 'none',
         }}
       >
         Browse
       </button>
-      
     </div>
 
               </div>
@@ -624,6 +703,7 @@ const validateForm1 = () => {
                     borderRadius: '8px',
                     cursor: 'pointer',
                     marginTop: '5px',
+                    textTransform:'none',
                   }}
                 >
                   Build Your Resume
@@ -708,7 +788,7 @@ const validateForm1 = () => {
             {renderStageFields()}
           </div>
           <div className="button-container">
-            {currentStage > 1  && (
+            {(currentStage > 1 && currentStage < 3) && (
               <button type="button" onClick={handleBack} className="form-button1">Back</button>
             )}
             {currentStage < 3 && (

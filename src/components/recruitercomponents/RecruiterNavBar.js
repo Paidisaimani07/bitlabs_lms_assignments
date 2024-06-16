@@ -5,6 +5,7 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
+import { right } from "@popperjs/core";
 
 function RecruiterNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
@@ -188,7 +189,7 @@ const iconStyle = {
               <div id="logo" className="logo">
                 <a href="/recruiterhome">
                   <img
-                    className="site-logo"
+                    className="profile-site-logo"
                     src="../images/logo.png"
                     alt="Image"
                   />
@@ -200,7 +201,8 @@ const iconStyle = {
             <div className="header-ct-right">
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
           <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
-          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick}>
+          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} style={window.innerWidth > 1300 ? { marginRight: '20px' } : {}}
+ onClick={handleBellClick}>
   {alertCount > 0 ? (
     <sup
       style={{
@@ -262,8 +264,8 @@ const iconStyle = {
           )}
     </div> */}
   </header>
-  {(isOpen &&
-  <div className="left-menu">
+  {(
+  <div className={`left-menu ${isOpen ? 'open' : ''}`}>
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
