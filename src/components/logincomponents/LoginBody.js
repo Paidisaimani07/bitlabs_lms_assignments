@@ -89,9 +89,22 @@ const login = useGoogleLogin({
           },
         });
         const profileId = profileIdResponse.data;
+
+        let resume;
+        try {
+         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
+       } catch (error) { 
+         resume=error.response.status;
+       }
        
-        if (profileId === 0) {
+        if (profileId !== 0 && resume === 404) {
+         console.log('checking ',jwtToken);
+         localStorage.setItem('jwtToken', userData.data.jwt);
           navigate('/applicant-basic-details-form');
+        }else if(profileId === 0 || resume === 404){
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form');
         }
       else{
         navigate('/applicant-find-jobs');
@@ -162,8 +175,14 @@ const login = useGoogleLogin({
            },
          });
          const profileId = profileIdResponse.data;
+         let resume;
+         try {
+          const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
+        } catch (error) { 
+          resume=error.response.status;
+        }
         
-         if (profileId === 0) {
+         if (profileId === 0 || resume === 404) {
           console.log('checking ',jwtToken);
           localStorage.setItem('jwtToken', userData.data.jwt);
            navigate('/applicant-basic-details-form');
