@@ -5,6 +5,10 @@ import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import File from '../../images/icons/file.png';
 import { useUserContext } from '../common/UserProvider';
+import ModalComponent from './ModalComponent';
+import { ClipLoader } from 'react-spinners';
+import ModalWrapper from './ModalWrapper';
+import ResumeBuilder from './ResumeBuilder';
 
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
@@ -19,6 +23,8 @@ const ResumeEditPopup = ({ id,resumeFileName }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUserContext();
   const [resumeName, setResumeName] = useState('');
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   useState(() => {
     setResumeName(resumeFileName);
   }, [resumeFileName]);
@@ -129,13 +135,15 @@ const ResumeEditPopup = ({ id,resumeFileName }) => {
         <span className="separator">Or</span>
         <button
           type="button"
-          onClick={handleResumeBuilder}
+          onClick={openModal}
           className="build-btn-resume"
         >
           Build Your Resume
         </button>
       </div>
-
+      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
       {error && <div className="error-message">{error}</div>}
       
       <div className="save-resume">
