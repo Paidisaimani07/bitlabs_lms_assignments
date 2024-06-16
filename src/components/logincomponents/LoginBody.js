@@ -100,20 +100,19 @@ const login = useGoogleLogin({
        } catch (error) { 
          resume=error.response.status;
        }
-       
-        if (profileId !== 0 && resume === 404) {
-         console.log('checking ',jwtToken);
-         localStorage.setItem('jwtToken', userData.data.jwt);
-          navigate('/applicant-basic-details-form');
-        }else if(profileId === 0 || resume === 404){
-          console.log('checking ',jwtToken);
-          localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form');
-        }
-      else{
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
-      }
+       console.log('resume',resume);
+       if (profileId === 0 || resume === 404) {
+        console.log('checking ',jwtToken);
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicant-basic-details-form');
+       }
+     else{
+     
+       navigate('/applicant-find-jobs');
+       //navigate('/applicanthome');
+     }
+         
+  
         //navigate('/applicanthome');
       }
     } catch (err) {

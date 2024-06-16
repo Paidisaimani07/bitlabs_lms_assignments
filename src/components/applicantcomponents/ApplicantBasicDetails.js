@@ -14,10 +14,13 @@ import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
+import ModalWrapper from './ModalWrapper';
+import ResumeBuilder from './ResumeBuilder';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [currentStage, setCurrentStage] = useState(1);
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -32,7 +35,8 @@ const ApplicantBasicDetails = () => {
     mobilenumber: "",
    
   });
-
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
     firstName: applicant.firstName,
     lastName: applicant.lastName,
@@ -690,10 +694,14 @@ const validateForm1 = () => {
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
+              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
+      {error && <div className="error-message">{error}</div>}
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"
-                  onClick={handleResumeBuilder}
+                  onClick={openModal}
                   className="btn-3"
                   style={{
                     backgroundColor: '#7E7E7E',
