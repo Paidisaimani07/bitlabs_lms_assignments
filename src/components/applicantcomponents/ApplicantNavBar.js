@@ -83,22 +83,22 @@ function ApplicantNavBar() {
   //   }
   // };
 
-  const handleProfileImageError = (event) => {
-    // Reset the image source to trigger a reload
-    event.target.src = `data:image/svg+xml,
-      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-        <g clip-path="url(#clip0_341_8986)">
-          <path d="M32 16C32 21.0701 29.6418 25.5894 25.9621 28.5207C23.229 30.6988 19.7664 32 16 32C12.2336 32 8.77097 30.6988 6.03788 28.5207C2.35823 25.5894 0 21.0701 0 16C0 7.16354 7.16354 0 16 0C24.8365 0 32 7.16354 32 16Z" fill="#D6D9DC"/>
-          <path d="M16.0001 19.1504C19.7146 19.1504 22.7257 16.1392 22.7257 12.4248C22.7257 8.71028 19.7146 5.6991 16.0001 5.6991C12.2856 5.6991 9.27441 8.71028 9.27441 12.4248C9.27441 16.1392 12.2856 19.1504 16.0001 19.1504Z" fill="#5F5F5F"/>
-          <path d="M25.9623 28.5207C23.2292 30.6987 19.7666 31.9999 16.0002 31.9999C12.2338 31.9999 8.77118 30.6987 6.03809 28.5207C7.33189 24.2453 11.3025 21.1327 16.0002 21.1327C20.6979 21.1327 24.6685 24.2453 25.9623 28.5207Z" fill="#5F5F5F"/>
-        </g>
-        <defs>
-          <clipPath id="clip0_341_8986">
-            <rect width="32" height="32" fill="white"/>
-          </clipPath>
-        </defs>
-      </svg>`;
-  };
+  // const handleProfileImageError = (event) => {
+  //   // Reset the image source to trigger a reload
+  //   event.target.src = `data:image/svg+xml,
+  //     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+  //       <g clip-path="url(#clip0_341_8986)">
+  //         <path d="M32 16C32 21.0701 29.6418 25.5894 25.9621 28.5207C23.229 30.6988 19.7664 32 16 32C12.2336 32 8.77097 30.6988 6.03788 28.5207C2.35823 25.5894 0 21.0701 0 16C0 7.16354 7.16354 0 16 0C24.8365 0 32 7.16354 32 16Z" fill="#D6D9DC"/>
+  //         <path d="M16.0001 19.1504C19.7146 19.1504 22.7257 16.1392 22.7257 12.4248C22.7257 8.71028 19.7146 5.6991 16.0001 5.6991C12.2856 5.6991 9.27441 8.71028 9.27441 12.4248C9.27441 16.1392 12.2856 19.1504 16.0001 19.1504Z" fill="#5F5F5F"/>
+  //         <path d="M25.9623 28.5207C23.2292 30.6987 19.7666 31.9999 16.0002 31.9999C12.2338 31.9999 8.77118 30.6987 6.03809 28.5207C7.33189 24.2453 11.3025 21.1327 16.0002 21.1327C20.6979 21.1327 24.6685 24.2453 25.9623 28.5207Z" fill="#5F5F5F"/>
+  //       </g>
+  //       <defs>
+  //         <clipPath id="clip0_341_8986">
+  //           <rect width="32" height="32" fill="white"/>
+  //         </clipPath>
+  //       </defs>
+  //     </svg>`;
+  // };
 
   const [requestData, setRequestData] = useState(null);
 
@@ -279,7 +279,11 @@ function ApplicantNavBar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`);
+        const profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        });
         setProfileData(profileResponse.data);
       } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -350,7 +354,7 @@ function ApplicantNavBar() {
                 </div>
                 <div className="header-ct-center"></div>
                 <div className="header-ct-right">
-                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '16px' }}>
+                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
                       {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
                       <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
@@ -401,7 +405,7 @@ function ApplicantNavBar() {
       </div> */}
 
                     <div id="specificDiv" className="header-customize-item account" onClick={toggleSubAccount}>
-                      <h4 className="username-text">{user.username}</h4>
+                      <h4 className="username-text">{profileData && profileData.basicDetails && profileData.basicDetails.firstName !== null ? profileData.basicDetails.firstName : user.username}</h4>
                     <img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
 
                     <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>

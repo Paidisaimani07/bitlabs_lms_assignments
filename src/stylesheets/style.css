@@ -3587,7 +3587,7 @@ input[type="color"],
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
  .username-text {
       display: none !important;
       
@@ -3611,7 +3611,7 @@ input[type="color"],
   text-decoration: none; /* Remove underline from link */
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 1400px) {
     .sticky-area-wrap {
         margin-top: 5px;
     }
