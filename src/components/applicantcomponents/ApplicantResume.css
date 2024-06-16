@@ -1,0 +1,79 @@
+/* .dashboard__content {
+    margin: 0 auto; 
+    max-width: 1200px;
+    padding: 0 40px; 
+} */
+
+.banner {
+    display: flex;
+    align-items: center;
+    background-color: #021230;
+    color: white;
+    padding: 20px;
+    position: relative;
+    border-radius: 10px; /* Add rounded corners to the banner */
+    margin-bottom: 20px; /* Add bottom margin */
+    overflow: hidden; /* Ensure content doesn't overflow */
+    width: 100%; /* Full width */
+}
+
+.banner-content {
+    flex: 1;
+    z-index: 1; /* Ensure content stays above the image */
+}
+
+.banner h1 {
+    margin: 0;
+    font-size: 24px;
+    color: white; /* Ensure the color is white */
+    font-weight: bold; /* Make the text bold */
+}
+
+.banner p {
+    margin: 6px 0;
+    color: rgba(255, 255, 255, 0.897); /* Ensure the color is white */
+    word-wrap: break-word; /* Allow the text to break into multiple lines */
+}
+
+/* Button styles */
+.banner .create-new-button {
+    background: linear-gradient(135deg, #f77307, #FFA500); /* Gradient from thick orange to light orange */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.5s ease;
+    border-radius: 10px; /* Rounded corners */
+    width: 100px; /* Set specific width */
+    text-align: center; /* Center the text */
+    white-space: nowrap; /* Keep text on one line */
+}
+
+.banner .create-new-button:hover {
+    background: linear-gradient(135deg, #f09f09, #FF8C00); /* Gradient reversed on hover */
+}
+
+/* Image styles */
+.banner-image {
+    flex-shrink: 0; /* Prevent image from shrinking */
+}
+
+.banner-image img {
+    height: auto;
+    max-height: 100%; /* Adjust the height to fit the banner */
+    width: auto;
+    max-width: 100%; /* Adjust the width to fit the banner */
+    position: absolute;
+    right: 0; /* Align the image to the right */
+    top: 0; /* Align the image to the top */
+    border-radius: 10px; /* Add rounded corners to the image */
+}
+  .pdf-container {
+    position: relative;
+  }
+  
+  .pdf-container .react-pdf__Document {
+    width: 100%;
+  }
+  

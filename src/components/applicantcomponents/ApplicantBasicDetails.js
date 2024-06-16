@@ -304,7 +304,7 @@ const validateForm1 = () => {
   };
 
   const handleResumeBuilder = async () => {
-    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
+    const apiUrl1 = 'http://localhost:5173/api/auth/login';
     if (requestData) {
       const requestOptions = {
         method: 'POST',
@@ -321,7 +321,7 @@ const validateForm1 = () => {
           return response.json();
         })
         .then(data => {
-          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
           // window.open(loginUrl, '_blank');
           setIsModalOpen(true);
