@@ -417,7 +417,7 @@ const ApplicantViewProfile = () => {
           </div>
         </div>
       </section> */}
-      <div className="features-job-view1">
+      <div className="features-job-view2">
       <div className='prof-container'>
            <div class="professional-details-container">
     <span > <img src={mortarboard1} alt="mortarboard1" class="icon-prof"  /></span> 
