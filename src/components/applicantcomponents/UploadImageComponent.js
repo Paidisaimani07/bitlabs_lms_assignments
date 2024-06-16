@@ -15,9 +15,15 @@ const UploadImageComponent = ({ id}) => {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     const fileExtension = file.name.split('.').pop().toLowerCase();
+
     if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png') {
-      setPhotoFile(file);
-      setError('');
+      if (file.size < 1048576) { // Check if the file size is less than 1 MB
+        setPhotoFile(file);
+        setError('');
+      } else {
+        setError('File size must be less than 1 MB.');
+        setPhotoFile(null);
+      }
     } else {
       setError('Only JPEG and PNG files are allowed.');
       setPhotoFile(null);
