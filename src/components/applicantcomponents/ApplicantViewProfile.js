@@ -481,7 +481,7 @@ const ApplicantViewProfile = () => {
               <ResumeEditPopup  id={id} resumeFileName={resumeFileName} />
             </Modal> 
             </div>
-            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName|| 'Not Available'}</span></div>
+            <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName}</span></div>
       </div>
     </div>
     

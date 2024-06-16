@@ -1,50 +1,49 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import File from '../../images/icons/file.png';
 import { useUserContext } from '../common/UserProvider';
-import ModalComponent from './ModalComponent';
-import { ClipLoader } from 'react-spinners';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
-
+import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
-const ResumeEditPopup = ({ id,resumeFileName }) => {
+const ResumeEditPopup = ({ id, resumeFileName }) => {
   const [resumeFile, setResumeFile] = useState(null);
-  const [fileName, setFileName] = useState(''); // New state for file name
+  const [fileName, setFileName] = useState(resumeFileName || ''); // Use resumeFileName as the initial state
   const [modalIsOpen, setModalIsOpen] = useState(true);
   const [error, setError] = useState('');
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useUserContext();
-  const [resumeName, setResumeName] = useState('');
+
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
-  useState(() => {
-    setResumeName(resumeFileName);
-  }, [resumeFileName]);
 
   const handleInputChange = (event) => {
-    setResumeName(event.target.value);
+    setFileName(event.target.value);
   };
- 
+
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setResumeFile(file);
-      setFileName(file.name); // Set file name
-      setError('');
+      if (file.size > 1048576) { // Check if file size is greater than 1MB (1MB = 1048576 bytes)
+        setError('File size should be less than 1MB.');
+        setResumeFile(null);
+        setFileName(''); // Clear file name if file is too large
+      } else {
+        setResumeFile(file);
+        setFileName(file.name); // Set file name
+        setError('');
+      }
     } else {
       setError('Only PDF files are allowed.');
       setResumeFile(null);
       setFileName(''); // Clear file name if invalid file
     }
   };
+
 
   const triggerFileInputClick = () => {
     document.getElementById('tf-upload-resume').click();
@@ -73,35 +72,7 @@ const ResumeEditPopup = ({ id,resumeFileName }) => {
     }
   };
 
-  const handleResumeBuilder = async () => {
-    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
-    if (requestData) {
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      };
-      fetch(apiUrl1, requestOptions)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
-          setLoginUrl(loginUrl);
-          // window.open(loginUrl, '_blank');
-          setIsModalOpen(true);
-        })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation:', error);
-        });
-    }
-  };
-
+ 
   return (
     <div id="upload-resume-editprofile">
       <div className="popup-heading-editprofile1">Resume</div>
@@ -111,17 +82,18 @@ const ResumeEditPopup = ({ id,resumeFileName }) => {
           id="tf-upload-resume"
           type="file"
           name="resume"
-          accept="application/pdf" // Accept only PDF files
+          accept="application/pdf"
           required=""
           onChange={handleResumeSelect}
         />
+               
       </div>
       <div className="row-editprofile">
         <i className="file-icon"></i>
         <input
           type="text"
-          value={resumeName} onChange={handleInputChange}
-          readOnly
+          value={fileName} // Display fileName state
+          onChange={handleInputChange}
           className="file-name-input-resume"
           placeholder="No file selected"
         />
@@ -145,7 +117,6 @@ const ResumeEditPopup = ({ id,resumeFileName }) => {
         <ResumeBuilder />
       </ModalWrapper>
       {error && <div className="error-message">{error}</div>}
-      
       <div className="save-resume">
         <button
           type="button"
