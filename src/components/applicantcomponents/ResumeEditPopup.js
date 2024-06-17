@@ -5,6 +5,7 @@ import { useUserContext } from '../common/UserProvider';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
@@ -16,6 +17,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [snackbars, setSnackbars] = useState([]);
   const { user } = useUserContext();
 
   const openModal = () => setIsModalOpen(true);
@@ -67,14 +69,24 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
       window.location.reload();
     } catch (error) {
       console.error('Error uploading resume:', error);
-      window.alert('Error uploading resume. Please try again.');
+     // window.alert('Error uploading resume. Please try again.');
+      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
   };
 
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+ 
  
   return (
     <div id="upload-resume-editprofile">
@@ -129,6 +141,17 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
           Save Changes
         </button>
       </div>
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };

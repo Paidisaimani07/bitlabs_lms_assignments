@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import Snackbar from '../common/Snackbar';
 
 const BasicDetailsEditPopup = ({ applicantDetails }) => {
   const [formValues, setFormValues] = useState({
@@ -13,6 +14,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
     alternatePhoneNumber: applicantDetails&&applicantDetails.alternatePhoneNumber || '',
   });
   const [errors, setErrors] = useState({});
+  const [snackbars, setSnackbars] = useState([]);
   const navigate = useNavigate();
   const user1 = useUserContext();
   const user = user1.user;
@@ -44,6 +46,14 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
     setErrors({ ...errors, [name]: validateInput(name, value) });
   };
 
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -65,15 +75,18 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         });
 
         if (response.status === 200) {
-          window.alert('Basic details updated successfully!');
+          //window.alert('Basic details updated successfully!');
+          addSnackbar({ message: 'Basic details updated successfully!', type: 'success' });
           window.location.reload();
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-          window.alert("Failed to update basic details.");
+          //window.alert("Failed to update basic details.");
+          addSnackbar({ message: 'Failed to update basic details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        window.alert("Failed to update basic details due to an error.");
+        //window.alert("Failed to update basic details due to an error.");
+        addSnackbar({ message: 'Failed to update basic details due to an error.', type: 'error' });
       }
     }
   };
@@ -160,6 +173,17 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
       </div>
       
       </div>
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };

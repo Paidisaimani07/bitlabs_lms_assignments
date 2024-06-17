@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
- 
+import Snackbar from '../common/Snackbar';
 import { Typeahead } from 'react-bootstrap-typeahead';
  
 const ProfessionalDetailsPopup = ({ applicantDetails }) => {
@@ -28,7 +28,7 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
    
   });
   const [errors, setErrors] = useState({});
- 
+  const [snackbars, setSnackbars] = useState([]);
   const user1 = useUserContext();
   const user = user1.user;
   useEffect(() => {
@@ -62,6 +62,14 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     }
     return error;
   };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
  
   const handleInputChange = (name, value) => {
     setFormValues({ ...formValues, [name]: value });
@@ -93,15 +101,18 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
         );
  
         if (response.status === 200) {
-          window.alert('Professional details updated successfully!');
+         // window.alert('Professional details updated successfully!');
+         addSnackbar({ message: 'Professional details updated successfully', type: 'success' });
           window.location.reload(); // You might want to use a more React-friendly way to update the UI
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-          window.alert('Failed to update professional details.');
+         // window.alert('Failed to update professional details.');
+          addSnackbar({ message: 'Failed to update professional details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        window.alert('Failed to update professional details due to an error.');
+        //window.alert('Failed to update professional details due to an error.');
+        addSnackbar({ message: 'Failed to update professional details due to an error.', type: 'error' });
       }
     }
   };
@@ -240,6 +251,17 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
           Save Changes
         </button>
       </div>
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };
