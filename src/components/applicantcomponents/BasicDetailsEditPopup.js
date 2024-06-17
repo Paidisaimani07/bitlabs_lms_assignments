@@ -19,29 +19,25 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
 
   const validateInput = (name, value) => {
     let error = '';
-    if (!value) {
-      var formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      if (name === 'alternatePhoneNumber') {
-       formattedName = 'Mobile number';
-    }
-      error=`${formattedName} is required.`;
-      // error = `${name} is required.`;
+    if (!value.trim()) { // Check if value is empty or contains only spaces
+        let formattedName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+        if (name === 'alternatePhoneNumber') {
+            formattedName = 'Mobile Number';
+        }
+        error = `${formattedName} is required.`;
     } else {
-      if (name === 'firstName' || name === 'lastName') {
-        if (value.length < 3) {
-          error = `${name === 'firstName' ? 'First' : 'Last'}name should be at least 3 characters.`;
-        } else if (!/^[a-zA-Z]+$/.test(value)) {
-          error = `${name === 'firstName' ? 'First' : 'Last'}name should contain only letters.`;
-        }
-      } else if (name === 'alternatePhoneNumber') {
-        if (!/^[6789]\d{9}$/.test(value)) {
-          error = 'Mobile number should be 10 digits, starting with 6, 7, 8, or 9.';
-        }
-      } 
+        if (name === 'firstName' || name === 'lastName') {
+            if (!/^[a-zA-Z\s]*$/.test(value.trim())) {
+                error = `${name === 'firstName' ? 'First' : 'Last'}name should contain only letters and spaces.`;
+            }
+        } else if (name === 'alternatePhoneNumber') {
+            if (!/^[6789]\d{9}$/.test(value)) {
+                error = 'Mobile number should be 10 digits, starting with 6, 7, 8, or 9.';
+            }
+        } 
     }
     return error;
-  };
-
+};
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
