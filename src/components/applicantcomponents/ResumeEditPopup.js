@@ -19,7 +19,10 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
   const { user } = useUserContext();
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+ const closeModal = () => {
+    setIsModalOpen(false);
+    window.location.reload(); // Reload the page when closing the modal
+  };
 
   const handleInputChange = (event) => {
     setFileName(event.target.value);
