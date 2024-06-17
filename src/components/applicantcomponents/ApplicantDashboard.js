@@ -313,7 +313,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 )}
-                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
+                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                   <div className="card ">
                     {/*New palet in application dashboard*/}
                     {/* <div onClick={Buildresume} className="resumecard"> */}

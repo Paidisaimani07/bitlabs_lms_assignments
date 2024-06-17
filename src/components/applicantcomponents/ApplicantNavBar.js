@@ -187,6 +187,7 @@ function ApplicantNavBar() {
   const hideMenu = e => {
     e.stopPropagation(); // Stop event propagation
     setIsOpen(window.innerWidth >= 1302);
+    setHamburgerClass('fa fa-bars');
   };
 
   useEffect(() => {
