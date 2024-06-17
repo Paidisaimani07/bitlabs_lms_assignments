@@ -92,6 +92,7 @@
       margin-top: auto;
       margin-bottom: 10px;
         width: 95% !important;
+        height:70% !important;
         /* top:30px Adjust for smaller screens */
     }
     /* .modal-content3 {
