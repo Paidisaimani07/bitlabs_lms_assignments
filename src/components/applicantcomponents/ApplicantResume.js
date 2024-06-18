@@ -173,4 +173,3 @@ const ApplicantResume = () => {
 };
  
 export default ApplicantResume;
- 
