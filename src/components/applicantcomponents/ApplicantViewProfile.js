@@ -108,15 +108,7 @@ const ApplicantViewProfile = () => {
           )
         );
         setImageSrc(`data:${imageResponse.headers['content-type']};base64,${base64Image}`);
-        const resumeId = await fetchResumeFileName(id);
-        if (resumeId) {
-          const firstName = profileResponse.data.basicDetails.firstName;
-          const lastName = profileResponse.data.basicDetails.lastName;
-          const fileName = `${firstName}_${lastName}.pdf`;
-          setResumeFileName(fileName);
-        } else {
-          console.error('No resume fileName found');
-        }
+        
         
   
         setLoading(false);
@@ -137,6 +129,35 @@ const ApplicantViewProfile = () => {
       isMounted = false;
     };
   }, [user]);  
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchResume = async () => {
+      try {
+        console.log('Making resume API call...');
+        const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`);
+        console.log('Resume API call response:', resumeResponse);
+
+        if (resumeResponse.data) {
+          const firstName = profileData?.basicDetails?.firstName || '';
+          const lastName = profileData?.basicDetails?.lastName || '';
+          const fileName = `${firstName}_${lastName}.pdf`;
+          setResumeFileName(fileName);
+        } else {
+          console.error('No resume fileName found:', resumeResponse.data);
+        }
+      } catch (error) {
+        console.error('Error fetching resume:', error);
+      }
+    };
+
+      fetchResume();
+    
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, profileData]);
 
   if (loading) {
     return <div>Loading...</div>;
