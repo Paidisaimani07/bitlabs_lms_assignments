@@ -31,6 +31,7 @@
     padding: 20px !important;
     width: 50% !important; 
    margin-bottom: 50px !important;
+   margin-top: 50px;
    
     overflow-y: auto !important;
 }
@@ -45,6 +46,8 @@
     /* height: 75% !important; */
     width:50% !important;
     overflow-y: auto !important;
+    margin-top: 20% !important;
+    margin-bottom: 10% !important; 
 }
 .modal-content1 {
     border-radius: 16px !important;
@@ -77,6 +80,13 @@
  flex-shrink: 0;
 
 }
+@media(min-width: 320px) and (max-width: 550px) {
+     .modal-content {
+      
+        height:70% !important;
+        /* top:30px Adjust for smaller screens */
+    }
+}
 @media(min-width: 320px) and (max-width: 450px) {
     .modal-content2 {
         width: 95% !important;
@@ -89,15 +99,16 @@
       margin-top: auto;
       margin-bottom: 10px;
         width: 95% !important;
+      
         /* top:30px Adjust for smaller screens */
     }
-    .modal-content3 {
-      width: 90% !important; /* Adjust for tablets */
-  }
+    /* .modal-content3 {
+      width: 90% !important; 
+  } */
   
 }
 
-@media (min-width: 451px) and (max-width: 1023px) {
+@media (min-width: 450px) and (max-width: 1023px) {
     .modal-content2 {
         width: 90% !important; /* Adjust for tablets */
     }
@@ -110,16 +121,93 @@
         margin-bottom: 20px;
         /* top:30px Adjust for smaller screens */
     }
-    .modal-content3 {
-      width: 90% !important; /* Adjust for tablets */
-  }
+    /* .modal-content3 {
+      width: 90% !important; 
+  } */
 }
+@media (min-width: 320px) and (max-width: 800px) {
+  
+  .modal-content3 {
+    width: 80% !important; /* Adjust for tablets */
+}
+.row-editprofile{
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+}
+.file-name-input-resume{
+  width: 100% !important;
+}
+.save-resume{
+ 
+  justify-content:center!important ;
+  
+}
+}
+@media (min-width: 600px) and (max-width: 800px) {
+  
+  .modal-content3 {
+    width: 70% !important; /* Adjust for tablets */
+}
+}
+
+
+@media (min-width: 800px) and (max-width: 1000px) {
+  
+  .modal-content3 {
+    width: 90% !important; /* Adjust for tablets */
+}
+/* .row-editprofile{
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+} */
+.file-name-input-resume{
+  width: 70% !important;
+}
+}
+@media (min-width: 1000px) and (max-width: 1200px) {
+  
+  .modal-content3 {
+    width: 70% !important; /* Adjust for tablets */
+}
+/* .row-editprofile{
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+} */
+.file-name-input-resume{
+  width: 80% !important;
+}
+
+}
+@media (min-width: 1200px) and (max-width: 3000px) {
+  
+  .modal-content3 {
+    width: 50% !important; /* Adjust for tablets */
+}
+/* .row-editprofile{
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+} */
+.file-name-input-resume{
+  width: 50% !important;
+}
+
+}
+
 
 @media (min-width: 1024px) {
     .modal-content2 {
         width: 50% !important; /* Adjust for larger screens (laptops) */
     }
    
+}
+@media (min-width: 1918px) and (max-width:3000px) {
+  .features-job-view2 {
+    width: 60%;
+}
 }
 /* * Extra Large Devices (Desktops, 1920px and up) */ 
 @media (min-width: 1920px) {
@@ -136,9 +224,30 @@
       right: 40px;
   }
 }
+@media (min-width: 1200px) and (max-width: 1300px) {
+  .features-job-view {
+      width: 95%;
+      margin: auto;
+  }
+  .features-job-view2 {
+    width: 90%;
+    margin: auto;
+    margin-top: 30px;
+}
+.features-job-view1 {
+  width: 90%;
+  margin: auto;
+}
+
+
+  .edit-icon {
+      top: 35px;
+      right: 35px;
+  }
+}
 
 /* Large Devices (Desktops, 1200px and up) */
-@media (min-width: 1200px) and (max-width: 1919px) {
+@media (min-width: 1301px) and (max-width: 1919px) {
   .features-job-view {
       width: 70%;
   }
@@ -155,7 +264,7 @@
 /* Medium Devices (Tablets, 992px and up) */
 @media (min-width: 992px) and (max-width: 1199px) {
   .features-job-view {
-      width: 80%;
+      width: 83%;
       margin:auto;
   }
   .features-job-view1 {
@@ -178,7 +287,7 @@
 /* Small Devices (Tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991px) {
   .features-job-view {
-      width: 90%;
+      width: 94%;
       margin:auto;
   }
   .features-job-view1 {
@@ -187,33 +296,21 @@
 }
 .features-job-view2 {
   width: 90%;
-  margin:auto;
-  margin-top: 30px;
+  margin: 30px auto;
+
   /* margin:auto; */
 }
   .edit-icon {
       top: 25px;
       right: 25px;
   }
-  .row-editprofile{
-    display: flex !important;
-    align-items: center !important;
-    flex-direction: column !important;
-  }
-  .file-name-input-resume{
-    width: 100% !important;
-  }
-  .save-resume{
-    justify-content:center!important ;
-    
-
-  }
+  
 }
 
 /* Extra Small Devices (Phones, 576px and up) */
 @media (min-width: 320px) and (max-width: 767px) {
   .features-job-view {
-      width: 90%;
+      width: 95%;
       margin:auto;
   }
   .features-job-view1 {
@@ -222,8 +319,8 @@
 }
 .features-job-view2 {
   width: 90%;
-  margin:auto;
-  margin-top: 30px;
+  margin: 30px auto;
+  
 }
   .edit-icon {
       top: 20px;
@@ -237,20 +334,7 @@
     width: 100%;
     justify-content: flex-end;
   }
-  .row-editprofile{
-    display: flex !important;
-    align-items: center !important;
-    flex-direction: column !important;
-  }
-  .file-name-input-resume{
-    width: 100% !important;
-  }
-  .save-resume{
-   
-    justify-content:center!important ;
-    
-
-  }
+  
    
 }
 #upload-resume-editprofile {

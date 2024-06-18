@@ -21,6 +21,7 @@ import Modal from 'react-modal';
 import './modalpopup.css'; // Import the CSS file
 import ProfessionalDetailsPopup from './ProfessionalDetailsPopup';
 import ResumeEditPopup from './ResumeEditPopup';
+import Snackbar from '../common/Snackbar';
 
 const ApplicantViewProfile = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -39,6 +40,7 @@ const ApplicantViewProfile = () => {
   const [edit1ModalIsOpen, setEdit1ModalIsOpen] = useState(false);
   const [resumeModalIsOpen, setResumeModalIsOpen] = useState(false);
   const [resumeFileName, setResumeFileName] = useState('');
+  const [snackbars, setSnackbars] = useState([]);
   const navigate = useNavigate();
   const { user } = useUserContext();
   const id = user.id;
@@ -70,6 +72,14 @@ const ApplicantViewProfile = () => {
       console.error('Error fetching resume ID:', error);
       return null;
     }
+  };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -114,7 +124,8 @@ const ApplicantViewProfile = () => {
       } catch (error) {
         setLoading(false);
         if (count === -1 && isMounted) {
-          window.alert('Profile not found. Please fill in your profile');
+          //window.alert('Profile not found. Please fill in your profile');
+          addSnackbar({ message: 'Profile not found. Please fill in your profile.', type: 'error' });
           window.location.href = '/applicant-update-profile';
         }
         
@@ -193,7 +204,7 @@ const ApplicantViewProfile = () => {
                 src={imageSrc || '../images/user/avatar/profile-pic.png'}
                 alt="Profile"
                 onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
-                style={{ borderRadius: '100px', position: 'relative' }}
+                style={{ borderRadius: '100%', position: 'relative',width:'100px',height:'100px' }}
               />
               <Link>
               <img
@@ -483,6 +494,17 @@ const ApplicantViewProfile = () => {
             </div>
             <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName}</span></div>
       </div>
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
     
   );

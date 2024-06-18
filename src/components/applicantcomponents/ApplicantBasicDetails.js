@@ -14,6 +14,9 @@ import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
+import ModalWrapper from './ModalWrapper';
+import ResumeBuilder from './ResumeBuilder';
+import Snackbar from '../common/Snackbar';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -22,6 +25,9 @@ const ApplicantBasicDetails = () => {
   number = parseInt(number, 10);
   const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(number);
+  const [snackbars, setSnackbars] = useState([]);
+  const [error, setError] = useState('');
+  // const [currentStage, setCurrentStage] = useState(1);
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
@@ -35,7 +41,8 @@ const ApplicantBasicDetails = () => {
     mobilenumber: "",
    
   });
-
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
     firstName: applicant.firstName,
     lastName: applicant.lastName,
@@ -229,7 +236,8 @@ if (!applicant.mobilenumber) {
 
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
-      window.alert('Profile saved successfully!');
+      //window.alert('Profile saved successfully!');
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -288,11 +296,13 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
       window.location.reload();
     } catch (error) {
       console.error('Error uploading resume:', error);
-      window.alert('Error uploading resume. Please try again.');
+     // window.alert('Error uploading resume. Please try again.');
+     addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
   };
 
@@ -379,6 +389,14 @@ if (!applicant.mobilenumber) {
     }
   };
 
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+
   const handleBack = () => {
     setCurrentStage((prevStage) => Math.max(prevStage - 1, 1));
   };
@@ -402,11 +420,13 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      window.alert('Error uploading resume. Please try again.');
+      //window.alert('Error uploading resume. Please try again.');
+      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
     navigate('/applicant-find-jobs');
@@ -687,10 +707,14 @@ if (!applicant.mobilenumber) {
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
+              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
+      {error && <div className="error-message">{error}</div>}
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
                   type="button"
-                  onClick={handleResumeBuilder}
+                  onClick={openModal}
                   className="btn-3"
                   style={{
                     backgroundColor: '#7E7E7E',
@@ -799,6 +823,17 @@ if (!applicant.mobilenumber) {
       </div>
     </div>
     </div>
+    {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };

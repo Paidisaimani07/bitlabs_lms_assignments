@@ -3,6 +3,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); // This is required by react-modal for accessibility
 
@@ -10,18 +11,32 @@ const UploadImageComponent = ({ id}) => {
   const [photoFile, setPhotoFile] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(true);
   const [error, setError] = useState('');
-  
+  const [snackbars, setSnackbars] = useState([]);  
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     const fileExtension = file.name.split('.').pop().toLowerCase();
+
     if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png') {
-      setPhotoFile(file);
-      setError('');
+      if (file.size < 1048576) { // Check if the file size is less than 1 MB
+        setPhotoFile(file);
+        setError('');
+      } else {
+        setError('File size must be less than 1 MB.');
+        setPhotoFile(null);
+      }
     } else {
       setError('Only JPEG and PNG files are allowed.');
       setPhotoFile(null);
     }
+  };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
 
   const uploadPhoto = async () => {
@@ -41,7 +56,8 @@ const UploadImageComponent = ({ id}) => {
       );
 
       console.log('Photo uploaded successfully:', response.data);
-      window.alert('Photo uploaded successfully:');
+      //window.alert('Photo uploaded successfully:');
+      addSnackbar({ message: 'Photo uploaded successfully', type: 'success' });
       window.location.reload();
       // Handle the response as needed
 
@@ -88,6 +104,17 @@ const UploadImageComponent = ({ id}) => {
         Upload Photo
       </button>
       {error && <div className="error-message">{error}</div>}
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };

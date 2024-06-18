@@ -10,7 +10,7 @@ const Snackbar = ({ message, link, linkText, type, onClose, index }) => {
       onClose(index);
     }, 5000); // 5 seconds
 
-    return () => clearTimeout(timer);
+   // return () => clearTimeout(timer);
   }, [onClose, index]);
 
   return (

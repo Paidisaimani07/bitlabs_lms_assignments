@@ -165,7 +165,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
         const response = await axios.post(`${apiUrl}/job/recruiters/cloneJob/${jobId}/${applicantId}`);
         const message = response.data.message; // Access the message from the response
        // window.alert(message);
-       setSnackbar({ open: true, message: message, type: 'success' });
+       setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
       } else {
         // Handle closing the job as before
         await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);

@@ -1,0 +1,96 @@
+
+/* .page-title-dashboard {
+  padding: 20px 0;
+  background-color: #f5f5f5;
+  text-align: center;
+}
+ 
+.title-dashboard {
+  font-size: 24px;
+  font-weight: bold;
+} */
+ 
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(0deg, #161734 0%, #161734 100%), linear-gradient(90deg, #F97316 -2.67%, #FDEC5A 99.69%);
+  color: white;
+  padding: 20px;
+  position: relative;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  width: 100%;
+  height: 180px;
+  margin-top: 20px;
+}
+ 
+.banner-content {
+  flex: 1;
+  z-index: 1;
+}
+ 
+.banner h1 {
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+}
+ 
+.banner p {
+  margin: 2px 0;
+  color: #D7D8E0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+ 
+.banner .create-new-button {
+  background: linear-gradient(135deg, #F97316, #FFA500);
+  color: #FFF;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  margin-top: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.5s ease;
+  border-radius: 10px;
+  width: 150px;
+  text-align: center;
+}
+ 
+.banner .create-new-button:hover {
+  background: linear-gradient(135deg, #f09f09, #FF8C00);
+}
+ 
+.banner-image {
+  flex-shrink: 0;
+}
+ 
+.banner-image img {
+  width: 461.59px;
+  height: 240.5px;
+  border-radius: 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: linear-gradient(270deg, rgba(210, 210, 212, 0) 41.7%, #161734 86.27%);
+}
+ 
+.download-section {
+  margin: 20px 0;
+  text-align: center;
+}
+ 
+.download-link {
+  display: inline-block;
+  text-decoration: none;
+  color: #333;
+  font-size: 20px;
+}
+ 
+.download-link img {
+  width: 24px;
+  vertical-align: middle;
+  margin-right: 8px;
+}
