@@ -5,6 +5,7 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
+import { right } from "@popperjs/core";
 
 function RecruiterNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
@@ -14,6 +15,7 @@ function RecruiterNavBar() {
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   // const [alertCount, setAlertCount] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -122,6 +124,33 @@ const handleBellClick = () => {
   // Reset the alert count
   setAlertCount(0);
 };
+const linkStyle = {
+  backgroundColor: isHovered ? '#ea670c' : '#F97316',
+  paddingRight: '0px',
+  display: 'inline-block',
+  borderRadius: '10px',
+  textAlign: 'center',
+  marginTop: '20px',
+  width: '230px',
+  transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+};
+
+const textStyle = {
+  color: 'white',
+  fontFamily: 'Plus Jakarta Sans',
+  fontSize: '18px',
+  fontWeight: '500',
+  lineHeight: '25px',
+  textAlign: 'center',
+};
+
+const iconStyle = {
+  marginLeft: '10px',
+  color: 'white',
+  fontWeight: '50',
+  fontSize: '15px',
+};
+
 
   return (
 <div>
@@ -160,7 +189,7 @@ const handleBellClick = () => {
               <div id="logo" className="logo">
                 <a href="/recruiterhome">
                   <img
-                    className="site-logo"
+                    className="profile-site-logo"
                     src="../images/logo.png"
                     alt="Image"
                   />
@@ -172,7 +201,8 @@ const handleBellClick = () => {
             <div className="header-ct-right">
           <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
           <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px' }}>
-          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick}>
+          <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} style={window.innerWidth > 1300 ? { marginRight: '20px' } : {}}
+ onClick={handleBellClick}>
   {alertCount > 0 ? (
     <sup
       style={{
@@ -234,8 +264,8 @@ const handleBellClick = () => {
           )}
     </div> */}
   </header>
-  {(isOpen &&
-  <div className="left-menu">
+  {(
+  <div className={`left-menu ${isOpen ? 'open' : ''}`}>
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
@@ -309,11 +339,19 @@ const handleBellClick = () => {
             </Link>
           </li>
           <li>
-          <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""} style={{ backgroundColor: "#F97316", paddingRight: "0px", display: "inline-block",borderRadius:"10px", textAlign: "center",marginTop:"20px",width:"250px" }}>
-  <span className=""></span>
-  <span className="" style={{ color: "white", fontFamily: "Plus Jakarta Sans", fontSize: "22px", fontWeight: "500", lineHeight: "25px", textAlign: "center" }}> Post <span style={{textTransform: "lowercase"}}>a</span> Job </span>
- <span style={{ marginLeft: "10px",color:"white",fontWeight: 150, fontSize: "25px" }}>➔</span>
-</Link>
+          <Link
+      to="/recruiter-postjob"
+      className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}
+      style={linkStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span className=""></span>
+      <span style={textStyle}>
+        Post <span style={{ textTransform: 'lowercase' }}>a</span> Job
+      </span>
+      <span style={iconStyle}>➔</span>
+    </Link>
 
           </li>
         </ul>

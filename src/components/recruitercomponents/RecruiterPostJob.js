@@ -5,7 +5,11 @@ import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+
 import axios from 'axios';
+import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
   const [jobTitle, setJobTitle] = useState("");
@@ -32,7 +36,10 @@ function RecruiterPostJob() {
   const [image, setImage] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [fileName, setFileName] = useState("No selected file")
+
+  const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
   const user = user1.user;
   const handleSubmit = (e) => {
@@ -65,7 +72,8 @@ function RecruiterPostJob() {
       .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
       .then((response) => {
         console.log('API Response:', response.data);
-        window.alert('job saved successfully');
+       // window.alert('Job saved successfully');
+       setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
         clearForm();
       })
       .catch((error) => {
@@ -90,6 +98,7 @@ function RecruiterPostJob() {
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
       alert("Sorry, you can't post the job until your profile is verified");
+      //setSnackbar({ open: true, message: 'Sorry, you cant post the job until your profile is verified', type: 'error' });
       window.location.href = '/recruiter-my-organization';
     }
   }, [approvalStatus]);
@@ -217,23 +226,16 @@ function RecruiterPostJob() {
       }));
       return isValid;
     }
-    // if (jobHighlights && jobHighlights.trim().length < 3) {
-    //   isValid = false;
-    //   setFormErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     jobHighlights: 'Job highlights must be at least 3 characters long.',
-    //   }));
-    //   return isValid;
-    // }
-    if (!description.trim() || description.trim().length < 15) {
-      errors.description = 'Description is required and must be at least 15 characters long.';
-      isValid = false;
-    } else {
-      errors.description = '';
-    }
-    setFormErrors(errors);
-    return isValid;
-  };
+  
+      if (!description.trim() || description.trim().length < 15) {
+        errors.description = 'Description is required and must be at least 15 characters long.';
+        isValid = false;
+      } else {
+        errors.description = '';
+      }
+      setFormErrors(errors);
+      return isValid;
+    };
 
   const handleJobTitleChange = (e) => {
     setJobTitle(e.target.value);
@@ -357,14 +359,15 @@ function RecruiterPostJob() {
   //     jobHighlights: '',
   //   }));
   // };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      description: '',
-    }));
-  }; 
 
+  
+  const handleDescriptionChange = (content) => {
+    setDescription(content);
+    setFormErrors((prevErrors) => ({
+         ...prevErrors,
+          description: '',
+         }));
+  };
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {
       case 'B.Tech':
@@ -513,7 +516,8 @@ function RecruiterPostJob() {
         setFileName(file.name);
         setImage(URL.createObjectURL(file));
       } else {
-        alert("Please select a valid PDF or DOC file.");
+        //alert("Please select a valid PDF or DOC file.");
+        setSnackbar({ open: true, message: 'Please select a valid PDF or DOC file.', type: 'error' });
         e.target.value = null;
       }
     }
@@ -526,6 +530,20 @@ function RecruiterPostJob() {
     }
 
   };
+
+   const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+  
+  const handleFocus = () => {
+    setIsActive(true);
+  };
+
+  const handleBlur = () => {
+    setIsActive(false);
+
+  };
+
   return (
     <div>
       <div className="dashboard__content">
@@ -534,7 +552,7 @@ function RecruiterPostJob() {
             <div className="row">
               <div className="col-lg-12 col-md-12 ">
                 <div className="title-dashboard">
-                <BackButton />
+                {/* <BackButton /> */}
                   <div className="title-dash flex2">Post a Job</div>
                 </div>
               </div>
@@ -562,21 +580,24 @@ function RecruiterPostJob() {
                         )}
                       </fieldset>
                     </div>
-                    <div className="text-editor-wrap">
-                      <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                      <div className="text-editor-main">
-                        <textarea
-                          className="input-form"
-                          placeholder="Job Description at least 15 characters"
-                          value={description}
-                          onChange={handleDescriptionChange}
-                          required
-                        />
-                        {formErrors.description && (
-                          <div className="error-message">{formErrors.description}</div>
-                        )}
-                      </div>
-                    </div>
+                   <div className="text-editor-wrap">
+                          <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
+                         <div className="text-editor-main">
+                         <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
+                           <ReactQuill 
+                            theme="snow" 
+                            value={description} // Set initial content from description state
+                            onChange={handleDescriptionChange} // Update state on content change
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                           required
+                         /> 
+                       </div>
+                   {formErrors.description && (
+                  <   div className="error-message">{formErrors.description}</div>
+                    )}
+                  </div>
+                 </div>
                     <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <div id="item_category" className="dropdown titles-dropdown info-wd">
@@ -816,6 +837,15 @@ function RecruiterPostJob() {
           </form>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   )
 }

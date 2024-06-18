@@ -1,4 +1,3 @@
-
 html {
   overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
@@ -98,7 +97,7 @@ video {
   font-family: inherit;
   font-size: 100%;
   font-weight: inherit;
-  font-style: inherit;
+  /* font-style: inherit; */
   vertical-align: baseline;
   margin: 0;
   padding: 0;
@@ -229,7 +228,7 @@ input::-moz-focus-inner {
 body {
   font: 14px/25px "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
-  background:#fff;
+  background:#EFF2F6;
   color: #202020;
 }
 
@@ -391,7 +390,7 @@ input[type="color"] {
   color: #000000;
   background-color: transparent;
   height: 50px;
-  padding: 12px 30px;
+  /* padding: 12px 30px; */
   border-radius: 0;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
@@ -540,6 +539,7 @@ input[type="color"],
 
 .tf-container.ct2 {
   width: 1830px;
+  /* padding-top: 5px; */
 }
 
 /* #header {
@@ -555,7 +555,7 @@ input[type="color"],
   background-color: #fff;
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
-  height: 80px;
+  height: 90px;
   position: fixed;
   top: 0;
   left: 0;
@@ -594,7 +594,8 @@ input[type="color"],
 }
 
 .sticky-area-wrap .header-ct-left .logo .site-logo {
-  width: 200px;
+  width: auto !important;
+  height:57px !important;
   display: block;
   margin-left:45px;
 }
@@ -610,8 +611,15 @@ input[type="color"],
   .sticky-area-wrap .header-ct-left .logo .site-logo {
       width: 160px; 
       display: block;
-      margin-left: 0px !important;
+      margin-left: -13px !important;
   }
+
+  @media only screen and (min-width: 320px) and (max-width: 700px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px !important;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:35px;
     margin-top: -14px;
@@ -621,29 +629,49 @@ input[type="color"],
 
 @media only screen and (min-width: 700px) and (max-width: 1400px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
+      /* width: 160px;  */
+      /* max-width:100%; */
+      width:auto !important;
+      height: 57 !important;
       display: block;
-      margin-left: 0px;
+      margin-left: -4px;
   }
+}
+  @media only screen and (min-width: 700px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:45px;
     margin-top: -10px;
   
   }
 }
-@media only screen and (min-width: 900px) and (max-width: 1400px) {
+@media only screen and (min-width: 900px) and (max-width: 1500px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
-      display: block;
-      margin-left: 52px;
+      width: auto !important;
+      height : 57px !important;
+      /* max-width:100%; */
+      display: inline-block;
+      margin-left: 15px !important;
   }
+}
+
+  @media only screen and (min-width: 900px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 52px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:65px;
     margin-top: -10px;
   
   }
 }
-
+}
 .custom-input {
   color: #8a8787 !important;
 }
@@ -686,8 +714,8 @@ input[type="color"],
 }
 
 .flat-dashboard-setting {
-  margin: 10px; 
-  padding: 10px;
+  margin: 0px; 
+  padding: 10px 10px 10px 0px;
   border-radius: 8px;
   /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  */
 }
@@ -761,6 +789,9 @@ input[type="color"],
   margin-left: 8px;
 }
 
+.header-style2 .logo .profile-site-logo {
+  max-width: 149px;
+}
 .header-style2 .sticky-area-wrap .header-ct-right .bell {
   margin-right: 28px;
 }
@@ -1503,6 +1534,15 @@ input[type="color"],
       padding-right: 10px; 
         height: auto; 
   }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+    width: 115px!important;
+    display: block!important;
+  }
+
+  .menu-mobile-popup .mobile-header .profile-site-logo {
+    width: 150px;
+  }
   .nav-filter .nav-mobile {
     display: none;
     position: relative;
@@ -1525,11 +1565,18 @@ input[type="color"],
   margin-left: 2px!important;
   }
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
+    width: auto !important;
+    height: 45px !important;
+    display: block!important;
+  }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
     width: 115px!important;
     display: block!important;
   }
   #header .sticky-area-wrap .header-ct-right .account {
     margin-right: 0.5px!important;
+    padding-right:0px;
 }
  
  
@@ -1544,7 +1591,7 @@ input[type="color"],
 
 .sticky-area-wrap .header-ct-right .account {
   display: flex;
-  gap: 9px;
+  /* gap: 9px; */
   align-items: center;
   padding-right: -50px;
   position: relative;
@@ -3376,8 +3423,13 @@ input[type="color"],
   border-radius: 4px;
 }
  
-.apply-button1:hover,
 .reset-button1:hover {
+  border-color: #c2570c; /* Darker Green */
+  color: #c2570c;
+}
+
+.apply-button1:hover
+{
   background-color: #F97316; /* Darker Green */
   color: white;
 }
@@ -3413,7 +3465,7 @@ input[type="color"],
   font-size: 16px;
   font-family: sans-serif;
   border-color: #F97316;
-  width: 150px;
+  width: 155px;
   stroke: 1px;
 
 }
@@ -3440,13 +3492,14 @@ input[type="color"],
   border-color: #F97316;
   font-family: sans-serif;
   width: 150px;
-  stroke: 1px;
+  /* stroke: 1px; */
 
 }
 .dashboard__content .status-select:hover,
 .dashboard__content .export-buttonn:hover {
-  background-color: #F97316; /* Background orange on hover */
-  color: #FFFFFF; /* White text color on hover */
+ 
+  color:#c2570c; /* White text color on hover */
+  border-color: #c2570c;
 }
 .profile-status-toggle .job-looking-status {
   font: 16px/28px "Plus Jakarta Sans", sans-serif;
@@ -3477,6 +3530,7 @@ input[type="color"],
   }
 }
 
+
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
 
@@ -3486,19 +3540,194 @@ input[type="color"],
   }
 }
 
-.title-dashboard .back-to-previous {
-  margin-top: 1px;  
+.back-to-previous {
+  margin-top: 24px;  
   align-items: center;
   display: flex;
 }
-.title-dashboard .back-to-previous .back-link { 
+/* .back-to-previous .back-link { 
   font-size: 12px;
-  line-height: 30px;
+ 
   font-family: "Plus Jakarta Sans", sans-serif;
   color: #0073dd;
   font-weight: bold;
   align-items: center;
   display: flex;
   align-items: center;
+  
+} */
+
+.sticky-area-wrap .header-ct-right .account .username-text {
+  color: #5F5F5F;
+  font-family: "Plus Jakarta Sans" !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  text-transform: capitalize !important;
+  margin-right:7px;
 }
- 
+
+@media screen and (min-width: 991px) {
+  .dash-icon1 {
+    width: 18px !important;
+    height: 23px !important;
+  }
+}
+
+#header .sticky-area-wrap .header-ct-left .logo .site-profilelogo{
+  max-width: 100%;
+  display:block !important;
+  margin-left : -5px;
+}
+
+@media (min-width: 1301px) {
+  #header .sticky-area-wrap .header-ct-left #hamburger {
+      display: none !important;
+  }
+}
+
+@media (max-width: 1200px) {
+ .username-text {
+      display: none !important;
+      
+  }
+}
+
+.dash-icon svg {
+  fill: #929698 !important; /* Default color for non-active state */
+}
+
+.tf-effect.active .dash-icon svg {
+  fill: #F46F16 !important; /* Color for active state */
+}
+
+.tf-effect.active .dash-icon svg:hover {
+  fill: #F46F16 !important;
+}
+.tf-effect {
+  display: flex;
+  align-items: center; /* Center vertically */
+  text-decoration: none; /* Remove underline from link */
+}
+
+@media (min-width: 1400px) {
+    .sticky-area-wrap {
+        margin-top: 5px;
+    }
+	}
+	
+@media (max-width: 550px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (max-width: px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (min-width: 551px) and (max-width: 1290px) {
+  .left-menu {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+.userName-title{
+color: #333;
+font-family: "Plus Jakarta Sans";
+font-size: 30px;
+font-style: normal;
+font-weight: 600;
+line-height: 25px; /* 78.125% */
+text-transform: capitalize;
+margin-left: 15px;
+display: block;
+}
+
+/* @media screen {
+  .dash-count .col-sm-12 .card,
+  .dash-count .col-md-12 .card {
+    margin: 0 10px 20px 20px !important;
+  }
+} */
+
+@media (max-width: 768px) {
+  .dash-count .card {
+    margin: 0 10px 20px 20px !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .userName-title {
+    display: none;
+  }
+}
+
+/* @media (min-width: 1020px) and (max-width: 1450px) {
+  .dash-count .card {
+    margin: 0 0px 20px 10px !important;
+  }
+} */
+
+.resumecard-heading .heading1 {
+color: #000;
+font-family: "Plus Jakarta Sans";
+font-size: 20px !important;
+font-style: normal !important;
+font-weight: 600 !important;
+line-height: 25px !important; /* 125% */
+}
+
+#sidebar-menu .dash-titles{
+  color: #272727;
+
+font-family: "Plus Jakarta Sans";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 25px; /* 156.25% */
+text-transform: capitalize;
+}
+
+@media only screen and (max-width: 767px) {
+.resumecard-heading .heading1 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  padding-top: 14px; 
+}
+}
+
+.resumecard-heading .heading2 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important; /* 125% */
+  }
+  
+   
+  @media only screen and (max-width: 767px) {
+  .resumecard-heading .heading2 {
+    color: #000;
+    font-family: "Plus Jakarta Sans";
+    font-size: 20px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    line-height: 25px !important;
+    padding-top: 12px; 
+  }
+  }

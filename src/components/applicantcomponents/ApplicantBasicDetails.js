@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
@@ -10,665 +10,834 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
+import './ApplicantBasicDetails1.css';
+import Logo from '../../images/logos-copy1.png';
+import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
+import ModalComponent from './ModalComponent';
+import ModalWrapper from './ModalWrapper';
+import ResumeBuilder from './ResumeBuilder';
+import Snackbar from '../common/Snackbar';
 
- 
 const ApplicantBasicDetails = () => {
- 
- 
   const { user } = useUserContext();
- 
-  const[applicant,setApplicant]=useState({
-    name:"",
-    email:"",
-    mobilenumber:"",
-   });
- 
+  const [loading, setLoading] = useState(true);
+  const [snackbars, setSnackbars] = useState([]);
+  const [error, setError] = useState('');
+  const [currentStage, setCurrentStage] = useState(1);
+  const [isNextDisabled, setIsNextDisabled] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const[imageSrc, setImageSrc]= useState();
+  const [shouldBeHidden, setShouldBeHidden] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [applicant, setApplicant] = useState({
+    firstName: '',
+    lastName: '',
+    email: user.email || "",
+    mobilenumber: "",
    
+  });
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+  const basicDetails = {
+    firstName: applicant.firstName,
+    lastName: applicant.lastName,
+    alternatePhoneNumber: applicant.mobilenumber,
+    email: applicant.email,
+  };
+  const applicantProfileDTO = {
+    basicDetails: basicDetails,
+  };
+  const [errors, setErrors] = useState({});
+
+  const validateInput = (name, value) => {
+    let error = '';
+
+    if (name === 'firstName' || name === 'lastName') {
+        if (value.length < 3) {
+            error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters.`;
+        } else if (!/^[a-zA-Z]+$/.test(value)) {
+            error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
+        }
+    } else if (name === 'mobilenumber') {
+        if (!/^[6789]\d{9}$/.test(value)) {
+            error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
+        }
+    }
+
+    setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: error,
+    }));
+
+    return !error; // Returns true if no error, false if there's an error
+};
+
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setApplicant((prevApplicant) => ({
+      ...prevApplicant,
+      [name]: value,
+  }));
+
+  //setIsNextDisabled(!validateForm1());
+};
+
+const handleBlur = (e) => {
+  const { name, value } = e.target;
+  validateInput(name, value);
+  
+ //setIsNextDisabled(!validateForm1());
+  
+};
+
+const handleSkillsChange = (selectedSkills) => {
+  const transformedSkills = selectedSkills.map(skill => ({ skillName: skill, experience: "" }));
+  setSkillsRequired(transformedSkills);
+};
+
+
   const [experience, setExperience] = useState('');
   const [skills, setSkills] = useState([]);
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [qualification, setQualification] = useState('');
-  const [passingYear, setPassingYear] = useState('');
-  const [resume, setResume] = useState(null);
-  const[fullName, setFullName]=useState(null);
-  const[mobilenumber, setMobileNumber]=useState(null);
-  const[email,setEmail]=useState(null);
-   const [phone, setPhone] = useState('');
-   const [specialization, setSpecialization] = useState('');
-  const [selectedCity, setSelectedCity] = useState([]);
+  const [specialization, setSpecialization] = useState('');
   const [selectedCities, setSelectedCities] = useState([]);
-  const [cityError, setCityError] = useState('');
   const [selectedSkills, setSelectedSkills] = useState([]);
-  const [skillsError, setSkillsError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [preferredJobLocations, setPreferredJobLocations] = useState([]);
+  const [skillsRequired, setSkillsRequired] = useState([]);
   const navigate = useNavigate();
-  const [errors, setErrors] = useState({});
-  const [skillsRequired, setSkillsRequired] = useState([
-   
-  ]);
+
+  const [resumeFile, setResumeFile] = useState(null);
+  const [requestData, setRequestData] = useState(null);
+  const [loginUrl, setLoginUrl] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  // Define the steps
+  const steps = ['Personal Information', 'Professional Details', 'Upload Resume'];
+
+
+ // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
+
+  const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
+  const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
+  const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada'];
+
   useEffect(() => {
     setLoading(false);
   }, []);
- 
-  const [preferredJobLocations, setPreferredJobLocations] = useState([]);
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => i); // 0 to 10
- 
-  const qualificationsOptions = [
-    'B.Tech',
-    'MCA',
-    'Degree',
-    'Intermediate',
-    'Diploma',
-  ];
- 
- 
- 
-  const validateForm = () => {
-    const newErrors = { ...errors }; // Assuming errors is the state containing existing errors
- 
-    if (!experience) {
-      newErrors.experience = 'Experience is required';
-    } else {
-      delete newErrors.experience; // Clear the error message if experience is filled
+  let resumeStatusCode;
+  let profileId;
+  useEffect(() => {
+    const fetchData1 = async () => {
+      try {
+      
+
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+         profileId = profileIdResponse.data;
+
+        try {
+         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       } catch (error) {
+        resumeStatusCode=error.response.status;
+          // Check conditions to navigate to the 3rd stepper
+          if (profileId !== 0 && resumeStatusCode === 404) {
+            setCurrentStage(3);
+          }
+       }
+       
+      } catch (error) {
+        console.error('Error fetching applicant data:', error);
+      }
+    };
+    fetchData1();
+  }, [user.id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
+        const newData = {
+          identifier: response.data.email,
+          password: response.data.password,
+        };
+        setRequestData(newData);
+
+      
+       
+      } catch (error) {
+        console.error('Error fetching applicant data:', error);
+      }
+    };
+    fetchData();
+  }, [user.id]);
+
+  useEffect(() => {
+    console.log(isFormValid);
+}, [isFormValid]);
+
+const validateForm1 = () => {
+  const newErrors = {};
+  const validFirstName = validateInput('firstName', applicant.firstName);
+  const validLastName = validateInput('lastName', applicant.lastName);
+  const validMobileNumber = validateInput('mobilenumber', applicant.mobilenumber);
+
+  if (!applicant.firstName) newErrors.firstName = "First name is required";
+  if (!applicant.lastName) newErrors.lastName = "Last name is required";
+  if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
+
+  setErrors(newErrors);
+  return validFirstName && validLastName && validMobileNumber && 
+         applicant.firstName && applicant.lastName && applicant.mobilenumber;
+};
+
+
+  const makeApiCall1 = async () => {
+    if (!validateForm1()) {
+      console.log(" returned in validation");
+      return false;
     }
- 
-    if (!qualification) {
-      newErrors.qualification = 'Qualification is required';
-    } else {
-      delete newErrors.qualification; // Clear the error message if qualification is filled
-    }
- 
-    if (!specialization) {
-      newErrors.specialization = 'Specialization is required';
-    } else {
-      delete newErrors.specialization; // Clear the error message if specialization is filled
-    }
- 
-    if (preferredJobLocations.length === 0) {
-      newErrors.city = 'City is required';
-    } else {
-      delete newErrors.city; // Clear the error message if city is filled
-    }
- 
-    if (skillsRequired.length === 0) {
-      newErrors.skills = 'Skills are required';
-    } else {
-      delete newErrors.skills; // Clear the error message if skills are filled
-    }
- 
-    if (!applicant.name && (!fullName || !fullName.trim())) {
-      newErrors.name = 'Name is required';
-    } else {
-      delete newErrors.name; // Clear the error message if name is filled or pre-filled
-    }
- 
-    // Add a condition to skip validation if mobileNumber is pre-filled
-    if (!applicant.mobilenumber && !mobilenumber) {
-      newErrors.mobileNumber = 'Mobile number is required';
-    } else {
-      delete newErrors.mobileNumber; // Clear the error message if mobileNumber is filled or pre-filled
-    }
- 
-    setErrors(newErrors);
- 
-    return Object.keys(newErrors).length === 0;
-  };
- 
- 
- 
-    const handleQualificationChange = (e) => {
-    const selectedQualification = e.target.value;
-    setQualification(selectedQualification);
-    setSpecialization('');
-    clearError('qualification');
-    clearError('specialization');
    
   };
+
  
-  const handleCityChange = (selected) => {
-    setSelectedCities(selected);
-    if (selected.length > 0) {
-      setCityError('');
-    } else {
-      setCityError('Please select at least one city.');
-    }
-  };
- 
-  const clearError = (fieldName) => {
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      [fieldName]: '',
-    }));
-  };
- 
-  // const handleChange2 = (e) => {
-  //   // setFullName(e.target.value);
-  //   setApplicant({...applicant,name: e.target.value});
-  //   clearError('fullName'); // Clear the error message for fullName
-  // };
- 
-  const handleChange2 = (e) => {
-    setFullName(e.target.value);
-    setApplicant({...applicant,name: e.target.value});
-    clearError('name'); // Clear the error message for name
-  };
- 
-  const handleChange3 = (e) => {
-    setMobileNumber(e.target.value);
-    clearError('mobileNumber'); // Clear the error message for mobileNumber
-  };
- 
- //specializationsByQualification
- 
- 
-  const specializationsByQualification = {
-    
-    'B.Tech': ['(CSE) Computer Science and Engineering',
-                '(ECE) Electronics and Communication Engineering',
-                '(EEE) Electrical and Electronics Engineering',
-                '(MECH) Mechanical Engineering',
-                '(CE) Civil Engineering',
-                '(Aerosp. Eng.) Aerospace Engineering',
-                '(IT) Information Technology',
-                 '(Chem. Eng.) Chemical Engineering',
-                 '(BSc) Biotechnology Engineering'],
-    'MCA': ['(SWE)Software Engineering', '(DS)Data Science','(AI)Artificial Intelligence','(ML)Machine Learning','(InfoSec)Information Security',
-             '(CC)Cloud Computing','(MAD)Mobile Application Development','(WD)Web Development','(DBM)Database Management','(NA)Network Administration',
-            '(CS)Cyber Security','(IT PM)IT Project Management'],
-    'Degree': ['(B.Sc) Physics','(B.Sc) Mathematics','(B.Sc) Statistics',
-               '(B.Sc) Computer Science','(B.Sc) Electronics','(B.Sc) Chemistry',
-               '(B.Com)Bachelor of Commerce'],
-    'Intermediate': ['MPC','BiPC','CEC','HEC'],
-    'Diploma': ['(MECH) Mechanical Engineering','(CE) Civil Engineering','(EEE) Electrical Engineering','(ECE) Electronics and Communication Engineering',
-                '(CSE) Computer Engineering','(AME)Automobile Engineering','(Chem. Eng.)Chemical Engineering','(IT) Information Technology','(IE)Instrumentation Engineering',
-                 '(Min. Eng.)Mining Engineering','(Met E)Metallurgical Engineering','(Agri. Eng.)Agricultural Engineering','(TE)Textile Technology',
-                  '(ID)Interior Designing','(FD)Fashion Designing','(HMCT)Hotel Management and Catering Technology','Pharmacy','(MLT)Medical Laboratory Technology',
-                 '(RIT)Radiology and Imaging Technology'],          
-   
-  };
- 
-  const cities = [
-    'Chennai',
-    'Thiruvananthapuram',
-    'Bangalore',
-    'Hyderabad',
-    'Coimbatore',
-    'Kochi',
-    'Madurai',
-    'Mysore',
-    'Thanjavur',
-    'Pondicherry',
-    'Vijayawada',
-  ];
- 
- 
- 
-  // Assuming skillsOptions is an array of skill names
-  const skillsOptions = [
-    'Java',
-    'C',
-    'C+',
-    'C Sharp',
-    'Python',
-    'HTML',
-    'CSS',
-    'JavaScript',
-    'TypeScript',
-    'Angular',
-    'React',
-    'Vue',
-    'JSP',
-    'Servlets',
-    'Spring',
-    'Spring Boot',
-    'Hibernate',
-    '.Net',
-    'Django',
-    'Flask',
-    'SQL',
-    'MySQL',
-    'SQL-Server',
-    'Mongo DB',
-    'Selenium',
-    'Regression Testing',
-    'Manual Testing'
-  ];
- 
-  const skillsOptionsWithStructure = skillsOptions.map(skill => ({ skillName: skill }));
- 
- 
-  const handleSkillsChange = (selected) => {
-    const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
-    setSkillsRequired(skillsWithNames);
- 
-    if (skillsWithNames.length > 0) {
-      setSkillsError('');
-    } else {
-      setSkillsError('Please select at least one skill.');
-    }
-  };
- 
-  const citiesOptionsWithStructure = cities.map((city) => ({ city }));
- 
-  const filterOutSelectedSkills = (options, selectedSkills) => {
-    const selectedSkillNames = selectedSkills.map((skill) => skill.skillName.toLowerCase());
-    return options.filter((option) => !selectedSkillNames.includes(option.skillName.toLowerCase()));
-  };
- 
-  const filterOutSelectedCities = (allCities = [], selectedCities = []) => {
-    const selectedCityNames = new Set(selectedCities.map((city) => city.city?.toLowerCase()));
-    return allCities.filter((city) => !selectedCityNames.has(city.city.toLowerCase()));
-  };
- 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const isFormValid = validateForm();
- 
-    if (!isFormValid) {
-      return;
-    }
- 
-    const formattedSkillsRequired = skillsRequired.map((skill) => ({
-      skillName: skill.skillName.toLowerCase(),
-    }));
- 
-    const profileFormData = {
+  
+  const makeApiCall2 = async () => {
+    // Implement your API call logic for stage 2
+
+    const applicantProfileDTO={
+      basicDetails: basicDetails,
+      skillsRequired: skillsRequired,
       experience,
       qualification,
       specialization,
-      preferredJobLocations: preferredJobLocations.map((location) => location.city),
-      skillsRequired: formattedSkillsRequired,
-    };
- 
-    const userFormData = {
-      name: applicant.name,
-      mobilenumber,
-    };
- 
+      preferredJobLocations,
+    }
+  
+    if (!validateForm1()) {
+      console.log(" returned in validation");
+      return false;
+    }
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-     
-        // Use PUT API if profile exists
-        const putResponse = await axios.put(`${apiUrl}/applicant/editApplicant/${user.id}`,
-          userFormData,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
-        );
- 
-        console.log('PUT API Response for User Data:', putResponse.data);
- 
-        // Now update the details in the applicant_profile table
-        const putProfileResponse = await axios.post(`${apiUrl}/applicantprofile/createprofile/${user.id}`,
-          profileFormData,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
-        );
- 
-        console.log('POST API Response for Profile Data:', putProfileResponse.data);
-     
- 
-      window.alert('Profile saved successfully!');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
- 
-      setExperience('');
-      setSkills([]);
-      setCity('');
-      setState('');
-      setQualification('');
-      setPassingYear('');
-      setResume(null);
-      setFullName(null);
-      setMobileNumber(null);
-      setEmail(null);
-      setPhone('');
-      setSpecialization('');
-      setSelectedCity([]);
-      setSelectedCities([]);
-      setCityError('');
-      setSelectedSkills([]);
-      setSkillsError('');
-      setLoading(true);
- 
-      navigate('/applicant-find-jobs');
+      console.log(" returned during api call");
+      // Now update the details in the applicant_profile table
+      const putProfileResponse = await axios.post(
+        `${apiUrl}/applicantprofile/createprofile/${user.id}`,
+        applicantProfileDTO,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(" returned after api call");
+
+      console.log('POST API Response for Profile Data:', putProfileResponse.data);
+      setRequestData(true);
+      //window.alert('Profile saved successfully!');
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
   };
-  useEffect(() => {    
-    const fetchData = async () => {
-        try {
-          const jwtToken = localStorage.getItem('jwtToken');
-      console.log('jwt token new', jwtToken);
-      const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {      
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-          setApplicant(response.data.applicant);
-          setLoading(false);
-        } catch (error) {
-          console.error('Error fetching user profile data:', error);
-          setLoading(false);
+
+
+  const handleResumeSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setResumeFile(file);
+      setSelectedFile(file);
+    }
+  };
+
+  const triggerFileInputClick = () => {
+    document.getElementById('tf-upload-img').click();
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setDragActive(false);
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      setResumeFile(file);
+      setSelectedFile(file);
+      document.getElementById('tf-upload-img').files = event.dataTransfer.files;
+    }
+  };
+
+  const handleResumeUpload = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      const response = await axios.post(
+        `${apiUrl}/resume/upload/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
         }
-      };
-      fetchData();    
-    }, []);
- 
-    const handleChange = (selectedCities) => {
-      setPreferredJobLocations(selectedCities);
-      setErrors({}); // Reset errors when there is a change in selection
-    };
- 
-    const filteredOptions = cities.filter(city => !preferredJobLocations.includes(city));
- 
-   
-      const handleChange1 = (selectedSkills) => {
-        setSkillsRequired(selectedSkills);
-        setErrors({}); // Reset errors when there is a change in selection
-      };
-   
-      // Filter out selected skills from the options
-      const filteredOptions1 = skillsOptions.filter(skill => !skillsRequired.includes(skill));
-      const [viewportWidth, setViewportWidth] = useState(window.innerWidth);
-      const [truncated, setTruncated] = useState(false);
-    
-      useEffect(() => {
-        const handleResize = () => {
-          setViewportWidth(window.innerWidth);
-        };
-    
-        window.addEventListener('resize', handleResize);
-    
-        return () => {
-          window.removeEventListener('resize', handleResize);
-        };
-      }, []);
-    
-      const handleSpecializationChange = (e) => {
-        setSpecialization(e.target.value);
-      };
-      
-  return (
-   
-    <div>
-      {loading && (
-      <div className="loading-spinner">
-        <ClipLoader color="#1967d2" size={50} />
-      </div>
-    )}
-       <div className="dashboard__content">
-  <section className="page-title-dashboard">
-    <div className="themes-container">
-      <div className="row">
-        <div className="col-lg-12 col-md-12 ">
-          <div className="title-dashboard">
-          <BackButton />
-            <div className="title-dash flex2">Profile Details</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <form onSubmit={handleSubmit}>
-  <section className="flat-dashboard-post flat-dashboard-setting">
- 
-    <div className="themes-container">
-      <div className="row">
- 
-        <div className="col-lg-12 col-md-12 ">
-          <div className="post-new profile-setting bg-white">
- 
-            <div className="row">
-            <div className="col-lg-6 col-md-12">
-                <div id="item_7" className="dropdown titles-dropdown info-wd">
-                  <input
-                    type="text"
-                    placeholder="*Full Name"
-                    value={applicant.name}
-                    className="input-form"
-                    onChange={(e) => handleChange2(e)}
-                    // onChange={(e) =>setApplicant({...applicant,name: e.target.value,})}
-                    style={{ color: fullName ? 'black' : 'black' }}
-                   
-                  />
-                   {errors.name && (
-      <div className="error-message">{errors.name}</div>
-    )}
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-12">
-                <div id="item_8" className="dropdown titles-dropdown info-wd">
-                  {/* <label className="title-user fw-7">
-                    Email<span className="color-red">*</span>
-                  </label> */}
-                  <input
-    type="text"
-    placeholder="Enter Email"
-    value={applicant.email}
-    className="input-form"
-    onChange={(e) => setEmail(e.target.value)}
-    style={{ color: email ? 'black' : 'black', fontSize: '15px' }} // Adjust the width as needed
-/>
+      );
+      console.log(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
+      window.location.reload();
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+     // window.alert('Error uploading resume. Please try again.');
+     addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
+    }
+  };
 
-                  {errors.email && (
-                    <div className="error-message">{errors.email}</div>
-                  )}
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-12">
-      <div id="item_8" className="dropdown titles-dropdown info-wd">
-        {/* <label className="title-user fw-7">
-          WhatsApp Number<span className="color-red">*</span>
-        </label> */}
-     
-          {/* <div style={{ marginRight: '10px' }}>
-          <PhoneInput
-  placeholder="*Email"
-  inputProps={{
-    className: 'input-form',
-    style: {
-      width: '485px',
-      height: '50px',
-      borderRadius: '1px',
-    },
-  }}
-  defaultCountry="ua"
-  value={applicant.mobilenumber}
-  onChange={(phone) => setPhone(phone.number)}  // Use phone.number to get the numeric value
-  dropdownStyle={{
-    height: '400px',
-  }}
-/>
-          </div> */}
-          <input
-            type="tel"
-            placeholder="WhatsApp"
-            value={applicant.mobilenumber}
-            className="input-form"
-            // onChange={(e) => setMobileNumber(e.target.value)}
-            onChange={(e) => handleChange3(e)}
-            style={{ color: mobilenumber ? 'black' : 'black' }}
-           
-          />
-            {errors.mobileNumber && (
-        <div className="error-message">{errors.mobileNumber}</div>
-      )}
-        </div>
-       
-      </div>
-   
-          <div className="col-lg-6 col-md-12">
-          <div id="item_1" className="dropdown titles-dropdown info-wd">
+  const handleResumeBuilder = async () => {
+    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
+    if (requestData) {
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      };
+      fetch(apiUrl1, requestOptions)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
+          setLoginUrl(loginUrl);
+          // window.open(loginUrl, '_blank');
+          setIsModalOpen(true);
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+  };
 
-                    
-  <select
-    value={experience}
-    className="input-form"
-    onChange={(e) => setExperience(e.target.value)}
-    style={{ color: experience ? 'black' : 'lightgrey' }}
-    // size="1" // Set the size attribute to 5 to display 5 options at a time
-  >
-    {/* <div className="select-wrapper"> */}
-    <option value="" disabled>*Experience</option>
-    {yearsOptions.map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-      
-    ))}
-    {/* </div> */}
-  </select>
+  const validateFields = () => {
+    const newErrors = {};
+    
+    if (!qualification) newErrors.qualification = 'Qualification is required';
+    if (!specialization) newErrors.specialization = 'Specialization is required';
+    if (skillsRequired.length === 0) newErrors.skillsRequired = 'Skills are required';
+    if (!experience) newErrors.experience = 'Experience is required';
+    if (preferredJobLocations.length === 0) newErrors.preferredJobLocations = 'Preferred Job Locations are required';
+    
+    setErrors(newErrors);
   
-  {!experience && errors.experience && (
-    <div className="error-message">{errors.experience}</div>
-  )}
-</div>
- 
- 
-              </div>
-              <div className="col-lg-6 col-md-12">
-              <div id="item_4" className="dropdown titles-dropdown info-wd">
-  <select
-    value={qualification}
-    className="input-form"
-    onChange={handleQualificationChange}
-    style={{ color: qualification ? 'black' : 'lightgrey' }}
-    
-  >
-    <option value="" disabled>*Qualification</option>
-    {/* {qualificationsOptions.map((qual,index) => (
-      <option key={qual} value={qual} style={{ display: index < 5 ? 'block' : 'none' }}> */}
-      {qualificationsOptions.map((qual) => (
-      <option key={qual} value={qual}> 
-        {qual}
-      </option>
-    ))}
-  </select>
-  {!qualification && errors.qualification && (
-    <div className="error-message">{errors.qualification}</div>
-  )}
-</div>
- 
-      </div>
-      <div className="col-lg-6 col-md-12">
-      {/* <div id="item_4" className="dropdown titles-dropdown info-wd">
-  <select
-    value={specialization}
-    className="input-form"
-    onChange={(e) => setSpecialization(e.target.value)}
-    style={{ color: specialization ? 'black' : 'lightgrey' }}
-    disabled={!qualification} // Disable if no qualification selected
-  >
-    <option value="" disabled>*Specialization</option>
-    {specializationsByQualification[qualification]?.map((spec, index) => (
-      <option key={spec} value={spec}>
-        {spec}
-      </option>
-      {index === Math.floor(specializationsByQualification[qualification].length / 2) - 1 && <br />} // Insert a line break halfway through the options
-    ))}
-  </select>
-  {!specialization && errors.specialization && (
-    <div className="error-message">{errors.specialization}</div>
-  )}
-</div>
- */}
- <div id="item_4" className="dropdown titles-dropdown info-wd">
-      <select
-        value={specialization}
-        className="input-form"
-        onChange={handleSpecializationChange}
-        style={{ color: specialization ? 'black' : 'lightgrey', width: '100%' }} 
-        disabled={!qualification} 
-      >
-        <option value="" disabled>*Specialization</option>
-        {specializationsByQualification[qualification]?.map((spec) => (
-          <option key={spec} value={spec}>
-            {viewportWidth <= 500 && spec.length > 10 ? `${spec.substring(0, 20)}...` : spec} 
-          </option>
-        ))}
-      </select>
-      {!specialization && errors.specialization && (
-        <div className="error-message">{errors.specialization}</div>
-      )}
-    </div> 
+    // Return true if there are no errors
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  const handleNext = async () => {
+  //   if (!validateForm1()) {
+  //     return;
+  // }
+  
+    try {
+      // Make the appropriate API call based on the current stage
+      switch (currentStage) {
+        case 1:
+          if (!validateForm1()) {
+            console.log(" returned in validation");
+            return false;
+          }
+          
+          console.log('API call 1 response:');
+          break;
+        case 2:
 
+        if (validateFields()) {
+          const response2 = await makeApiCall2(); // Replace with your actual API call and handle response
+          console.log('API call 2 response:');
+        } else {
+          return false;
+        }
+          break;
+        default:
+          console.warn('Unexpected stage:');
+          // Handle unexpected stage (optional)
+          break;
+      }
+  
+      // Update current stage only if the API call succeeds (optional)
+      setCurrentStage((prevStage) => Math.min(prevStage + 1, steps.length));
+    } catch (error) {
+      console.error('Error during API call:', error);
+      // Handle API call errors (optional)
+    }
+  };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+
+  const handleBack = () => {
+    setCurrentStage((prevStage) => Math.max(prevStage - 1, 1));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // const isFormValid = validateForm();
+    // if (!isFormValid) return;
+   
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      const response = await axios.post(
+        `${apiUrl}/resume/upload/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
+      
+    } catch (error) {
+      console.error('Error uploading resume:', error);
+      //window.alert('Error uploading resume. Please try again.');
+      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
+    }
+    resetForm();
+    navigate('/applicant-find-jobs');
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (currentStage === 1) {
+      if (!applicant.name) newErrors.name = 'Name is required';
+      if (!applicant.email) newErrors.email = 'Email is required';
+      if (!applicant.mobilenumber) newErrors.mobilenumber = 'Mobile number is required';
+      if (!experience) newErrors.experience = 'Experience is required';
+    } else if (currentStage === 2) {
+      if (!qualification) newErrors.qualification = 'Qualification is required';
+      if (!specialization) newErrors.specialization = 'Specialization is required';
+      if (!preferredJobLocations.length) newErrors.preferredJobLocations = 'At least one job location is required';
+      if (!skillsRequired.length) newErrors.skillsRequired = 'At least one skill is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const resetForm = () => {
+    setApplicant({ name: '', email: '', mobilenumber: '' });
+    setExperience('');
+    setSkills([]);
+    setCity('');
+    setState('');
+    setQualification('');
+    setSpecialization('');
+    setSelectedCities([]);
+    setSelectedSkills([]);
+    setPreferredJobLocations([]);
+    setSkillsRequired([]);
+    setResumeFile(null);
+    setRequestData(null);
+    setLoginUrl('');
+    setSelectedFile(null);
+  };
+
+  const specializationsByQualification = {
+  'B.Tech': ['Computer Science and Engineering (CSE)',
+                'Electronics and Communication Engineering (ECE)',
+                'Electrical and Electronics Engineering (EEE)',
+                'Mechanical Engineering (ME)',
+                'Civil Engineering (CE)',
+                'Aerospace Engineering',
+                'Information Technology(IT)',
+                 'Chemical Engineering',
+                 'Biotechnology Engineering'],
+    'MCA': ['Software Engineering', 'Data Science','Artificial Intelligence','Machine Learning','Information Security',
+             'Cloud Computing','Mobile Application Development','Web Development','Database Management','Network Administration',
+            'Cyber Security','IT Project Management'],
+    'Degree': ['Bachelor of Science (B.Sc) Physics','Bachelor of Science (B.Sc) Mathematics','Bachelor of Science (B.Sc) Statistics',
+               'Bachelor of Science (B.Sc) Computer Science','Bachelor of Science (B.Sc) Electronics','Bachelor of Science (B.Sc) Chemistry',
+               'Bachelor of Commerce (B.Com)'],
+    'Intermediate': ['MPC','BiPC','CEC','HEC'],
+    'Diploma': ['Mechanical Engineering','Civil Engineering','Electrical Engineering','Electronics and Communication Engineering',
+                'Computer Engineering','Automobile Engineering','Chemical Engineering','Information Technology','Instrumentation Engineering',
+                 'Mining Engineering','Metallurgical Engineering','Agricultural Engineering','Textile Technology','Architecture',
+                  'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
+                 'Radiology and Imaging Technology'],  
+  };
+
+  const renderStageFields = () => {
+    switch (currentStage) {
+      case 1:
+        return (
+          <div className="input-container">
+      <div className="input-wrapper">
+        <input
+          type="text"
+          name="firstName"
+          placeholder="*First Name"
+          value={applicant.firstName}
+          className="input-form"
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+        />
+        {errors.firstName && <div className="error-message">{errors.firstName}</div>}
       </div>
-  <div className="col-lg-6 col-md-12">
-  <div id="item_3" className="dropdown titles-dropdown info-wd">
+
+      <div className="input-wrapper">
+        <input
+          type="text"
+          name="lastName"
+          placeholder="*Last Name"
+          value={applicant.lastName}
+          className="input-form"
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+        />
+        {errors.lastName && <div className="error-message">{errors.lastName}</div>}
+      </div>
+
+      <div className="input-wrapper">
+        <input
+          type="email"
+          placeholder="*Email"
+          value={applicant.email}
+          className="input-form"
+          readOnly
+          style={{ color: '#ccc' }} 
+        />
+        {errors.email && <div className="error-message">{errors.email}</div>}
+      </div>
+
+      <div className="input-wrapper">
+        <input
+          type="tel"
+          name="mobilenumber"
+          placeholder="*WhatsApp Number"
+          value={applicant.mobilenumber}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          className="input-form"
+          pattern="^\+(?:[0-9]?){6,14}[0-9]$"
+          title="Enter a valid WhatsApp number"
+          required
+        />
+        {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
+      </div>
+    </div>
+        );
+      case 2:
+        return (
+          <div className="input-container">
+            <div className="input-wrapper">
+              <Typeahead
+                id="qualification"
+                options={qualificationsOptions}
+                placeholder="*Qualification"
+                onChange={(selected) => setQualification(selected[0])}
+                selected={qualification ? [qualification] : []}
+                className="input-form typeahead"
+              />
+              {errors.qualification && <div className="error-message">{errors.qualification}</div>}
+            </div>
+  
+            <div className="input-wrapper">
+              <Typeahead
+                id="specialization"
+                options={qualification ? specializationsByQualification[qualification] : []}
+                placeholder="*Specialization"
+                onChange={(selected) => setSpecialization(selected[0])}
+                selected={specialization ? [specialization] : []}
+                className="input-form typeahead"
+              />
+              {errors.specialization && <div className="error-message">{errors.specialization}</div>}
+            </div>
+  
+            <div className="input-wrapper">
   <Typeahead
-  id="cityTypeahead"
-  labelKey={(option) => option.city}
-  multiple
-  placeholder="*Preferred Job Location(s)"
-  options={filterOutSelectedCities(citiesOptionsWithStructure, preferredJobLocations)}
-  onChange={(selectedCities) => setPreferredJobLocations(selectedCities)}
-  selected={preferredJobLocations}
-  inputProps={{
-    className: 'input-form placeholder-light-grey',
-  }}
-  allowNew={false} // Prevent new entries
-  filterBy={(option, props) =>
-    option.city.toLowerCase().startsWith(props.text.toLowerCase())
-  }
-/>
- 
-  {preferredJobLocations.length === 0 && errors.city && (
-    <div className="error-message">{errors.city}</div>
-  )}
+    id="skillsRequired"
+    multiple
+    options={skillsOptions}
+    placeholder="*Skills Required"
+    onChange={handleSkillsChange}
+    selected={skillsRequired.map(skill => skill.skillName)}
+    className="input-form typeahead"
+  />
+  {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
 </div>
- 
- 
- 
-    </div>  
-    <div className="col-lg-6 col-md-12">
-    <div id="item_2" className="dropdown titles-dropdown info-wd">
-    <Typeahead
-  id="skillsTypeahead"
-  labelKey={(option) => option.skillName}
-  multiple
-  placeholder="*Skills"
-  options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
-  onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
-  selected={skillsRequired}
-  inputProps={{
-    className: 'input-form placeholder-light-grey',
-  }}
-  allowNew={false} // Prevent new entries
-  filterBy={(option, props) =>
-    option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
-  }
-/>
-      {skillsRequired.length === 0 && errors.skills && (
-        <div className="error-message">{errors.skills}</div>
+
+
+            <div className="input-wrapper">
+      <Typeahead
+        id="experience"
+        options={yearsOptions}
+        placeholder="*Experience"
+        onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
+        selected={yearsOptions.filter(option => option.label === experience)}
+        className="input-form typeahead"
+        single
+      />
+      {!experience && errors.experience && (
+        <div className="error-message">{errors.experience}</div>
       )}
     </div>
  
-</div>            
-              </div>
-            <div className="form-infor flex flat-form">
-              <div className="info-box info-wd">
-             </div>
+ 
+              
+            
+            <div className="input-wrapper">
+              <Typeahead
+                id="preferredJobLocations"
+                multiple
+                options={cities}
+                placeholder="*Preferred Job Locations"
+                onChange={setPreferredJobLocations}
+                selected={preferredJobLocations}
+                className="input-form typeahead"
+              />
+              {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
             </div>
-            <div className="form-group">
-            <button type="submit" className='button-status'>Submit</button>
-              </div>
+  
+            <div className="input-wrapper" ></div>
           </div>
-        </div>
+        );
+      case 3:
+        return (
+          <div className="col-lg-12 col-md-12">
+            <div className="post-new profile-setting bg-white" >
+              <div className="wrap-img flex2" >
+                <p><strong>Resume</strong></p>
+                <div id="upload-profile" style={{ display: 'flex', alignItems: 'center' }}>
+      <input
+        className="up-file"
+        id="tf-upload-img"
+        type="file"
+        name="profile"
+        required
+        onChange={handleResumeSelect}
+        style={{ display: 'none' }}
+      />
+      <div
+        id="resume-text-input-container"
+        onClick={triggerFileInputClick}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          width: '318.25px',
+          height: '47px',
+          borderRadius: '8px',
+          border: dragActive ? '2px dashed #000' : '1px solid #E5E5E5',
+          background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
+          backgroundSize: '16px 16px',
+          paddingLeft: '40px',
+          padding: '10px',
+          marginRight: '20px',
+          boxSizing: 'border-box',
+          cursor: 'pointer',
+        }}
+      >
+        <input
+          id="resume-text-input"
+          type="text"
+          placeholder="Upload your resume"
+          value={selectedFile ? selectedFile.name : ''}
+          readOnly
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            background: 'transparent',
+            paddingLeft: '40px',
+            boxSizing: 'border-box',
+            cursor: 'pointer',
+          }}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={triggerFileInputClick}
+        className="btn-3"
+        style={{
+          backgroundColor: '#7E7E7E',
+          color: 'white',
+          padding: '10px 15px',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          textTransform: 'none',
+        }}
+      >
+        Browse
+      </button>
+    </div>
+
+              </div>
+              <br></br>
+              <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
+              <br></br>
+              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
+      {error && <div className="error-message">{error}</div>}
+              <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={openModal}
+                  className="btn-3"
+                  style={{
+                    backgroundColor: '#7E7E7E',
+                    color: 'white',
+                    padding: '10px 15px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    marginTop: '5px',
+                    textTransform:'none',
+                  }}
+                >
+                  Build Your Resume
+                </button>
+              </div>
+
+              
+              <ModalComponent
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          loginUrl={loginUrl}
+        />
+            </div>
+          </div>
+        );
+    }
+  };
+  
+  
+  
+
+  const Stepper = ({ currentStage }) => {
+    return (
+      <div className="stepper">
+        {steps.map((step, i) => (
+          <div key={i} className="step-item">
+            {i !== 0 && (
+              <div
+                className={`step-line ${
+                  currentStage > i  ? 'completed' : ''
+                }`}
+              ></div>
+            )}
+            <div
+              className={`step-circle ${
+                currentStage === i + 1 ? 'active' : ''
+              } ${currentStage > i + 1 ? 'completed' : ''}`}
+            >
+              {currentStage > i + 1 ? '✔' : i + 1}
+            </div>
+            <p className="step-label">{step}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
+  if (loading) {
+    return (
+      <div className="spinner-container">
+        <ClipLoader color="#0d6efd" loading={loading} size={50} />
+      </div>
+    );
+  }
+
+
+  return (
+    <div class="component">
+      
+      {/* <a href="/applicanthome">
+        <img 
+          src={imageSrc || '../images/user/avatar/image-01.jpg'} 
+          alt="Profile" 
+          onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} 
+        />
+      </a> */}
+      <img className="top-left-svg" src={Logo} alt="Image" usemap="#image-map" />
+
+    
+    <div className="card-container">
+    <div className="card1">
+      <div className="header">
+        <p className="form-title">Complete Your Profile</p>
+        <p>Fill the form fields to go to the next step</p>
+      </div>
+      <div className="stepper-container">
+        <Stepper currentStage={currentStage} />
+      </div>
+      <div className="form-container">
+        <form onSubmit={handleSubmit} className="applicant-details-form">
+          <div className="row">
+            {renderStageFields()}
+          </div>
+          <div className="button-container">
+            {(currentStage > 1 && currentStage < 3) && (
+              <button type="button" onClick={handleBack} className="form-button1">Back</button>
+            )}
+            {currentStage < 3 && (
+              <button type="button" onClick={handleNext} className="form-button" >Next</button>
+            )}
+            {currentStage === 3 && (
+              <button type="submit" className="form-button">Submit</button>
+            )}
+          </div>
+        </form>
       </div>
     </div>
- 
-  </section>
-  </form>
-</div>
-</div>
-  )
+    </div>
+    {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
+    </div>
+  );
 };
- 
+
 export default ApplicantBasicDetails;

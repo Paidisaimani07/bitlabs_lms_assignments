@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './ContactStyle.css';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
+import Snackbar from '../common/Snackbar';
 
 export default function ContacBody() {
     const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function ContacBody() {
     });
 
     const [showAlert, setShowAlert] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
     
 
@@ -31,11 +33,15 @@ export default function ContacBody() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name || !formData.subject || !formData.email || !formData.questions) {
-        window.alert("Please complete all the fields.");
+        //window.alert("Please complete all the fields.");
+        setSnackbar({ open: true, message: 'Please complete all the fields.', type: 'error' });
+
       return;
     }
     if (!isEmailValid(formData.email)) {
-      window.alert("Please enter a valid email address.");
+     // window.alert("Please enter a valid email address.");
+     setSnackbar({ open: true, message: 'Please enter a valid email address.', type: 'error' });
+
       return;
     }
 
@@ -48,7 +54,8 @@ export default function ContacBody() {
   
       if (response.status === 200) {
         
-        window.alert('Message sent successfully!We will get back you soon');
+       // window.alert('Message sent successfully!We will get back you soon');
+        setSnackbar({ open: true, message: 'Message sent successfully!We will get back you soon', type: 'success' });
   
         setFormData({
           name: '',
@@ -62,6 +69,10 @@ export default function ContacBody() {
     } catch (error) {
       console.error('Error sending message:', error);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
   };
   return (
     <div>
@@ -173,7 +184,15 @@ export default function ContacBody() {
             </div>
           </div>
             </section>
-        
+            {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
    
     </div>
   )
