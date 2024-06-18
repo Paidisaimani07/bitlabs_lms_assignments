@@ -228,7 +228,7 @@ input::-moz-focus-inner {
 body {
   font: 14px/25px "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
-  background:#EFF2F6;
+  background:#fff;
   color: #202020;
 }
 
@@ -3697,3 +3697,37 @@ font-weight: 400;
 line-height: 25px; /* 156.25% */
 text-transform: capitalize;
 }
+
+@media only screen and (max-width: 767px) {
+.resumecard-heading .heading1 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  padding-top: 14px; 
+}
+}
+
+.resumecard-heading .heading2 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important; /* 125% */
+  }
+  
+   
+  @media only screen and (max-width: 767px) {
+  .resumecard-heading .heading2 {
+    color: #000;
+    font-family: "Plus Jakarta Sans";
+    font-size: 20px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    line-height: 25px !important;
+    padding-top: 12px; 
+  }
+  }

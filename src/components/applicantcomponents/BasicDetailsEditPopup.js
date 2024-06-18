@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import Snackbar from '../common/Snackbar';
 
 const BasicDetailsEditPopup = ({ applicantDetails }) => {
   const [formValues, setFormValues] = useState({
@@ -13,6 +14,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
     alternatePhoneNumber: applicantDetails&&applicantDetails.alternatePhoneNumber || '',
   });
   const [errors, setErrors] = useState({});
+  const [snackbars, setSnackbars] = useState([]);
   const navigate = useNavigate();
   const user1 = useUserContext();
   const user = user1.user;
@@ -42,6 +44,14 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
     setErrors({ ...errors, [name]: validateInput(name, value) });
+  };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -160,6 +170,17 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
       </div>
       
       </div>
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };
