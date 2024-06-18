@@ -426,7 +426,8 @@ function ApplicantNavBar() {
       </div> */}
 
                     <div id="specificDiv" className="header-customize-item account">
-                      <h4 className="username-text">{profileData && profileData.basicDetails && profileData.basicDetails.firstName !== null ? profileData.basicDetails.firstName : user.username}</h4>
+                      {/* <h4 className="username-text">{profileData && profileData.basicDetails && profileData.basicDetails.firstName !== null ? profileData.basicDetails.firstName : user.username}</h4> */}
+                      <h4 className="username-text" >{(profileData && profileData.basicDetails && profileData.basicDetails.firstName !== null) ? profileData.basicDetails.firstName : ''}</h4>
                     <img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onClick={toggleSubAccount} onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
 
                     <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>

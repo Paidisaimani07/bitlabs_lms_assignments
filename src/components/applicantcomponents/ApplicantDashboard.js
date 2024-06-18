@@ -175,7 +175,8 @@ const ApplicantDashboard = () => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
                   {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
-                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div>
+                  {/* <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div> */}
+                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</div>
                 </div>
               </div>
             </div>
@@ -295,7 +296,7 @@ const ApplicantDashboard = () => {
                               onMouseEnter={() => setIsHovered(true)}
                               onMouseLeave={() => setIsHovered(false)}
                             >
-                              <span className="button button-custom" style={spanStyle}>Create Now</span>
+                              <span className="button button-custom" style={spanStyle}>Create  Now</span>
                             </Link>
                           </div>
                         </div>
@@ -334,7 +335,7 @@ const ApplicantDashboard = () => {
                               onMouseEnter={() => setIsHovered(true)}
                               onMouseLeave={() => setIsHovered(false)}
                             >
-                              <span className="button button-custom" style={spanStyle}>Start Learning</span>
+                              <span className="button button-custom" style={spanStyle}>Start  Learning</span>
                             </Link>
                           </div>
                         </div>
