@@ -16,10 +16,12 @@ import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
+import Snackbar from '../common/Snackbar';
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
+  const [snackbars, setSnackbars] = useState([]);
   const [error, setError] = useState('');
   const [currentStage, setCurrentStage] = useState(1);
   const [isNextDisabled, setIsNextDisabled] = useState(true);
@@ -240,7 +242,8 @@ const validateForm1 = () => {
 
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
-      window.alert('Profile saved successfully!');
+      //window.alert('Profile saved successfully!');
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -299,11 +302,13 @@ const validateForm1 = () => {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
       window.location.reload();
     } catch (error) {
       console.error('Error uploading resume:', error);
-      window.alert('Error uploading resume. Please try again.');
+     // window.alert('Error uploading resume. Please try again.');
+     addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
   };
 
@@ -390,6 +395,14 @@ const validateForm1 = () => {
     }
   };
 
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+
   const handleBack = () => {
     setCurrentStage((prevStage) => Math.max(prevStage - 1, 1));
   };
@@ -413,11 +426,13 @@ const validateForm1 = () => {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
+      //window.alert(response.data);
+      addSnackbar({ message: response.data, type: 'success' });
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      window.alert('Error uploading resume. Please try again.');
+      //window.alert('Error uploading resume. Please try again.');
+      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
     navigate('/applicant-find-jobs');
@@ -810,6 +825,17 @@ const validateForm1 = () => {
       </div>
     </div>
     </div>
+    {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
     </div>
   );
 };
