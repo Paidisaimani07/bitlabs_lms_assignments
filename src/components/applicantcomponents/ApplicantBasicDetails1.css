@@ -3,12 +3,12 @@
   width: 100%;
   height: 100%;
   background-color: #f3f4f6;
-  
+ 
   /* Other styles for the component */
 }
 
 .top-left-svg {
-  position: relative;
+  position: absolute;
   top: 0;
   left: 0;
   width: 200px;  /* Fixed width */
@@ -25,109 +25,60 @@
   align-items: center;
   height: 100vh;
   background-color: #f3f4f6; /* Light gray background */
-  padding-top: 100px;
+  padding-top: 40px;
 }
 
+/* Media query for small screens (mobile devices) */
 @media (max-width: 767px) {
-    .card-container {
-      display: flex;
-    justify-content: center;
-    align-items: center;
-      height: 120vh; 
-      background-color: #f3f4f6; 
-    padding-top: 100px;
-    }
+  .card-container {
+    height: 120vh; /* Increase height for mobile screens */
   }
-  
-.card {
-  /* padding: 60px; */
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background-color: #ffffff;
-  width: 100% !important;
-  padding: 22px !important;
-  /* height: auto; */
-  /* margin: 0  10px 20px 20px !important; */
-  margin: 0  0px 20px 0px !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.card .title-count{
-  color: #6F6F6F;
-font-family: "Plus Jakarta Sans";
-font-size: 15px !important;
-font-style: normal;
-font-weight: 500;
-line-height: 28px; /* 175% */
-}
-.card .content h3{
-  color: #121212;
-font-family: "Plus Jakarta Sans";
-font-size: 34px;
-font-style: normal;
-font-weight: 700;
-line-height: 28px; /* 80% */
-}
+
+
 
 .card1 {
   position: relative;
-    padding: 60px;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    background-color: #ffffff;
-    width: 55%;
-    height: 652px;
-    margin: 0 auto;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+  padding: 60px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background-color: #ffffff;
+  width: 55%;
+  height: 652px;
+  margin: 0 auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 /* For large screens (desktops and laptops) */
 @media (min-width: 1024px) {
-.card {
-  /* padding: 60px; */
+.card1 {
+  padding: 60px;
   width: 90%;
 }
-.card1 {
-    padding: 60px;
-    width: 90%;
-  }
 }
 
 /* For medium screens (tablets) */
 @media (min-width: 768px) and (max-width: 1023px) {
-.card {
-  /* padding: 40px;
-  width: 80%; */
+.card1 {
+  padding: 40px;
+  width: 80%;
 }
-  .card1 {
-    padding: 40px;
-    width: 80%;
-  }
 }
 
 /* For small screens (mobile devices) */
 @media (max-width: 767px) {
-.card {
-  /* padding: 20px;
-  width: 95%; */
+.card1 {
+  margin-top: 40px;
+  padding: 20px;
+  width: 95%;
+  height: 90%;
 }
 }
 @media (min-width: 1024px) {
-.card {
-  /* padding: 20px;
-  width: 60%; */
+.card1 {
+  padding: 20px;
+  width: 60%;
+ 
 }
-  .card1 {
-    margin-top: 40px;
-    padding: 20px;
-    width: 95%;
-    height: 140%;
-  }
-}
-@media (min-width: 1024px) {
-  .card1 {
-    padding: 20px;
-    width: 60%;
-    
-  }
 }
 
 .header {
@@ -223,45 +174,21 @@ line-height: 28px; /* 80% */
   gap: 10px; /* Optional: Add some space between buttons if needed */
    margin-right: 20px;
    margin-bottom: 20px;
-}
-  
-  .form-container {
-    margin-bottom: 20px;
-  }
-  
-  .applicant-details-form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .row {
-    margin-bottom: 20px;
-  }
-  
- .form-container .button-container {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
-    gap: 10px; /* Optional: Add some space between buttons if needed */
-     margin-right: 20px;
-     margin-bottom: 20px;
-    
+ 
 }
 
 .form-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    width:180px;
-    height: 40px;
-    background-color: #F97316;
-    color: white;
-    cursor: pointer;
-    font-size: 16px;
-    text-transform: none; /* This will show the text as it is */
-    margin-bottom: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  width:180px;
+  height: 40px;
+  background-color: #F97316;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  text-transform: none; /* This will show the text as it is */
+  margin-bottom: 20px;
 }
 
 /* Media query for small screens */
@@ -293,41 +220,41 @@ line-height: 28px; /* 80% */
 }
 
 .form-button1 {
-    padding: 10px 20px;
-    border: 1px solid #F97316;
-    border-radius: 8px;
-    width:180px;
-    height: 40px;
-    background-color: #fff;
-    color: #F97316;
-    cursor: pointer;
-    font-size: 16px;
-    text-transform: none; /* This will show the text as it is */
-    margin-bottom: 20px;
+  padding: 10px 20px;
+  border: 1px solid #F97316;
+  border-radius: 8px;
+  width:180px;
+  height: 40px;
+  background-color: #fff;
+  color: #F97316;
+  cursor: pointer;
+  font-size: 16px;
+  text-transform: none; /* This will show the text as it is */
+  margin-bottom: 20px;
 }
 
- /* Media query for small screens */
+/* Media query for small screens */
 @media (max-width: 600px) {
-  .form-button1 {
-      width: 100%; /* Full width on small screens */
-      max-width: 150px; /* Decrease the max-width on small screens */
-  }
+.form-button1 {
+    width: 100%; /* Full width on small screens */
+    max-width: 150px; /* Decrease the max-width on small screens */
+}
 }
 
 /* Media query for very small screens */
 @media (max-width: 400px) {
-  .form-button1 {
-      width: 100%; /* Full width on very small screens */
-      max-width: 120px; /* Further decrease the max-width */
-  }
+.form-button1 {
+    width: 100%; /* Full width on very small screens */
+    max-width: 120px; /* Further decrease the max-width */
 }
-  /* Media query for tablets */
+}
+/* Media query for tablets */
 @media (min-width: 600px) and (max-width: 900px) {
-  .form-button1 {
-      width: 100%; /* Full width on tablets */
-      max-width: 160px; /* Adjust the max-width for tablets */
-      margin-right: 25px;
-  }
+.form-button1 {
+    width: 100%; /* Full width on tablets */
+    max-width: 160px; /* Adjust the max-width for tablets */
+    margin-right: 25px;
+}
 }
 
 /* Add additional CSS styles for responsiveness as needed */
@@ -440,80 +367,66 @@ line-height: 28px; /* 80% */
   width: 100%; /* Full width */
 }
 
+.input-wrapper .input-form.typeahead {
+  border-radius: 8px; /* Rounded corners */
+  border: 1px solid #E5E5E5; /* Light grey border */
+  background: #F5F5F5; /* Light grey background */
+  padding: 0px; /* Padding for better appearance */
+  margin-bottom: 5px; /* Gapbetween input fields */
+  width: 100%; /* Full width */
+}
 
-  .input-wrapper .input-form.typeahead {
-    border-radius: 8px; /* Rounded corners */
-    border: 1px solid #E5E5E5; /* Light grey border */
-    background: #F5F5F5; /* Light grey background */
-    padding: 0px; /* Padding for better appearance */
-    margin-bottom: 5px; /* Gapbetween input fields */
-    width: 100%; /* Full width */ 
-  }
+.rbt-input-multi.form-control.rbt-input {
+  height: 50px;
+  text-align: center;
+  border: 1px solid #E5E5E5; /* Light grey border */
+  background: #F5F5F5; /* Light grey background */
+  padding: 0px 10px;
 
-  .rbt-input-multi.form-control.rbt-input {
-    height: 50px;
-    text-align: center;
-    border: 1px solid #E5E5E5; /* Light grey border */
-    background: #F5F5F5; /* Light grey background */
-    padding: 0px 30px;
-  
 }
 
 .input-wrapper.typeahead-hidden {
-  visibility: hidden; /* Hide the input wrapper without removing it from the layout flow */
-  border: 0; /* Remove border */
-  padding: 0; /* Remove padding */
-  margin: 0; /* Remove margin */
+visibility: hidden; /* Hide the input wrapper without removing it from the layout flow */
+border: 0; /* Remove border */
+padding: 0; /* Remove padding */
+margin: 0; /* Remove margin */
 }
 
-  
-  .input-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    flex-direction: column; /* Default to single column for mobile */
-    width: 100%;
-    justify-content: flex-end;
-  }
-  
-  .input-container {
-    flex: 1 1 100%; /* Default to full width for mobile */
-    box-sizing: border-box;
-  }
-  
-  /* Media query for tablet and larger screens */
-  @media (min-width: 768px) {
-    .input-container {
-      flex-direction: row; /* Change to row for larger screens */
-    justify-content: flex-start;
-    }
-  
-    .input-wrapper {
-      flex: 1 1 calc(50% - 20px); /* Adjust width to fit two columns with gap */
-    }
-  
-  }
 
 .input-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Gap between columns */
+  gap: 20px;
+  flex-direction: column; /* Default to single column for mobile */
+  width: 100%;
+  justify-content: flex-end;
 }
 
-.input-wrapper {
-  flex: 1 1 calc(50% - 20px); /* Adjust width to fit two columns with gap */
+.input-container {
+  flex: 1 1 100%; /* Default to full width for mobile */
   box-sizing: border-box;
 }
+
+/* Media query for tablet and larger screens */
+@media (min-width: 768px) {
+  .input-container {
+    flex-direction: row; /* Change to row for larger screens */
+  justify-content: flex-start;
+  }
+
+  .input-wrapper {
+    flex: 1 1 calc(50% - 20px); /* Adjust width to fit two columns with gap */
+  }
+
+}
+
 
 .error-message {
   font-size: 12px; /* Smaller font size */
   color: red; /* Error message color */
   margin-top: 5px; /* Margin to space it from other elements */
 }
-.pl-16{padding-left: 16px !important;}
-.display-flex{
-  display: flex;
-}
+
 /* For large screens (desktops and laptops) */
 /*@media (min-width: 1024px) {
 .step-circle {
@@ -522,7 +435,7 @@ line-height: 28px; /* 80% */
 }
 
 .step-line {
-  top: 25px; 
+  top: 25px;
 }
 }
 
@@ -545,13 +458,13 @@ line-height: 28px; /* 80% */
 }
 
 .step-line {
-  top: 20px; 
+  top: 20px;
 }
 
 
 .step-label {
   margin-top: 0.25rem;
-  font-size: 0.875rem; 
+  font-size: 0.875rem;
 }
 
 .step-container {
@@ -562,7 +475,7 @@ line-height: 28px; /* 80% */
 
 .step-line {
   position: relative;
-  width: 80%; 
+  width: 80%;
   left: 0;
   top: 0.5rem;
   margin-bottom: 1rem;
@@ -590,26 +503,45 @@ right: 0;
 left: auto;
 width: 100%;
 } */
-  
- /* Add this to your CSS file */
-#upload-profile {
-  flex-wrap: wrap;
+
+
+.card {
+  /* padding: 60px; */
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background-color: #ffffff;
+  width: 100% !important;
+  padding: 22px !important;
+  /* height: auto; */
+  /* margin: 0  10px 20px 20px !important; */
+  margin: 0  0px 20px 0px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.card .title-count{
+  color: #6F6F6F;
+font-family: "Plus Jakarta Sans";
+font-size: 15px !important;
+font-style: normal;
+font-weight: 500;
+line-height: 28px; /* 175% */
+}
+.card .content h3{
+  color: #121212;
+font-family: "Plus Jakarta Sans";
+font-size: 34px;
+font-style: normal;
+font-weight: 700;
+line-height: 28px; /* 80% */
 }
 
-#upload-profile input,
-#upload-profile button,
-#upload-profile p {
-  margin-bottom: 10px;
+.pl-16{padding-left: 16px !important;}
+.display-flex{
+  display: flex;
 }
 
-@media (min-width: 768px) {
-  #upload-profile {
-    flex-wrap: nowrap;
-  }
-
-  #upload-profile input,
-  #upload-profile button,
-  #upload-profile p {
-    margin-bottom: 0;
+@media (min-width: 1024px) {
+  .card {
+    /* padding: 60px; */
+    width: 90%;
   }
 }
