@@ -175,7 +175,8 @@ const ApplicantDashboard = () => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
                   {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
-                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div>
+                  {/* <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div> */}
+                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</div>
                 </div>
               </div>
             </div>
