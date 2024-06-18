@@ -9,15 +9,27 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
+import Typography from '@mui/material/Typography';
+
+// ModalWrapper.js
+// ... (imports)
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  const handleCloseClick = () => {
+    if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
+      onClose();
+    }
+  };
+
   return (
     <Dialog
       open={isOpen}
-      onClose={onClose}
+      onClose={handleCloseClick}
       fullScreen={true}
       aria-labelledby="responsive-dialog-title"
       maxWidth="xl" // Ensures the dialog can stretch to full width
@@ -29,29 +41,35 @@ const ModalWrapper = ({ isOpen, onClose }) => {
           maxWidth: 'none',
           maxHeight: 'none',
           position: 'relative',
-          paddingTop: '90px'
+          paddingTop: '90px',
         },
       }}
     >
       <DialogContent sx={{ padding: 0, position: 'relative' }}>
         {isMobile ? (
-          <IconButton
-            aria-label="close"
-            onClick={onClose}
-            sx={{
-              position: 'absolute',
-              right: -10,
-              top: -10,
-              color: '#F97316',
-              zIndex: 1,
-              
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <>
+            <Button
+              variant="contained"
+              sx={{
+                position: 'absolute',
+                right: -10,
+                top: 16,
+                background: '#F97316',
+                borderRadius: '8px',
+                color: '#fff',
+                '&:hover': {
+                  background: '#F97316',
+                },
+                zIndex: 1,
+              }}
+              onClick={handleCloseClick}
+            >
+              Close
+            </Button>
+          </>
         ) : (
           <Button
-            onClick={onClose}
+            onClick={handleCloseClick}
             sx={{
               position: 'absolute',
               right: 16,
@@ -62,7 +80,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
               '&:hover': {
                 background: '#F97316',
               },
-              zIndex: 1, // Ensure the button is above other content
+              zIndex: 1,
             }}
           >
             Close
