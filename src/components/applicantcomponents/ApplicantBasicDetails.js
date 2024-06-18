@@ -112,7 +112,7 @@ const handleSkillsChange = (selectedSkills) => {
   const [preferredJobLocations, setPreferredJobLocations] = useState([]);
   const [skillsRequired, setSkillsRequired] = useState([]);
   const navigate = useNavigate();
-
+  const [errorMessage, setErrorMessage] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
@@ -247,21 +247,40 @@ if (!applicant.mobilenumber) {
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setResumeFile(file);
+      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  
+      if (file.size > fileSizeLimit) {
+        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
+        setErrorMessage('File size should be less than 1MB.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      if (!allowedTypes.includes(file.type)) {
+        alert('Only PDF and DOC/DOCX file types are allowed.');
+        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      setErrorMessage('');
       setSelectedFile(file);
     }
   };
-
+  
+  
+  
   const triggerFileInputClick = () => {
     document.getElementById('tf-upload-img').click();
   };
-
+  
   const handleDragOver = (event) => {
     event.preventDefault();
     event.stopPropagation();
     setDragActive(true);
   };
-
+  
   const handleDragLeave = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -272,10 +291,27 @@ if (!applicant.mobilenumber) {
     event.preventDefault();
     event.stopPropagation();
     setDragActive(false);
-
+  
     const file = event.dataTransfer.files[0];
     if (file) {
-      setResumeFile(file);
+      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  
+      if (file.size > fileSizeLimit) {
+        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
+        setErrorMessage('File size should be less than 1MB.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      if (!allowedTypes.includes(file.type)) {
+        alert('Only PDF and DOC/DOCX file types are allowed.');
+        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      setErrorMessage('');
       setSelectedFile(file);
       document.getElementById('tf-upload-img').files = event.dataTransfer.files;
     }
@@ -403,8 +439,10 @@ if (!applicant.mobilenumber) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const isFormValid = validateForm();
-    // if (!isFormValid) return;
+    if (!selectedFile) {
+      setErrorMessage('Please upload a valid file.');
+      return;
+    }
    
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -701,8 +739,13 @@ if (!applicant.mobilenumber) {
       >
         Browse
       </button>
-    </div>
 
+    </div>
+ {errorMessage && (
+    <div style={{ color: 'red', marginTop: '10px' }}>
+      {errorMessage}
+    </div>
+  )}
               </div>
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
