@@ -75,18 +75,15 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         });
 
         if (response.status === 200) {
-          //window.alert('Basic details updated successfully!');
-          addSnackbar({ message: 'Basic details updated successfully!', type: 'success' });
+          window.alert('Personal details updated successfully!');
           window.location.reload();
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-          //window.alert("Failed to update basic details.");
-          addSnackbar({ message: 'Failed to update basic details.', type: 'error' });
+          window.alert("Failed to update personal details.");
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        //window.alert("Failed to update basic details due to an error.");
-        addSnackbar({ message: 'Failed to update basic details due to an error.', type: 'error' });
+        window.alert("Failed to update personal details due to an error.");
       }
     }
   };
