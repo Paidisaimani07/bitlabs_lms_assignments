@@ -80,6 +80,13 @@
  flex-shrink: 0;
 
 }
+@media(min-width: 320px) and (max-width: 550px) {
+     .modal-content {
+      
+        height:70% !important;
+        /* top:30px Adjust for smaller screens */
+    }
+}
 @media(min-width: 320px) and (max-width: 450px) {
     .modal-content2 {
         width: 95% !important;
@@ -92,6 +99,7 @@
       margin-top: auto;
       margin-bottom: 10px;
         width: 95% !important;
+      
         /* top:30px Adjust for smaller screens */
     }
     /* .modal-content3 {
@@ -256,7 +264,7 @@
 /* Medium Devices (Tablets, 992px and up) */
 @media (min-width: 992px) and (max-width: 1199px) {
   .features-job-view {
-      width: 80%;
+      width: 83%;
       margin:auto;
   }
   .features-job-view1 {
@@ -279,7 +287,7 @@
 /* Small Devices (Tablets, 768px and up) */
 @media (min-width: 768px) and (max-width: 991px) {
   .features-job-view {
-      width: 90%;
+      width: 94%;
       margin:auto;
   }
   .features-job-view1 {
@@ -288,8 +296,8 @@
 }
 .features-job-view2 {
   width: 90%;
-  margin:auto;
-  margin-top: 30px;
+  margin: 30px auto;
+
   /* margin:auto; */
 }
   .edit-icon {
@@ -302,7 +310,7 @@
 /* Extra Small Devices (Phones, 576px and up) */
 @media (min-width: 320px) and (max-width: 767px) {
   .features-job-view {
-      width: 90%;
+      width: 95%;
       margin:auto;
   }
   .features-job-view1 {
@@ -311,8 +319,8 @@
 }
 .features-job-view2 {
   width: 90%;
-  margin:auto;
-  margin-top: 30px;
+  margin: 30px auto;
+  
 }
   .edit-icon {
       top: 20px;
