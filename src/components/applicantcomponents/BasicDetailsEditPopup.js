@@ -52,6 +52,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+    
   };
 
   const handleSubmit = async (e) => {
@@ -75,15 +76,19 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         });
 
         if (response.status === 200) {
-          window.alert('Personal details updated successfully!');
+          // window.alert('Personal details updated successfully!');
+          addSnackbar({ message: 'Personal details updated successfully!', type: 'success' });
           window.location.reload();
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-          window.alert("Failed to update personal details.");
+
+          // window.alert("Failed to update personal details.");
+          addSnackbar({ message: 'Failed to update personal details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        window.alert("Failed to update personal details due to an error.");
+        // window.alert("Failed to update personal details due to an error.");
+        addSnackbar({ message: 'Failed to update personal details due to an error', type: 'error' });
       }
     }
   };
