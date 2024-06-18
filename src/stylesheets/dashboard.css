@@ -5447,10 +5447,46 @@ input[type="radio"]:checked:after {
 }
 
 .resumebox .card {
+    /* padding: 30px 30px 12px 30px !important; */
     padding: 30px !important;
 }
 
-@media (max-width:375px){
+@media only screen and (min-width: 1185px) and (max-width: 1300px) {
+    .certificatebox .card {
+        padding: 24px 30px 30px 30px !important;
+    }
+}
+
+@media only screen and (min-width: 1132px) and (max-width: 1300px) {
+    .resumebox .card {
+        padding: 20px 30px 12px 30px !important;
+    }
+}
+
+@media only screen and (min-width: 1132px) and (max-width: 1300px){
+.resumecard-heading .heading1 {
+    padding-top:15px !important;
+}
+}
+
+@media only screen and (min-width: 1423px) and (max-width: 1540px){
+    .resumecard-heading .heading1 {
+        padding-top:15px !important;
+    }
+    }
+
+ @media only screen and (min-width: 1423px) and (max-width: 1540px) {
+    .resumebox .card {
+            padding: 20px 30px 12px 30px !important;
+        }
+    }
+.certificatebox .card 
+{
+    padding: 30px !important;
+    /* padding: 24px 30px 30px 30px !important; */
+}
+
+@media (max-width:670px){
     .resumecard-button a span{
         color: #FFF;
 font-family: "Plus Jakarta Sans";
@@ -5597,4 +5633,40 @@ width: 24px;
     #header .sticky-area-wrap .header-ct-left #hamburger {
         display: block !important;
     }
+}
+
+@media only screen and (max-width: 655px) {
+.button-link1 {
+    /* background-color: #F97316; */
+    background: linear-gradient(90deg, #F97316 11.81%, #FAA729 100%);
+    padding-right: 0px;
+    display: inline-block;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 16px;
+    width: 127px;
+    height: 42px;
+    }
+}
+
+@media only screen and (min-width: 1185px) and (max-width: 1300px) {
+    .resumecard-icon img {
+        width: 200px !important;
+        object-fit: contain;
+    }
+}
+
+@media only screen and (min-width: 1423px) and (max-width: 1540px) {
+    .resumecard-icon img {
+        width: 200px !important;
+        object-fit: contain;
+    }
+}
+
+.downmenu svg{
+    margin-bottom: 0px !important;
+}
+
+.box-icon0 .svg{
+    margin-bottom: 0px !important;
 }
