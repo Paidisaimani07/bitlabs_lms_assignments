@@ -99,19 +99,21 @@ const login = useGoogleLogin({
        } catch (error) { 
          resume=error.response.status;
        }
-       console.log('resume',resume);
-       if (profileId === 0 || resume === 404) {
+       
+       if (profileId !== 0 && resume === 404) {
         console.log('checking ',jwtToken);
         localStorage.setItem('jwtToken', userData.data.jwt);
-         navigate('/applicant-basic-details-form');
+         navigate('/applicant-basic-details-form/3');
+      }
+       else if (profileId === 0 || resume === 404) {
+        console.log('checking ',jwtToken);
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicant-basic-details-form/1');
        }
-     else{
-     
-       navigate('/applicant-find-jobs');
-       //navigate('/applicanthome');
-     }
-         
-  
+      else{
+        navigate('/applicant-find-jobs');
+        //navigate('/applicanthome');
+      }
         //navigate('/applicanthome');
       }
     } catch (err) {
@@ -270,11 +272,15 @@ const login = useGoogleLogin({
         } catch (error) { 
           resume=error.response.status;
         }
-        
-         if (profileId === 0 || resume === 404) {
+        if (profileId !== 0 && resume === 404) {
           console.log('checking ',jwtToken);
           localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form');
+           navigate('/applicant-basic-details-form/3');
+        }
+         else if (profileId === 0 || resume === 404) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form/1');
          }
        else{
        
