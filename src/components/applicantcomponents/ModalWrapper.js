@@ -32,6 +32,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       let resume;
       try {
        const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       
      } catch (error) { 
        resume=error.response.status; 
      }
