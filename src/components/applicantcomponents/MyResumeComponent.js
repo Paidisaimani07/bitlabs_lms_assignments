@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
 import ModalComponent from './ModalComponent';
-
+import ResumeBuilder from './ResumeBuilder';
 const MyResumeComponent = ({ pdfUrl, loading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loginUrl, setLoginUrl] = useState('');
