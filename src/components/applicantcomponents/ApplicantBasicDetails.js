@@ -60,11 +60,11 @@ const ApplicantBasicDetails = () => {
     let error = '';
 
     if (name === 'firstName' || name === 'lastName') {
-        if (value.length < 3) {
-            error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters.`;
-        } else if (!/^[a-zA-Z]+$/.test(value)) {
-            error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
-        }
+      if (value.length < 3) {
+        error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
+    } else if (!/^[a-zA-Z]+$/.test(value)) {
+        error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters without spaces or special characters.`;
+    }
     } else if (name === 'mobilenumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
             error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
