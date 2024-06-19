@@ -210,6 +210,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
   value={email}
   onChange={handleEmailChange}
   onBlur={handleEmailBlur}
+  disabled={isEmailFieldDisabled}
   className="input-style"
 />
 
