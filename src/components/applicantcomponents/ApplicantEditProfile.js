@@ -6,11 +6,15 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
+
 function ApplicantEditProfile() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const user1 = useUserContext();
   const user=user1.user;
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+
   let error = "";
   const [userData, setUserData] = useState({
     basicDetails: {},
@@ -617,7 +621,9 @@ if (!graduationDetails.gState) {
      if (response.status === 200) {
       if (response.data === 'profile saved sucessfully') {
         console.log(response.body);
-        window.alert('Profile saved successfully!');
+       // window.alert('Profile saved successfully!');
+       
+ setSnackbar({ open: true, message: 'Profile saved successfully', type: 'success' });
         navigate('/applicanthome');
       }  else {
         console.error('An unexpected success response:', response.body);
@@ -653,11 +659,13 @@ const uploadPhoto = async () => {
     );
 
     console.log(response.data);
-    window.alert(response.data);
+    //window.alert(response.data);
+    setSnackbar({ open: true, message: response.data , type: 'success' });
     window.location.reload();
   } catch (error) {
     console.error('Error uploading photo:', error);
-    window.alert('error in uploading Profile ');
+    //window.alert('error in uploading Profile ');
+    setSnackbar({ open: true, message: 'Error in uploading Profile ', type: 'error' });
   }
 };
 const handleResumeSelect = (e) => {
@@ -679,14 +687,19 @@ const handleResumeUpload = async () => {
       }
     );
     console.log(response.data);
-    window.alert(response.data);
-    window.location.reload();
+   // window.alert(response.data);
+   setSnackbar({ open: true, message: response.data , type: 'success' });
+   // window.location.reload();
   } catch (error) {
     console.error('Error uploading resume:', error);
-    window.alert('Error uploading resume. Please try again.');
+    //window.alert('Error uploading resume. Please try again.');
+    setSnackbar({ open: true, message: 'Error uploading resume. Please try again.', type: 'error' });
   }
 };
 
+const handleCloseSnackbar = () => {
+  setSnackbar({ open: false, message: '', type: '' });
+};
 
 
   return (
@@ -699,8 +712,8 @@ const handleResumeUpload = async () => {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
-          <BackButton />
-            <div className="title-dash flex2">Edit Your Profile</div>
+          {/* <BackButton /> */}
+            <div className="title-dash flex2"><BackButton />Edit Your Profile</div>
           </div>
         </div>
       </div>
@@ -1655,6 +1668,15 @@ const handleResumeUpload = async () => {
     </form>
     )
   }
+  {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>      
   )
 }

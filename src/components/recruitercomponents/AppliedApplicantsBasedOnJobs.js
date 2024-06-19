@@ -7,6 +7,7 @@ import ScheduleInterviewPopup from './ScheduleInterviewPopup';
 import { CSVLink } from 'react-csv';
 import { Link, useParams} from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
 $.DataTable = require('datatables.net')
  
 function AppliedApplicantsBasedOnJobs() {
@@ -33,6 +34,7 @@ function AppliedApplicantsBasedOnJobs() {
   const [minimumQualification, setMinimumQualification] = useState(null);
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const { id } = useParams();
 
   const handleCheckboxChange2 = (applyjobid) => {
@@ -382,8 +384,10 @@ const handleSelectChange = async (e) => {
         setSelectedApplicants([]);
       }
       
-      alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
-      window.location.reload();
+      //alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
+      const message1 = `Status changed to ${newStatus} for ${selectedApplicants.length} applicants`;
+      setSnackbar({ open: true, message: message1, type: 'success' });
+      //window.location.reload();
     }
   } catch (error) {
     console.error('Error updating status:', error);
@@ -425,7 +429,10 @@ const handleSelectChange = async (e) => {
       link.click();
     };
    
- 
+    const handleCloseSnackbar = () => {
+      setSnackbar({ open: false, message: '', type: '' });
+      window.location.reload();
+    };
    
  return (
       <div className="dashboard__content">
@@ -434,8 +441,8 @@ const handleSelectChange = async (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
-                  <BackButton />
-                  <div className="title-dash flex2">All Applicants</div>
+                  
+                  <div className="title-dash flex2"><BackButton />All Applicants</div>
                 </div>
               </div>
             </div>
@@ -823,6 +830,15 @@ const handleSelectChange = async (e) => {
             </div>
           </div>
         </section>
+        {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
       </div>
     );
   }

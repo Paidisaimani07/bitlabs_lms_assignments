@@ -5,6 +5,7 @@ import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
+import Snackbar from '../common/Snackbar';
  
 function RecruiterMyOrganization() {
    
@@ -15,6 +16,7 @@ function RecruiterMyOrganization() {
     const [verificationStatus, setVerificationStatus] = useState(false);
     const [photoFile,setPhotoFile]=useState(null);
     const [isProfileSubmitted, setIsProfileSubmitted] = useState(localStorage.getItem('isProfileSubmitted') === 'true');
+    const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
     const [socialProfiles, setSocialProfiles] = useState({
       twitter: '',
       instagram: '',
@@ -36,7 +38,19 @@ function RecruiterMyOrganization() {
  
     const user1 = useUserContext();
     const user = user1.user;
- 
+    const [isHovered, setIsHovered] = useState(false);
+    const buttonStyle = {
+      backgroundColor: isHovered ? '#ea670c' : '#F97316',
+      color: 'white',
+      padding: '10px 15px',
+      border: 'none',
+      borderRadius: '5px',
+      cursor: 'pointer',
+      marginLeft: '5px',
+      marginTop: '5px',
+      transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+    };
+
     useEffect(() => {
       const storedToken = localStorage.getItem('jwtToken');
       if (storedToken) {
@@ -182,7 +196,8 @@ function RecruiterMyOrganization() {
             const responseData = await response.text();
             console.log('Success:', responseData);
             if (responseData === 'CompanyProfile was already updated.') {
-              window.alert('CompanyProfile was already updated.');
+             // window.alert('CompanyProfile was already updated.');
+             setSnackbar({ open: true, message: 'Company profile was already updated.', type: 'error' });
               setCompanyName('');
               setWebsite('');
               setPhoneNumber('');
@@ -200,7 +215,8 @@ function RecruiterMyOrganization() {
                 instagram: '',
               });
             } else {
-              window.alert('Profile saved successfully');
+              //window.alert('Profile saved successfully');
+              setSnackbar({ open: true, message: 'Profile saved successfully', type: 'success' });
               setIsProfileSubmitted(true);
               setVerificationStatus(false);
               localStorage.setItem('isProfileSubmitted', 'true'); 
@@ -249,13 +265,20 @@ function RecruiterMyOrganization() {
           }
         );
         console.log(response.data);
-        window.alert(response.data);
+        //window.alert(response.data);
+        setSnackbar({ open: true, message: response.data, type: 'success' });
         window.location.reload();
       } catch (error) {
         console.error('Error uploading photo:', error);
-        window.alert('Error in uploading profile');
+        //window.alert('Error in uploading profile');
+        setSnackbar({ open: true, message: 'Error in uploading profile.', type: 'error' });
       }
     };
+
+    const handleCloseSnackbar = () => {
+      setSnackbar({ open: false, message: '', type: '' });
+    };
+
   return (
     <div>
 <div className="dashboard__content">
@@ -264,7 +287,7 @@ function RecruiterMyOrganization() {
       <div className="row">
         <div className="col-lg-12 col-md-12 ">
           <div className="title-dashboard">
-          <BackButton />
+          {/* <BackButton /> */}
             <div className="title-dash flex2">My Organization</div>
           </div>
         </div>
@@ -294,19 +317,13 @@ function RecruiterMyOrganization() {
       type="button"
       onClick={uploadPhoto}
       className="btn-3"
-      style={{
-        backgroundColor: '#F97316',
-        color: 'white',
-        padding: '10px 15px',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        marginLeft:'5px',
-        marginTop:'5px'
-      }}
+      style={buttonStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       Upload Photo
     </button>
+    
   </div>
               </div>
               <div className="wrap-img flex2">
@@ -466,7 +483,16 @@ function RecruiterMyOrganization() {
     </div>
     </form>
   </section>
- </div>      
+ </div> 
+ {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}     
 </div>
   )
 }

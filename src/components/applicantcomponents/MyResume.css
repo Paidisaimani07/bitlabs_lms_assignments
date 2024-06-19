@@ -1,0 +1,43 @@
+/* Media Queries for Responsive Design */
+@media screen and (max-width: 1200px) {
+  .commonContainer {
+    margin-left: 0.25rem; /* Adjusted left margin */
+    margin-right: 2rem;
+  }
+
+  .banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5625rem;  /* Equivalent to '25px' */
+  }
+
+  .bannerContent {
+    margin-bottom: 1.25rem;  /* Equivalent to '20px' */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .commonContainer {
+    margin-left: 0.5rem; /* Adjusted left margin */
+    margin-right: 1rem;
+  }
+
+  .banner {
+    padding: 0.625rem;  /* Equivalent to '10px' */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .commonContainer {
+    margin-left: 0.25rem; /* Adjusted left margin */
+    margin-right: 0.5rem;
+  }
+
+  .banner {
+    padding: 0.3125rem;  /* Equivalent to '5px' */
+  }
+
+  .banner1 {
+    display: none;
+  }
+}
