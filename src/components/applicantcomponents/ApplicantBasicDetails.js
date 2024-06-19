@@ -34,13 +34,11 @@ const ApplicantBasicDetails = () => {
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [requestData, setRequestData] = useState(null);
-  
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
     email: user.email || "",
-    mobilenumber: user.mobilenumber || "",
+    mobilenumber: "",
    
   });
   const openModal = () => setIsModalOpen(true);
@@ -116,7 +114,7 @@ const handleSkillsChange = (selectedSkills) => {
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
-  
+  const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   // Define the steps
@@ -124,7 +122,7 @@ const handleSkillsChange = (selectedSkills) => {
 
 
  // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i}` }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
 
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
@@ -140,18 +138,19 @@ const handleSkillsChange = (selectedSkills) => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
-        console.log(response);
         const newData = {
           identifier: response.data.email,
           password: response.data.password,
         };
-        setRequestData(newData);       
+        setRequestData(newData);
+
+      
+       
       } catch (error) {
         console.error('Error fetching applicant data:', error);
       }
     };
     fetchData();
-    
   }, [user.id]);
 
   useEffect(() => {
@@ -470,8 +469,7 @@ if (!applicant.mobilenumber) {
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
-    // navigate('/applicant-find-jobs');
-     navigate('/applicanthome');
+    navigate('/applicant-find-jobs');
   };
 
   const validateForm = () => {
@@ -582,9 +580,12 @@ if (!applicant.mobilenumber) {
           name="mobilenumber"
           placeholder="*WhatsApp Number"
           value={applicant.mobilenumber}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           className="input-form"
-          readOnly
-          style={{ color: '#ccc' }} 
+          pattern="^\+(?:[0-9]?){6,14}[0-9]$"
+          title="Enter a valid WhatsApp number"
+          required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
       </div>
