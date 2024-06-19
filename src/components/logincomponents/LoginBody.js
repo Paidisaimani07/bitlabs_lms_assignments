@@ -663,7 +663,7 @@ const handleChange = (e) => {
 };
 
   return (
-    <div  style={{ backgroundColor: 'white', height: '100vh', width: '100%' }}>
+    <div>
       <img
         src={Backgroundimagemobile}
         alt="Background"
