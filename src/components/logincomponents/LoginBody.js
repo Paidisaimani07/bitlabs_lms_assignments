@@ -111,10 +111,10 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
+        //navigate('/applicant-find-jobs');
+        navigate('/applicanthome');
       }
-        //navigate('/applicanthome');
+       
       }
     } catch (err) {
       console.log(err);
@@ -284,8 +284,8 @@ const login = useGoogleLogin({
          }
        else{
        
-         navigate('/applicant-find-jobs');
-         //navigate('/applicanthome');
+        //  navigate('/applicant-find-jobs');
+         navigate('/applicanthome');
        }
       }     
 
@@ -816,7 +816,7 @@ const handleChange = (e) => {
             <input
                 type="text"
                 className="name"
-                placeholder="Mobile Number"
+                placeholder="WhatsApp Number"
                 value={candidateMobileNumber}
                 onChange={handleChange}
                 required
