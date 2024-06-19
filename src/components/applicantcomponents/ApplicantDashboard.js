@@ -9,6 +9,9 @@ import Resume from '../../images/user/avatar/Resume.png';
 import Certificate from '../../images/user/avatar/Certificate.svg';
 import { useLocation } from "react-router-dom";
 import { faL } from "@fortawesome/free-solid-svg-icons";
+import ModalWrapper from './ModalWrapper';
+import Button from '@mui/material/Button';
+import ResumeBuilder from './ResumeBuilder';
 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
@@ -22,7 +25,9 @@ const ApplicantDashboard = () => {
   const userId = user.id;
   const [isHovered, setIsHovered] = useState(false);
   const [userData, setUserData] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
@@ -288,8 +293,9 @@ const ApplicantDashboard = () => {
                           </div>
                           <div className="resumecard-button">
                             <Link
+                              onClick={openModal}
                               // to="/applicant-resume-builder"
-                              to="https://resume.bitlabs.in:5173"
+                              //to="https://resume.bitlabs.in:5173"
                               // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
                               className={'button-link1'}
                               style={linkStyle}
@@ -298,6 +304,9 @@ const ApplicantDashboard = () => {
                             >
                               <span className="button button-custom" style={spanStyle}>Create Now</span>
                             </Link>
+      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
                           </div>
                         </div>
                         <div className="resumecard-icon">
