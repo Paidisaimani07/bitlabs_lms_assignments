@@ -265,6 +265,7 @@ if (!applicant.mobilenumber) {
       }
   
       setErrorMessage('');
+      setResumeFile(file);
       setSelectedFile(file);
     }
   };
@@ -313,6 +314,7 @@ if (!applicant.mobilenumber) {
   
       setErrorMessage('');
       setSelectedFile(file);
+      setResumeFile(file);
       document.getElementById('tf-upload-img').files = event.dataTransfer.files;
     }
   };
@@ -458,7 +460,7 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      //window.alert(response.data);
+      window.alert(response.data);
       addSnackbar({ message: response.data, type: 'success' });
       
     } catch (error) {
