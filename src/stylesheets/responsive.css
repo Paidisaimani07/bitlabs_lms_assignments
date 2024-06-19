@@ -41,7 +41,7 @@
     }
     .sticky-area-wrap .header-ct-right .account {
       display: flex;
-      gap: 9px;
+      /* gap: 9px; */
       align-items: center;
       padding-right: 2px;
       position: relative;
