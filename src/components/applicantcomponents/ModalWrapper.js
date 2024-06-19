@@ -20,7 +20,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const handleCloseClick = () => {
+  const handleCloseClick = async() => {
     if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
 
 
