@@ -234,8 +234,11 @@ function ResumeBuilder() {
   }, [user.id]);
 
   useEffect(() => {
-   const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
-  //  const apiUrl1 = 'http://localhost:5173/api/auth/login';
+
+
+    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
+   //const apiUrl1 = 'http://localhost:5173/api/auth/login';
+
     if (requestData) {
       const requestOptions = {
         method: 'POST',
