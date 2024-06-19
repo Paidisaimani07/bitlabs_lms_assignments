@@ -3,6 +3,7 @@ import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
 import ModalComponent from './ModalComponent';
 import ResumeBuilder from './ResumeBuilder';
+import ModalWrapper from './ModalWrapper';
 const MyResumeComponent = ({ pdfUrl, loading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loginUrl, setLoginUrl] = useState('');
@@ -171,11 +172,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
         </div>
       </section>
 
-      // <ModalComponent
-      //   isOpen={isModalOpen}
-      //   onRequestClose={() => setIsModalOpen(false)}
-      //   loginUrl={loginUrl}
-      // />
+    
  <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
       </ModalWrapper>
