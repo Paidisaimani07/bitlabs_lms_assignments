@@ -11,12 +11,13 @@ import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
-import Logo from '../../images/logos-copy1.png';
+import Logo from '../../images/artboard.svg';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
 import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
+
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -59,10 +60,12 @@ const ApplicantBasicDetails = () => {
 
     if (name === 'firstName' || name === 'lastName') {
       if (value.length < 3) {
-        error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
-    } else if (!/^[a-zA-Z]+$/.test(value)) {
-        error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters without spaces or special characters.`;
-    }
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
+      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters and spaces without special characters and numbers.`;
+      }
+  
+  
     } else if (name === 'mobilenumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
             error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
@@ -237,7 +240,7 @@ if (!applicant.mobilenumber) {
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
       //window.alert('Profile saved successfully!');
-      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+      //addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
 
 
     } catch (error) {
@@ -466,7 +469,7 @@ if (!applicant.mobilenumber) {
       );
       console.log(response.data);
       
-      addSnackbar({ message: 'File uploaded successfully', type: 'success' });
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
 
        // Add a delay before navigating
     setTimeout(() => {
@@ -838,7 +841,7 @@ if (!applicant.mobilenumber) {
 
   return (
     <div class="component">
-      
+       
       {/* <a href="/applicanthome">
         <img 
           src={imageSrc || '../images/user/avatar/image-01.jpg'} 
