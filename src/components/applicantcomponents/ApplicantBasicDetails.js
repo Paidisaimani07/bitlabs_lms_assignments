@@ -469,7 +469,8 @@ if (!applicant.mobilenumber) {
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
-    navigate('/applicant-find-jobs');
+    // navigate('/applicant-find-jobs');
+    navigate('/applicanthome');
   };
 
   const validateForm = () => {

@@ -111,8 +111,8 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
+        // navigate('/applicant-find-jobs');
+        navigate('/applicanthome');
       }
         //navigate('/applicanthome');
       }
@@ -284,8 +284,8 @@ const login = useGoogleLogin({
          }
        else{
        
-         navigate('/applicant-find-jobs');
-         //navigate('/applicanthome');
+        //  navigate('/applicant-find-jobs');
+         navigate('/applicanthome');
        }
       }     
 
