@@ -597,8 +597,7 @@ if (!applicant.mobilenumber) {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className="input-form"
-          readOnly
-          style={{ color: '#ccc' }} 
+          required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
       </div>
