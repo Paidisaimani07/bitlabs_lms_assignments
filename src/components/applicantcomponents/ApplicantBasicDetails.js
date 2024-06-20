@@ -248,18 +248,18 @@ if (!applicant.mobilenumber) {
     const file = event.target.files[0];
     if (file) {
       const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
-        setErrorMessage('File size should be less than 1MB.');
+        alert('File size should be less than 1MB and Only PDF allowed.');
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF and DOC/DOCX file types are allowed.');
-        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        alert('Only PDF file types are allowed.');
+        setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
       }
@@ -296,18 +296,18 @@ if (!applicant.mobilenumber) {
     const file = event.dataTransfer.files[0];
     if (file) {
       const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
-        setErrorMessage('File size should be less than 1MB.');
+        alert('File size should be less than 1MB and Only PDF allowed.');
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF and DOC/DOCX file types are allowed.');
-        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        alert('Only PDF file types are allowed.');
+        setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
       }
@@ -583,9 +583,8 @@ if (!applicant.mobilenumber) {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className="input-form"
-          pattern="^\+(?:[0-9]?){6,14}[0-9]$"
-          title="Enter a valid WhatsApp number"
-          required
+          readOnly
+          style={{ color: '#ccc' }} 
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
       </div>

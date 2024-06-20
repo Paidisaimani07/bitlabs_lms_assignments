@@ -816,7 +816,7 @@ const handleChange = (e) => {
             <input
                 type="text"
                 className="name"
-                placeholder="Mobile Number"
+                placeholder="WhatsApp Number"
                 value={candidateMobileNumber}
                 onChange={handleChange}
                 required
