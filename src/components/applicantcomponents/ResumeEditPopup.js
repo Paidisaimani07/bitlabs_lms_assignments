@@ -33,7 +33,12 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      if (file.size > 1048576) { // Check if file size is greater than 1MB (1MB = 1048576 bytes)
+      // Check if the selected file is a PDF
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        setError('Only PDF files are allowed.');
+        setResumeFile(null);
+        setFileName(''); // Clear file name if invalid file
+      } else if (file.size > 1048576) { // Check if file size is greater than 1MB (1MB = 1048576 bytes)
         setError('File size should be less than 1MB.');
         setResumeFile(null);
         setFileName(''); // Clear file name if file is too large
@@ -43,13 +48,11 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
         setError('');
       }
     } else {
-      setError('Only PDF files are allowed.');
+      setError('Please select a file.');
       setResumeFile(null);
-      setFileName(''); // Clear file name if invalid file
+      setFileName(''); // Clear file name if no file selected
     }
   };
-
-
   const triggerFileInputClick = () => {
     document.getElementById('tf-upload-resume').click();
   };

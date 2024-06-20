@@ -24,18 +24,24 @@
   }
 
   .sticky-area-wrap .header-ct-right .account img {
-    max-width: 40px;
-    height: 32px;
+    /* max-width: 40px;
+    height: 32px; */
+    width:30px !important;
+    height:30px !important;
+    object-fit:cover;
+    border-radius:50% !important;
   }
 
-  @media only screen and (min-width: 50px) and (max-width: 300px) {
+  @media only screen and (min-width: 360px) and (max-width: 2000px) {
     .sticky-area-wrap .header-ct-right .account img {
-        max-width: 32px;
-        height: 32px;
+      width:30px !important;
+      height:30px !important;
+      object-fit:cover;
+      border-radius:50% !important;
     }
     .sticky-area-wrap .header-ct-right .account {
       display: flex;
-      gap: 9px;
+      /* gap: 9px; */
       align-items: center;
       padding-right: 2px;
       position: relative;

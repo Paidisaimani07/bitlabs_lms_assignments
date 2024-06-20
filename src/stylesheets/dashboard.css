@@ -5645,7 +5645,7 @@ width: 24px;
     text-align: center;
     margin-top: 16px;
     width: 127px;
-    height: 42px;
+    height: 47px;
     }
 }
 
@@ -5667,6 +5667,22 @@ width: 24px;
     margin-bottom: 0px !important;
 }
 
-.box-icon0 .svg{
+.icon-bag svg{
     margin-bottom: 0px !important;
+}
+
+.profile-icon {
+    width: 30px;  /* Set the desired width */
+    height: 30px; /* Set the desired height to match width for 1:1 aspect ratio */
+    border-radius: 50%; /* Make the image rounded */
+    overflow: hidden; /* Hide overflow to maintain round shape */
+    display: flex; /* Center the image inside the div */
+    align-items: center; /* Center the image inside the div */
+    justify-content: center; /* Center the image inside the div */
+    object-fit: cover;
+}
+.profile-icon img {
+    width: 100%; /* Ensure the image covers the entire div */
+    height: 100%; /* Ensure the image covers the entire div */
+    object-fit: cover; /* Cover the div while maintaining aspect ratio */
 }

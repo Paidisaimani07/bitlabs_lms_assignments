@@ -13,8 +13,7 @@ import logo from '../../images/user/avatar/bitlabslogo.svg';
 
 import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
 import Snackbar from '../common/Snackbar';
-
-
+// import './Signup-and-login-pages-css-changes.css';
 
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
@@ -100,19 +99,21 @@ const login = useGoogleLogin({
        } catch (error) { 
          resume=error.response.status;
        }
-       console.log('resume',resume);
-       if (profileId === 0 || resume === 404) {
+       
+       if (profileId !== 0 && resume === 404) {
         console.log('checking ',jwtToken);
         localStorage.setItem('jwtToken', userData.data.jwt);
-         navigate('/applicant-basic-details-form');
+         navigate('/applicant-basic-details-form/3');
+      }
+       else if (profileId === 0 || resume === 404) {
+        console.log('checking ',jwtToken);
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicant-basic-details-form/1');
        }
-     else{
-     
-       navigate('/applicant-find-jobs');
-       //navigate('/applicanthome');
-     }
-         
-  
+      else{
+        navigate('/applicant-find-jobs');
+        //navigate('/applicanthome');
+      }
         //navigate('/applicanthome');
       }
     } catch (err) {
@@ -271,11 +272,15 @@ const login = useGoogleLogin({
         } catch (error) { 
           resume=error.response.status;
         }
-        
-         if (profileId === 0 || resume === 404) {
+        if (profileId !== 0 && resume === 404) {
           console.log('checking ',jwtToken);
           localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form');
+           navigate('/applicant-basic-details-form/3');
+        }
+         else if (profileId === 0 || resume === 404) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form/1');
          }
        else{
        
@@ -644,6 +649,18 @@ const getTabStyle = (tab) => ({
 const handleCloseSnackbar = () => {
   setSnackbar({ open: false, message: '', type: '' });
 };
+const handleChange = (e) => {
+  const inputValue = e.target.value;
+  const numericValue = inputValue.replace(/\D/g, '');
+  const truncatedValue = numericValue.slice(0, 10);
+
+  if (/[^0-9]/.test(inputValue)) {
+      setCandidateMobileNumberError('Mobile number should contain only digits');
+  } else {
+      setCandidateMobileNumber(truncatedValue);
+      setCandidateMobileNumberError('');
+  }
+};
 
   return (
     <div>
@@ -794,28 +811,26 @@ const handleCloseSnackbar = () => {
                   </div>
                   <div className="ip">
                     {/* <label>Mobile Number<span>*</span></label> */}
-                    <input
-    type="text"
-    className="name"
-    placeholder="Mobile Number"
-    value={candidateMobileNumber}
-    onChange={(e) => {
-        const inputValue = e.target.value;
-        
-        const numericValue = inputValue.replace(/\D/g, '');
-        // Limit to 10 digits
-        const truncatedValue = numericValue.slice(0, 10);
-        
-        if (/[^0-9]/.test(inputValue)) {
-            setCandidateMobileNumberError('Mobile number should contain only digits');
-        } else {
-            setCandidateMobileNumber(truncatedValue);
-            setCandidateMobileNumberError('');
-        }
-    }}
-    required
-    disabled={allFieldsDisabled}
-/>
+                    <form autoComplete="off">
+            <input type="text" style={{ display: 'none' }} />
+            <input
+                type="text"
+                className="name"
+                placeholder="Mobile Number"
+                value={candidateMobileNumber}
+                onChange={handleChange}
+                required
+                disabled={allFieldsDisabled}
+                autoComplete="off"
+                name="unique_mobile_number"
+                id="unique_mobile_number"
+            />
+            {/* {candidateMobileNumberError && (
+                <span className="error-message">{candidateMobileNumberError}</span>
+            )} */}
+        </form>
+
+
 
 
                     {candidateMobileNumberError && <div className="error-message">{candidateMobileNumberError}</div>}
