@@ -116,7 +116,7 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
       }
     }
   };
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i}` }));
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
   const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada'];
@@ -195,14 +195,14 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
   <Typeahead
     id="experience"
     options={yearsOptions}
-    placeholder="*Experience"
+    placeholder="*Experience in Years"
     onChange={(selected) => {
       const experienceValue = selected.length > 0 ? selected[0].label.split(' ')[0] : '';
       handleInputChange('experience', experienceValue);
     }}
     selected={
       formValues.experience
-        ? [{ label: `${formValues.experience} years`, value: formValues.experience }]
+        ? [{ label: `${formValues.experience}`, value: formValues.experience }]
         : []
     }
     className="custom-typeahead"

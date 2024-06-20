@@ -111,10 +111,10 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
-        //navigate('/applicant-find-jobs');
+        // navigate('/applicant-find-jobs');
         navigate('/applicanthome');
       }
-       
+        //navigate('/applicanthome');
       }
     } catch (err) {
       console.log(err);
@@ -663,7 +663,7 @@ const handleChange = (e) => {
 };
 
   return (
-    <div  style={{ backgroundColor: 'white', height: '100vh', width: '100%' }}>
+    <div>
       <img
         src={Backgroundimagemobile}
         alt="Background"

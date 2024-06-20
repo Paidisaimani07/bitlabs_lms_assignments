@@ -19,7 +19,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 
-const ModalWrapper = ({ isOpen, onClose }) => {
+const ModalWrapper1 = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate =useNavigate();
@@ -27,7 +27,23 @@ const ModalWrapper = ({ isOpen, onClose }) => {
 
   const handleCloseClick = async() => {
     if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
-     onClose();
+
+
+      let resume;
+      try {
+       const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       
+     } catch (error) { 
+       resume=error.response.status; 
+     }
+     if(resume === 404){
+      navigate('/applicant-basic-details-form/3');
+     }else{
+      navigate('/applicanthome');
+     }
+
+
+      onClose();
     }
   };
 
@@ -105,4 +121,4 @@ const ModalWrapper = ({ isOpen, onClose }) => {
   );
 };
 
-export default ModalWrapper;
+export default ModalWrapper1;
