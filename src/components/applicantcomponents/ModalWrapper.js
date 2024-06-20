@@ -10,18 +10,39 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
 import Typography from '@mui/material/Typography';
-
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 // ModalWrapper.js
 // ... (imports)
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import { useUserContext } from '../common/UserProvider';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const navigate =useNavigate();
+  const { user } = useUserContext();
 
-  const handleCloseClick = () => {
+  const handleCloseClick = async() => {
     if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
+
+
+      let resume;
+      try {
+       const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       
+     } catch (error) { 
+       resume=error.response.status; 
+     }
+     if(resume === 404){
+      navigate('/applicant-basic-details-form/3');
+     }else{
+      navigate('/applicanthome');
+     }
+
+
       onClose();
     }
   };
