@@ -8,7 +8,6 @@
 }
 
 .top-left-svg {
-  position: absolute;
   top: 0;
   left: 0;
   width: 200px;  /* Fixed width */
@@ -61,6 +60,7 @@
 .card1 {
   padding: 40px;
   width: 80%;
+  
 }
 }
 
@@ -70,7 +70,7 @@
   margin-top: 40px;
   padding: 20px;
   width: 95%;
-  height: 90%;
+ height: inherit;
 }
 }
 @media (min-width: 1024px) {
@@ -80,6 +80,8 @@
  
 }
 }
+
+
 
 .header {
   margin-bottom: 20px;
