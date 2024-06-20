@@ -14,7 +14,7 @@ import './ApplicantBasicDetails1.css';
 import Logo from '../../images/logos-copy1.png';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
-import ModalWrapper from './ModalWrapper';
+import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
 
@@ -238,6 +238,8 @@ if (!applicant.mobilenumber) {
       setRequestData(true);
       //window.alert('Profile saved successfully!');
       addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+
+
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -251,14 +253,16 @@ if (!applicant.mobilenumber) {
       const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF allowed.');
+        // alert('File size should be less than 1MB and Only PDF allowed.');
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
         setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF file types are allowed.');
+        // alert('Only PDF file types are allowed.');
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
         setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
@@ -299,14 +303,14 @@ if (!applicant.mobilenumber) {
       const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF allowed.');
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
         setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF file types are allowed.');
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
         setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
@@ -433,6 +437,7 @@ if (!applicant.mobilenumber) {
 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+     
   };
 
   const handleBack = () => {
@@ -460,17 +465,22 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
-      addSnackbar({ message: response.data, type: 'success' });
+      
+      addSnackbar({ message: 'File uploaded successfully', type: 'success' });
+
+       // Add a delay before navigating
+    setTimeout(() => {
+      navigate('/applicanthome');
+    }, 3000); // Delay of 3 seconds (3000 milliseconds)
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      //window.alert('Error uploading resume. Please try again.');
+      
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
-    // navigate('/applicant-find-jobs');
-    navigate('/applicanthome');
+   
+   
   };
 
   const validateForm = () => {
@@ -752,9 +762,9 @@ if (!applicant.mobilenumber) {
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
-              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+              <ModalWrapper1 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
-      </ModalWrapper>
+      </ModalWrapper1>
       {error && <div className="error-message">{error}</div>}
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
