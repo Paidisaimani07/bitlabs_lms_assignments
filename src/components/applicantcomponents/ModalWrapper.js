@@ -1,4 +1,3 @@
-// ModalWrapper.js
 import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -12,8 +11,6 @@ import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// ModalWrapper.js
-// ... (imports)
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -25,9 +22,28 @@ const ModalWrapper = ({ isOpen, onClose }) => {
   const navigate =useNavigate();
   const { user } = useUserContext();
 
-  const handleCloseClick = async() => {
-    if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
-     onClose();
+  const handleCloseClick = async () => {
+    if (window.confirm("Please close this window only after saving your resume.")) {
+      try {
+        // Add a cache-busting parameter to the logout URL
+        const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
+        const response = await fetch(logoutUrl, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+  
+        onClose();
+      } catch (error) {
+        console.error('There was a problem with the logout request:', error);
+        alert('Failed to close. Please try again.');
+      }
     }
   };
 
@@ -52,26 +68,24 @@ const ModalWrapper = ({ isOpen, onClose }) => {
     >
       <DialogContent sx={{ padding: 0, position: 'relative' }}>
         {isMobile ? (
-          <>
-            <Button
-              variant="contained"
-              sx={{
-                position: 'absolute',
-                right: -10,
-                top: 16,
+          <Button
+            variant="contained"
+            sx={{
+              position: 'absolute',
+              right: -10,
+              top: 16,
+              background: '#F97316',
+              borderRadius: '8px',
+              color: '#fff',
+              '&:hover': {
                 background: '#F97316',
-                borderRadius: '8px',
-                color: '#fff',
-                '&:hover': {
-                  background: '#F97316',
-                },
-                zIndex: 1,
-              }}
-              onClick={handleCloseClick}
-            >
-              Close
-            </Button>
-          </>
+              },
+              zIndex: 1,
+            }}
+            onClick={handleCloseClick}
+          >
+            Close
+          </Button>
         ) : (
           <Button
             onClick={handleCloseClick}
