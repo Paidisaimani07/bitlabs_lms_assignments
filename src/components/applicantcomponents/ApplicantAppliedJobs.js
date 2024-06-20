@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import leftArrow from '../../images/arrow-left.png';
 import { useNavigate } from "react-router-dom";
-
+import './ApplicantFindJobs.css';
+ 
 function ApplicantAppliedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +15,8 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const userId = user.id;
   const navigate = useNavigate();
-
+ 
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,14 +46,16 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
         setLoading(false);
       }
     };
-
+ 
     fetchAppliedJobs();
   }, []);
+ 
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+ 
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
@@ -61,7 +65,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
-              <section className="page-title-dashboard">
+              <section className="page-title-dashboard">  
                 <div className="themes-container">
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
@@ -78,18 +82,24 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                 </div>
               </section>
             </div>
-            <div className="col-lg-12 col-md-12">
+            <div className=" col-lg-12 col-md-12">
               <section className="flat-dashboard-setting flat-dashboard-setting2">
                 <div className="themes-container">
                   <div className="content-tab">
                     <div className="inner">
-
+ 
                       <div className="group-col-2">
                         {jobs.length === 0 ? (
                           <div style={{ marginLeft: 30 }}>No Applied jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2  bg-white" key={job.id}>
+                            <Link className="features-job cl2  bg-white"
+                              to={`/applicant-interview-status?jobId=${job.id}`}
+                              key={job.id}
+                              style={{ textDecoration: 'none', color: 'inherit' }}
+                              onClick={() => setSelectedJobId(job.applyJobId)}
+                            >
+                             
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   {/* <div className="logo-company">
@@ -156,8 +166,9 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                   </button>
                                 </div>
                               </div>
-                            </div>
+                            </Link>
                           )))}
+                         
                       </div>
                     </div>
                   </div>
@@ -171,5 +182,3 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   );
 }
 export default ApplicantAppliedJobs;
-
-
