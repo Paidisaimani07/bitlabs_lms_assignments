@@ -8,11 +8,10 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
+import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
-import ModalWrapper from './ModalWrapper';
-import Button from '@mui/material/Button';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -27,14 +26,11 @@ function ApplicantNavBar() {
   const [loading, setLoading] = useState(true);
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   const [profileData, setProfileData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const id = user.id;
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
+ 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
@@ -224,17 +220,31 @@ function ApplicantNavBar() {
       window.removeEventListener('resize', handleResize);
     };
   }, [user.id]);
-  const logout = () => {
-    const confirmLogout = window.confirm("Do you want to logout?");
-    if (confirmLogout) {
-      try {
-        clearJWTToken(); // Call the function here
-        window.location.href = "/";
-      } catch (error) {
-        console.error('Logout failed', error);
-      }
+
+  // const logout = () => {
+  //   const confirmLogout = window.confirm("Do you want to logout?");
+  //   if (confirmLogout) {
+  //     try {
+  //       clearJWTToken(); // Call the function here
+  //       window.location.href = "/";
+  //     } catch (error) {
+  //       console.error('Logout failed', error);
+  //     }
+  //   }
+  // };
+  const handleLogout =  () => {
+    console.log('Logout button clicked'); // Debugging log
+    try {
+       //clearJWTToken();
+       localStorage.removeItem('jwtToken');
+       localStorage.removeItem('user');
+       localStorage.removeItem('userType');
+      window.location.href = "https://www.bitlabs.in/jobs";
+    } catch (error) {
+      console.error('Logout failed', error);
     }
   };
+  
   //  const fetchAlertCount = async () => {
   //   try {
   //     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
@@ -460,9 +470,12 @@ function ApplicantNavBar() {
                         </a>
                       </div>
                       <div className="sub-account-item">
-                        <a onClick={logout}>
+                        {/* <a onClick={logout}>
                           <span className="icon-log-out" /> Log Out
-                        </a>
+                        </a> */}
+                         <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
+                         
+                        
                       </div>
                     </div>
                   </div>
@@ -575,18 +588,19 @@ function ApplicantNavBar() {
               <span className="dash-titles">My Resume</span>
             </Link>
           </li>
-              {/* <li>
-<Button variant="contained" color="primary" onClick={openModal}>
-        Build Your Resume
-      </Button>
-      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
-        <ResumeBuilder />
-      </ModalWrapper>
-              </li> */}
             </ul>
+          
           </div>
+       
         </div>
       )}
+
+                               <ModalLogout
+                                       isOpen={showModal}
+                                       onClose={() => setShowModal(false)}
+                                       onConfirm={handleLogout}
+                                    />
+      
     </div>
   )
 }
