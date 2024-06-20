@@ -112,6 +112,7 @@ const login = useGoogleLogin({
        }
       else{
         // navigate('/applicant-find-jobs');
+        localStorage.setItem('jwtToken', userData.data.jwt);
         navigate('/applicanthome');
       }
         //navigate('/applicanthome');
@@ -285,6 +286,7 @@ const login = useGoogleLogin({
        else{
        
         //  navigate('/applicant-find-jobs');
+        localStorage.setItem('jwtToken', userData.data.jwt);
          navigate('/applicanthome');
        }
       }     
