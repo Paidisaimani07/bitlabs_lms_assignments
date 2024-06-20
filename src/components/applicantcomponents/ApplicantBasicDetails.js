@@ -649,7 +649,7 @@ if (!applicant.mobilenumber) {
       <Typeahead
         id="experience"
         options={yearsOptions}
-        placeholder="*Experience"
+        placeholder="*Experience in Years"
         onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
         selected={yearsOptions.filter(option => option.label === experience)}
         className="input-form typeahead"

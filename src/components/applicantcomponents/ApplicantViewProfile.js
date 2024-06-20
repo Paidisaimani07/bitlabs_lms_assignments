@@ -356,7 +356,7 @@ const ApplicantViewProfile = () => {
               
               <div className="inner">
                 
-                <div className="text-heading-profdata">Experience</div>
+                <div className="text-heading-profdata">Experience in Years</div>
                   
                 <p style={{
                           color:'black',
