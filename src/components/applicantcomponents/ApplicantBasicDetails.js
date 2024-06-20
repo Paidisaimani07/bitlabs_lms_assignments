@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useParams } from 'react-router-dom';
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -11,19 +11,24 @@ import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
-import Logo from '../../images/logos-copy1.png';
+import Logo from '../../images/artboard.svg';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
-import ModalWrapper from './ModalWrapper';
+import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
 
+
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
+  let { number } = useParams();
+  // Convert the number to a numeric value (if needed)
+  number = parseInt(number, 10);
   const [loading, setLoading] = useState(true);
+  const [currentStage, setCurrentStage] = useState(number);
   const [snackbars, setSnackbars] = useState([]);
   const [error, setError] = useState('');
-  const [currentStage, setCurrentStage] = useState(1);
+  // const [currentStage, setCurrentStage] = useState(1);
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
@@ -34,7 +39,7 @@ const ApplicantBasicDetails = () => {
     firstName: '',
     lastName: '',
     email: user.email || "",
-    mobilenumber: "",
+    mobilenumber: user.mobilenumber || "",
    
   });
   const openModal = () => setIsModalOpen(true);
@@ -54,11 +59,13 @@ const ApplicantBasicDetails = () => {
     let error = '';
 
     if (name === 'firstName' || name === 'lastName') {
-        if (value.length < 3) {
-            error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters.`;
-        } else if (!/^[a-zA-Z]+$/.test(value)) {
-            error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters.`;
-        }
+      if (value.length < 3) {
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
+      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters and spaces without special characters and numbers.`;
+      }
+  
+  
     } else if (name === 'mobilenumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
             error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
@@ -108,7 +115,7 @@ const handleSkillsChange = (selectedSkills) => {
   const [preferredJobLocations, setPreferredJobLocations] = useState([]);
   const [skillsRequired, setSkillsRequired] = useState([]);
   const navigate = useNavigate();
-
+  const [errorMessage, setErrorMessage] = useState('');
   const [resumeFile, setResumeFile] = useState(null);
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
@@ -118,7 +125,7 @@ const handleSkillsChange = (selectedSkills) => {
 
 
  // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
-  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} years` }));
+  const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} ` }));
 
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
@@ -127,38 +134,8 @@ const handleSkillsChange = (selectedSkills) => {
   useEffect(() => {
     setLoading(false);
   }, []);
-  let resumeStatusCode;
-  let profileId;
-  useEffect(() => {
-    const fetchData1 = async () => {
-      try {
-      
-
-        // Check the profile ID
-        const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-         profileId = profileIdResponse.data;
-
-        try {
-         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-       } catch (error) {
-        resumeStatusCode=error.response.status;
-          // Check conditions to navigate to the 3rd stepper
-          if (profileId !== 0 && resumeStatusCode === 404) {
-            setCurrentStage(3);
-          }
-       }
-       
-      } catch (error) {
-        console.error('Error fetching applicant data:', error);
-      }
-    };
-    fetchData1();
-  }, [user.id]);
+  
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -189,9 +166,29 @@ const validateForm1 = () => {
   const validLastName = validateInput('lastName', applicant.lastName);
   const validMobileNumber = validateInput('mobilenumber', applicant.mobilenumber);
 
-  if (!applicant.firstName) newErrors.firstName = "First name is required";
-  if (!applicant.lastName) newErrors.lastName = "Last name is required";
-  if (!applicant.mobilenumber) newErrors.mobilenumber = "Mobile number is required";
+  if (!applicant.firstName) {
+    newErrors.firstName = "First name is required";
+} else {
+    if (!validateInput('firstName', applicant.firstName)) {
+        newErrors.firstName = errors.firstName;
+    }
+}
+
+if (!applicant.lastName) {
+    newErrors.lastName = "Last name is required";
+} else {
+    if (!validateInput('lastName', applicant.lastName)) {
+        newErrors.lastName = errors.lastName;
+    }
+}
+
+if (!applicant.mobilenumber) {
+    newErrors.mobilenumber = "Mobile number is required";
+} else {
+    if (!validateInput('mobilenumber', applicant.mobilenumber)) {
+        newErrors.mobilenumber = errors.mobilenumber;
+    }
+}
 
   setErrors(newErrors);
   return validFirstName && validLastName && validMobileNumber && 
@@ -243,7 +240,9 @@ const validateForm1 = () => {
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
       //window.alert('Profile saved successfully!');
-      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+      //addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+
+
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -253,21 +252,43 @@ const validateForm1 = () => {
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const allowedTypes = ['application/pdf'];
+  
+      if (file.size > fileSizeLimit) {
+        // alert('File size should be less than 1MB and Only PDF allowed.');
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      if (!allowedTypes.includes(file.type)) {
+        // alert('Only PDF file types are allowed.');
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
+        setErrorMessage('Only PDF file types are allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      setErrorMessage('');
       setResumeFile(file);
       setSelectedFile(file);
     }
   };
-
+  
+  
+  
   const triggerFileInputClick = () => {
     document.getElementById('tf-upload-img').click();
   };
-
+  
   const handleDragOver = (event) => {
     event.preventDefault();
     event.stopPropagation();
     setDragActive(true);
   };
-
+  
   const handleDragLeave = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -278,11 +299,29 @@ const validateForm1 = () => {
     event.preventDefault();
     event.stopPropagation();
     setDragActive(false);
-
+  
     const file = event.dataTransfer.files[0];
     if (file) {
-      setResumeFile(file);
+      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const allowedTypes = ['application/pdf'];
+  
+      if (file.size > fileSizeLimit) {
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      if (!allowedTypes.includes(file.type)) {
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
+        setErrorMessage('Only PDF file types are allowed.');
+        setSelectedFile(null);
+        return;
+      }
+  
+      setErrorMessage('');
       setSelectedFile(file);
+      setResumeFile(file);
       document.getElementById('tf-upload-img').files = event.dataTransfer.files;
     }
   };
@@ -401,6 +440,7 @@ const validateForm1 = () => {
 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+     
   };
 
   const handleBack = () => {
@@ -409,8 +449,10 @@ const validateForm1 = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const isFormValid = validateForm();
-    // if (!isFormValid) return;
+    if (!selectedFile) {
+      setErrorMessage('Please upload a valid file.');
+      return;
+    }
    
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -426,16 +468,22 @@ const validateForm1 = () => {
         }
       );
       console.log(response.data);
-      //window.alert(response.data);
-      addSnackbar({ message: response.data, type: 'success' });
+      
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+
+       // Add a delay before navigating
+    setTimeout(() => {
+      navigate('/applicanthome');
+    }, 3000); // Delay of 3 seconds (3000 milliseconds)
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      //window.alert('Error uploading resume. Please try again.');
+      
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
-    navigate('/applicant-find-jobs');
+   
+   
   };
 
   const validateForm = () => {
@@ -549,8 +597,6 @@ const validateForm1 = () => {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className="input-form"
-          pattern="^\+(?:[0-9]?){6,14}[0-9]$"
-          title="Enter a valid WhatsApp number"
           required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
@@ -602,7 +648,7 @@ const validateForm1 = () => {
       <Typeahead
         id="experience"
         options={yearsOptions}
-        placeholder="*Experience"
+        placeholder="*Experience in Years"
         onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
         selected={yearsOptions.filter(option => option.label === experience)}
         className="input-form typeahead"
@@ -661,7 +707,6 @@ const validateForm1 = () => {
           height: '47px',
           borderRadius: '8px',
           border: dragActive ? '2px dashed #000' : '1px solid #E5E5E5',
-          background: '#F5F5F5 url(data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'currentColor\' class=\'bi bi-file\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M4 .5a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5V5.5L9.5 1H4.5zM10 5a1 1 0 0 1-1-1V1.5L13.5 6H10z\'/%3E%3C/svg%3E) no-repeat 10px center',
           backgroundSize: '16px 16px',
           paddingLeft: '40px',
           padding: '10px',
@@ -669,10 +714,15 @@ const validateForm1 = () => {
           boxSizing: 'border-box',
           cursor: 'pointer',
         }}
-      >
+      > 
+      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+<path d="M13.75 2H6.75C6.21957 2 5.71086 2.21071 5.33579 2.58579C4.96071 2.96086 4.75 3.46957 4.75 4V20C4.75 20.5304 4.96071 21.0391 5.33579 21.4142C5.71086 21.7893 6.21957 22 6.75 22H18.75C19.2804 22 19.7891 21.7893 20.1642 21.4142C20.5393 21.0391 20.75 20.5304 20.75 20V9L13.75 2Z" stroke="#9E9E9E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.75 2V9H20.75" stroke="#9E9E9E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
         <input
           id="resume-text-input"
           type="text"
+          
           placeholder="Upload your resume"
           value={selectedFile ? selectedFile.name : ''}
           readOnly
@@ -703,15 +753,20 @@ const validateForm1 = () => {
       >
         Browse
       </button>
-    </div>
 
+    </div>
+ {errorMessage && (
+    <div style={{ color: 'red', marginTop: '10px' }}>
+      {errorMessage}
+    </div>
+  )}
               </div>
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
-              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+              <ModalWrapper1 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
-      </ModalWrapper>
+      </ModalWrapper1>
       {error && <div className="error-message">{error}</div>}
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
@@ -785,7 +840,7 @@ const validateForm1 = () => {
 
   return (
     <div class="component">
-      
+       
       {/* <a href="/applicanthome">
         <img 
           src={imageSrc || '../images/user/avatar/image-01.jpg'} 

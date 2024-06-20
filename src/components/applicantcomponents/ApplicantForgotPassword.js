@@ -183,7 +183,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
   };
 
   return (
-    <div>
+    <div  style={{ backgroundColor: 'white', height: '100vh', width: '100%' }}>
       <div>       
  <section className="">
           <div className="tf-container">
@@ -210,7 +210,6 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
   value={email}
   onChange={handleEmailChange}
   onBlur={handleEmailBlur}
-  disabled={isEmailFieldDisabled}
   className="input-style"
 />
 

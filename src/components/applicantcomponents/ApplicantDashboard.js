@@ -9,6 +9,9 @@ import Resume from '../../images/user/avatar/Resume.png';
 import Certificate from '../../images/user/avatar/Certificate.svg';
 import { useLocation } from "react-router-dom";
 import { faL } from "@fortawesome/free-solid-svg-icons";
+import ModalWrapper from './ModalWrapper';
+import Button from '@mui/material/Button';
+import ResumeBuilder from './ResumeBuilder';
 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
@@ -22,7 +25,9 @@ const ApplicantDashboard = () => {
   const userId = user.id;
   const [isHovered, setIsHovered] = useState(false);
   const [userData, setUserData] = useState(null);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
@@ -175,7 +180,8 @@ const ApplicantDashboard = () => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
                   {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
-                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div>
+                  {/* <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div> */}
+                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</div>
                 </div>
               </div>
             </div>
@@ -287,8 +293,9 @@ const ApplicantDashboard = () => {
                           </div>
                           <div className="resumecard-button">
                             <Link
+                              onClick={openModal}
                               // to="/applicant-resume-builder"
-                              to="https://resume.bitlabs.in:5173"
+                              //to="https://resume.bitlabs.in:5173"
                               // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
                               className={'button-link1'}
                               style={linkStyle}
@@ -297,6 +304,9 @@ const ApplicantDashboard = () => {
                             >
                               <span className="button button-custom" style={spanStyle}>Create Now</span>
                             </Link>
+      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+        <ResumeBuilder />
+      </ModalWrapper>
                           </div>
                         </div>
                         <div className="resumecard-icon">
@@ -313,7 +323,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 )}
-                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
+                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                   <div className="card ">
                     {/*New palet in application dashboard*/}
                     {/* <div onClick={Buildresume} className="resumecard"> */}

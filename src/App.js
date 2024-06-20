@@ -84,7 +84,7 @@ function App() {
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
-                <Route path="/applicant-basic-details-form" element={<ApplicantBasicDetails />} />
+                <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-postjob" element={<RecruiterHomePage />} />
