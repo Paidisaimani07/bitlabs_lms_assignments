@@ -27,23 +27,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
 
   const handleCloseClick = async() => {
     if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
-
-
-    //   let resume;
-    //   try {
-    //    const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-       
-    //  } catch (error) { 
-    //    resume=error.response.status; 
-    //  }
-    //  if(resume === 404){
-    //   navigate('/applicant-basic-details-form/3');
-    //  }else{
-    //   navigate('/applicanthome');
-    //  }
-
-
-      onClose();
+     onClose();
     }
   };
 
