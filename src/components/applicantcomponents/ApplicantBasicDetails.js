@@ -11,12 +11,13 @@ import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
-import Logo from '../../images/logos-copy1.png';
+import Logo from '../../images/artboard.svg';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
 import ModalComponent from './ModalComponent';
-import ModalWrapper from './ModalWrapper';
+import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
+
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
@@ -59,10 +60,12 @@ const ApplicantBasicDetails = () => {
 
     if (name === 'firstName' || name === 'lastName') {
       if (value.length < 3) {
-        error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
-    } else if (!/^[a-zA-Z]+$/.test(value)) {
-        error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters without spaces or special characters.`;
-    }
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
+      } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+          error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters and spaces without special characters and numbers.`;
+      }
+  
+  
     } else if (name === 'mobilenumber') {
         if (!/^[6789]\d{9}$/.test(value)) {
             error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
@@ -237,7 +240,9 @@ if (!applicant.mobilenumber) {
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
       //window.alert('Profile saved successfully!');
-      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+      //addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+
+
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -248,18 +253,20 @@ if (!applicant.mobilenumber) {
     const file = event.target.files[0];
     if (file) {
       const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
-        setErrorMessage('File size should be less than 1MB.');
+        // alert('File size should be less than 1MB and Only PDF allowed.');
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF and DOC/DOCX file types are allowed.');
-        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        // alert('Only PDF file types are allowed.');
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
+        setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
       }
@@ -296,18 +303,18 @@ if (!applicant.mobilenumber) {
     const file = event.dataTransfer.files[0];
     if (file) {
       const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
-      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        alert('File size should be less than 1MB and Only PDF and DOC/DOCX allowed.');
-        setErrorMessage('File size should be less than 1MB.');
+        addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
+        setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
         return;
       }
   
       if (!allowedTypes.includes(file.type)) {
-        alert('Only PDF and DOC/DOCX file types are allowed.');
-        setErrorMessage('Only PDF and DOC/DOCX file types are allowed.');
+        addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
+        setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
         return;
       }
@@ -433,6 +440,7 @@ if (!applicant.mobilenumber) {
 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+     
   };
 
   const handleBack = () => {
@@ -460,16 +468,22 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      window.alert(response.data);
-      addSnackbar({ message: response.data, type: 'success' });
+      
+      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
+
+       // Add a delay before navigating
+    setTimeout(() => {
+      navigate('/applicanthome');
+    }, 3000); // Delay of 3 seconds (3000 milliseconds)
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      //window.alert('Error uploading resume. Please try again.');
+      
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
     resetForm();
-    navigate('/applicant-find-jobs');
+   
+   
   };
 
   const validateForm = () => {
@@ -583,8 +597,6 @@ if (!applicant.mobilenumber) {
           onChange={handleInputChange}
           onBlur={handleBlur}
           className="input-form"
-          pattern="^\+(?:[0-9]?){6,14}[0-9]$"
-          title="Enter a valid WhatsApp number"
           required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
@@ -636,7 +648,7 @@ if (!applicant.mobilenumber) {
       <Typeahead
         id="experience"
         options={yearsOptions}
-        placeholder="*Experience"
+        placeholder="*Experience in Years"
         onChange={(selected) => setExperience(selected[0] ? selected[0].label : '')}
         selected={yearsOptions.filter(option => option.label === experience)}
         className="input-form typeahead"
@@ -752,9 +764,9 @@ if (!applicant.mobilenumber) {
               <br></br>
               <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
-              <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+              <ModalWrapper1 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
-      </ModalWrapper>
+      </ModalWrapper1>
       {error && <div className="error-message">{error}</div>}
               <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
                 <button
@@ -828,7 +840,7 @@ if (!applicant.mobilenumber) {
 
   return (
     <div class="component">
-      
+       
       {/* <a href="/applicanthome">
         <img 
           src={imageSrc || '../images/user/avatar/image-01.jpg'} 
