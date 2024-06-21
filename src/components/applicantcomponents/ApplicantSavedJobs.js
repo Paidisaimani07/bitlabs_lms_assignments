@@ -7,7 +7,8 @@ import logoCompany1 from '../../images/cty12.png';
 import { useNavigate } from "react-router-dom";
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
-
+import './ApplicantFindJobs.css';
+ 
 function ApplicantSavedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const navigate = useNavigate();
   const [snackbars, setSnackbars] = useState([]);
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -26,14 +27,14 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
         setLoading(false);
       }
     };
-
+ 
     fetchData();
   }, []);
-
+ 
   const fetchSavedJobs = async () => {
     try {
       const authToken = localStorage.getItem('jwtToken');
-
+ 
       const response = await axios.get(
         `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
         {
@@ -42,7 +43,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
           },
         }
       );
-
+ 
       const jobsData = response.data;
       setJobs(jobsData);
     } catch (error) {
@@ -51,27 +52,27 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       setLoading(false);
     }
   };
-
+ 
   useEffect(() => {
     fetchSavedJobs();
   }, [applicantId]);
-
+ 
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
+ 
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
-
+ 
   const handleApplyNowClick = (jobId) => {
     setSelectedJobId(jobId);
     // Perform any additional actions you need here
     navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
   };
-
+ 
   const handleRemoveJob = async (jobId) => {
     try {
       const authToken = localStorage.getItem('jwtToken');
@@ -83,26 +84,26 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
           },
         }
       );
-
+ 
       if (response.status === 200) {
         addSnackbar({ message: 'Job removed', type: 'success' });
       }
-
+ 
       await fetchSavedJobs(); // Fetch jobs again after removal
     } catch (error) {
       addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
       console.error('Error removing job:', error);
     }
   };
-
+ 
   const addSnackbar = (snackbar) => {
     setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
   };
-
+ 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
-
+ 
   return (
     <div>
       {loading ? null : (
@@ -122,7 +123,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                 </div>
               </section>
             </div>
-            <div className="col-lg-12 col-md-12">
+            <div className=" col-lg-12 col-md-12">
               <section className="flat-dashboard-setting flat-dashboard-setting2">
                 <div className="themes-container">
                   <div className="content-tab">
@@ -132,7 +133,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}>No Saved jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2 bg-white" key={job.id}>
+                            <div className="features-job cl2 bg-white" key={job.id} onClick={() => handleApplyNowClick(job.id)}>
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -227,5 +228,5 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     </div>
   );
 }
-
+ 
 export default ApplicantSavedJobs;

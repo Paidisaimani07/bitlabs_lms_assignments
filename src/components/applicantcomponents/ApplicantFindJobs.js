@@ -7,7 +7,8 @@ import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
-
+import './ApplicantFindJobs.css';
+ 
 function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [profileid1, setprofileid] = useState();
@@ -16,7 +17,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const userId = user.id;
   const [snackbars, setSnackbars] = useState([]);
-
+ 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -24,14 +25,14 @@ function ApplicantFindJobs({ setSelectedJobId }) {
         localStorage.setItem('jwtToken', user.data.jwt);
         const jwtToken = user.data.jwt;
         console.log(jwtToken);
-
+ 
         const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/${userId}`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
         jobData = recommendedJobsResponse.data;
-
+ 
         setJobs(jobData);
       } catch (error) {
         console.error('Error fetching job data:', error);
@@ -41,7 +42,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchJobs();
   }, [userId]);
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,11 +55,11 @@ function ApplicantFindJobs({ setSelectedJobId }) {
     };
     fetchData();
   }, []);
-
+ 
   const handleSaveJob = async (jobId) => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-
+ 
       const response = await axios.post(
         `${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`,
         null,
@@ -69,7 +70,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
           },
         }
       );
-
+ 
       if (response.status === 200) {
         addSnackbar({ message: 'Job saved successfully.', link: '/applicant-saved-jobs', linkText: 'View Saved Jobs', type: 'success' });
       }
@@ -85,7 +86,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       }
     }
   };
-
+ 
   const fetchJobs = async () => {
     try {
       let jobData;
@@ -119,30 +120,30 @@ function ApplicantFindJobs({ setSelectedJobId }) {
       setLoading(false);
     }
   };
-
+ 
   const addSnackbar = (snackbar) => {
     setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
   };
-
+ 
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
-
+ 
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
+ 
   const handleApplyNowClick = (jobId) => {
     setSelectedJobId(jobId);
     navigate('/applicant-view-job');
   };
-
+ 
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2);
   };
-
+ 
   return (
     <div>
       {loading ? null : (
@@ -161,7 +162,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                 </div>
               </section>
             </div>
-            <div className="col-lg-12 col-md-12">
+            <div className=" col-lg-12 col-md-12">
               <section className="flat-dashboard-setting flat-dashboard-setting2">
                 <div className="themes-container">
                   <div className="content-tab">
@@ -171,7 +172,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}></div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2 bg-white " key={job.id}>
+                            <div className="features-job cl2 bg-white " key={job.id}  onClick={() => handleApplyNowClick(job.id)}>
+                           
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -214,6 +216,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                     ))}
                                   </div>
                                 </div>
+                               
                                 <div className="job-footer-right">
                                   <div className="price">
                                     <span>
@@ -249,6 +252,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   </ul>
                                 </div>
                               </div>
+                             
+ 
+                           
                             </div>
                           )))}
                       </div>
