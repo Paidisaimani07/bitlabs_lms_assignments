@@ -8,8 +8,8 @@ import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-cale
 import 'react-calendar-timeline/lib/Timeline.css';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import BackButton from '../common/BackButton';
-
-
+ 
+ 
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStatus, setJobStatus] = useState([]);
@@ -36,7 +36,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
       try {
         // Assuming you have a function to get the JWT token from wherever it's stored
         const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
-
+ 
         const response = await axios.get(
           `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
           {
@@ -45,7 +45,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
             },
           }
         );
-
+ 
         const { body } = response.data;
         setLoading(false);
         if (body) {
@@ -57,16 +57,16 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         setLoading(false);
       }
     };
-
+ 
     fetchJobDetails();
   }, [jobId]);
-
+ 
   useEffect(() => {
     const fetchJobStatus = async () => {
       try {
         // Assuming you have a function to get the JWT token from wherever it's stored
         const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
-
+ 
         const response = await axios.get(
           `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
           {
@@ -75,7 +75,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
             },
           }
         );
-
+ 
         const body = response.data;
         setLoading(false);
         if (Array.isArray(body) && body.length > 0) {
@@ -87,7 +87,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         setLoading(false);
       }
     };
-
+ 
     fetchJobStatus();
   }, [selectedJobId]);
   function formatDate(dateString) {
@@ -95,7 +95,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
-
+ 
   const handleApplyNowClick = () => {
     if (jobDetails && jobDetails.id) {
       // Construct the API URL
@@ -120,7 +120,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
       console.error('No job details or jobId available');
     }
   };
-
+ 
   // const handleApplyNowClick = () => {
   //   if (jobDetails && jobDetails.id) {
   //     // Construct the API URL
@@ -148,13 +148,13 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
-
+ 
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
     // Navigate to the job details page programmatically
     navigate(`/applicant-view-job`);
   };
-
+ 
   return (
 <div>
       {loading ? null : (
@@ -164,7 +164,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="row">
 <div className="col-lg-12 col-md-12 ">
 <div className="title-dashboard">
-
+ 
 <div className="title-dash flex2"><BackButton />Job Status</div>
 </div>
 </div>
@@ -178,7 +178,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <article className="job-article">
                     {jobDetails && (
 <div className="top-content">
-<div className="features-job style-2 stc-apply  bg-white">
+<div className="features-job style-2 stc-apply  bg-white" onClick={handleViewJobDetails}>
 <div className="job-archive-header">
 <div className="inner-box">
 {/* <div className="logo-company">                            
@@ -273,5 +273,5 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 </div>
   );
 };
-
+ 
 export default ApplicantInterviewStatus;
