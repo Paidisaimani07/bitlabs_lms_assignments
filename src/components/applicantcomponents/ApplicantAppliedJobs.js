@@ -82,7 +82,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                 </div>
               </section>
             </div>
-            <div className="col-xlg-9 col-fhd-9 col-lg-9 col-md-12">
+            <div className=" col-lg-12 col-md-12">
               <section className="flat-dashboard-setting flat-dashboard-setting2">
                 <div className="themes-container">
                   <div className="content-tab">
