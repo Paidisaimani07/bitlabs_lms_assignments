@@ -388,9 +388,14 @@ function ApplicantNavBar() {
                 <div className="header-ct-right">
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-                      <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} >
+                      {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
                       <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
-                        
+                            {alertCount > 0 && (
+                          <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
+                            {alertCount}
+                            <span class="visually-hidden">unread messages</span>
+                          </span>
+                        )}
                       </span>
                       {/* <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -422,7 +427,7 @@ function ApplicantNavBar() {
                           {alertCount}
                         </sup>
                       )} */}
-                      </span>
+                      
                     </Link>
                   </div>
                   {/* <div className="name" style={nameStyle}>
