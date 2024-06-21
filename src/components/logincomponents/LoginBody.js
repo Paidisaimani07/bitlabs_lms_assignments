@@ -111,11 +111,12 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
+
         localStorage.setItem('jwtToken', userData.data.jwt);
         navigate('/applicanthome');
         
       }
-       
+        //navigate('/applicanthome');
       }
     } catch (err) {
       console.log(err);
@@ -285,6 +286,7 @@ const login = useGoogleLogin({
          }
        else{
        
+
         localStorage.setItem('jwtToken', userData.data.jwt);
          navigate('/applicanthome');
        }
@@ -956,20 +958,11 @@ const handleChange = (e) => {
   }}
   
 />
-
-<div className="find-your1 hide-at-1200px"
-style={{
-  objectFit: 'cover',
-  zIndex: '1',
-}}>
-  Find Your
-</div>
-<div className="dream-job1 hide-at-1200px"
-style={{
-  objectFit: 'cover',
-  zIndex: '1',
-}}>
-  Dream Job
+<div className='hide'>
+<div style={{position:'fixed' , zIndex:'1' , flexDirection: 'column',gap:'20px',bottom:0,justifyContent:'center',width:'10%',left:'5%'}}>
+        <h1 className='find-your 'style={{ marginBottom: '-30px',fontSize:'50px' }}>FindYour</h1>
+        <h1 className='dream-job 'style={{ marginBottom: '5px',fontSize:'50px' }}>DreamJob</h1>
+      </div>
 </div>
 
 <div>

@@ -12526,12 +12526,17 @@ line-height: 16px; /* 133.333% */
     display: none;
   }
 }
+@media (max-width: 1200px) {
+  .hide {
+    display: none;
+  }
+}
 
 .logo-image1 {
   position: fixed;
   top: 12px;
   left: 2%;
-  height: calc(40px + 4vw);
+  height: calc(20px + 3vw);
 }
 
 @media (max-width:1201px) {
