@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
@@ -17,6 +17,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const userId = user.id;
   const [snackbars, setSnackbars] = useState([]);
+  const location = useLocation();
  
   useEffect(() => {
     const fetchJobs = async () => {
@@ -137,7 +138,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
  
   const handleApplyNowClick = (jobId) => {
     setSelectedJobId(jobId);
-    navigate('/applicant-view-job');
+    navigate('/applicant-view-job',{state:{from:location.pathname}});
   };
  
   const convertToLakhs = (amountInRupees) => {
