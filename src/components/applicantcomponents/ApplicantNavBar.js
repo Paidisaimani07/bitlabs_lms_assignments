@@ -377,7 +377,7 @@ function ApplicantNavBar() {
                 <div className="header-ct-right">
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-                      {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
+                      <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} >
                       <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
                         
                       </span>
@@ -411,7 +411,7 @@ function ApplicantNavBar() {
                           {alertCount}
                         </sup>
                       )} */}
-                      {/* </span> */}
+                      </span>
                     </Link>
                   </div>
                   {/* <div className="name" style={nameStyle}>

@@ -240,7 +240,7 @@ export default function ApplicantJobAlerts() {
            onMouseOver={(e) => { e.target.style.color = '#848484'; }}
            onMouseOut={(e) => { e.target.style.color = '#848484'; }}
            >
-            {formatDate(alert.changeDate)}
+            {formatDate(alert.applyJob.changeDate)}
           </span>
         </Link>
       </>

@@ -111,8 +111,9 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
-        //navigate('/applicant-find-jobs');
+        localStorage.setItem('jwtToken', userData.data.jwt);
         navigate('/applicanthome');
+        
       }
        
       }
@@ -284,7 +285,7 @@ const login = useGoogleLogin({
          }
        else{
        
-        //  navigate('/applicant-find-jobs');
+        localStorage.setItem('jwtToken', userData.data.jwt);
          navigate('/applicanthome');
        }
       }     
