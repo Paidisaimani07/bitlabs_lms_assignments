@@ -152,7 +152,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
     // Navigate to the job details page programmatically
-    navigate(`/applicant-view-job`);
+    navigate(`/applicant-view-job`,{state:{from:location.pathname}});
   };
  
   return (
