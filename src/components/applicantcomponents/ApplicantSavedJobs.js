@@ -67,13 +67,15 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
   };
  
-  const handleApplyNowClick = (jobId) => {
+  const handleApplyNowClick = (jobId,e) => {
+    if (e) e.stopPropagation(); // Prevent event propagation
     setSelectedJobId(jobId);
     // Perform any additional actions you need here
     navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
   };
  
-  const handleRemoveJob = async (jobId) => {
+  const handleRemoveJob = async (jobId,e) => {
+    e.stopPropagation(); // Prevent event propagation
     try {
       const authToken = localStorage.getItem('jwtToken');
       const response = await axios.delete(
@@ -133,7 +135,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}>No Saved jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2 bg-white" key={job.id} onClick={() => handleApplyNowClick(job.id)}>
+                            <div className="features-job cl2 bg-white" key={job.id} onClick={(e) => handleApplyNowClick(job.id, e)}>
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -186,7 +188,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                                     <li>
                                       <button
                                         className="button-status2"
-                                        onClick={() => handleRemoveJob(job.id)}
+                                        onClick={(e) => handleRemoveJob(job.id, e)}
                                       >
                                         Remove
                                       </button>
