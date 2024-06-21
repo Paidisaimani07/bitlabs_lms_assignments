@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import './ApplicantFindJobs.css';
@@ -16,6 +16,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const navigate = useNavigate();
   const [snackbars, setSnackbars] = useState([]);
+  const location = useLocation();
  
   useEffect(() => {
     const fetchData = async () => {
@@ -70,7 +71,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const handleApplyNowClick = (jobId) => {
     setSelectedJobId(jobId);
     // Perform any additional actions you need here
-    navigate('/applicant-view-job'); // Programmatically navigate to the desired URL
+    navigate('/applicant-view-job',{state:{from:location.pathname}}); // Programmatically navigate to the desired URL
   };
  
   const handleRemoveJob = async (jobId) => {

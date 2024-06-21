@@ -58,7 +58,12 @@ const ApplicantDashboard = () => {
     const fetchUserData = async () => {
       try {
         // Make API call to update status in backend
-        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
         // Construct requestData
         const newData = {
           identifier: response.data.applicant.email,
