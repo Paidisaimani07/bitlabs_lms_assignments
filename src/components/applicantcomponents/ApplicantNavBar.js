@@ -379,12 +379,7 @@ function ApplicantNavBar() {
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
                       {/* <span className={"icon-bell1 dash-icon1" + (alertCount > 0 ? " dash-titles" : "")} onClick={handleBellClick} > */}
                       <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
-                        {alertCount > 0 && (
-                          <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
-                            {alertCount}
-                            <span class="visually-hidden">unread messages</span>
-                          </span>
-                        )}
+                        
                       </span>
                       {/* <svg
                         xmlns="http://www.w3.org/2000/svg"

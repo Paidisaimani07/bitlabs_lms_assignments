@@ -663,17 +663,45 @@ const handleChange = (e) => {
 };
 
   return (
-    <div>
+    <div  style={{
+      backgroundColor: 'white',
+      width: '100%',
+      height: '100vh',
+    }}>
+    
+      <div style={{position:'relative'}}>
       <img
         src={Backgroundimagemobile}
         alt="Background"
         className="responsive-image1"
-       
+        style={{
+          position: 'relative',
+          top: '0',
+          left: '0',
+          objectFit: 'cover',
+          zIndex: '1',
+        }}
       />
+
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',gap:'20px',bottom:0,justifyContent:'center',width:'100%'}}>
+        <h1 className='find-your'>Find Your</h1>
+        <h1 className='dream-job'>Dream Job</h1>
+      </div>
+      <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+      </div>
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
-            <div className="wd-form-login tf-tab">
+            <div className="wd-form-login">
               <section className="account-section">
                 {registrationSuccess && (
                   <div className="success-message">
@@ -914,7 +942,7 @@ const handleChange = (e) => {
                   </div>
                   
                 </div>
-
+                <div style={{position:'relative'}}>
                 <img
   src={Background}
   alt="Background"
@@ -925,22 +953,43 @@ const handleChange = (e) => {
     left: "-20px",
     paddingRight: "10px"
   }}
+  
 />
 
-<div className="find-your">
+<div className="find-your1 hide-at-1200px"
+style={{
+  objectFit: 'cover',
+  zIndex: '1',
+}}>
   Find Your
 </div>
-<div className="dream-job">
+<div className="dream-job1 hide-at-1200px"
+style={{
+  objectFit: 'cover',
+  zIndex: '1',
+}}>
   Dream Job
 </div>
-              </section>
-              <div>
+
+<div>
       <img
         src={logo}
         alt="logo"
-        className="logo-image"
+        className="logo-image1"
+        style={{
+          zIndex: '1',
+        }}
       />
     </div>
+
+</div>
+
+
+{/* <div style={{display:'flex',width:'100%',position:'absolute',gap:'20px',top:0,zIndex:'1'}}>
+  <h1>Find Your</h1>
+  <h1>Dream Job</h1>
+</div> */}
+              </section>
 
             </div>
           </div>

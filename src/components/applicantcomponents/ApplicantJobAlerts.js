@@ -157,7 +157,7 @@ export default function ApplicantJobAlerts() {
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
               {/* <BackButton /> */}
-                <div className="title-dash flex2" style={{marginLeft: "30px",marginBottom:"10px" }}>Notifications</div>
+                <div className="title-dash flex2" style={{marginLeft: "30px",marginBottom:"-30px" }}>Notifications</div>
 {/*<h4 className="title-count" onClick={RecommendJobs}>
     {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
   </h4> */}
@@ -173,9 +173,6 @@ export default function ApplicantJobAlerts() {
             <span className="icon-bag"></span>
           </div>
           <div className="content">
-          {/* <h4 className="title-count" onClick={RecommendJobs} style={{ cursor: "pointer", marginLeft: "60px" }}>
-  {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-</h4> */}
 
 <style jsx>{`
   .title-count:hover {
@@ -186,9 +183,6 @@ export default function ApplicantJobAlerts() {
         </div>
         <div className="themes-container">
           <div className="row">
-          {/* <h4 className="title-count" onClick={RecommendJobs}>
-    {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-  </h4> */}
             <div className="col-lg-12 col-md-12">
            
               <div className="box-notifications">
@@ -211,7 +205,7 @@ export default function ApplicantJobAlerts() {
       top:'20px',
     }}
   ></div>
-  <h4 style={{ marginLeft: '25px' }}> {/* Adjust margin to position correctly */}
+  <h4 style={{ marginLeft: '25px' }}>
     {alert.status === 'New' || alert.status === null ? (
       <>
         <Link
@@ -222,7 +216,7 @@ export default function ApplicantJobAlerts() {
         >
           Your application has been successfully submitted to &nbsp;
           {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
-          <br /> {/* Line break to move the date to the second line */}
+          <br />
           <span className="date-info" 
       onMouseOver={(e) => { e.target.style.color = '#848484'; }}
       onMouseOut={(e) => { e.target.style.color = '#848484'; }}
