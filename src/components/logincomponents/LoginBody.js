@@ -111,11 +111,12 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
+
         localStorage.setItem('jwtToken', userData.data.jwt);
         navigate('/applicanthome');
         
       }
-       
+        //navigate('/applicanthome');
       }
     } catch (err) {
       console.log(err);
@@ -285,6 +286,7 @@ const login = useGoogleLogin({
          }
        else{
        
+
         localStorage.setItem('jwtToken', userData.data.jwt);
          navigate('/applicanthome');
        }

@@ -8,11 +8,10 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import ResumeBuilder from './ResumeBuilder';
 import clearJWTToken from '../common/clearJWTToken';
+import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
-import ModalWrapper from './ModalWrapper';
-import Button from '@mui/material/Button';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -27,13 +26,11 @@ function ApplicantNavBar() {
   const [loading, setLoading] = useState(true);
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   const [profileData, setProfileData] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const id = user.id;
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const frompath = location.state?.from;
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -234,17 +231,31 @@ function ApplicantNavBar() {
       window.removeEventListener('resize', handleResize);
     };
   }, [user.id]);
-  const logout = () => {
-    const confirmLogout = window.confirm("Do you want to logout?");
-    if (confirmLogout) {
-      try {
-        clearJWTToken(); // Call the function here
-        window.location.href = "/";
-      } catch (error) {
-        console.error('Logout failed', error);
-      }
+
+  // const logout = () => {
+  //   const confirmLogout = window.confirm("Do you want to logout?");
+  //   if (confirmLogout) {
+  //     try {
+  //       clearJWTToken(); // Call the function here
+  //       window.location.href = "/";
+  //     } catch (error) {
+  //       console.error('Logout failed', error);
+  //     }
+  //   }
+  // };
+  const handleLogout =  () => {
+    console.log('Logout button clicked'); // Debugging log
+    try {
+       //clearJWTToken();
+       localStorage.removeItem('jwtToken');
+       localStorage.removeItem('user');
+       localStorage.removeItem('userType');
+      window.location.href = "https://www.bitlabs.in/jobs";
+    } catch (error) {
+      console.error('Logout failed', error);
     }
   };
+  
   //  const fetchAlertCount = async () => {
   //   try {
   //     const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`);
@@ -466,9 +477,12 @@ function ApplicantNavBar() {
                         </a>
                       </div>
                       <div className="sub-account-item">
-                        <a onClick={logout}>
+                        {/* <a onClick={logout}>
                           <span className="icon-log-out" /> Log Out
-                        </a>
+                        </a> */}
+                         <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
+                         
+                        
                       </div>
                     </div>
                   </div>
@@ -519,7 +533,7 @@ function ApplicantNavBar() {
             </Link>
           </li> */}
               <li>
-                <Link onClick={hideMenu} to="/applicant-find-jobs" className={location.pathname === "/applicant-find-jobs" || location.pathname === "/applicant-view-job" ? "tf-effect active" : ""}>
+                <Link onClick={hideMenu} to="/applicant-find-jobs" className={location.pathname === "/applicant-find-jobs" || frompath === "/applicant-find-jobs" ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
@@ -529,7 +543,7 @@ function ApplicantNavBar() {
                 </Link>
               </li>
               <li>
-                <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
+                <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || frompath === "/applicant-interview-status" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M18.0002 13.2C15.3002 13.2 13.2002 15.4 13.2002 18C13.2002 20.6 15.4002 22.8 18.0002 22.8C20.6002 22.8 22.8002 20.6 22.8002 18C22.8002 15.4 20.6002 13.2 18.0002 13.2ZM21.0002 16.9L17.6002 20.3C17.5002 20.4 17.3002 20.5 17.1002 20.5C16.9002 20.5 16.7002 20.5 16.6002 20.3L15.0002 18.6C14.9002 18.5 14.8002 18.3 14.8002 18.2C14.8002 18 14.8002 17.9 15.0002 17.7C15.1002 17.6 15.3002 17.5 15.4002 17.5C15.5002 17.5 15.7002 17.5 15.8002 17.7L17.1002 19L20.1002 16C20.2002 15.9 20.4002 15.8 20.5002 15.8C20.7002 15.8 20.8002 15.8 20.9002 16C21.0002 16.2 21.1002 16.3 21.1002 16.4C21.1002 16.5 21.1002 16.7 20.9002 16.8L21.0002 16.9Z" fill="#929698"/>
@@ -540,7 +554,7 @@ function ApplicantNavBar() {
                 </Link>
               </li>
               <li>
-                <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" ? "tf-effect active" : ""}>
+                <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" || frompath==="/applicant-saved-jobs" ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path d="M10.3512 19.2188L6.40219 20.91C5.83169 21.1544 5.29078 21.1086 4.77945 20.7728C4.26828 20.4371 4.0127 19.9634 4.0127 19.3515V7.29254C4.0127 6.82004 4.1787 6.41787 4.5107 6.08604C4.84253 5.75404 5.24478 5.58804 5.71745 5.58804H14.9849C15.4574 5.58804 15.8597 5.75404 16.1917 6.08604C16.5237 6.41787 16.6897 6.82004 16.6897 7.29254V19.3515C16.6897 19.9634 16.434 20.4371 15.9227 20.7728C15.4115 21.1086 14.8707 21.1544 14.3002 20.91L10.3512 19.2188ZM19.2882 19.0755C19.0969 19.0755 18.9324 19.0079 18.7949 18.8725C18.6574 18.7374 18.5887 18.5726 18.5887 18.3783V3.99679C18.5887 3.91979 18.5566 3.84921 18.4924 3.78504C18.4283 3.72104 18.3578 3.68904 18.2809 3.68904H7.6137C7.41953 3.68904 7.25395 3.62137 7.11695 3.48604C6.98011 3.35087 6.9117 3.18612 6.9117 2.99179C6.9117 2.79762 6.98011 2.63212 7.11695 2.49529C7.25395 2.35846 7.41953 2.29004 7.6137 2.29004H18.2814C18.7551 2.29004 19.1579 2.45596 19.4897 2.78779C19.8217 3.11979 19.9877 3.52246 19.9877 3.99579V18.3783C19.9877 18.5726 19.9189 18.7374 19.7812 18.8725C19.6437 19.0079 19.4794 19.0755 19.2882 19.0755Z"/>
@@ -586,18 +600,19 @@ function ApplicantNavBar() {
               <span className="dash-titles">My Resume</span>
             </Link>
           </li>
-              {/* <li>
-<Button variant="contained" color="primary" onClick={openModal}>
-        Build Your Resume
-      </Button>
-      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
-        <ResumeBuilder />
-      </ModalWrapper>
-              </li> */}
             </ul>
+          
           </div>
+       
         </div>
       )}
+
+                               <ModalLogout
+                                       isOpen={showModal}
+                                       onClose={() => setShowModal(false)}
+                                       onConfirm={handleLogout}
+                                    />
+      
     </div>
   )
 }
