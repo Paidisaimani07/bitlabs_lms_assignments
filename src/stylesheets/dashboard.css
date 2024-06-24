@@ -5072,7 +5072,7 @@ input[type="radio"]:checked:after {
 .date-info {
     display: block;
     margin-top: 1px;
-    margin-left: 860px;
+    margin-left: 780px;
     color: #848484;
     font-family: "Plus Jakarta Sans";
     font-size: 14px;
@@ -5087,7 +5087,7 @@ input[type="radio"]:checked:after {
   
   @media screen and (max-width: 1440px) {
     .date-info {
-      margin-left: 860px; /* Margin-left value for screens up to 1440px */
+      margin-left: 650px; /* Margin-left value for screens up to 1440px */
       font-size: 14px;
     }
   }
@@ -5117,21 +5117,21 @@ input[type="radio"]:checked:after {
   }
   @media screen and (max-width: 1080px) {
     .date-info {
-      margin-left: 750px; /* Margin-left value for screens up to 1024px */
+      margin-left: 320px; /* Margin-left value for screens up to 1024px */
     }
   }
 
 
   @media screen and (min-width: 834px) and (max-width: 1194px) {
     .date-info {
-      margin-left: 540px !important; /* Center the element horizontally */
+      margin-left: 510px !important; /* Center the element horizontally */
       margin-top: 5px;
     }
   }
 
   @media screen and (min-width: 800px) and (max-width: 1280px) {
     .date-info {
-      margin-left: 500px; /* Center the element horizontally */
+      margin-left: 450px; /* Center the element horizontally */
       margin-top: 5px;
     }
   }
@@ -5153,7 +5153,7 @@ input[type="radio"]:checked:after {
   
   @media screen and (max-width: 768px) {
     .date-info {
-      margin-left: 470px; /* Margin-left value for screens up to 768px */
+      margin-right: 5px; 
       margin-top: 3px;
       font-family: "Plus Jakarta Sans";
       font-style: normal;
@@ -5162,12 +5162,61 @@ input[type="radio"]:checked:after {
     }
   }
   
+  
 /* Media query for screens up to 486px in width */
-@media screen and (max-width: 486px) {
+@media screen and (max-width: 608px) and (min-width: 550px){
     .date-info {
-      margin-left: 140px !important;
+      margin-left: 280px !important;
+      font-size: 12px;
+      margin-top: 8px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  @media screen and (max-width: 550px) and (min-width: 500px){
+    .date-info {
+      margin-left: 230px !important;
       font-size: 12px;
       margin-top: 10px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  @media screen and (max-width: 500px) and (min-width: 450px){
+    .date-info {
+      margin-left: 200px !important;
+      font-size: 12px;
+      margin-top: 10px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  @media screen and (max-width: 450px) and (min-width: 400px){
+    .date-info {
+      margin-left: 130px !important;
+      font-size: 12px;
+      margin-top: 10px !important;
+      font-family: "Plus Jakarta Sans";
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+    }
+  }
+
+  @media screen and (max-width: 400px) and (min-width: 336px){
+    .date-info {
+      margin-left: 120px !important;
+      font-size: 12px;
+      margin-top: 8px !important;
       font-family: "Plus Jakarta Sans";
       font-style: normal;
       font-weight: 400;
@@ -5176,7 +5225,7 @@ input[type="radio"]:checked:after {
   }
   
   /* Media query for screens up to 428px in width and 926px in height */
-  @media screen and (max-width: 428px) and (max-height: 926px) {
+  /* @media screen and (max-width: 428px) and (max-height: 926px) {
     .date-info {
       margin-left: 140px !important;
       font-size: 12px;
@@ -5186,7 +5235,7 @@ input[type="radio"]:checked:after {
       font-weight: 400;
       line-height: 25px;
     }
-  }
+  } */
   
 
   @media screen and (max-width: 376px) {
@@ -5201,16 +5250,7 @@ input[type="radio"]:checked:after {
     }
   }
 
-  @media screen and (max-width: 321px) {
-    .date-info {
-      margin-left: 80px; /* Margin-left value for screens up to 768px */
-      font-size: 10px;
-      font-family: "Plus Jakarta Sans";
-      font-style: normal;
-      font-weight: 400;
-      line-height: 25px;
-    }
-  }
+ 
   
 .icon-bag {
     fill: #EFF2F6;
