@@ -666,12 +666,7 @@ const handleChange = (e) => {
 };
 
   return (
-    <div  style={{
-      backgroundColor: 'white',
-      width: '100%',
-      height: '100vh',
-    }}>
-    
+    <div className="full-page">
       <div style={{position:'relative'}}>
       <img
         src={Backgroundimagemobile}
@@ -686,7 +681,7 @@ const handleChange = (e) => {
         }}
       />
 
-      <div style={{position:'absolute' , zIndex:'1' , display:'flex',gap:'20px',bottom:0,justifyContent:'center',width:'100%'}}>
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',gap:'5px',bottom:0,justifyContent:'center',width:'100%'}}>
         <h1 className='find-your'>Find Your</h1>
         <h1 className='dream-job'>Dream Job</h1>
       </div>
@@ -701,7 +696,8 @@ const handleChange = (e) => {
       />
     </div>
       </div>
-      <section className="account-section">
+
+      <section style={{backgroundColor:"fff"}} className="account-section">
         <div className="tf-container">
           <div className="row">
             <div className="wd-form-login">
