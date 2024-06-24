@@ -36,11 +36,12 @@
   border-radius: 16px;
   background-color: #ffffff;
   width: 55%;
-  height: 652px;
+  height: 700px;
   margin: 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   
 }
+
 
 /* For large screens (desktops and laptops) */
 @media (min-width: 1024px) {
@@ -179,6 +180,8 @@
   margin-top: 60px;
   margin-bottom: 20px;
 }
+
+
 
 /* Media query for small screens */
 @media (max-width: 600px) {
