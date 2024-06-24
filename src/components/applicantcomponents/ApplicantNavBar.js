@@ -428,6 +428,7 @@ function ApplicantNavBar() {
                         </sup>
                       )} */}
                       {/* </span> */}
+                      
                     </Link>
                   </div>
                   {/* <div className="name" style={nameStyle}>

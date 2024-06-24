@@ -111,9 +111,10 @@ const login = useGoogleLogin({
          navigate('/applicant-basic-details-form/1');
        }
       else{
-        // navigate('/applicant-find-jobs');
+
         localStorage.setItem('jwtToken', userData.data.jwt);
         navigate('/applicanthome');
+        
       }
         //navigate('/applicanthome');
       }
@@ -285,7 +286,7 @@ const login = useGoogleLogin({
          }
        else{
        
-        //  navigate('/applicant-find-jobs');
+
         localStorage.setItem('jwtToken', userData.data.jwt);
          navigate('/applicanthome');
        }
@@ -665,17 +666,41 @@ const handleChange = (e) => {
 };
 
   return (
-    <div>
+    <div className="full-page">
+      <div style={{position:'relative'}}>
       <img
         src={Backgroundimagemobile}
         alt="Background"
         className="responsive-image1"
-       
+        style={{
+          position: 'relative',
+          top: '0',
+          left: '0',
+          objectFit: 'cover',
+          zIndex: '1',
+        }}
       />
-      <section className="account-section">
+
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',gap:'5px',bottom:0,justifyContent:'center',width:'100%'}}>
+        <h1 className='find-your'>Find Your</h1>
+        <h1 className='dream-job'>Dream Job</h1>
+      </div>
+      <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+      </div>
+
+      <section style={{backgroundColor:"fff"}} className="account-section">
         <div className="tf-container">
           <div className="row">
-            <div className="wd-form-login tf-tab">
+            <div className="wd-form-login">
               <section className="account-section">
                 {registrationSuccess && (
                   <div className="success-message">
@@ -917,7 +942,7 @@ const handleChange = (e) => {
                   </div>
                   
                 </div>
-
+                <div style={{position:'relative'}}>
                 <img
   src={Background}
   alt="Background"
@@ -928,22 +953,34 @@ const handleChange = (e) => {
     left: "-20px",
     paddingRight: "10px"
   }}
+  
 />
+<div className='hide'>
+<div style={{position:'fixed' , zIndex:'1' , flexDirection: 'column',gap:'20px',bottom:0,justifyContent:'center',width:'10%',left:'5%'}}>
+        <h1 className='find-your 'style={{ marginBottom: '-30px',fontSize:'50px' }}>FindYour</h1>
+        <h1 className='dream-job 'style={{ marginBottom: '5px',fontSize:'50px' }}>DreamJob</h1>
+      </div>
+</div>
 
-<div className="find-your">
-  Find Your
-</div>
-<div className="dream-job">
-  Dream Job
-</div>
-              </section>
-              <div>
+<div>
       <img
         src={logo}
         alt="logo"
-        className="logo-image"
+        className="logo-image1"
+        style={{
+          zIndex: '1',
+        }}
       />
     </div>
+
+</div>
+
+
+{/* <div style={{display:'flex',width:'100%',position:'absolute',gap:'20px',top:0,zIndex:'1'}}>
+  <h1>Find Your</h1>
+  <h1>Dream Job</h1>
+</div> */}
+              </section>
 
             </div>
           </div>
