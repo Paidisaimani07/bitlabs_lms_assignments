@@ -616,7 +616,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  
  const handleOTPSendSuccess = () => {
   //window.alert('OTP Resend successfully');
-  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
   setResendOtpMessage('OTP Resent successfully. Check your email.');
  };
  const handleOTPSendFail = () => {
@@ -863,6 +863,7 @@ const handleChange = (e) => {
     <p style={{ color: 'green' }}>OTP sent to your email. Please check and enter below:</p>
     <OTPVerification
             email={candidateEmail1}
+            mobilenumber={candidateMobileNumber}
             onOTPVerified={() => {
               setTimeout(() => {
                 setCandidateOTPVerified(true);
