@@ -206,27 +206,7 @@ export default function ApplicantJobAlerts() {
     }}
   ></div>
   <h4 style={{ marginLeft: '25px' }}>
-    {alert.status === 'New' || alert.status === null ? (
-      <>
-        <Link
-          to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
-          className="link"
-          onMouseOver={(e) => { e.target.style.color = 'black'; }}
-          onMouseOut={(e) => { e.target.style.color = 'black'; }}
-        >
-          Your application has been successfully submitted to &nbsp;
-          {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
-          <br />
-          <span className="date-info" 
-      onMouseOver={(e) => { e.target.style.color = '#848484'; }}
-      onMouseOut={(e) => { e.target.style.color = '#848484'; }}
-    >
-            {formatDate(alert.applyJob.applicationDate)}
-          </span>
-        </Link>
-        
-      </>
-    ) : (
+      
       <>
         <Link
           to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
@@ -244,7 +224,7 @@ export default function ApplicantJobAlerts() {
           </span>
         </Link>
       </>
-    )}
+    
   </h4>
 </div>
 
