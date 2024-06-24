@@ -26,7 +26,7 @@ const ModalLogout = ({ isOpen, onClose, onConfirm }) => {
             </Link>
           </div>
           <div className="modal1-body">
-            <p>Are you sure want to logout?</p>
+            <p>Are you sure you want to logout?</p>
           </div>
           <div className="modal1-footer">
             <button type="button" className="btn1 btn-secondary1" onClick={onClose}>cancel</button>

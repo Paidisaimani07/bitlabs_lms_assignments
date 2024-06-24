@@ -69,16 +69,19 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       <DialogContent sx={{ padding: 0, position: 'relative' }}>
         {isMobile ? (
           <Button
-            variant="contained"
+            //variant="contained"
             sx={{
               position: 'absolute',
-              right: -10,
+              textTransform:'capitalize',
+              right: 2,
               top: 16,
-              background: '#F97316',
+              //background: '#FFFFFF',
+              border:'1px solid #F97316',
               borderRadius: '8px',
-              color: '#fff',
+              color: '#F97316',
               '&:hover': {
-                background: '#F97316',
+                border:'1px solid #DA4D0B',
+                color:'#DA4D0B'
               },
               zIndex: 1,
             }}
@@ -91,13 +94,16 @@ const ModalWrapper = ({ isOpen, onClose }) => {
             onClick={handleCloseClick}
             sx={{
               position: 'absolute',
+              textTransform:'capitalize',
               right: 16,
               top: 9,
-              background: '#F97316',
+              //background: '#FFFFFF',
+              border:'1px solid #F97316',
               borderRadius: '8px',
-              color: '#fff',
+              color: '#F97316',
               '&:hover': {
-                background: '#F97316',
+                border:'1px solid #DA4D0B',
+                color:'#DA4D0B'
               },
               zIndex: 1,
             }}
