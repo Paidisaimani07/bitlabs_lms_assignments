@@ -22,22 +22,21 @@ import TermsOfServices from './components/common/TermsOfServices';
 import Recruiterviewapplicant from './components/recruitercomponents/Recruiterviewapplicant';
 import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/AppliedApplicantsBasedOnJobs';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
-import ReactGA from 'react-ga';
 
-const TrackPageView = () => {
-  const location = useLocation();
 
-  useEffect(() => {
-    ReactGA.pageview(location.pathname + location.search);
-  }, [location]);
-
-  return null;
-};
-
+// function usePageViews() {
+//   const location = useLocation();
+//   useEffect(() => {
+//     window.gtag('config', 'G-H3XJ3KKJ09', {
+//       page_path: location.pathname + location.search,
+//     });
+//   }, [location]);
+// }
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -53,6 +52,9 @@ function App() {
     }
     setCheckingAuth(false);
   }, []);
+
+  // usePageViews();
+
   return (
     <div>
       <UserProvider>
@@ -60,7 +62,7 @@ function App() {
           <p>Loading...</p>
         ) : (
           <Router>
-            <TrackPageView />
+            
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/find-jobs" element={<IndexPage />} />
