@@ -697,7 +697,7 @@ const handleChange = (e) => {
     </div>
       </div>
 
-      <section style={{backgroundColor:"fff"}} className="account-section">
+      <section className="account-section">
         <div className="tf-container">
           <div className="row">
             <div className="wd-form-login">
@@ -908,12 +908,11 @@ const handleChange = (e) => {
   <div>
     {candidateOTPVerified ? (
       <div style={{ color: 'green' }}>
-        {/* <p >OTP verified successfully! Click on Register to proceed</p> */}
+       
       </div>
     ) : (
       <div>
-        {/* <div className="">Click on send OTP to verify your email</div> */}
-        {/* {isFormValidForOTP() && ( */}
+       
         <button
           type="button"
           onClick={handleSendOTP}
@@ -930,8 +929,6 @@ const handleChange = (e) => {
           )}
          
         </button>
-        {/* )} */}
-        {/* <div className="">To complete signup process please verify your email</div> */}
       </div>
     )}
   </div>
@@ -975,11 +972,6 @@ const handleChange = (e) => {
 
 </div>
 
-
-{/* <div style={{display:'flex',width:'100%',position:'absolute',gap:'20px',top:0,zIndex:'1'}}>
-  <h1>Find Your</h1>
-  <h1>Dream Job</h1>
-</div> */}
               </section>
 
             </div>
