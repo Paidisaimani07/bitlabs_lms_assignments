@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import IndexPage from './pages/indexpage/IndexPage';
 import AboutPage from './pages/aboutpage/AboutPage';
 import ContactPage from './pages/contactpage/ContactPage';
@@ -24,11 +24,19 @@ import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/Appli
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 
 
-
+// function usePageViews() {
+//   const location = useLocation();
+//   useEffect(() => {
+//     window.gtag('config', 'G-H3XJ3KKJ09', {
+//       page_path: location.pathname + location.search,
+//     });
+//   }, [location]);
+// }
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -44,6 +52,9 @@ function App() {
     }
     setCheckingAuth(false);
   }, []);
+
+  // usePageViews();
+
   return (
     <div>
       <UserProvider>
@@ -51,6 +62,7 @@ function App() {
           <p>Loading...</p>
         ) : (
           <Router>
+            
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/find-jobs" element={<IndexPage />} />
