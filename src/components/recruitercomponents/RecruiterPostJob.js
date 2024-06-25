@@ -42,29 +42,6 @@ function RecruiterPostJob() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
   const user = user1.user;
-  const [
-    selectedOption, setSelectedOption] = useState('');
-  const [url, setUrl] = useState('');
-  const [urlError, setUrlError] = useState('');
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-    setUrl(''); // Clear the URL input when changing option
-    setUrlError(''); // Clear any URL validation error
-  };
-
-  const handleUrlChange = (event) => {
-    setUrl(event.target.value);
-  };
-
-  const validateUrl = () => {
-    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-    if (!urlPattern.test(url)) {
-      setUrlError('Please enter a valid URL');
-    } else {
-      setUrlError('');
-    }
-  };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validateForm()) {
@@ -85,7 +62,6 @@ function RecruiterPostJob() {
       // jobHighlights,
       description,
       uploadDocument,
-      url,
     };
     const jwtToken = localStorage.getItem('jwtToken');
     const headers = {
@@ -845,48 +821,6 @@ function RecruiterPostJob() {
                         </div>
 
                       </div>
-
-                      <div className="col-lg-6 col-md-12">
-                      <label className="title-user fw-7">Get Applicants on<span className="color-red">*</span></label>
-                      
-    
-        <div>
-          <label>
-            <input
-              type="radio"
-              value="bitLabsJobs"
-              checked={selectedOption === 'bitLabsJobs'}
-              onChange={handleOptionChange}
-            />
-            BitLabsJobs
-          </label>
-        </div>
-        <div>
-          <label>
-            <input
-              type="radio"
-              value="companyCareerPage"
-              checked={selectedOption === 'companyCareerPage'}
-              onChange={handleOptionChange}
-            />
-            
-            Company's Career Page
-          </label>
-        </div>
-        {selectedOption === 'companyCareerPage' && (
-          <div>
-            <input
-              type="text"
-              placeholder="Enter URL"
-              value={url}
-              onChange={handleUrlChange}
-              onBlur={validateUrl}
-            />
-            {urlError && <div style={{ color: 'red' }}>{urlError}</div>}
-          </div>
-        )}
-       
-    </div>
                     </div>
 
                     <div className="form-infor flex flat-form">
