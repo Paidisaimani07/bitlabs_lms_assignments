@@ -214,7 +214,7 @@ export default function ApplicantJobAlerts() {
           onMouseOver={(e) => { e.target.style.color = 'black'; }}
           onMouseOut={(e) => { e.target.style.color = 'black'; }}
         >
-          Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
+           Your application status has been marked as &nbsp;{alert.applyJob.applicantStatus} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
           <br /> {/* Line break to move the date to the second line */}
           <span className="date-info" 
            onMouseOver={(e) => { e.target.style.color = '#848484'; }}
