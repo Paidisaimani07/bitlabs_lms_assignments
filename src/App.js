@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import IndexPage from './pages/indexpage/IndexPage';
 import AboutPage from './pages/aboutpage/AboutPage';
 import ContactPage from './pages/contactpage/ContactPage';
@@ -22,8 +22,17 @@ import TermsOfServices from './components/common/TermsOfServices';
 import Recruiterviewapplicant from './components/recruitercomponents/Recruiterviewapplicant';
 import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/AppliedApplicantsBasedOnJobs';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
+import ReactGA from 'react-ga';
 
+const TrackPageView = () => {
+  const location = useLocation();
 
+  useEffect(() => {
+    ReactGA.pageview(location.pathname + location.search);
+  }, [location]);
+
+  return null;
+};
 
 
 function App() {
@@ -51,6 +60,7 @@ function App() {
           <p>Loading...</p>
         ) : (
           <Router>
+            <TrackPageView />
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/find-jobs" element={<IndexPage />} />
