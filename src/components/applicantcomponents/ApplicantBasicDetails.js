@@ -242,7 +242,28 @@ if (!applicant.mobilenumber) {
       //window.alert('Profile saved successfully!');
       //addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
 
+        // Send data to the webhook after successfully saving the profile
+    const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
+    const webhookPayload = {
+      userId: user.id,
+      profileData: applicantProfileDTO,
+    };
 
+    const webhookResponse = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(webhookPayload),
+    });
+
+    if (!webhookResponse.ok) {
+      throw new Error('Failed to send data to the webhook');
+    }
+
+    console.log('Webhook response:', await webhookResponse.json());
+
+    
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
