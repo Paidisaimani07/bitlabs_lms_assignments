@@ -3,8 +3,6 @@ import axios from 'axios';
 import { Link} from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import logoCompany1 from '../../images/cty12.png';
-import leftArrow from '../../images/arrow-left.png';
 import { useNavigate } from "react-router-dom";
 import './ApplicantFindJobs.css';
  
@@ -15,7 +13,6 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const userId = user.id;
   const navigate = useNavigate();
- 
  
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +54,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   }
  
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); 
   };
   return (
     <div>
@@ -70,11 +67,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-                        {/* <div className="back-to-previous pb-4">
-                  <Link to="/applicanthome" className="back-link" >
-                  <img src={leftArrow} alt="Back"  />BACK
-                  </Link>
-                  </div> */}
+                       
                         <div className="title-dash flex2">My Applied Jobs</div>
                       </div>
                     </div>
@@ -102,13 +95,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                              
                               <div className="job-archive-header">
                                 <div className="inner-box">
-                                  {/* <div className="logo-company">
-                              {job.logoFile ? (
-                                   <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
-                              ) : (
-                                    <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
-                              )}
-                             </div> */}
+                                 
                                   <div className="box-content">
                                     <h4>
                                       <a href="javascript:void(0);">{job.companyname}</a>
@@ -123,10 +110,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                         <span className="icon-map-pin"></span>
                                         &nbsp;{job.location}
                                       </li>
-                                      {/* <li>
-                                  <span className="icon-calendar"></span>
-                                  &nbsp;{formatDate(job.creationDate)}
-                                </li> */}
+                                      
                                     </ul>
                                   </div>
                                 </div>

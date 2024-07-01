@@ -1,6 +1,7 @@
 import React from 'react'
 export default function ApplicantDeleteProfile() {
   return (
+    
     <div>
 <div class="dashboard__content">
     <section class="page-title-dashboard">
