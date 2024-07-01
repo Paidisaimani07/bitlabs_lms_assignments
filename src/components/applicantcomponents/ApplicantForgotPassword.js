@@ -28,7 +28,6 @@ function ApplicantForgotPassword() {
   const user1 = useUserContext();
   const user = user1.user;
   const [isEmailFieldDisabled, setIsEmailFieldDisabled] = useState(false);
-  // Define a state to control whether to show the success message or not
 const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
@@ -36,14 +35,13 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
 
   useEffect(() => {
     if (resetSuccess) {
-      // Show alert window
-     // window.alert("Password has been reset successfully. Click OK to continue.");
+    
 
       setSnackbar({ open: true, message: 'Password has been reset successfully', type: 'success' });
       
-      // Redirect after clicking OK
+     
       window.location.href = '/candidate';
-      // Set showSuccessMessage to true to prevent rendering the message in the UI
+
     setShowSuccessMessage(true);
     }
   }, [resetSuccess]);
@@ -127,7 +125,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
         clearInterval(timerInterval);
         setResendButtonDisabled(false);
       }, 60000);
-      //window.alert('OTP Resent successfully');
+     
       setSnackbar({ open: true, message: 'OTP resent successfully', type: 'success' });
 
     } catch (error) {
@@ -136,8 +134,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
   };
   const handleResetPassword = async () => {
 
-    // console.log("Reset password button clicked");
-    // setShowMessage(true);
+   
    
     if (password !== confirmedPassword) {
       setResetSuccess(false);
@@ -163,8 +160,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
       if (response.data === 'Password reset was done successfully') {
         setResetSuccess(true);
         setResetError('');
-         // Redirect to login page after password reset
-        //  window.location.href = '/candidate';
+         
 
       } else {
         
@@ -193,7 +189,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
                  
                  
                <div className="success-message">
-    {/* {showSuccessMessage && <h5>Password reset was done successfully.</h5>} */}
+   
   </div>
                  
                 ) : (
@@ -273,7 +269,7 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
                         </div>
                                     ) : (
                     <div>        
-                   <button type="button" className="button-style" onClick={() => { setResetError(null); // Set resetError to null
+                   <button type="button" className="button-style" onClick={() => { setResetError(null); 
                                         handleResendOTP();  }} disabled={resendButtonDisabled}>
                                              Resend OTP
                      </button>

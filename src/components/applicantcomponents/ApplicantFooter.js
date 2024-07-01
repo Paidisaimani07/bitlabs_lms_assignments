@@ -1,5 +1,6 @@
 import React from 'react'
 function ApplicantFooter() {
+  
   return (
     <div>
 <section class="flat-dashboard-bottom">

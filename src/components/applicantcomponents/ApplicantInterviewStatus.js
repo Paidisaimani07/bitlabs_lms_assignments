@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import logoCompany1 from '../../images/cty12.png';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useLocation,useNavigate } from 'react-router-dom';
-import { Timeline, TimelineHeaders, TodayMarker, CustomHeader } from 'react-calendar-timeline';
 import 'react-calendar-timeline/lib/Timeline.css';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import BackButton from '../common/BackButton';
  
  
@@ -34,8 +31,8 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        // Assuming you have a function to get the JWT token from wherever it's stored
-        const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
+       
+        const authToken = localStorage.getItem('jwtToken'); 
  
         const response = await axios.get(
           `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
@@ -64,8 +61,8 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   useEffect(() => {
     const fetchJobStatus = async () => {
       try {
-        // Assuming you have a function to get the JWT token from wherever it's stored
-        const authToken = localStorage.getItem('jwtToken'); // Replace with your actual function
+       
+        const authToken = localStorage.getItem('jwtToken'); 
  
         const response = await axios.get(
           `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
@@ -98,13 +95,12 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
  
   const handleApplyNowClick = () => {
     if (jobDetails && jobDetails.id) {
-      // Construct the API URL
+      
       const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
-      console.log('API Endpoint:', apiEndpoint); // Log API endpoint
-      // Call your API using fetch or any other method (e.g., axios)
+      console.log('API Endpoint:', apiEndpoint); 
+      
       axios.get(apiEndpoint)
         .then(response => {
-          // Handle response if needed
           console.log('API Response:', response);
           const { body } = response.data;
         setLoading(false);
@@ -113,7 +109,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         }
         })
         .catch(error => {
-          // Handle error if needed
+          
           console.error('API Error:', error);
         });
     } else {
@@ -121,37 +117,13 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     }
   };
  
-  // const handleApplyNowClick = () => {
-  //   if (jobDetails && jobDetails.id) {
-  //     // Construct the API URL
-  //     const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
-  //     console.log('API Endpoint:', apiEndpoint); // Log API endpoint
-  //     // Call your API using fetch or any other method (e.g., axios)
-  //     axios.get(apiEndpoint)
-  //       .then(response => {
-  //         // Handle response if needed
-  //         console.log('API Response:', response);
-  //         const { body } = response.data;
-  //       setLoading(false);
-  //       if (body) {
-  //         setJobDetails(body);
-  //       }
-  //       })
-  //       .catch(error => {
-  //         // Handle error if needed
-  //         console.error('API Error:', error);
-  //       });
-  //   } else {
-  //     console.error('No job details or jobId available');
-  //   }
-  // };
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); 
   };
  
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
-    // Navigate to the job details page programmatically
+   
     navigate(`/applicant-view-job`,{state:{from:location.pathname}});
   };
  
@@ -181,10 +153,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <div className="features-job style-2 stc-apply  bg-white" onClick={handleViewJobDetails}>
 <div className="job-archive-header">
 <div className="inner-box">
-{/* <div className="logo-company">                            
-                                {jobDetails.logoFile ? ( <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" /> )
-                                : (<img src="images/logo-company/cty12.png" alt={`Default Company Logo ${jobDetails.id}`} /> )}
-</div> */}
+
 <div className="box-content">
 <h4>
 <a href="javascript:void(0);">{jobDetails.companyname}</a>
@@ -197,10 +166,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <span className="icon-map-pin"></span>
                                     {jobDetails.location}
 </li>
-{/* <li>
-<span className="icon-calendar"></span>
-                                    {formatDate(jobDetails.creationDate)}
-</li> */}
+
 </ul>  
 </div>
 </div>
