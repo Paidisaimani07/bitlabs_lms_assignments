@@ -1285,4 +1285,5 @@ const handleResumeUpload = async () => {
  
   )
 }
+
 export default ApplicantUpdateProfile;

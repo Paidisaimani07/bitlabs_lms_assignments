@@ -101,17 +101,17 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
         );
  
         if (response.status === 200) {
-         // window.alert('Professional details updated successfully!');
+        
          addSnackbar({ message: 'Professional details updated successfully', type: 'success' });
-          window.location.reload(); // You might want to use a more React-friendly way to update the UI
+          window.location.reload(); 
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-         // window.alert('Failed to update professional details.');
+        
           addSnackbar({ message: 'Failed to update professional details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        //window.alert('Failed to update professional details due to an error.');
+       
         addSnackbar({ message: 'Failed to update professional details due to an error.', type: 'error' });
       }
     }

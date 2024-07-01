@@ -65,18 +65,18 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   }
  
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); 
   };
  
   const handleApplyNowClick = (jobId,e) => {
-    if (e) e.stopPropagation(); // Prevent event propagation
+    if (e) e.stopPropagation();
     setSelectedJobId(jobId);
-    // Perform any additional actions you need here
-    navigate('/applicant-view-job',{state:{from:location.pathname}}); // Programmatically navigate to the desired URL
+    
+    navigate('/applicant-view-job',{state:{from:location.pathname}}); 
   };
  
   const handleRemoveJob = async (jobId,e) => {
-    e.stopPropagation(); // Prevent event propagation
+    e.stopPropagation(); 
     try {
       const authToken = localStorage.getItem('jwtToken');
       const response = await axios.delete(
@@ -92,7 +92,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
         addSnackbar({ message: 'Job removed', type: 'success' });
       }
  
-      await fetchSavedJobs(); // Fetch jobs again after removal
+      await fetchSavedJobs(); 
     } catch (error) {
       addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
       console.error('Error removing job:', error);
@@ -118,7 +118,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-                        {/* <BackButton /> */}
+                        
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>
