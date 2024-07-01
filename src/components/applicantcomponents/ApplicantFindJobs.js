@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import logoCompany1 from '../../images/cty12.png';
-import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import './ApplicantFindJobs.css';
  
@@ -253,9 +251,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   </ul>
                                 </div>
                               </div>
-                             
- 
-                           
                             </div>
                           )))}
                       </div>

@@ -1499,4 +1499,5 @@ const handleCloseSnackbar = () => {
     </div>      
   )
 }
+
 export default ApplicantEditProfile;
