@@ -90,7 +90,7 @@ if(fielname === "" || fielname === "dateOfBirth")
  
   if (basicDetails && (fielname === "" || fielname === "dateOfBirth")) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(basicDetails.dateOfBirth)){
-      //newErrors.basicDetails.dateOfBirth = 'Date of birth is required';
+    
     } else {
       const selectedDate = new Date(basicDetails.dateOfBirth);
       const currentDate = new Date();
@@ -458,8 +458,7 @@ if (!graduationDetails.gState) {
     const selectedQualification = e.target.value;
     setQualification(selectedQualification);
     setSpecialization('');
-    // clearError('qualification');
-    // clearError('specialization');
+   
    
   };
   const specializationsByQualification = {
@@ -589,12 +588,7 @@ if (!graduationDetails.gState) {
   const handleSubmit = async (e) => {
     e.preventDefault();
   console.log("in handleSubmit")
-//  let dateOfBirth=applicant.dateOfBirth;
-//      const isFormValid = validateForm("dateOfBirth"); 
-//      if (!isFormValid) {
-//        console.log("returned becuse while validating");
-//       return;
-//     }
+
     const formData={
       applicant:applicant,
       basicDetails: basicDetails,
@@ -621,7 +615,7 @@ if (!graduationDetails.gState) {
      if (response.status === 200) {
       if (response.data === 'profile saved sucessfully') {
         console.log(response.body);
-       // window.alert('Profile saved successfully!');
+       
        
  setSnackbar({ open: true, message: 'Profile saved successfully', type: 'success' });
         navigate('/applicanthome');
@@ -659,12 +653,12 @@ const uploadPhoto = async () => {
     );
 
     console.log(response.data);
-    //window.alert(response.data);
+   
     setSnackbar({ open: true, message: response.data , type: 'success' });
     window.location.reload();
   } catch (error) {
     console.error('Error uploading photo:', error);
-    //window.alert('error in uploading Profile ');
+   
     setSnackbar({ open: true, message: 'Error in uploading Profile ', type: 'error' });
   }
 };
@@ -687,12 +681,12 @@ const handleResumeUpload = async () => {
       }
     );
     console.log(response.data);
-   // window.alert(response.data);
+   
    setSnackbar({ open: true, message: response.data , type: 'success' });
-   // window.location.reload();
+ 
   } catch (error) {
     console.error('Error uploading resume:', error);
-    //window.alert('Error uploading resume. Please try again.');
+
     setSnackbar({ open: true, message: 'Error uploading resume. Please try again.', type: 'error' });
   }
 };
@@ -822,17 +816,7 @@ const handleCloseSnackbar = () => {
           </div>
           </fieldset>
           
-          {/* <div id="item_size" className="dropdown titles-dropdown ">
-                  <label class="title-user fw-7">WhatsApp</label>
-                    <input
-                             type="text"
-                             placeholder="WhatsApp"
-                             className="input-form"
-                             value={basicDetails?.alternatePhoneNumber || ''}
-                             onChange={(e) =>
-                             setBasicDetails({...basicDetails,alternatePhoneNumber: e.target.value,})}
-                    />
-                  </div> */}
+        
 
                   <fieldset>
                   <label class="title-user fw-7">WhatsApp<span className="color-red">*</span></label>
@@ -873,36 +857,17 @@ const handleCloseSnackbar = () => {
               <div className="error-message">{errors.applicant.qualification}</div>
             )}
           </div>
-                    {/* {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )} */}
+                   
                   </fieldset>
 
-                  {/* <div className="dropdown titles-dropdown info-wd">
-          <select
-            value={qualification}
-            className="input-form"
-            onChange={handleQualificationChange}
-            style={{ color: qualification ? 'black' : 'lightgrey' }}
-          >
-            <option value="" disabled>*Qualification</option>
-            {qualificationsOptions.map((qual) => (
-              <option key={qual} value={qual}>
-                {qual}
-              </option>
-            ))}
-          </select>
-          {errors.qualification && (
-            <div className="error-message">{errors.qualification}</div>
-          )}
-        </div> */}
+                 
 
                   <div className="col-lg-6 col-md-12">
       <div id="item_3" className="dropdown titles-dropdown info-wd">
       <label class="title-user fw-7">Preferred Location(s) <span className="color-red">*</span></label>
       <Typeahead
   id="cityTypeahead"
-  labelKey="city"  // Specify the property to be used as the label
+  labelKey="city"  
   multiple
   placeholder="*Preferred Job Location(s)"
   options={cities.map(city => ({ city }))}
@@ -919,67 +884,20 @@ const handleCloseSnackbar = () => {
     </div> 
 
                   
-                  {/* <fieldset>
-                  <label class="title-user fw-7">City <span className="color-red">*</span></label>
-                    <input type="text"
-                           placeholder="City"
-                           className="input-form"
-                           value={basicDetails?.city || ''}
-                           onChange={(e) =>
-                           setBasicDetails({ ...basicDetails, city: e.target.value })}
-                           onBlur={() => validateForm("city")}
-                  />
-                   {errors.basicDetails.city && (
-              <div className="error-message">{errors.basicDetails.city}</div>
-            )}
-                  </fieldset> */}
-                  {/* <div id="item_date" className="dropdown titles-dropdown">
-                  <label class="title-user fw-7">Pin Code <span className="color-red">*</span></label>
-                    <input
-                            type="text"
-                            placeholder="Pin Code"
-                            className="input-form"
-                            maxLength="6"
-                            value={basicDetails?.pincode || ''}
-                            onChange={(e) =>
-                            setBasicDetails({ ...basicDetails, pincode: e.target.value })}
-                            onBlur={() => validateForm("pincode")}
-                    />
-                     {errors.basicDetails.pincode && (
-              <div className="error-message">{errors.basicDetails.pincode}</div>
-            )}
-                  </div> */}
-                  
-                  
                 </div>
                 <div className="info-box info-wd">
 
                 <fieldset>
                   <label class="title-user fw-7">Date of Birth </label>
-                     {/* <input
-                             type="date"
-                             placeholder="Date of Birth"
-                             id="dateOfBirth"
-                             className="input-form"                          
-                             value={basicDetails?.dateOfBirth || ''}
-                             onChange={(e) =>{
-                              console.log(e.target.value);
-                             setBasicDetails({...basicDetails,dateOfBirth: e.target.value,})}}
-                             onBlur={() => validateForm("dateOfBirth")}                             
-                       /> 
-                       {errors.basicDetails.dateOfBirth && (
-              <div className="error-message">{errors.basicDetails.dateOfBirth}</div>
-            )} */}
-
-
+                    
                             <input
                              type="date"
                              placeholder="Date of Birth"
                              id="dateOfBirth"
                              className="input-form"
-                            //  style={{ color: basicDetails.dateOfBirth==="dd-mm-yyyy"||basicDetails.dateOfBirth===""? 'lightgrey': 'black' }}
+                            
                              value={basicDetails?.dateOfBirth || ''}
-                            //  value={basicDetails.dateOfBirth}
+                            
                              onChange={(e) =>{
                             console.log(e.target.value);
                              setBasicDetails({...basicDetails,dateOfBirth: e.target.value,})}}
@@ -1002,8 +920,7 @@ const handleCloseSnackbar = () => {
                     onChange={(e) =>
                       setApplicant({...applicant,email: e.target.value,})}
                       onBlur={() => validateForm("email")}
-                    // onChange={(e) => setEmail(e.target.value)}
-                    // style={{ color: email ? 'black' : 'black' }}
+                   
                     
                   />
                    {errors.applicant.email && (
@@ -1019,7 +936,7 @@ const handleCloseSnackbar = () => {
     onChange={(e) =>
     setSpecialization(e.target.value)}
     style={{ color: specialization ? 'black' : 'lightgrey' }}
-    disabled={!qualification} // Disable if no qualification selected
+    disabled={!qualification} 
   >
     <option value="" disabled>*Specialization</option>
     {specializationsByQualification[qualification]?.map((spec) => (
@@ -1028,9 +945,6 @@ const handleCloseSnackbar = () => {
       </option>
     ))}
   </select>
-                    {/* {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )} */}
                   </fieldset>
 
           <fieldset>
@@ -1041,73 +955,17 @@ const handleCloseSnackbar = () => {
                         className="input-form"
                         value={experience || ''}
                         onChange={(e) => setExperience(e.target.value)}
-                        //onBlur={() => validateForm("experience")}
+                       
                    />
-                    {/* {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )} */}
+                   
                   </fieldset>
-
-                  
-
-                  {/* <fieldset>
-                  <label class="title-user fw-7">Address <span className="color-red">*</span></label>
-                    <input
-                            type="text"
-                            placeholder="Address"
-                            className="input-form"
-                            value={basicDetails?.address || ''}
-                            onChange={(e) =>
-                            setBasicDetails({ ...basicDetails, address: e.target.value })}
-                            onBlur={() => validateForm("address")}
-                     />
-                      {errors.basicDetails.address && (
-              <div className="error-message">{errors.basicDetails.address}</div>
-            )}
-                  </fieldset>
-                  <fieldset>
-                  <label class="title-user fw-7">State <span className="color-red">*</span></label>
-                    <input
-                        type="text"
-                        placeholder="State"
-                        className="input-form"
-                        value={basicDetails?.state || ''}
-                        onChange={(e) =>
-                        setBasicDetails({ ...basicDetails, state: e.target.value })}
-                        onBlur={() => validateForm("state")}
-                   />
-                    {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )}
-                  </fieldset> */}
-                  
-                  
-                  {/* <fieldset>
-                  <label class="title-user fw-7">Preferred Job Locations <span className="color-red">*</span></label>
-                    <input
-                        type="text"
-                        placeholder="Preferred Job Locations"
-                        className="input-form"
-                        value={preferredJobLocations || ''}
-                        onChange={(e) =>
-                        setBasicDetails({ ...basicDetails, state: e.target.value })}
-                        onBlur={() => validateForm("state")}
-                   />
-                    {errors.basicDetails.state && (
-              <div className="error-message">{errors.basicDetails.state}</div>
-            )}
-                  </fieldset> */}
-
-
-
-
                 </div>
                
               </div>
              </div>
              <div className="form-infor-profile">
               <h3 className="title-info">Education- X Class 
-              {/* <span className="color-red">*</span> */}
+              
               </h3>
               <div className="form-infor flex flat-form">
                 <div className="info-box info-wd">
@@ -1354,7 +1212,7 @@ const handleCloseSnackbar = () => {
              </div>
              <div className="form-infor-profile">
               <h3 className="title-info">Education- Graduation Details 
-              {/* <span className="color-red">*</span> */}
+              
               </h3>
               <div className="form-infor flex flat-form">
                 <div className="info-box info-wd">
@@ -1472,46 +1330,7 @@ const handleCloseSnackbar = () => {
                
               </div>
              </div>
-   {/* <div className="form-infor-profile">
-              <h3 className="title-info">Registration- Details <span className="color-red">*</span></h3>
-              <div className="form-infor flex flat-form">
-                <div className="info-box info-wd">
-                  <fieldset>
-                  <input  type="text"
-                          placeholder="Name Given at Registration"
-                          className="input-form"
-                          value={applicant.name}
-                          onChange={(e) =>
-                           setApplicant({...applicant,name: e.target.value,})}
-                           onBlur={() => validateForm("name")}
-                  />
-                  <div className="validation-errors">
-            {errors.applicant.name && (
-              <div className="error-message">{errors.applicant.name}</div>
-            )}
-          </div>
-          </fieldset>
-          </div>
-          <div className="info-box info-wd">
-                  <fieldset>
-                    <input
-                           type="text"
-                           placeholder="mobilenumber"
-                           className="input-form"
-                           value={applicant.mobilenumber}
-                           onChange={(e) =>
-                           setApplicant({ ...applicant, mobilenumber: e.target.value })}
-                           onBlur={() => validateForm("mobilenumber")}
-              />
-              <div className="validation-errors">
-            {errors.applicant.mobilenumber && (
-              <div className="error-message">{errors.applicant.mobilenumber}</div>
-            )}
-          </div>
-                  </fieldset>             
-                  </div>
-                </div>            
-              </div>             */}
+ 
     <div className="contact-wrap info-wd">
       <h3>Experience & Skills</h3>
       <div className="form-social form-wg flex flat-form">
