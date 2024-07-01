@@ -6,7 +6,16 @@ import reportWebVitals from './reportWebVitals';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
+// Function to load the Tidio script
+function loadTidioScript() {
+  const script = document.createElement('script');
+  script.src = "//code.tidio.co/wpu5hre78erukppaxms2pcge39ckekpy.js";
+  script.async = true;
+  document.body.appendChild(script);
+}
 
+// Load the Tidio script when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', loadTidioScript);
  
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
