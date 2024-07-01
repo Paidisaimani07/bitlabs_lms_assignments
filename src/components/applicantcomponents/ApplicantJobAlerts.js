@@ -218,7 +218,6 @@ export default function ApplicantJobAlerts() {
     
   </h4>
 </div>
-
                       {alert.applyJob && (
                         <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
                       )}

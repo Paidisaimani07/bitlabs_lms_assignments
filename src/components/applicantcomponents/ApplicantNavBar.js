@@ -420,7 +420,6 @@ function ApplicantNavBar() {
        
         </div>
       )}
-
                                <ModalLogout
                                        isOpen={showModal}
                                        onClose={() => setShowModal(false)}

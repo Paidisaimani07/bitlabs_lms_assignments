@@ -304,7 +304,6 @@ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' })
       )}
     </div>
   );
- 
 }
 export default ApplicantForgotPassword;
 

@@ -31,7 +31,6 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-       
         const authToken = localStorage.getItem('jwtToken'); 
  
         const response = await axios.get(

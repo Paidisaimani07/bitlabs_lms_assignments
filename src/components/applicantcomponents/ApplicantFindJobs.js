@@ -251,9 +251,6 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   </ul>
                                 </div>
                               </div>
-                             
- 
-                           
                             </div>
                           )))}
                       </div>
