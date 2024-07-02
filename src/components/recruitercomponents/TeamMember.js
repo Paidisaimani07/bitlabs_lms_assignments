@@ -98,7 +98,7 @@ const Table = ({ data, handleDelete }) => {
               <td>{teamMember.name}</td>
               <td>{teamMember.role}</td>
               <td>{teamMember.email}</td>
-              <td>********{/* Display asterisks or any other mask */}</td>
+              <td>********</td>
               <td>
                 <a
                   href="#"

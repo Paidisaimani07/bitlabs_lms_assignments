@@ -3,7 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { FiEye, FiEyeOff } from 'react-icons/fi'; // Assuming you have the necessary icons installed
+import { FiEye, FiEyeOff } from 'react-icons/fi'; 
 
 
 const AddTeamMemberPopup = ({ show, handleClose, handleAddTeamMember, userId }) => {
@@ -33,7 +33,7 @@ const AddTeamMemberPopup = ({ show, handleClose, handleAddTeamMember, userId }) 
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    // Clear the validation error for the current input field
+   
     setValidationErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
