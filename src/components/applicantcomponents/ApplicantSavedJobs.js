@@ -58,18 +58,6 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
 
   const handleRemoveJob = async (jobId, e) => {
     e.stopPropagation(); // Prevent event propagation
-    return (amountInRupees * 1).toFixed(2); 
-  };
- 
-  const handleApplyNowClick = (jobId,e) => {
-    if (e) e.stopPropagation();
-    setSelectedJobId(jobId);
-    
-    navigate('/applicant-view-job',{state:{from:location.pathname}}); 
-  };
- 
-  const handleRemoveJob = async (jobId,e) => {
-    e.stopPropagation(); 
     try {
       const authToken = localStorage.getItem('jwtToken');
       const response = await axios.delete(
@@ -85,8 +73,6 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
         addSnackbar({ message: 'Job removed', type: 'success' });
         await fetchSavedJobs(); // Fetch jobs again after removal
       }
-      await fetchSavedJobs(); 
-
     } catch (error) {
       addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
       console.error('Error removing job:', error);
@@ -105,21 +91,21 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     <div>
       {loading ? (
         <div className="dashboard__content">
-        <div className="row mr-0 ml-10">
-          <div className="col-lg-12 col-md-12">
-            <section className="page-title-dashboard">
-              <div className="themes-container">
-                <div className="row">
-                  <div className="col-lg-12 col-md-12">
-                    <div className="title-dashboard">
-                    <Spinner />
+          <div className="row mr-0 ml-10">
+            <div className="col-lg-12 col-md-12">
+              <section className="page-title-dashboard">
+                <div className="themes-container">
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12">
+                      <div className="title-dashboard">
+                        <Spinner />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
-        </div>
         </div>
       ) : (
         <div className="dashboard__content">
@@ -130,7 +116,6 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12">
                       <div className="title-dashboard">
-                        
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>
