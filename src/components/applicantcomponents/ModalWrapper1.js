@@ -8,12 +8,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
-import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
+import ResumeBuilder from './ResumeBuilder'; 
 import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-// ModalWrapper.js
-// ... (imports)
+
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -53,7 +52,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
       onClose={handleCloseClick}
       fullScreen={true}
       aria-labelledby="responsive-dialog-title"
-      maxWidth="xl" // Ensures the dialog can stretch to full width
+      maxWidth="xl"
       PaperProps={{
         style: {
           width: '100%',
@@ -114,7 +113,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
             overflow: 'hidden',
           }}
         >
-          <ResumeBuilder /> {/* Include ResumeBuilder component here */}
+          <ResumeBuilder />
         </Box>
       </DialogContent>
     </Dialog>

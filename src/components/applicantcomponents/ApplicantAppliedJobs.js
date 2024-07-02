@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import logoCompany1 from '../../images/cty12.png';
 import { useNavigate } from "react-router-dom";
 import './ApplicantFindJobs.css';
 import Spinner from '../common/Spinner'; // Assume you have a spinner component
@@ -14,6 +13,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const applicantId = user.id;
   const navigate = useNavigate();
+
 
   const fetchAppliedJobs = useCallback(async () => {
     try {
@@ -31,6 +31,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
     }
   }, [applicantId]);
 
+
   useEffect(() => {
     fetchAppliedJobs();
   }, [fetchAppliedJobs]);
@@ -41,7 +42,9 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   };
 
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+
+    return (amountInRupees * 1).toFixed(2); 
+
   };
 
   return (
@@ -99,6 +102,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                             >
                               <div className="job-archive-header">
                                 <div className="inner-box">
+
                                   <div className="box-content">
                                     <h4>{job.companyname}</h4>
                                     <h3>{job.jobTitle}</h3>

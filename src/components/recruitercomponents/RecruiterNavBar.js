@@ -14,24 +14,24 @@ function RecruiterNavBar() {
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
-  // const [alertCount, setAlertCount] = useState(0);
+  
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
 
-  // Function to handle clicks outside the account element
+ 
   const handleOutsideClick = (event) => {
-    const accountElement = document.querySelector(".account"); // Assuming "account" is the class name of your account element
+    const accountElement = document.querySelector(".account"); 
   
     if (accountElement && !accountElement.contains(event.target)) {
-      // Click occurred outside the account element, hide sub-account
+      
       setIsSubAccountVisible(false);
     }
   };
 
-// Event listener to detect clicks outside the account element
+
 document.addEventListener("click", handleOutsideClick);
   useEffect(() => {
     const handleResize = () => {
@@ -92,14 +92,14 @@ document.addEventListener("click", handleOutsideClick);
   setIsOpen(!isOpen);
 };
 useEffect(() => {
-  fetchAlertCount(); // Fetch alert count when component mounts
+  fetchAlertCount(); 
 }, []);
 
 const fetchAlertCount = async () => {
   try {
     const response = await axios.get(`${apiUrl}/recuriters/appledjobs/${user.id}/unread-alert-count`);
     setAlertCount(response.data);
-    // window.location.reload();
+    
   } catch (error) {
     console.error('Error fetching alert count:', error);
   }
@@ -121,7 +121,7 @@ useEffect(() => {
 }, [user.id]);
 
 const handleBellClick = () => {
-  // Reset the alert count
+ 
   setAlertCount(0);
 };
 const linkStyle = {
@@ -132,7 +132,7 @@ const linkStyle = {
   textAlign: 'center',
   marginTop: '20px',
   width: '230px',
-  transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+  transition: 'background-color 0.3s ease', 
 };
 
 const textStyle = {
@@ -221,13 +221,13 @@ const iconStyle = {
   ) : null}
 </span>
   </div>
-        {/* <span className="dash-titles"></span> */}
+       
       </Link>
       
               <div className="header-customize-item account" onClick={toggleSubAccount}>
                 <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
-                  {/* <span className="icon-keyboard_arrow_down" /> */}
+                  
                 </div>
                 <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
                 <h4>Welcome {user.username}</h4>
@@ -245,24 +245,12 @@ const iconStyle = {
                 </div>
               </div>
             </div>
-            {/* <div className="nav-filter">
-              <div className="nav-mobile">
-                <span />
-              </div>
-            </div> */}
+           
           </div>
         </div>
       </div>
     </div>
-    {/* <div className="btn header-item " id="left-menu-btn">
-      {window.innerWidth < 768 && (
-            <span className="hamburger-icon" onClick={handleToggleMenu}>
-              <span />
-              <span />
-              <span />
-            </span>
-          )}
-    </div> */}
+
   </header>
   {(
   <div className={`left-menu ${isOpen ? 'open' : ''}`}>
@@ -274,12 +262,7 @@ const iconStyle = {
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
-          {/* <li>
-            <Link to="/recruiter-postjob" className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}>
-              <span className="icon-work dash-icon"></span>
-              <span className="dash-titles">Post Job</span>
-            </Link>
-          </li> */}
+         
           <li>
             <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
               <span className="icon-submit dash-icon"></span>
@@ -294,44 +277,7 @@ const iconStyle = {
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
-          {/* <li>
-            <Link to="/recruiter-applicantinterviews" className={location.pathname === "/recruiter-applicantinterviews" ? "tf-effect active" : ""}>
-              <span className="icon-chat dash-icon"></span>
-              <span className="dash-titles">Interviews</span>
-            </Link>
-          </li> */}
-          {/* <li>
-            <Link to="/recruiter-team-member" className="tf-effect">
-              <span className="icon-meeting dash-icon"></span>
-              <span className="dash-titles">Team Members</span>
-            </Link>
-          </li> */}
-          {/* <li>
-          <Link to="/job-applicant-alerts"  className={location.pathname === "/job-applicant-alerts" ? "tf-effect active" : ""} onClick={fetchAlertCount}>
-        <div style={{ position: 'relative', display: 'inline-block' }}>
-        <span className="icon-bell1 dash-icon">
-                    {alertCount > 0 && (
-  <sup
-    style={{
-      background: 'red',
-      borderRadius: '50%',
-      padding: '2px 5px',
-      color: 'white',
-      fontSize: '10px',
-      textAlign: 'center',
-      lineHeight: '1',
-      marginLeft: '-10px',
-    }}
-  >
-    {alertCount}
-  </sup>
-)}
-
-                    </span>
-        </div>
-        <span className="dash-titles">Alerts</span>
-      </Link>
-      </li> */}
+      
           <li>
             <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
               <span className="icon-mypackage dash-icon"></span>

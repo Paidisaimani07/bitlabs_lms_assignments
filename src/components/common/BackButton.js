@@ -7,7 +7,7 @@ const BackButton = () => {
   const handleClick = (e) => {
     e.preventDefault();
     console.log("Back button is clicked",e);
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1); 
   };
 
   return (

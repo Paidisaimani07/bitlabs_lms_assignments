@@ -86,23 +86,20 @@ function ApplicantChangePassword() {
     try {
       const response = await axios.post(`${apiUrl}/applicant/authenticateUsers/${user.id}`, formData);
       if (response.data === 'Password updated and stored') {
-       // window.alert('Password Changed Successfully');
+      
        setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
       }else if(response.data==='your new password should not be same as old password'){
-        //window.alert('New password should not be same as old password.');
+
         setSnackbar({ open: true, message: 'New password should not be same as old password.', type: 'error' });
       } else {
-       // window.alert('Password change failed. Old password is wrong.');
+       
         setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
-        // window.alert('Password change failed. New password should not be same as Old password.');
+      
       }
-    } /*catch (error) {
-      console.error('Error resetting password:', error);
-      window.alert('Error resetting password');
-    }*/
+    } 
   catch (error) {
       console.error('Password change failed. Old password is wrong.:', error);
-    //  window.alert('Password change failed. Old password is wrong.');
+    
       setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
     }
   };
@@ -124,7 +121,7 @@ function ApplicantChangePassword() {
         <div className="row">
           <div className="col-lg-12 col-md-12">
             <div className="title-dashboard">            
-                {/* <BackButton /> */}
+               
               <div className="title-dash flex2">Change Password</div>
             </div>
           </div>
@@ -136,7 +133,7 @@ function ApplicantChangePassword() {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="change-password bg-white">
-                    {/* <form action="https://themesflat.co/html/jobtex/dashboard/dashboard.html"> */}
+                   
                     <form action="#">
                       <div className="form-password">
                         <div className="inner info-wd">

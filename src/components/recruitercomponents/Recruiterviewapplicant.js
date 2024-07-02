@@ -53,7 +53,7 @@ const Recruiterviewapplicant = () => {
         setLoading(false);
         if (count === 0 && isMounted) {
           window.alert('Profile not found. Please fill in your profile');
-        //   window.location.href = '/applicant-update-profile';
+      
         }
         
       }
@@ -96,11 +96,9 @@ const Recruiterviewapplicant = () => {
         <div className="author-archive-header">
         <img width="100px" height="25px" src={imageSrc || '../images/user/avatar/profile-pic.png'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}  style={{padding:'10px',borderRadius:'100px'}} />
           <div className="content">
-            {/* <a href="#" className="tag-head">
-              Available now
-            </a> */}
+           
             <h4>
-              {/* <a href="#">Computer Systems Analyst</a> */}
+              
             </h4>
             <h3>
               <a href="#">{profileData.applicant.name}</a>
@@ -123,8 +121,7 @@ const Recruiterviewapplicant = () => {
         </div>
         <div className="author-archive-footer">
           <div className="group-btn">
-            {/* <button className="tf-btn">Edit Profile</button> */}
-            {/* <Link to="/applicant-edit-profile"  className="tf-btn">Edit Profile</Link> */}
+          
             <button className="tf-btn btn-author">View Resume</button>
           </div>
         </div>
@@ -138,8 +135,7 @@ const Recruiterviewapplicant = () => {
           <article className="job-article tf-tab single-job stc2">
             <ul className="menu-tab">
               <li className="ct-tab active"> Education & Experience Details</li>
-              {/* <li className="ct-tab">Portfolio</li>
-              <li className="ct-tab">Contact</li> */}
+             
             </ul>
             <div className="content-tab">
               <div className="inner-content">
@@ -221,9 +217,7 @@ const Recruiterviewapplicant = () => {
 </div>
   </div>
   <div className="col">
-    {/* <div className="subtitle-2 fw-7 fw-5">
-    Year of Passing: {(profileData.intermediateDetails && profileData.intermediateDetails.iyearOfPassing) || <span style={{ color: '#808080' }}></span>}
-    </div> */}
+ 
   </div>
 </div>
                   </div>
@@ -292,27 +286,13 @@ const Recruiterviewapplicant = () => {
                 <div className="category">Experience</div>
                 <div className="detail">{profileData.experience} Year(s)</div>
               </li>
-              {/* <li>
-                <div className="category">Language</div>
-                <div className="detail">English, Vietnamese </div>
-              </li>
-              <li>
-                <div className="category">Age</div>
-                <div className="detail">26 Years Old</div>
-              </li> */}
+              
               <li>
                 <div className="category">Qualification</div>
                 <div className="detail">{profileData && profileData.qualification|| ''}</div>
               </li>
             </ul>
-            {/* <div className="preview-cv mgt-32">
-              <div className="title">Samle_cv_jobitex</div>
-              <div className="category">PDF</div>
-              <div className="icon icon-file-pdf" />
-            </div> */}
-            {/* <a href="#" className="btn-dowload">
-              <i className="icon-download" /> Download CV
-            </a> */}
+           
           </div>
         </div>
       </div>
