@@ -27,13 +27,13 @@ export default function Banner() {
               style={{
                 color: '#FFFFFF',
                 backgroundColor: '#f97316',
-                // border: '1px solid #f97316',
+                
                 padding: '10px 10px 10px 30px',
                 borderRadius: '8px',
                 display: 'inline-flex',
                 width: '130px',
                 textAlign: window.innerWidth >= 320 && window.innerWidth <= 462 ? 'center' : '',
-                marginRight: '10px', // Added margin between buttons
+                marginRight: '10px', 
                 marginBottom: '10px'
               }}
               onMouseOver={(e) => {
@@ -89,13 +89,7 @@ export default function Banner() {
             <div className="trader-box sl7">
               <div className="content">
                 <h3 className="number wrap-counter">
-                  {/* <span
-                    className="number counter-number"
-                    data-speed={2000}
-                    data-to={25}
-                  >
-                    25
-                  </span> */}
+                 
                   <span>25M+</span>
                 </h3>
                 <div className="des" >Jobs Available</div>
