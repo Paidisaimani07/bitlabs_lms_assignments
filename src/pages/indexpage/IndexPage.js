@@ -17,7 +17,7 @@
 //   )
 // }
 
-import React from 'react';
+import React,{useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import Nav from '../../components/common/Nav';
 import Banner from '../../components/indexpagecomponents/Banner';
@@ -31,9 +31,15 @@ export default function IndexPage() {
   const isFindJobsPage = location.pathname === '/find-jobs';
   const isFindCandidatesPage = location.pathname === '/find-candidates';
 
+  useEffect(() => {
+    window.location.href = 'https://www.bitlabs.in/jobs';
+  }, []);
+
+  return null;
+
   return (
     <div>
-      {isFindJobsPage && <FindJobs />}
+      {/* {isFindJobsPage && <FindJobs />}
       {isFindCandidatesPage && <FindCandidates />}
       {!isFindJobsPage && !isFindCandidatesPage && (
         <>
@@ -42,7 +48,8 @@ export default function IndexPage() {
       )}
        <Banner />
           <Body />
-          <Footer />
+          <Footer /> */}
+          
     </div>
   );
 }
