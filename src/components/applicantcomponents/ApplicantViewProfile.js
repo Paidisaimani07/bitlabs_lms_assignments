@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { Link } from 'react-router-dom';
-import BackButton from '../common/BackButton';
 import { useNavigate } from "react-router-dom";
 import Phone from '../../images/icons/phone.png';
 import Mail from '../../images/icons/mail.png';
@@ -24,7 +23,6 @@ import ResumeEditPopup from './ResumeEditPopup';
 import Snackbar from '../common/Snackbar';
 
 const ApplicantViewProfile = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [profileData, setProfileData] = useState(null);
   const [profileid1, setprofileid] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);

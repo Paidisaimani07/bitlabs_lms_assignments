@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import { Link,useParams } from 'react-router-dom';
-import BackButton from '../common/BackButton';
+import { useParams } from 'react-router-dom';
 const Recruiterviewapplicant = () => {
   const [profileData, setProfileData] = useState(null);
-  const [profileid1, setprofileid] = useState(0);
   const [imageSrc, setImageSrc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [alertShown, setAlertShown] = useState(false);
-  const[experience,setExperience]=useState();
-   const[qualification,setQualification]=useState();
-   const[specialization,setSpecialization]=useState();
-   const[preferredJobLocations,setpreferredJobLocations]=useState([]);
   const { user } = useUserContext();
   const { id } = useParams();
   

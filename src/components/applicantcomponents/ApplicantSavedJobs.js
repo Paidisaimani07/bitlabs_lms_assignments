@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import logoCompany1 from '../../images/cty12.png';
 import { useNavigate, useLocation } from "react-router-dom";
-import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import './ApplicantFindJobs.css';
  

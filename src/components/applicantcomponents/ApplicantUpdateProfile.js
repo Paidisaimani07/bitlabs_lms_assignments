@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
  
 function ApplicantUpdateProfile() {
@@ -9,7 +9,6 @@ function ApplicantUpdateProfile() {
   const navigate = useNavigate();
   const user1 = useUserContext();
   const user=user1.user;
-  let error = "";
  
   const [formData, setFormData] = useState({
     declaration1: false,
@@ -409,8 +408,6 @@ if (!graduationDetails.gState) {
   ]);
   const [resumeFile, setResumeFile] = useState(null);
   const [photoFile,setPhotoFile]=useState(null);
-  const [dragging, setDragging] = useState(false);
-  const [selectedSkill, setSelectedSkill] = useState("");
   const handleSkillChange = (e, index, field) => {
     const updatedSkillsRequired = [...skillsRequired];
         updatedSkillsRequired[index][field] = e.target.value;
@@ -447,12 +444,6 @@ if (!graduationDetails.gState) {
    
   };
    
-  const handleFileDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    setResumeFile(file);
-  };
   
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
 import { Link, useLocation } from 'react-router-dom';
 import Postjobimg from '../../images/user/avatar/Postjobimg.png';

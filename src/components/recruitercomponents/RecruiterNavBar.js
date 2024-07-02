@@ -1,11 +1,11 @@
 import React, { useState,useEffect } from "react";
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
-import { right } from "@popperjs/core";
+
 
 function RecruiterNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);

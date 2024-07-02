@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './ContactStyle.css';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 
@@ -12,7 +12,7 @@ export default function ContacBody() {
       questions: '',
     });
 
-    const [showAlert, setShowAlert] = useState(false);
+    
     const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
 
     
