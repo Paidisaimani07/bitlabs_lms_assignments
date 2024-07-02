@@ -1,80 +1,78 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import logoCompany1 from '../../images/cty12.png';
-import leftArrow from '../../images/arrow-left.png';
 import { useNavigate } from "react-router-dom";
 import './ApplicantFindJobs.css';
- 
+import Spinner from '../common/Spinner'; // Assume you have a spinner component
+
 function ApplicantAppliedJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useUserContext();
   const applicantId = user.id;
-  const userId = user.id;
   const navigate = useNavigate();
- 
- 
+
+  const fetchAppliedJobs = useCallback(async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      const response = await axios.get(`${apiUrl}/applyjob/getAppliedJobs/${applicantId}`, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+      setJobs(response.data);
+    } catch (error) {
+      console.error('Error fetching applied jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [applicantId]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await new Promise(resolve => setTimeout(resolve, 50));
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-  useEffect(() => {
-    const fetchAppliedJobs = async () => {
-      try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${apiUrl}/applyjob/getAppliedJobs/${applicantId}`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        const jobsData = response.data;
-        setJobs(jobsData);
-      } catch (error) {
-        console.error('Error fetching applied jobs:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
- 
     fetchAppliedJobs();
-  }, []);
- 
-  function formatDate(dateString) {
+  }, [fetchAppliedJobs]);
+
+  const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
-    return formattedDate;
-  }
- 
-  const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
+
+  const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+  };
+
   return (
     <div>
-      {loading ? null : (
+      {loading ? (
+        <div className="dashboard__content">
+        <div className="row mr-0 ml-10">
+          <div className="col-lg-12 col-md-12">
+            <section className="page-title-dashboard">
+              <div className="themes-container">
+                <div className="row">
+                  <div className="col-lg-12 col-md-12 ">
+                    <div className="title-dashboard">
+                    <Spinner /> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+        </div>
+      ) : (
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
-              <section className="page-title-dashboard">  
+              <section className="page-title-dashboard">
                 <div className="themes-container">
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-                        {/* <div className="back-to-previous pb-4">
-                  <Link to="/applicanthome" className="back-link" >
-                  <img src={leftArrow} alt="Back"  />BACK
-                  </Link>
-                  </div> */}
                         <div className="title-dash flex2">My Applied Jobs</div>
                       </div>
                     </div>
@@ -82,51 +80,33 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                 </div>
               </section>
             </div>
-            <div className=" col-lg-12 col-md-12">
+            <div className="col-lg-12 col-md-12">
               <section className="flat-dashboard-setting flat-dashboard-setting2">
                 <div className="themes-container">
                   <div className="content-tab">
                     <div className="inner">
- 
                       <div className="group-col-2">
                         {jobs.length === 0 ? (
                           <div style={{ marginLeft: 30 }}>No Applied jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <Link className="features-job cl2  bg-white"
+                            <Link
+                              className="features-job cl2 bg-white"
                               to={`/applicant-interview-status?jobId=${job.id}`}
                               key={job.id}
                               style={{ textDecoration: 'none', color: 'inherit' }}
                               onClick={() => setSelectedJobId(job.applyJobId)}
                             >
-                             
                               <div className="job-archive-header">
                                 <div className="inner-box">
-                                  {/* <div className="logo-company">
-                              {job.logoFile ? (
-                                   <img src={`data:image/png;base64,${job.logoFile}`} alt="Company Logo" />
-                              ) : (
-                                    <img src={logoCompany1} alt={`Default Company Logo ${job.id}`} />
-                              )}
-                             </div> */}
                                   <div className="box-content">
-                                    <h4>
-                                      <a href="javascript:void(0);">{job.companyname}</a>
-                                    </h4>
-                                    <h3>
-                                      <a href="javascript:void(0);">
-                                        {job.jobTitle}
-                                      </a>
-                                    </h3>
+                                    <h4>{job.companyname}</h4>
+                                    <h3>{job.jobTitle}</h3>
                                     <ul>
                                       <li>
                                         <span className="icon-map-pin"></span>
                                         &nbsp;{job.location}
                                       </li>
-                                      {/* <li>
-                                  <span className="icon-calendar"></span>
-                                  &nbsp;{formatDate(job.creationDate)}
-                                </li> */}
                                     </ul>
                                   </div>
                                 </div>
@@ -134,18 +114,10 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                               <div className="job-archive-footer">
                                 <div className="job-footer-left">
                                   <ul className="job-tag">
-                                    <li>
-                                      <a href="javascript:void(0);">{job.employeeType}</a>
-                                    </li>
-                                    <li>
-                                      <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
-                                    </li>
-                                    <li>
-                                      <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
-                                    </li>
-                                    <li>
-                                      <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
-                                    </li>
+                                    <li>{job.employeeType}</li>
+                                    <li>{job.remote ? 'Remote' : 'Office-based'}</li>
+                                    <li>Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</li>
+                                    <li>&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</li>
                                   </ul>
                                   <div className="star">
                                     {Array.from({ length: job.starRating }).map((_, index) => (
@@ -155,20 +127,22 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                 </div>
                                 <div className="job-footer-right">
                                   <div className="price">
-                                    <span>
-                                      <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span></span>
+                                    <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span>
                                   </div>
-                                  <button class="button-status">
-                                    {job && (<Link to={`/applicant-interview-status?jobId=${job.id}`} style={{ color: 'white' }} onClick={() => setSelectedJobId(job.applyJobId)}>
+                                  <button className="button-status">
+                                    <Link
+                                      to={`/applicant-interview-status?jobId=${job.id}`}
+                                      style={{ color: 'white' }}
+                                      onClick={() => setSelectedJobId(job.applyJobId)}
+                                    >
                                       Check Status
                                     </Link>
-                                    )}
                                   </button>
                                 </div>
                               </div>
                             </Link>
-                          )))}
-                         
+                          ))
+                        )}
                       </div>
                     </div>
                   </div>
@@ -181,4 +155,5 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
     </div>
   );
 }
+
 export default ApplicantAppliedJobs;
