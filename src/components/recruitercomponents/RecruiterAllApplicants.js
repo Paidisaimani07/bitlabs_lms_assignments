@@ -39,7 +39,7 @@ function RecruiterAllApplicants() {
 
 
   const handleCheckboxChange2 = (applyjobid) => {
-   // const index = selectedApplicants.indexOf(applyjobid);
+  
       console.log(applyjobid);
    
       setSelectedApplicants([...selectedApplicants, applyjobid]);
@@ -83,15 +83,14 @@ function RecruiterAllApplicants() {
     }));
   };
   const resetFilter = () => {
-  // Reload the page
+  
   window.location.reload();
 };
   const applyFilter = () => {
-    // Construct the URL with filter options
-    // let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}`;
+ 
     let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
    
-   // Construct object for body
+   
 const body = {
   "name": filterOptions.nameFilter === "contains" ? "contains" : filterOptions.nameFilter === "is" ? "is" : null,
   "email": filterOptions.emailFilter === "contains" ? "contains" : filterOptions.emailFilter === "is" ? "is" : null,
@@ -104,18 +103,17 @@ const body = {
   "minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
 };
     console.log(filterOptions);
-    // Add your JWT token here
+   
     const token = localStorage.getItem('jwtToken');
     console.log(token);
  
-    // Make sure to replace 'Bearer' with the appropriate prefix if needed
+   
     const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
     };
  
-    // Make API call with constructed URL, and headers
-   // Make API call with constructed URL, body, and headers
+  
    fetch(url, {
     method: 'POST',
     headers: headers,
@@ -129,7 +127,7 @@ const body = {
     const $table = window.$(tableref.current);
     $table.DataTable().clear().destroy();
  
-    // Reinitialize DataTable with new data
+    
     $table.DataTable({
         responsive: true,
         data: data,
@@ -163,9 +161,9 @@ const body = {
             { data: 'jobTitle' },
             { data: 'applicantStatus' },
             { data: 'experience' },
-            // { data: 'skillName' },
+            
             { data: 'minimumQualification' },
-            // { data: 'location' }
+          
             {
               data: null,
               render: function(data, type, row) {
@@ -186,43 +184,44 @@ const body = {
 const handleTextFieldChange = (e) => {
   const { id, value } = e.target;
   switch (id) {
-    case "name": // Assuming you have an input field with id "name"
+    case "name":
       setName(value);
       break;
-    case "email": // Assuming you have an input field with id "email"
+    case "email":
       setEmail(value);
       break;
-    case "mobileNumber": // Assuming you have an input field with id "mobileNumber"
+    case "mobileNumber":
       setMobileNumber(value);
       break;
-    case "jobTitle": // Assuming you have an input field with id "jobTitle"
+    case "jobTitle":
       setJobTitle(value);
       break;
-    case "applicantStatus": // Assuming you have an input field with id "applicantStatus"
+    case "applicantStatus":
       setApplicantStatus(value);
       break;
-    case "skillName": // Assuming you have an input field with id "skillName"
+    case "skillName":
       setSkillName(value);
       break;
-    case "minimumExperience": // Assuming you have an input field with id "minimumExperience"
+    case "minimumExperience":
       setMinimumExperience(value);
       break;
-    case "location": // Assuming you have an input field with id "location"
+    case "location":
       setLocation(value);
       break;
-      case "minimumQualification": // Assuming you have an input field with id "minimumQualification"
+    case "minimumQualification":
       setMinimumQualification(value);
       break;
     default:
       break;
   }
 };
+
  
  
  
   const handleFilterChange = (event) => {
     const { name, checked, value } = event.target;
-    const updatedFilters = [...selectedFilter]; // Copy the existing filters
+    const updatedFilters = [...selectedFilter]; 
  
     if (checked) {
       updatedFilters.push({ name, value });
@@ -235,30 +234,23 @@ const handleTextFieldChange = (e) => {
  
     setSelectedFilter(updatedFilters);
  
-    // Apply filters to applicants based on updatedFilters
+    
     const filteredApplicants = applicants.filter((applicant) => {
       return updatedFilters.every((filter) => {
-        // Implement filtering logic based on filter.name and filter.value
-        // You can use string matching, comparisons, etc.
-        // Example: filter applicant.jobTitle based on filter.name === 'jobTitle' and filter.value
+        
       });
     });
  
-    // Update the displayed applicants in the table
+   
     setApplicants(filteredApplicants);
   };
   useEffect(() => {
-    // ... existing useEffect logic
- 
-    // Add event listeners to filter checkboxes on mount
     filterRef.current.forEach((checkbox) => {
       checkbox.addEventListener('change', handleFilterChange);
     });
  
     return () => {
-      // ... existing cleanup logic
- 
-      // Remove event listeners on unmount
+   
       filterRef.current.forEach((checkbox) => {
         checkbox.removeEventListener('change', handleFilterChange);
       });
@@ -363,7 +355,7 @@ const handleSelectChange = async (e) => {
         console.log("Apply Job ID:", applyJobId);
         if (!applyJobId) {
           console.error("applyjobid is undefined or null for:", selectedApplicant);
-          return null; // Skip this iteration if applyjobid is undefined or null
+          return null; 
         }
 
         const response = await axios.put(
@@ -374,7 +366,6 @@ const handleSelectChange = async (e) => {
 
       const updatedResults = await Promise.all(updatePromises);
 
-      // Filter out null values in case applyjobid was undefined or null
       const filteredResults = updatedResults.filter(result => result !== null);
       
       if (isMounted.current) {
@@ -390,7 +381,7 @@ const handleSelectChange = async (e) => {
         setSelectedApplicants([]);
       }
       
-      //alert(`Status changed to ${newStatus} for ${selectedApplicants.length} applicants`);
+     
       const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
       setSnackbar({ open: true, message: message1, type: 'success' });
       
@@ -402,36 +393,31 @@ const handleSelectChange = async (e) => {
 
  
     const exportCSV = () => {
-      // Extracting headers from the table, excluding the "Schedule Interview" column
+      
       const headers = Array.from(tableref.current.querySelectorAll('thead th')).map(th => th.textContent);
-      // const scheduleInterviewIndex = headers.indexOf('Schedule Interview');
-      // if (scheduleInterviewIndex !== -1) {
-      //   headers.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" header
-      // }
      
-      // Convert headers to uppercase
       const capitalizedHeaders = headers.map(header => header.toUpperCase());
    
-      // Extracting data rows from the table, excluding the "Schedule Interview" column
+      
       const data = Array.from(tableref.current.querySelectorAll('tbody tr')).map(tr => {
         const rowData = Array.from(tr.children).map(td => td.textContent);
-        // rowData.splice(scheduleInterviewIndex, 1); // Remove the "Schedule Interview" column
+       
         return rowData;
       });
    
-      // Adding headers to the data
+     
       data.unshift(capitalizedHeaders);
    
-      // Creating CSV content
+      
       const csvContent = data.map(row => row.join(',')).join('\n');
    
-      // Creating a Blob and creating an anchor element to trigger the download
+      
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
       link.download = 'applicants.csv';
    
-      // Triggering the download
+     
       link.click();
     };
    
@@ -444,7 +430,7 @@ const handleSelectChange = async (e) => {
             <div className="row">
               <div className="col-lg-12 col-md-12">
                 <div className="title-dashboard">
-                {/* <BackButton /> */}
+               
                   <div className="title-dash flex2">All Applicants</div>
                 </div>
               </div>
@@ -493,7 +479,7 @@ const handleSelectChange = async (e) => {
     id="nameFilter"
     checked={filterOptions.nameFilter}
     onChange={handleCheckboxChange}
-    style={{ width: 'auto' }} // Adjust the width of the checkbox
+    style={{ width: 'auto' }} 
   />
   <label className="label" htmlFor="nameFilter">&nbsp;Name</label>
   {filterOptions.nameFilter && (
@@ -615,31 +601,7 @@ const handleSelectChange = async (e) => {
     </>
   )}
 </div>
- 
-{/* <div className="filter-option">
-  <input
-    type="checkbox"
-    id="skillFilter"
-    checked={filterOptions.skillFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="skillFilter">Skill Name</label>
-  {filterOptions.skillFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="skillFilter"
-                      value={filterOptions.skillFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="skillName" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div> */}
+
  
 <div className="filter-option">
   <input
@@ -729,9 +691,9 @@ const handleSelectChange = async (e) => {
                           <th>Job Title</th>
                           <th>Applicant Status</th>
                           <th>Experience</th>
-                          {/* <th>Skill Name</th> */}
+                          
                           <th>Qualification</th>
-                          {/* <th>Location</th> */}
+                         
                           <th>Resume</th>
                         </tr>
                       </thead>
@@ -743,16 +705,11 @@ const handleSelectChange = async (e) => {
   type="checkbox"
   value={application.applyjobid}
   checked={selectedApplicants.includes(application.applyjobid)}
-  onChange={() => handleCheckboxChange2(application.applyjobid)} // Pass only the application ID to the handler function
+  onChange={() => handleCheckboxChange2(application.applyjobid)} 
   name={`applicantCheckbox-${application.applyjobid}`}
 />
                             </td>
-                            {/* <td><Link to={`/viewapplicant/${application.id}`} >View applicant</Link></td> */}
-                            {/* <td>
-  <Link to={`/viewapplicant/${application.id}`} style={{ color: '#ff0000', textDecoration: 'none' }}>
-    View applicant
-  </Link>
-</td> */}
+                           
 <td>
   <Link to={`/viewapplicant/${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
     {application.name}
@@ -773,53 +730,11 @@ const handleSelectChange = async (e) => {
                               </td>
                             <td>{application.jobTitle}</td>
                             <td>{application.applicantStatus}</td>
-                            {/* <td>
-                                  <button
-                                    onClick={() =>
-                                      application.applicantStatus ===
-                                      'Interviewing'
-                                        ? setShowPopup(true)
-                                        : null
-                                    }
-                                    style={{
-                                      border: 'none',
-                                      background: 'none',
-                                      padding: '0',
-                                      cursor:
-                                        application.applicantStatus ===
-                                        'Interviewing'
-                                          ? 'pointer'
-                                          : 'default',
-                                      outline: 'none',
-                                    }}
-                                  >
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width="16"
-                                      height="16"
-                                      viewBox="0 0 16 16"
-                                      className="bi bi-clock"
-                                      fill={
-                                        application.applicantStatus ===
-                                        'Interviewing'
-                                          ? '#3498db'
-                                          : '#d3d3d3'
-                                      }
-                                    >
-                                      <path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0zM9 4a.5.5 0 0 1 1 0v4.5h3a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5V4z" />
-                                      <path d="M7.5 15a.5.5 0 0 1-.5-.5V9a.5.5 0 0 1 1 0v5.5a.5.5 0 0 1-.5.5z" />
-                                    </svg>
-                                  </button>
-                                  <ScheduleInterviewPopup
-                                    show={showPopup}
-                                    handleClose={() => setShowPopup(false)}
-                                    applyjobid={application.applyjobid}
-                                  />
-                                </td> */}
+
                             <td>{application.experience}</td>
-                            {/* <td>{application.skillName}</td> */}
+                           
                             <td>{application.minimumQualification}</td>
-                            {/* <td>{application.location}</td> */}
+                            
                             <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View Resume</Link></td>
                           </tr>
                         ))}

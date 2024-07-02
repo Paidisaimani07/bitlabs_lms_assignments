@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-// import Modal from 'react-bootstrap/Modal';
-// import Form from 'react-bootstrap/Form';
 import { Modal, Form } from "react-bootstrap";
  
  
@@ -132,7 +130,6 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
         } else if (selectedDate <= currentDate) {
           setValidationError((prevErrors) => ({
             ...prevErrors,
-            // timeAndDate: 'Please select a future date and time for the interview.',
             timeAndDate: 'Please select future date and time.',
           }));
         } else {
@@ -226,10 +223,10 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
  
  
           if (!value.trim()) {
-            // updatedValidationErrors[name] = 'Please select a date and time for the interview.';
+          
             updatedValidationErrors[name] = 'Field cannot be empty.';
           } else if (selectedDate <= currentDate) {
-            // updatedValidationErrors[name] = 'Please select a future date and time for the interview.';
+          
             updatedValidationErrors[name] = 'Please select a future date and time.';
           } else {
             updatedValidationErrors[name] = '';
@@ -257,7 +254,7 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
  
  
         case 'modeOfInterview':
-          // updatedValidationErrors[name] = value.trim() ? '' : 'Please select the Mode of Interview.';
+          
           updatedValidationErrors[name] = value.trim() ? '' : 'Field cannot be empty.';
           break;
  
@@ -271,25 +268,6 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
           }
           break;
  
-  //       case 'location':
-  // if (touchedFields[name] && !value.trim()) {
-  //   setValidationError((prevErrors) => ({
-  //     ...prevErrors,
-  //     location: 'Field cannot be empty.',
-  //   }));
-  // } else if (interviewData.modeOfInterview === 'Face-to-Face' && !value.trim()) {
-  //   setValidationError((prevErrors) => ({
-  //     ...prevErrors,
-  //     location: 'Location is required for Face-to-Face interviews.',
-  //   }));
-  // } else {
-  //   const containsOnlyAlphabet = /^[a-zA-Z\s]*$/.test(value);
-  //   setValidationError((prevErrors) => ({
-  //     ...prevErrors,
-  //     location: containsOnlyAlphabet ? '' : 'Location should have only alphabetical characters.',
-  //   }));
-  // }
-  // break;
  
  
  
@@ -344,7 +322,7 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
   return (
 <div>
 <Modal show={show} onHide={handleCloseModal} centered backdrop="static">
-{/* <Modal show={show} onHide={handleClose} centered> */}
+
 <Modal.Header closeButton>
 <Modal.Title style={{ color: 'blue' }}>Schedule Interview</Modal.Title>
 </Modal.Header>
@@ -504,7 +482,7 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
               <button type="button" onClick={handleCloseModal}>
                 Close
 </button>
-{/* <button type="button" onClick={handleClose}>Close</button> */}
+
 </div>
 </Form>
 </Modal.Body>
