@@ -1,31 +1,36 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
-import Typography from '@mui/material/Typography';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import './ModalWrap.css';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const { user } = useUserContext();
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
 
   const handleCloseClick = async () => {
     if (window.confirm("Please close this window only after saving your resume.")) {
       try {
-        // Add a cache-busting parameter to the logout URL
         const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
         const response = await fetch(logoutUrl, {
           method: 'POST',
@@ -34,11 +39,15 @@ const ModalWrapper = ({ isOpen, onClose }) => {
             'Content-Type': 'application/json',
           },
         });
-  
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-  
+
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
+        document.body.appendChild(iframe);
         onClose();
       } catch (error) {
         console.error('There was a problem with the logout request:', error);
@@ -53,7 +62,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       onClose={handleCloseClick}
       fullScreen={true}
       aria-labelledby="responsive-dialog-title"
-      maxWidth="xl" // Ensures the dialog can stretch to full width
+      maxWidth="xl"
       PaperProps={{
         style: {
           width: '100%',
@@ -65,23 +74,26 @@ const ModalWrapper = ({ isOpen, onClose }) => {
           paddingTop: '90px',
         },
       }}
+      BackdropProps={{
+        style: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the backdrop color if needed
+        },
+      }}
     >
       <DialogContent sx={{ padding: 0, position: 'relative' }}>
         {isMobile ? (
           <Button
-            //variant="contained"
             sx={{
               position: 'absolute',
-              textTransform:'capitalize',
+              textTransform: 'capitalize',
               right: 2,
               top: 16,
-              //background: '#FFFFFF',
-              border:'1px solid #F97316',
+              border: '1px solid #F97316',
               borderRadius: '8px',
               color: '#F97316',
               '&:hover': {
-                border:'1px solid #DA4D0B',
-                color:'#DA4D0B'
+                border: '1px solid #DA4D0B',
+                color: '#DA4D0B'
               },
               zIndex: 1,
             }}
@@ -94,16 +106,15 @@ const ModalWrapper = ({ isOpen, onClose }) => {
             onClick={handleCloseClick}
             sx={{
               position: 'absolute',
-              textTransform:'capitalize',
+              textTransform: 'capitalize',
               right: 16,
               top: 9,
-              //background: '#FFFFFF',
-              border:'1px solid #F97316',
+              border: '1px solid #F97316',
               borderRadius: '8px',
               color: '#F97316',
               '&:hover': {
-                border:'1px solid #DA4D0B',
-                color:'#DA4D0B'
+                border: '1px solid #DA4D0B',
+                color: '#DA4D0B'
               },
               zIndex: 1,
             }}
