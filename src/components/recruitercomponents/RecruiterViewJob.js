@@ -26,7 +26,7 @@ function RecruiterViewJob({ selectedJobId }) {
       console.log(jobId);
       const response = await axios.get(
 
-        // `${apiUrl}/viewjob/applicant/viewjob/${selectedJobId}/${user.id}`,
+      
 
         `${apiUrl}/viewjob/recruiter/viewjob/${selectedJobId}`,
         {
@@ -65,13 +65,13 @@ function RecruiterViewJob({ selectedJobId }) {
   }, []);
 
   useEffect(() => {
-    fetchJobDetails(); // Call the function directly when the component mounts
+    fetchJobDetails(); 
   }, [selectedJobId]); 
 
   
   const handleApplyNow = async () => {
     try {
-      // Check the profile ID
+      
       const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -80,7 +80,7 @@ function RecruiterViewJob({ selectedJobId }) {
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
-        // If profile ID is "0", fetch promoted jobs
+        
         navigate('/applicant-basic-details-form');
         return;
       } else {
@@ -95,7 +95,7 @@ function RecruiterViewJob({ selectedJobId }) {
           }
         );
         const { applied } = response.data;
-        //window.alert('Job applied successfully');
+      
         setSnackbar({ open: true, message: 'Job applied successfully', type: 'success' });
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
         setApplied(applied);
@@ -103,7 +103,7 @@ function RecruiterViewJob({ selectedJobId }) {
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
-      //window.alert('Job has already been applied by the applicant');
+      
       setSnackbar({ open: true, message: 'Job has already been applied by the applicant', type: 'error' });
       setApplied(false);
     }
@@ -113,8 +113,7 @@ function RecruiterViewJob({ selectedJobId }) {
     const getStatus = async () => {
       try {
         const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${selectedJobId}`);
-        // Handle the response to update job status as needed
-        // For example:
+        
         setJobStatus(statusResponse.data);
         console.log('Job status:', statusResponse.data);
       } catch (error) {
@@ -130,7 +129,7 @@ function RecruiterViewJob({ selectedJobId }) {
     return formattedDate;
   }
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees / 100000).toFixed(2);
   };
 
   const toggleMenu = () => {
@@ -141,43 +140,28 @@ function RecruiterViewJob({ selectedJobId }) {
     setMenuOpen(false);
   };
 
-//   const handleStatusChange = async (jobId, newStatus) => {
-//     try {
-//       await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
-  
-//       setJobDetails((prevJobDetails) => ({
-//         ...prevJobDetails,
-//         status: newStatus
-//       }));
-  
-//       localStorage.setItem(`jobStatus-${jobId}`, newStatus);
-//       window.alert('Job closed successfully.');
-//       navigate('/recruiter-jobopenings');
-//     } catch (error) {
-//       console.error('Error updating job status:', error);
-//     }
-//   };
+
    
 
 const handleStatusChange = async (jobId, newStatus, action) => {
     try {
       if (action === 'Repost') {
         const response = await axios.post(`${apiUrl}/job/recruiters/cloneJob/${jobId}/${applicantId}`);
-        const message = response.data.message; // Access the message from the response
-       // window.alert(message);
+        const message = response.data.message; 
+       
        setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
       } else {
-        // Handle closing the job as before
+        
         await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
         setJobDetails((prevJobDetails) => ({
           ...prevJobDetails,
           status: newStatus
         }));
         localStorage.setItem(`jobStatus-${jobId}`, newStatus);
-       // window.alert('Job closed successfully.');
+       
         setSnackbar({ open: true, message: 'Job closed successfully.', type: 'success' });
       }
-      //navigate('/recruiter-jobopenings');
+      
     } catch (error) {
       console.error('Error updating job status:', error);
     }
@@ -214,13 +198,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                         <div className="features-job style-2 stc-apply  bg-white">
                           <div className="job-archive-header">
                             <div className="inner-box">
-                              {/* <div className="logo-company">
-                                {jobDetails.logoFile ? (
-                                  <img src={`data:image/png;base64,${jobDetails.logoFile}`} alt="Company Logo" />
-                                ) : (
-                                  <img src="images/logo-company/cty12.png" alt={`Default Company Logo`} />
-                                )}
-                              </div> */}
+                              
                               <div className="box-content">
                                 <h4>
                                   <a href="#">{jobDetails.companyname}</a>
@@ -233,10 +211,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                                     <span className="icon-map-pin"></span>
                                     &nbsp;{jobDetails.location}
                                   </li>
-                                  {/* <li>
-                                    <span className="icon-calendar"></span>
-                                    &nbsp;{formatDate(jobDetails.creationDate)}
-                                  </li> */}
+                                 
                                 </ul>
                             
                                 <div className="button-readmore">
@@ -254,9 +229,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
             Edit Job
           </Link>
           )}
-          {/* <Link onClick={() => handleStatusChange(selectedJobId, jobDetails.status === 'Active' ? 'Inactive' : 'Active')}>
-           {jobDetails.status === 'Active' ? 'Repost Job' : 'Close Job'}
-         </Link> */}
+       
 
 {jobStatus === 'active' ? (
   <Link onClick={() => handleStatusChange(selectedJobId, 'inactive', 'Close')}>
@@ -307,12 +280,9 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                               <Link to={`/appliedapplicantsbasedonjob/${selectedJobId}`} className="custom-link">
                             <button
                               type="button"
-                              // style={{
-                              //   backgroundColor: job.status === 'Inactive' ? '#f2f2f2' : '',
-                              //   color: job.status === 'Inactive' ? '#808080' : ''
-                              // }}
+                              
                               className={`button-status ${jobDetails.status === 'Inactive' ? 'disabled-button' : ''}`}
-                              // disabled={job.status === 'Inactive'}
+                            
                             >
                               View Applicants
                             </button>
@@ -326,7 +296,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                     {jobDetails && (
                       <div className="inner-content">
                         <h5>Full Job Description</h5>
-                        {/* <p>{jobDetails.description}</p> */}
+                        
                         <div className="description-preview" dangerouslySetInnerHTML={{ __html: jobDetails.description }} />
                       </div>
                     )}

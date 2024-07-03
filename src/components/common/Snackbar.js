@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import './Snackbar.css';
 import { Link } from 'react-router-dom';
-import successIcon from '../../images/accept.png'; // Ensure the path is correct
-import errorIcon from '../../images/close.png'; // Ensure the path is correct
+import successIcon from '../../images/accept.png'; 
+import errorIcon from '../../images/close.png';
 
 const Snackbar = ({ message, link, linkText, type, onClose, index }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose(index);
-    }, 5000); // 5 seconds
-
-   // return () => clearTimeout(timer);
+    }, 5000); 
   }, [onClose, index]);
 
   return (
