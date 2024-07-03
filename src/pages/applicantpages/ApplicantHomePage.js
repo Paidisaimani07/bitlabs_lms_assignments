@@ -1,14 +1,12 @@
 import React from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes,Outlet } from 'react-router-dom';
 import { useUserContext } from '../../components/common/UserProvider';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBar';
 import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
-import ApplicantFooter from '../../components/applicantcomponents/ApplicantFooter';
 import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
 import ApplicantViewProfile from '../../components/applicantcomponents/ApplicantViewProfile';
-import { Link, useLocation,useNavigate } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 import ApplicantFindJobs from '../../components/applicantcomponents/ApplicantFindJobs';
 import ApplicantViewJob from '../../components/applicantcomponents/ApplicantViewJob';
