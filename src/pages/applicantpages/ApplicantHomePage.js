@@ -32,9 +32,9 @@ function ApplicantHomePage() {
   const { user } = useUserContext();
   const userId = user.id;
   useEffect(() => {
-    // Check if the current location is already 'applicant-find-jobs'
+    
     if (location.pathname === '/applicant-find-jobs' || location.pathname === '/applicanthome') {
-      return; // Skip the API call if already on 'applicant-find-jobs' or 'applicanthome'
+      return; 
     }
     const checkUserProfile = async () => {
       try {
@@ -49,8 +49,7 @@ function ApplicantHomePage() {
         if (profileId === 0) {
           navigate('/applicant-basic-details-form');
         } else {
-          // Navigate to applicanthome for existing users
-          //navigate('/applicanthome');
+          
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
