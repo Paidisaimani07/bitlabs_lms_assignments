@@ -90,7 +90,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   };
 
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees * 1).toFixed(2); 
   };
 
   const handleCloseSnackbar = (index) => {
@@ -99,7 +99,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
 
   const handleBackClick = (e) => {
     e.preventDefault();
-    navigate(-1); // Navigate back to the previous page
+    navigate(-1); 
   };
 
   return (

@@ -91,21 +91,21 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
     <div>
       {loading ? (
         <div className="dashboard__content">
-        <div className="row mr-0 ml-10">
-          <div className="col-lg-12 col-md-12">
-            <section className="page-title-dashboard">
-              <div className="themes-container">
-                <div className="row">
-                  <div className="col-lg-12 col-md-12">
-                    <div className="title-dashboard">
-                    <Spinner />
+          <div className="row mr-0 ml-10">
+            <div className="col-lg-12 col-md-12">
+              <section className="page-title-dashboard">
+                <div className="themes-container">
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12">
+                      <div className="title-dashboard">
+                        <Spinner />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
+              </section>
+            </div>
           </div>
-        </div>
         </div>
       ) : (
         <div className="dashboard__content">
@@ -116,7 +116,6 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12">
                       <div className="title-dashboard">
-                        {/* <BackButton /> */}
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>

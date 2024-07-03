@@ -129,7 +129,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
             overflow: 'hidden',
           }}
         >
-          <ResumeBuilder /> {/* Include ResumeBuilder component here */}
+          <ResumeBuilder /> 
         </Box>
       </DialogContent>
     </Dialog>

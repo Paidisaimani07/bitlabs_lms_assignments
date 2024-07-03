@@ -84,7 +84,7 @@ function RecruiterForgotPassword() {
           clearInterval(timerInterval);
           setResendButtonDisabled(false);
         }, 60000);
-       // window.alert('OTP Resent successfully');
+      
        setSnackbar({ open: true, message: 'OTP resent successfully', type: 'success' });
       } catch (error) {
         console.error('Error resending OTP:', error);

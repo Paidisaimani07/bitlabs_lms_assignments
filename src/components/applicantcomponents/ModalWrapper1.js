@@ -5,8 +5,14 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
-import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
+import ResumeBuilder from './ResumeBuilder'; 
+import Typography from '@mui/material/Typography';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { apiUrl } from '../../services/ApplicantAPIService';
+
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
@@ -68,35 +74,6 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       onClose();
     }
   };
-
-
-  // const handleCloseClick = async () => {
-  //   if (window.confirm("Please close this window only after saving your resume.")) {
-  //     try {
-  //       const logoutUrl = 'http://localhost:5173/api/auth/logout?_=' + Date.now();
-  //       const response = await fetch(logoutUrl, {
-  //         method: 'POST',
-  //         credentials: 'include',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //       });
-
-  //       if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //       }
-
-  //       const iframe = document.createElement('iframe');
-  //       iframe.style.display = 'none';
-  //       iframe.src = 'http://localhost:5173/dashboard/resumes';
-  //       document.body.appendChild(iframe);
-  //       onClose();
-  //     } catch (error) {
-  //       console.error('There was a problem with the logout request:', error);
-  //       alert('Failed to close. Please try again.');
-  //     }
-  //   }
-  // };
 
   return (
     <Dialog
@@ -171,7 +148,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
             overflow: 'hidden',
           }}
         >
-          <ResumeBuilder /> {/* Include ResumeBuilder component here */}
+          <ResumeBuilder />
         </Box>
       </DialogContent>
     </Dialog>

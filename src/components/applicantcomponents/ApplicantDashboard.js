@@ -39,11 +39,11 @@ const ApplicantDashboard = () => {
         });
         const profileId = profileIdResponse.data;
 
-        // Navigate based on profile ID
+       
         if (profileId === 0) {
-          navigate('/applicant-basic-details-form'); // Navigate to applicant-find-jobs for new users
+          navigate('/applicant-basic-details-form'); 
         } else {
-          setLoading(false); // No need to navigate, stay on this page
+          setLoading(false); 
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
@@ -57,14 +57,14 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Make API call to update status in backend
+ 
         const jwtToken = localStorage.getItem('jwtToken');
         const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-        // Construct requestData
+    
         const newData = {
           identifier: response.data.applicant.email,
           password: response.data.applicant.password,
@@ -78,7 +78,7 @@ const ApplicantDashboard = () => {
       }
     };
     fetchUserData();
-  }, []); // Empty dependency array to run the effect only once
+  }, []);
 
 
   useEffect(() => {
@@ -172,7 +172,7 @@ const ApplicantDashboard = () => {
     fontFamily: 'Plus Jakarta Sans',
     fontSize: '15px',
     fontWeight: '600',
-    // lineHeight: '25px',
+   
   };
 
 
@@ -184,8 +184,7 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
-                  {/* <div className="title-dash flex2">Welcome {user.username}</div> */}
-                  {/* <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : user.username}</div> */}
+                  
                   <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</div>
                 </div>
               </div>
@@ -193,7 +192,7 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="row dash-count">
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
-                  <div className="card" onClick={handleRedirect}>
+                  <div className="card" onClick={handleRedirect} style={{ cursor: "pointer" }}>
                     <div className="container">
                       <div>
                           <span className="icon-bag color-icon-1">
@@ -226,7 +225,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
-                  <div className="card" onClick={handleRedirect1}>
+                  <div className="card" onClick={handleRedirect1} style={{ cursor: "pointer" }}>
                     <div className="container">
                       <div>
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect1}>
@@ -258,7 +257,7 @@ const ApplicantDashboard = () => {
                   </div>
                 </div>
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
-                  <div className="card" onClick={handleRedirect2}>
+                  <div className="card" onClick={handleRedirect2} style={{ cursor: "pointer" }}>
                     <div className="container">
                       <div>
                         <div className="box-icon wrap-counter flex" onClick={handleRedirect2} >
@@ -284,10 +283,9 @@ const ApplicantDashboard = () => {
                 </div>
                 {userData && userData.localResume == true && (
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
-                  <div className="card">
-                    {/*New palet in application dashboard*/}
-                    {/* <div onClick={Buildresume} className="resumecard"> */}
-                    <div className="resumecard">
+                  <div className="card" >
+                   
+                    <div className="resumecard" style={{ cursor: "pointer" }}>
                       <div className="resumecard-content">
                         <div className="resumecard-text">
                           <div className="resumecard-heading">
@@ -299,9 +297,7 @@ const ApplicantDashboard = () => {
                           <div className="resumecard-button">
                             <Link
                               onClick={openModal}
-                              // to="/applicant-resume-builder"
-                              //to="https://resume.bitlabs.in:5173"
-                              // className={`button-link1 ${location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}`}
+                              
                               className={'button-link1'}
                               style={linkStyle}
                               onMouseEnter={() => setIsHovered(true)}
@@ -329,10 +325,9 @@ const ApplicantDashboard = () => {
                 </div>
                 )}
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
-                  <div className="card ">
-                    {/*New palet in application dashboard*/}
-                    {/* <div onClick={Buildresume} className="resumecard"> */}
-                    <div className="resumecard"> 
+                  <div className="card " style={{ cursor: "pointer" }}>
+                  
+                    <div className="resumecard" > 
                       <div className="resumecard-content">
                         <div className="resumecard-text">
                           <div className="resumecard-heading">
@@ -362,8 +357,6 @@ const ApplicantDashboard = () => {
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
               </div>
@@ -375,4 +368,5 @@ const ApplicantDashboard = () => {
     </div>
   );
 };
+
 export default ApplicantDashboard;

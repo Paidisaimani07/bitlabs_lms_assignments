@@ -5,7 +5,7 @@ import { useNavigate, useLocation,useParams  } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
-Modal.setAppElement('#root'); // This is required by react-modal for accessibility
+Modal.setAppElement('#root'); 
 
 const UploadImageComponent = ({ id}) => {
   const [photoFile, setPhotoFile] = useState(null);
@@ -18,7 +18,7 @@ const UploadImageComponent = ({ id}) => {
     const fileExtension = file.name.split('.').pop().toLowerCase();
 
     if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png') {
-      if (file.size < 1048576) { // Check if the file size is less than 1 MB
+      if (file.size < 1048576) { 
         setPhotoFile(file);
         setError('');
       } else {
@@ -56,14 +56,14 @@ const UploadImageComponent = ({ id}) => {
       );
 
       console.log('Photo uploaded successfully:', response.data);
-      //window.alert('Photo uploaded successfully:');
+      
       addSnackbar({ message: 'Photo uploaded successfully', type: 'success' });
       window.location.reload();
-      // Handle the response as needed
+  
 
     } catch (error) {
       console.error('Error uploading photo:', error);
-      // Handle the error as needed
+      
     }
   };
 
@@ -78,7 +78,7 @@ const UploadImageComponent = ({ id}) => {
         id="tf-upload-img"
         type="file"
         name="profile"
-        accept="image/jpeg, image/png" // Accept only JPEG and PNG files
+        accept="image/jpeg, image/png" 
         required=""
         onChange={handleFileSelect}
       />
