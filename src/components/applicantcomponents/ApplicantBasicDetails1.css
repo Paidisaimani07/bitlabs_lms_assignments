@@ -1,10 +1,10 @@
-/* Main component styling */
+
 .component {
   position: relative;
   width: 100%;
   height: 100%;
   background-color: #f3f4f6;
-  /* Other styles for the component */
+  
 }
 
 .top-left-svg {
@@ -31,7 +31,7 @@
 
 .card1 {
   position: relative;
-  padding: 20px 20px 20px; /* Adjust padding to include space for buttons */
+  padding: 20px 20px 20px; 
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   background-color: #ffffff;
@@ -43,7 +43,7 @@
 }
 
 
-/* For large screens (desktops and laptops) */
+
 @media (min-width: 1024px) {
   .card1 {
     margin-top: 20px;
@@ -51,7 +51,7 @@
   }
 }
 
-/* For large screens (desktops and laptops) */
+
 @media (min-width: 1440px) {
   .card1 {
     margin-top: auto;
@@ -59,7 +59,6 @@
   }
 }
 
-/* For medium screens (tablets) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .card1 {
     width: 80%;
@@ -67,7 +66,7 @@
   }
 }
 
-/* For small screens (mobile devices) */
+
 @media (max-width: 767px) {
   .card1 {
     margin-top: 40px;
@@ -120,14 +119,13 @@
   }
 }
 
-/* Tablets */
 @media (min-width: 768px) and (max-width: 1023px) {
   .stepper-container {
     width: 90%;
   }
 }
 
-/* Desktops/Laptops */
+
 @media (min-width: 1024px) and (max-width: 1365px) {
   .stepper-container {
     width: 90%;
@@ -183,7 +181,6 @@
 
 
 
-/* Media query for small screens */
 @media (max-width: 600px) {
   .form-button {
     width: 100%;
@@ -191,7 +188,6 @@
   }
 }
 
-/* Media query for very small screens */
 @media (max-width: 400px) {
   .form-button {
     width: 100%;
@@ -199,7 +195,7 @@
   }
 }
 
-/* Media query for tablets */
+
 @media (min-width: 600px) and (max-width: 900px) {
   .form-button {
     width: 100%;
@@ -208,7 +204,7 @@
   }
 }
 
-/* Media query for tablets */
+
 @media (min-width: 990px) and (max-width: 1024px) {
   .form-button {
     width: 100%;
@@ -217,7 +213,7 @@
   }
 }
 
-/* Media query for tablets */
+
 @media (min-width: 1030px) and (max-width: 1440px) {
   .form-button {
     width: 100%;
@@ -246,7 +242,7 @@
   margin-bottom: 20px;
 }
 
-/* Media query for small screens */
+
 @media (max-width: 600px) {
   .form-button1 {
     width: 100%;
@@ -254,7 +250,7 @@
   }
 }
 
-/* Media query for very small screens */
+
 @media (max-width: 400px) {
   .form-button1 {
     width: 100%;
@@ -262,7 +258,7 @@
   }
 }
 
-/* Media query for tablets */
+
 @media (min-width: 600px) and (max-width: 900px) {
   .form-button1 {
     width: 100%;
@@ -347,7 +343,7 @@
   gap: 20px;
 }
 
-/* For screens smaller than 768px (e.g., mobile) */
+
 @media (max-width: 767px) {
   .first .input-form {
     flex-direction: column;
@@ -360,7 +356,7 @@
   }
 }
 
-/* For screens larger than or equal to 768px (e.g., laptop, tablet) */
+
 @media (min-width: 1024px) {
   .first .input-form {
     flex-direction: row;
@@ -414,7 +410,7 @@
   box-sizing: border-box;
 }
 
-/* Media query for tablet and larger screens */
+
 @media (min-width: 768px) {
   .input-container {
     flex-direction: row;
@@ -459,11 +455,9 @@
   font-weight: 700;
   line-height: 28px;
 }
-
 .pl-16 {
   padding-left: 16px !important;
 }
-
 .display-flex {
   display: flex;
 }

@@ -4,14 +4,14 @@ import { useLocation } from 'react-router-dom';
  
 const ViewApplicantResume = () => {
   const location = useLocation();
-  const [resumeUrl, setResumeUrl] = useState(null); // Remove type annotation
+  const [resumeUrl, setResumeUrl] = useState(null); 
  
   useEffect(() => {
-    // Extract ID from the URL path
+  
     const pathnameParts = location.pathname.split('/');
     const userId = pathnameParts[pathnameParts.length - 1];
  
-    // Fetch resume PDF using the extracted ID
+  
     fetch(`http://localhost:8081/resume/pdf/${userId}`)
       .then(response => {
         if (response.ok) {
@@ -20,7 +20,7 @@ const ViewApplicantResume = () => {
         throw new Error('Network response was not ok.');
       })
       .then(blob => {
-        // Convert the blob to a URL
+        
         const resumeBlobUrl = URL.createObjectURL(blob);
         setResumeUrl(resumeBlobUrl);
       })
@@ -28,7 +28,7 @@ const ViewApplicantResume = () => {
         console.error('There was a problem fetching the resume:', error);
       });
  
-    // Clean up the URL object when component unmounts
+    
     return () => {
       if (resumeUrl) {
         URL.revokeObjectURL(resumeUrl);
@@ -67,9 +67,8 @@ const ViewApplicantResume = () => {
   );
 };
  
-// Add prop types validation
 ViewApplicantResume.propTypes = {
-  resumeUrl: PropTypes.string, // Assuming resumeUrl is a string
+  resumeUrl: PropTypes.string, 
 };
  
 export default ViewApplicantResume;
