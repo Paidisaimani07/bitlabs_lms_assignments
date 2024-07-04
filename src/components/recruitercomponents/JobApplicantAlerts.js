@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import BackButton from '../common/BackButton';
 export default function JobApplicantAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();

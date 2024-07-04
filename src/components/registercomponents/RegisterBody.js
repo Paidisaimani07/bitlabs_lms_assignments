@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
@@ -521,7 +521,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
 
   return (
-    <div>
+    <div className='full-page'>
       <a id="scroll-top" />
     <section className="account-section1">
       <div className="tf-container1">
@@ -579,7 +579,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                             setRecruiterEmailError('');
                           }}
                         />
-                        {recruiterEmailError && <div className="error-message">{recruiterEmailError}</div>}
+                        {recruiterEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{recruiterEmailError}</div>}
                       </div>
                       <div className="ip">
                     
@@ -598,7 +598,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       {showPassword ? <FaEye /> : <FaEyeSlash />}
     </div>
                         </div>
-                        {recruiterPasswordError && <div className="error-message">{recruiterPasswordError}</div>}
+                        {recruiterPasswordError && <div className="error-message" style={{ textAlign: 'left' }}>{recruiterPasswordError}</div>}
                       </div>
                    
                       <button type="submit" class="custom-button">Login</button>
@@ -630,7 +630,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                     {employerNameError && <div className="error-message">{employerNameError}</div>}
+                     {employerNameError && <div className="error-message" style={{ textAlign: 'left' }}>{employerNameError}</div>}
                   </div>
                   <div className="ip2">
                     
@@ -645,7 +645,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                     {employerEmailError && <div className="error-message">{employerEmailError}</div>}
+                     {employerEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{employerEmailError}</div>}
                   </div>
                   <div className="ip2">
                     
@@ -660,7 +660,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                    {employerMobileNumberError && <div className="error-message">{employerMobileNumberError}</div>}
+                    {employerMobileNumberError && <div className="error-message" style={{ textAlign: 'left' }}>{employerMobileNumberError}</div>}
                   </div>
                   <div className="ip2">
                     
@@ -680,7 +680,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         {showPassword ? <FaEye /> : <FaEyeSlash />}
       </div>
                     </div>
-                    {employerPasswordError && <div className="error-message">{employerPasswordError}</div>}
+                    {employerPasswordError && <div className="error-message" style={{ textAlign: 'left' }}>{employerPasswordError}</div>}
                   </div>
                   {recruiterOTPSent && !recruiterOTPVerified ? (
   <div>

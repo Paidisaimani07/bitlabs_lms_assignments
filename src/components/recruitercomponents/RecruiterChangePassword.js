@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { Link } from 'react-router-dom';
-import BackButton from '../common/BackButton';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
  
 function RecruiterChangePassword() {

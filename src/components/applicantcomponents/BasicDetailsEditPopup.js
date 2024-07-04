@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import Snackbar from '../common/Snackbar';
