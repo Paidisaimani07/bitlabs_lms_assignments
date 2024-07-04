@@ -97,10 +97,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     setSnackbar({ open: false, message: '', type: '', link: '', linkText: '' });
   };
 
-  const handleBackClick = (e) => {
-    e.preventDefault();
-    navigate(-1); 
-  };
+  
 
   return (
     <div>

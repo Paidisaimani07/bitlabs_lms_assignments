@@ -1,9 +1,8 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
-import { useNavigate, useLocation,useParams  } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 import { Typeahead } from 'react-bootstrap-typeahead';

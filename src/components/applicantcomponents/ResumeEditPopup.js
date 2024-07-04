@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import { useUserContext } from '../common/UserProvider';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); 
@@ -12,10 +12,7 @@ Modal.setAppElement('#root');
 const ResumeEditPopup = ({ id, resumeFileName }) => {
   const [resumeFile, setResumeFile] = useState(null);
   const [fileName, setFileName] = useState(resumeFileName || ''); 
-  const [modalIsOpen, setModalIsOpen] = useState(true);
   const [error, setError] = useState('');
-  const [requestData, setRequestData] = useState(null);
-  const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
   const { user } = useUserContext();

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
  
 const OTPVerification1 = ({ email, onOTPVerified, onOTPSendSuccess, onOTPSendFail, recruiterOTPVerifyingInProgress, setRecruiterOTPVerifyingInProgress }) => {
   const [otp, setOTP] = useState('');
