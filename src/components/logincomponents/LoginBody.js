@@ -1,4 +1,4 @@
-import React, { useState,useEffect} from 'react';
+import React, { useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
@@ -25,9 +25,6 @@ function LoginBody({ handleLogin }) {
   const [activeTab, setActiveTab] = useState('Candidate');
   const [candidateEmailError, setCandidateEmailError] = useState('');
   const [candidatePasswordError, setCandidatePasswordError] = useState('');
-  const [recruiterEmailError, setRecruiterEmailError] = useState('');
-  const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
- const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  const [message, setMessage] = useState('Welcome Back');

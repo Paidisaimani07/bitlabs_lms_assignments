@@ -3,8 +3,6 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import $ from 'jquery';
-import ScheduleInterviewPopup from './ScheduleInterviewPopup';
-import { CSVLink } from 'react-csv';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';

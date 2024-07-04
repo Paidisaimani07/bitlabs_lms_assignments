@@ -8,16 +8,11 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; 
 
-import { useNavigate } from 'react-router-dom';
-
-
-import { useUserContext } from '../common/UserProvider';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const navigate =useNavigate();
-  const { user } = useUserContext();
+
 
   const handleCloseClick = async () => {
     if (window.confirm("Please close this window only after saving your resume.")) {

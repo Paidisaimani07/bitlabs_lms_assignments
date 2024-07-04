@@ -1,6 +1,6 @@
 
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 
 const clearUserData = () => {
   try {

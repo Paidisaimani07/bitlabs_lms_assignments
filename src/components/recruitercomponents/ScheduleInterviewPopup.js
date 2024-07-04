@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { Modal, Form } from "react-bootstrap";
  
  
