@@ -34,8 +34,17 @@ function LoginBody({ handleLogin }) {
  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  const [message, setMessage] = useState('Welcome Back');
  const { user } = useUserContext();
+ const [utmSource, setUtmSource] = useState("Self");
 
- 
+ useEffect(() => {
+  const searchParams = new URLSearchParams(location.search);
+  const utmSourceValue = searchParams.get('utm_source');
+
+  if (utmSourceValue) {
+    setUtmSource(utmSourceValue);
+    
+  }
+}, [location.search]);
  
 const login = useGoogleLogin({
   // clientId: "435586738795-9tuq57be4e92djg8d8ol1sn1h6a9mm6c.apps.googleusercontent.com", // Pass the clientId here
@@ -56,6 +65,7 @@ const login = useGoogleLogin({
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
       const response1 = await axios.post(loginEndpoint, {
         email: email1,
+        utmSource : utmSource,
       });
      
       console.log(response1);
@@ -471,12 +481,14 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
      return;
    }
    try {
+     
      setCandidateRegistrationInProgress(true);
      const response = await axios.post(`${apiUrl}/applicant/saveApplicant`, {
        name: candidateName,
        email: candidateEmail1,
        mobilenumber: candidateMobileNumber,
        password: candidatePassword1,
+       utmSource: utmSource,
      });
     if (response.data === 'Email is already registered.') {
       // window.alert('Email is already registered.');
