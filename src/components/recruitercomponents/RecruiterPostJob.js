@@ -1,10 +1,9 @@
 import React from 'react';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import BackButton from '../common/BackButton';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
 
@@ -23,10 +22,9 @@ function RecruiterPostJob() {
   const [industryType, setIndustryType] = useState("");
   const [minimumQualification, setMinimumQualification] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [skillsError, setSkillsError] = useState('');
-  const [errors, setErrors] = useState({});
  
-  const [selectedSkills, setSelectedSkills] = useState([]);
+ 
+ 
   const [skillsRequired, setSkillsRequired] = useState([]);
  
   const [description, setDescription] = useState("");

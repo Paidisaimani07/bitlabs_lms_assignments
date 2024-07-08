@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
-import { useNavigate, useLocation,useParams  } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); 
 
 const UploadImageComponent = ({ id}) => {
   const [photoFile, setPhotoFile] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(true);
   const [error, setError] = useState('');
   const [snackbars, setSnackbars] = useState([]);  
 

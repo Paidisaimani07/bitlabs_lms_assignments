@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import './ModalWrap.css';
 
+
 const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));

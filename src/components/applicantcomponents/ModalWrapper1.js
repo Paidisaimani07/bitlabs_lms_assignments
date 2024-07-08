@@ -6,16 +6,14 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; 
-import Typography from '@mui/material/Typography';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import { apiUrl } from '../../services/ApplicantAPIService';
 
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+
 import './ModalWrap.css';
 
 const ModalWrapper = ({ isOpen, onClose }) => {

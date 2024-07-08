@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
  
 function formatDateTime(dateTimeArray) {
