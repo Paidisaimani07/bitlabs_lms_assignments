@@ -45,6 +45,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   }
 
   const convertToLakhs = (amountInRupees) => {
+
     return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
 
@@ -68,6 +69,8 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       );
 
       if (response.status === 200) {
+        // Update the jobs state to remove the job immediately
+        setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
         addSnackbar({ message: 'Job removed', type: 'success' });
         await fetchSavedJobs(); // Fetch jobs again after removal
       }
@@ -114,6 +117,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12">
                       <div className="title-dashboard">
+
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>
