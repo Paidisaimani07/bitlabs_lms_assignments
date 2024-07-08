@@ -1,11 +1,14 @@
 import React from 'react';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; 
+
 import axios from 'axios';
+import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
   const [jobTitle, setJobTitle] = useState("");
@@ -19,20 +22,20 @@ function RecruiterPostJob() {
   const [industryType, setIndustryType] = useState("");
   const [minimumQualification, setMinimumQualification] = useState("");
   const [specialization, setSpecialization] = useState("");
-  const [skillsError, setSkillsError] = useState('');
-  const [errors, setErrors] = useState({});
-  // const [skillsRequired, setSkillsRequired] = useState([
-  //   { skillName: "", minimumExperience: "" },
-  // ]);
-  const [selectedSkills, setSelectedSkills] = useState([]);
+ 
+ 
+ 
   const [skillsRequired, setSkillsRequired] = useState([]);
-  // const [jobHighlights, setJobHighlights] = useState("");
+ 
   const [description, setDescription] = useState("");
   const [uploadDocument, setUploadDocument] = useState(null);
   const [image, setImage] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [fileName, setFileName] = useState("No selected file")
+
+  const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
   const user = user1.user;
   const handleSubmit = (e) => {
@@ -52,7 +55,7 @@ function RecruiterPostJob() {
       minimumQualification,
       specialization,
       skillsRequired: formattedSkillsRequired,
-      // jobHighlights,
+      
       description,
       uploadDocument,
     };
@@ -65,7 +68,8 @@ function RecruiterPostJob() {
       .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
       .then((response) => {
         console.log('API Response:', response.data);
-        window.alert('job saved successfully');
+       
+       setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
         clearForm();
       })
       .catch((error) => {
@@ -90,6 +94,7 @@ function RecruiterPostJob() {
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
       alert("Sorry, you can't post the job until your profile is verified");
+     
       window.location.href = '/recruiter-my-organization';
     }
   }, [approvalStatus]);
@@ -104,7 +109,7 @@ function RecruiterPostJob() {
     description: '',
     skills: '',
     skillsRequired: [],
-    // jobHighlights: '',
+    
     description: '',
     uploadDocument: '',
     specialization: '',
@@ -121,7 +126,6 @@ function RecruiterPostJob() {
     setMinimumQualification('');
     setSpecialization('');
     setSkillsRequired([]);
-    // setJobHighlights('');
     setDescription('');
     setUploadDocument(null);
     setFileName('No selected file');
@@ -138,12 +142,12 @@ function RecruiterPostJob() {
     }
     if (!minimumExperience.trim()) {
       
-     // alert(minimumExperience);
+    
       setMinimumExperience('');
       isValid = false;
       errors.minimumExperience = 'Minimum experience is required.';
     } else {
-      //alert(minimumExperience);
+      
       errors.minimumExperience = '';
     }
     if (!maximumExperience.trim()) {
@@ -197,7 +201,7 @@ function RecruiterPostJob() {
       errors.skills = 'Skills are required';
       isValid = false;
     } else {
-      errors.skills = ""; // Clear the error message if skills are filled
+      errors.skills = ""; 
     }
 
 
@@ -217,23 +221,16 @@ function RecruiterPostJob() {
       }));
       return isValid;
     }
-    // if (jobHighlights && jobHighlights.trim().length < 3) {
-    //   isValid = false;
-    //   setFormErrors((prevErrors) => ({
-    //     ...prevErrors,
-    //     jobHighlights: 'Job highlights must be at least 3 characters long.',
-    //   }));
-    //   return isValid;
-    // }
-    if (!description.trim() || description.trim().length < 15) {
-      errors.description = 'Description is required and must be at least 15 characters long.';
-      isValid = false;
-    } else {
-      errors.description = '';
-    }
-    setFormErrors(errors);
-    return isValid;
-  };
+  
+      if (!description.trim() || description.trim().length < 15) {
+        errors.description = 'Description is required and must be at least 15 characters long.';
+        isValid = false;
+      } else {
+        errors.description = '';
+      }
+      setFormErrors(errors);
+      return isValid;
+    };
 
   const handleJobTitleChange = (e) => {
     setJobTitle(e.target.value);
@@ -244,7 +241,7 @@ function RecruiterPostJob() {
   };
   const handleMinimumExperienceChange = (e) => {
     const value = e.target.value;  
-    // Check if the input value contains only numeric characters
+    
     if (/^\d*$/.test(value)) {
       setMinimumExperience(value);
       setFormErrors((prevErrors) => ({
@@ -261,7 +258,7 @@ function RecruiterPostJob() {
   };
   const handleMaximumExperienceChange = (e) => {
     const value = e.target.value;  
-    // Check if the input value contains only numeric characters
+  
     if (/^\d*$/.test(value)) {
       setMaximumExperience(value);
       setFormErrors((prevErrors) => ({
@@ -278,7 +275,7 @@ function RecruiterPostJob() {
   };
   const handleMaxSalaryChange = (e) => {
     const value = e.target.value;
-    // Check if the input value contains only numeric characters and at most one decimal point
+    
     if (/^\d*\.?\d*$/.test(value)) {
       setMaxSalary(value);
       setFormErrors((prevErrors) => ({
@@ -296,10 +293,6 @@ function RecruiterPostJob() {
   
   const handleMinSalaryChange = (e) => {
     const value = e.target.value;
-  
-  //  console.log('Input value:', value);
-  
-    // Check if the input value contains only numeric characters and at most one decimal point
     if (/^\d*\.?\d*$/.test(value)) {
       setMinSalary(value);
       setFormErrors((prevErrors) => ({
@@ -350,21 +343,14 @@ function RecruiterPostJob() {
     }));
   };
 
-  // const handleJobHighlightsChange = (e) => {
-  //   setJobHighlights(e.target.value);
-  //   setFormErrors((prevErrors) => ({
-  //     ...prevErrors,
-  //     jobHighlights: '',
-  //   }));
-  // };
-  const handleDescriptionChange = (e) => {
-    setDescription(e.target.value);
+  
+  const handleDescriptionChange = (content) => {
+    setDescription(content);
     setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      description: '',
-    }));
-  }; 
-
+         ...prevErrors,
+          description: '',
+         }));
+  };
   const getSpecializationOptions = (qualification) => {
     switch (qualification) {
       case 'B.Tech':
@@ -378,7 +364,7 @@ function RecruiterPostJob() {
           'Information Technology(IT)',
           'Chemical Engineering',
           'Biotechnology Engineering',
-          // Add other specializations as needed
+          
         ];
       case 'MCA':
         return [
@@ -394,7 +380,7 @@ function RecruiterPostJob() {
           'Network Administration',
           'Cyber Security',
           'IT Project Management',
-          // Add other specializations as needed
+         
         ];
       case 'Degree':
         return [
@@ -405,7 +391,7 @@ function RecruiterPostJob() {
           'Bachelor of Science (B.Sc) Electronics',
           'Bachelor of Science (B.Sc) Chemistry',
           'Bachelor of Commerce (B.Com)',
-          // Add other specializations as needed
+          
         ];
       case 'Intermediate':
         return ['MPC', 'BiPC', 'CEC', 'HEC'];
@@ -431,9 +417,9 @@ function RecruiterPostJob() {
           'Pharmacy',
           'Medical Laboratory Technology',
           'Radiology and Imaging Technology',
-          // Add other specializations as needed
+          
         ];
-      // Add cases for other qualifications
+      
       default:
         return [];
     }
@@ -471,16 +457,6 @@ function RecruiterPostJob() {
   const skillsOptionsWithStructure = skillsOptions.map(skill => ({ skillName: skill }));
 
 
-  // const handleSkillsChange = (selected) => {
-  //   const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
-  //   setSkillsRequired(skillsWithNames);
-
-  //   if (skillsWithNames.length > 0) {
-  //     setSkillsError('');
-  //   } else {
-  //     setSkillsError('Please select at least one skill.');
-  //   }
-  // };
 
   const handleSkillsChange = (selected) => {
     const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
@@ -489,7 +465,7 @@ function RecruiterPostJob() {
     if (skillsWithNames.length > 0) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        skills: '', // Clear the error message for skills
+        skills: '', 
       }));
     } else {
       setFormErrors((prevErrors) => ({
@@ -513,7 +489,8 @@ function RecruiterPostJob() {
         setFileName(file.name);
         setImage(URL.createObjectURL(file));
       } else {
-        alert("Please select a valid PDF or DOC file.");
+        
+        setSnackbar({ open: true, message: 'Please select a valid PDF or DOC file.', type: 'error' });
         e.target.value = null;
       }
     }
@@ -526,6 +503,20 @@ function RecruiterPostJob() {
     }
 
   };
+
+   const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+  
+  const handleFocus = () => {
+    setIsActive(true);
+  };
+
+  const handleBlur = () => {
+    setIsActive(false);
+
+  };
+
   return (
     <div>
       <div className="dashboard__content">
@@ -562,21 +553,24 @@ function RecruiterPostJob() {
                         )}
                       </fieldset>
                     </div>
-                    <div className="text-editor-wrap">
-                      <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                      <div className="text-editor-main">
-                        <textarea
-                          className="input-form"
-                          placeholder="Job Description at least 15 characters"
-                          value={description}
-                          onChange={handleDescriptionChange}
-                          required
-                        />
-                        {formErrors.description && (
-                          <div className="error-message">{formErrors.description}</div>
-                        )}
-                      </div>
-                    </div>
+                   <div className="text-editor-wrap">
+                          <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
+                         <div className="text-editor-main">
+                         <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
+                           <ReactQuill 
+                            theme="snow" 
+                            value={description} 
+                            onChange={handleDescriptionChange}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                           required
+                         /> 
+                       </div>
+                   {formErrors.description && (
+                  <   div className="error-message">{formErrors.description}</div>
+                    )}
+                  </div>
+                 </div>
                     <div className="row">
                       <div className="col-lg-6 col-md-6">
                         <div id="item_category" className="dropdown titles-dropdown info-wd">
@@ -658,7 +652,7 @@ function RecruiterPostJob() {
                             <option value="Degree">Degree</option>
                             <option value="Intermediate">Intermediate</option>
                             <option value="Diploma">Diploma</option>
-                            {/* Add other qualifications as needed */}
+                          
                           </select>
                           {formErrors.minimumQualification && (
                             <div className="error-message">{formErrors.minimumQualification}</div>
@@ -708,7 +702,7 @@ function RecruiterPostJob() {
                             <option value="Thanjavur">Thanjavur</option>
                             <option value="Pondicherry">Pondicherry</option>
                             <option value="Vijayawada">Vijayawada</option>
-                            {/* Add other locations as needed */}
+                          
                           </select>
                           {formErrors.location && (
                             <div className="error-message">{formErrors.location}</div>
@@ -730,28 +724,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      {/* <div className="col-lg-6 col-md-12">
-                        <div id="item_1" className="dropdown titles-dropdown info-wd">
-                          <label className="title-user fw-7">Job Highlights</label> */}
-                      {/* <input type="text"
-                         className="input-form"
-                         placeholder="Job key points"
-                         value={jobHighlights}
-                         onChange={handleJobHighlightsChange}
-                       
-                  /> */}
-                      {/* <textarea
-                            className="input-form"
-                            placeholder="Job Highlights"
-                            value={jobHighlights}
-                            onChange={handleJobHighlightsChange}
-                          />
-                          {formErrors.jobHighlights && (
-                            <div className="error-message">{formErrors.jobHighlights}</div>
-                          )}
-
-                        </div>
-                      </div> */}
+                      
                       <div className="col-lg-6 col-md-12">
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">
@@ -789,7 +762,7 @@ function RecruiterPostJob() {
                             inputProps={{
                               className: 'input-form placeholder-light-grey',
                             }}
-                            allowNew={false} // Prevent new entries
+                            allowNew={false} 
                             filterBy={(option, props) =>
                               option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
                             }
@@ -816,6 +789,15 @@ function RecruiterPostJob() {
           </form>
         </section>
       </div>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   )
 }

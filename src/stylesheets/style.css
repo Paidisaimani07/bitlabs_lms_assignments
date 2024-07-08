@@ -1,4 +1,3 @@
-
 html {
   overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
@@ -98,7 +97,7 @@ video {
   font-family: inherit;
   font-size: 100%;
   font-weight: inherit;
-  font-style: inherit;
+  /* font-style: inherit; */
   vertical-align: baseline;
   margin: 0;
   padding: 0;
@@ -229,7 +228,7 @@ input::-moz-focus-inner {
 body {
   font: 14px/25px "Plus Jakarta Sans", sans-serif;
   font-weight: 400;
-  background:#fff;
+  background:#eff2f6;
   color: #202020;
 }
 
@@ -391,7 +390,7 @@ input[type="color"] {
   color: #000000;
   background-color: transparent;
   height: 50px;
-  padding: 12px 30px;
+  /* padding: 12px 30px; */
   border-radius: 0;
   -webkit-transition: all 0.3s ease-in-out;
   -moz-transition: all 0.3s ease-in-out;
@@ -540,22 +539,17 @@ input[type="color"],
 
 .tf-container.ct2 {
   width: 1830px;
+ 
 }
 
-/* #header {
-  width: 100%;
-  background-color: #fff;
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-  height: 80px;
-} */
+
 
 #header {
   width: 100%;
   background-color: #fff;
   text-align: center;
   border-bottom: 1px solid #e5e5e5;
-  height: 80px;
+  height: 90px;
   position: fixed;
   top: 0;
   left: 0;
@@ -594,7 +588,8 @@ input[type="color"],
 }
 
 .sticky-area-wrap .header-ct-left .logo .site-logo {
-  width: 200px;
+  width: auto !important;
+  height:57px !important;
   display: block;
   margin-left:45px;
 }
@@ -610,8 +605,15 @@ input[type="color"],
   .sticky-area-wrap .header-ct-left .logo .site-logo {
       width: 160px; 
       display: block;
-      margin-left: 0px !important;
+      margin-left: -13px !important;
   }
+
+  @media only screen and (min-width: 320px) and (max-width: 700px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px !important;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:35px;
     margin-top: -14px;
@@ -621,36 +623,55 @@ input[type="color"],
 
 @media only screen and (min-width: 700px) and (max-width: 1400px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
+      
+      width:auto !important;
+      height: 57 !important;
       display: block;
-      margin-left: 0px;
+      margin-left: -4px;
   }
+}
+  @media only screen and (min-width: 700px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 0px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:45px;
     margin-top: -10px;
   
   }
 }
-@media only screen and (min-width: 900px) and (max-width: 1400px) {
+@media only screen and (min-width: 900px) and (max-width: 1500px) {
   .sticky-area-wrap .header-ct-left .logo .site-logo {
-      width: 160px; 
-      display: block;
-      margin-left: 52px;
+      width: auto !important;
+      height : 57px !important;
+     
+      display: inline-block;
+      margin-left: 15px !important;
   }
+}
+
+  @media only screen and (min-width: 900px) and (max-width: 1400px) {
+    .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+        width: 160px; 
+        display: block;
+        margin-left: 52px;
+    }
   .sticky-area-wrap .header-ct-left .logo .para1 {
     margin-left:65px;
     margin-top: -10px;
   
   }
 }
-
+}
 .custom-input {
   color: #8a8787 !important;
 }
 
 .sticky-area-wrap .header-ct-left .logo {
   flex-shrink: 0;
-  /* margin-right: 18px; */
+ 
 }
 
 .sticky-area-wrap .header-ct-left .categories {
@@ -686,10 +707,10 @@ input[type="color"],
 }
 
 .flat-dashboard-setting {
-  margin: 10px; 
-  padding: 10px;
+  margin: 0px; 
+  padding: 10px 10px 10px 0px;
   border-radius: 8px;
-  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  */
+  
 }
 
 .menu-list {
@@ -761,6 +782,9 @@ input[type="color"],
   margin-left: 8px;
 }
 
+.header-style2 .logo .profile-site-logo {
+  max-width: 149px;
+}
 .header-style2 .sticky-area-wrap .header-ct-right .bell {
   margin-right: 28px;
 }
@@ -1329,10 +1353,7 @@ input[type="color"],
   font-weight: 500;
 }
 .sticky-area-wrap .header-ct-right {
-  /* flex-grow: 1;
-  justify-content: flex-end;
-  display: flex;
-  align-items: center; */
+
   flex-grow: 1;
   justify-content: flex-end;
   display: flex;
@@ -1503,6 +1524,15 @@ input[type="color"],
       padding-right: 10px; 
         height: auto; 
   }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
+    width: 115px!important;
+    display: block!important;
+  }
+
+  .menu-mobile-popup .mobile-header .profile-site-logo {
+    width: 150px;
+  }
   .nav-filter .nav-mobile {
     display: none;
     position: relative;
@@ -1525,11 +1555,18 @@ input[type="color"],
   margin-left: 2px!important;
   }
   #header .sticky-area-wrap .header-ct-left .logo .site-logo {
+    width: auto !important;
+    height: 45px !important;
+    display: block!important;
+  }
+
+  #header .sticky-area-wrap .header-ct-left .logo .profile-site-logo {
     width: 115px!important;
     display: block!important;
   }
   #header .sticky-area-wrap .header-ct-right .account {
     margin-right: 0.5px!important;
+    padding-right:0px;
 }
  
  
@@ -1544,12 +1581,13 @@ input[type="color"],
 
 .sticky-area-wrap .header-ct-right .account {
   display: flex;
-  gap: 9px;
+  /* gap: 9px; */
   align-items: center;
   padding-right: -50px;
   position: relative;
   cursor: pointer;
   height: 80px;
+white-space: nowrap;
 }
 
 .sticky-area-wrap .header-ct-right.st-1 .account {
@@ -3257,7 +3295,7 @@ input[type="color"],
   cursor: pointer;
 }
 
-/* Common styles for all screen sizes */
+
 .filterContainer select {
   padding: 10px;
   font-size: 18px;
@@ -3271,36 +3309,36 @@ input[type="color"],
 }
  
 .filterContainer {
-  /* text-align: right;*/
+ 
 }
  
-/* Media query for screens between 320px and 1794px width */
+
 @media screen and (min-width: 320px) and (max-width: 1794px) {
   .filterContainer select {
-      /* Adjust styles for this screen size range */
-      max-width: 90PX; /* Adjust the max-width as needed for responsiveness */
-      margin-right: 74px; /* Adjust the margin as needed for spacing */
+      
+      max-width: 90PX; 
+      margin-right: 74px; 
   }
 }
 .disabled-status {
-  color: #808080; /* Gray color */
-  /* Add any additional styles for disabled status here */
+  color: #808080; 
+  
 }
 
 .disabled-button {
-  background-color: #e3d915; /* Replace with your preferred light color code for disabled button */
-  color: #585353; /* Replace with your preferred text color for disabled button */
-  
+  background-color: #e3d915;
+  color: #585353;
 }
+
 .inactive-job {
-  /* Add your styles for inactive jobs here */
-  background-color: #BFCDDB; /* Replace with your preferred light color code for inactive jobs */
-  color: #e7e2e2c3; /* Replace with your preferred text color for inactive jobs */
+  background-color: #BFCDDB;
+  color: #e7e2e2c3;
 }
+
 .active-job {
-  /* Add your styles for active jobs here */
-  color: #00ff00; /* Replace with your preferred color code for active jobs */
+  color: #00ff00;
 }
+
 
 .filter-option input[type="text"],
 .filter-option input[type="password"],
@@ -3316,7 +3354,7 @@ input[type="color"],
 .filter-option input[type="search"],
 .filter-option input[type="tel"],
 .filter-option input[type="color"] {
-    width: 75px; /* Adjust width as needed */
+    width: 75px; 
     font-size: 14px;
     border: 1px solid #e5e5e5;
     color: #000000;
@@ -3328,7 +3366,7 @@ input[type="color"],
 }
  
 .filter-option select {
-    width: 100px; /* Adjust width as needed */
+    width: 100px; 
     font-size: 14px;
     border: 1px solid #e5e5e5;
     color: #000000;
@@ -3377,13 +3415,13 @@ input[type="color"],
 }
  
 .reset-button1:hover {
-  border-color: #c2570c; /* Darker Green */
+  border-color: #c2570c; 
   color: #c2570c;
 }
 
 .apply-button1:hover
 {
-  background-color: #F97316; /* Darker Green */
+  background-color: #F97316; 
   color: white;
 }
 
@@ -3418,21 +3456,20 @@ input[type="color"],
   font-size: 16px;
   font-family: sans-serif;
   border-color: #F97316;
-  width: 150px;
+  width: 155px;
   stroke: 1px;
 
 }
-/* Style options */
 .dashboard__content .status-select option {
-  background-color: white; /* Set background color to white */
-  color: black; /* Set text color */
+  background-color: white;
+  color: black;
 }
 
-/* Hover effect on options */
 .dashboard__content .status-select option:hover {
-  background-color: #F97316; /* Change background color to orange on hover */
-  color: white; /* Change text color to white on hover */
+  background-color: #F97316;
+  color: white;
 }
+
  
 .dashboard__content .export-buttonn {
   background-color: #FFFFFF;
@@ -3445,13 +3482,13 @@ input[type="color"],
   border-color: #F97316;
   font-family: sans-serif;
   width: 150px;
-  /* stroke: 1px; */
+ 
 
 }
 .dashboard__content .status-select:hover,
 .dashboard__content .export-buttonn:hover {
  
-  color:#c2570c; /* White text color on hover */
+  color:#c2570c; 
   border-color: #c2570c;
 }
 .profile-status-toggle .job-looking-status {
@@ -3471,8 +3508,7 @@ input[type="color"],
 
 @media screen and (max-width: 465px) {
   .sub-account .profile-status-toggle span {
-    font-size: 14px; /* Decrease the font size to 14px */
-    /* line-height: 24px; */
+    font-size: 14px;
   } 
 }
 
@@ -3482,6 +3518,7 @@ input[type="color"],
       max-width: 60%;
   }
 }
+
 
 @media screen and (max-width: 465px) {
   .sticky-area-wrap .header-ct-right .account .sub-account-item a {
@@ -3497,15 +3534,170 @@ input[type="color"],
   align-items: center;
   display: flex;
 }
-/* .back-to-previous .back-link { 
-  font-size: 12px;
- 
-  font-family: "Plus Jakarta Sans", sans-serif;
-  color: #0073dd;
-  font-weight: bold;
-  align-items: center;
+
+
+.sticky-area-wrap .header-ct-right .account .username-text {
+  color: #5F5F5F;
+  font-family: "Plus Jakarta Sans" !important;
+  font-size: 15px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  text-transform: capitalize !important;
+  margin-right:7px;
+}
+
+@media screen and (min-width: 991px) {
+  .dash-icon1 {
+    width: 18px !important;
+    height: 23px !important;
+  }
+}
+
+#header .sticky-area-wrap .header-ct-left .logo .site-profilelogo{
+  max-width: 100%;
+  display:block !important;
+  margin-left : -5px;
+}
+
+@media (min-width: 1301px) {
+  #header .sticky-area-wrap .header-ct-left #hamburger {
+      display: none !important;
+  }
+}
+
+@media (max-width: 1200px) {
+ .username-text {
+      display: none !important;
+      
+  }
+}
+
+.dash-icon svg {
+  fill: #929698 !important; 
+}
+
+.tf-effect.active .dash-icon svg {
+  fill: #F46F16 !important;
+}
+
+.tf-effect.active .dash-icon svg:hover {
+  fill: #F46F16 !important;
+}
+.tf-effect {
   display: flex;
-  align-items: center;
+  align-items: center; 
+  text-decoration: none; 
+}
+
+@media (min-width: 1400px) {
+    .sticky-area-wrap {
+        margin-top: 5px;
+    }
+	}
+	
+@media (max-width: 550px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (max-width: px) {
+  .left-menu {
+    width: 100% !important;
+    margin:0px !important;
+    border-radius:0 !important;
+  }
+}
+
+@media (min-width: 551px) and (max-width: 1290px) {
+  .left-menu {
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+}
+
+.userName-title{
+color: #333;
+font-family: "Plus Jakarta Sans";
+font-size: 30px;
+font-style: normal;
+font-weight: 600;
+line-height: 25px; 
+text-transform: capitalize;
+margin-left: 15px;
+display: block;
+}
+
+
+
+@media (max-width: 768px) {
+  .dash-count .card {
+    margin: 0 10px 20px 20px !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .userName-title {
+    display: none;
+  }
+}
+
+
+
+.resumecard-heading .heading1 {
+color: #000;
+font-family: "Plus Jakarta Sans";
+font-size: 20px !important;
+font-style: normal !important;
+font-weight: 600 !important;
+line-height: 25px !important; 
+}
+
+#sidebar-menu .dash-titles{
+  color: #272727;
+
+font-family: "Plus Jakarta Sans";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 25px; 
+text-transform: capitalize;
+}
+
+@media only screen and (max-width: 767px) {
+.resumecard-heading .heading1 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important;
+  padding-top: 16px; 
+}
+}
+
+.resumecard-heading .heading2 {
+  color: #000;
+  font-family: "Plus Jakarta Sans";
+  font-size: 20px !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  line-height: 25px !important; 
+  }
   
-} */
- 
+   
+  @media only screen and (max-width: 767px) {
+  .resumecard-heading .heading2 {
+    color: #000;
+    font-family: "Plus Jakarta Sans";
+    font-size: 20px !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    line-height: 25px !important;
+    padding-top: 12px; 
+  }
+  }

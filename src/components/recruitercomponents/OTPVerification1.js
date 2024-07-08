@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
  
 const OTPVerification1 = ({ email, onOTPVerified, onOTPSendSuccess, onOTPSendFail, recruiterOTPVerifyingInProgress, setRecruiterOTPVerifyingInProgress }) => {
   const [otp, setOTP] = useState('');
   const [verificationError, setVerificationError] = useState('');
-  const [otpVerified, setOTPVerified] = useState(false); // New state
-  const [otpResendTimer, setOTPResendTimer] = useState(60); // 2 minutes timer
+  const [otpVerified, setOTPVerified] = useState(false); 
+  const [otpResendTimer, setOTPResendTimer] = useState(60); 
   const [resendButtonDisabled, setResendButtonDisabled] = useState(true);
   const handleVerifyOTP = async () => {
     try {

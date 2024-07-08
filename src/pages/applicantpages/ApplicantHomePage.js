@@ -1,14 +1,12 @@
 import React from 'react';
 import axios from 'axios';
-import { BrowserRouter as Router, Route, Routes,Outlet } from 'react-router-dom';
 import { useUserContext } from '../../components/common/UserProvider';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBar';
 import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
-import ApplicantFooter from '../../components/applicantcomponents/ApplicantFooter';
 import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
 import ApplicantViewProfile from '../../components/applicantcomponents/ApplicantViewProfile';
-import { Link, useLocation,useNavigate } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 import ApplicantFindJobs from '../../components/applicantcomponents/ApplicantFindJobs';
 import ApplicantViewJob from '../../components/applicantcomponents/ApplicantViewJob';
@@ -22,6 +20,8 @@ import ApplicantResume from '../../components/applicantcomponents/ApplicantResum
 import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
 import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
+
+
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
   const [selectedJobId, setSelectedJobId] = useState('');
@@ -30,9 +30,9 @@ function ApplicantHomePage() {
   const { user } = useUserContext();
   const userId = user.id;
   useEffect(() => {
-    // Check if the current location is already 'applicant-find-jobs'
+    
     if (location.pathname === '/applicant-find-jobs' || location.pathname === '/applicanthome') {
-      return; // Skip the API call if already on 'applicant-find-jobs' or 'applicanthome'
+      return; 
     }
     const checkUserProfile = async () => {
       try {
@@ -47,8 +47,7 @@ function ApplicantHomePage() {
         if (profileId === 0) {
           navigate('/applicant-basic-details-form');
         } else {
-          // Navigate to applicanthome for existing users
-          //navigate('/applicanthome');
+          
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
@@ -124,7 +123,6 @@ function ApplicantHomePage() {
      {activeRoute === 'profile' && <ApplicantUpdateProfile />}
      {activeRoute === 'viewprofile' && <ApplicantViewProfile />}
      {activeRoute === 'editprofile' && <ApplicantEditProfile />}
-     
      {activeRoute === 'viewjob' && (<ApplicantViewJob selectedJobId={selectedJobId} /> )}
      {activeRoute === 'appliedjobs' && <ApplicantAppliedJobs setSelectedJobId={setSelectedJobId}/>}
      {activeRoute === 'savedjobs' && <ApplicantSavedJobs setSelectedJobId={setSelectedJobId} />}

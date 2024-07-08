@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
  
 function formatDateTime(dateTimeArray) {
@@ -41,7 +40,7 @@ function RecruiterApplicantInterviews() {
       .catch((error) => {
         console.error('Error fetching job details:', error);
       });
-  }, [user.id]); // Replace with the actual user identifier
+  }, [user.id]); 
  
   const todayApplicants = applicants.filter(applicant => {
     const [year, month, day, hour, minute] = applicant.timeAndDate;
@@ -51,7 +50,7 @@ function RecruiterApplicantInterviews() {
     return interviewTimestamp >= todayTimestamp && interviewTimestamp < todayTimestamp + 24 * 60 * 60 * 1000;
   });
  
-  // Filter applicants for this week
+ 
   const thisWeekApplicants = applicants.filter(applicant => {
     const [year, month, day, hour, minute] = applicant.timeAndDate;
     const interviewTimestamp = new Date(year, month - 1, day, hour, minute).getTime();
@@ -62,7 +61,7 @@ function RecruiterApplicantInterviews() {
     return interviewTimestamp >= startOfWeekTimestamp && interviewTimestamp < startOfWeekTimestamp + 7 * 24 * 60 * 60 * 1000;
   });
  
-  // Filter applicants for this month
+  
   const thisMonthApplicants = applicants.filter(applicant => {
     const [year, month, day, hour, minute] = applicant.timeAndDate;
     const interviewTimestamp = new Date(year, month - 1, day, hour, minute).getTime();
@@ -73,7 +72,7 @@ function RecruiterApplicantInterviews() {
   });
  
   useEffect(() => {
-    // Update filtered applicants based on the selected option
+    
     switch (filterOption) {
       case 'today':
         setFilteredApplicants(todayApplicants);
@@ -85,7 +84,7 @@ function RecruiterApplicantInterviews() {
         setFilteredApplicants(thisMonthApplicants);
         break;
       default:
-        setFilteredApplicants(applicants); // 'all' option or default
+        setFilteredApplicants(applicants); 
     }
   }, [filterOption, todayApplicants, thisWeekApplicants, thisMonthApplicants, applicants]);
  

@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
 import { Link, useLocation } from 'react-router-dom';
 import Postjobimg from '../../images/user/avatar/Postjobimg.png';
@@ -182,7 +182,7 @@ function RecruiterDashboard() {
       >
         Active Jobs
       </h4>
-                {/* <h4 className="title-count">Active Jobs</h4> */}
+               
               </div>
             </div>
             <div className="box-icon wrap-counter flex" onClick={allapplicants}>
@@ -227,68 +227,15 @@ function RecruiterDashboard() {
       >
         Applicants
       </h4>
-                {/* <h4 className="title-count">Applicants</h4> */}
+               
               </div>
             </div>
-            {/* <div className="box-icon wrap-counter flex">
-              <div className="icon style3">
-                <span className="icon-bag">
-                  <svg
-                    width={38}
-                    height={43}
-                    viewBox="0 0 38 43"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M31.0769 25.4044H21.8774C22.6365 23.1266 23.04 21.2093 23.1065 19.5746C23.2634 15.718 21.4425 14.1916 19.8873 13.5894C19.8223 13.5638 19.7546 13.5457 19.6855 13.5352C18.4805 13.3448 18.0515 13.9118 17.7672 14.5524L17.7299 14.6364C17.6883 14.7285 17.6611 14.8264 17.6493 14.9267C17.2647 18.2166 15.8599 21.3036 13.6318 23.7546V42.134C13.8804 42.225 14.1342 42.3008 14.392 42.3608C14.4618 42.3773 14.5332 42.3861 14.6049 42.3871C15.375 42.3953 16.293 42.3995 17.3517 42.3995C18.4078 42.3995 19.6035 42.3953 20.9306 42.3871H29.5972C30.1039 42.3872 30.6016 42.2527 31.0392 41.9973C31.4769 41.7419 31.8389 41.3749 32.0882 40.9337C32.3374 40.4925 32.465 39.993 32.4579 39.4863C32.4507 38.9796 32.3091 38.4839 32.0475 38.0499C32.6259 37.6118 33.0159 36.9699 33.1383 36.2546C33.2607 35.5394 33.1063 34.8043 32.7065 34.1987C33.2678 33.7227 33.6238 33.0485 33.7004 32.3165C33.7769 31.5845 33.5681 30.8512 33.1174 30.2694C33.5127 29.8675 33.7803 29.3578 33.8867 28.8042C33.9931 28.2507 33.9336 27.6781 33.7156 27.1583C33.4975 26.6385 33.1307 26.1947 32.6613 25.8827C32.1918 25.5708 31.6406 25.4045 31.0769 25.4049V25.4044ZM11.7085 8.90458C11.6502 8.72507 11.5416 8.56606 11.3956 8.44648C11.2496 8.3269 11.0723 8.25177 10.8849 8.23003L8.19749 7.92085L7.07365 5.46217C6.99554 5.2902 6.86957 5.14436 6.71079 5.04209C6.55201 4.93981 6.36713 4.88542 6.17826 4.88542C5.98939 4.88542 5.80451 4.93981 5.64573 5.04209C5.48695 5.14436 5.36098 5.2902 5.28288 5.46217L4.15903 7.92085L1.47173 8.23003C1.28425 8.25155 1.1069 8.32651 0.960823 8.44597C0.814741 8.56544 0.706076 8.72437 0.647772 8.90385C0.589467 9.08333 0.58398 9.27579 0.631963 9.45829C0.679947 9.6408 0.779379 9.80567 0.918417 9.93327L2.91033 11.7626L2.37408 14.4136C2.33704 14.5985 2.3538 14.7901 2.42237 14.9657C2.49094 15.1413 2.60845 15.2935 2.76094 15.4044C2.91344 15.5152 3.09453 15.5799 3.28272 15.5909C3.47092 15.602 3.65832 15.5587 3.8227 15.4664L6.17801 14.1366L8.53382 15.4664C8.69815 15.5592 8.88566 15.6027 9.07403 15.5919C9.26241 15.5811 9.4437 15.5164 9.59634 15.4055C9.74898 15.2946 9.86652 15.1421 9.93497 14.9663C10.0034 14.7904 10.0199 14.5986 9.98244 14.4137L9.44619 11.7627L11.4381 9.93335C11.577 9.80582 11.6763 9.64106 11.7242 9.45868C11.7722 9.2763 11.7667 9.084 11.7084 8.90466L11.7085 8.90458ZM37.3546 8.90458C37.4129 9.0839 37.4185 9.2762 37.3706 9.45858C37.3227 9.64095 37.2234 9.80572 37.0845 9.93327L35.0924 11.7626L35.6287 14.4136C35.6661 14.5986 35.6496 14.7903 35.5812 14.9662C35.5127 15.142 35.3952 15.2944 35.2426 15.4053C35.09 15.5162 34.9087 15.581 34.7203 15.5918C34.532 15.6026 34.3445 15.5591 34.1801 15.4664L31.8248 14.1365L29.4693 15.4664C29.305 15.5591 29.1175 15.6027 28.9291 15.5918C28.7408 15.581 28.5595 15.5163 28.4068 15.4054C28.2542 15.2945 28.1367 15.142 28.0682 14.9662C27.9998 14.7904 27.9833 14.5986 28.0207 14.4136L28.557 11.7626L26.5651 9.93327C26.426 9.80567 26.3266 9.6408 26.2786 9.45829C26.2306 9.27579 26.2361 9.08333 26.2944 8.90385C26.3527 8.72437 26.4614 8.56544 26.6075 8.44597C26.7536 8.32651 26.9309 8.25155 27.1184 8.23003L29.8049 7.92085L30.9292 5.46217C31.0073 5.29021 31.1332 5.14439 31.292 5.04212C31.4508 4.93984 31.6356 4.88546 31.8245 4.88546C32.0133 4.88546 32.1982 4.93984 32.3569 5.04212C32.5157 5.14439 32.6416 5.29021 32.7197 5.46217L33.8441 7.92085L36.5307 8.23003C36.7182 8.25173 36.8955 8.32684 37.0415 8.44643C37.1875 8.56602 37.2961 8.72505 37.3543 8.90458H37.3546ZM25.6275 5.21467C25.5692 5.03494 25.4606 4.87567 25.3146 4.75566C25.1686 4.63565 24.9914 4.55992 24.8037 4.53741L21.3441 4.14267L19.8966 0.972771C19.8176 0.80177 19.6913 0.656958 19.5327 0.55546C19.374 0.453963 19.1896 0.400024 19.0012 0.400024C18.8129 0.400024 18.6285 0.453963 18.4698 0.55546C18.3111 0.656958 18.1848 0.80177 18.1059 0.972771L16.6582 4.14243L13.1987 4.53717C13.0113 4.55915 12.8342 4.63442 12.6884 4.75403C12.5425 4.87365 12.434 5.0326 12.3758 5.21202C12.3175 5.39144 12.3119 5.5838 12.3597 5.76629C12.4075 5.94877 12.5067 6.11372 12.6454 6.24156L15.2102 8.5977L14.5197 12.0102C14.4823 12.1951 14.4989 12.3869 14.5674 12.5626C14.6359 12.7384 14.7534 12.8907 14.906 13.0016C15.0587 13.1124 15.2399 13.1771 15.4282 13.1879C15.6165 13.1987 15.804 13.1552 15.9683 13.0625L19.0012 11.3517L22.0341 13.0626C22.1984 13.1553 22.3858 13.1988 22.5741 13.188C22.7624 13.1772 22.9436 13.1125 23.0962 13.0017C23.2488 12.8908 23.3664 12.7385 23.4349 12.5627C23.5034 12.387 23.5199 12.1953 23.4826 12.0104L22.7922 8.59786L25.3571 6.24156C25.4959 6.11431 25.5952 5.94984 25.6432 5.76774C25.6912 5.58563 25.6858 5.39357 25.6278 5.21443L25.6275 5.21467ZM11.663 25.5825C11.4897 25.3069 11.2493 25.0797 10.9643 24.9222C10.6793 24.7647 10.3591 24.682 10.0335 24.6819H3.23887C2.7281 24.6824 2.23836 24.8854 1.87714 25.2465C1.51591 25.6077 1.3127 26.0973 1.31209 26.6081V40.4723C1.31252 40.9832 1.51563 41.4732 1.87685 41.8346C2.23807 42.196 2.7279 42.3993 3.23887 42.4H10.0335C10.359 42.3998 10.6792 42.3172 10.9641 42.1598C11.2491 42.0025 11.4895 41.7755 11.663 41.5V25.5825ZM3.80186 28.2978C3.80186 28.0367 3.90557 27.7863 4.09018 27.6017C4.27479 27.4171 4.52517 27.3134 4.78625 27.3134H5.50871C5.76979 27.3134 6.02017 27.4171 6.20478 27.6017C6.38939 27.7863 6.4931 28.0367 6.4931 28.2978C6.4931 28.5589 6.38939 28.8093 6.20478 28.9939C6.02017 29.1785 5.76979 29.2822 5.50871 29.2822H4.78633C4.65705 29.2822 4.52904 29.2568 4.4096 29.2073C4.29016 29.1578 4.18163 29.0853 4.09021 28.9939C3.99879 28.9025 3.92628 28.794 3.8768 28.6745C3.82732 28.5551 3.80186 28.4271 3.80186 28.2978Z"
-                      fill="#14A077"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <div className="content style3">
-              <h3>{contJobHires}</h3>
-                <h4 className="title-count">Hires</h4>
-              </div>
-            </div> */}
-            {/* <div className="box-icon wrap-counter flex" onClick={interviews}>
-              <div className="icon style4">
-                <span className="icon-bag">
-                  <svg
-                    width={36}
-                    height={48}
-                    viewBox="0 0 36 48"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M34.3496 0H2.34998C1.92564 0 1.51868 0.168569 1.21862 0.468623C0.918569 0.768678 0.75 1.17564 0.75 1.59998V46.3994C0.749887 46.7009 0.834958 46.9963 0.99541 47.2515C1.15586 47.5068 1.38517 47.7115 1.6569 47.8421C1.92863 47.9727 2.23173 48.0239 2.53128 47.9897C2.83082 47.9555 3.11462 47.8374 3.34997 47.649L18.3498 35.6476L33.3496 47.6474C33.5848 47.8357 33.8685 47.9538 34.1679 47.9881C34.4673 48.0223 34.7703 47.9712 35.0419 47.8408C35.3136 47.7104 35.5429 47.506 35.7035 47.2509C35.8641 46.9959 35.9494 46.7008 35.9496 46.3994V1.59998C35.9496 1.17564 35.781 0.768678 35.4809 0.468623C35.1809 0.168569 34.7739 0 34.3496 0Z"
-                      fill="#FFB321"
-                    />
-                  </svg>
-                </span>
-              </div>
-              <div className="content">
-              <h3> {countInterviews}</h3>
-              <h4
-        className="title-count"
-        onClick={interviews}
-        style={{ cursor: "pointer" }}
-      >
-        Interviews
-      </h4>
-                
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
     </div>
     {/*New Change In the Dash Board*/}
-    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center" }} onClick={Postajob}>
+    <div className="box-icon1 wrap-counter" style={{ display: "flex", alignItems: "center", marginLeft: '25px', width: '75%' }} onClick={Postajob}>
       
     <div>
     <h2 className="heading">Find the right candidate</h2>
@@ -332,96 +279,9 @@ function RecruiterDashboard() {
 
 
   </section>
-  {/* <section className="flat-dashboard-applicants">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12">
-              <div className="applicants bg-white">
-                <h3 className="title-appli">Today Interviews</h3>
-                <div className="table-content">
-                {todayApplicants.length > 0 ? (
-                  <div className="wrap-applicants table-container-wrapper">
-                    <table className="table-responsive">
-                      <thead>
-                        <tr>
-                          <th>Candidates</th>
-                          <th>Job Title</th>
-                          <th>Interview Date and Time</th>
-                          <th>Location</th>
-                          
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {todayApplicants.map((interview) => (
-                          <tr key={interview.id} className="file-delete">
-                            <td style={{ paddingBottom: '10px' }}>
-                                 {interview.name}
-                          
-                            </td>
-                            <td style={{ paddingBottom: '10px' }}> <h6>{interview.jobTitle}</h6></td>
-                            <td>{formatDateTime(interview.timeAndDate)}</td>
-                            <td className="map color-4">{interview.location}</td>
-                            
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ): (
-                  <p align="center">No today interviews are available.</p>
-                )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
+ 
       <br />
-  {/* <section className="flat-dashboard-applicants">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12">
-              <div className="applicants bg-white">
-                <h3 className="title-appli">Upcoming Interviews</h3>
-                <div className="table-content">
-                {applicants.length > 0 ? (
-                  <div className="wrap-applicants table-container-wrapper">
-                    <table className="table-responsive">
-                      <thead>
-                        <tr>
-                          <th>Candidates</th>
-                          <th>Job Title</th>
-                          <th>Interview Date and Time</th>
-                          <th>Location</th>
-                          
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {applicants.map((interview) => (
-                          <tr key={interview.id} className="file-delete">
-                            <td>
-                                 {interview.name}
-                          
-                            </td>
-                            <td> <h6>{interview.jobTitle}</h6></td>
-                            <td>{formatDateTime(interview.timeAndDate)}</td>
-                            <td className="map color-4">{interview.location}</td>
 
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                              ) : (
-                                <p align="center">No upcoming interviews are available.</p>
-                              )}
-                  
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
 <br />
 </div>
 

@@ -6,6 +6,7 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import { useNavigate } from "react-router-dom";
+import Snackbar from '../common/Snackbar';
 
 function ApplicantChangePassword() {
   const { user } = useUserContext();
@@ -16,6 +17,7 @@ function ApplicantChangePassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const [showConfirmedPassword, setShowConfirmedPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({
     oldPassword: '',
@@ -84,26 +86,32 @@ function ApplicantChangePassword() {
     try {
       const response = await axios.post(`${apiUrl}/applicant/authenticateUsers/${user.id}`, formData);
       if (response.data === 'Password updated and stored') {
-        window.alert('Password Changed Successfully');
+      
+       setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
       }else if(response.data==='your new password should not be same as old password'){
-        window.alert('New password should not be same as old password.');
+
+        setSnackbar({ open: true, message: 'New password should not be same as old password.', type: 'error' });
       } else {
-        window.alert('Password change failed. Old password is wrong.');
-        // window.alert('Password change failed. New password should not be same as Old password.');
+       
+        setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
+      
       }
-    } /*catch (error) {
-      console.error('Error resetting password:', error);
-      window.alert('Error resetting password');
-    }*/
+    } 
   catch (error) {
       console.error('Password change failed. Old password is wrong.:', error);
-      window.alert('Password change failed. Old password is wrong.');
+    
+      setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
     }
   };
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     return passwordRegex.test(password);
   };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+  };
+
   return (
     <div>
       <>
@@ -113,7 +121,7 @@ function ApplicantChangePassword() {
         <div className="row">
           <div className="col-lg-12 col-md-12">
             <div className="title-dashboard">            
-                {/* <BackButton /> */}
+               
               <div className="title-dash flex2">Change Password</div>
             </div>
           </div>
@@ -125,7 +133,7 @@ function ApplicantChangePassword() {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="change-password bg-white">
-                    {/* <form action="https://themesflat.co/html/jobtex/dashboard/dashboard.html"> */}
+                   
                     <form action="#">
                       <div className="form-password">
                         <div className="inner info-wd">
@@ -211,6 +219,15 @@ function ApplicantChangePassword() {
           <br></br>
         </div>
       </>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
 }

@@ -19,15 +19,13 @@ import RecruiterForgotPasswordPage from './pages/recruiterpages/RecruiterForgotP
 import PrivacyPolicy from './components/common/PrivacyPolicy';
 import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
-import Recruiterviewapplicant from './components/recruitercomponents/Recruiterviewapplicant';
-import AppliedApplicantsBasedOnJobs from './components/recruitercomponents/AppliedApplicantsBasedOnJobs';
-
-
+import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+  
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
@@ -43,6 +41,8 @@ function App() {
     }
     setCheckingAuth(false);
   }, []);
+
+
   return (
     <div>
       <UserProvider>
@@ -50,6 +50,7 @@ function App() {
           <p>Loading...</p>
         ) : (
           <Router>
+            
             <Routes>
               <Route path="/" element={<IndexPage />} />
               <Route path="/find-jobs" element={<IndexPage />} />
@@ -83,7 +84,7 @@ function App() {
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
-                <Route path="/applicant-basic-details-form" element={<ApplicantHomePage />} />
+                <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-postjob" element={<RecruiterHomePage />} />

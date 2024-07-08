@@ -1,14 +1,18 @@
-import React, { useState,useEffect} from 'react';
+import React, { useState} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import { useGoogleLogin } from '@react-oauth/google'; // Import GoogleLoginButton
-import jwt_decode from "jwt-decode";
+import { useGoogleLogin } from '@react-oauth/google'; 
 import OTPVerification from '../applicantcomponents/OTPVerification';
-import logoCompany1 from '../../images/bitlabs-logo.png';
- 
+import Background from '../../images/user/avatar/Backgroundimage.png';
+import logo from '../../images/user/avatar/bitlabslogo.svg';
+
+import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
+import Snackbar from '../common/Snackbar';
+
+
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidatePassword, setCandidatePassword] = useState('');
@@ -21,14 +25,15 @@ function LoginBody({ handleLogin }) {
   const [activeTab, setActiveTab] = useState('Candidate');
   const [candidateEmailError, setCandidateEmailError] = useState('');
   const [candidatePasswordError, setCandidatePasswordError] = useState('');
-  const [recruiterEmailError, setRecruiterEmailError] = useState('');
-  const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
- const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
+ const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+ const [message, setMessage] = useState('Welcome Back');
+ const { user } = useUserContext();
+
  
  
 const login = useGoogleLogin({
-  // clientId: "435586738795-9tuq57be4e92djg8d8ol1sn1h6a9mm6c.apps.googleusercontent.com", // Pass the clientId here
+
   onSuccess: async (response) => {
     try {
       console.log('First API');
@@ -51,7 +56,7 @@ const login = useGoogleLogin({
       console.log(response1);
       if (response1.status === 200) {
         setErrorMessage('');
-        const userData = response1.data; // Change `response` to `response1`
+        const userData = response1.data; 
         console.log('This is response: ', userData);
         console.log('This is token: ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
@@ -71,11 +76,42 @@ const login = useGoogleLogin({
         handleLogin();
  
         setUser(userData);
-        setUserType(userType1); // Change `userData.userType` to `userType1`
+        setUserType(userType1); 
         console.log('Login successful', userData);
- 
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
+        const userId = userData.id;
+        
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+
+        let resume;
+        try {
+         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
+       } catch (error) { 
+         resume=error.response.status;
+       }
+       
+       if (profileId !== 0 && resume === 404) {
+        console.log('checking ',jwtToken);
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicant-basic-details-form/3');
+      }
+       else if (profileId === 0 || resume === 404) {
+        console.log('checking ',jwtToken);
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicant-basic-details-form/1');
+       }
+      else{
+
+        localStorage.setItem('jwtToken', userData.data.jwt);
+        navigate('/applicanthome');
+        
+      }
+  
       }
     } catch (err) {
       console.log(err);
@@ -92,6 +128,9 @@ const login = useGoogleLogin({
     setErrorMessage('');
   };
   let userType1;
+ 
+
+
   const handleCandidateSubmit = async (e) => {
     e.preventDefault();
     if (!isCandidateFormValid()) {
@@ -130,25 +169,46 @@ const login = useGoogleLogin({
         setUser(userData);
         setUserType(userData.userType);
         console.log('Login successful', userData);
+        const userId = userData.id;
+
+         // Check the profile ID
+         const jwtToken = localStorage.getItem('jwtToken');
+         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+           headers: {
+             Authorization: `Bearer ${jwtToken}`,
+           },
+         });
+         const profileId = profileIdResponse.data;
+         let resume;
+         try {
+          const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
+        } catch (error) { 
+          resume=error.response.status;
+        }
+        if (profileId !== 0 && resume === 404) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form/3');
+        }
+         else if (profileId === 0 || resume === 404) {
+          console.log('checking ',jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+           navigate('/applicant-basic-details-form/1');
+         }
+       else{
        
-        // console.log("candidateOTPSent:", candidateOTPSent); // Add this line
-        // console.log("candidateOTPVerified:", candidateOTPVerified); // Add this line
- 
-        // if (candidateOTPSent && candidateOTPVerified) {
-        //   await handleSubmit(); // Trigger registration after OTP verification
-        //   return; // Exit the function to prevent further execution
-        // }
- 
-        // Navigate to the applicant home page
-        
-        navigate('/applicant-find-jobs');
-        //navigate('/applicanthome');
-            }
- 
-    } catch (error) {
+
+        localStorage.setItem('jwtToken', userData.data.jwt);
+         navigate('/applicanthome');
+       }
+      }     
+
+    }
+    
+    catch (error) {
       console.log(error.response.data);
       if(error.response.data==="Incorrect password") {
-        setErrorMessage('enter a correct password or password is incorrect try again');
+        setErrorMessage('Incorrect password.');
         console.error('login failed');
       }
       else if(error.response.data==="No account found with this email address") {
@@ -190,18 +250,7 @@ const login = useGoogleLogin({
     if (!password.trim()) {
       return 'Password is required.';
     }
-    // if (password.length < 6) {
-    //   return 'Password must be at least 6 characters long.';
-    // }
-    // if (!/[A-Z]/.test(password)) {
-    //   return 'Password must contain at least one uppercase letter.';
-    // }
-    // if (!/[^A-Za-z0-9]/.test(password)) {
-    //   return 'Password must contain at least one special character (non-alphanumeric).';
-    // }
-    // if (/\s/.test(password)) {
-    //   return 'Password cannot contain spaces.';
-    // }
+   
     return '';
   };
  
@@ -210,15 +259,11 @@ const login = useGoogleLogin({
   const [candidateEmail1, setCandidateEmail1] = useState('');
   const [candidateMobileNumber, setCandidateMobileNumber] = useState('');
   const [candidatePassword1, setCandidatePassword1] = useState('');
- 
-//  const [errorMessage, setErrorMessage] = useState('');
  const [allErrors, setAllErrors] = useState(false);
 const [candidateNameError, setCandidateNameError] = useState('');
 const [candidateEmailError1, setCandidateEmailError1] = useState('');
 const [candidateMobileNumberError, setCandidateMobileNumberError] = useState('');
 const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
- 
-//  const [showPassword, setShowPassword] = useState(false);
  const [candidateOTPSent, setCandidateOTPSent] = useState(false);
  const [candidateOTPVerified, setCandidateOTPVerified] = useState(false);
  const [candidateOTPVerifyingInProgress, setCandidateOTPVerifyingInProgress] = useState(false);
@@ -227,12 +272,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
  const [candidateRegistrationInProgress, setCandidateRegistrationInProgress] = useState(false);
  const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
  const [resendOtpMessage, setResendOtpMessage] = useState('');
-//  const handleTogglePassword = () => {
-//    setShowPassword(!showPassword);
-//  };
-//  const handleTabClick = (tab) => {
-//    setActiveTab(tab);
-//  };
+
  const handleSendOTP = async () => {
    if (!isFormValid1()) {
      setAllErrors(true);
@@ -245,69 +285,65 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
      console.log("email is:", candidateEmail1);
      setCandidateOTPSent(true);
      setCandidateOTPSendingInProgress(false);
-    //  if (response.data === "Email already registered recruiter"){
+    
       if (response.data === "Email is already registered as a Recruiter."){
        setCandidateOTPSent(false);
    
-       window.alert('Email already registered as recruiter, please try to login');
+      
+      setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
       }
-      // if(response.data === ('Email already registered as applicant')){
+      
         if(response.data === ('Email is already registered as an Applicant.')){
        setCandidateOTPSent(false);
    
-       window.alert('email already exists, please provide a new email ID');
+  
+      setSnackbar({ open: true, message: 'Email already exists,Please provide a new email ID', type: 'error' });
       }
-      // if(response.data === "Mobile number already existed in recruiter"){
+      
         if(response.data === "Mobile number is already registered as a Recruiter."){
        setCandidateOTPSent(false);
-   
-       window.alert('Mobile number already existed as recruiter');
+  
+       
+       setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
       }
-      // if(response.data === 'Mobile number already existed in applicant'){
+      
         if(response.data === 'Mobile number is already registered as an Applicant.'){
        setCandidateOTPSent(false);
    
-       window.alert('Mobile number already existed as candidate');
+      
+       setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
       }
    } catch (error) {
-     console.error('Error sending OTP:', error);
+     console.error('Error sending OTP:', error.response.data);
      if (error.response && error.response.status === 400) {
-      //  window.alert('Email is already registered.');
-      // Server responded with a 400 status code
+     
     if (error.response.data === 'Email is already registered as a Recruiter.') {
-      window.alert('Email already registered as recruiter, please try to login');
+      
+      setSnackbar({ open: true, message: 'Email already registered as recruiter, please try to login', type: 'error' });
     } else if (error.response.data === 'Email is already registered as an Applicant.') {
-      window.alert('email already exists, please provide a new email ID');
+      
+      setSnackbar({ open: true, message: 'Email already exists, please provide a new email ID', type: 'error' });
     } else if (error.response.data === 'Mobile number is already registered as a Recruiter.') {
-      window.alert('Mobile number already existed as recruiter');
+      
+      setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
     } else if (error.response.data === 'Mobile number is already registered as an Applicant.') {
-      window.alert('mobile number already exists, please provide a new mobile number');
+      
+      setSnackbar({ open: true, message: 'Mobile number already exists,please provide a new mobile number', type: 'error' });
     } else {
-      window.alert('Email is already registered.'); // Default message for other 400 errors
+      
+      setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
     }
      } else {
-       window.alert('An error occurred while sending OTP.');
+       
+       setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
      }
      setCandidateOTPSendingInProgress(false);
    }
  };
  
- // Define a function to check if all form fields are valid
-//  const isFormValidForOTP = () => {
-//   return candidateName.trim() !== '' && candidateEmail1.trim() !== '' && candidateMobileNumber.trim() !== '' && candidatePassword1.trim() !== '';
-// };
  
-// const isFormValidForOTP = () => {
-//   return (
-//     !candidateNameError &&
-//     !candidateEmailError1 &&
-//     !candidateMobileNumberError &&
-//     !candidatePasswordError1
-//   );
-// };
  
  const handleSubmit = async (e) => {
-   //e.preventDefault();
    if (!isFormValid1()) {
      return;
    }
@@ -320,7 +356,8 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        password: candidatePassword1,
      });
     if (response.data === 'Email is already registered.') {
-       window.alert('Email is already registered.');
+      
+       setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
      }
      setErrorMessage('');
      setCandidateRegistrationSuccess(true);
@@ -341,9 +378,11 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        console.error('Registration failed', error);
        if (error.response && error.response.status === 400) {
          if (error.response.data === 'Email already registered') {
-           window.alert('email already exists, please provide a new email ID');
+          
+           setSnackbar({ open: true, message: 'Email already exists,please provide a new email ID', type: 'error' });
          } else if (error.response.data === 'Mobile number already existed') {
-           window.alert('mobile number already exists, please provide a new mobile number');
+           
+           setSnackbar({ open: true, message: 'Mobile number already exists,please provide a new mobile number', type: 'error' });
          }
        }
    }
@@ -454,59 +493,112 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
 };
  
  const handleOTPSendSuccess = () => {
-  window.alert('OTP Resend successfully');
+
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
   setResendOtpMessage('OTP Resent successfully. Check your email.');
  };
  const handleOTPSendFail = () => {
-  window.alert('Failed to Resend OTP. Please try again.');
+
+ setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
   setResendOtpMessage('Failed to Resent OTP. Please try again.');
  };
+ 
  const handleTabClick1 = (tab) => {
   setActiveTab(tab);
+  if (tab === 'Candidate') {
+    setMessage('Welcome Back');
+    console.log("login");
+  } else if (tab === 'Employer') {
+    setMessage('Create Account');
+  }
 };
 
 const getTabStyle = (tab) => ({
   padding: '10px 20px',
   cursor: 'pointer',
-  backgroundColor: activeTab === tab ? '#F97316' : 'transparent', // Change active background color as needed
-  color: activeTab === tab ? '#fff' : '#000', // Optional: change text color for better contrast
+  backgroundColor: activeTab === tab ? '#F97316' : 'transparent', 
+  color: activeTab === tab ? '#fff' : '#000', 
   transition: 'background-color 1s ease;', 
-  display: 'inline-block', // Display tabs side by side
+  display: 'inline-block', 
   textAlign: 'center',
   borderRadius: '4px',
-  marginRight: tab === 'Candidate' ? '0px' : '0', // Add right margin to the first tab
-  flex: 1, // Each button takes up half of the container
+  marginRight: tab === 'Candidate' ? '0px' : '0', 
+  flex: 1, 
 });
 
- 
+const handleCloseSnackbar = () => {
+  setSnackbar({ open: false, message: '', type: '' });
+};
+const handleChange = (e) => {
+  const inputValue = e.target.value;
+  const numericValue = inputValue.replace(/\D/g, '');
+  const truncatedValue = numericValue.slice(0, 10);
+
+  if (/[^0-9]/.test(inputValue)) {
+      setCandidateMobileNumberError('Mobile number should contain only digits');
+  } else {
+      setCandidateMobileNumber(truncatedValue);
+      setCandidateMobileNumberError('');
+  }
+};
+
   return (
-    <div>
+    <div className="full-page">
+      <div style={{position:'relative'}}>
+      <img
+        src={Backgroundimagemobile}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+          position: 'relative',
+          top: '0',
+          left: '0',
+          objectFit: 'cover',
+          zIndex: '1',
+        }}
+      />
+
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',gap:'5px',bottom:0,justifyContent:'center',width:'100%'}}>
+        <h1 className='find-your'>Find Your</h1>
+        <h1 className='dream-job'>Dream Job</h1>
+      </div>
+      <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+      </div>
+
       <section className="account-section">
         <div className="tf-container">
           <div className="row">
-            <div className="wd-form-login tf-tab">
+            <div className="wd-form-login">
               <section className="account-section">
                 {registrationSuccess && (
                   <div className="success-message">
                     Registration successful! Please log in to continue.
                   </div>
                 )}
-                <h4><a href="/"><img src={logoCompany1} width="80px" height="80px"/></a> </h4>
-               
-                <div style={{
-      display: 'flex',
-      marginBottom: '18px',
-      border: '1.8px solid lightgrey',
-      borderRadius: '8px',
-      overflow: 'hidden',
-     
-    }}>
+                 
+      
+   
+    <div className="custom-div-style">
+      {message}
+    </div>
+                <div className="myComponent">
+                
       <div
   style={{
     ...getTabStyle('Candidate'),
-    fontWeight: 'bold' // Add font weight inline
+    fontWeight: 'bold'
   }}
   onClick={() => handleTabClick1('Candidate')}
+  
 >
   Login
 </div>
@@ -514,7 +606,7 @@ const getTabStyle = (tab) => ({
 <div
   style={{
     ...getTabStyle('Employer'),
-    fontWeight: 'bold' // Apply font weight inline
+    fontWeight: 'bold'
   }}
   onClick={() => handleTabClick1('Employer')}
 >
@@ -534,9 +626,10 @@ const getTabStyle = (tab) => ({
             )}</span></p>
                     <form onSubmit={handleCandidateSubmit}>
                       <div className="ip">
-                        {/* <label>Email Address<span>*</span></label> */}
+                      
                         <input
                   type="text"
+                  className="name"
                   placeholder="Email"
                   value={candidateEmail}
                   onChange={(e) => {
@@ -548,10 +641,11 @@ const getTabStyle = (tab) => ({
                         {candidateEmailError && <div className="error-message">{candidateEmailError}</div>}
                       </div>
                       <div className="ip">
-                        {/* <label>Password<span>*</span></label> */}
+                        
                         <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
+                            className="name"
                             placeholder="Password"
                             value={candidatePassword}
                             onChange={(e) => {
@@ -566,12 +660,6 @@ const getTabStyle = (tab) => ({
                         </div>
                         {candidatePasswordError && <div className="error-message">{candidatePasswordError}</div>}
                       </div>
-                      {/* <div className="group-ant-choice">
-                        <div className="sub-ip"></div>
-                        <a href="/applicant-forgot-password" className="forgot">
-                          Forgot password?
-                        </a>
-                      </div> */}
                       <button type="submit">Login</button>
                       <div className="group-ant-choice">
                         <div className="sub-ip"></div>
@@ -580,25 +668,20 @@ const getTabStyle = (tab) => ({
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                      {/* <div className="sign-up">
-                        Not registered yet? <a href="/register">Sign Up</a>
-                      </div> */}
        
                     </form>
                     <br></br>
-                    {/* <button onClick={() => login()}>Sign in with Google 🚀</button> */}
-                    {/* <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a> */}
-                    {/* <button onClick={googleLogin}>Sign in with Google</button> */}
+                  
                   </div>
  
                   <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
                   <p class="line-ip"><span>or Sign Up using</span></p>
                    
                   <form onSubmit={handleSubmit}>
-                <div className="ip">
-                    {/* <label>Full Name<span>*</span></label> */}
-                    <input
+                  <div className="ip">
+  <input
     type="text"
+    className="name"
     placeholder="Name"
     onChange={(e) => {
         const inputValue = e.target.value;
@@ -611,14 +694,14 @@ const getTabStyle = (tab) => ({
     }}
     required
     disabled={allFieldsDisabled}
-/>
-
-                    {candidateNameError && <div className="error-message">{candidateNameError}</div>}
-                  </div>
+  />
+  {candidateNameError && <div className="error-message">{candidateNameError}</div>}
+</div>
                   <div className="ip">
-                    {/* <label>Email Address<span>*</span></label> */}
+                    
                 <input
                   type="email"
+                  className="name"
                   placeholder="Email"
                   value={candidateEmail1}
                   onChange={(e) => {
@@ -631,38 +714,36 @@ const getTabStyle = (tab) => ({
                     {candidateEmailError1 && <div className="error-message">{candidateEmailError1}</div>}
                   </div>
                   <div className="ip">
-                    {/* <label>Mobile Number<span>*</span></label> */}
-                    <input
-    type="text"
-    placeholder="Mobile Number"
-    value={candidateMobileNumber}
-    onChange={(e) => {
-        const inputValue = e.target.value;
-        
-        const numericValue = inputValue.replace(/\D/g, '');
-        // Limit to 10 digits
-        const truncatedValue = numericValue.slice(0, 10);
-        
-        if (/[^0-9]/.test(inputValue)) {
-            setCandidateMobileNumberError('Mobile number should contain only digits');
-        } else {
-            setCandidateMobileNumber(truncatedValue);
-            setCandidateMobileNumberError('');
-        }
-    }}
-    required
-    disabled={allFieldsDisabled}
-/>
+                  
+                    <form autoComplete="off">
+            <input type="text" style={{ display: 'none' }} />
+            <input
+                type="text"
+                className="name"
+                placeholder="WhatsApp Number"
+                value={candidateMobileNumber}
+                onChange={handleChange}
+                required
+                disabled={allFieldsDisabled}
+                autoComplete="off"
+                name="unique_mobile_number"
+                id="unique_mobile_number"
+            />
+            
+        </form>
+
+
 
 
                     {candidateMobileNumberError && <div className="error-message">{candidateMobileNumberError}</div>}
                   </div>
                   <div className="ip">
-                    {/* <label>Password<span>*</span></label> */}
+                    
                     <div className="inputs-group auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
+                        className="name"
                         value={candidatePassword1}
                          onChange={(e) => {
                          setCandidatePassword1(e.target.value);
@@ -682,6 +763,7 @@ const getTabStyle = (tab) => ({
     <p style={{ color: 'green' }}>OTP sent to your email. Please check and enter below:</p>
     <OTPVerification
             email={candidateEmail1}
+            mobilenumber={candidateMobileNumber}
             onOTPVerified={() => {
               setTimeout(() => {
                 setCandidateOTPVerified(true);
@@ -701,17 +783,16 @@ const getTabStyle = (tab) => ({
   <div>
     {candidateOTPVerified ? (
       <div style={{ color: 'green' }}>
-        {/* <p >OTP verified successfully! Click on Register to proceed</p> */}
+       
       </div>
     ) : (
       <div>
-        <div className="helpful-line">Click on send OTP to verify your email</div>
-        {/* {isFormValidForOTP() && ( */}
+       
         <button
           type="button"
           onClick={handleSendOTP}
           disabled={candidateOTPSent || candidateRegistrationSuccess || candidateOTPSendingInProgress}
-          style={{ marginBottom: '20px' }}
+          style={{ marginBottom: '10px' }}
         >
           {candidateOTPSendingInProgress ? (
              <div className="status-container">
@@ -723,32 +804,64 @@ const getTabStyle = (tab) => ({
           )}
          
         </button>
-        {/* )} */}
       </div>
     )}
   </div>
 )}
  
-{/* {candidateOTPVerified && (
-  <button type="submit" onClick={handleSubmit}>
-    {candidateRegistrationInProgress ? (
-       <div className="status-container">
-       <div className="spinner"></div>
-       <div className="status-text">Registering</div>
-     </div>
-    ) : (
-      'Register'
-    )}
-  </button>
-)} */}
                 </form>
+                
                   </div>
+                  
                 </div>
+                <div style={{position:'relative'}}>
+                <img
+  src={Background}
+  alt="Background"
+  className="responsive-image"
+  style={{
+    position: "fixed",
+    top: "0px",
+    left: "-20px",
+    paddingRight: "10px"
+  }}
+  
+/>
+<div className='hide'>
+<div style={{position:'fixed' , zIndex:'1' , flexDirection: 'column',gap:'20px',bottom:0,justifyContent:'center',width:'10%',left:'5%'}}>
+        <h1 className='find-your 'style={{ marginBottom: '-30px',fontSize:'50px' }}>FindYour</h1>
+        <h1 className='dream-job 'style={{ marginBottom: '5px',fontSize:'50px' }}>DreamJob</h1>
+      </div>
+</div>
+
+<div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image1"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+
+</div>
+
               </section>
+
             </div>
           </div>
         </div>
       </section>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
 }

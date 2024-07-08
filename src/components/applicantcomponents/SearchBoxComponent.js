@@ -2,6 +2,7 @@ import React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import TuneIcon from '@mui/icons-material/Tune'; 
 
+
 export const SearchBoxComponent = () => {
   return (
     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
