@@ -6,7 +6,7 @@ import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService'
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Resume from '../../images/user/avatar/Resume.png';
-import Certificate from '../../images/user/avatar/Certificate.svg';
+import Certificate from '../../images/user/avatar/Certificate.png';
 import { useLocation } from "react-router-dom";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 import ModalWrapper from './ModalWrapper';
