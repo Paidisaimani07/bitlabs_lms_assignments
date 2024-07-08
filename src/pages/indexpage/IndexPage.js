@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {useEffect} from 'react';
 import { useLocation } from 'react-router-dom';
 import Nav from '../../components/common/Nav';
 import Banner from '../../components/indexpagecomponents/Banner';
