@@ -1,24 +1,14 @@
 import React, { useState,useEffect } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import Snackbar from '../common/Snackbar';
 import { Typeahead } from 'react-bootstrap-typeahead';
  
 const ProfessionalDetailsPopup = ({ applicantDetails }) => {
-   const [experience, setExperience] = useState('');
-  const [skills, setSkills] = useState([]);
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
+  
   const [qualification, setQualification] = useState('');
-  const [specialization, setSpecialization] = useState('');
-  const [selectedCities, setSelectedCities] = useState([]);
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [preferredJobLocations, setPreferredJobLocations] = useState([]);
-  const [skillsRequired, setSkillsRequired] = useState([]);
-  const navigate = useNavigate();
+  
   const [formValues, setFormValues] = useState({
     qualification: applicantDetails&&applicantDetails.qualification|| '',
      specialization: applicantDetails&&applicantDetails.specialization || '',
@@ -101,17 +91,17 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
         );
  
         if (response.status === 200) {
-         // window.alert('Professional details updated successfully!');
+        
          addSnackbar({ message: 'Professional details updated successfully', type: 'success' });
-          window.location.reload(); // You might want to use a more React-friendly way to update the UI
+          window.location.reload(); 
         } else {
           console.error('An error occurred:', response.status, response.statusText);
-         // window.alert('Failed to update professional details.');
+        
           addSnackbar({ message: 'Failed to update professional details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        //window.alert('Failed to update professional details due to an error.');
+       
         addSnackbar({ message: 'Failed to update professional details due to an error.', type: 'error' });
       }
     }

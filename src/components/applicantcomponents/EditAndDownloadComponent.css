@@ -19,7 +19,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 5px; /* Increase padding if needed */
+  padding: 5px;
 }
 
 .edit-overlay-button img,
@@ -29,11 +29,10 @@
   margin-right: 5px;
 }
 
-/* Increase width, height, and adjust margin if needed */
+
 .edit-overlay-button,
 .download-overlay-button {
-  /* Other styles */
-  width: 40px; /* Increase width if needed */
-  height: 40px; /* Increase height if needed */
-  margin-right: 10px; /* Adjust margin if needed */
+  width: 40px; 
+  height: 40px; 
+  margin-right: 10px; 
 }

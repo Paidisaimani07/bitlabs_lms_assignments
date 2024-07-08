@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
@@ -48,20 +48,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
-  // recruiter login
-  // const [candidateEmail, setCandidateEmail] = useState('');
-  // const [candidatePassword, setCandidatePassword] = useState('');
   const [recruiterEmail, setRecruiterEmail] = useState('');
   const [recruiterPassword, setRecruiterPassword] = useState('');
-  // const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
   const registrationSuccess = location.state?.registrationSuccess;
-  // const navigate = useNavigate();
   const { setUser, setUserType } = useUserContext();
-  // const [showPassword, setShowPassword] = useState(false);
-  // const [activeTab, setActiveTab] = useState('Candidate');
-  // const [candidateEmailError, setCandidateEmailError] = useState('');
-  // const [candidatePasswordError, setCandidatePasswordError] = useState('');
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
@@ -91,34 +82,33 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       if (response.data === "Email already registered recruiter"){
         setCandidateOTPSent(false);
      
-     //   window.alert('Email already registered as recruiter, please try to login');
+     
      setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
        }
        if(response.data === ('Email already registered as applicant')){
         setCandidateOTPSent(false);
      
-        //window.alert('Email already registered as candidate, please try to login');
+        
         setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' });
        }
        if(response.data === "Mobile number already existed in recruiter"){
         setCandidateOTPSent(false);
      
-       // window.alert('Mobile number already existed as recruiter');
+       
         setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
        }
        if(response.data === 'Mobile number already existed in applicant'){
         setCandidateOTPSent(false);
      
-        //window.alert('Mobile number already existed as candidate');
         setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
        }
     } catch (error) {
       console.error('Error sending OTP:', error);
       if (error.response && error.response.status === 400) {
-       // window.alert('Email is already registered.');
+       
        setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
       } else {
-       // window.alert('An error occurred while sending OTP.');
+       
        setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
       }
       setCandidateOTPSendingInProgress(false);
@@ -143,32 +133,29 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
  
     if (response.data === "Email already registered recruiter") {
       setRecruiterOTPSent(false);
-     // window.alert('Email already registered as recruiter, please try to login');
+     
      setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
 
     } else if (response.data === 'Email already registered as applicant') {
       setRecruiterOTPSent(false);
-      //window.alert('Email already registered as candidate, please try to login');
+      
       setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' }); 
     } else if (response.data === "Mobile number already existed in recruiter") {
       setRecruiterOTPSent(false);
-      //window.alert('Mobile number already existed as recruiter');
+      
       setSnackbar({ open: true, message: 'Mobile number already existed as recruiter', type: 'error' });
     } else if (response.data === 'Mobile number already existed in applicant') {
       setRecruiterOTPSent(false);
-      //window.alert('Mobile number already existed as candidate');
       setSnackbar({ open: true, message: 'Mobile number already existed as candidate', type: 'error' });
     } else {
-      // Proceed with registration since there's no separate OTP verification logic
-      //handleSubmit1();
+  
     }
   } catch (error) {
     console.error('Error sending OTP:', error);
     if (error.response && error.response.status === 400) {
-     // window.alert('Email is already registered.');
+     
      setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
     } else {
-      //window.alert('An error occurred while sending OTP.');
       setSnackbar({ open: true, message: 'An error occurred while sending OTP.', type: 'error' });
     }
     setRecruiterOTPSendingInProgress(false);
@@ -192,7 +179,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         const userData = response.data;
  
         if (userData && userData.data && userData.data.jwt) {
-          // Successful login
+         
           setErrorMessage('');
           localStorage.setItem('jwtToken', userData.data.jwt);
  
@@ -213,24 +200,22 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
           console.log('Recruiter Login successful', userData);
           navigate('/recruiterhome');
         } else {
-          // Handle the case where the token is not present in the response
+          
           console.error('Login failed. Token not found in response:', response);
           setErrorMessage('Login failed. Please check your user name and password.');
         }
       } else {
-        // Handle other cases where the status code is not 200
+       
         console.error('Login failed. Invalid response:', response);
         setErrorMessage('Login failed. Please check your user name and password.');
       }
     } catch (error) {
       console.error('Login failed', error);
-      // Handle other error cases
+      
       if(error.response.data==="No account found with this email address")
           setErrorMessage('No account found with this email address');
       if(error.response.data==="Incorrect password")
           setErrorMessage('Incorrect password');
-
-      // setErrorMessage('Login failed. Please try again later.');
     }
   };
  
@@ -248,7 +233,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         password: candidatePassword,
       });
      if (response.data === 'Email is already registered.') {
-       // window.alert('Email is already registered.');
+       
        setSnackbar({ open: true, message: 'Email is already registered.', type: 'error' });
       }
       setErrorMessage('');
@@ -268,10 +253,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         console.error('Registration failed', error);
         if (error.response && error.response.status === 400) {
           if (error.response.data === 'Email already registered') {
-           // window.alert('Registration failed! User with this email already exists');
+          
            setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
           } else if (error.response.data === 'Mobile number already existed') {
-           // window.alert('Registration failed! Mobile number already exists');
+        
             setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
           }
         }
@@ -408,7 +393,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     setEmployerPasswordError('');
   };
   const handleSubmit1 = async (e) => {
-    //e.preventDefault();
+   
     if (!isFormValid1()) {
       return;
     }
@@ -416,14 +401,8 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     try {
       setRecruiterRegistrationInProgress(true);
  
-      //setRecruiterOTPVerified(true);
-      // Check if OTP is verified before proceeding with registration
-      // if (!recruiterOTPVerified) {
-      //   window.alert('Please verify your email by entering the OTP.');
-      //   return;
-      // }
- 
-      // Proceed with registration
+      
+   
       const response = await axios.post(`${apiUrl}/recuriters/saverecruiters`, {
         companyname: companyName,
         mobilenumber: employerMobileNumber,
@@ -437,33 +416,30 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       setActiveTab('Candidate');
       console.log('Registration successful', response.data);
  
-      // Reset fields and states
+     
       setCompanyName('');
       setEmployerEmail('');
       setEmployerMobileNumber('');
       setEmployerPassword('');
       setRecruiterRegistrationInProgress(false);
      
-       // Set success message
-      //setRecruiterOTPVerified(false); // Reset OTP verification status
- 
-      // Redirect to login page
+     
  
       navigate('/recruiter', { state: { registrationSuccess: true } });
-     // window.location.reload();
+     
    
     } catch (error) {
       setErrorMessage('Registration failed. Please try again later.');
-      //window.alert('Registration failed! or User with this email already exists.');
+     
       setSnackbar({ open: true, message: 'Registration failed or User with this email already exists.', type: 'error' });
       console.error('Registration failed', error);
  
       if (error.response && error.response.status === 400) {
         if (error.response.data === 'Email already registered') {
-         // window.alert('Registration failed! User with this email already exists');
+        
          setSnackbar({ open: true, message: 'Registration failed.User with this email already exists', type: 'error' });
         } else if (error.response.data === 'Mobile number already existed') {
-          //window.alert('Registration failed! Mobile number already exists');
+          
           setSnackbar({ open: true, message: 'Registration failed.Mobile number already exists', type: 'error' });
         }
       }
@@ -471,12 +447,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     }
   };
   const handleOTPSendSuccess = () => {
-  // window.alert('OTP Resend successfully');
+
   setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
-  // window.alert('Failed to Resend OTP. Please try again.');
+  
   setSnackbar({ open: true, message: 'Failed to resend OTP.Please try again.', type: 'error' });
    setResendOtpMessage('Failed to Resent OTP. Please try again.');
   };
@@ -530,14 +506,14 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const getTabStyle = (tab) => ({
     padding: '10px 20px',
     cursor: 'pointer',
-    backgroundColor: activeTab === tab ? '#F97316' : 'transparent', // Change active background color as needed
-    color: activeTab === tab ? '#fff' : '#000', // Optional: change text color for better contrast
-    transition: 'background-color 1s ease;', 
-    display: 'inline-block', // Display tabs side by side
+    backgroundColor: activeTab === tab ? '#F97316' : 'transparent',
+    color: activeTab === tab ? '#fff' : '#000',
+    transition: 'background-color 1s ease;',
+    display: 'inline-block',
     textAlign: 'center',
     borderRadius: '4px',
-    marginRight: tab === 'Candidate' ? '0px' : '0', // Add right margin to the first tab
-    flex: 1, // Each button takes up half of the container
+    marginRight: tab === 'Candidate' ? '0px' : '0',
+    flex: 1,
   });
   
   const handleCloseSnackbar = () => {
@@ -545,7 +521,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
 
   return (
-    <div>
+    <div className='full-page'>
       <a id="scroll-top" />
     <section className="account-section1">
       <div className="tf-container1">
@@ -567,7 +543,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       <div
   style={{
     ...getTabStyle('Candidate'),
-    fontWeight: 'bold' // Add font weight inline
+    fontWeight: 'bold' 
   }}
   onClick={() => handleTabClick1('Candidate')}
 >
@@ -577,7 +553,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
 <div
   style={{
     ...getTabStyle('Employer'),
-    fontWeight: 'bold' // Apply font weight inline
+    fontWeight: 'bold' 
   }}
   onClick={() => handleTabClick1('Employer')}
 >
@@ -585,8 +561,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
 </div>
 
     </div>
-            {/* <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a>
-                    <br /> */}
+            
             <div className="content-tab">
               <div className="inner" style={{ display: activeTab === 'Candidate' ? 'block' : 'none' }}>
               <p><span>  {registrationSuccessMessage && (
@@ -594,7 +569,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
             )}</span></p>
               <form onSubmit={handleRecruiterSubmit}>
                       <div className="ip2">
-                        {/* <label>Email Address<span>*</span></label> */}
+                       
                         <input
                           type="text"
                           placeholder="Email"
@@ -604,10 +579,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                             setRecruiterEmailError('');
                           }}
                         />
-                        {recruiterEmailError && <div className="error-message">{recruiterEmailError}</div>}
+                        {recruiterEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{recruiterEmailError}</div>}
                       </div>
                       <div className="ip">
-                        {/* <label>Password<span>*</span></label> */}
+                    
                         <div className="inputs-group2 auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
@@ -623,7 +598,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       {showPassword ? <FaEye /> : <FaEyeSlash />}
     </div>
                         </div>
-                        {recruiterPasswordError && <div className="error-message">{recruiterPasswordError}</div>}
+                        {recruiterPasswordError && <div className="error-message" style={{ textAlign: 'left' }}>{recruiterPasswordError}</div>}
                       </div>
                    
                       <button type="submit" class="custom-button">Login</button>
@@ -634,20 +609,17 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                      {/* <div className="sign-up">
-                        Not registered yet? <a href="/register">Sign Up</a>
-                      </div> */}
-                     
+                    
        
                     </form>
               </div>
             </div>
             <div className="content-tab">
               <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
-              {/* <p class="line-ip"><span>or signup with</span></p> */}
+              
                 <form onSubmit={handleSubmit1}>
                 <div className="ip2">
-                    {/* <label>Company Name<span>*</span></label> */}
+                   
                     <input
                       type="text"
                       placeholder="company name"
@@ -658,10 +630,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                     {employerNameError && <div className="error-message">{employerNameError}</div>}
+                     {employerNameError && <div className="error-message" style={{ textAlign: 'left' }}>{employerNameError}</div>}
                   </div>
                   <div className="ip2">
-                    {/* <label>Email Address<span>*</span></label> */}
+                    
                     <input
                       type="email"
                       placeholder="Email"
@@ -673,10 +645,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                     {employerEmailError && <div className="error-message">{employerEmailError}</div>}
+                     {employerEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{employerEmailError}</div>}
                   </div>
                   <div className="ip2">
-                    {/* <label>Mobile Number<span>*</span></label> */}
+                    
                     <input
                       type="text"
                       placeholder="Mobile Number"
@@ -688,10 +660,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       }}
                       disabled={allFieldsDisabled}
                     />
-                    {employerMobileNumberError && <div className="error-message">{employerMobileNumberError}</div>}
+                    {employerMobileNumberError && <div className="error-message" style={{ textAlign: 'left' }}>{employerMobileNumberError}</div>}
                   </div>
                   <div className="ip2">
-                    {/* <label>Password<span>*</span></label> */}
+                    
                     <div className="inputs-group2 auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
@@ -708,7 +680,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
         {showPassword ? <FaEye /> : <FaEyeSlash />}
       </div>
                     </div>
-                    {employerPasswordError && <div className="error-message">{employerPasswordError}</div>}
+                    {employerPasswordError && <div className="error-message" style={{ textAlign: 'left' }}>{employerPasswordError}</div>}
                   </div>
                   {recruiterOTPSent && !recruiterOTPVerified ? (
   <div>
@@ -737,7 +709,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     {recruiterOTPVerified ? (
       <div style={{ color: 'green'  }}>
        
-        {/* <p>Registered successfully! </p> */}
+       
       </div>
     ) : (
       <div>
@@ -761,18 +733,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     )}
   </div>
 )}
-{/* {recruiterOTPVerified && (
-  <button type="submit">
-    {recruiterRegistrationInProgress ? (
-       <div className="status-container">
-       <div className="spinner"></div>
-       <div className="status-text">Registering</div>
-     </div>
-    ) : (
-      'Register'
-    )}
-  </button>
-)} */}
+
                 </form>
               </div>
             </div>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import Snackbar from '../common/Snackbar';
@@ -76,18 +75,17 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
         });
 
         if (response.status === 200) {
-          // window.alert('Personal details updated successfully!');
+         
           addSnackbar({ message: 'Personal details updated successfully!', type: 'success' });
           window.location.reload();
         } else {
           console.error('An error occurred:', response.status, response.statusText);
 
-          // window.alert("Failed to update personal details.");
           addSnackbar({ message: 'Failed to update personal details.', type: 'error' });
         }
       } catch (error) {
         console.error('An error occurred:', error);
-        // window.alert("Failed to update personal details due to an error.");
+       
         addSnackbar({ message: 'Failed to update personal details due to an error', type: 'error' });
       }
     }
@@ -131,7 +129,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
             type="email"
             placeholder="*Email"
             value={formValues.email}
-            // className="input-form"
+            
            className="input-form disabled-input"
             disabled
           />
@@ -165,7 +163,7 @@ const BasicDetailsEditPopup = ({ applicantDetails }) => {
           marginTop: '5px',
           textTransform:'capitalize',
           height: '48px',
-          // marginLeft:'80%'
+         
           
           
         }}

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import 'react-calendar-timeline/lib/Timeline.css';
 import BackButton from '../common/BackButton';
 
@@ -20,7 +21,6 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     const fetchJobDetailsAndStatus = async () => {
       try {
         const authToken = localStorage.getItem('jwtToken');
-
         const jobDetailsResponse = await axios.get(
           `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
           {
@@ -36,6 +36,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         }
 
         const jobStatusResponse = await axios.get(
+
           `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
           {
             headers: {
@@ -68,6 +69,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
       const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
       axios.get(apiEndpoint)
         .then(response => {
+
           const { body } = response.data;
           if (body) {
             setJobDetails(body);
@@ -87,6 +89,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
+
     navigate(`/applicant-view-job`, { state: { from: location.pathname } });
   };
 
@@ -111,6 +114,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                 <div className="inner">
                   <article className="job-article">
                     {jobDetails && (
+
                       <div className="top-content">
                         <div className="features-job style-2 stc-apply bg-white" onClick={handleViewJobDetails}>
                           <div className="job-archive-header">

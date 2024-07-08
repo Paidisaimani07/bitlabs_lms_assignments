@@ -1,9 +1,8 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
-import { useNavigate, useLocation,useParams  } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -53,7 +52,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
     if (skillsWithNames.length > 0) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        skills: '', // Clear the error message for skills
+        skills: '', 
       }));
     } else {
       setFormErrors((prevErrors) => ({
@@ -192,7 +191,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
          
           const response = await axios.put(
             `${apiUrl}/job/editJob/${selectedJobId}/${user.id}`,
-            formData,  // Using the existing formData object
+            formData,  
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -203,11 +202,10 @@ const RecruiterEditJob = ({selectedJobId}) => {
      
           if (response.status === 200) {
             console.log(response.body);
-            //window.alert('Job updated successfully');
+           
             setSnackbar({ open: true, message: 'Job updated successfully', type: 'success' });
             localStorage.setItem('jobs', JSON.stringify(''));
-            //navigate('/recruiter-jobopenings');
-            // You can perform additional actions after saving, such as redirecting to another page
+            
           } else {
             console.error('An error occurred:', response.status, response.body);
           }
@@ -301,18 +299,7 @@ skillsRequired.forEach((skill, index) => {
   } else {
     skillErrors.skillName = '';
   }
- 
-//   const minExperience = String(skill.minimumExperience);
- 
-// if (!minExperience.trim()) {
-//   skillErrors.minimumExperience = 'Experience is required.';
-//   isValid = false;
-// } else if (typeof minExperience !== 'string' || isNaN(parseInt(minExperience, 10))) {
-//   skillErrors.minimumExperience = 'Experience should be a valid number.';
-//   isValid = false;
-// } else {
-//   skillErrors.minimumExperience = '';
-// }
+
  
   skillsErrors[index] = skillErrors;
 });
@@ -421,7 +408,7 @@ errors.skillsRequired = skillsErrors;
             'Information Technology(IT)',
             'Chemical Engineering',
             'Biotechnology Engineering',
-            // Add other specializations as needed
+            
           ];
         case 'MCA':
           return [
@@ -437,7 +424,7 @@ errors.skillsRequired = skillsErrors;
             'Network Administration',
             'Cyber Security',
             'IT Project Management',
-            // Add other specializations as needed
+            
           ];
         case 'Degree':
           return [
@@ -448,7 +435,7 @@ errors.skillsRequired = skillsErrors;
             'Bachelor of Science (B.Sc) Electronics',
             'Bachelor of Science (B.Sc) Chemistry',
             'Bachelor of Commerce (B.Com)',
-            // Add other specializations as needed
+           
           ];
         case 'Intermediate':
           return ['MPC', 'BiPC', 'CEC', 'HEC'];
@@ -474,9 +461,9 @@ errors.skillsRequired = skillsErrors;
             'Pharmacy',
             'Medical Laboratory Technology',
             'Radiology and Imaging Technology',
-            // Add other specializations as needed
+          
           ];
-        // Add cases for other qualifications
+        
         default:
           return [];
       }
@@ -556,7 +543,7 @@ errors.skillsRequired = skillsErrors;
           minimumExperience: '',
         }));
       } else {
-        setJobData({ ...jobData, minimumExperience: '' }); // Clear the value
+        setJobData({ ...jobData, minimumExperience: '' }); 
         setFormErrors((prevErrors) => ({
           ...prevErrors,
           minimumExperience: 'Minimum experience must be a valid number.',
@@ -668,7 +655,6 @@ errors.skillsRequired = skillsErrors;
                     <option value="Degree">Degree</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Diploma">Diploma</option>
-                    {/* Add other qualifications as needed */}
                     </select>
                    {formErrors.minimumQualification && (
                     <div className="error-message">{formErrors.minimumQualification}</div>
@@ -719,7 +705,7 @@ errors.skillsRequired = skillsErrors;
          <option value="Thanjavur">Thanjavur</option>
          <option value="Pondicherry">Pondicherry</option>
          <option value="Vijayawada">Vijayawada</option>
-        {/* Add other location options as needed */}
+        
     </select>
     {formErrors.location && (
       <div className="error-message">{formErrors.location}</div>
@@ -741,22 +727,6 @@ errors.skillsRequired = skillsErrors;
                     )}
                     </div>
                     </div>
-                    {/* <div className="col-lg-6 col-md-12">
-                    <div id="item_1" className="dropdown titles-dropdown info-wd">
-                    <label className="title-user fw-7">Job Highlights</label>
-                       <textarea
-                        className="input-form"
-                        placeholder="Job key points"
-                        value={jobData.jobHighlights}
-        onChange={(e) => setJobData({ ...jobData, jobHighlights: e.target.value })}
-                        
-                      />
-                      {formErrors.jobHighlights && (
-                      <div className="error-message">{formErrors.jobHighlights}</div>
-                    )}
-                    
-                    </div>
-                    </div> */}
                     <div className="col-lg-6 col-md-12">
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">
@@ -765,7 +735,7 @@ errors.skillsRequired = skillsErrors;
                       <select    value={jobData.employeeType}
                               className="input-form"
                               onChange={(e) => setJobData({ ...jobData, employeeType: e.target.value })}
-                             // style={{ color: employeeType ? 'black' : 'lightgrey' }}
+                             
                               >
                            <option value="">Select</option>
                            <option value="Full-time">Full-time</option>
