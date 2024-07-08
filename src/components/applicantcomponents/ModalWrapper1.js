@@ -1,5 +1,4 @@
-// ModalWrapper.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
@@ -9,22 +8,56 @@ import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import { useUserContext } from '../common/UserProvider';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
-const ModalWrapper1 = ({ isOpen, onClose }) => {
+import { useUserContext } from '../common/UserProvider';
+import { apiUrl } from '../../services/ApplicantAPIService';
+
+import './ModalWrap.css';
+
+const ModalWrapper = ({ isOpen, onClose }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const navigate =useNavigate();
+  const navigate = useNavigate();
   const { user } = useUserContext();
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isOpen]);
+
   const handleCloseClick = async() => {
-    if (window.confirm("Are you sure you want to close? Note: Please save your resume before closing.")) {
+    if (window.confirm("Please close this window only after saving your resume.")) {
 
 
       let resume;
       try {
        const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
+       const response = await fetch(logoutUrl, {
+         method: 'POST',
+         credentials: 'include',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+       });
+
+       if (!response.ok) {
+         throw new Error('Network response was not ok');
+       }
+       const iframe = document.createElement('iframe');
+       iframe.style.display = 'none';
+       iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
+       document.body.appendChild(iframe);
+       onClose();
        
      } catch (error) { 
        resume=error.response.status; 
@@ -58,41 +91,47 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
           paddingTop: '90px',
         },
       }}
+      BackdropProps={{
+        style: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the backdrop color if needed
+        },
+      }}
     >
       <DialogContent sx={{ padding: 0, position: 'relative' }}>
         {isMobile ? (
-          <>
-            <Button
-              variant="contained"
-              sx={{
-                position: 'absolute',
-                right: -10,
-                top: 16,
-                background: '#F97316',
-                borderRadius: '8px',
-                color: '#fff',
-                '&:hover': {
-                  background: '#F97316',
-                },
-                zIndex: 1,
-              }}
-              onClick={handleCloseClick}
-            >
-              Close
-            </Button>
-          </>
+          <Button
+            sx={{
+              position: 'absolute',
+              textTransform: 'capitalize',
+              right: 2,
+              top: 16,
+              border: '1px solid #F97316',
+              borderRadius: '8px',
+              color: '#F97316',
+              '&:hover': {
+                border: '1px solid #DA4D0B',
+                color: '#DA4D0B'
+              },
+              zIndex: 1,
+            }}
+            onClick={handleCloseClick}
+          >
+            Close
+          </Button>
         ) : (
           <Button
             onClick={handleCloseClick}
             sx={{
               position: 'absolute',
+              textTransform: 'capitalize',
               right: 16,
               top: 9,
-              background: '#F97316',
+              border: '1px solid #F97316',
               borderRadius: '8px',
-              color: '#fff',
+              color: '#F97316',
               '&:hover': {
-                background: '#F97316',
+                border: '1px solid #DA4D0B',
+                color: '#DA4D0B'
               },
               zIndex: 1,
             }}
@@ -114,4 +153,4 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
   );
 };
 
-export default ModalWrapper1;
+export default ModalWrapper;
