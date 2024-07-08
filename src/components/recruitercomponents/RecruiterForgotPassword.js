@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
  
@@ -84,7 +83,7 @@ function RecruiterForgotPassword() {
           clearInterval(timerInterval);
           setResendButtonDisabled(false);
         }, 60000);
-       // window.alert('OTP Resent successfully');
+      
        setSnackbar({ open: true, message: 'OTP resent successfully', type: 'success' });
       } catch (error) {
         console.error('Error resending OTP:', error);
@@ -143,7 +142,7 @@ function RecruiterForgotPassword() {
     };
  
   return (
-    <div>
+    <div className='full-page'>
       <div>
         <section className="">
           <div className="tf-container">

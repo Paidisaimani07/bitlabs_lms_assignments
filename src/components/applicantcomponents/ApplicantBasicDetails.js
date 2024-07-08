@@ -3,32 +3,28 @@ import axios from 'axios';
 import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate,useParams } from 'react-router-dom';
-import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
-import BackButton from '../common/BackButton';
 import './ApplicantBasicDetails1.css';
 import Logo from '../../images/artboard.svg';
-import 'react-bootstrap-typeahead/css/Typeahead.css'; // Import Typeahead styles
+import 'react-bootstrap-typeahead/css/Typeahead.css'; 
 import ModalComponent from './ModalComponent';
 import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
 
-
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
   let { number } = useParams();
-  // Convert the number to a numeric value (if needed)
+  
   number = parseInt(number, 10);
   const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(number);
   const [snackbars, setSnackbars] = useState([]);
   const [error, setError] = useState('');
-  // const [currentStage, setCurrentStage] = useState(1);
   const [isNextDisabled, setIsNextDisabled] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
   const[imageSrc, setImageSrc]= useState();
@@ -77,7 +73,7 @@ const ApplicantBasicDetails = () => {
         [name]: error,
     }));
 
-    return !error; // Returns true if no error, false if there's an error
+    return !error; 
 };
 
 const handleInputChange = (e) => {
@@ -87,14 +83,14 @@ const handleInputChange = (e) => {
       [name]: value,
   }));
 
-  //setIsNextDisabled(!validateForm1());
+  
 };
 
 const handleBlur = (e) => {
   const { name, value } = e.target;
   validateInput(name, value);
   
- //setIsNextDisabled(!validateForm1());
+ 
   
 };
 
@@ -120,11 +116,7 @@ const handleSkillsChange = (selectedSkills) => {
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  // Define the steps
   const steps = ['Personal Information', 'Professional Details', 'Upload Resume'];
-
-
- // const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: i.toString() }));
   const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i} ` }));
 
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
@@ -207,7 +199,7 @@ if (!applicant.mobilenumber) {
  
   
   const makeApiCall2 = async () => {
-    // Implement your API call logic for stage 2
+   
 
     const applicantProfileDTO={
       basicDetails: basicDetails,
@@ -225,7 +217,7 @@ if (!applicant.mobilenumber) {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
       console.log(" returned during api call");
-      // Now update the details in the applicant_profile table
+     
       const putProfileResponse = await axios.post(
         `${apiUrl}/applicantprofile/createprofile/${user.id}`,
         applicantProfileDTO,
@@ -239,10 +231,7 @@ if (!applicant.mobilenumber) {
 
       console.log('POST API Response for Profile Data:', putProfileResponse.data);
       setRequestData(true);
-      //window.alert('Profile saved successfully!');
-      //addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
-
-        // Send data to the webhook after successfully saving the profile
+      
     const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
     const webhookPayload = {
       userId: user.id,
@@ -273,11 +262,11 @@ if (!applicant.mobilenumber) {
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const fileSizeLimit = 1 * 1024 * 1024; 
       const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
-        // alert('File size should be less than 1MB and Only PDF allowed.');
+        
         addSnackbar({ message: 'File size should be less than 1MB and Only PDF allowed.', type: 'error' });
         setErrorMessage('File size should be less than 1MB and Only PDF allowed.');
         setSelectedFile(null);
@@ -285,7 +274,7 @@ if (!applicant.mobilenumber) {
       }
   
       if (!allowedTypes.includes(file.type)) {
-        // alert('Only PDF file types are allowed.');
+        
         addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
         setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
@@ -323,7 +312,7 @@ if (!applicant.mobilenumber) {
   
     const file = event.dataTransfer.files[0];
     if (file) {
-      const fileSizeLimit = 1 * 1024 * 1024; // 1MB in bytes
+      const fileSizeLimit = 1 * 1024 * 1024; 
       const allowedTypes = ['application/pdf'];
   
       if (file.size > fileSizeLimit) {
@@ -362,12 +351,12 @@ if (!applicant.mobilenumber) {
         }
       );
       console.log(response.data);
-      //window.alert(response.data);
+    
       addSnackbar({ message: response.data, type: 'success' });
       window.location.reload();
     } catch (error) {
       console.error('Error uploading resume:', error);
-     // window.alert('Error uploading resume. Please try again.');
+     
      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
   };
@@ -392,7 +381,7 @@ if (!applicant.mobilenumber) {
         .then(data => {
           const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
           setLoginUrl(loginUrl);
-          // window.open(loginUrl, '_blank');
+          
           setIsModalOpen(true);
         })
         .catch(error => {
@@ -412,17 +401,14 @@ if (!applicant.mobilenumber) {
     
     setErrors(newErrors);
   
-    // Return true if there are no errors
+
     return Object.keys(newErrors).length === 0;
   };
   
   const handleNext = async () => {
-  //   if (!validateForm1()) {
-  //     return;
-  // }
   
     try {
-      // Make the appropriate API call based on the current stage
+     
       switch (currentStage) {
         case 1:
           if (!validateForm1()) {
@@ -435,7 +421,7 @@ if (!applicant.mobilenumber) {
         case 2:
 
         if (validateFields()) {
-          const response2 = await makeApiCall2(); // Replace with your actual API call and handle response
+          const response2 = await makeApiCall2(); 
           console.log('API call 2 response:');
         } else {
           return false;
@@ -443,15 +429,15 @@ if (!applicant.mobilenumber) {
           break;
         default:
           console.warn('Unexpected stage:');
-          // Handle unexpected stage (optional)
+          
           break;
       }
   
-      // Update current stage only if the API call succeeds (optional)
+      
       setCurrentStage((prevStage) => Math.min(prevStage + 1, steps.length));
     } catch (error) {
       console.error('Error during API call:', error);
-      // Handle API call errors (optional)
+     
     }
   };
 
@@ -492,10 +478,10 @@ if (!applicant.mobilenumber) {
       
       addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
 
-       // Add a delay before navigating
+      
     setTimeout(() => {
       navigate('/applicanthome');
-    }, 3000); // Delay of 3 seconds (3000 milliseconds)
+    }, 3000); 
       
     } catch (error) {
       console.error('Error uploading resume:', error);
@@ -862,13 +848,6 @@ if (!applicant.mobilenumber) {
   return (
     <div class="component">
        
-      {/* <a href="/applicanthome">
-        <img 
-          src={imageSrc || '../images/user/avatar/image-01.jpg'} 
-          alt="Profile" 
-          onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} 
-        />
-      </a> */}
       <img className="top-left-svg" src={Logo} alt="Image" usemap="#image-map" />
 
     

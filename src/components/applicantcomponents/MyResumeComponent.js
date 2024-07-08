@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
-import ModalComponent from './ModalComponent';
 import ResumeBuilder from './ResumeBuilder';
 import ModalWrapper from './ModalWrapper';
 const MyResumeComponent = ({ pdfUrl, loading }) => {
@@ -11,7 +10,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
   const closeModal = () => setIsModalOpen(false);
   const handleCreateNowClick = () => {
     openModal();
-   //const loginUrl = `https://resume.bitlabs.in:5173/auth/login?redirect=/dashboard/resumes`;
+   
     setLoginUrl(loginUrl);
     setIsModalOpen(true);
   };
@@ -42,7 +41,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       flex: 3,
       color: '#D7D8E0',
       fontFamily: 'Plus Jakarta Sans',
-      marginBottom: '1rem',  // Added margin-bottom
+      marginBottom: '1rem', 
     },
     bannerHeading: {
       fontFamily: 'Plus Jakarta Sans',
@@ -51,14 +50,14 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       fontWeight: '800',
       lineHeight: '25px',
       color: 'white',
-      marginBottom: '1rem',  // Added margin-bottom
+      marginBottom: '1rem',  
     },
     bannerImage: {
       flex: 1,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: '2rem',  // Added margin-left
+      marginLeft: '2rem',  
     },
     bannerImageImg: {
       maxWidth: '100%',
@@ -76,7 +75,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       fontWeight: '600',
       borderRadius: '5px',
       cursor: 'pointer',
-      marginTop: '1rem',  // Added margin-top
+      marginTop: '1rem',  
     },
     changePassword: {
       padding: '1.875rem',

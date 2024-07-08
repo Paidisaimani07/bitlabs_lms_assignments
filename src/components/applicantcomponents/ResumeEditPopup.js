@@ -4,18 +4,15 @@ import Modal from 'react-modal';
 import { useUserContext } from '../common/UserProvider';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
-Modal.setAppElement('#root'); // This is required by react-modal for accessibility
+Modal.setAppElement('#root'); 
 
 const ResumeEditPopup = ({ id, resumeFileName }) => {
   const [resumeFile, setResumeFile] = useState(null);
-  const [fileName, setFileName] = useState(resumeFileName || ''); // Use resumeFileName as the initial state
-  const [modalIsOpen, setModalIsOpen] = useState(true);
+  const [fileName, setFileName] = useState(resumeFileName || ''); 
   const [error, setError] = useState('');
-  const [requestData, setRequestData] = useState(null);
-  const [loginUrl, setLoginUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
   const { user } = useUserContext();
@@ -23,7 +20,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
   const openModal = () => setIsModalOpen(true);
  const closeModal = () => {
     setIsModalOpen(false);
-    window.location.reload(); // Reload the page when closing the modal
+    window.location.reload(); 
   };
 
   const handleInputChange = (event) => {
@@ -33,24 +30,24 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
   const handleResumeSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Check if the selected file is a PDF
+      
       if (!file.name.toLowerCase().endsWith('.pdf')) {
         setError('Only PDF files are allowed.');
         setResumeFile(null);
-        setFileName(''); // Clear file name if invalid file
-      } else if (file.size > 1048576) { // Check if file size is greater than 1MB (1MB = 1048576 bytes)
+        setFileName(''); 
+      } else if (file.size > 1048576) { 
         setError('File size should be less than 1MB.');
         setResumeFile(null);
-        setFileName(''); // Clear file name if file is too large
+        setFileName(''); 
       } else {
         setResumeFile(file);
-        setFileName(file.name); // Set file name
+        setFileName(file.name); 
         setError('');
       }
     } else {
       setError('Please select a file.');
       setResumeFile(null);
-      setFileName(''); // Clear file name if no file selected
+      setFileName(''); 
     }
   };
   const triggerFileInputClick = () => {
@@ -72,12 +69,12 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
         }
       );
       console.log(response.data);
-      //window.alert(response.data);
+     
       addSnackbar({ message: response.data, type: 'success' });
       window.location.reload();
     } catch (error) {
       console.error('Error uploading resume:', error);
-     // window.alert('Error uploading resume. Please try again.');
+     
       addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
     }
   };
@@ -110,7 +107,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
         <i className="file-icon"></i>
         <input
           type="text"
-          value={fileName} // Display fileName state
+          value={fileName} 
           onChange={handleInputChange}
           className="file-name-input-resume"
           placeholder="No file selected"
