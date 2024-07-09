@@ -36,3 +36,10 @@
   height: 40px; 
   margin-right: 10px; 
 }
+
+
+@media (max-width: 768px) { /* adjust max-width as per your design */
+  #pdfViewer {
+    height: 350px; /* Adjust this height as needed for mobile */
+  }
+}
