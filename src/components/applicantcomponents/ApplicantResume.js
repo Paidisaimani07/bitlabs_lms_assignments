@@ -68,11 +68,22 @@ const ApplicantResume = () => {
         </div>
       </div>
     </section>
+    <div className="col-lg-12 col-md-12">
+              <section className="flat-dashboard-setting flat-dashboard-setting2">
+                <div className="themes-container">
+                  <div className="content-tab">
+                    <div className="inner">
+                      <div className="group-col-2"></div>
       {showBanner ? (
         <MyResumeComponent pdfUrl={pdfUrl} loading={loading} />
       ) : (
         <EditAndDownloadComponent pdfUrl={pdfUrl} loading={loading} />
       )}
+    </div>
+    </div>
+    </div>
+    </section>
+    </div>
     </div>
   );
 };

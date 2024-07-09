@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './EditAndDownloadComponent.css';
 import ModalComponent from './ModalComponent';
 import { ClipLoader } from 'react-spinners';
@@ -22,6 +22,19 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
     window.open(pdfUrl, '_blank');
   };
  
+  useEffect(() => {
+    // Load PDF.js script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://mozilla.github.io/pdf.js/build/pdf.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Clean up script
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="themes-container pdf-container">
       {loading || isLoggingIn ? (
@@ -65,13 +78,13 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
            
           </div>
           <iframe
-            id="pdfViewer"
-            title="Resume"
-            src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-            width="90%"
-            height="900"
-            frameBorder="0"
-          />
+              id="pdfViewer"
+              title="Resume"
+              src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+              width='100%'
+              height='600px' // default height
+              style={{ border: 'none' }}
+            />
          
         </div>
       )}
