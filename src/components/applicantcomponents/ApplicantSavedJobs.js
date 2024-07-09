@@ -62,7 +62,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   }
  
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2);
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
  
   const handleApplyNowClick = (jobId,e) => {
@@ -116,7 +116,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-                       
+
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>
