@@ -200,7 +200,9 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 <ul className="job-tag">
 <li>
       {jobDetails && (
-        <button onClick={handleViewJobDetails} className="button-status">
+        <button 
+        //onClick={handleViewJobDetails} 
+        className="button-status">
           View Job Details
         </button>
       )}
