@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
@@ -8,15 +8,13 @@ import { Box } from '@mui/material';
 import ResumeBuilder from './ResumeBuilder'; 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
-
 import './ModalWrap.css';
+import ModalClose from '../common/ModalClose';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
+  const [showCloseModal, setShowCloseModal] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
@@ -34,123 +32,133 @@ const ModalWrapper = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
-  const handleCloseClick = async() => {
-    if (window.confirm("Please close this window only after saving your resume.")) {
+  const handleCloseClick = () => {
+    setShowCloseModal(true);
+  };
 
+  const handleCloseConfirm = async () => {
+    setShowCloseModal(false);
+    try {
+      const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+      const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
+      const response = await fetch(logoutUrl, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      let resume;
-      try {
-       const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-       const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
-       const response = await fetch(logoutUrl, {
-         method: 'POST',
-         credentials: 'include',
-         headers: {
-           'Content-Type': 'application/json',
-         },
-       });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
 
-       if (!response.ok) {
-         throw new Error('Network response was not ok');
-       }
-       const iframe = document.createElement('iframe');
-       iframe.style.display = 'none';
-       iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
-       document.body.appendChild(iframe);
-       onClose();
-       
-     } catch (error) { 
-       resume=error.response.status; 
-     }
-     if(resume === 404){
-      navigate('/applicant-basic-details-form/3');
-     }else{
-      navigate('/applicanthome');
-     }
-
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
+      document.body.appendChild(iframe);
 
       onClose();
+      
+      if (profileIdResponse1.status === 404) {
+        navigate('/applicant-basic-details-form/3');
+      } else {
+        navigate('/applicanthome');
+      }
+    } catch (error) {
+      console.error('There was a problem with the logout request:', error);
+      alert('Failed to close. Please try again.');
     }
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onClose={handleCloseClick}
-      fullScreen={true}
-      aria-labelledby="responsive-dialog-title"
-      maxWidth="xl"
-      PaperProps={{
-        style: {
-          width: '100%',
-          height: '100%',
-          margin: 0,
-          maxWidth: 'none',
-          maxHeight: 'none',
-          position: 'relative',
-          paddingTop: '90px',
-        },
-      }}
-      BackdropProps={{
-        style: {
-          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the backdrop color if needed
-        },
-      }}
-    >
-      <DialogContent sx={{ padding: 0, position: 'relative' }}>
-        {isMobile ? (
-          <Button
-            sx={{
-              position: 'absolute',
-              textTransform: 'capitalize',
-              right: 2,
-              top: 16,
-              border: '1px solid #F97316',
-              borderRadius: '8px',
-              color: '#F97316',
-              '&:hover': {
-                border: '1px solid #DA4D0B',
-                color: '#DA4D0B'
-              },
-              zIndex: 1,
-            }}
-            onClick={handleCloseClick}
-          >
-            Close
-          </Button>
-        ) : (
-          <Button
-            onClick={handleCloseClick}
-            sx={{
-              position: 'absolute',
-              textTransform: 'capitalize',
-              right: 16,
-              top: 9,
-              border: '1px solid #F97316',
-              borderRadius: '8px',
-              color: '#F97316',
-              '&:hover': {
-                border: '1px solid #DA4D0B',
-                color: '#DA4D0B'
-              },
-              zIndex: 1,
-            }}
-          >
-            Close
-          </Button>
-        )}
-        <Box
-          sx={{
+    <>
+      <Dialog
+        open={isOpen}
+        onClose={handleCloseClick}
+        fullScreen={true}
+        aria-labelledby="responsive-dialog-title"
+        maxWidth="xl"
+        PaperProps={{
+          style: {
             width: '100%',
             height: '100%',
-            overflow: 'hidden',
-          }}
-        >
-          <ResumeBuilder />
-        </Box>
-      </DialogContent>
-    </Dialog>
+            margin: 0,
+            maxWidth: 'none',
+            maxHeight: 'none',
+            position: 'relative',
+            paddingTop: '90px',
+          },
+        }}
+        BackdropProps={{
+          style: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the backdrop color if needed
+          },
+        }}
+      >
+        <DialogContent sx={{ padding: 0, position: 'relative' }}>
+          {isMobile ? (
+            <Button
+              sx={{
+                position: 'absolute',
+                textTransform: 'capitalize',
+                right: 2,
+                top: 16,
+                border: '1px solid #F97316',
+                borderRadius: '8px',
+                color: '#F97316',
+                '&:hover': {
+                  border: '1px solid #DA4D0B',
+                  color: '#DA4D0B'
+                },
+                zIndex: 1,
+              }}
+              onClick={handleCloseClick}
+            >
+              Close
+            </Button>
+          ) : (
+            <Button
+              onClick={handleCloseClick}
+              sx={{
+                position: 'absolute',
+                textTransform: 'capitalize',
+                right: 16,
+                top: 9,
+                border: '1px solid #F97316',
+                borderRadius: '8px',
+                color: '#F97316',
+                '&:hover': {
+                  border: '1px solid #DA4D0B',
+                  color: '#DA4D0B'
+                },
+                zIndex: 1,
+              }}
+            >
+              Close
+            </Button>
+          )}
+          <Box
+            sx={{
+              width: '100%',
+              height: '100%',
+              overflow: 'hidden',
+            }}
+          >
+            <ResumeBuilder />
+          </Box>
+        </DialogContent>
+      </Dialog>
+      <div className="modal-close-wrapper">
+        <ModalClose
+          isOpen={showCloseModal}
+          onClose={() => setShowCloseModal(false)}
+          onConfirm={handleCloseConfirm}
+        />
+      </div>
+    </>
   );
 };
 
 export default ModalWrapper;
+
