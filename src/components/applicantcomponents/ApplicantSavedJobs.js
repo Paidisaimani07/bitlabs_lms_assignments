@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import logoCompany1 from '../../images/cty12.png';
 import { useNavigate, useLocation } from "react-router-dom";
-import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import './ApplicantFindJobs.css';
  
@@ -65,18 +62,18 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   }
  
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); // Assuming salary is in rupees
+    return (amountInRupees / 100000).toFixed(2); // Assuming salary is in rupees
   };
  
   const handleApplyNowClick = (jobId,e) => {
-    if (e) e.stopPropagation(); // Prevent event propagation
+    if (e) e.stopPropagation();
     setSelectedJobId(jobId);
-    // Perform any additional actions you need here
-    navigate('/applicant-view-job',{state:{from:location.pathname}}); // Programmatically navigate to the desired URL
+   
+    navigate('/applicant-view-job',{state:{from:location.pathname}});
   };
  
-  const handleRemoveJob = async (jobId,e) => {
-    e.stopPropagation(); // Prevent event propagation
+  const handleRemoveJob = async (jobId, e) => {
+    e.stopPropagation();
     try {
       const authToken = localStorage.getItem('jwtToken');
       const response = await axios.delete(
@@ -89,15 +86,16 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       );
  
       if (response.status === 200) {
+        // Update the jobs state to remove the job immediately
+        setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
         addSnackbar({ message: 'Job removed', type: 'success' });
       }
- 
-      await fetchSavedJobs(); // Fetch jobs again after removal
     } catch (error) {
       addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
       console.error('Error removing job:', error);
     }
   };
+ 
  
   const addSnackbar = (snackbar) => {
     setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
@@ -118,7 +116,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-                        {/* <BackButton /> */}
+
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>

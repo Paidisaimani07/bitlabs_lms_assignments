@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { useHistory, useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 Modal.setAppElement('#root');
 
@@ -18,20 +18,20 @@ const ModalComponent = ({ isOpen, onRequestClose, loginUrl }) => {
       contentLabel="Login Modal"
       style={{
         overlay: {
-          zIndex: 1000, // Set a high z-index for the overlay
+          zIndex: 1000, 
         },
         content: {
-          width: '1366px', // Set the width to typical laptop screen width
-          height: '900px', // Set the height to typical laptop screen height
-          maxWidth: '100%', // Ensure the modal doesn't exceed the screen width
-          maxHeight: '100%', // Ensure the modal doesn't exceed the screen height
+          width: '1366px', 
+          height: '900px', 
+          maxWidth: '100%', 
+          maxHeight: '100%', 
           top: '50%',
           left: '50%',
           right: 'auto',
           bottom: 'auto',
           marginRight: '-50%',
           transform: 'translate(-50%, -50%)',
-          zIndex: 1001, // Set a high z-index for the content
+          zIndex: 1001,
         },
       }}
       >

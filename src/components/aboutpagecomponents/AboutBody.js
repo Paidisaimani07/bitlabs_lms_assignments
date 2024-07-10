@@ -5,6 +5,7 @@ export default function AboutBody() {
   const toggleContent = () => {
     setShowAdditionalContent(!showAdditionalContent);
   };
+  
   return (
     <div>
       <section className="inner-review-section">
