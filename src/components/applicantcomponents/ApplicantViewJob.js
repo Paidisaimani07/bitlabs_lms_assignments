@@ -126,10 +126,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <div className="inner-box">
                               <div className="box-content">
                                 <h4>
-                                  <a href="#">{jobDetails.companyname}</a>
+                                  <a href="javascript:void(0);">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
-                                  <a href="#">{jobDetails.jobTitle}</a>
+                                  <a href="javascript:void(0);#">{jobDetails.jobTitle}</a>
                                 </h3>
                                 <ul>
                                   <li>
