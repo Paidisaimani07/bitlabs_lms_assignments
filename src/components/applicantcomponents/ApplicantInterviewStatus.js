@@ -155,27 +155,29 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
                                   <span key={index} className="icon-star-full"></span>
                                 ))}
-                              </div>
-                            </div>
-                            <div className="job-footer-right">
-                              <div className="price">
-                                <span>
-                                  <span style={{ fontSize: '12px' }}>Posted on {formatDate(jobDetails.creationDate)}</span>
-                                </span>
-                              </div>
-                              <ul className="job-tag">
-                                <li>
-                                  {jobDetails && (
-                                    <button onClick={handleViewJobDetails} className="button-status">
-                                      View Job Details
-                                    </button>
-                                  )}
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+</div>
+</div>
+<div className="job-footer-right">
+<div className="price">
+<span>
+<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
+</div>
+<ul className="job-tag">
+<li>
+      {jobDetails && (
+        <button 
+        //onClick={handleViewJobDetails} 
+        className="button-status">
+          View Job Details
+        </button>
+      )}
+    </li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
                     )}
                     <h4>Status History</h4>
                     {jobStatus && jobStatus.length > 0 && (
