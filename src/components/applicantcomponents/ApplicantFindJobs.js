@@ -171,7 +171,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}>No jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2 bg-white" key={job.id}>
+                            <div className="features-job cl2 bg-white" key={job.id} onClick={() => handleApplyNowClick(job.id)}>
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -239,7 +239,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                     <li>
                                       {job && (
                                         <button
-                                          onClick={() => handleApplyNowClick(job.id)}
+                                         // onClick={() => handleApplyNowClick(job.id)}
                                           className="button-status1"
                                         >
                                           View Job

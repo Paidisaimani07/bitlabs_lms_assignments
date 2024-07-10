@@ -139,10 +139,10 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                                 <div className="inner-box">
                                   <div className="box-content">
                                     <h4>
-                                      <a href="#">{job.companyname}</a>
+                                      <a href="javascript:void(0);">{job.companyname}</a>
                                     </h4>
                                     <h3>
-                                      <a href="#">
+                                      <a href="javascript:void(0);#">
                                         {job.jobTitle}
                                       </a>
                                     </h3>
@@ -159,13 +159,13 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                                 <div className="job-footer-left">
                                   <ul className="job-tag">
                                     <li>
-                                      <a href="#">{job.employeeType}</a>
+                                      <a href="javascript:void(0);">{job.employeeType}</a>
                                     </li>
                                     <li>
-                                      <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                      <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
                                     </li>
                                     <li>
-                                      <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+                                      <a href="javascript:void(0);">Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
                                     </li>
                                     <li>
                                       <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
@@ -195,7 +195,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                                     <li>
                                       {job && (
                                         <button
-                                          onClick={() => handleApplyNowClick(job.id)}
+                                          // onClick={() => handleApplyNowClick(job.id)}
                                           className="button-status1"
                                         >
                                           View Job

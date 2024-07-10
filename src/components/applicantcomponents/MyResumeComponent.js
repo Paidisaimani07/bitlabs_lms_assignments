@@ -35,7 +35,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
   const styles = {
     commonContainer: {
       paddingLeft: '2rem',
-      paddingRight: '1rem',
+      paddingRight: '2rem',
       marginLeft: 'auto',
       marginRight: 'auto',
       maxWidth: '1400px',
@@ -118,14 +118,15 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       marginBottom: '0.625rem',
     },
     flatDashboardSetting: {
-      padding: '1.25rem',
+      padding: '1rem',
       borderRadius: '8px',
-      paddingLeft: '2rem',
+      paddingLeft: '1rem',
+      paddingRight: '1rem',
     },
     pdfContainer: {
-      width: 'calc(100% - 2rem)',
+      width: 'calc(100% - 1rem)',
       height: '600px',
-      marginBottom: '1.25rem',
+     marginBottom: '1.25rem',
     },
     actionButtons: {
       display: 'flex',
@@ -182,7 +183,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
               src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
               width='100%'
               height='100%' // default height
-              style={{ border: 'none' }}
+              
             />
           )}
         </div>
