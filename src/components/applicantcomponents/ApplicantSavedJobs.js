@@ -195,7 +195,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                                     <li>
                                       {job && (
                                         <button
-                                          onClick={() => handleApplyNowClick(job.id)}
+                                          // onClick={() => handleApplyNowClick(job.id)}
                                           className="button-status1"
                                         >
                                           View Job
