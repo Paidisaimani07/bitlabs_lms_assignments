@@ -1,5 +1,5 @@
 import React, { useState,useEffect} from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -34,17 +34,27 @@ function LoginBody({ handleLogin }) {
  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  const [message, setMessage] = useState('Welcome Back');
  const { user } = useUserContext();
- const [utmSource, setUtmSource] = useState("Self");
+// State variables for UTM parameters
+const [utmSource, setUtmSource] = useState('bitlabs.in');
+const [utmMedium, setUtmMedium] = useState('bitlabs.in');
+const [utmCampaign, setUtmCampaign] = useState('bitlabs.in');
+const [utmContent, setUtmContent] = useState('bitlabs.in');
+const [utmTerm, setUtmTerm] = useState('bitlabs.in');
 
- useEffect(() => {
-  const searchParams = new URLSearchParams(location.search);
-  const utmSourceValue = searchParams.get('utm_source');
 
-  if (utmSourceValue) {
-    setUtmSource(utmSourceValue);
-    
-  }
-}, [location.search]);
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+
+ // Update state variables with UTM parameters from URL if available
+ setUtmSource(params.get('utm_source') || 'bitlabs.in');
+ setUtmMedium(params.get('utm_medium') || 'bitlabs.in');
+ setUtmCampaign(params.get('utm_campaign') || 'bitlabs.in');
+ setUtmContent(params.get('utm_content') || 'bitlabs.in');
+ setUtmTerm(params.get('utm_term') || 'bitlabs.in');
+
+
+}, [location, navigate]);
+
  
 const login = useGoogleLogin({
   // clientId: "435586738795-9tuq57be4e92djg8d8ol1sn1h6a9mm6c.apps.googleusercontent.com", // Pass the clientId here
@@ -61,11 +71,12 @@ const login = useGoogleLogin({
       );
       console.log(res);
       const email1 = res.data.email;
+      const name1= res.data.name;
       console.log('Second API');
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
       const response1 = await axios.post(loginEndpoint, {
         email: email1,
-        utmSource : utmSource,
+        // utmSource : utmSource,
       });
      
       console.log(response1);
@@ -75,6 +86,36 @@ const login = useGoogleLogin({
         console.log('This is response: ', userData);
         console.log('This is token: ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
+
+        if(userData.utmSource === 'first time'){
+         const email = email1;
+         const name = name1;
+         const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+         const webhookData = {
+          email,
+          name,
+          utmSource,
+          utmMedium,
+          utmCampaign,
+          utmContent,
+          utmTerm,
+         };
+ 
+         try {
+           const webhookResponse = await fetch(webhookUrl, {
+             method: 'POST',
+             headers: {
+               'Content-Type': 'application/json',
+             },
+             body: JSON.stringify(webhookData),
+           });
+        console.log('web hook excuted');
+        
+         }catch (error) {
+           console.error('Error sending first webhook:', error);
+           // Handle network errors or other exceptions
+         }
+        }
  
         let userType1;
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -488,7 +529,6 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        email: candidateEmail1,
        mobilenumber: candidateMobileNumber,
        password: candidatePassword1,
-       utmSource: utmSource,
      });
     if (response.data === 'Email is already registered.') {
       // window.alert('Email is already registered.');
@@ -504,6 +544,37 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
      setCandidateMobileNumber('');
      setCandidatePassword1('');
      setCandidateRegistrationInProgress(false);
+    //  const userId = response.data.user.id;
+        const email = candidateEmail1;
+        const name = candidateName;
+        const mobilenumber= candidateMobileNumber;
+        const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+        const webhookData = {
+         //userId,
+         email,
+         name,
+         mobilenumber,
+         utmSource,
+         utmMedium,
+         utmCampaign,
+         utmContent,
+         utmTerm,
+        };
+
+        try {
+          const webhookResponse = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(webhookData),
+          });
+       console.log('web hook excuted');
+       
+        }catch (error) {
+          console.error('Error sending first webhook:', error);
+          // Handle network errors or other exceptions
+        }
      if (candidateOTPSent && candidateOTPVerified) {
        navigate('/candidate', { state: { registrationSuccess: true } });
      }

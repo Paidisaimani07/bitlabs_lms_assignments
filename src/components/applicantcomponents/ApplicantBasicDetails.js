@@ -40,7 +40,6 @@ const ApplicantBasicDetails = () => {
     lastName: '',
     email: user.email || "",
     mobilenumber: user.mobilenumber || "",
-    utmSource:user.utmSource,
   });
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -49,7 +48,6 @@ const ApplicantBasicDetails = () => {
     lastName: applicant.lastName,
     alternatePhoneNumber: applicant.mobilenumber,
     email: applicant.email,
-    utmSource:applicant.utmSource,
   };
   const applicantProfileDTO = {
     basicDetails: basicDetails,
