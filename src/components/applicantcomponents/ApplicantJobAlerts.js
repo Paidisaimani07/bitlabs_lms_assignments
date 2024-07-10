@@ -124,27 +124,50 @@ export default function ApplicantJobAlerts() {
   //   navigate(`/applicant-view-job?jobId=${jobId}`);
   // };
 
-  function formatDate(dateArray) {
-    // Destructure the array into individual components
-    const [year, month, day, hour, minute, second, millisecond] = dateArray;
+//   function formatDate(dateArray) {
+//     // Destructure the array into individual components
+//     const [year, month, day, hour, minute, second, millisecond] = dateArray;
 
-    // Create a Date object using the components
-    const date = new Date(year, month - 1, day, hour, minute, second, millisecond / 1000000);
+//     // Create a Date object using the components
+//     const date = new Date(year, month - 1, day, hour, minute, second, millisecond / 1000000);
 
-    // Define options for date and time formatting
-    const options = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        // second: '2-digit',
-        hour12: true // Use 24-hour format
-    };
+//     // Define options for date and time formatting
+//     const options = {
+//         year: 'numeric',
+//         month: 'long',
+//         day: 'numeric',
+//         hour: '2-digit',
+//         minute: '2-digit',
+//         // second: '2-digit',
+//         hour12: true // Use 24-hour format
+//     };
 
-    // Format the date and time
-    const formattedDate = date.toLocaleString('en-US', options);
-    return formattedDate;
+//     // Format the date and time
+//     const formattedDate = date.toLocaleString('en-US', options);
+//     return formattedDate;
+// }
+
+function formatDate(dateArray) {
+  // Destructure the array into individual components
+  const [year, month, day, hour, minute, second] = dateArray;
+
+  // Create a Date object using the components
+  const date = new Date(year, month - 1, day, hour, minute, second);
+
+  // Define options for date and time formatting
+  const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit', // Include seconds if needed
+      hour12: true // Use 12-hour format with AM/PM
+  };
+
+  // Format the date and time
+  const formattedDate = date.toLocaleString('en-US', options);
+  return formattedDate;
 }
 
   
@@ -214,13 +237,13 @@ export default function ApplicantJobAlerts() {
           onMouseOver={(e) => { e.target.style.color = 'black'; }}
           onMouseOut={(e) => { e.target.style.color = 'black'; }}
         >
-           Your application status has been marked as &nbsp;{alert.applyJob.applicantStatus} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
+           Your application status has been marked as &nbsp;{alert.status} {' '} by {alert.companyName} for {' '} {alert.jobTitle} {' '} role {' '}.
           <br /> {/* Line break to move the date to the second line */}
           <span className="date-info" 
            onMouseOver={(e) => { e.target.style.color = '#848484'; }}
            onMouseOut={(e) => { e.target.style.color = '#848484'; }}
            >
-            {formatDate(alert.applyJob.changeDate)}
+            {formatDate(alert.changeDate)}
           </span>
         </Link>
       </>
