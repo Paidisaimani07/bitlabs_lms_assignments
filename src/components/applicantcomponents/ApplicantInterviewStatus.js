@@ -37,7 +37,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 
         const jobStatusResponse = await axios.get(
 
-          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
+          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${jobId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
