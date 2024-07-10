@@ -4,7 +4,6 @@ import { Link, useLocation,useParams } from 'react-router-dom';
 import RecruiterNavBar from '../../components/recruitercomponents/RecruiterNavBar';
 import { useState } from 'react';
 import RecruiterDashboard from '../../components/recruitercomponents/RecruiterDashboard';
-import ApplicantFooter from '../../components/applicantcomponents/ApplicantFooter';
 import RecruiterMyOrganization from '../../components/recruitercomponents/RecruiterMyOrganization';
 import RecruiterPostJob from '../../components/recruitercomponents/RecruiterPostJob';
 import RecruiterJobOpenings from '../../components/recruitercomponents/RecruiterJobOpenings';

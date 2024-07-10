@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
-import ModalComponent from './ModalComponent';
 import ResumeBuilder from './ResumeBuilder';
 import ModalWrapper from './ModalWrapper';
 const MyResumeComponent = ({ pdfUrl, loading }) => {
@@ -11,7 +10,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
   const closeModal = () => setIsModalOpen(false);
   const handleCreateNowClick = () => {
     openModal();
-   //const loginUrl = `https://resume.bitlabs.in:5173/auth/login?redirect=/dashboard/resumes`;
+   
     setLoginUrl(loginUrl);
     setIsModalOpen(true);
   };
@@ -19,6 +18,19 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
   const handleDownload = () => {
     window.open(pdfUrl, '_blank');
   };
+
+  useEffect(() => {
+    // Load PDF.js script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://mozilla.github.io/pdf.js/build/pdf.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Clean up script
+      document.body.removeChild(script);
+    };
+  }, []);
 
   const styles = {
     commonContainer: {
@@ -42,7 +54,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       flex: 3,
       color: '#D7D8E0',
       fontFamily: 'Plus Jakarta Sans',
-      marginBottom: '1rem',  // Added margin-bottom
+      marginBottom: '1rem', 
     },
     bannerHeading: {
       fontFamily: 'Plus Jakarta Sans',
@@ -51,14 +63,14 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       fontWeight: '800',
       lineHeight: '25px',
       color: 'white',
-      marginBottom: '1rem',  // Added margin-bottom
+      marginBottom: '1rem',  
     },
     bannerImage: {
       flex: 1,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      marginLeft: '2rem',  // Added margin-left
+      marginLeft: '2rem',  
     },
     bannerImageImg: {
       maxWidth: '100%',
@@ -76,7 +88,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       fontWeight: '600',
       borderRadius: '5px',
       cursor: 'pointer',
-      marginTop: '1rem',  // Added margin-top
+      marginTop: '1rem',  
     },
     changePassword: {
       padding: '1.875rem',
@@ -126,6 +138,8 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
     },
   };
 
+
+  
   return (
     <div style={styles.commonContainer}>
       <section style={styles.banner}>
@@ -166,7 +180,9 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
               id="pdfViewer"
               title="Resume"
               src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-              style={{ width: '100%', height: '100%', border: 'none', flex: 1 }}
+              width='100%'
+              height='100%' // default height
+              style={{ border: 'none' }}
             />
           )}
         </div>
@@ -181,3 +197,5 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
 };
 
 export default MyResumeComponent;
+
+

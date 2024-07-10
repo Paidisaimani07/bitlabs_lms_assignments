@@ -1,13 +1,11 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
-import { useNavigate, useLocation,useParams  } from 'react-router-dom';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { Link } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import 'react-quill/dist/quill.snow.css'; 
 
 const RecruiterRepostJob = ({selectedJobId}) => {
  
@@ -132,7 +130,7 @@ const RecruiterRepostJob = ({selectedJobId}) => {
          
           const response = await axios
             .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`,
-            formData,  // Using the existing formData object
+            formData, 
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -143,11 +141,10 @@ const RecruiterRepostJob = ({selectedJobId}) => {
      
           if (response.status === 200) {
             console.log(response.body);
-            //window.alert('Job Reposted successfully');
+          
             setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
             localStorage.setItem('jobs', JSON.stringify(''));
-            //navigate('/recruiter-jobopenings');
-            // You can perform additional actions after saving, such as redirecting to another page
+            
           } else {
             console.error('An error occurred:', response.status, response.body);
           }
@@ -361,7 +358,7 @@ errors.skillsRequired = skillsErrors;
             'Information Technology(IT)',
             'Chemical Engineering',
             'Biotechnology Engineering',
-            // Add other specializations as needed
+            
           ];
         case 'MCA':
           return [
@@ -377,7 +374,7 @@ errors.skillsRequired = skillsErrors;
             'Network Administration',
             'Cyber Security',
             'IT Project Management',
-            // Add other specializations as needed
+            
           ];
         case 'Degree':
           return [
@@ -388,7 +385,7 @@ errors.skillsRequired = skillsErrors;
             'Bachelor of Science (B.Sc) Electronics',
             'Bachelor of Science (B.Sc) Chemistry',
             'Bachelor of Commerce (B.Com)',
-            // Add other specializations as needed
+            
           ];
         case 'Intermediate':
           return ['MPC', 'BiPC', 'CEC', 'HEC'];
@@ -414,9 +411,9 @@ errors.skillsRequired = skillsErrors;
             'Pharmacy',
             'Medical Laboratory Technology',
             'Radiology and Imaging Technology',
-            // Add other specializations as needed
+        
           ];
-        // Add cases for other qualifications
+        
         default:
           return [];
       }
@@ -558,7 +555,7 @@ errors.skillsRequired = skillsErrors;
                     <option value="Degree">Degree</option>
                     <option value="Intermediate">Intermediate</option>
                     <option value="Diploma">Diploma</option>
-                    {/* Add other qualifications as needed */}
+                    
                     </select>
                    {formErrors.minimumQualification && (
                     <div className="error-message">{formErrors.minimumQualification}</div>
@@ -609,7 +606,7 @@ errors.skillsRequired = skillsErrors;
          <option value="Thanjavur">Thanjavur</option>
          <option value="Pondicherry">Pondicherry</option>
          <option value="Vijayawada">Vijayawada</option>
-        {/* Add other location options as needed */}
+        
     </select>
     {formErrors.location && (
       <div className="error-message">{formErrors.location}</div>
@@ -655,7 +652,7 @@ errors.skillsRequired = skillsErrors;
                       <select    value={jobData.employeeType}
                               className="input-form"
                               onChange={(e) => setJobData({ ...jobData, employeeType: e.target.value })}
-                             // style={{ color: employeeType ? 'black' : 'lightgrey' }}
+                             
                               >
                            <option value="">Select</option>
                            <option value="Full-time">Full-time</option>

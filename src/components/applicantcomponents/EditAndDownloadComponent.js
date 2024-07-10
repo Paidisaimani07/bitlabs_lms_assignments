@@ -1,108 +1,11 @@
-// import React, { useState } from 'react';
-// import DownloadIcon from '../../images/blog/dashboard/downloadbutton.png';
-// import EditIcon from '../../images/blog/dashboard/editbutton.png';
-// import './EditAndDownloadComponent.css';
-// import ModalComponent from './ModalComponent';
-// import { ClipLoader } from 'react-spinners';
- 
-// const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
-//   const [requestData, setRequestData] = useState({ identifier: 'your-identifier', password: 'your-password' });
-//   const [isLoggingIn, setIsLoggingIn] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [loginUrl, setLoginUrl] = useState('');
-//   const [errorMessage, setErrorMessage] = useState(''); // State for error messages
- 
-//   const handleDownload = () => {
-//     window.open(pdfUrl, '_blank');
-//   };
- 
-//   const handleResumeBuilder = async () => {
-//     setIsLoggingIn(true);
-//     const apiUrl = 'https://resume.bitlabs.in:5173/api/auth/login';
- 
-//     try {
-//       const response = await fetch(apiUrl, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(requestData),
-//       });
- 
-//       if (!response.ok) {
-//         const errorData = await response.json();
-//         console.error('Error response data:', errorData);
-//         setErrorMessage(errorData.message); // Set the error message
-//         throw new Error('Network response was not ok');
-//       }
- 
-//       const loginUrl = `https://resume.bitlabs.in:5173/auth/login?redirect=/dashboard/resumes&identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
-     
-//       setLoginUrl(loginUrl);
-//       setIsModalOpen(true);
-//       setErrorMessage(''); // Clear any previous error messages
-//     } catch (error) {
-//       console.error('There was a problem with the fetch operation:', error);
-//     } finally {
-//       setIsLoggingIn(false);
-//     }
-//   };
- 
-//   return (
-//     <div className="themes-container pdf-container">
-//       {loading || isLoggingIn ? (
-//         <div className="spinner-container">
-//           <ClipLoader color="#0d6efd" loading={loading || isLoggingIn} size={50} />
-//         </div>
-//       ) : (
-//         <div className="pdf-viewer">
-//           <iframe
-//             id="pdfViewer"
-//             title="Resume"
-//             src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-//             width="100%"
-//             height="600"
-//             frameBorder="0"
-//           />
-//           <div className="button-overlay">
-//             <button className="edit-overlay-button" onClick={handleResumeBuilder}>
-//               <img src={EditIcon} alt="Edit" />
-//               <span>Edit</span>
-//             </button>
-//             <button className="download-overlay-button" onClick={handleDownload}>
-//               <img src={DownloadIcon} alt="Download" />
-//               <span>Download</span>
-//             </button>
-//           </div>
-//         </div>
-//       )}
- 
-//       {errorMessage && (
-//         <div className="error-message">
-//           {errorMessage}
-//         </div>
-//       )}
- 
-//       <ModalComponent
-//         isOpen={isModalOpen}
-//         onRequestClose={() => setIsModalOpen(false)}
-//         loginUrl={loginUrl}
-//       />
-//     </div>
-//   );
-// };
- 
-// export default EditAndDownloadComponent;
- 
-import React, { useState } from 'react';
-import DownloadIcon from '../../images/blog/dashboard/downloadbutton.png';
-import EditIcon from '../../images/blog/dashboard/editbutton.png';
+
+import React, { useState,useEffect } from 'react';
 import './EditAndDownloadComponent.css';
 import ModalComponent from './ModalComponent';
 import { ClipLoader } from 'react-spinners';
 import ResumeBuilder from './ResumeBuilder';
 import ModalWrapper from './ModalWrapper';
-import Button from '@mui/material/Button';
+
  
 const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
   const [requestData, setRequestData] = useState({ identifier: 'your-identifier', password: 'your-password' });
@@ -110,7 +13,7 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isResumeBuilderOpen, setIsResumeBuilderOpen] = useState(false);
   const [loginUrl, setLoginUrl] = useState('');
-  const [errorMessage, setErrorMessage] = useState(''); // State for error messages
+  const [errorMessage, setErrorMessage] = useState(''); 
   
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -119,6 +22,19 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
     window.open(pdfUrl, '_blank');
   };
  
+  useEffect(() => {
+    // Load PDF.js script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://mozilla.github.io/pdf.js/build/pdf.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Clean up script
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="themes-container pdf-container">
       {loading || isLoggingIn ? (
@@ -128,16 +44,11 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
       ) : (
         <div className="pdf-viewer">
              <div className="button-overlay">
-            {/* <Button variant="contained" color="primary" onClick={openModal}>
-        Edit
-      </Button> */}
+            
       <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
       </ModalWrapper>
-            {/* <button className="download-overlay-button" >
-              <img src={DownloadIcon} alt="Download" />
-              <span>Download</span>
-            </button>  */}
+          
             <section className="flat-dashboard-password">
             <div className="themes-container">
               <div className="row">
@@ -167,13 +78,13 @@ const EditAndDownloadComponent = ({ pdfUrl, loading }) => {
            
           </div>
           <iframe
-            id="pdfViewer"
-            title="Resume"
-            src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-            width="90%"
-            height="900"
-            frameBorder="0"
-          />
+              id="pdfViewer"
+              title="Resume"
+              src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+              width='100%'
+              height='600px' // default height
+              style={{ border: 'none' }}
+            />
          
         </div>
       )}

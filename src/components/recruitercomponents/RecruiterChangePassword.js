@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import { Link } from 'react-router-dom';
-import BackButton from '../common/BackButton';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
  
 function RecruiterChangePassword() {
@@ -90,19 +88,19 @@ function RecruiterChangePassword() {
     try {
       const response = await axios.post(`${apiUrl}/recuriters/authenticateRecruiter/${user.id}`, formData);
       if (response.data === 'Password updated and stored') {
-       // window.alert('Password Changed Successfully');
+      
        setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
       } else if(response.data==='your new password should not be same as old password'){
-       // window.alert('New password should not be same as old password.');
+       
         setSnackbar({ open: true, message: 'New password should not be same as old password.', type: 'error' });
       }
       else {
-       // window.alert('Password change failed. Old password is wrong.');
+      
        setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
       }
     } catch (error) {
       console.error('Password change failed. Old password is wrong.:', error);
-      //window.alert('Password change failed. Old password is wrong.');
+      
       setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
     }
   };

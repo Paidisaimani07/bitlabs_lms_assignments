@@ -57,19 +57,19 @@ const handleResumeSelect = (e) => {
       const handleResumeBuilder = async () => {
         const apiUrl1 = 'https://rb.chalowithcharan.com:5173/api/auth/login';
  
-    // Check if requestData is not null before making the API call
+    
     if (requestData) {
-      // Options for the fetch request
+     
       const requestOptions = {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-          // Add any other headers if needed
+         
         },
         body: JSON.stringify(requestData)
       };
  
-      // Make the API call
+      
       fetch(apiUrl1, requestOptions)
         .then(response => {
           if (!response.ok) {
@@ -83,7 +83,7 @@ const handleResumeSelect = (e) => {
           window.open(loginUrl, '_blank');
         })
         .catch(error => {
-          // Handle errors here
+          
           console.error('There was a problem with the fetch operation:', error);
         });
     }
@@ -92,10 +92,10 @@ const handleResumeSelect = (e) => {
  useEffect(() => {
         const fetchData = async () => {
           try {
-            // Make API call to update status in backend
+            
             const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
    
-            // Construct requestData
+          
             const newData = {
               identifier: response.data.email,
               password: response.data.password
@@ -107,7 +107,7 @@ const handleResumeSelect = (e) => {
           }
         };
         fetchData();
-      }, []); // Empty dependency array to run the effect only once
+      }, []); 
      
      
  
@@ -193,7 +193,7 @@ const handleResumeSelect = (e) => {
      border: 'none',
      borderRadius: '8px',
      cursor: 'pointer',
-     marginTop: '5px' // Adjust margin-top as needed
+     marginTop: '5px' 
    }}
  >
    Build Your Resume
@@ -204,12 +204,10 @@ const handleResumeSelect = (e) => {
         </div>
       </div>
     </div>
-   
   </section>
   </form>
 </div>
 </div>
   )
 };
- 
 export default ApplicantBasicDetails1;

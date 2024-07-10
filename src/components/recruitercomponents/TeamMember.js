@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from "axios";
 import AddTeamMemberPopup from './AddTeamMemberPopup';
 function TeamMember() {
@@ -98,7 +98,7 @@ const Table = ({ data, handleDelete }) => {
               <td>{teamMember.name}</td>
               <td>{teamMember.role}</td>
               <td>{teamMember.email}</td>
-              <td>********{/* Display asterisks or any other mask */}</td>
+              <td>********</td>
               <td>
                 <a
                   href="#"

@@ -1,10 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
  
 function RecruiterMyOrganization() {
@@ -196,7 +194,7 @@ function RecruiterMyOrganization() {
             const responseData = await response.text();
             console.log('Success:', responseData);
             if (responseData === 'CompanyProfile was already updated.') {
-             // window.alert('CompanyProfile was already updated.');
+             
              setSnackbar({ open: true, message: 'Company profile was already updated.', type: 'error' });
               setCompanyName('');
               setWebsite('');
@@ -215,7 +213,7 @@ function RecruiterMyOrganization() {
                 instagram: '',
               });
             } else {
-              //window.alert('Profile saved successfully');
+              
               setSnackbar({ open: true, message: 'Profile saved successfully', type: 'success' });
               setIsProfileSubmitted(true);
               setVerificationStatus(false);
@@ -265,12 +263,12 @@ function RecruiterMyOrganization() {
           }
         );
         console.log(response.data);
-        //window.alert(response.data);
+        
         setSnackbar({ open: true, message: response.data, type: 'success' });
         window.location.reload();
       } catch (error) {
         console.error('Error uploading photo:', error);
-        //window.alert('Error in uploading profile');
+        
         setSnackbar({ open: true, message: 'Error in uploading profile.', type: 'error' });
       }
     };

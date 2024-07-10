@@ -14,7 +14,7 @@ export default function ApplicantJobAlerts() {
   const jobIdParam = new URLSearchParams(location.search).get('jobId');
   const [loading, setLoading] = useState(false);
   const [jobDetails, setJobDetails] = useState(null);
-  const [selectedJobId, setSelectedJobId] = useState(null); // Define setSelectedJobId
+  const [selectedJobId, setSelectedJobId] = useState(null); 
   const [jobId, setJobId] = useState(null); 
 
   useEffect(() => {
@@ -56,12 +56,12 @@ export default function ApplicantJobAlerts() {
   useEffect(() => {
     const fetchJobAlerts = async () => {
       try {
-        const authToken = localStorage.getItem('jwtToken'); // Get JWT token from local storage
+        const authToken = localStorage.getItem('jwtToken'); 
         const response = await axios.get(
           `${apiUrl}/applyjob/applicant/job-alerts/${user.id}`,
           {
             headers: {
-              Authorization: `Bearer ${authToken}`, // Add JWT token to request headers
+              Authorization: `Bearer ${authToken}`, 
             },
           }
         );
@@ -89,14 +89,14 @@ export default function ApplicantJobAlerts() {
       });
   }, [user.id]);
 
-  //handleJobAlertClick 
+  
   
   const handleJobAlertClick = async (alert) => {
     try {
-      // Call the backend API to mark the alert as seen
+      
       await axios.put(`${apiUrl}/applyjob/applicant/mark-alert-as-seen/${alert.alertsId}`);
       
-      // Update the "seen" status of the clicked alert in the frontend
+     
       const updatedJobAlerts = jobAlerts.map(alert => {
         if (alert.alertsId === alert.alertsId) {
           return { ...alert, seen: true };
@@ -105,11 +105,7 @@ export default function ApplicantJobAlerts() {
       });
       setJobAlerts(updatedJobAlerts);
   
-      // Show job details
-      // const jobId = alert.applyJob && alert.applyJob.job && alert.applyJob.job.id;
-      // setSelectedJobId(jobId);
-      // console.log('Selected job ID:', jobId);
-      // navigate('/applicant-interview-status?jobId=${alert.applyJob.job.id}');
+     
     } catch (error) {
       console.error('Error marking alert as seen:', error);
     }
@@ -119,10 +115,7 @@ export default function ApplicantJobAlerts() {
     navigate("/applicant-find-jobs");
   };
 
-  // const handleJobTitleClick = (jobId) => {
-  //   setSelectedJobId(jobId);
-  //   navigate(`/applicant-view-job?jobId=${jobId}`);
-  // };
+  
 
 //   function formatDate(dateArray) {
 //     // Destructure the array into individual components
@@ -179,11 +172,9 @@ function formatDate(dateArray) {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
-              {/* <BackButton /> */}
+            
                 <div className="title-dash flex2" style={{marginLeft: "30px",marginBottom:"-30px" }}>Notifications</div>
-{/*<h4 className="title-count" onClick={RecommendJobs}>
-    {"We've"} {contRecJobs}{" "} {"New job recommendations matching your profile. Check it out now!"}
-  </h4> */}
+
                 
               </div>
             </div>
@@ -250,7 +241,6 @@ function formatDate(dateArray) {
     
   </h4>
 </div>
-
                       {alert.applyJob && (
                         <a href="#" className="p-16 color-3">{alert.applyJob.jobTitle}</a>
                       )}
