@@ -36,7 +36,6 @@ const ApplicantBasicDetails = () => {
     lastName: '',
     email: user.email || "",
     mobilenumber: user.mobilenumber || "",
-   
   });
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
