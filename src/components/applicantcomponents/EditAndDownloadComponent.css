@@ -36,3 +36,25 @@
   height: 40px; 
   margin-right: 10px; 
 }
+
+
+@media (max-width: 768px) { 
+  #pdfViewer {
+    height: 490px; 
+  }
+}
+@media (max-width: 480px) {
+  #pdfViewer {
+    height: 340px;
+  }
+} 
+@media (max-width: 768px) { 
+  .bg-white {
+    height: 520px; 
+  }
+}
+@media (max-width: 480px) { 
+  .bg-white {
+    height: 370px; 
+  }
+}

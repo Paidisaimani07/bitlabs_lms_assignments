@@ -126,10 +126,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <div className="inner-box">
                               <div className="box-content">
                                 <h4>
-                                  <a href="#">{jobDetails.companyname}</a>
+                                  <a href="javascript:void(0);">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
-                                  <a href="#">{jobDetails.jobTitle}</a>
+                                  <a href="javascript:void(0);#">{jobDetails.jobTitle}</a>
                                 </h3>
                                 <ul>
                                   <li>
@@ -144,10 +144,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <div className="job-footer-left">
                               <ul className="job-tag">
                                 <li>
-                                  <a href="#">{jobDetails.employeeType}</a>
+                                  <a href="javascript:void(0);">{jobDetails.employeeType}</a>
                                 </li>
                                 <li>
-                                  <a href="#">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
+                                  <a href="javascript:void(0);">{jobDetails.remote ? 'Remote' : 'Office-based'}</a>
                                 </li>
                                 <li>
                                   <a href="javascript:void(0);">

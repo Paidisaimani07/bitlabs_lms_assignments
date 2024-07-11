@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
 import ResumeBuilder from './ResumeBuilder';
@@ -19,10 +19,23 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
     window.open(pdfUrl, '_blank');
   };
 
+  useEffect(() => {
+    // Load PDF.js script dynamically
+    const script = document.createElement('script');
+    script.src = 'https://mozilla.github.io/pdf.js/build/pdf.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Clean up script
+      document.body.removeChild(script);
+    };
+  }, []);
+
   const styles = {
     commonContainer: {
       paddingLeft: '2rem',
-      paddingRight: '1rem',
+      paddingRight: '2rem',
       marginLeft: 'auto',
       marginRight: 'auto',
       maxWidth: '1400px',
@@ -105,14 +118,15 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       marginBottom: '0.625rem',
     },
     flatDashboardSetting: {
-      padding: '1.25rem',
+      padding: '1rem',
       borderRadius: '8px',
-      paddingLeft: '2rem',
+      paddingLeft: '1rem',
+      paddingRight: '1rem',
     },
     pdfContainer: {
-      width: 'calc(100% - 2rem)',
+      width: 'calc(100% - 1rem)',
       height: '600px',
-      marginBottom: '1.25rem',
+     marginBottom: '1.25rem',
     },
     actionButtons: {
       display: 'flex',
@@ -125,6 +139,8 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
     },
   };
 
+
+  
   return (
     <div style={styles.commonContainer}>
       <section style={styles.banner}>
@@ -165,7 +181,9 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
               id="pdfViewer"
               title="Resume"
               src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-              style={{ width: '100%', height: '100%', border: 'none', flex: 1 }}
+              width='100%'
+              height='100%' // default height
+              
             />
           )}
         </div>
@@ -180,3 +198,5 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
 };
 
 export default MyResumeComponent;
+
+

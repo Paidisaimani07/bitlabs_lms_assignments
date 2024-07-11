@@ -49,25 +49,8 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
 
   return (
     <div>
-      {loading ? (
-        <div className="dashboard__content">
-        <div className="row mr-0 ml-10">
-          <div className="col-lg-12 col-md-12">
-            <section className="page-title-dashboard">
-              <div className="themes-container">
-                <div className="row">
-                  <div className="col-lg-12 col-md-12 ">
-                    <div className="title-dashboard">
-                    <Spinner /> 
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-        </div>
-      ) : (
+      {loading ? null : (
+      
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
@@ -118,10 +101,18 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                               <div className="job-archive-footer">
                                 <div className="job-footer-left">
                                   <ul className="job-tag">
-                                    <li>{job.employeeType}</li>
-                                    <li>{job.remote ? 'Remote' : 'Office-based'}</li>
-                                    <li>Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</li>
-                                    <li>&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</li>
+                                  <li>
+                                      <a href="#">{job.employeeType}</a>
+                                    </li>
+                                    <li>
+                                      <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
+                                    </li>
+                                    <li>
+                                      <a href="javascript:void(0);">&#x20B9; {convertToLakhs(job.minSalary)} - &#x20B9; {convertToLakhs(job.maxSalary)} LPA</a>
+                                    </li>
                                   </ul>
                                   <div className="star">
                                     {Array.from({ length: job.starRating }).map((_, index) => (

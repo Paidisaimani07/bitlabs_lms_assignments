@@ -145,26 +145,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
 
   return (
     <div>
-      {loading ? (
-         <div className="dashboard__content">
-         <div className="row mr-0 ml-10">
-           <div className="col-lg-12 col-md-12">
-             <section className="page-title-dashboard">
-               <div className="themes-container">
-                 <div className="row">
-                   <div className="col-lg-12 col-md-12 ">
-                     <div className="title-dashboard">
-                     <Spinner />
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </section>
-           </div>
-           </div>
-           </div>
-        
-      ) : (
+      {loading ? null : (
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
@@ -190,7 +171,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}>No jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <div className="features-job cl2 bg-white" key={job.id}>
+                            <div className="features-job cl2 bg-white" key={job.id} onClick={() => handleApplyNowClick(job.id)}>
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -258,7 +239,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                     <li>
                                       {job && (
                                         <button
-                                          onClick={() => handleApplyNowClick(job.id)}
+                                         // onClick={() => handleApplyNowClick(job.id)}
                                           className="button-status1"
                                         >
                                           View Job
