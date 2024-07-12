@@ -228,22 +228,29 @@ if (!applicant.mobilenumber) {
       );
       console.log(" returned after api call");
 
-      console.log('POST API Response for Profile Data:', putProfileResponse.data);
-      setRequestData(true);
-      
-    const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
-    const webhookPayload = {
-      userId: user.id,
-      profileData: applicantProfileDTO,
-    };
+     // Transform the payload
+const transformedApplicantProfileDTO = {
+  ...applicantProfileDTO,
+  locations: applicantProfileDTO.preferredJobLocations.join(','),
+  skills: applicantProfileDTO.skillsRequired.map(skill => skill.skillName).join(','),
+};
 
-    const webhookResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(webhookPayload),
-    });
+delete transformedApplicantProfileDTO.preferredJobLocations;
+delete transformedApplicantProfileDTO.skillsRequired;
+
+const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
+const webhookPayload = {
+  userId: user.id,
+  profileData: transformedApplicantProfileDTO,
+};
+
+const webhookResponse = await fetch(webhookUrl, {
+  method: 'POST',
+  headers: {
+      'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(webhookPayload),
+});
 
     if (!webhookResponse.ok) {
       throw new Error('Failed to send data to the webhook');
