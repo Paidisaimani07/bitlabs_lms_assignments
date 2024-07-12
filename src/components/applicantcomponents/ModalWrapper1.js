@@ -13,7 +13,7 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import './ModalWrap.css';
 import ModalClose from '../common/ModalClose';
 
-const ModalWrapper = ({ isOpen, onClose }) => {
+const ModalWrapper1 = ({ isOpen, onClose }) => {
   const [showCloseModal, setShowCloseModal] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -36,39 +36,85 @@ const ModalWrapper = ({ isOpen, onClose }) => {
     setShowCloseModal(true);
   };
 
-  const handleCloseConfirm = async () => {
-    setShowCloseModal(false);
-    try {
-      const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-      const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
-      const response = await fetch(logoutUrl, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
-      document.body.appendChild(iframe);
-
-      onClose();
+  // const handleCloseConfirm = async () => {
+  //   setShowCloseModal(false);
+  //   let profileIdResponse1;
+  //   try {
+  //     profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+  //     const logoutUrl = 'http://localhost:5173/api/auth/logout?_=' + Date.now();
+  //     const response = await fetch(logoutUrl, {
+  //       method: 'POST',
+  //       credentials: 'include',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+  //   }
+  //   catch (error) {
+  //     console.error('There was a problem with the logout request:', error);
+  //     //alert('Failed to close. Please try again.');
+  //   }
       
-      if (profileIdResponse1.status === 404) {
-        navigate('/applicant-basic-details-form/3');
-      } else {
-        navigate('/applicanthome');
+  //     const iframe = document.createElement('iframe');
+  //     iframe.style.display = 'none';
+  //     try{
+  //     iframe.src = 'http://localhost:5173/dashboard/resumes';
+  //     document.body.appendChild(iframe);
+  //     }
+  //     catch(error)
+  //     {
+
+  //     }
+  //     onClose();
+  //     if (profileIdResponse1.status === 404) {
+  //       navigate('/applicant-basic-details-form/3');
+  //     } else {
+  //       navigate('/applicanthome');
+  //     }
+  // };
+
+  const handleCloseConfirm = async() => {
+    setShowCloseModal(false);
+      let resume;
+      try{
+        const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
+        const response = await fetch(logoutUrl, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });  
       }
-    } catch (error) {
-      console.error('There was a problem with the logout request:', error);
-      alert('Failed to close. Please try again.');
-    }
+      catch(error)
+      {
+       console.error('There was a problem with the logout request:', error);
+      }
+      try {
+       const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
+       
+     } catch (error) { 
+       resume=error.response.status; 
+     }
+         const iframe = document.createElement('iframe');
+         iframe.style.display = 'none';
+         try{
+         iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
+         document.body.appendChild(iframe);
+         }
+         catch(error)
+         {
+          console.error('There was a problem with the logout request:', error);
+         }
+
+     onClose();
+      if(resume === 404){
+        navigate('/applicant-basic-details-form/3');
+       }else{
+        navigate('/applicanthome');
+       }
+    
+   
   };
 
   return (
@@ -160,5 +206,5 @@ const ModalWrapper = ({ isOpen, onClose }) => {
   );
 };
 
-export default ModalWrapper;
+export default ModalWrapper1;
 
