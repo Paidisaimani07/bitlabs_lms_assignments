@@ -12,6 +12,7 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import './ModalWrap.css';
 import ModalClose from '../common/ModalClose';
+import Logo from '../../images/artboard.svg';
 
 const ModalWrapper1 = ({ isOpen, onClose }) => {
   const [showCloseModal, setShowCloseModal] = useState(false);
@@ -35,43 +36,6 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
   const handleCloseClick = () => {
     setShowCloseModal(true);
   };
-
-  // const handleCloseConfirm = async () => {
-  //   setShowCloseModal(false);
-  //   let profileIdResponse1;
-  //   try {
-  //     profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-  //     const logoutUrl = 'http://localhost:5173/api/auth/logout?_=' + Date.now();
-  //     const response = await fetch(logoutUrl, {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
-  //   }
-  //   catch (error) {
-  //     console.error('There was a problem with the logout request:', error);
-  //     //alert('Failed to close. Please try again.');
-  //   }
-      
-  //     const iframe = document.createElement('iframe');
-  //     iframe.style.display = 'none';
-  //     try{
-  //     iframe.src = 'http://localhost:5173/dashboard/resumes';
-  //     document.body.appendChild(iframe);
-  //     }
-  //     catch(error)
-  //     {
-
-  //     }
-  //     onClose();
-  //     if (profileIdResponse1.status === 404) {
-  //       navigate('/applicant-basic-details-form/3');
-  //     } else {
-  //       navigate('/applicanthome');
-  //     }
-  // };
 
   const handleCloseConfirm = async() => {
     setShowCloseModal(false);
@@ -133,22 +97,27 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
             maxWidth: 'none',
             maxHeight: 'none',
             position: 'relative',
-            paddingTop: '90px',
+            paddingTop: '30px',
+           //marginTop:'150px',
+            zIndex: 1000
           },
         }}
         BackdropProps={{
           style: {
             backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the backdrop color if needed
+           // zIndex:'999'
           },
         }}
       >
+        <img className="top-left-svg" src={Logo} alt="Logo" /><br></br>
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
+        
           {isMobile ? (
             <Button
               sx={{
                 position: 'absolute',
                 textTransform: 'capitalize',
-                right: 2,
+                right: 6,
                 top: 16,
                 border: '1px solid #F97316',
                 borderRadius: '8px',
@@ -169,7 +138,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
               sx={{
                 position: 'absolute',
                 textTransform: 'capitalize',
-                right: 16,
+                right: 24,
                 top: 9,
                 border: '1px solid #F97316',
                 borderRadius: '8px',
