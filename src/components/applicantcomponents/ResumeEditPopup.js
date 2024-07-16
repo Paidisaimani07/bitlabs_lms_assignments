@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import { useUserContext } from '../common/UserProvider';
-import ModalWrapper from './ModalWrapper';
+import ModalWrapper2 from './ModalWrapper2';
 import ResumeBuilder from './ResumeBuilder';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
@@ -128,9 +128,9 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
           Build Your Resume
         </button>
       </div>
-      <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
+      <ModalWrapper2 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
-      </ModalWrapper>
+      </ModalWrapper2>
       {error && <div className="error-message">{error}</div>}
       <div className="save-resume">
         <button
