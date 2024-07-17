@@ -50,6 +50,17 @@ const ApplicantBasicDetails = () => {
   };
   const [errors, setErrors] = useState({});
 
+
+  const handleQualificationChange = (selected) => {
+    setQualification(selected[0] || null);
+    setSpecialization(null); // Clear the specialization when qualification changes
+  };
+
+  const handleSpecializationChange = (selected) => {
+    setSpecialization(selected[0] || null);
+  };
+
+
   const validateInput = (name, value) => {
     let error = '';
 
@@ -620,28 +631,28 @@ const webhookResponse = await fetch(webhookUrl, {
         return (
           <div className="input-container">
             <div className="input-wrapper">
-              <Typeahead
-                id="qualification"
-                options={qualificationsOptions}
-                placeholder="*Qualification"
-                onChange={(selected) => setQualification(selected[0])}
-                selected={qualification ? [qualification] : []}
-                className="input-form typeahead"
-              />
-              {errors.qualification && <div className="error-message">{errors.qualification}</div>}
-            </div>
-  
-            <div className="input-wrapper">
-              <Typeahead
-                id="specialization"
-                options={qualification ? specializationsByQualification[qualification] : []}
-                placeholder="*Specialization"
-                onChange={(selected) => setSpecialization(selected[0])}
-                selected={specialization ? [specialization] : []}
-                className="input-form typeahead"
-              />
-              {errors.specialization && <div className="error-message">{errors.specialization}</div>}
-            </div>
+        <Typeahead
+          id="qualification"
+          options={qualificationsOptions}
+          placeholder="*Qualification"
+          onChange={handleQualificationChange}
+          selected={qualification ? [qualification] : []}
+          className="input-form typeahead"
+        />
+        {errors.qualification && <div className="error-message">{errors.qualification}</div>}
+      </div>
+
+      <div className="input-wrapper">
+        <Typeahead
+          id="specialization"
+          options={qualification ? specializationsByQualification[qualification] : []}
+          placeholder="*Specialization"
+          onChange={handleSpecializationChange}
+          selected={specialization ? [specialization] : []}
+          className="input-form typeahead"
+        />
+        {errors.specialization && <div className="error-message">{errors.specialization}</div>}
+      </div>
   
             <div className="input-wrapper">
   <Typeahead
