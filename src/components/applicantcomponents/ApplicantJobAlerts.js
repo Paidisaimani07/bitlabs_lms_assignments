@@ -115,47 +115,23 @@ export default function ApplicantJobAlerts() {
     navigate("/applicant-find-jobs");
   };
 
-  
 
-//   function formatDate(dateArray) {
-//     // Destructure the array into individual components
-//     const [year, month, day, hour, minute, second, millisecond] = dateArray;
-
-//     // Create a Date object using the components
-//     const date = new Date(year, month - 1, day, hour, minute, second, millisecond / 1000000);
-
-//     // Define options for date and time formatting
-//     const options = {
-//         year: 'numeric',
-//         month: 'long',
-//         day: 'numeric',
-//         hour: '2-digit',
-//         minute: '2-digit',
-//         // second: '2-digit',
-//         hour12: true // Use 24-hour format
-//     };
-
-//     // Format the date and time
-//     const formattedDate = date.toLocaleString('en-US', options);
-//     return formattedDate;
-// }
 
 function formatDate(dateArray) {
-  // Destructure the array into individual components
+  
   const [year, month, day, hour, minute, second] = dateArray;
 
-  // Create a Date object using the components
+  
   const date = new Date(year, month - 1, day, hour, minute, second);
 
-  // Define options for date and time formatting
+  
   const options = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit', // Include seconds if needed
-      hour12: true // Use 12-hour format with AM/PM
+      hour12: true 
   };
 
   // Format the date and time
@@ -223,7 +199,7 @@ function formatDate(dateArray) {
       
       <>
         <Link
-          to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}`}
+          to={`/applicant-interview-status?jobId=${alert.applyJob.job.id}&applyJobId=${alert.applyJob.applyjobid}`}
           className="link"
           onMouseOver={(e) => { e.target.style.color = 'black'; }}
           onMouseOut={(e) => { e.target.style.color = 'black'; }}

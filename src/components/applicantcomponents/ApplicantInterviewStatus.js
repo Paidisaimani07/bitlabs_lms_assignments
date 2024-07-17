@@ -15,7 +15,8 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId');
- 
+  const applyJobId = new URLSearchParams(location.search).get('applyJobId'); 
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,7 +71,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
           setLoading(false);
         } else {
           const response = await axios.get(
-            `${apiUrl}/applyjob/recruiters/applyjob-status-history/${selectedJobId}`,
+            `${apiUrl}/applyjob/recruiters/applyjob-status-history/${applyJobId}`,
             {
               headers: {
                 Authorization: `Bearer ${authToken}`,
@@ -98,7 +99,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   }, [jobId]);
  
   function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
@@ -209,7 +210,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                               <ul className="job-tag">
                                 <li>
                                   {jobDetails && (
-                                    <button onClick={handleViewJobDetails} className="button-status">
+                                    <button className="button-status">
                                       View Job Details
                                     </button>
                                   )}
@@ -223,7 +224,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                    <h4>Status History</h4>
   {jobStatus && jobStatus.length > 0 && (
     <ul className="events">
-      {jobStatus.slice().reverse().map((status, index) => (
+      {jobStatus.slice().map((status, index) => (
         <li key={index}>
           {status && status.changeDate && status.status !== undefined && (
             <>
