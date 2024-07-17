@@ -20,17 +20,17 @@ const ModalClose = ({ isOpen, onClose, onConfirm }) => {
       <div className="modal1-dialog" role="document">
         <div className="modal1-content">
           <div className="modal1-header">
-            <h5 className="modal1-title">Close?</h5>
+            <h5 className="modal1-title">Did you save your resume before closing?</h5>
             <Link type="button" className="close" aria-label="Close" onClick={onClose}>
               <span aria-hidden="true">&times;</span>
             </Link>
           </div>
           <div className="modal1-body">
-            <p>Please close this window only after saving your resume.</p>
+            <p>Your resume won't be displayed to the recruiters until you hit the <b>"Save"</b> button</p>
           </div>
-          <div className="modal1-footer">
-            <button type="button" className="btn1 btn-secondary1" onClick={onClose}>Cancel</button>
-            <button type="button" className="btn1 btn-primary1" onClick={onConfirm}>Close</button>
+          <div className="modal1-footer" >
+            <button type="button" className="btn1 btn-secondary1" onClick={onClose}>No,go back</button>
+            <button type="button" className="btn1 btn-primary1" onClick={onConfirm}>Yes,I saved</button>
           </div>
         </div>
       </div>
