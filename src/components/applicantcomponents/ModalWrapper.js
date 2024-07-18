@@ -9,7 +9,6 @@ import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import './ModalWrap.css';
-import ModalClose from '../common/ModalClose';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const [showCloseModal, setShowCloseModal] = useState(false);
@@ -30,38 +29,23 @@ const ModalWrapper = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data === 'close-modal') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [onClose]);
+
   const handleCloseClick = () => {
     setShowCloseModal(true);
   };
-
-  const handleCloseConfirm = async () => {
-    setShowCloseModal(false);
-    onClose(); // Close the ModalWrapper first
-
-    try {
-      const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
-      const response = await fetch(logoutUrl, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
-      document.body.appendChild(iframe);
-    } catch (error) {
-      console.error('There was a problem with the logout request:', error);
-      alert('Failed to close. Please try again.');
-    }
-  };
-
   return (
     <>
       <Dialog
@@ -89,47 +73,6 @@ const ModalWrapper = ({ isOpen, onClose }) => {
         }}
       >
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
-          {isMobile ? (
-            <Button
-              sx={{
-                position: 'absolute',
-                textTransform: 'capitalize',
-                right: 6,
-                top: 16,
-                border: '1px solid #F97316',
-                borderRadius: '8px',
-                color: '#F97316',
-                '&:hover': {
-                  border: '1px solid #DA4D0B',
-                  color: '#DA4D0B'
-                },
-                zIndex: 1,
-              }}
-              onClick={handleCloseClick}
-            >
-              Close
-            </Button>
-          ) : (
-            <Button
-              onClick={handleCloseClick}
-              sx={{
-                position: 'absolute',
-                textTransform: 'capitalize',
-                right: 28,
-                top: 9,
-                border: '1px solid #F97316',
-                borderRadius: '8px',
-                color: '#F97316',
-                '&:hover': {
-                  border: '1px solid #DA4D0B',
-                  color: '#DA4D0B'
-                },
-                zIndex: 1,
-              }}
-            >
-              Close
-            </Button>
-          )}
           <Box
             sx={{
               width: '100%',
@@ -141,13 +84,6 @@ const ModalWrapper = ({ isOpen, onClose }) => {
           </Box>
         </DialogContent>
       </Dialog>
-      <div className="modal-close-wrapper">
-        <ModalClose
-          isOpen={showCloseModal}
-          onClose={() => setShowCloseModal(false)}
-          onConfirm={handleCloseConfirm}
-        />
-      </div>
     </>
   );
 };
