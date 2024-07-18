@@ -5,7 +5,7 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import 'react-calendar-timeline/lib/Timeline.css';
 import BackButton from '../common/BackButton';
- 
+
 const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
   const [jobStatus, setJobStatus] = useState([]);
@@ -29,12 +29,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     };
     fetchData();
   }, []);
- 
+
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
         const authToken = localStorage.getItem('jwtToken');
- 
         const response = await axios.get(
           `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
           {
@@ -43,7 +42,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
             },
           }
         );
- 
+
         const { body } = response.data;
         setLoading(false);
         if (body) {
@@ -56,59 +55,62 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
         setLoading(false);
       }
     };
- 
+
     fetchJobDetails();
   }, [jobId]);
- 
-  useEffect(() => {
-    const fetchJobStatus = async () => {
-      try {
-        const authToken = localStorage.getItem('jwtToken');
-        const storedJobStatus = localStorage.getItem(`jobStatus_${jobId}`);
- 
-        if (storedJobStatus) {
-          setJobStatus(JSON.parse(storedJobStatus));
-          setLoading(false);
-        } else {
-          const response = await axios.get(
-            `${apiUrl}/applyjob/recruiters/applyjob-status-history/${applyJobId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
- 
-          const body = response.data;
-          setLoading(false);
-          if (Array.isArray(body) && body.length > 0) {
-            setJobStatus(body);
-            localStorage.setItem(`jobStatus_${jobId}`, JSON.stringify(body));
-          }
+
+  const fetchJobStatus = async () => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+      const response = await axios.get(
+        `${apiUrl}/applyjob/recruiters/applyjob-status-history/${applyJobId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         }
-      } catch (error) {
-        console.error('Error fetching job status:', error);
-      } finally {
-        setLoading(false);
+      );
+
+      const body = response.data;
+      setLoading(false);
+      if (Array.isArray(body) && body.length > 0) {
+        setJobStatus(body);
+        localStorage.setItem(`jobStatus_${jobId}`, JSON.stringify(body));
       }
-    };
- 
+    } catch (error) {
+      console.error('Error fetching job status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (jobId) {
       fetchJobStatus();
     }
   }, [jobId]);
- 
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (jobId) {
+        fetchJobStatus();
+      }
+    }, 5000); // Polling interval set to 5 seconds
+
+    return () => clearInterval(intervalId);
+  }, [jobId]);
+
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
- 
+
   const handleApplyNowClick = () => {
     if (jobDetails && jobDetails.id) {
       const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
       console.log('API Endpoint:', apiEndpoint);
- 
+
       axios.get(apiEndpoint)
         .then(response => {
           console.log('API Response:', response);
@@ -125,16 +127,16 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
       console.error('No job details or jobId available');
     }
   };
- 
+
   const convertToLakhs = (amountInRupees) => {
     return (amountInRupees * 1).toFixed(2);
   };
- 
+
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
     navigate(`/applicant-view-job`, { state: { from: location.pathname } });
   };
- 
+
   return (
     <div>
       {loading ? null : (
@@ -248,6 +250,5 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
     </div>
   );
 };
- 
+
 export default ApplicantInterviewStatus;
- 
