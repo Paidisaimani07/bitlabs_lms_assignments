@@ -170,7 +170,9 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                         {jobs.length === 0 ? (
                           <div style={{ marginLeft: 30 }}>No jobs available</div>
                         ) : (
-                          jobs.map((job) => (
+                        jobs
+                          .sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate))
+                          .map((job) => (
                             <div className="features-job cl2 bg-white" key={job.id} onClick={() => handleApplyNowClick(job.id)}>
                               <div className="job-archive-header">
                                 <div className="inner-box">
