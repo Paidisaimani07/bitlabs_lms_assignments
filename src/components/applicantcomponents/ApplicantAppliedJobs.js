@@ -83,11 +83,13 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                               style={{ textDecoration: 'none', color: 'inherit' }}
                               onClick={() => setSelectedJobId(job.applyJobId)}
                             >
+                              <div>
                               <div className="job-archive-header">
                                 <div className="inner-box">
-
                                   <div className="box-content">
-                                    <h4>{job.companyname}</h4>
+                                    <h4><a href="javascript:void(0);">
+                                  {job.companyname}
+                                      </a></h4>
                                     <h3>{job.jobTitle}</h3>
                                     <ul>
                                       <li>
@@ -102,10 +104,10 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                 <div className="job-footer-left">
                                   <ul className="job-tag">
                                   <li>
-                                      <a href="#">{job.employeeType}</a>
+                                      <a href="javascript:void(0);">{job.employeeType}</a>
                                     </li>
                                     <li>
-                                      <a href="#">{job.remote ? 'Remote' : 'Office-based'}</a>
+                                      <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
                                     </li>
                                     <li>
                                       <a href="javascript:void(0);"> Exp &nbsp;{job.minimumExperience} - {job.maximumExperience} years</a>
@@ -134,6 +136,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                     </Link>
                                   </button>
                                 </div>
+                              </div>
                               </div>
                             </Link>
                           ))
