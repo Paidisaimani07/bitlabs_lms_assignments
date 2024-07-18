@@ -14,7 +14,6 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const applicantId = user.id;
   const navigate = useNavigate();
 
-
   const fetchAppliedJobs = useCallback(async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
@@ -31,7 +30,6 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
     }
   }, [applicantId]);
 
-
   useEffect(() => {
     fetchAppliedJobs();
   }, [fetchAppliedJobs]);
@@ -42,15 +40,12 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   };
 
   const convertToLakhs = (amountInRupees) => {
-
-    return (amountInRupees * 1).toFixed(2); 
-
+    return (amountInRupees * 1).toFixed(2);
   };
 
   return (
     <div>
       {loading ? null : (
-      
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
@@ -78,14 +73,13 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                           jobs.map((job) => (
                             <Link
                               className="features-job cl2 bg-white"
-                              to={`/applicant-interview-status?jobId=${job.id}`}
+                              to="#"
                               key={job.id}
                               style={{ textDecoration: 'none', color: 'inherit' }}
                               onClick={() => setSelectedJobId(job.applyJobId)}
                             >
                               <div className="job-archive-header">
                                 <div className="inner-box">
-
                                   <div className="box-content">
                                     <h4>{job.companyname}</h4>
                                     <h3>{job.jobTitle}</h3>
@@ -101,7 +95,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                               <div className="job-archive-footer">
                                 <div className="job-footer-left">
                                   <ul className="job-tag">
-                                  <li>
+                                    <li>
                                       <a href="#">{job.employeeType}</a>
                                     </li>
                                     <li>
@@ -128,7 +122,9 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                     <Link
                                       to={`/applicant-interview-status?jobId=${job.id}&applyJobId=${job.applyJobId}`}
                                       style={{ color: 'white' }}
-                                      onClick={() => setSelectedJobId(job.applyJobId)}
+                                      onClick={() => {
+                                        setSelectedJobId(job.applyJobId);
+                                      }}
                                     >
                                       Check Status
                                     </Link>
