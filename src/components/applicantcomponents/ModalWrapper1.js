@@ -16,6 +16,7 @@ import Logo from '../../images/artboard.svg';
 
 const ModalWrapper1 = ({ isOpen, onClose }) => {
   const [showCloseModal, setShowCloseModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
@@ -33,52 +34,31 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleMessage = async (event) => {
+      if (event.data === 'close-modal') {
+        try {
+          await axios.get(`${apiUrl}/resume/pdf/${user.id}`);
+          navigate('/applicanthome');
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            navigate('/applicant-basic-details-form/3');
+          } else {
+            console.error('An unexpected error occurred:', error);
+          }
+        } finally {
+          onClose(); 
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, [onClose, user.id, apiUrl, navigate]);
+
   const handleCloseClick = () => {
     setShowCloseModal(true);
-  };
-
-  const handleCloseConfirm = async() => {
-    setShowCloseModal(false);
-      let resume;
-      try{
-        const logoutUrl = 'https://resume.bitlabs.in:5173/api/auth/logout?_=' + Date.now();
-        const response = await fetch(logoutUrl, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });  
-      }
-      catch(error)
-      {
-       console.error('There was a problem with the logout request:', error);
-      }
-      try {
-       const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${user.id}`); 
-       
-     } catch (error) { 
-       resume=error.response.status; 
-     }
-         const iframe = document.createElement('iframe');
-         iframe.style.display = 'none';
-         try{
-         iframe.src = 'https://resume.bitlabs.in:5173/dashboard/resumes';
-         document.body.appendChild(iframe);
-         }
-         catch(error)
-         {
-          console.error('There was a problem with the logout request:', error);
-         }
-
-     onClose();
-      if(resume === 404){
-        navigate('/applicant-basic-details-form/3');
-       }else{
-        navigate('/applicanthome');
-       }
-    
-   
   };
 
   return (
@@ -111,48 +91,6 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
       >
         <img className="top-left-svg" src={Logo} alt="Logo" /><br></br>
         <DialogContent sx={{ padding: 0, position: 'relative' }}>
-        
-          {isMobile ? (
-            <Button
-              sx={{
-                position: 'absolute',
-                textTransform: 'capitalize',
-                right: 6,
-                top: 16,
-                border: '1px solid #F97316',
-                borderRadius: '8px',
-                color: '#F97316',
-                '&:hover': {
-                  border: '1px solid #DA4D0B',
-                  color: '#DA4D0B'
-                },
-                zIndex: 1,
-              }}
-              onClick={handleCloseClick}
-            >
-              Close
-            </Button>
-          ) : (
-            <Button
-              onClick={handleCloseClick}
-              sx={{
-                position: 'absolute',
-                textTransform: 'capitalize',
-                right: 24,
-                top: 9,
-                border: '1px solid #F97316',
-                borderRadius: '8px',
-                color: '#F97316',
-                '&:hover': {
-                  border: '1px solid #DA4D0B',
-                  color: '#DA4D0B'
-                },
-                zIndex: 1,
-              }}
-            >
-              Close
-            </Button>
-          )}
           <Box
             sx={{
               width: '100%',
@@ -164,13 +102,6 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
           </Box>
         </DialogContent>
       </Dialog>
-      <div className="modal-close-wrapper">
-        <ModalClose
-          isOpen={showCloseModal}
-          onClose={() => setShowCloseModal(false)}
-          onConfirm={handleCloseConfirm}
-        />
-      </div>
     </>
   );
 };
