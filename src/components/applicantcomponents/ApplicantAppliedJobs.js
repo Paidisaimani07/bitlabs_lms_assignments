@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import { useNavigate } from "react-router-dom";
 import './ApplicantFindJobs.css';
 import Spinner from '../common/Spinner'; // Assume you have a spinner component
 
@@ -13,7 +12,6 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const applicantId = user.id;
   const navigate = useNavigate();
-
 
   const fetchAppliedJobs = useCallback(async () => {
     try {
@@ -31,7 +29,6 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
     }
   }, [applicantId]);
 
-
   useEffect(() => {
     fetchAppliedJobs();
   }, [fetchAppliedJobs]);
@@ -42,15 +39,17 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   };
 
   const convertToLakhs = (amountInRupees) => {
+    return (amountInRupees * 1).toFixed(2);
+  };
 
-    return (amountInRupees * 1).toFixed(2); 
-
+  const handleCheckStatusClick = (jobId, applyJobId) => {
+    setSelectedJobId(applyJobId);
+    navigate(`/applicant-interview-status?jobId=${jobId}&applyJobId=${applyJobId}`);
   };
 
   return (
     <div>
       {loading ? null : (
-      
         <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
@@ -76,14 +75,9 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                           <div style={{ marginLeft: 30 }}>No Applied jobs available</div>
                         ) : (
                           jobs.map((job) => (
-                            <Link
-                              className="features-job cl2 bg-white"
-                              to={`/applicant-interview-status?jobId=${job.id}`}
-                              key={job.id}
-                              style={{ textDecoration: 'none', color: 'inherit' }}
-                              onClick={() => setSelectedJobId(job.applyJobId)}
-                            >
-                              <div>
+
+                            <div className="features-job cl2 bg-white" key={job.id}>
+
                               <div className="job-archive-header">
                                 <div className="inner-box">
                                   <div className="box-content">
@@ -105,6 +99,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                   <ul className="job-tag">
                                   <li>
                                       <a href="javascript:void(0);">{job.employeeType}</a>
+
                                     </li>
                                     <li>
                                       <a href="javascript:void(0);">{job.remote ? 'Remote' : 'Office-based'}</a>
@@ -126,19 +121,17 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                                   <div className="price">
                                     <span style={{ fontSize: '12px' }}>Posted on {formatDate(job.creationDate)}</span>
                                   </div>
-                                  <button className="button-status">
-                                    <Link
-                                      to={`/applicant-interview-status?jobId=${job.id}`}
-                                      style={{ color: 'white' }}
-                                      onClick={() => setSelectedJobId(job.applyJobId)}
-                                    >
-                                      Check Status
-                                    </Link>
+                                  <button
+                                    className="button-status"
+                                    style={{ color: 'white', border: 'none', cursor: 'pointer' }}
+                                    onClick={() => handleCheckStatusClick(job.id, job.applyJobId)}
+                                  >
+                                    Check Status
                                   </button>
                                 </div>
                               </div>
-                              </div>
-                            </Link>
+
+                            </div>
                           ))
                         )}
                       </div>

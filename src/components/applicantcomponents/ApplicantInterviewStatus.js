@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import 'react-calendar-timeline/lib/Timeline.css';
 import BackButton from '../common/BackButton';
 
@@ -16,12 +15,26 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId');
+  const applyJobId = new URLSearchParams(location.search).get('applyJobId'); 
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    const fetchJobDetailsAndStatus = async () => {
+    const fetchJobDetails = async () => {
       try {
         const authToken = localStorage.getItem('jwtToken');
-        const jobDetailsResponse = await axios.get(
+        const response = await axios.get(
           `${apiUrl}/viewjob/applicant/viewjob/${jobId}`,
           {
             headers: {
@@ -30,47 +43,79 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
           }
         );
 
-        const jobDetailsBody = jobDetailsResponse.data.body;
-        if (jobDetailsBody) {
-          setJobDetails(jobDetailsBody);
-        }
-
-        const jobStatusResponse = await axios.get(
-
-          `${apiUrl}/applyjob/recruiters/applyjob-status-history/${jobId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
-
-        const jobStatusBody = jobStatusResponse.data;
-        if (Array.isArray(jobStatusBody) && jobStatusBody.length > 0) {
-          setJobStatus(jobStatusBody);
+        const { body } = response.data;
+        setLoading(false);
+        if (body) {
+          setJobDetails(body);
+          localStorage.setItem(`jobDetails_${jobId}`, JSON.stringify(body));
         }
       } catch (error) {
-        console.error('Error fetching job details or status:', error);
+        console.error('Error fetching job details:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchJobDetailsAndStatus();
-  }, [jobId, selectedJobId]);
+    fetchJobDetails();
+  }, [jobId]);
+
+  const fetchJobStatus = async () => {
+    try {
+      const authToken = localStorage.getItem('jwtToken');
+      const response = await axios.get(
+        `${apiUrl}/applyjob/recruiters/applyjob-status-history/${applyJobId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const body = response.data;
+      setLoading(false);
+      if (Array.isArray(body) && body.length > 0) {
+        setJobStatus(body);
+        localStorage.setItem(`jobStatus_${jobId}`, JSON.stringify(body));
+      }
+    } catch (error) {
+      console.error('Error fetching job status:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (jobId) {
+      fetchJobStatus();
+    }
+  }, [jobId]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (jobId) {
+        fetchJobStatus();
+      }
+    }, 5000); // Polling interval set to 5 seconds
+
+    return () => clearInterval(intervalId);
+  }, [jobId]);
 
   function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
+    return formattedDate;
   }
 
   const handleApplyNowClick = () => {
     if (jobDetails && jobDetails.id) {
       const apiEndpoint = `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`;
+      console.log('API Endpoint:', apiEndpoint);
+
       axios.get(apiEndpoint)
         .then(response => {
-
+          console.log('API Response:', response);
           const { body } = response.data;
+          setLoading(false);
           if (body) {
             setJobDetails(body);
           }
@@ -84,12 +129,11 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   };
 
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees * 1).toFixed(2); 
+    return (amountInRupees * 1).toFixed(2);
   };
 
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
-
     navigate(`/applicant-view-job`, { state: { from: location.pathname } });
   };
 
@@ -102,7 +146,10 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
               <div className="row">
                 <div className="col-lg-12 col-md-12">
                   <div className="title-dashboard">
-                    <div className="title-dash flex2"><BackButton />Job Status</div>
+                    <div className="title-dash flex2">
+                      <BackButton />
+                      Job Status
+                    </div>
                   </div>
                 </div>
               </div>
@@ -114,7 +161,6 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                 <div className="inner">
                   <article className="job-article">
                     {jobDetails && (
-
                       <div className="top-content">
                         <div className="features-job style-2 stc-apply bg-white" onClick={handleViewJobDetails}>
                           <div className="job-archive-header">
@@ -131,7 +177,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                                     <span className="icon-map-pin"></span>
                                     {jobDetails.location}
                                   </li>
-                                </ul>  
+                                </ul>
                               </div>
                             </div>
                           </div>
@@ -155,47 +201,45 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
                                 {Array.from({ length: jobDetails.starRating }).map((_, index) => (
                                   <span key={index} className="icon-star-full"></span>
                                 ))}
-</div>
-</div>
-<div className="job-footer-right">
-<div className="price">
-<span>
-<span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
-</div>
-<ul className="job-tag">
-<li>
-      {jobDetails && (
-        <button 
-        //onClick={handleViewJobDetails} 
-        className="button-status">
-          View Job Details
-        </button>
-      )}
-    </li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-
-                    )}
-                    <h4>Status History</h4>
-                    {jobStatus && jobStatus.length > 0 && (
-                      <ul className="events">
-                        {jobStatus.map((status, index) => (
-                          <li key={index}>
-                            {status && status.changeDate && status.status && (
-                              <>
-                                <time>Date: {formatDate(status.changeDate)}</time>
+                              </div>
+                            </div>
+                            <div className="job-footer-right">
+                              <div className="price">
                                 <span>
-                                  <strong>Status: {status.status === 'New' ? 'Job Applied' : status.status}</strong>
+                                  <span style={{ fontSize: '12px' }}>Posted on {formatDate(jobDetails.creationDate)}</span>
                                 </span>
-                              </>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                              </div>
+                              <ul className="job-tag">
+                                <li>
+                                  {jobDetails && (
+                                    <button className="button-status">
+                                      View Job Details
+                                    </button>
+                                  )}
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     )}
+                   <h4>Status History</h4>
+  {jobStatus && jobStatus.length > 0 && (
+    <ul className="events">
+      {jobStatus.slice().map((status, index) => (
+        <li key={index}>
+          {status && status.changeDate && status.status !== undefined && (
+            <>
+              <time>Date: {formatDate(status.changeDate)}</time>
+              <span>
+                <strong>Status: {status.status === 'New' ? 'Job Applied' : status.status}</strong>
+              </span>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+  )}
                   </article>
                 </div>
               </div>
