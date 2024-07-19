@@ -53,13 +53,18 @@ const ApplicantBasicDetails = () => {
 
   const handleQualificationChange = (selected) => {
     setQualification(selected[0] || null);
-    setSpecialization(null); // Clear the specialization when qualification changes
+    setSpecialization(null);
+    if (errors.qualification) {
+      setErrors((prevErrors) => ({ ...prevErrors, qualification: '' }));
+    }
   };
 
   const handleSpecializationChange = (selected) => {
     setSpecialization(selected[0] || null);
+    if (errors.specialization) {
+      setErrors((prevErrors) => ({ ...prevErrors, specialization: '' }));
+    }
   };
-
 
   const validateInput = (name, value) => {
     let error = '';
@@ -104,9 +109,19 @@ const handleBlur = (e) => {
   
 };
 
-const handleSkillsChange = (selectedSkills) => {
-  const transformedSkills = selectedSkills.map(skill => ({ skillName: skill, experience: "" }));
-  setSkillsRequired(transformedSkills);
+const handleSkillsChange = (selected) => {
+  const selectedSkills = selected.map(skillName => ({ skillName }));
+  setSkillsRequired(selectedSkills);
+  if (errors.skillsRequired) {
+    setErrors((prevErrors) => ({ ...prevErrors, skillsRequired: '' }));
+  }
+};
+
+const handlePreferredJobLocationsChange = (selected) => {
+  setPreferredJobLocations(selected);
+  if (errors.preferredJobLocations) {
+    setErrors((prevErrors) => ({ ...prevErrors, preferredJobLocations: '' }));
+  }
 };
 
 
@@ -630,7 +645,7 @@ const webhookResponse = await fetch(webhookUrl, {
       case 2:
         return (
           <div className="input-container">
-            <div className="input-wrapper">
+           <div className="input-wrapper">
         <Typeahead
           id="qualification"
           options={qualificationsOptions}
@@ -654,18 +669,18 @@ const webhookResponse = await fetch(webhookUrl, {
         {errors.specialization && <div className="error-message">{errors.specialization}</div>}
       </div>
   
-            <div className="input-wrapper">
-  <Typeahead
-    id="skillsRequired"
-    multiple
-    options={skillsOptions}
-    placeholder="*Skills Required"
-    onChange={handleSkillsChange}
-    selected={skillsRequired.map(skill => skill.skillName)}
-    className="input-form typeahead"
-  />
-  {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
-</div>
+      <div className="input-wrapper">
+        <Typeahead
+          id="skillsRequired"
+          multiple
+          options={skillsOptions}
+          placeholder="*Skills Required"
+          onChange={handleSkillsChange}
+          selected={skillsRequired.map(skill => skill.skillName)}
+          className="input-form typeahead"
+        />
+        {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
+      </div>
 
 
             <div className="input-wrapper">
@@ -683,21 +698,18 @@ const webhookResponse = await fetch(webhookUrl, {
       )}
     </div>
  
- 
-              
-            
-            <div className="input-wrapper">
-              <Typeahead
-                id="preferredJobLocations"
-                multiple
-                options={cities}
-                placeholder="*Preferred Job Locations"
-                onChange={setPreferredJobLocations}
-                selected={preferredJobLocations}
-                className="input-form typeahead"
-              />
-              {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
-            </div>
+    <div className="input-wrapper">
+        <Typeahead
+          id="preferredJobLocations"
+          multiple
+          options={cities}
+          placeholder="*Preferred Job Locations"
+          onChange={handlePreferredJobLocationsChange}
+          selected={preferredJobLocations}
+          className="input-form typeahead"
+        />
+        {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
+      </div>
   
             <div className="input-wrapper" ></div>
           </div>
