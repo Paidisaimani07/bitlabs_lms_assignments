@@ -3,11 +3,16 @@ import BannerImage from '../../images/blog/dashboard/Banner_Image.png';
 import './MyResume.css';
 import ResumeBuilder from './ResumeBuilder';
 import ModalWrapper from './ModalWrapper';
+import { ClipLoader } from 'react-spinners';
 const MyResumeComponent = ({ pdfUrl, loading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loginUrl, setLoginUrl] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    window.location.reload(); 
+  };
   const handleCreateNowClick = () => {
     openModal();
    
@@ -49,6 +54,8 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       padding: '1.25rem',
       borderRadius: '8px',
       color: '#FFF',
+      width:'95%',
+      marginLeft:'20px'
     },
     bannerContent: {
       flex: 3,
@@ -73,7 +80,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
       marginLeft: '2rem',  
     },
     bannerImageImg: {
-      maxWidth: '100%',
+      maxWidth: '90%',
       height: 'auto',
       borderRadius: '8px',
     },
@@ -140,7 +147,7 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
   };
 
 
-  
+
   return (
     <div style={styles.commonContainer}>
       <section style={styles.banner}>
@@ -160,34 +167,49 @@ const MyResumeComponent = ({ pdfUrl, loading }) => {
         </div>
       </section>
 
-      <section style={styles.changePassword}>
-        <span style={styles.myResumeText}></span>
-        <div style={styles.actionButtons}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 25" fill="none">
+      <section className="flat-dashboard-password" style={{borderRadius:'23px 23px 1px 2px', marginBottom: 0}}>
+      <div className="themes-container">
+              <div className="row">
+                <div className="col-lg-12 col-md-12 ">
+                  <div className="change-password bg-white" style={{borderRadius:'23px 23px 1px 2px', marginBottom: 0}}>
+                    
+                 
+                  <div className="action-buttons" style={{ textAlign: 'right', paddingRight: '10px' }}>
+                    
+          <svg onClick={handleDownload} xmlns="http://www.w3.org/2000/svg" width="25" height="18" viewBox="0 0 24 25" fill="none">
             <path d="M21 15.25V19.25C21 19.7804 20.7893 20.2891 20.4142 20.6642C20.0391 21.0393 19.5304 21.25 19 21.25H5C4.46957 21.25 3.96086 21.0393 3.58579 20.6642C3.21071 20.2891 3 19.7804 3 19.25V15.25" stroke="#787474" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M7 10.25L12 15.25L17 10.25" stroke="#787474" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             <path d="M12 15.25V3.25" stroke="#787474" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-          <span style={styles.downloadIcon} onClick={handleDownload}>Download</span>
+          <span onClick={handleDownload} style={{ cursor: 'pointer',fontSize: '18px' }}>Download</span>
+        </div>
+        </div>
+        </div>
+        <div>
+        {loading || isLoggingIn ? (
+        <div className="spinner-container">
+          <ClipLoader color="#F97316" loading={loading || isLoggingIn} size={30}/>
+        </div>
+      ) : (
+            <div align='center'>
+            <iframe
+                id="pdfViewer"
+                title="Resume"
+                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0view=fit`}
+                
+                height='600px' // default height
+                style={{ border: 'none',width:'100%',textAlign:'center',marginTop: 0  }}
+                allowfullscreen=""
+                frameborder="0"
+             />
+           </div>
+          )}
+        </div>
+        </div>
         </div>
       </section>
 
-      <section style={styles.flatDashboardSetting} className="bg-white with-banner">
-        <div style={styles.pdfContainer}>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <iframe
-              id="pdfViewer"
-              title="Resume"
-              src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-              width='100%'
-              height='100%' // default height
-              
-            />
-          )}
-        </div>
-      </section>
+     
 
     
  <ModalWrapper isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">

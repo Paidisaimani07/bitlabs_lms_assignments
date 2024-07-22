@@ -129,7 +129,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                                   <a href="javascript:void(0);">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
-                                  <a href="javascript:void(0);#">{jobDetails.jobTitle}</a>
+                                  <a href="javascript:void(0);">{jobDetails.jobTitle}</a>
                                 </h3>
                                 <ul>
                                   <li>
