@@ -708,7 +708,7 @@ input[type="color"],
 
 .flat-dashboard-setting {
   margin: 0px; 
-  padding: 10px 10px 10px 0px;
+  padding: 10px 0px 10px 0px;
   border-radius: 8px;
   
 }
@@ -3701,3 +3701,59 @@ text-transform: capitalize;
     padding-top: 12px; 
   }
   }
+  
+  
+  .progress-bar-container {
+    display: flex;
+    justify-content: center;
+    align-items: bottom;
+    position: relative;
+    height: 80px;
+   
+  }
+  
+  .progress-bar-wrapper {
+    position: relative;
+  }
+  
+  .progress-bar-value {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    font-weight: bold;
+    color:#F46F16;
+  }
+  .match {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    height: 8vh;           /* Full viewport height */
+    
+  }
+  
+  .centered-text {
+    color: #F46F16;
+    ;           /* Text color */
+    margin: 0;
+  }
+  .match-probability {
+    color:#F46F16;
+  }
+  
+  .features-job, .inner-content, .row, .col-lg-8, .col-lg-4 {
+    border: none;
+    align-items:center;
+  }
+  
+ 
+
+
+
+
+
+
+  
+ 
+  
