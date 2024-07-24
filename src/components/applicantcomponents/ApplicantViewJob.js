@@ -225,11 +225,11 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                           <div className="right-aligned-content">
                             <div className="progress-bar-container">
                            
-                              <SemiCircleProgressBar percentage={jobDetails.matchPercentage} showPercentValue={false}  stroke="#F46F16" />
+                              <SemiCircleProgressBar percentage={jobDetails.matchPercentage} showPercentValue={false}  stroke="#F46F16" background="#FFDBBB" />
                               <div className="progress-bar-value">{jobDetails.matchPercentage} %</div>
                             </div>
                             <div className="match">
-                              <p className="centered-text"><strong>{jobDetails.matchStatus}</strong></p>
+                              <h5 className="centered-text" style={{color:'#000000'}}>{jobDetails.matchStatus}</h5>
                             </div>
                           </div>
                           </div>

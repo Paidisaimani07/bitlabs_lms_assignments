@@ -3721,8 +3721,9 @@ text-transform: capitalize;
     top: 90%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 1.5em;
+    font-size: 1.9em;
     font-weight: bold;
+    
     color:#F46F16;
   }
   .match {
@@ -3731,12 +3732,13 @@ text-transform: capitalize;
     align-items: center;     /* Center vertically */
     height: 8vh;           /* Full viewport height */
     
+    
   }
   
   .centered-text {
-    color: #F46F16;
-    ;           /* Text color */
+    color: #000000;
     margin: 0;
+    font-weight: 600px;
   }
   .match-probability {
     color:#F46F16;
