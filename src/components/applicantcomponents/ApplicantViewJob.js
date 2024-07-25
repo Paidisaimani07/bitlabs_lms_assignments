@@ -4,10 +4,12 @@ import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
-import Snackbar from '../common/Snackbar';
 import { apiUrl } from '../../services/ApplicantAPIService';
+
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 
+import Modal from './AppliedjobsModal';
+import './AppliedjobsModal.css';
 
 const ApplicantViewJob = ({ selectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
@@ -16,6 +18,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const { user } = useUserContext();
   const location = useLocation();
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '', link: '', linkText: '' });
+  const [isModalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
   
@@ -80,6 +83,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
 
         setApplied(applied);
         fetchJobDetails();
+        setModalOpen(true); // Open the modal when the job is applied successfully
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
@@ -100,10 +104,14 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     setSnackbar({ open: false, message: '', type: '', link: '', linkText: '' });
   };
 
+
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <div>
@@ -133,10 +141,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <div className="inner-box">
                               <div className="box-content">
                                 <h4>
-                                  <a href="javascript:void(0);">{jobDetails.companyname}</a>
+                                  <a href="#">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
-                                  <a href="javascript:void(0);">{jobDetails.jobTitle}</a>
+                                  <a href="#">{jobDetails.jobTitle}</a>
                                 </h3>
                                 <ul>
                                   <li>
@@ -317,7 +325,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
           </section>
         </div>
       )}
-      {snackbar.open && (
+      {/* {snackbar.open && (
         <Snackbar
           message={snackbar.message}
           type={snackbar.type}
@@ -325,7 +333,8 @@ const ApplicantViewJob = ({ selectedJobId }) => {
           link={snackbar.link}
           linkText={snackbar.linkText}
         />
-      )}
+      )} */}
+      {isModalOpen && <Modal onClose={handleCloseModal} />}
     </div>
   );
 };
