@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import { apiUrl } from '../../services/ApplicantAPIService';
+
+import SemiCircleProgressBar from "react-progressbar-semicircle";
+
 import Modal from './AppliedjobsModal';
 import './AppliedjobsModal.css';
 
@@ -18,6 +21,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
+  
 
   const fetchJobDetails = async () => {
     try {
@@ -100,6 +104,11 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     setSnackbar({ open: false, message: '', type: '', link: '', linkText: '' });
   };
 
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  
   const handleCloseModal = () => {
     setModalOpen(false);
   };
@@ -124,6 +133,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
               <div className="content-tab">
                 <div className="inner">
                   <article className="job-article">
+                    
                     {jobDetails && (
                       <div className="top-content">
                         <div className="features-job style-2 stc-apply bg-white">
@@ -204,7 +214,101 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                         </div>
                       </div>
                     )}
+                    
+                    
+                    
+                    {jobDetails && (
+                      <div className="features-job style-2 stc-apply bg-white">
+                        <div className="inner-content">
+                          <div className='row'>
+                          
+                          <div id="item_1" className="col-lg-8 col-md-12" style={{padding:'4px'}}>
 
+                          
+                          <h5 className='match-probability'>Skill Match Probability</h5>
+                          <p>The more the Probability, more are the chances to get hired.</p>
+                          </div>
+                         
+                          <div id="item_1" className="col-lg-4 col-md-12">
+                          <div className="right-aligned-content">
+                            <div className="progress-bar-container">
+                           
+                              <SemiCircleProgressBar percentage={jobDetails.matchPercentage} showPercentValue={false}  stroke="#F46F16" background="#FFDBBB" />
+                              <div className="progress-bar-value">{jobDetails.matchPercentage} %</div>
+                            </div>
+                            <div className="match">
+                              <h5 className="centered-text" style={{color:'#000000'}}>{jobDetails.matchStatus}</h5>
+                            </div>
+                          </div>
+                          </div>
+                         </div>
+                        
+                         <div className="job-archive-footer">
+  <div className="job-footer-left1">
+    <ul className="job-tag">
+    {jobDetails.matchedSkills.map((skill, index) => (
+        <li key={index}>
+           <a 
+            href="javascript:void(0);"
+            style={{
+              backgroundColor: '#498C07', /* Green background color */
+              color: '#FFFF', /* White text color */
+              padding: '8px 12px', /* Padding around the text */
+              borderRadius: '50px', /* Rounded corners */
+              textDecoration: 'none', /* Remove underline */
+              display: 'inline-block', /* Ensure padding is applied */
+              transition: 'background-color 0.3s' /* Smooth transition for hover effect */
+              
+            }}
+          >
+            {skill.skillName}
+          </a>
+        </li>
+      ))}
+      {jobDetails.skillsRequired.map((skill, index) => (
+        <li key={index}>
+           <a 
+            href="javascript:void(0);"
+            style={{
+              backgroundColor: 'red', /* Green background color */
+              color: 'white', /* White text color */
+              padding: '8px 12px', /* Padding around the text */
+              height:'32',
+              borderRadius: '50px', /* Rounded corners */
+              textDecoration: 'none', /* Remove underline */
+              display: 'inline-block', /* Ensure padding is applied */
+              transition: 'background-color 0.3s' /* Smooth transition for hover effect */
+            }}
+          >
+             <span style={{
+              display: 'inline-block',
+              width: '18px',
+              height: '18px',
+              borderRadius: '50%',
+              border: '2px solid white', /* White border color */
+              backgroundColor: 'red', /* Circle background color */
+              color: 'white', /* Exclamation mark color */
+              textAlign: 'center',
+              lineHeight: '15px',
+              marginRight: '8px',
+              fontWeight: 'bold'
+            }}>!</span>
+             {capitalizeFirstLetter(skill.skillName)}
+          </a>
+        </li>
+      ))}
+     
+    </ul>
+  </div>
+</div>
+
+                         
+                        </div>
+                      </div>
+                    )}
+
+                   
+                  
                     {jobDetails && (
                       <div className="features-job style-2 stc-apply bg-white">
                         <div className="inner-content">
@@ -213,6 +317,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                         </div>
                       </div>
                     )}
+                    
                   </article>
                 </div>
               </div>
