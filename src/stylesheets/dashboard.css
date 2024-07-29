@@ -5356,8 +5356,9 @@ input[type="radio"]:checked:after {
 @media (min-width: 769px) {
     .resumecard-content {
         flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
+        
     }
 
     .resumecard-icon {
