@@ -19,6 +19,7 @@ import AppliedApplicantsBasedOnJobs from '../../components/recruitercomponents/A
 import ViewApplicantResume from '../../components/recruitercomponents/ViewApplicantResume';
 import RecruiterViewJob from '../../components/recruitercomponents/RecruiterViewJob';
 import RecruiterRepostJob from '../../components/recruitercomponents/RecruiterRepostJob';
+import RecruiterPostJob2 from '../../components/recruitercomponents/RecruiterPostJob2';
 
 function RecruiterHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -39,6 +40,9 @@ function RecruiterHomePage() {
           case '/recruiter-postjob':
             setActiveRoute('postjob');
             break;
+            case '/recruiter-postjob2':
+              setActiveRoute('postjob2');
+              break;
             case '/recruiter-jobopenings':
               setActiveRoute('jobopenings');
               break;
@@ -93,6 +97,7 @@ function RecruiterHomePage() {
      {activeRoute === 'dashboard' && <RecruiterDashboard />}
      {activeRoute === 'organization' && <RecruiterMyOrganization />}
      {activeRoute === 'postjob' && <RecruiterPostJob />}
+     {activeRoute === 'postjob2' && <RecruiterPostJob2 />}
      {activeRoute === 'jobopenings' && <RecruiterJobOpenings setSelectedJobId={setSelectedJobId} />}
      {activeRoute === 'appliedapplicants' && <RecruiterAppliedApplicants selectedJobId={selectedJobId} />}
      {activeRoute === 'allapplicants' && <RecruiterAllApplicants />}
