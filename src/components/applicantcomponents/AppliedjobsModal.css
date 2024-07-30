@@ -22,16 +22,15 @@
     width: clamp(340px,60vw,550px);
   }
   
-  .close-button {
+  .close-button1 {
     position: absolute;
-    top: 0px !important;
-    right: -2px !important;
+    top: -5px !important;
+    right: 0px !important;
     background: transparent !important;
-    border: none !important;
+    border: 0px !important; ;
     font-size: 22px !important;
-    cursor: pointer !important; 
     color: #6C6C6C !important;
-    height: 20px !important;
+    height: 30px !important;
     flex-shrink: 0 !important;
   }
 
