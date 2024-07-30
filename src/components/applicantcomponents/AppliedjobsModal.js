@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import ModalWrapper from './ModalWrapper'; // Import your ModalWrapper component
-import ResumeBuilder from './ResumeBuilder'; // Import your ResumeBuilder component
+import ModalWrapper from './ModalWrapper'; 
+import ResumeBuilder from './ResumeBuilder'; 
 
 const Modal = ({ onClose }) => {
   const [userData, setUserData] = useState(null);
@@ -25,7 +25,7 @@ const Modal = ({ onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-text">
-      <button type="button" className="close-button" onClick={onClose}>
+      <button type="button" className="close-button1" onClick={onClose}>
   <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
     <path d="M15.5 5L5.5 15" stroke="#6C6C6C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M5.5 5L15.5 15" stroke="#6C6C6C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
