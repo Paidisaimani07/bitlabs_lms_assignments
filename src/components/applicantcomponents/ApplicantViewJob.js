@@ -7,6 +7,15 @@ import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
+import Python from '../../images/Python.svg';
+import Mysql from '../../images/Mysql.svg';
+import HTMLCSS from '../../images/Html&Css.svg';
+import Java from '../../images/Java.svg';
+import JavaScript from '../../images/JavaScript.svg';
+import ReactImg from '../../images/React.svg';
+import SpringBoot from '../../images/SpringBoot.svg';
+
+
 
 
 const ApplicantViewJob = ({ selectedJobId }) => {
@@ -19,6 +28,27 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
   
+
+  const courseImageMap = {
+    'HTML&CSS': HTMLCSS,
+  'JAVA': Java,
+  'PYTHON': Python,
+  'MYSQL': Mysql,
+  'JAVASCRIPT': JavaScript,
+  'REACT': ReactImg,
+  'SPRING BOOT': SpringBoot,
+  };
+  
+
+  const courseUrlMap = {
+    "HTML&CSS": "https://upskill.bitlabs.in/course/view.php?id=9",
+    "JAVA": "https://upskill.bitlabs.in/course/view.php?id=22",
+    "PYTHON": "https://upskill.bitlabs.in/course/view.php?id=7",
+    "MYSQL": "https://upskill.bitlabs.in/course/view.php?id=8",
+    "JAVASCRIPT": "https://upskill.bitlabs.in/course/view.php?id=47",
+    "REACT": "https://upskill.bitlabs.in/course/view.php?id=21",
+    "SPRING BOOT":"https://upskill.bitlabs.in/course/view.php?id=23"
+  };
 
   const fetchJobDetails = async () => {
     try {
@@ -310,6 +340,33 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                       </div>
                     )}
                     
+                    {jobDetails && jobDetails.sugesstedCourses.length > 0 && (
+                        <div className="features-job style-2 stc-apply bg-white">
+                          <div className="inner-content">
+                            <h5 className='match-probability'>Suggested Courses</h5>
+                            <ul className="job-tag course-list">
+                              {jobDetails.sugesstedCourses.map((course, index) => (
+                                <li key={index} className="course-box">
+                                  <a
+                                    href={courseUrlMap[course] || '#'}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="course-link"
+                                  >
+                                    <div className="course-content">
+                                      <img src={courseImageMap[course]} alt={course} className="course-image" />
+                                      <i className="fas fa-external-link course-icon"></i>
+                                    </div>
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
+
+
+
                   </article>
                 </div>
               </div>
