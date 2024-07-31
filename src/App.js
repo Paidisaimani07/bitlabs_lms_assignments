@@ -88,6 +88,7 @@ function App() {
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-postjob" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-postjob2" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-jobopenings" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-allapplicants" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-appliedapplicants" element={<RecruiterHomePage />} />
