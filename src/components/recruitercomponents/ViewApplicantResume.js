@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
+import { apiUrl } from '../../services/ApplicantAPIService';
  
 const ViewApplicantResume = () => {
   const location = useLocation();
@@ -12,7 +13,7 @@ const ViewApplicantResume = () => {
     const userId = pathnameParts[pathnameParts.length - 1];
  
   
-    fetch(`http://localhost:8081/resume/pdf/${userId}`)
+    fetch(`${apiUrl}/resume/pdf/${userId}`)
       .then(response => {
         if (response.ok) {
           return response.blob();
