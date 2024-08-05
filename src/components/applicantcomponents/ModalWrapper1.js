@@ -36,7 +36,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     const handleMessage = async (event) => {
-      if (event.data === 'close-modal') {
+      if (event.data === 'close-modal' || event.data === 'close-modal-saveexit') {
         try {
           await axios.get(`${apiUrl}/resume/pdf/${user.id}`);
           navigate('/applicanthome');

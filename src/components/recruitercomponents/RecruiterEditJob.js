@@ -1,15 +1,14 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { useNavigate} from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
-
 import { Typeahead } from 'react-bootstrap-typeahead';
-
-
-
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 const RecruiterEditJob = ({selectedJobId}) => {
   const [skillsRequired, setSkillsRequired] = useState([
@@ -473,6 +472,25 @@ errors.skillsRequired = skillsErrors;
       navigate('/recruiter-jobopenings');
     };
 
+
+    const handleQuillChange = (value) => {
+      setJobData({ ...jobData, description: value });
+  
+      if (value.trim().length >= 15) {
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          description: '',
+        }));
+      } else {
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          description: 'Job Description must be at least 15 characters.',
+        }));
+      }
+    };
+    
+
+
     return (
         <div>
            <div className="dashboard__content">
@@ -511,20 +529,21 @@ errors.skillsRequired = skillsErrors;
                   </fieldset>
                 </div>
                 <div className="text-editor-wrap">
-                <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                  <div className="text-editor-main">
-                    <textarea
-                        className="input-form"
-                        placeholder="Job Description at least 15 characters"
-                        value={jobData.description}
-        onChange={(e) => setJobData({ ...jobData, description: e.target.value })}
-                        required
-                      />
-                      {formErrors.description && (
-                      <div className="error-message">{formErrors.description}</div>
-                    )}
-                  </div>
-                </div>
+      <label className="title-user fw-7">
+        Job Description<span className="color-red">*</span>
+      </label>
+      <div className="text-editor-main">
+        <ReactQuill
+          value={jobData.description}
+          onChange={handleQuillChange}
+          placeholder="Job Description at least 15 characters"
+          required
+        />
+        {formErrors.description && (
+          <div className="error-message">{formErrors.description}</div>
+        )}
+      </div>
+    </div>
                 <div className="row">
                     <div className="col-lg-6 col-md-6">
                     <div id="item_category" className="dropdown titles-dropdown info-wd">
