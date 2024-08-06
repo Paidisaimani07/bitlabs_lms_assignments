@@ -3748,8 +3748,107 @@ text-transform: capitalize;
     border: none;
     align-items:center;
   }
+
+
+ .course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between items */
+}
+
+.course-box {
+  border: 1px solid #ccc; /* Border for the box */
+  padding: 10px; /* Padding inside the box */
+  border-radius: 8px; /* Rounded corners for the box */
+  background-color: #FFFFFF; /* Background color for the box */
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.course-link {
+  text-decoration: none;
+  color: black;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.course-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.course-image {
+  width: auto;
+  height: 50px;
+  margin-right: 10px; /* Default margin for all screens */
+}
+
+.course-icon {
+  margin-left: auto;
+  visibility: visible; /* Ensure the icon is always visible */
+  opacity: 1; /* Ensure the icon is always fully opaque */
+  transition: opacity 0.3s ease, color 0.3s ease; /* Smooth transition for opacity and color */
+}
+
+.course-icon:hover {
+  opacity: 1; /* Ensure the icon is fully opaque on hover */
+  color: black; /* Change icon color on hover */
+}
+
+/* Hover effect for course-box */
+.course-box:hover {
+  border-color: #F46F16; /* New border color on hover */
+  visibility: visible; /* Ensure the icon is always visible */
+  color: black;
+}
+
+/* Ensure visibility on hover */
+.course-link:hover .course-icon,
+.course-box:hover .course-icon {
+  visibility: visible; /* Ensure the icon is always visible */
+  opacity: 1; /* Ensure the icon remains fully opaque on hover */
+  color: black;
+}
+
+.course-image:hover,
+.course-link:hover {
+  visibility: visible; /* Ensure the icon is always visible */
+  color: black;
+}
+
+/* Media query for tablet screens */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .course-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .course-box {
+    flex: 0 0 48%; /* Two items per row */
+    margin-bottom: 10px; /* Space between rows */
+  }
+}
+
+/* Media query for desktop screens */
+@media (min-width: 1025px) {
+  .course-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .course-box {
+    flex: 0 0 48%; /* Two items per row */
+    margin-bottom: 10px; /* Space between rows */
+  }
+}
+
   
- 
 
 
 
