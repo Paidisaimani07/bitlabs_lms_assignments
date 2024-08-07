@@ -12,7 +12,7 @@ const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, apiUrl,
       return 'Please provide your answer';
     }
     if (/^[^a-zA-Z0-9]+$/.test(value)) {
-      return 'Please provide a valid response';
+      return 'Please provide valid response';
     }
     if (value.length > 50) {
       return 'Maximum character limit has been exceeded';
@@ -89,7 +89,7 @@ const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, apiUrl,
                 value={answers[question.id] || ''}
                 onChange={(e) => handleInputChange(question.id, e.target.value)}
                 className="font-input"
-                placeholder='Write your answer'
+                placeholder='Write your answer here'
               />
               {errors[question.id] && (
                 <p className="error-message10">{errors[question.id]}</p>
