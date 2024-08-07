@@ -12,7 +12,7 @@
     align-items: center !important; 
     justify-content: center !important;
     border-radius: 16px;
-    margin-top: 20px;
+    margin-top: 30px;
   }
   
   .modal-content10 {
@@ -61,7 +61,7 @@
   
   .modal-subtitle10 {
     color: #8F8F8F;
-    font-size: 12px;
+    font-size: 14px !important;
     font-style: normal;
     font-weight: 400;
     font-family: "Plus Jakarta Sans";
