@@ -14,6 +14,7 @@ import Java from '../../images/Java.svg';
 import JavaScript from '../../images/JavaScript.svg';
 import ReactImg from '../../images/React.svg';
 import SpringBoot from '../../images/SpringBoot.svg';
+import alertcircle from '../../images/alert-circle 3.svg';
 
 
 import ScreeningQuestionsModal from './ScreeningQuestionsModal';
@@ -316,7 +317,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
            <a 
             href="javascript:void(0);"
             style={{
-              backgroundColor: 'red', /* Green background color */
+              backgroundColor: '#BF230E', /* Green background color */
               color: 'white', /* White text color */
               padding: '8px 12px', /* Padding around the text */
               height:'32',
@@ -326,19 +327,8 @@ const ApplicantViewJob = ({ selectedJobId }) => {
               transition: 'background-color 0.3s' /* Smooth transition for hover effect */
             }}
           >
-             <span style={{
-              display: 'inline-block',
-              width: '18px',
-              height: '18px',
-              borderRadius: '50%',
-              border: '2px solid white', /* White border color */
-              backgroundColor: 'red', /* Circle background color */
-              color: 'white', /* Exclamation mark color */
-              textAlign: 'center',
-              lineHeight: '15px',
-              marginRight: '8px',
-              fontWeight: 'bold'
-            }}>!</span>
+              
+             <img src={alertcircle} className="course-image1" />
              {capitalizeFirstLetter(skill.skillName)}
           </a>
         </li>
@@ -370,7 +360,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <h5 className='match-probability'>Suggested Courses</h5>
                             <ul className="job-tag course-list">
                               {jobDetails.sugesstedCourses.map((course, index) => (
-                                <li key={index} className="course-box">
+                                <li key={index} className="course-box" >
                                   <a
                                     href={courseUrlMap[course] || '#'}
                                     target="_blank"
