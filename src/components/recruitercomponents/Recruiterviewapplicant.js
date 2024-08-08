@@ -28,6 +28,7 @@ const Recruiterviewapplicant = () => {
  
   const query = useQuery();
   const jobid = query.get('jobid');
+  const  applicantId= query.get('appid');
  
   const fetchResume = async () => {
     try {
@@ -190,7 +191,7 @@ const Recruiterviewapplicant = () => {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
-                <div className="title-dash flex2"><BackButton /> Applicant Profile</div>
+                <div className="title-dash flex2"><BackButton /> Applicant's Profile</div>
               </div>
             </div>
           </div>
@@ -459,19 +460,22 @@ const Recruiterviewapplicant = () => {
                 <br />
               </span>
               {question.answers.map((answer, index) => (
-                <span
-                  key={index}
-                  style={{
-                    fontWeight: 'bold',
-                    color: '#686666',
-                    fontSize: '15px',
-                    fontWeight: '400'
-                  }}
-                >
-                  {answer.answerText}
-                  <br />
-                </span>
-              ))}
+  answer.applicant.id == applicantId? (
+    <span
+      key={index}
+      style={{
+        fontWeight: 'bold',
+        color: '#686666',
+        fontSize: '15px',
+        fontWeight: '400'
+      }}
+    >
+      {answer.answerText}
+      <br />
+    </span>
+  ) : null
+))}
+ 
             </div>
           ))}
         </div>

@@ -148,6 +148,7 @@ const RecruiterPostJob2 = () => {
                         <div className="text-editor-wrap">
                           <label className="title-user fw-7">Question</label>
                           <div align="right" style={{ marginBottom: '10px' }}>
+                          <Link onClick={() => handleDeleteQuestion(index)} className="delete-button">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               width="17"
@@ -180,7 +181,7 @@ const RecruiterPostJob2 = () => {
                                 stroke-linejoin="round"
                               />
                             </svg>
-                            <Link onClick={() => handleDeleteQuestion(index)} className="delete-button">
+                            
                               Delete
                             </Link>
                           </div>
@@ -189,7 +190,7 @@ const RecruiterPostJob2 = () => {
                               type="text"
                               value={question}
                               onChange={(event) => handleQuestionChange(index, event)}
-                              placeholder="Write your Question here"
+                              placeholder="Write your question here"
                               className="input-form"
                             />
                           </fieldset>
