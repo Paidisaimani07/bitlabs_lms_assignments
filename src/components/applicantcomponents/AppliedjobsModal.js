@@ -32,9 +32,10 @@ const Modal = ({ onClose }) => {
         style={{
           border: 'none',
           position: 'absolute',
-          top: '-10px',
-          right: '-12px',
-          background: 'transparent'
+          top: '-1px',
+          right: '0px',
+          background: 'transparent',
+          padding:'1px'
         }}
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
