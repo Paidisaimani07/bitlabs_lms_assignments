@@ -12462,3 +12462,13 @@ margin-top: 50px;
     height: 115vh;
   }
 }
+
+.skills-list1 {
+  margin-left: -25px !important;
+  color: #FFFF;
+  list-style-type: none;
+  padding: 0;
+  margin: 2px;
+  display: flex;
+  flex-wrap: wrap;
+}
