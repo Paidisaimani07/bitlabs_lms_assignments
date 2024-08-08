@@ -536,7 +536,6 @@ errors.skillsRequired = skillsErrors;
         <ReactQuill
           value={jobData.description}
           onChange={handleQuillChange}
-          placeholder="Job Description at least 15 characters"
           required
         />
         {formErrors.description && (

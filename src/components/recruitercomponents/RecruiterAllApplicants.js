@@ -5,8 +5,8 @@ import axios from 'axios';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
-
-
+ 
+ 
 $.DataTable = require('datatables.net')
  
 function RecruiterAllApplicants() {
@@ -34,14 +34,14 @@ function RecruiterAllApplicants() {
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-
-
+ 
+ 
   const handleCheckboxChange2 = (applyjobid) => {
-  
+ 
       console.log(applyjobid);
    
       setSelectedApplicants([...selectedApplicants, applyjobid]);
-    
+   
   };
   const handleSelectAll = (event) => {
     const isChecked = event.target.checked;
@@ -52,7 +52,7 @@ function RecruiterAllApplicants() {
       setSelectedApplicants([]);
     }
   };
-  
+ 
  
   const [filterOptions, setFilterOptions] = useState({
     nameFilter: false,
@@ -64,10 +64,10 @@ function RecruiterAllApplicants() {
     experienceFilter: false,
     locationFilter: false,
     minimumQualification: false
-    
-
+   
+ 
   });
-
+ 
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
     window.location.reload();
@@ -81,7 +81,7 @@ function RecruiterAllApplicants() {
     }));
   };
   const resetFilter = () => {
-  
+ 
   window.location.reload();
 };
   const applyFilter = () => {
@@ -111,7 +111,7 @@ const body = {
         'Content-Type': 'application/json'
     };
  
-  
+ 
    fetch(url, {
     method: 'POST',
     headers: headers,
@@ -125,7 +125,7 @@ const body = {
     const $table = window.$(tableref.current);
     $table.DataTable().clear().destroy();
  
-    
+   
     $table.DataTable({
         responsive: true,
         data: data,
@@ -138,19 +138,19 @@ const body = {
                 ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
             }
           },
-          { 
+          {
             data: 'name',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
             }
           },
-          { 
+          {
             data: 'email',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
             }
           },
-          { 
+          {
             data: 'mobilenumber',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
@@ -159,9 +159,9 @@ const body = {
             { data: 'jobTitle' },
             { data: 'applicantStatus' },
             { data: 'experience' },
-            
+           
             { data: 'minimumQualification' },
-          
+         
             {
               data: null,
               render: function(data, type, row) {
@@ -213,13 +213,13 @@ const handleTextFieldChange = (e) => {
       break;
   }
 };
-
+ 
  
  
  
   const handleFilterChange = (event) => {
     const { name, checked, value } = event.target;
-    const updatedFilters = [...selectedFilter]; 
+    const updatedFilters = [...selectedFilter];
  
     if (checked) {
       updatedFilters.push({ name, value });
@@ -232,10 +232,10 @@ const handleTextFieldChange = (e) => {
  
     setSelectedFilter(updatedFilters);
  
-    
+   
     const filteredApplicants = applicants.filter((applicant) => {
       return updatedFilters.every((filter) => {
-        
+       
       });
     });
  
@@ -353,19 +353,19 @@ const handleSelectChange = async (e) => {
         console.log("Apply Job ID:", applyJobId);
         if (!applyJobId) {
           console.error("applyjobid is undefined or null for:", selectedApplicant);
-          return null; 
+          return null;
         }
-
+ 
         const response = await axios.put(
           `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
         );
         return { applyJobId, newStatus };
       });
-
+ 
       const updatedResults = await Promise.all(updatePromises);
-
+ 
       const filteredResults = updatedResults.filter(result => result !== null);
-      
+     
       if (isMounted.current) {
         const updatedApplicants = applicants.map((application) => {
           const updatedResult = filteredResults.find(result => result.applyJobId === application.applyjobid);
@@ -378,25 +378,25 @@ const handleSelectChange = async (e) => {
         setSelectedStatus(newStatus);
         setSelectedApplicants([]);
       }
-      
+     
      
       const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
       setSnackbar({ open: true, message: message1, type: 'success' });
-      
+     
     }
   } catch (error) {
     console.error('Error updating status:', error);
   }
 };
-
+ 
  
     const exportCSV = () => {
-      
+     
       const headers = Array.from(tableref.current.querySelectorAll('thead th')).map(th => th.textContent);
      
       const capitalizedHeaders = headers.map(header => header.toUpperCase());
    
-      
+     
       const data = Array.from(tableref.current.querySelectorAll('tbody tr')).map(tr => {
         const rowData = Array.from(tr.children).map(td => td.textContent);
        
@@ -406,10 +406,10 @@ const handleSelectChange = async (e) => {
      
       data.unshift(capitalizedHeaders);
    
-      
+     
       const csvContent = data.map(row => row.join(',')).join('\n');
    
-      
+     
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -440,7 +440,7 @@ const handleSelectChange = async (e) => {
         <div className="container">
   <h4 className="total-applicants">Total Applicants: {count}</h4>
   <div className="controls">
-    
+   
   <button className="export-buttonn" onClick={exportCSV}>
       Export CSV
     </button>
@@ -452,9 +452,9 @@ const handleSelectChange = async (e) => {
       <option  value="Shortlisted">Shortlisted</option>
       <option  value="Interviewing">Interviewing</option>
       <option  value="Selected">Selected</option>
-      
+     
     </select>
-    
+   
   </div>
 </div>
        
@@ -477,7 +477,7 @@ const handleSelectChange = async (e) => {
     id="nameFilter"
     checked={filterOptions.nameFilter}
     onChange={handleCheckboxChange}
-    style={{ width: 'auto' }} 
+    style={{ width: 'auto' }}
   />
   <label className="label" htmlFor="nameFilter">&nbsp;Name</label>
   {filterOptions.nameFilter && (
@@ -599,7 +599,7 @@ const handleSelectChange = async (e) => {
     </>
   )}
 </div>
-
+ 
  
 <div className="filter-option">
   <input
@@ -689,7 +689,7 @@ const handleSelectChange = async (e) => {
                           <th>Job Title</th>
                           <th>Applicant Status</th>
                           <th>Experience</th>
-                          
+                         
                           <th>Qualification</th>
                          
                           <th>Resume</th>
@@ -703,7 +703,7 @@ const handleSelectChange = async (e) => {
   type="checkbox"
   value={application.applyjobid}
   checked={selectedApplicants.includes(application.applyjobid)}
-  onChange={() => handleCheckboxChange2(application.applyjobid)} 
+  onChange={() => handleCheckboxChange2(application.applyjobid)}
   name={`applicantCheckbox-${application.applyjobid}`}
 />
                             </td>
@@ -715,7 +715,7 @@ const handleSelectChange = async (e) => {
 </td>
  
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.email}
   </Link>
   </td>
@@ -728,11 +728,11 @@ const handleSelectChange = async (e) => {
                               </td>
                             <td>{application.jobTitle}</td>
                             <td>{application.applicantStatus}</td>
-
+ 
                             <td>{application.experience}</td>
                            
                             <td>{application.minimumQualification}</td>
-                            
+                           
                             <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View Resume</Link></td>
                           </tr>
                         ))}
