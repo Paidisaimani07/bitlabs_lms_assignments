@@ -241,83 +241,89 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                     
                     
                     {jobDetails && (
-                      <div className="features-job style-2 stc-apply bg-white">
-                        <div className="inner-content">
-                          <div className='row'>
-                          
-                          <div id="item_1" className="col-lg-8 col-md-12" style={{padding:'4px'}}>
-
-                          
-                          <h5 className='match-probability'>Skill Match Probability</h5>
-                          <p>The more the Probability, more are the chances to get hired.</p>
-                          </div>
-                         
-                          <div id="item_1" className="col-lg-4 col-md-12">
-                          <div className="right-aligned-content">
-                            <div className="progress-bar-container">
-                           
-                              <SemiCircleProgressBar percentage={jobDetails.matchPercentage} showPercentValue={false}  stroke="#F46F16" background="#FFDBBB" />
-                              <div className="progress-bar-value">{jobDetails.matchPercentage} %</div>
-                            </div>
-                            <div className="match">
-                              <h5 className="centered-text" style={{color:'#000000'}}>{jobDetails.matchStatus}</h5>
-                            </div>
-                          </div>
-                          </div>
-                         </div>
-                        
-                         <div className="job-archive-footer">
-  <div className="job-footer-left1">
-    <ul className="job-tag">
-    {jobDetails.matchedSkills.map((skill, index) => (
-        <li key={index}>
-           <a 
-            href="javascript:void(0);"
-            style={{
-              backgroundColor: '#498C07', /* Green background color */
-              color: '#FFFF', /* White text color */
-              padding: '8px 12px', /* Padding around the text */
-              borderRadius: '50px', /* Rounded corners */
-              textDecoration: 'none', /* Remove underline */
-              display: 'inline-block', /* Ensure padding is applied */
-              transition: 'background-color 0.3s' /* Smooth transition for hover effect */
-              
-            }}
-          >
-            {skill.skillName}
-          </a>
-        </li>
-      ))}
-      {jobDetails.skillsRequired.map((skill, index) => (
-        <li key={index}>
-           <a 
-            href="javascript:void(0);"
-            style={{
-              backgroundColor: '#BF230E', /* Green background color */
-              color: 'white', /* White text color */
-              padding: '8px 12px', /* Padding around the text */
-              height:'32',
-              borderRadius: '50px', /* Rounded corners */
-              textDecoration: 'none', /* Remove underline */
-              display: 'inline-block', /* Ensure padding is applied */
-              transition: 'background-color 0.3s' /* Smooth transition for hover effect */
-            }}
-          >
-              
-             <img src={alertcircle} className="course-image1" />
-             {capitalizeFirstLetter(skill.skillName)}
-          </a>
-        </li>
-      ))}
-     
-    </ul>
+  <div className="features-job style-2 stc-apply bg-white grid-container">
+    <div className="grid-item item1">
+      <h5 className='match-probability'>Skill Match Probability</h5>
+      <p>The more the Probability, more are the chances to get hired.</p>
+    </div>
+    <div className="grid-item item2">
+      <div className="right-aligned-content">
+        <div className="progress-bar-container">
+          <SemiCircleProgressBar 
+            percentage={jobDetails.matchPercentage} 
+            showPercentValue={false}  
+            stroke="#F46F16" 
+            background="#FFDBBB" 
+          />
+          <div className="progress-bar-value">{jobDetails.matchPercentage} %</div>
+        </div>
+        <div className="match">
+          <h5 className="centered-text" style={{color:'#000000',fontWeight: 'bolder',fontSize: '20px'}}>{jobDetails.matchStatus}</h5>
+        </div>
+      </div>
+    </div>
+    <div className="grid-item item3">
+      <div className="job-archive-footer">
+        <div className="job-footer-left1">
+          <ul className="job-tag">
+            {jobDetails.matchedSkills.map((skill, index) => (
+              <li key={index}>
+                <a 
+                  href="javascript:void(0);" 
+                  style={{
+                    backgroundColor: '#498C07', /* Green background color */
+                    color: '#FFFF', /* White text color */
+                    padding: '8px 12px', /* Padding around the text */
+                    borderRadius: '50px', /* Rounded corners */
+                    textDecoration: 'none', /* Remove underline */
+                    display: 'inline-block', /* Ensure padding is applied */
+                    transition: 'background-color 0.3s' /* Smooth transition for hover effect */
+                    
+                  }}
+                >
+                  {skill.skillName}
+                </a>
+              </li>
+            ))}
+            {jobDetails.skillsRequired.map((skill, index) => (
+              <li key={index}>
+                <a 
+                  href="javascript:void(0);" 
+                  style={{
+                    backgroundColor: '#BF230E', /* Green background color */
+                    color: 'white', /* White text color */
+                    padding: '8px 12px', /* Padding around the text */
+                    height:'32',
+                    borderRadius: '50px', /* Rounded corners */
+                    textDecoration: 'none', /* Remove underline */
+                    display: 'inline-block', /* Ensure padding is applied */
+                    transition: 'background-color 0.3s' /* Smooth transition for hover effect */
+                  }}
+                >
+                    {/* <span style={{
+              display: 'inline-block',
+              width: '18px',
+              height: '18px',
+              borderRadius: '50%',
+              border: '2px solid white',
+              backgroundColor: '#BF230E', 
+              color: 'white', 
+              textAlign: 'center',
+              lineHeight: '15px',
+              marginRight: '8px',
+              fontWeight: 'bold'
+            }}>!</span> */}
+                  <img src={alertcircle} className="course-image1" alt="Alert" />
+                  {capitalizeFirstLetter(skill.skillName)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
-                         
-                        </div>
-                      </div>
-                    )}
+)}
 
                    
                   
