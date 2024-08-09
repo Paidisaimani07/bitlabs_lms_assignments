@@ -3994,5 +3994,172 @@ text-transform: capitalize;
 }
 
   
- 
+
+
+
+.features-job.stc-apply1 {
+  width: 100%;
+  padding-right: 28px;
+  padding-bottom: 23px;
+
+}
+ /* Container for the filters */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+/* Individual filter options */
+.filter-option {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-right: 45px; /* Adjust this value to increase horizontal spacing */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Container for the checkbox and label */
+.filter-option .checkbox-label {
+  display: flex;
+  align-items: center; /* Align checkbox and label inline */
+  margin-bottom: 2px; /* Space below the checkbox and label */
+}
+
+/* Label for each filter option */
+.filter-option .label {
+  margin-left: 10px; /* Space between checkbox and label */
+  font-size: 14px;
+  color: #333;
+}
+
+/* Dropdown container */
+.dropdown-container1 {
+  margin-bottom: 10px; /* Space below the dropdown */
+}
+
+.dropdown-container1 select {
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+/* Text input */
+.filter-option input[type="text"] {
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+/* Buttons */
+.apply-button1, .reset-button1 {
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.apply-button1 {
+  background-color: #28a745;
+}
+
+.apply-button1:hover {
+  background-color: #218838;
+}
+
+.reset-button1 {
+  background-color: #dc3545;
+}
+
+.reset-button1:hover {
+  background-color: #c82333;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .filter-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters-container {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .apply-button1, .reset-button1 {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+/* Container for checkbox and label */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Space below the checkbox and label */
+}
+
+/* Label for each filter option */
+.label {
+  margin-left: 10px; /* Space between checkbox and label */
+  font-size: 14px;
+  color: #333;
+}
+
+/* Container for additional filter details (dropdown and text input) */
+.filter-details {
+  position: relative; /* Required for absolute positioning of popup */
+}
+
+/* Popup styling */
+.popup {
+  position: absolute;
+  top: 100%; /* Position below the checkbox-label container */
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10; /* Ensure the popup appears above other elements */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dropdown container */
+.dropdown-container1 {
+  margin-bottom: 10px; /* Space below the dropdown */
+}
+
+.dropdown-container1 select {
+  padding: 0px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+
+/* Text input */
+.popup input[type="text"] {
+  padding: 5px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+}
+
   
