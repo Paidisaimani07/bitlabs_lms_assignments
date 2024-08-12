@@ -128,7 +128,7 @@ function RecruiterViewJob({ selectedJobId }) {
     return formattedDate;
   }
   const convertToLakhs = (amountInRupees) => {
-    return (amountInRupees / 100000).toFixed(2);
+    return (amountInRupees * 1).toFixed(2);
   };
 
   const toggleMenu = () => {

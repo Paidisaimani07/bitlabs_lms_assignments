@@ -45,13 +45,19 @@ const RecruiterEditJob = ({selectedJobId}) => {
     'Manual Testing'
   ];
   const handleSkillsChange = (selected) => {
-    const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
+    const skillsWithNames = selected.map((skill) => ({
+      skillName: skill.skillName || skill, 
+      minimumExperience: '', 
+    }));
     setSkillsRequired(skillsWithNames);
-
+    setJobData((prevJobData) => ({
+      ...prevJobData,
+      skillsRequired: skillsWithNames,
+    }));
     if (skillsWithNames.length > 0) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        skills: '', 
+        skills: '',
       }));
     } else {
       setFormErrors((prevErrors) => ({
@@ -165,6 +171,8 @@ const RecruiterEditJob = ({selectedJobId}) => {
         if (!isFormValid) {
           return;
         }
+
+      
         const formData = {
             jobTitle: jobData.jobTitle,
             minimumExperience: jobData.minimumExperience,
@@ -361,26 +369,38 @@ errors.skillsRequired = skillsErrors;
         specialization: '',
       }));
     };
-  const handleSkillChange = (e, index, field) => {
-    const updatedSkillsRequired = [...skillsRequired];
-    updatedSkillsRequired[index][field] = e.target.value;
-    setSkillsRequired(updatedSkillsRequired);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      skillsRequired: '',
-    }));
-  };
+    const handleSkillChange = (e, index, field) => {
+      const updatedSkillsRequired = [...skillsRequired];
+      updatedSkillsRequired[index][field] = e.target.value;
+    
+      setSkillsRequired(updatedSkillsRequired);
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        skillsRequired: updatedSkillsRequired,
+      }));
+    
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skillsRequired: '',
+      }));
+    };
  
  
-  const handleExperienceChange = (e, index, field) => {
-    const updatedSkillsRequired = [...skillsRequired];
-    updatedSkillsRequired[index][field] = e.target.value;
-    setSkillsRequired(updatedSkillsRequired);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      skillsRequired: '',
-    }));
-  };
+    const handleExperienceChange = (e, index, field) => {
+      const updatedSkillsRequired = [...skillsRequired];
+      updatedSkillsRequired[index][field] = e.target.value;
+    
+      setSkillsRequired(updatedSkillsRequired);
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        skillsRequired: updatedSkillsRequired,
+      }));
+    
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skillsRequired: '',
+      }));
+    };
    
  
     const addExperience = () => {
@@ -474,8 +494,11 @@ errors.skillsRequired = skillsErrors;
 
 
     const handleQuillChange = (value) => {
-      setJobData({ ...jobData, description: value });
-  
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        description: value,
+      }));
+     
       if (value.trim().length >= 15) {
         setFormErrors((prevErrors) => ({
           ...prevErrors,
@@ -551,6 +574,7 @@ errors.skillsRequired = skillsErrors;
         required
       />
     </>
+
         {formErrors.description && (
           <div className="error-message">{formErrors.description}</div>
         )}
@@ -782,21 +806,14 @@ errors.skillsRequired = skillsErrors;
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
   <label className="title-user fw-7">Skills<span className="color-red">*</span></label>
   <Typeahead
-    id="skillsTypeahead"
-    labelKey={(option) => option.skillName}
-    multiple
-    placeholder="*Skills"
-    options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
-    onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
-    selected={skillsRequired}
-    inputProps={{
-      className: 'input-form placeholder-light-grey',
-    }}
-    allowNew={false} // Prevent new entries
-    filterBy={(option, props) =>
-      option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
-    }
-  />
+  id="skills"
+  multiple
+  labelKey="skillName"
+  onChange={handleSkillsChange}
+  options={skillsOptionsWithStructure}
+  selected={skillsRequired}
+  placeholder="Select required skills"
+/>
   {formErrors.skills && (
     <div className="error-message">{formErrors.skills}</div>
   )}
