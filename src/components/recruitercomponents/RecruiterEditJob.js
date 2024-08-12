@@ -80,6 +80,12 @@ const RecruiterEditJob = ({selectedJobId}) => {
     const navigate=useNavigate();
 
     
+    const filteredSkillsOptions = skillsOptionsWithStructure.filter(
+      skill => !skillsRequired.some(selectedSkill => selectedSkill.skillName === skill.skillName)
+    );
+  
+
+    
     const user1 = useUserContext();
     const user = user1.user;
     const [loading, setLoading] = useState(true);
@@ -810,7 +816,8 @@ errors.skillsRequired = skillsErrors;
   multiple
   labelKey="skillName"
   onChange={handleSkillsChange}
-  options={skillsOptionsWithStructure}
+  //options={skillsOptionsWithStructure}
+  options={filteredSkillsOptions}
   selected={skillsRequired}
   placeholder="Select required skills"
 />
