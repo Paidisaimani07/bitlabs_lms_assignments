@@ -3399,6 +3399,7 @@ white-space: nowrap;
  
 }
  
+
 .apply-button1,
 .reset-button1 {
   background-color: #F97316;
@@ -3412,6 +3413,7 @@ white-space: nowrap;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 4px;
+  
 }
  
 .reset-button1:hover {
@@ -4105,6 +4107,7 @@ text-transform: capitalize;
   .apply-button1, .reset-button1 {
     width: 100%;
     margin-top: 10px;
+    
   }
 }
 /* Container for checkbox and label */
