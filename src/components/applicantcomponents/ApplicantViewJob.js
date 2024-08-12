@@ -4,8 +4,8 @@ import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
-import Snackbar from '../common/Snackbar';
 import { apiUrl } from '../../services/ApplicantAPIService';
+
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import Python from '../../images/Python.svg';
 import Mysql from '../../images/Mysql.svg';
@@ -17,7 +17,11 @@ import SpringBoot from '../../images/SpringBoot.svg';
 import alertcircle from '../../images/alert-circle 3.svg';
 
 
+import ScreeningQuestionsModal from './ScreeningQuestionsModal';
 
+import Modal from './AppliedjobsModal';
+import './AppliedjobsModal.css';
+import './ScreeningQuestionsModal.css';
 
 const ApplicantViewJob = ({ selectedJobId }) => {
   const [jobDetails, setJobDetails] = useState(null);
@@ -26,9 +30,12 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const { user } = useUserContext();
   const location = useLocation();
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '', link: '', linkText: '' });
+  const [isModalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
   const jobId = new URLSearchParams(location.search).get('jobId') || selectedJobId;
-  
+  const [isScreeningModalOpen, setScreeningModalOpen] = useState(false);
+  const [screeningQuestions, setScreeningQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
 
   const courseImageMap = {
     'HTML&CSS': HTMLCSS,
@@ -81,7 +88,16 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     fetchJobDetails();
   }, [jobId]);
 
-  const handleApplyNow = async () => {
+   const handleApplyNow = async () => {
+    if (jobDetails.screeningQuestions && jobDetails.screeningQuestions.length > 0) {
+      setScreeningQuestions(jobDetails.screeningQuestions);
+      setScreeningModalOpen(true);
+    } else {
+      await applyJob();
+    }
+  };
+
+  const applyJob = async () => {
     try {
       const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
         headers: {
@@ -97,7 +113,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         setApplied(true);
         const response = await axios.post(
           `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
-          {},
+          { answers },
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -105,18 +121,22 @@ const ApplicantViewJob = ({ selectedJobId }) => {
           }
         );
         const { applied } = response.data;
-
-        setSnackbar({ open: true, message: 'Job applied successfully.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'success' });
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
-
         setApplied(applied);
         fetchJobDetails();
+        setModalOpen(true);
       }
     } catch (error) {
       console.error('Error applying for the job:', error);
       setSnackbar({ open: true, message: 'Job has already been applied by the applicant.', link: '/applicant-applied-jobs', linkText: 'View Applied Jobs', type: 'error' });
     }
   };
+
+  const handleScreeningSubmit = async (answers) => {
+    setAnswers(answers);
+    await applyJob();
+  };
+
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -131,10 +151,14 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     setSnackbar({ open: false, message: '', type: '', link: '', linkText: '' });
   };
 
+
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
 
   return (
     <div>
@@ -164,10 +188,10 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                             <div className="inner-box">
                               <div className="box-content">
                                 <h4>
-                                  <a href="javascript:void(0);">{jobDetails.companyname}</a>
+                                  <a href="#">{jobDetails.companyname}</a>
                                 </h4>
                                 <h3>
-                                  <a href="javascript:void(0);">{jobDetails.jobTitle}</a>
+                                  <a href="#">{jobDetails.jobTitle}</a>
                                 </h3>
                                 <ul>
                                   <li>
@@ -379,15 +403,16 @@ const ApplicantViewJob = ({ selectedJobId }) => {
           </section>
         </div>
       )}
-      {snackbar.open && (
-        <Snackbar
-          message={snackbar.message}
-          type={snackbar.type}
-          onClose={handleCloseSnackbar}
-          link={snackbar.link}
-          linkText={snackbar.linkText}
-        />
-      )}
+      {isModalOpen && <Modal onClose={handleCloseModal} />}
+       <ScreeningQuestionsModal
+        isOpen={isScreeningModalOpen}
+        questions={screeningQuestions}
+        onClose={() => setScreeningModalOpen(false)}
+        onSubmit={handleScreeningSubmit}
+        apiUrl={apiUrl}
+        user={user}
+        jobId={jobId}
+      />
     </div>
   );
 };

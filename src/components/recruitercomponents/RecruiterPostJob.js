@@ -6,6 +6,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
+import { useNavigate,useLocation } from 'react-router-dom';
 
 import axios from 'axios';
 import Snackbar from '../common/Snackbar';
@@ -22,23 +23,43 @@ function RecruiterPostJob() {
   const [industryType, setIndustryType] = useState("");
   const [minimumQualification, setMinimumQualification] = useState("");
   const [specialization, setSpecialization] = useState("");
- 
- 
- 
+  const navigate = useNavigate();
   const [skillsRequired, setSkillsRequired] = useState([]);
- 
   const [description, setDescription] = useState("");
   const [uploadDocument, setUploadDocument] = useState(null);
   const [image, setImage] = useState(null);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [fileName, setFileName] = useState("No selected file")
-
+  const location1 = useLocation();
   const [isActive, setIsActive] = useState(false);
   const fileInputRef = useRef(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const user1 = useUserContext();
   const user = user1.user;
-  const handleSubmit = (e) => {
+  const locationState = useLocation().state;
+
+  useEffect(() => {
+    // Load data from local storage or passed state
+    const formData = locationState || JSON.parse(localStorage.getItem('jobDetails'));
+    if (formData) {
+      setJobTitle(formData.jobTitle);
+      setMinimumExperience(formData.minimumExperience);
+      setMaximumExperience(formData.maximumExperience);
+      setMinSalary(formData.minSalary);
+      setMaxSalary(formData.maxSalary);
+      setLocation(formData.location);
+      setEmployeeType(formData.employeeType);
+      setIndustryType(formData.industryType);
+      setMinimumQualification(formData.minimumQualification);
+      setSpecialization(formData.specialization);
+      setSkillsRequired(formData.skillsRequired);
+      setDescription(formData.description);
+      setUploadDocument(formData.uploadDocument);
+      setFileName(formData.uploadDocument ? formData.uploadDocument.name : "No selected file");
+    }
+  }, [locationState]);
+
+  const handleNext = (e) => {
     e.preventDefault();
     if (!validateForm()) {
       return;
@@ -55,26 +76,29 @@ function RecruiterPostJob() {
       minimumQualification,
       specialization,
       skillsRequired: formattedSkillsRequired,
-      
       description,
       uploadDocument,
     };
-    const jwtToken = localStorage.getItem('jwtToken');
-    const headers = {
-      Authorization: `Bearer ${jwtToken}`,
-      'Content-Type': 'application/json',
-    };
-    axios
-      .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
-      .then((response) => {
-        console.log('API Response:', response.data);
+
+    localStorage.setItem('jobDetails', JSON.stringify(formData));
+    navigate('/recruiter-postjob2');
+     
+  //   // const jwtToken = localStorage.getItem('jwtToken');
+  //   // const headers = {
+  //   //   Authorization: `Bearer ${jwtToken}`,
+  //   //   'Content-Type': 'application/json',
+  //   // };
+  //   // axios
+  //   //   .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
+  //   //   .then((response) => {
+  //   //     console.log('API Response:', response.data);
        
-       setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
-        clearForm();
-      })
-      .catch((error) => {
-        console.error('API Error:', error);
-      });
+  //   //    setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
+  //   //     clearForm();
+  //   //   })
+  //   //   .catch((error) => {
+  //   //     console.error('API Error:', error);
+  //   //   });
   };
   useEffect(() => {
     const fetchApprovalStatus = async () => {
@@ -533,7 +557,7 @@ function RecruiterPostJob() {
           </div>
         </section>
         <section className="flat-dashboard-post flat-dashboard-setting">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <div className="themes-container">
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
@@ -557,14 +581,27 @@ function RecruiterPostJob() {
                           <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
                          <div className="text-editor-main">
                          <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
-                           <ReactQuill 
-                            theme="snow" 
-                            value={description} 
-                            onChange={handleDescriptionChange}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                           required
-                         /> 
+                         <>
+  <style>
+    {`
+      .ql-editor h2 {
+        font-weight: normal !important;
+      }
+
+      .ql-editor h3 {
+        font-weight: normal !important;
+      }
+    `}
+  </style>
+  <ReactQuill 
+    theme="snow" 
+    value={description} 
+    onChange={handleDescriptionChange}
+    onFocus={handleFocus}
+    onBlur={handleBlur}
+    required
+  />
+</>
                        </div>
                    {formErrors.description && (
                   <   div className="error-message">{formErrors.description}</div>
@@ -779,8 +816,9 @@ function RecruiterPostJob() {
                       <div className="info-box info-wd">
                       </div>
                     </div>
-                    <div className="form-group">
-                      <button type="submit" onClick={handleSubmit} className='button-status'>Post Job</button>
+                    <div className="form-group" align='right'>
+                      {/* <button type="submit" onClick={handleSubmit} className='button-status'>Next</button> */}
+                      <button onClick={handleNext} className='button-status'>Next</button>
                     </div>
                   </div>
                 </div>

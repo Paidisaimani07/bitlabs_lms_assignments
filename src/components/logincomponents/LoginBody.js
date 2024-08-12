@@ -697,7 +697,7 @@ const handleChange = (e) => {
 </div>
 
     </div>
-                <a href="#" class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a>
+                <a href="javascript:void(0);"  class="btn-social" onClick={() => login()}> <img src="images/review/google.png" alt="images" /> Continue with Google</a>
                     <br />
                    
                 <div className="content-tab">

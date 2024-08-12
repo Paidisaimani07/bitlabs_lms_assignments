@@ -57,7 +57,6 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
- 
         const jwtToken = localStorage.getItem('jwtToken');
         const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
           headers: {
@@ -71,14 +70,19 @@ const ApplicantDashboard = () => {
           localResume: response.data.applicant.localResume,
           firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
         };
-
+  
+        // Store newData in local storage
+        localStorage.setItem('userData', JSON.stringify(newData));
+  
         setUserData(newData);
       } catch (error) {
         console.error('Error updating profile status:', error);
       }
     };
+  
     fetchUserData();
   }, []);
+  
 
 
   useEffect(() => {

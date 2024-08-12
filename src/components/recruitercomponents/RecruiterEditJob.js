@@ -1,15 +1,14 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import { useNavigate} from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
-
 import { Typeahead } from 'react-bootstrap-typeahead';
-
-
-
 import BackButton from '../common/BackButton';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 
 const RecruiterEditJob = ({selectedJobId}) => {
   const [skillsRequired, setSkillsRequired] = useState([
@@ -46,13 +45,19 @@ const RecruiterEditJob = ({selectedJobId}) => {
     'Manual Testing'
   ];
   const handleSkillsChange = (selected) => {
-    const skillsWithNames = selected.map((skill) => ({ skillName: skill.skillName }));
+    const skillsWithNames = selected.map((skill) => ({
+      skillName: skill.skillName || skill, 
+      minimumExperience: '', 
+    }));
     setSkillsRequired(skillsWithNames);
-
+    setJobData((prevJobData) => ({
+      ...prevJobData,
+      skillsRequired: skillsWithNames,
+    }));
     if (skillsWithNames.length > 0) {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
-        skills: '', 
+        skills: '',
       }));
     } else {
       setFormErrors((prevErrors) => ({
@@ -166,6 +171,8 @@ const RecruiterEditJob = ({selectedJobId}) => {
         if (!isFormValid) {
           return;
         }
+
+      
         const formData = {
             jobTitle: jobData.jobTitle,
             minimumExperience: jobData.minimumExperience,
@@ -362,26 +369,38 @@ errors.skillsRequired = skillsErrors;
         specialization: '',
       }));
     };
-  const handleSkillChange = (e, index, field) => {
-    const updatedSkillsRequired = [...skillsRequired];
-    updatedSkillsRequired[index][field] = e.target.value;
-    setSkillsRequired(updatedSkillsRequired);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      skillsRequired: '',
-    }));
-  };
+    const handleSkillChange = (e, index, field) => {
+      const updatedSkillsRequired = [...skillsRequired];
+      updatedSkillsRequired[index][field] = e.target.value;
+    
+      setSkillsRequired(updatedSkillsRequired);
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        skillsRequired: updatedSkillsRequired,
+      }));
+    
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skillsRequired: '',
+      }));
+    };
  
  
-  const handleExperienceChange = (e, index, field) => {
-    const updatedSkillsRequired = [...skillsRequired];
-    updatedSkillsRequired[index][field] = e.target.value;
-    setSkillsRequired(updatedSkillsRequired);
-    setFormErrors((prevErrors) => ({
-      ...prevErrors,
-      skillsRequired: '',
-    }));
-  };
+    const handleExperienceChange = (e, index, field) => {
+      const updatedSkillsRequired = [...skillsRequired];
+      updatedSkillsRequired[index][field] = e.target.value;
+    
+      setSkillsRequired(updatedSkillsRequired);
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        skillsRequired: updatedSkillsRequired,
+      }));
+    
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        skillsRequired: '',
+      }));
+    };
    
  
     const addExperience = () => {
@@ -473,6 +492,28 @@ errors.skillsRequired = skillsErrors;
       navigate('/recruiter-jobopenings');
     };
 
+
+    const handleQuillChange = (value) => {
+      setJobData((prevJobData) => ({
+        ...prevJobData,
+        description: value,
+      }));
+     
+      if (value.trim().length >= 15) {
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          description: '',
+        }));
+      } else {
+        setFormErrors((prevErrors) => ({
+          ...prevErrors,
+          description: 'Job Description must be at least 15 characters.',
+        }));
+      }
+    };
+    
+
+
     return (
         <div>
            <div className="dashboard__content">
@@ -511,20 +552,34 @@ errors.skillsRequired = skillsErrors;
                   </fieldset>
                 </div>
                 <div className="text-editor-wrap">
-                <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
-                  <div className="text-editor-main">
-                    <textarea
-                        className="input-form"
-                        placeholder="Job Description at least 15 characters"
-                        value={jobData.description}
-        onChange={(e) => setJobData({ ...jobData, description: e.target.value })}
-                        required
-                      />
-                      {formErrors.description && (
-                      <div className="error-message">{formErrors.description}</div>
-                    )}
-                  </div>
-                </div>
+      <label className="title-user fw-7">
+        Job Description<span className="color-red">*</span>
+      </label>
+      <div className="text-editor-main">
+      <>
+      <style>
+        {`
+          .ql-editor h2 {
+            font-weight: normal !important;
+          }
+
+          .ql-editor h3 {
+            font-weight: normal !important;
+          }
+        `}
+      </style>
+      <ReactQuill
+        value={jobData.description}
+        onChange={handleQuillChange}
+        required
+      />
+    </>
+
+        {formErrors.description && (
+          <div className="error-message">{formErrors.description}</div>
+        )}
+      </div>
+    </div>
                 <div className="row">
                     <div className="col-lg-6 col-md-6">
                     <div id="item_category" className="dropdown titles-dropdown info-wd">
@@ -751,21 +806,14 @@ errors.skillsRequired = skillsErrors;
                     <div id="item_1" className="dropdown titles-dropdown info-wd">
   <label className="title-user fw-7">Skills<span className="color-red">*</span></label>
   <Typeahead
-    id="skillsTypeahead"
-    labelKey={(option) => option.skillName}
-    multiple
-    placeholder="*Skills"
-    options={filterOutSelectedSkills(skillsOptionsWithStructure, skillsRequired)}
-    onChange={(selectedSkills) => handleSkillsChange(selectedSkills)}
-    selected={skillsRequired}
-    inputProps={{
-      className: 'input-form placeholder-light-grey',
-    }}
-    allowNew={false} // Prevent new entries
-    filterBy={(option, props) =>
-      option.skillName.toLowerCase().startsWith(props.text.toLowerCase())
-    }
-  />
+  id="skills"
+  multiple
+  labelKey="skillName"
+  onChange={handleSkillsChange}
+  options={skillsOptionsWithStructure}
+  selected={skillsRequired}
+  placeholder="Select required skills"
+/>
   {formErrors.skills && (
     <div className="error-message">{formErrors.skills}</div>
   )}
