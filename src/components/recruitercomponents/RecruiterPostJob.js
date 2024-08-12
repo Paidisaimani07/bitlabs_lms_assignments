@@ -581,14 +581,27 @@ function RecruiterPostJob() {
                           <label className="title-user fw-7">Job Description<span className="color-red">*</span></label>
                          <div className="text-editor-main">
                          <div className={`editor-wrapper ${isActive ? 'active' : ''}`}>
-                           <ReactQuill 
-                            theme="snow" 
-                            value={description} 
-                            onChange={handleDescriptionChange}
-                            onFocus={handleFocus}
-                            onBlur={handleBlur}
-                           required
-                         /> 
+                         <>
+  <style>
+    {`
+      .ql-editor h2 {
+        font-weight: normal !important;
+      }
+
+      .ql-editor h3 {
+        font-weight: normal !important;
+      }
+    `}
+  </style>
+  <ReactQuill 
+    theme="snow" 
+    value={description} 
+    onChange={handleDescriptionChange}
+    onFocus={handleFocus}
+    onBlur={handleBlur}
+    required
+  />
+</>
                        </div>
                    {formErrors.description && (
                   <   div className="error-message">{formErrors.description}</div>
