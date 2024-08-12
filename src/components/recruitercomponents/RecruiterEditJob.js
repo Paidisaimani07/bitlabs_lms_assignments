@@ -556,11 +556,25 @@ errors.skillsRequired = skillsErrors;
         Job Description<span className="color-red">*</span>
       </label>
       <div className="text-editor-main">
+      <>
+      <style>
+        {`
+          .ql-editor h2 {
+            font-weight: normal !important;
+          }
+
+          .ql-editor h3 {
+            font-weight: normal !important;
+          }
+        `}
+      </style>
       <ReactQuill
-          value={jobData.description}
-          onChange={handleQuillChange}
-          required
-        />
+        value={jobData.description}
+        onChange={handleQuillChange}
+        required
+      />
+    </>
+
         {formErrors.description && (
           <div className="error-message">{formErrors.description}</div>
         )}
