@@ -287,65 +287,74 @@ const ApplicantViewJob = ({ selectedJobId }) => {
       </div>
     </div>
     <div className="grid-item item3">
-      <div className="job-archive-footer">
-        <div className="job-footer-left1">
-          <ul className="job-tag">
-            {jobDetails.matchedSkills.map((skill, index) => (
-              <li key={index}>
-                <a 
-                  href="javascript:void(0);" 
-                  style={{
-                    backgroundColor: '#498C07', /* Green background color */
-                    color: '#FFFF', /* White text color */
-                    padding: '8px 12px', /* Padding around the text */
-                    borderRadius: '50px', /* Rounded corners */
-                    textDecoration: 'none', /* Remove underline */
-                    display: 'inline-block', /* Ensure padding is applied */
-                    transition: 'background-color 0.3s' /* Smooth transition for hover effect */
-                    
-                  }}
-                >
-                  {skill.skillName}
-                </a>
-              </li>
-            ))}
-            {jobDetails.skillsRequired.map((skill, index) => (
-              <li key={index}>
-                <a 
-                  href="javascript:void(0);" 
-                  style={{
-                    backgroundColor: '#BF230E', /* Green background color */
-                    color: 'white', /* White text color */
-                    padding: '8px 12px', /* Padding around the text */
-                    height:'32',
-                    borderRadius: '50px', /* Rounded corners */
-                    textDecoration: 'none', /* Remove underline */
-                    display: 'inline-block', /* Ensure padding is applied */
-                    transition: 'background-color 0.3s' /* Smooth transition for hover effect */
-                  }}
-                >
-                    {/* <span style={{
-              display: 'inline-block',
-              width: '18px',
-              height: '18px',
-              borderRadius: '50%',
-              border: '2px solid white',
-              backgroundColor: '#BF230E', 
-              color: 'white', 
-              textAlign: 'center',
-              lineHeight: '15px',
-              marginRight: '8px',
-              fontWeight: 'bold'
-            }}>!</span> */}
-                  <img src={alertcircle} className="course-image1" alt="Alert" />
-                  {capitalizeFirstLetter(skill.skillName)}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </div>
+    <div className="job-archive-footer">
+  <div className="job-footer-left1">
+    <ul className="job-tag" 
+    style={{ 
+        listStyleType: 'none', 
+        padding: 0, 
+        margin: 0, 
+        display: 'flex', /* Flexbox layout */
+        flexWrap: 'wrap', /* Allow items to wrap to the next line */
+        gap: '6px' /* Adjust the gap between items */
+      }}
+      >
+      {jobDetails.matchedSkills.map((skill, index) => (
+        <li key={index} style={{ marginBottom: '2px' }}> {/* Adjust the margin as needed */}
+          <a 
+            href="javascript:void(0);" 
+            style={{
+              backgroundColor: '#498C07', /* Green background color */
+              color: '#FFFF', /* White text color */
+              padding: '10px 12px', /* Padding around the text */
+              borderRadius: '50px', /* Rounded corners */
+              textDecoration: 'none', /* Remove underline */
+              height: '36px',
+              display: 'inline-block', /* Ensure padding is applied */
+              transition: 'background-color 0.3s', /* Smooth transition for hover effect */
+              marginBottom: '2px' /* Equal margin at the bottom */
+            }}
+          >
+            {skill.skillName}
+          </a>
+        </li>
+      ))}
+      {jobDetails.skillsRequired.map((skill, index) => (
+        <li key={index} style={{ marginBottom: '2px' }}> {/* Adjust the margin as needed */}
+          <a 
+            href="javascript:void(0);" 
+            style={{
+              backgroundColor: '#BF230E', /* Red background color */
+              color: 'white', /* White text color */
+              padding: '6px 12px', /* Padding around the text */
+              borderRadius: '50px', /* Rounded corners */
+              textDecoration: 'none', /* Remove underline */
+              display: 'flex', /* Align image and text in a row */
+              alignItems: 'center', /* Vertically center the image and text */
+              transition: 'background-color 0.3s', /* Smooth transition for hover effect */
+              marginBottom: '2px' /* Equal margin at the bottom */
+            }}
+          >
+            <img 
+              src={alertcircle} 
+              className="course-image1" 
+              alt="Alert" 
+              style={{
+                width: '24px', /* Increase the width of the image */
+                height: '24px', /* Increase the height of the image */
+                marginRight: '8px' /* Space between the image and text */
+              }}
+            />
+            {capitalizeFirstLetter(skill.skillName)}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+</div>
+
   </div>
 )}
 
