@@ -16,7 +16,7 @@ const RecruiterEditJob = ({selectedJobId}) => {
   ]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const skillsOptions = [
-    'java',
+    'Java',
     'C',
     'C+',
     'C Sharp',
