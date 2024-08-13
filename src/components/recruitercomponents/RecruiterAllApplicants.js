@@ -709,7 +709,7 @@ const handleSelectChange = async (e) => {
                             </td>
                            
 <td>
-  <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+  <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
     {application.name}
   </Link>
 </td>
@@ -722,7 +722,7 @@ const handleSelectChange = async (e) => {
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
   </Link>
                               </td>
