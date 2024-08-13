@@ -633,7 +633,7 @@ thead tr th {
     color: #64666c;
     letter-spacing: 1.2px;
     border-bottom: 1px solid #e5e5e5;
-    padding: 16px 16px 14px 16px;
+    padding: 0px 16px 8px 16px;
 }
 
 thead tr th:last-child {
@@ -653,13 +653,13 @@ tbody tr td:last-child {
 }
 
 tbody tr td {
-    padding: 43px 16px 26px;
+    padding: 10px 10px 10px;
     border-bottom: 1px solid #e5e5e5;
     vertical-align: middle;
 }
 
 tbody tr:last-child td {
-    padding: 43px 16px 35px;
+    padding: 10px 10px 10px;
     border-bottom: 0px solid #e5e5e5;
     transition: all 0.3s ease;
 }
@@ -5356,8 +5356,9 @@ input[type="radio"]:checked:after {
 @media (min-width: 769px) {
     .resumecard-content {
         flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
+        align-items: center;
+        justify-content: center;
+        
     }
 
     .resumecard-icon {

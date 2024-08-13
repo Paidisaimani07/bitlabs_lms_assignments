@@ -5,7 +5,7 @@ import axios from 'axios';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
-
+import BackButton from '../common/BackButton';
 
 $.DataTable = require('datatables.net')
  
@@ -34,14 +34,18 @@ function RecruiterAllApplicants() {
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-
-
+ 
+ 
   const handleCheckboxChange2 = (applyjobid) => {
-  
-      console.log(applyjobid);
-   
-      setSelectedApplicants([...selectedApplicants, applyjobid]);
-    
+    setSelectedApplicants((prevSelected) => {
+      if (prevSelected.includes(applyjobid)) {
+        // If the ID is already in the array, remove it (uncheck the box)
+        return prevSelected.filter((id) => id !== applyjobid);
+      } else {
+        // If the ID is not in the array, add it (check the box)
+        return [...prevSelected, applyjobid];
+      }
+    });
   };
   const handleSelectAll = (event) => {
     const isChecked = event.target.checked;
@@ -52,7 +56,7 @@ function RecruiterAllApplicants() {
       setSelectedApplicants([]);
     }
   };
-  
+ 
  
   const [filterOptions, setFilterOptions] = useState({
     nameFilter: false,
@@ -64,10 +68,10 @@ function RecruiterAllApplicants() {
     experienceFilter: false,
     locationFilter: false,
     minimumQualification: false
-    
-
+   
+ 
   });
-
+ 
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
     window.location.reload();
@@ -81,7 +85,7 @@ function RecruiterAllApplicants() {
     }));
   };
   const resetFilter = () => {
-  
+ 
   window.location.reload();
 };
   const applyFilter = () => {
@@ -111,7 +115,7 @@ const body = {
         'Content-Type': 'application/json'
     };
  
-  
+ 
    fetch(url, {
     method: 'POST',
     headers: headers,
@@ -125,7 +129,7 @@ const body = {
     const $table = window.$(tableref.current);
     $table.DataTable().clear().destroy();
  
-    
+   
     $table.DataTable({
         responsive: true,
         data: data,
@@ -138,19 +142,19 @@ const body = {
                 ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
             }
           },
-          { 
+          {
             data: 'name',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
             }
           },
-          { 
+          {
             data: 'email',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
             }
           },
-          { 
+          {
             data: 'mobilenumber',
             render: function(data, type, row) {
               return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
@@ -159,9 +163,9 @@ const body = {
             { data: 'jobTitle' },
             { data: 'applicantStatus' },
             { data: 'experience' },
-            
+           
             { data: 'minimumQualification' },
-          
+         
             {
               data: null,
               render: function(data, type, row) {
@@ -206,20 +210,20 @@ const handleTextFieldChange = (e) => {
     case "location":
       setLocation(value);
       break;
-    case "minimumQualification":
+    case "minimumQualificationInput":
       setMinimumQualification(value);
       break;
     default:
       break;
   }
 };
-
+ 
  
  
  
   const handleFilterChange = (event) => {
     const { name, checked, value } = event.target;
-    const updatedFilters = [...selectedFilter]; 
+    const updatedFilters = [...selectedFilter];
  
     if (checked) {
       updatedFilters.push({ name, value });
@@ -232,10 +236,10 @@ const handleTextFieldChange = (e) => {
  
     setSelectedFilter(updatedFilters);
  
-    
+   
     const filteredApplicants = applicants.filter((applicant) => {
       return updatedFilters.every((filter) => {
-        
+       
       });
     });
  
@@ -282,66 +286,69 @@ const handleTextFieldChange = (e) => {
   }, [user.id]);
  
   const handleSelectChange1 = (e) => {
-  const { id, value } = e.target;
-  switch (id) {
-    case "nameFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        nameFilter: value
-      }));
-      break;
-    case "emailFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        emailFilter: value
-      }));
-      break;
-    case "mobileFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        mobileFilter: value
-      }));
-      break;
-    case "jobFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        jobFilter: value
-      }));
-      break;
-    case "statusFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        statusFilter: value
-      }));
-      break;
-    case "skillFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        skillFilter: value
-      }));
-      break;
-    case "experienceFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        experienceFilter: value
-      }));
-      break;
-    case "locationFilter":
-      setFilterOptions(prevState => ({
-        ...prevState,
-        locationFilter: value
-      }));
-      break;
-      case "minimumQualification":
+    
+    const { id, value } = e.target;
+  
+    switch (id) {
+      case "nameFilterSelect":
         setFilterOptions(prevState => ({
           ...prevState,
-          minimumQualification: value
+          nameFilter: value
         }));
-        break;  
-    default:
-      break;
-  }
-};
+       
+        break;
+      case "emailFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          emailFilter: value
+        }));
+        break;
+      case "mobileFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          mobileFilter: value
+        }));
+        break;
+      case "jobFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          jobFilter: value
+        }));
+        break;
+      case "statusFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          statusFilter: value
+        }));
+        break;
+      case "skillFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          skillFilter: value
+        }));
+        break;
+      case "experienceFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          experienceFilter: value
+        }));
+        break;
+      case "locationFilterSelect":
+        setFilterOptions(prevState => ({
+          ...prevState,
+          locationFilter: value
+        }));
+        break;
+        case "minimumQualificationSelect":
+          setFilterOptions(prevState => ({
+            ...prevState,
+            minimumQualification: value
+          }));
+          break;  
+      default:
+        break;
+    }
+  };
 const handleSelectChange = async (e) => {
   const newStatus = e.target.value;
  
@@ -353,19 +360,19 @@ const handleSelectChange = async (e) => {
         console.log("Apply Job ID:", applyJobId);
         if (!applyJobId) {
           console.error("applyjobid is undefined or null for:", selectedApplicant);
-          return null; 
+          return null;
         }
-
+ 
         const response = await axios.put(
           `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
         );
         return { applyJobId, newStatus };
       });
-
+ 
       const updatedResults = await Promise.all(updatePromises);
-
+ 
       const filteredResults = updatedResults.filter(result => result !== null);
-      
+     
       if (isMounted.current) {
         const updatedApplicants = applicants.map((application) => {
           const updatedResult = filteredResults.find(result => result.applyJobId === application.applyjobid);
@@ -378,25 +385,25 @@ const handleSelectChange = async (e) => {
         setSelectedStatus(newStatus);
         setSelectedApplicants([]);
       }
-      
+     
      
       const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
       setSnackbar({ open: true, message: message1, type: 'success' });
-      
+     
     }
   } catch (error) {
     console.error('Error updating status:', error);
   }
 };
-
+ 
  
     const exportCSV = () => {
-      
+     
       const headers = Array.from(tableref.current.querySelectorAll('thead th')).map(th => th.textContent);
      
       const capitalizedHeaders = headers.map(header => header.toUpperCase());
    
-      
+     
       const data = Array.from(tableref.current.querySelectorAll('tbody tr')).map(tr => {
         const rowData = Array.from(tr.children).map(td => td.textContent);
        
@@ -406,10 +413,10 @@ const handleSelectChange = async (e) => {
      
       data.unshift(capitalizedHeaders);
    
-      
+     
       const csvContent = data.map(row => row.join(',')).join('\n');
    
-      
+     
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -421,28 +428,25 @@ const handleSelectChange = async (e) => {
    
  
    
- return (
+    return (
       <div className="dashboard__content">
         <section className="page-title-dashboard">
           <div className="themes-container">
             <div className="row">
-              <div className="col-lg-12 col-md-12">
+              <div className="col-lg-9 col-md-9">
                 <div className="title-dashboard">
-               
-                  <div className="title-dash flex2">All Applicants</div>
+                  
+                  
+                  <div className="title-dash flex2"><BackButton />All Applicants : <h5 className="title-dash flex2">Total Applicants: {count}</h5></div>
+            
+                  
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
- 
-       
-        <div className="container">
-  <h4 className="total-applicants">Total Applicants: {count}</h4>
-  <div className="controls">
+              <div className="col-lg-3 col-md-3">
+              <div className="controls">
     
   <button className="export-buttonn" onClick={exportCSV}>
-      Export CSV
+      ExportCSV
     </button>
     <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
     <option value="" disabled>
@@ -452,219 +456,280 @@ const handleSelectChange = async (e) => {
       <option  value="Shortlisted">Shortlisted</option>
       <option  value="Interviewing">Interviewing</option>
       <option  value="Selected">Selected</option>
-      
+     
     </select>
     
-  </div>
-</div>
-       
+                  </div>
+                  </div>
+            </div>
+          </div>
+        </section>
  
+       
+        <div className="table-container">
+              <h3 className="filter"><strong>Filters </strong></h3>
+              <div className="filters-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {/* Filter section */}
+                <div className="filter-option">
+  <div className="checkbox-label">
+    <input
+      type="checkbox"
+      id="nameFilter"
+      checked={filterOptions.nameFilter}
+      onChange={handleCheckboxChange}
+      style={{ width: 'auto' }} 
+    />
+    <label className="label" htmlFor="nameFilter">Name</label>
+  </div>
+  {filterOptions.nameFilter && (
+    <div className="filter-details">
+      <div className="popup">
+        <div className="dropdown-container1">
+          <select
+            id="nameFilterSelect"
+            value={filterOptions.nameFilterSelect}
+            onChange={handleSelectChange1}
+          >
+            <option value="is">is</option>
+            <option value="contains">contains</option>
+          </select>
+        </div>
+        <input
+          type="text"
+          id="name"
+          placeholder="Enter value"
+          onChange={handleTextFieldChange}
+          style={{ width: '100px', height: '20px' }}
+        />
+      </div>
+    </div>
+  )}
+                 </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="emailFilter"
+                          checked={filterOptions.emailFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="emailFilter">Email</label>
+                      </div>
+                      {filterOptions.emailFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="emailFilterSelect"
+                              value={filterOptions.emailFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="email"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="mobileFilter"
+                          checked={filterOptions.mobileFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="mobileFilter">MobileNumber</label>
+                      </div>
+                      {filterOptions.mobileFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="mobileFilterSelect"
+                              value={filterOptions.mobileFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="mobileNumber"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="jobFilter"
+                          checked={filterOptions.jobFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="jobFilter">&nbsp;Job Title</label>
+                      </div>
+                      {filterOptions.jobFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="jobFilterSelect"
+                              value={filterOptions.jobFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="jobTitle"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="statusFilter"
+                          checked={filterOptions.statusFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="statusFilter">&nbsp;ApplicantStatus</label>
+                      </div>
+                      {filterOptions.statusFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="statusFilterSelect"
+                              value={filterOptions.statusFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="applicantStatus"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="experienceFilter"
+                          checked={filterOptions.experienceFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="experienceFilter">&nbsp;Experience</label>
+                      </div>
+                      {filterOptions.experienceFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="experienceFilterSelect"
+                              value={filterOptions.experienceFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="greaterThan">greaterThan</option>
+                              <option value="lessThan">lessThan</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="minimumExperience"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="minimumQualification"
+                          checked={filterOptions.minimumQualification}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="minimumQualification">&nbsp;Qualification</label>
+                      </div>
+                      {filterOptions.minimumQualification && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="minimumQualificationSelect"
+                              value={filterOptions.minimumQualificationSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="minimumQualificationInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <button className="apply-button1" onClick={applyFilter}>Apply</button>
+                      <button className="reset-button1" onClick={resetFilter}>Reset</button>
+                      </div>
+              </div> 
+              </div>
+
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
             <div className="row">
-            <div className="col-lg-2 col-md-2" style={{ borderRight: '1px solid black', paddingLeft: '1px', paddingRight: '0px' }}>
-        {/* <!-- First Section --> */}
-       
-<div className="profile-setting">
-  <div className="table-container-wrapper">
-    <div className="table-container">
-    <h3 className="filter"><strong>Filters </strong></h3>
- 
-      {/* Filter section */}
-      <div className="filter-option">
-  <input
-    type="checkbox"
-    id="nameFilter"
-    checked={filterOptions.nameFilter}
-    onChange={handleCheckboxChange}
-    style={{ width: 'auto' }} 
-  />
-  <label className="label" htmlFor="nameFilter">&nbsp;Name</label>
-  {filterOptions.nameFilter && (
-    <>
-    <div className="dropdown-container1">
-    <select
-                      id="nameFilter"
-                      value={filterOptions.nameFilter || 'null'}
-                     
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      </div>
-      <input type="text" id="name" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-    </>
-  )}
-</div>
- 
- 
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="emailFilter"
-    checked={filterOptions.emailFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="emailFilter">&nbsp;Email</label>
-  {filterOptions.emailFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="emailFilter"
-                      value={filterOptions.emailFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="email" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div>
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="mobileFilter"
-    checked={filterOptions.mobileFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="mobileFilter">&nbsp;MobileNumber</label>
-  {filterOptions.mobileFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="mobileFilter"
-                      value={filterOptions.mobileFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="mobileNumber" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div>
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="jobFilter"
-    checked={filterOptions.jobFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="jobFilter">&nbsp;Job Title</label>
-  {filterOptions.jobFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="jobFilter"
-                      value={filterOptions.jobFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="jobTitle" placeholder="Enter value" onChange={handleTextFieldChange}  style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div>
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="statusFilter"
-    checked={filterOptions.statusFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="statusFilter">&nbsp;ApplicantStatus</label>
-  {filterOptions.statusFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="statusFilter"
-                      value={filterOptions.statusFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="applicantStatus" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div>
-
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="experienceFilter"
-    checked={filterOptions.experienceFilter}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="experienceFilter">&nbsp;Experience</label>
-  {filterOptions.experienceFilter && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      id="experienceFilter"
-                      value={filterOptions.experienceFilter || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="greaterThan">greaterThan</option>
-        <option value="lessThan">lessThan</option>
-      </select>
-      <input type="text" id="minimumExperience" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
-</div>
- 
-<div className="filter-option">
-  <input
-    type="checkbox"
-    id="minimumQualification"
-    checked={filterOptions.minimumQualification}
-    onChange={handleCheckboxChange}
-  />
-  <label className="label" htmlFor="minimumQualification">&nbsp;Qualification</label>
-  {filterOptions.minimumQualification && (
-    <>
-      <div className="dropdown-container1">
-      <select
-                      className="checkbox"
-                      id="minimumQualification"
-                      value={filterOptions.minimumQualification || 'null'}
-                      onChange={handleSelectChange1}
-                    >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-      <input type="text" id="minimumQualification" placeholder="Enter value" onChange={handleTextFieldChange} style={{ width: '100px', height: '20px' }}/>
-      </div>
-    </>
-  )}
- 
-</div>
-<div>
-  <button className="apply-button1" onClick={applyFilter}>Apply</button>
-  <button className="reset-button1" onClick={resetFilter}>Reset</button>
-  </div>
-      {/* End of filter section */}
-    </div>
-  </div>
-</div>
- 
-      </div>
+            
      
-              <div className="col-lg-10 col-md-10">
+              <div className="col-lg-12 col-md-12">
                 <div className="profile-setting">
                 <div className="table-container-wrapper">
                   <div className="table-container">
@@ -689,7 +754,7 @@ const handleSelectChange = async (e) => {
                           <th>Job Title</th>
                           <th>Applicant Status</th>
                           <th>Experience</th>
-                          
+                         
                           <th>Qualification</th>
                          
                           <th>Resume</th>
@@ -703,36 +768,36 @@ const handleSelectChange = async (e) => {
   type="checkbox"
   value={application.applyjobid}
   checked={selectedApplicants.includes(application.applyjobid)}
-  onChange={() => handleCheckboxChange2(application.applyjobid)} 
+  onChange={() => handleCheckboxChange2(application.applyjobid)}
   name={`applicantCheckbox-${application.applyjobid}`}
 />
                             </td>
                            
 <td>
-  <Link to={`/viewapplicant/${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+  <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
     {application.name}
   </Link>
 </td>
  
                             <td>
-                            <Link to={`/viewapplicant/${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.email}
   </Link>
   </td>
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
   </Link>
                               </td>
                             <td>{application.jobTitle}</td>
                             <td>{application.applicantStatus}</td>
-
+                           
                             <td>{application.experience}</td>
                            
                             <td>{application.minimumQualification}</td>
-                            
+                           
                             <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View Resume</Link></td>
                           </tr>
                         ))}
@@ -746,6 +811,7 @@ const handleSelectChange = async (e) => {
             </div>
           </div>
         </section>
+
         {snackbar.open && (
         <Snackbar
           message={snackbar.message}

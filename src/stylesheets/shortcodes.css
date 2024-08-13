@@ -7717,6 +7717,7 @@ button.btn-find:hover {
 .features-job {
   margin-bottom: 32px;
   gap: 32;
+  width: 70%;
   /* border: 1px solid #e5e5e5; */
   padding: 24px;
   -webkit-transition: all 0.3s ease 0s;
@@ -7729,6 +7730,12 @@ button.btn-find:hover {
   z-index: 1;
   border-radius: 16px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.05) ;
+}
+/* Media query for tablet and mobile screens */
+@media (max-width: 900px) {
+  .features-job {
+    width: 100%;
+  }
 }
 .features-job-view {
   margin-left: 30px ;
@@ -8209,6 +8216,11 @@ h3 span.icon-bolt {
   display: flex;
   justify-content: space-between;
   padding: 16px 0px;
+}
+.features-job .job-footer-left1 {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 0px;
 }
 
 .features-job .job-footer-right {
@@ -12449,4 +12461,14 @@ margin-top: 50px;
   .full-page {
     height: 115vh;
   }
+}
+
+.skills-list1 {
+  margin-left: -25px !important;
+  color: #FFFF;
+  list-style-type: none;
+  padding: 0;
+  margin: 2px;
+  display: flex;
+  flex-wrap: wrap;
 }
