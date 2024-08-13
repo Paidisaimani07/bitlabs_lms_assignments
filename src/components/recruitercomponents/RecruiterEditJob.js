@@ -79,10 +79,12 @@ const RecruiterEditJob = ({selectedJobId}) => {
   const skillsOptionsWithStructure = skillsOptions.map(skill => ({ skillName: skill }));
     const navigate=useNavigate();
 
-    
     const filteredSkillsOptions = skillsOptionsWithStructure.filter(
-      skill => !skillsRequired.some(selectedSkill => selectedSkill.skillName === skill.skillName)
+      skill => !skillsRequired.some(
+        selectedSkill => selectedSkill.skillName.toLowerCase() === skill.skillName.toLowerCase()
+      )
     );
+    
   
 
     
@@ -172,6 +174,15 @@ const RecruiterEditJob = ({selectedJobId}) => {
       const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("in handleSubmit");
+
+          // Check if skills are empty
+  if (skillsRequired.length === 0 || skillsRequired.some(skill => !skill.skillName.trim())) {
+    setFormErrors((prevErrors) => ({
+      ...prevErrors,
+      skillsRequired: [{ skillName: 'Please select at least one skill.', minimumExperience: '' }],
+    }));
+    return;
+  }
      
         const isFormValid = validateForm("");
         if (!isFormValid) {
@@ -348,6 +359,13 @@ errors.skillsRequired = skillsErrors;
         isValid = false;
       } else {
         errors.description = '';
+      }
+
+      if (skillsRequired.length === 0 || skillsRequired.some(skill => !skill.skillName.trim())) {
+        isValid = false;
+        errors.skillsRequired = [{ skillName: 'Please select at least one skill.', minimumExperience: '' }];
+      } else {
+        errors.skillsRequired = '';
       }
      
       setFormErrors(errors);
