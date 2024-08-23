@@ -1,6 +1,6 @@
-.verified-badges-container {
-    padding: 20px;
-    background-color: #f4f8fb; /* Light grey background */
+.verified-badges-container1 {
+    /* padding: 15px; */
+    /* background-color: #f4f8fb; */
   }
   
   .title {
@@ -9,30 +9,35 @@
     margin-bottom: 20px;
   }
   
-  .subtitle {
-    font-size: 20px;
-    font-weight: 600;
-    margin-bottom: 10px;
+  .subtitle1 {
+    color: #000;
+font-family: "Plus Jakarta Sans";
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: 26px; 
   }
   
-  .description {
+  .description1 {
     font-size: 14px;
     color: #666;
     margin-bottom: 20px;
+    margin-left: 20px;
   }
   
-  .progress-bar {
+  .progress-bar1 {
     display: flex;
-    justify-content: space-between;
+    justify-content:space-evenly;
     align-items: center;
     margin-bottom: 30px;
+  
   }
   
-  .step {
+  .step1 {
     text-align: center;
   }
   
-  .step .circle {
+  .step1 .circle1 {
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -40,24 +45,26 @@
     color: #fff;
     line-height: 30px;
     margin-bottom: 8px;
+    margin-left: 40px;
   }
   
-  .step.active .circle {
-    background-color: #22c55e; /* Green color */
+  .step1.active1 .circle1 {
+    background-color: #22c55e; 
   }
   
-  .test-card {
+  .test-card1 {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: center; 
+    justify-content: space-between; 
+    height: auto;
   }
   
   .test-info {
-    flex: 1;
+    flex: 1; 
   }
   
   .test-info h3 {
@@ -71,11 +78,14 @@
     color: #666;
   }
   
-  .test-action {
+  .test-action1 {
     margin-right: 20px;
+    justify-content: flex-start;
+    margin-top: 20px; 
+    
   }
   
-  .take-test-button {
+  .take-test-button1 {
     background-color: #f46f16;
     color: #fff;
     padding: 10px 20px;
@@ -83,13 +93,18 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
+    
   }
   
-  .take-test-button:hover {
+  .take-test-button1:hover {
     background-color: #d65c10;
   }
   
-  .test-image img {
+  .test-image1 {
+    margin-left: 20px; 
+  }
+  
+  .test-image1 img {
     max-width: 100px;
     height: auto;
   }

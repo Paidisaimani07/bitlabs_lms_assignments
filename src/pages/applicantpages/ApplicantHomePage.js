@@ -20,6 +20,7 @@ import ApplicantResume from '../../components/applicantcomponents/ApplicantResum
 import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
 import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
+import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
 
 
 function ApplicantHomePage() {
@@ -106,6 +107,9 @@ function ApplicantHomePage() {
         case '/applicant-basic-details-form':
           setActiveRoute('abdf');
         break;
+        case '/applicant-verified-badges':
+          setActiveRoute('badges');
+        break;
       default:
         setActiveRoute('');
         break;
@@ -133,6 +137,7 @@ function ApplicantHomePage() {
      {activeRoute === 'resume' && <ApplicantResume />}
      {activeRoute === 'resumebuilder' && <ResumeBuilder />}
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
+     {activeRoute === 'badges' && <VerifiedBadges />}
       </div> 
   )
 }
