@@ -20,7 +20,7 @@ import PrivacyPolicy from './components/common/PrivacyPolicy';
 import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
-
+import JobWidget from './components/jobWidget';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -102,6 +102,8 @@ function App() {
                 <Route path="/view-resume/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-job" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
+
+                <Route path="/widget" element={<JobWidget />} />
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />
