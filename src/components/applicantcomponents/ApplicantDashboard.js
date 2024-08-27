@@ -7,11 +7,13 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Resume from '../../images/user/avatar/Resume.png';
 import Certificate from '../../images/user/avatar/Certificate.png';
+import Taketest from '../../images/user/avatar/Taketest.png';
 import { useLocation } from "react-router-dom";
 import { faL } from "@fortawesome/free-solid-svg-icons";
 import ModalWrapper from './ModalWrapper';
 import Button from '@mui/material/Button';
 import ResumeBuilder from './ResumeBuilder';
+
 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
@@ -28,6 +30,24 @@ const ApplicantDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const [isWideScreen, setIsWideScreen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsWideScreen(window.innerWidth > 780);
+    };
+
+    // Initialize the state on component mount
+    handleResize();
+
+    // Add event listener for resize
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
@@ -178,7 +198,7 @@ const ApplicantDashboard = () => {
     fontWeight: '600',
    
   };
-
+  const [showIcon, setShowIcon] = useState(false); // Set to true or false to show/hide the SVG
 
   return (
     <div>
@@ -189,7 +209,17 @@ const ApplicantDashboard = () => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
                   
-                  <div className="userName-title">Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</div>
+                <div className="userName-title">
+      Welcome {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}
+      {showIcon && (
+        <span style={{ marginLeft: '12px' }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 33 33" fill="none" style={{ marginTop: '-10px' }}>
+            <path d="M31.8433 14.7899L29.6255 12.2552C29.1503 11.78 28.8334 10.8295 28.8334 10.1958V7.66114C28.8334 5.91856 27.4077 4.65124 25.8235 4.65124H23.1305C22.4968 4.65124 21.5463 4.33441 21.0711 3.85916L18.5364 1.64134C17.4275 0.690843 15.6849 0.690843 14.576 1.64134L12.1998 3.85916C11.7245 4.33441 10.774 4.65124 10.1404 4.65124H7.4473C5.70473 4.65124 4.4374 6.07698 4.4374 7.66114V10.3542C4.4374 10.9879 4.12057 11.9384 3.64532 12.4136L1.58592 14.9483C0.635423 16.0572 0.635423 17.7998 1.58592 18.9087L3.64532 21.4433C4.12057 21.9186 4.4374 22.8691 4.4374 23.5027V26.1958C4.4374 27.9384 5.86315 29.2057 7.4473 29.2057H10.1404C10.774 29.2057 11.7245 29.5225 12.1998 29.9978L14.7344 32.2156C15.8433 33.1661 17.5859 33.1661 18.6948 32.2156L21.2295 29.9978C21.7047 29.5225 22.6552 29.2057 23.2889 29.2057H25.982C27.7245 29.2057 28.9919 27.7799 28.9919 26.1958V23.5027C28.9919 22.8691 29.3087 21.9186 29.7839 21.4433L32.0018 18.9087C32.7938 17.7998 32.7938 15.8988 31.8433 14.7899ZM23.2889 13.8394L15.6849 21.4433C15.5265 21.6017 15.2097 21.7601 14.8928 21.7601C14.576 21.7601 14.2592 21.6017 14.1008 21.4433L10.2988 17.6413C9.82354 17.1661 9.82354 16.374 10.2988 15.8988C10.774 15.4235 11.5661 15.4235 12.0414 15.8988L15.0513 18.9087L21.5463 12.0968C22.0216 11.6215 22.8136 11.6215 23.2889 12.0968C23.7641 12.572 23.7641 13.3641 23.2889 13.8394Z" fill="#F46F16"/>
+          </svg>
+        </span>
+      )}
+    </div>
+
                 </div>
               </div>
             </div>
@@ -288,7 +318,6 @@ const ApplicantDashboard = () => {
                 {userData && userData.localResume == true && (
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex resumebox">
                   <div className="card" >
-                   
                     <div className="resumecard" style={{ cursor: "pointer" }}>
                       <div className="resumecard-content">
                         <div className="resumecard-text">
@@ -323,14 +352,50 @@ const ApplicantDashboard = () => {
                         </div>
                       </div>
                     </div>
-
-
                   </div>
                 </div>
                 )}
+              {/* New one*/}
+              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
+      <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3',fontfamily: 'Plus Jakarta Sans',fontWeight:'500'}}>
+      <div className={!isWideScreen ? 'resumecard' : ''}>
+          <div className="resumecard-content">
+            <div className="resumecard-text">
+              <div className="resumecard-heading">
+                <h2 className="heading1">Earn Pre-Screened Badges</h2>
+                <div className="" style={{ fontSize: '16.8px',color:'#6F6F6F',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal'}}>
+  Achieve your dream job faster by demonstrating your aptitude and technical skills.
+</div>
+
+              </div>
+              <div className="resumecard-button">
+                <Link
+                  // to="/applicant-verified-badges"
+                  className="button-link1"
+                  style={linkStyle}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <span className="button button-custom" style={spanStyle}>Take Test</span>
+                </Link>
+              </div>
+            </div>
+            
+            <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
+              <img
+                src={Taketest}
+                alt="Taketest"
+                style={{ width: '160px', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+                {/* New one*/}
+
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                   <div className="card " style={{ cursor: "pointer" }}>
-                  
                     <div className="resumecard" > 
                       <div className="resumecard-content">
                         <div className="resumecard-text">
