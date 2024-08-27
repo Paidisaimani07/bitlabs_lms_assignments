@@ -12,7 +12,7 @@ const JobWidget = () => {
     const fetchJobs = async () => {
       try {
         // API call without JWT token
-        const recommendedJobsResponse = await axios.get(`${apiUrl}/recommendedjob/findrecommendedjob/12342`);
+        const recommendedJobsResponse = await axios.get(`${apiUrl}/getAllJobs`);
         // Update job data state
         setJobs(recommendedJobsResponse.data);
       } catch (error) {
