@@ -166,6 +166,39 @@ const ApplicantDashboard = () => {
       });
   }, [user.id]);
 
+  const [testData, setTestData] = useState([]);
+  const [showIcon, setShowIcon] = useState(false);
+
+  {/* tests api */}
+  useEffect(() => {
+    const fetchTestData = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applicant1/tests/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+
+        const data = response.data;
+        setTestData(data);
+
+        // Check if any test status is "F" or "f"
+        const hasFailureStatus = data.some(test => test.testStatus.toLowerCase() === 'f');
+
+        // Determine if we should show the icon
+        const shouldShowIcon = !hasFailureStatus && data.every(test => test.testStatus.toLowerCase() === 'p');
+
+        setShowIcon(shouldShowIcon);
+
+      } catch (error) {
+        console.error('Error fetching test data:', error);
+      }
+    };
+
+    fetchTestData();
+  }, [user.id]);
+
   const handleRedirect = () => {
 
     navigate("/applicant-find-jobs");
@@ -198,7 +231,7 @@ const ApplicantDashboard = () => {
     fontWeight: '600',
    
   };
-  const [showIcon, setShowIcon] = useState(false); // Set to true or false to show/hide the SVG
+  // const [showIcon, setShowIcon] = useState(false); // Set to true or false to show/hide the SVG
 
   return (
     <div>
@@ -356,42 +389,43 @@ const ApplicantDashboard = () => {
                 </div>
                 )}
               {/* New one*/}
-              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
-      <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3',fontfamily: 'Plus Jakarta Sans',fontWeight:'500'}}>
-      <div className={!isWideScreen ? 'resumecard' : ''}>
-          <div className="resumecard-content">
-            <div className="resumecard-text">
-              <div className="resumecard-heading">
-                <h2 className="heading1">Earn Pre-Screened Badges</h2>
-                <div className="" style={{ fontSize: '16.8px',color:'#6F6F6F',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal'}}>
-  Achieve your dream job faster by demonstrating your aptitude and technical skills.
-</div>
-
+              {!showIcon && (
+        <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
+          <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3', fontFamily: 'Plus Jakarta Sans', fontWeight: '500' }}>
+            <div className={!isWideScreen ? 'resumecard' : ''}>
+              <div className="resumecard-content">
+                <div className="resumecard-text">
+                  <div className="resumecard-heading">
+                    <h2 className="heading1">Earn Pre-Screened Badges</h2>
+                    <div className="" style={{ fontSize: '16.8px', color: '#6F6F6F', fontWeight: '500', fontFamily: 'Plus Jakarta Sans', fontStyle: 'normal' }}>
+                      Achieve your dream job faster by demonstrating your aptitude and technical skills.
+                    </div>
+                  </div>
+                  <div className="resumecard-button">
+                    <Link
+                      // to="/applicant-verified-badges"
+                      className="button-link1"
+                      style={linkStyle}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <span className="button button-custom" style={spanStyle}>Take Test</span>
+                    </Link>
+                  </div>
+                </div>
+                
+                <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
+                  <img
+                    src={Taketest}
+                    alt="Taketest"
+                    style={{ width: '160px', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
+                  />
+                </div>
               </div>
-              <div className="resumecard-button">
-                <Link
-                  // to="/applicant-verified-badges"
-                  className="button-link1"
-                  style={linkStyle}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  <span className="button button-custom" style={spanStyle}>Take Test</span>
-                </Link>
-              </div>
-            </div>
-            
-            <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
-              <img
-                src={Taketest}
-                alt="Taketest"
-                style={{ width: '160px', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
-              />
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
                 {/* New one*/}
 
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
