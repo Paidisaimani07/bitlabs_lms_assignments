@@ -67,6 +67,7 @@ function App() {
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/cookiepolicy" element={<CookiePolicy />} />
               <Route path="/termsofservices" element={<TermsOfServices />} />
+  <Route path="/widget" element={<JobWidget />} />
               {isLoggedIn ? (
                 <>
                 <Route path="/applicanthome" element={<ApplicantHomePage />} />
@@ -103,7 +104,7 @@ function App() {
                 <Route path="/recruiter-view-job" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
 
-                <Route path="/widget" element={<JobWidget />} />
+              
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />
