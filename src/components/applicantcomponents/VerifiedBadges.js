@@ -93,6 +93,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
 };
 
 
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
@@ -105,6 +106,8 @@ const VerifiedBadges = () => {
   
   
  
+  const navigate = useNavigate();
+
   // Update state based on window width
   useEffect(() => {
     const handleResize = () => {
@@ -150,6 +153,7 @@ const VerifiedBadges = () => {
   const spanStyle = {
     fontSize: '14px',
     color: '#FFFFFF',
+    
   };
 
   const steps = [
@@ -214,6 +218,9 @@ const VerifiedBadges = () => {
 
   const handleRetakeTest = () => {
     
+  const handleTakeTest = (testName) => {
+
+    navigate('/applicant-take-test', { state: { testName } });
   };
 
   return (
@@ -295,15 +302,20 @@ const VerifiedBadges = () => {
                           </div>
                         </div>
                         <div className="resumecard-button">
-                          <Link
-                            to="https://www.bitlabs.in/"
+                          
+                          <button
                             className="button-link1"
                             style={linkStyle}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
                           >
                             <span className="button button-custom" style={spanStyle}>Take Test</span>
-                          </Link>
+                          
+                            onClick={() => handleTakeTest('General Aptitude Test')}
+                          
+                            {/* <span className="button button-custom" style={spanStyle}>Take Test</span> */}
+                            <span className="button button-custom" style={spanStyle} >Take Test</span>
+                          </button>
                         </div>
                       </div>
                       <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
@@ -331,15 +343,16 @@ const VerifiedBadges = () => {
                           </div>
                         </div>
                         <div className="resumecard-button">
-                          <Link
-                            to="https://www.bitlabs.in/"
+                        <button
                             className="button-link1"
                             style={linkStyle}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
+                            onClick={() => handleTakeTest('Technical Test')}
                           >
-                            <span className="button button-custom" style={spanStyle}>Take Test</span>
-                          </Link>
+                            {/* <span className="button button-custom" style={spanStyle}>Take Test</span> */}
+                            <span className="button button-custom" style={spanStyle} >Take Test</span>
+                          </button>
                         </div>
                       </div>
                       <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
