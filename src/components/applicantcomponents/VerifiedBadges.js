@@ -2,13 +2,109 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './VerifiedBadges.css';
 import Taketest from '../../images/user/avatar/Taketest.png';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import { useUserContext } from '../common/UserProvider';
+import axios from 'axios';
+import javaPNG from '../../images/javaPNG.svg';
+
+
+const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
+  const [timeLeft, setTimeLeft] = useState({});
+  const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
+
+  useEffect(() => {
+    if (status === 'FAILED') {
+      // Calculate the future time (6 days from now)
+      const futureTime = new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000);
+
+      const calculateTimeLeft = () => {
+        const currentTime = new Date();
+        const difference = futureTime - currentTime;
+
+        if (difference > 0) {
+          const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((difference / 1000 / 60) % 60);
+
+          return { days, hours, minutes };
+        } else {
+          setIsRetakeAvailable(true);
+          return null;
+        }
+      };
+
+      const timer = setInterval(() => {
+        const newTimeLeft = calculateTimeLeft();
+        if (newTimeLeft) {
+          setTimeLeft(newTimeLeft);
+        }
+      }, 1000); // Update every second
+
+      return () => clearInterval(timer); // Cleanup on unmount
+    }
+  }, [status]);
+
+  return (
+    <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
+      {/* Top Section: Status */}
+      <div className="status">
+        <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
+          &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
+        </span>
+      </div>
+
+      {/* Second Section: Badge */}
+      <div className="badge">
+        <img src={javaPNG} alt={skillName} className="skill-image" />
+        <span className="skill-name">{skillName}</span>
+      </div>
+
+      {/* Third Section: Actions */}
+      <div className="test">
+        {status === 'FAILED' && (
+          <div className="test-action retake" onClick={retakeTest}>
+            {isRetakeAvailable ? (
+              'Retake Test'
+            ) : (
+              <>
+                Retake Test in&nbsp;
+                <span>
+                  {timeLeft.days !== undefined && `${timeLeft.days}D `}
+                  {timeLeft.hours !== undefined && `${timeLeft.hours}H `}
+                  {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
+                </span>
+              </>
+            )}
+          </div>
+        )}
+        {status === 'PASSED' && (
+          <div className="test-action verified" onClick={retakeTest}>
+            <span className="tick-mark">✔&nbsp;Verified</span>
+          </div>
+        )}
+        {!status && (
+          <div className="test-action take" onClick={retakeTest}>
+            Take Test <i className="fa fa-external-link" aria-hidden="true"></i>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
   const [currentStep, setCurrentStep] = useState(1); 
   const [hideSteps, setHideSteps] = useState(false); // New state variable
   const [isMobile, setIsMobile] = useState(window.innerWidth < 767);
-
+  const [skillBadges, setSkillBadges] = useState({ skillsRequired: [], applicantSkillBadges: [] }); // Initialize with default values
+  const { user } = useUserContext();
+  const userId = user.id;
+  
+  
+ 
   // Update state based on window width
   useEffect(() => {
     const handleResize = () => {
@@ -20,6 +116,31 @@ const VerifiedBadges = () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    const fetchSkillBadges = async () => {
+      try {
+        // Assuming JWT token is stored in localStorage
+        const jwtToken = localStorage.getItem('jwtToken'); // Retrieve from localStorage
+        console.log(jwtToken);
+
+        const skillBadgesResponse = await axios.get(`${apiUrl}/skill-badges/${userId}/skill-badges`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Pass the JWT token in headers
+          },
+        });
+
+        const skillBadgeData = skillBadgesResponse.data;
+        setSkillBadges(skillBadgeData); // Update state with the fetched data
+        // setSkillsRequired(skillBadgeData.skillsRequired);
+        // setApplicantSkillBadges(skillBadgeData.applicantSkillBadges);
+      } catch (error) {
+        console.error('Error fetching skill badges:', error);
+      } 
+    };
+
+    fetchSkillBadges();
+  }, [userId]);
 
   const linkStyle = {
     textDecoration: 'none',
@@ -90,6 +211,10 @@ const VerifiedBadges = () => {
     position: "relative", // Ensure the line is positioned
     zIndex: 1, // Lower z-index to be behind the circle
   });
+
+  const handleRetakeTest = () => {
+    
+  };
 
   return (
     <div className="dashboard__content">
@@ -284,6 +409,42 @@ const VerifiedBadges = () => {
           </div>
         </div>
       </div>
+      <div className="row">
+  <h3>Skills Badges</h3>
+  <div className="col-lg-8 col-md-12">
+    <div className="row skill-badge-container">
+      {skillBadges.skillsRequired.map((skill) => (
+        <div className="custom-col-5 col-md-4 col-sm-6" key={skill.id}>
+          <div className="skill-required-card">
+            <SkillBadgeCard
+              key={skill.skillName}
+              skillName={skill.skillName}
+              status={skill.status}
+              retakeTest={() => handleRetakeTest()}
+              time={skill.testTaken}
+            />
+          </div>
+        </div>
+      ))}
+
+      {skillBadges.applicantSkillBadges.map((badge) => (
+        <div className="custom-col-5 col-md-4 col-sm-6" key={badge.id}>
+          <div className="skill-required-card">
+            <SkillBadgeCard 
+              skillName={badge.skillBadge.name} 
+              status={badge.status} 
+              time={badge.testTaken}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+      
+
     </div>
   );
 };

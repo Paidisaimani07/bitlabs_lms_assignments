@@ -109,3 +109,166 @@ line-height: 26px;
     height: auto;
   }
   
+  /* Skill Badge style starts here*/
+
+  .skill-badge-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px; /* Adjust the gap between cards */
+  }
+  
+  /* Custom column for responsiveness */
+  .custom-col-5 {
+    flex: 1 1 calc(20% - 16px); /* 5 cards per row */
+    margin-bottom: 20px;
+  }
+  
+  @media (min-width: 900px) {
+    .custom-col-5 {
+      flex: 1 1 calc(25% - 16px); /* 4 cards per row on large screens */
+    }
+  }
+  
+  @media (max-width: 767px) {
+    .custom-col-5 {
+      flex: 1 1 calc(50% - 16px); /* 2 cards per row on mobile, including 360px screens */
+      margin-bottom: 20px;
+    }
+    
+  }
+  
+ 
+  .skill-badge-card {
+    background: #FFFFFF;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    width: 180px;
+    height: 220px;
+  }
+
+ 
+  .badge {
+    background: #FFFFFF;
+    color: #000000;
+    border-radius: 4px;
+    display: inline-block;
+    font-weight: 600px;
+    
+  }
+  
+  .status {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .skill-required-card h5 {
+    margin: 0;
+  }
+  
+  .skill-required-card p {
+    margin: 5px 0 0;
+  }
+  
+  
+  /* Top section: Status */
+  .status {
+    text-align: right;
+    font-size: 14px;
+    font-weight: bold;
+    margin-right: 10px;
+    margin-top: 5px;
+  }
+  
+  .status-passed {
+    background-color: #0A8D08; /* Green for passed */
+    color: white;
+    border-radius: 10px;
+    
+  }
+  
+  .status-failed {
+    background-color: red; /* Red for failed */
+    color: white;
+    border-radius: 10px;
+    
+  }
+  
+  .status-empty {
+    visibility: hidden; /* Makes the element invisible but retains its space */
+  height: 25px; /* Keeps the space */
+  background-color: transparent;
+  }
+  
+  /* Second section: Badge */
+  .badge {
+    text-align: center;
+    
+    
+  }
+  
+  .skill-image {
+    width: 60px;
+    height: 90px;
+  }
+  
+  .skill-name {
+    display: block;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  
+  
+  /* Third section: Test actions */
+.test {
+  text-align: left;
+  margin-top: 20px;
+}
+
+.test-action {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer; 
+  border: none;
+  text-align: left;
+  border-bottom-left-radius: 8px; /* Bottom left radius */
+  border-bottom-right-radius: 8px; /* Bottom right radius */
+  height: 53px;
+}
+
+.test-action.take {
+  background-color: #374A70; /* Take test background */
+  color: white;
+}
+
+.test-action.retake {
+  background-color: #BEC0C1; /* Retake test background */
+  color: black;
+}
+
+.test-action.verified {
+  background-color: #0A8D08; /* Verified background */
+  color: white;
+  align-items: center;
+}
+
+.tick-mark {
+  align-items: center;
+  color: white;
+  margin-left: 30px;
+}
+
+.external-link-symbol {
+  
+  font-size: 14px;
+}
+
+  
+  
+  /* skill badge style ends here*/
