@@ -37,13 +37,10 @@
     padding: 30px !important;
     background: #fff !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
-    min-height: 80vh; /* Adjust this value as needed for height */
-
+    min-height: 75vh; /* Adjust this value as needed for height */
     justify-content: space-between;
     padding-bottom: 20px;
 }
-
-
 
 .instructions-page h2, .test-page h3 {
     font-size: 24px !important;
@@ -289,16 +286,4 @@ margin-top: 10px;
     cursor: not-allowed;
   }
   
-  .second-btn {
-    padding: 10px 20px;
-    border: 1px solid #F46F16 !important; /* Adjust border color */
-    color: #F46F16 !important; /* Text color */
-    cursor: pointer !important;
-    background-color: #9E9E9E !important;
-  }
-
-  .second-btn:disabled {
-    border-color: #ccc; /* Disabled state border color */
-    color: #ccc; /* Disabled state text color */
-    cursor: not-allowed;
-  }
+ 

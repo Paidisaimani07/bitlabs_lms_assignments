@@ -245,9 +245,10 @@ const ApplicantTakeTest = () => {
                   </label>
                 </li>
               ))}
+                {validationMessage && <p className="validation">{validationMessage}</p>}
             </ul>
-            {validationMessage && <p className="validation">{validationMessage}</p>}
-          </div><br /><br /><br /><br /><br /><br /><br /><br /><br />
+          
+          </div><br /><br /><br /><br /><br /><br /><br /><br />
           <div className="footer1">
             <button
               disabled={currentQuestionIndex === 0}
