@@ -12,6 +12,7 @@ import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
+import ApplicantTakeTest from './ApplicantTakeTest';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -31,6 +32,9 @@ function ApplicantNavBar() {
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
   const frompath = location.state?.from;
+
+  const [showTestPopup, setShowTestPopup] = useState(false);
+  const [testName, setTestName] = useState('');
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -242,6 +246,7 @@ function ApplicantNavBar() {
     navigate('/applicant-resume-builder');
   };
 
+
   return (
     <div>
       <div className="menu-mobile-popup">
@@ -400,9 +405,7 @@ function ApplicantNavBar() {
                   <span className="dash-titles">Saved Jobs</span>
                 </Link>
               </li>
-              <li>
              
-              </li>
               <li>
             <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
              
@@ -451,6 +454,45 @@ function ApplicantNavBar() {
   <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
 </Link>
           </li>
+          <li>
+          <Link 
+  onClick={hideMenu} 
+  to="/applicant-verified-badges" 
+  className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
+  style={{ 
+    display: 'inline-flex', 
+    alignItems: 'center', 
+    textDecoration: 'none', 
+    marginTop: '17px' 
+  }}
+>
+  <span 
+    className="dash-icon" 
+    style={{
+      display: 'inline-block', 
+      transition: 'fill 0.3s ease',
+      marginRight: '8px',
+    }}
+  >
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="25" 
+      viewBox="0 0 24 25" 
+      fill="none"
+      style={{ 
+        fill: location.pathname === "/applicant-verified-badges" ? "#F46F16" : "#888888" 
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
+      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/verified-badges" ? "#F46F16" : "#888888"} 
+    >
+      <path d="M21.6008 11.2002L20.2008 9.6002C19.9008 9.3002 19.7008 8.7002 19.7008 8.3002V6.70019C19.7008 5.60019 18.8008 4.8002 17.8008 4.8002H16.1008C15.7008 4.8002 15.1008 4.6002 14.8008 4.3002L13.2008 2.9002C12.5008 2.3002 11.4008 2.3002 10.7008 2.9002L9.20078 4.3002C8.90078 4.6002 8.30078 4.8002 7.90078 4.8002H6.20078C5.10078 4.8002 4.30078 5.70019 4.30078 6.70019V8.4002C4.30078 8.8002 4.10078 9.40019 3.80078 9.70019L2.50078 11.3002C1.90078 12.0002 1.90078 13.1002 2.50078 13.8002L3.80078 15.4002C4.10078 15.7002 4.30078 16.3002 4.30078 16.7002V18.4002C4.30078 19.5002 5.20078 20.3002 6.20078 20.3002H7.90078C8.30078 20.3002 8.90078 20.5002 9.20078 20.8002L10.8008 22.2002C11.5008 22.8002 12.6008 22.8002 13.3008 22.2002L14.9008 20.8002C15.2008 20.5002 15.8008 20.3002 16.2008 20.3002H17.9008C19.0008 20.3002 19.8008 19.4002 19.8008 18.4002V16.7002C19.8008 16.3002 20.0008 15.7002 20.3008 15.4002L21.7008 13.8002C22.2008 13.1002 22.2008 11.9002 21.6008 11.2002ZM16.2008 10.6002L11.4008 15.4002C11.3008 15.5002 11.1008 15.6002 10.9008 15.6002C10.7008 15.6002 10.5008 15.5002 10.4008 15.4002L8.00078 13.0002C7.70078 12.7002 7.70078 12.2002 8.00078 11.9002C8.30078 11.6002 8.80078 11.6002 9.10078 11.9002L11.0008 13.8002L15.1008 9.5002C15.4008 9.20019 15.9008 9.20019 16.2008 9.5002C16.5008 9.8002 16.5008 10.3002 16.2008 10.6002Z"/>
+    </svg>
+  </span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
+</Link>
+          </li>
+
             </ul>
           
           </div>
