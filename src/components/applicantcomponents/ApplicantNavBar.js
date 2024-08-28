@@ -12,6 +12,7 @@ import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
+import ApplicantTakeTest from './ApplicantTakeTest';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -31,6 +32,9 @@ function ApplicantNavBar() {
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
   const frompath = location.state?.from;
+
+  const [showTestPopup, setShowTestPopup] = useState(false);
+  const [testName, setTestName] = useState('');
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -242,6 +246,7 @@ function ApplicantNavBar() {
     navigate('/applicant-resume-builder');
   };
 
+
   return (
     <div>
       <div className="menu-mobile-popup">
@@ -400,9 +405,7 @@ function ApplicantNavBar() {
                   <span className="dash-titles">Saved Jobs</span>
                 </Link>
               </li>
-              <li>
              
-              </li>
               <li>
             <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
              
@@ -416,7 +419,7 @@ function ApplicantNavBar() {
             {/*Verified badges */}
             <Link 
   onClick={hideMenu} 
-  to="" 
+  to="/applicant-verified-badges" 
   className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
   style={{ 
     display: 'inline-flex', 
@@ -451,6 +454,8 @@ function ApplicantNavBar() {
   <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
 </Link>
           </li>
+        
+
             </ul>
           
           </div>
