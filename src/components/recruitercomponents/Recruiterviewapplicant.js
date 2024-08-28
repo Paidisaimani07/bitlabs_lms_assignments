@@ -444,14 +444,15 @@ const Recruiterviewapplicant = () => {
             Screening Questions
           </h5>
           {screeningQuestions.map(question => (
-            <div key={question.id} className="subtitle-2 fw-7">
+            <div key={question.id} className="subtitle-2 fw-7"
+            style={{ marginBottom: '20px' }}>
               <span
                 style={{
                   marginLeft: '0px',
                   marginTop: '20px',
                   color: 'black',
                   fontSize: '16px',
-                  fontWeight: '500',
+                  fontWeight: '800',
                   fontFamily: 'Plus Jakarta Sans',
                   fontStyle: 'normal'
                 }}
@@ -467,7 +468,8 @@ const Recruiterviewapplicant = () => {
         fontWeight: 'bold',
         color: '#686666',
         fontSize: '15px',
-        fontWeight: '400'
+        fontWeight: '400',
+        
       }}
     >
       {answer.answerText}

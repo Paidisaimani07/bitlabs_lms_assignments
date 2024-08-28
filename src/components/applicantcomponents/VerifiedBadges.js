@@ -6,11 +6,12 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import javaPNG from '../../images/javaPNG.svg';
-
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
   const [timeLeft, setTimeLeft] = useState({});
   const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (status === 'FAILED') {
@@ -44,6 +45,11 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
     }
   }, [status]);
 
+  const handleTakeTest = (testName) => {
+
+    navigate('/applicant-take-test', { state: { testName } });
+  };
+
   return (
     <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
       {/* Top Section: Status */}
@@ -62,7 +68,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
       {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
-          <div className="test-action retake" onClick={retakeTest}>
+          <div className="test-action retake" onClick={() => handleTakeTest('General Aptitude Test')}>
             {isRetakeAvailable ? (
               'Retake Test'
             ) : (
@@ -83,7 +89,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
           </div>
         )}
         {!status && (
-          <div className="test-action take" onClick={retakeTest}>
+          <div className="test-action take" onClick={() => handleTakeTest('General Aptitude Test')}>
             Take Test <i className="fa fa-external-link" aria-hidden="true"></i>
           </div>
         )}
@@ -93,7 +99,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
 };
 
 
-import { useNavigate, useLocation } from 'react-router-dom';
+
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
@@ -152,8 +158,7 @@ const VerifiedBadges = () => {
 
   const spanStyle = {
     fontSize: '14px',
-    color: '#FFFFFF',
-    
+    color: 'orange',
   };
 
   const steps = [
@@ -216,13 +221,14 @@ const VerifiedBadges = () => {
     zIndex: 1, // Lower z-index to be behind the circle
   });
 
-  const handleRetakeTest = () => {
-    
   const handleTakeTest = (testName) => {
 
     navigate('/applicant-take-test', { state: { testName } });
   };
 
+  const handleRetakeTest = () => {
+
+  }
   return (
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
@@ -302,17 +308,13 @@ const VerifiedBadges = () => {
                           </div>
                         </div>
                         <div className="resumecard-button">
-                          
                           <button
                             className="button-link1"
                             style={linkStyle}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
-                          >
-                            <span className="button button-custom" style={spanStyle}>Take Test</span>
-                          
                             onClick={() => handleTakeTest('General Aptitude Test')}
-                          
+                          >
                             {/* <span className="button button-custom" style={spanStyle}>Take Test</span> */}
                             <span className="button button-custom" style={spanStyle} >Take Test</span>
                           </button>
