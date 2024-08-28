@@ -419,7 +419,7 @@ function ApplicantNavBar() {
             {/*Verified badges */}
             <Link 
   onClick={hideMenu} 
-  to="" 
+  to="/applicant-verified-badges" 
   className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
   style={{ 
     display: 'inline-flex', 
