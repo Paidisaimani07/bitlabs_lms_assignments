@@ -1,0 +1,28 @@
+{
+    "testName": "Technical Test",
+    "duration": "30 mins",
+    "numberOfQuestions": 30,
+    "topicsCovered": ["Programming Skills"],
+    "questions": [
+      {
+        "id": 1,
+        "question": "1.A train running at the speed of 60 km/hr crosses a pole in 9 seconds. What is the length of the train?",
+        "options": ["120 Metres", "180 Metres", "324 Metres", "150 Metres"],
+        "answer": "150 Metres"
+      },
+      {
+        "id": 2,
+        "question": "2.What is the next number in the series: 2, 6, 12, 20, ...?",
+        "options": ["30", "28", "36", "40"],
+        "answer": "30"
+      },
+      {
+        "id": 3,
+        "question": "3.A train running at the speed of 60 km/hr crosses a pole in 9 seconds. What is the length of the train?",
+        "options": ["120 Metres", "180 Metres", "324 Metres", "150 Metres"],
+        "answer": "150 Metres"
+      }
+     
+    ]
+  }
+  

@@ -82,7 +82,9 @@ function App() {
                 <Route path="/applicant-change-password" element={<ApplicantHomePage />} />
                 <Route path="/applicant-delete-profile" element={<ApplicantHomePage />} />
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
+                <Route path="/applicant-take-test" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
                 <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
