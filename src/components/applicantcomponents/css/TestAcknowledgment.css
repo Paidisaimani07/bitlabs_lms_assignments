@@ -1,0 +1,75 @@
+.acknowledgment-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+ 
+}
+
+.acknowledgment-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 97% !important;
+  height: 100% !important;
+}
+
+.acknowledgment-image {
+  width: 100%;
+  max-width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
+.acknowledgment-score {
+  color: #F97316 !important;
+  text-align: center !important;
+  font-family: "Plus Jakarta Sans" !important;
+  font-size: 36px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 25px !important; /* 69.444% */
+   margin: 30px !important;
+}
+
+.acknowledgment-text {
+  color: #000 !important;
+text-align: center !important;
+font-family: "Plus Jakarta Sans" !important;
+font-size: 28px !important;
+font-style: normal !important;
+font-weight: 600 !important;
+line-height: 41px !important; /* 146.429% */
+align-items: center !important;
+width: 53% !important;
+margin: auto;
+}
+
+.acknowledgment-subtext {
+  color: #F97316 !important;
+font-family: "Plus Jakarta Sans" !important;
+font-size: 24px !important;
+font-style: normal !important;
+font-weight: 600 !important;
+line-height: 25px !important; /* 104.167% */
+margin: 30px;
+}
+
+.acknowledgment-btn {
+  background-color: #f46f16 !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  border-radius: 5px !important;
+  transition: background-color 0.3s ease !important;
+  margin-bottom: 30px;
+}
+
+.acknowledgment-btn:hover {
+  background-color: #e65a00;
+}

@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import aptitudeQuestions from './aptitude_questions.json';
-import technicalQuestions from './technical_questions.json';
-import './ApplicantTakeTest.css';
+import aptitudeQuestions from './questions/aptitude_questions.json';
+import technicalQuestions from './questions/technical_questions.json';
+import './css/ApplicantTakeTest.css';
 import Logo from '../../images/artboard.svg';
 import TestExitPopup from './TestExitPopup';
+import TestTimeUp from './TestTimeUp';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import { useUserContext } from '../common/UserProvider';
+import TestPassAcknowledgment from './TestPassAcknowledgment';
+import TestFailAcknowledgment from './TestFailAcknowledgment';
+
+const shuffleArray = (array) => {
+  return array.sort(() => Math.random() - 0.5);
+};
 
 const ApplicantTakeTest = () => {
   const [currentPage, setCurrentPage] = useState('instructions');
@@ -14,21 +23,32 @@ const ApplicantTakeTest = () => {
   const [timer, setTimer] = useState(3600); // Assuming 1 hour (3600 seconds)
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
+  const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState({ questions: [], duration: 0, numberOfQuestions: 0, topicsCovered: [] });
+  const [acknowledgmentVisible, setAcknowledgmentVisible] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { testName } = location.state || {};
+  const { user } = useUserContext();
+  const userId = user.id;
 
   useEffect(() => {
     // Load questions and set timer based on the test name
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(60 * 60); // 60 minutes for General Aptitude Test
+      setTimer(60* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
     }
   }, [testName]);
+
+  useEffect(() => {
+    // Shuffle the questions array when the component mounts
+    const shuffled = shuffleArray(questions.questions);
+    setShuffledQuestions(shuffled);
+  }, [questions.questions]);
   
 
   useEffect(() => {
@@ -69,21 +89,79 @@ const ApplicantTakeTest = () => {
     }
   };
 
+  // const handleOptionChange = (event) => {
+  //   setSelectedOptions({
+  //     ...selectedOptions,
+  //     [currentQuestionIndex]: event.target.value,
+  //   });
+  // };
+
   const handleOptionChange = (event) => {
+    const selectedOption = event.target.value;
     setSelectedOptions({
       ...selectedOptions,
-      [currentQuestionIndex]: event.target.value,
+      [currentQuestionIndex]: selectedOption,
     });
   };
 
+  
+
+  const calculateScore = () => {
+    let correctAnswers = 0;
+    questions.questions.forEach((question, index) => {
+      if (selectedOptions[index] === question.answer) {
+        correctAnswers += 1;
+      }
+    });
+     const calculatedScore = (correctAnswers / questions.questions.length) * 100;
+    setScore(calculatedScore);
+    return calculatedScore;
+  };
+
+  
   const handleSubmitTest = () => {
     if (!selectedOptions[currentQuestionIndex]) {
       setValidationMessage('Please provide your answer to submit the test.');
       return;
     }
     setValidationMessage('');
-    // Handle test submission logic here
+  
+    const calculatedScore = calculateScore();
+    const testStatus = calculatedScore >= 70 ? 'P' : 'F';
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    // Submit the test result to the API
+    fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Test submitted successfully:', data);
+      })
+      .catch((error) => {
+        console.error('Error submitting the test:', error);
+      });
+  
+    // Show the acknowledgment popup based on the test result
+    if (testStatus === 'P') {
+      setCurrentPage('passAcknowledgment');
+    } else {
+      setCurrentPage('failAcknowledgment');
+    }
   };
+  
 
   const handleExit = () => {
     setShowExitPopup(true); // Show exit confirmation popup
@@ -91,7 +169,7 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
-    navigate(-1); // Navigate back to the previous page
+    navigate("/applicant-verified-badges"); // Navigate back to the previous page
   };
 
   const handleCancelExit = () => {
@@ -100,6 +178,31 @@ const ApplicantTakeTest = () => {
 
   const handleTimesUp = () => {
     setCurrentPage('timesup');
+  };
+
+  const handleTimesUpClose = () => {
+    setCurrentPage(false);
+  };
+
+  const handleClosePopup = () => {
+    setCurrentPage('instructions'); // Or navigate to a different page if needed
+  };
+
+  const handleTakeTest = (testName) => {
+    console.log("Test Button Clicked");
+    setAcknowledgmentVisible(false); // Hide the acknowledgment component
+    window.location.reload();
+    navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
+  };
+
+  const handleViewResults = () => {
+    const calculatedScore1 = calculateScore();
+    const testStatus = calculatedScore1 >= 70 ? 'P' : 'F';
+    if (testStatus === 'P') {
+      setCurrentPage('passAcknowledgment');
+    } else {
+      setCurrentPage('failAcknowledgment');
+    }
   };
 
   return (
@@ -228,27 +331,26 @@ const ApplicantTakeTest = () => {
           </div>
           <div className="separator"></div>
           <div className="question">
-            <ul>
-              <li>
-                <p>{questions.questions[currentQuestionIndex].question}</p>
-              </li>
-              {questions.questions[currentQuestionIndex].options.map((option) => (
-                <li key={option}>
-                  <label>
-                    <input
-                      type="radio"
-                      value={option}
-                      checked={selectedOptions[currentQuestionIndex] === option}
-                      onChange={handleOptionChange}
-                    />
-                    {option}
-                  </label>
-                </li>
-              ))}
-                {validationMessage && <p className="validation">{validationMessage}</p>}
-            </ul>
-          
-          </div><br /><br /><br /><br /><br /><br /><br /><br />
+      <ul>
+        <li>
+          <p>{currentQuestionIndex + 1}.{shuffledQuestions[currentQuestionIndex]?.question}</p>
+        </li>
+        {shuffledQuestions[currentQuestionIndex]?.options.map((option) => (
+          <li key={option}>
+            <label>
+              <input
+                type="radio"
+                value={option}
+                checked={selectedOptions[currentQuestionIndex] === option}
+                onChange={handleOptionChange}
+              />
+              {option}
+            </label>
+          </li>
+        ))}
+        {validationMessage && <p className="validation">{validationMessage}</p>}
+      </ul>
+    </div><br /><br /><br /><br /><br /><br /><br /><br />
           <div className="footer1">
             <button
               disabled={currentQuestionIndex === 0}
@@ -270,12 +372,16 @@ const ApplicantTakeTest = () => {
         </div>
       )}
 
-      {currentPage === 'timesup' && (
-        <div className="timesup-popup">
-          <p>Time’s up!</p>
-          <p>Your progress has been saved. Please check your score.</p>
-          <button onClick={() => setCurrentPage('viewResults')}>View Results</button>
-        </div>
+     {currentPage === 'passAcknowledgment' && (
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score}  handleTakeTest={handleTakeTest}/>
+      )}
+      {currentPage === 'failAcknowledgment' && (
+        <TestFailAcknowledgment onClose={handleClosePopup} />
+      )}
+
+
+     {currentPage === 'timesup' && (
+        <TestTimeUp onViewResults={handleViewResults} onCancel={handleTimesUpClose} />
       )}
 
       {currentPage === 'exitConfirmed' && (
