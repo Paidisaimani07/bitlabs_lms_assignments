@@ -6,17 +6,50 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
 import javaPNG from '../../images/javaPNG.svg';
+import htmlPNG from '../../images/HTML.svg';
+import cssPNG from '../../images/CSS.svg';
+import paythonPNG from '../../images/Paython.svg';
+import mysqlPNG from '../../images/Mysqll.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
+const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
   const [timeLeft, setTimeLeft] = useState({});
   const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
   const navigate = useNavigate();
 
+    // Map skill names to images
+    const skillImages = {
+      'JAVA': javaPNG,
+      'HTML': htmlPNG,
+      'CSS': cssPNG,
+      'python': paythonPNG,
+      'mysql' : mysqlPNG,
+      // Add other skills here...
+    };
+  
+    // Get the image based on skill name, default to javaPNG if not found
+    const skillImage = skillImages[skillName] || javaPNG;
+
   useEffect(() => {
     if (status === 'FAILED') {
-      // Calculate the future time (6 days from now)
-      const futureTime = new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000);
+       // Convert `testFailedAt` to Date object, which is when the test failed
+       
+      //const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
+      // Create a Date object by using the array elements
+  const failedDate = new Date(
+    testFailedAt[0], // year
+    testFailedAt[1] - 1, // month (JavaScript Date is 0-based for months)
+    testFailedAt[2], // day
+    testFailedAt[3], // hour
+    testFailedAt[4], // minute
+    testFailedAt[5] // second
+    
+  );
+      
+      // Calculate the total 7 days (or 168 hours) from the failure time
+      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+
 
       const calculateTimeLeft = () => {
         const currentTime = new Date();
@@ -61,22 +94,22 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest }) => {
 
       {/* Second Section: Badge */}
       <div className="badge">
-        <img src={javaPNG} alt={skillName} className="skill-image" />
+        <img src={skillImage} alt={skillName} className="skill-image" />
         <span className="skill-name">{skillName}</span>
       </div>
 
       {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
-          <div className="test-action retake" onClick={() => handleTakeTest('General Aptitude Test')}>
+          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest('General Aptitude Test') : null}>
             {isRetakeAvailable ? (
               'Retake Test'
             ) : (
               <>
                 Retake Test in&nbsp;
                 <span>
-                  {timeLeft.days !== undefined && `${timeLeft.days}D `}
-                  {timeLeft.hours !== undefined && `${timeLeft.hours}H `}
+                  {timeLeft.days > 0 && `${timeLeft.days}D `}
+                  {timeLeft.hours > 0 && `${timeLeft.hours}H `}
                   {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
                 </span>
               </>
@@ -424,10 +457,10 @@ const VerifiedBadges = () => {
           </div>
         </div>
       </div>
-      <div className="row">
+      <div className="row mr-0 ml-10">
   <h3>Skills Badges</h3>
-  <div className="col-lg-8 col-md-12">
-    <div className="row skill-badge-container">
+  <div className="col-lg-10 col-md-12">
+    <div className="skill-badge-container">
       {skillBadges.skillsRequired.map((skill) => (
         <div className="custom-col-5 col-md-4 col-sm-6" key={skill.id}>
           <div className="skill-required-card">
@@ -436,7 +469,7 @@ const VerifiedBadges = () => {
               skillName={skill.skillName}
               status={skill.status}
               retakeTest={() => handleRetakeTest()}
-              time={skill.testTaken}
+              testFailedAt={skill.testTaken}
             />
           </div>
         </div>
@@ -448,7 +481,7 @@ const VerifiedBadges = () => {
             <SkillBadgeCard 
               skillName={badge.skillBadge.name} 
               status={badge.status} 
-              time={badge.testTaken}
+              testFailedAt={badge.testTaken}
             />
           </div>
         </div>
