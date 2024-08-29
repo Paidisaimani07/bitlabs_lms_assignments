@@ -5,11 +5,33 @@ import Taketest from '../../images/user/avatar/Taketest.png';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import axios from 'axios';
-import javaPNG from '../../images/javaPNG.svg';
-import htmlPNG from '../../images/HTML.svg';
-import cssPNG from '../../images/CSS.svg';
-import paythonPNG from '../../images/Paython.svg';
-import mysqlPNG from '../../images/Mysqll.svg';
+import javaPNG from '../../images/Icons1/Icons/Java.svg';
+import htmlPNG from '../../images/Icons1/Icons/HTML.svg';
+import cssPNG from '../../images/Icons1/Icons/CSS.svg';
+import mysqlPNG from '../../images/Icons1/Icons/MySQL.svg';
+import angularPNG from '../../images/Icons1/Icons/Angular.svg';
+import reactPNG from '../../images/Icons1/Icons/React.svg';
+import manualTestingPNG from '../../images/Icons1/Icons/Manual Testing.svg';
+import sqlPNG from '../../images/Icons1/Icons/SQL.svg';
+import jspPNG from '../../images/Icons1/Icons/JSP.svg';
+import cPlusPlusPNG from '../../images/Icons1/Icons/C++.svg';
+import paythonPNG from '../../images/Icons1/Icons/Python.svg';
+import regressionPNG from '../../images/Icons1/Icons/Regression Testing.svg';
+import hibernatePNG from '../../images/Icons1/Icons/Hibernate.svg';
+import netPNG from '../../images/Icons1/Icons/Dot Net.svg';
+import servletsPNG from '../../images/Icons1/Icons/Servlets.svg';
+import typeScriptPNG from '../../images/Icons1/Icons/TypeScript.svg';
+import cSharpPNG from '../../images/Icons1/Icons/C Sharp.svg';
+import cPNG from '../../images/Icons1/Icons/C.svg';
+import seleniumPNG from '../../images/Icons1/Icons/Selenium.svg';
+import javaScriptPNG from '../../images/Icons1/Icons/JavaScript.svg';
+import springPNG from '../../images/Icons1/Icons/Spring.svg';
+import springBootPNG from '../../images/Icons1/Icons/Spring Boot.svg';
+import vuePNG from '../../images/Icons1/Icons/Vue.svg';
+import mongodbPNG from '../../images/Icons1/Icons/Mongo DB.svg';
+import sqlServerPNG from '../../images/Icons1/Icons/SQL-Server.svg';
+import djangoPNG from '../../images/Icons1/Icons/Django.svg';
+import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
@@ -22,8 +44,30 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
       'JAVA': javaPNG,
       'HTML': htmlPNG,
       'CSS': cssPNG,
-      'python': paythonPNG,
-      'mysql' : mysqlPNG,
+      'Python': paythonPNG,
+      'MySQL' : mysqlPNG,
+      'Angular' : angularPNG,
+      'React' : reactPNG,
+      'Manual Testing' : manualTestingPNG,
+      "SQL" : sqlPNG,
+      "JSP" : jspPNG,
+      "C++" : cPlusPlusPNG,
+      "Regression Testing" : regressionPNG,
+      "Hibernate" : hibernatePNG,
+      ".Net" : netPNG,
+      "Servlets" : servletsPNG,
+      "TypeScript" : typeScriptPNG,
+      "C Sharp" : cSharpPNG,
+      "C" : cPNG,
+      "Selenium" : seleniumPNG,
+      "JavaScript" : javaScriptPNG,
+      "Spring" : springPNG,
+      "Spring Boot" : springBootPNG,
+      "Vue" : vuePNG,
+      "Mongo DB" : mongodbPNG,
+      "SQL-Server" : sqlServerPNG,
+      "Django" : djangoPNG,
+      "Flask" : flaskPNG,
       // Add other skills here...
     };
   
@@ -462,8 +506,8 @@ const VerifiedBadges = () => {
   <div className="col-lg-10 col-md-12">
     <div className="skill-badge-container">
       {skillBadges.skillsRequired.map((skill) => (
-        <div className="custom-col-5 col-md-4 col-sm-6" key={skill.id}>
-          <div className="skill-required-card">
+       
+          <div className="skill-badge-card" key={skill.id}>
             <SkillBadgeCard
               key={skill.skillName}
               skillName={skill.skillName}
@@ -472,23 +516,24 @@ const VerifiedBadges = () => {
               testFailedAt={skill.testTaken}
             />
           </div>
-        </div>
+        
       ))}
 
       {skillBadges.applicantSkillBadges.map((badge) => (
-        <div className="custom-col-5 col-md-4 col-sm-6" key={badge.id}>
-          <div className="skill-required-card">
+        
+          <div className="skill-badge-card" key={badge.id}>
             <SkillBadgeCard 
               skillName={badge.skillBadge.name} 
               status={badge.status} 
               testFailedAt={badge.testTaken}
             />
           </div>
-        </div>
+        
       ))}
     </div>
   </div>
 </div>
+
 
 
       
