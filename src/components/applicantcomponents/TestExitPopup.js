@@ -23,14 +23,14 @@ const TestExitPopup = ({ onConfirm, onCancel }) => {
   </defs>
 </svg>
           </div>
-          <p className="exit-popup-title">Are you sure you want to quit?</p>
+          <p className="exit-popup-title">Do you really want to exit?</p>
           <p className="exit-popup-message">
-            You will lose all the test results till now & You cannot take the test until 1 week
+          Exiting will erase your progress and prevent retaking the test for 7 days. Proceed?
           </p>
         </div>
         <div className="exit-popup-footer">
-          <button className="exit-popup-btn exit-popup-cancel-btn" onClick={onCancel}>Back</button>
-          <button className="exit-popup-btn exit-popup-confirm-btn" onClick={onConfirm}>Next</button>
+          <button className="exit-popup-btn exit-popup-cancel-btn" onClick={onCancel}>No</button>
+          <button className="exit-popup-btn exit-popup-confirm-btn" onClick={onConfirm}>Yes</button>
         </div>
       </div>
     </div>

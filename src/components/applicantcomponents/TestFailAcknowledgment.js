@@ -14,11 +14,11 @@ const TestFailAcknowledgment = () => {
     <div className="acknowledgment-container">
       <div className="acknowledgment-content">
         <img src={TestFail} alt="Test Failed" className="acknowledgment-image"/>
-        <div className="acknowledgment-text">
-          Unfortunately, you scored less than 70%, and have not passed the exam.
+        <div className="acknowledgment-text1">
+        Unfortunately, you’ve scored less than 70% and haven’t qualified
         </div>
-        <p className="acknowledgment-subtext">
-          You Can Retake The Test After 7 Days
+        <p className="acknowledgment-subtext1">
+        You can retake this test after 7 days
         </p>
         <button className="acknowledgment-btn" onClick={handleExit}>
           Exit &nbsp;

@@ -17,13 +17,13 @@ const TestPassAcknowledgment = ({ score, handleTakeTest }) => {
       <div className="acknowledgment-content">
         <img src={TestPass} className="acknowledgment-image" alt="Test Passed"/>
         <p className="acknowledgment-score">You Scored {score}%</p>
-        <p style={{ color: '#8C8C8C', fontSize: '24px', lineHeight: '30px' }}>
-          Congratulations You have Successfully<br />
-          Completed General Aptitude test
+        <p className="acknowledgment-text" style={{ color: '#8C8C8C', fontSize: '24px',marginTop:'-10px' }}>
+           Congratulations! You’re now verified for the General Aptitude Test
         </p>
         <p className="acknowledgment-subtext">
-          Now you are eligible for Technical Test
+          You are now eligible to take the technical test
         </p>
+        <div className='but-link'>
         <button
           className="acknowledgment-btn"
           onClick={() => handleTakeTest('Technical Test')}
@@ -31,11 +31,13 @@ const TestPassAcknowledgment = ({ score, handleTakeTest }) => {
           Take Test
         </button>
         <Link
+        className='link-but'
           onClick={handleTakeTest1} // Use the same handle to close and navigate
-          style={{ color: '#0D4CC5', fontSize: '20px', marginLeft: '20px', textDecoration: 'underline', fontWeight: 'bold' }}
+          style={{ color: '#0D4CC5', fontSize: '20px', textDecoration: 'underline', fontWeight: 'bold' }}
         >
           I’ll take later
         </Link>
+        </div>
       </div>
     </div>
   );

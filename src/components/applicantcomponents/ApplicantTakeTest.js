@@ -37,7 +37,7 @@ const ApplicantTakeTest = () => {
     // Load questions and set timer based on the test name
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(60* 60); // 60 minutes for General Aptitude Test
+      setTimer(0.1* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
@@ -74,7 +74,7 @@ const ApplicantTakeTest = () => {
 
   const handleNextQuestion = () => {
     if (!selectedOptions[currentQuestionIndex]) {
-      setValidationMessage('Please provide your answer to move to the next question.');
+      setValidationMessage('Please provide your answer to move to the next question');
       return;
     }
     setValidationMessage('');
@@ -196,8 +196,41 @@ const ApplicantTakeTest = () => {
   };
 
   const handleViewResults = () => {
-    const calculatedScore1 = calculateScore();
-    const testStatus = calculatedScore1 >= 70 ? 'P' : 'F';
+    if (!selectedOptions[currentQuestionIndex]) {
+      setValidationMessage('Please provide your answer to submit the test.');
+      return;
+    }
+    setValidationMessage('');
+  
+    const calculatedScore = calculateScore();
+    const testStatus = calculatedScore >= 70 ? 'P' : 'F';
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    // Submit the test result to the API
+    fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Test submitted successfully:', data);
+      })
+      .catch((error) => {
+        console.error('Error submitting the test:', error);
+      });
+  
+    // Show the acknowledgment popup based on the test result
     if (testStatus === 'P') {
       setCurrentPage('passAcknowledgment');
     } else {
@@ -208,11 +241,12 @@ const ApplicantTakeTest = () => {
   return (
     <div className="test-container">
       <header className="test-header">
-        <img className="top-left-svg" src={Logo} alt="Logo" />
+        <img className="logo1" src={Logo} alt="Logo" />
         <button className="exit-btn" onClick={handleExit}>
           Exit&nbsp;
           <svg
-            style={{ marginTop: '-4px' }}
+            className='exit-svg'
+            style={{ marginTop: '-3px' }}
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -251,7 +285,7 @@ const ApplicantTakeTest = () => {
       {currentPage === 'instructions' && (
         <div className="instructions-page">
           <div className="instructions-header">
-            <div style={{ marginLeft: '20px' }}>
+            <div style={{ marginLeft: '2%' }}>
               <h2 className="text-name">{testName}</h2>
               <div className="duration-container">
                 <div className="duration-box">
@@ -278,17 +312,18 @@ const ApplicantTakeTest = () => {
             </div>
           </div>
           <br />
-          <div className="instructions" style={{ paddingLeft: '30px' }}>
+          <div className="instructions" style={{ paddingLeft: '2%' }}>
             <span className="instructions-title">Instructions</span>
             <ul className="instructions-list">
-              <li>You need to score at least 70% to pass the exam</li>
-              <li>Once started, the test cannot be paused or reattempted during the same session</li>
-              <li>If you score below 70%, you can retake the exam after 7 days</li>
-              <li>Ensure all questions are answered before submitting, as your first submission will be final</li>
-              <li>Please complete the test independently. External help is prohibited</li>
+              <li>You need to score at least 70% to pass the exam.</li>
+              <li>Once started, the test cannot be paused or reattempted during the same session.</li>
+              <li>Do not refresh the page during the test.</li>
+              <li>If you score below 70%, you can retake the exam after 7 days.</li>
+              <li>Ensure all questions are answered before submitting, as your first submission will be final.</li>
+              <li>All the questions are mandatory.</li>
+              <li>Please complete the test independently. External help is prohibited.</li>
               <li>
-                Make sure your device is fully charged and has a stable internet connection before
-                starting the test.
+              Make sure your device is fully charged and has a stable internet connection before starting the test.
               </li>
             </ul>
           </div>
@@ -303,15 +338,15 @@ const ApplicantTakeTest = () => {
       {currentPage === 'test' && (
         <div className="test-page">
           <div className="header">
-            <h3 className="text-name">
-              <span style={{color:'#000000'}}>{testName}</span>
+            <h3>
+              <span className="text-name">{testName}</span>
               <h4 className='test-sub'>
                 Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
               </h4>
             </h3>
             <div className="right-content">
               <div className="timer">
-              <svg  style={{marginBottom:'3px'}} xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
+              <svg className='timer-svg' style={{marginBottom:'3px'}} xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
   <g clip-path="url(#clip0_2734_1347)">
     <path d="M9 17.375C13.1421 17.375 16.5 14.0171 16.5 9.875C16.5 5.73286 13.1421 2.375 9 2.375C4.85786 2.375 1.5 5.73286 1.5 9.875C1.5 14.0171 4.85786 17.375 9 17.375Z" stroke="#F46F16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M9 5.375V9.875L12 11.375" stroke="#F46F16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -321,7 +356,7 @@ const ApplicantTakeTest = () => {
       <rect width="18" height="18" fill="white" transform="translate(0 0.875)"/>
     </clipPath>
   </defs>
-</svg>&nbsp;
+</svg>&nbsp;&nbsp;
 <span>
   {new Date(timer * 1000).toISOString().substr(14, 5)}
 </span>
@@ -333,16 +368,17 @@ const ApplicantTakeTest = () => {
           <div className="question">
       <ul>
         <li>
-          <p>{currentQuestionIndex + 1}.{shuffledQuestions[currentQuestionIndex]?.question}</p>
+          <p  className="question1">{currentQuestionIndex + 1}.&nbsp;{shuffledQuestions[currentQuestionIndex]?.question}</p>
         </li>
         {shuffledQuestions[currentQuestionIndex]?.options.map((option) => (
           <li key={option}>
-            <label>
+            <label  className='question-label'>
               <input
                 type="radio"
                 value={option}
                 checked={selectedOptions[currentQuestionIndex] === option}
                 onChange={handleOptionChange}
+                className='question-radio'
               />
               {option}
             </label>
@@ -381,7 +417,7 @@ const ApplicantTakeTest = () => {
 
 
      {currentPage === 'timesup' && (
-        <TestTimeUp onViewResults={handleViewResults} onCancel={handleTimesUpClose} />
+        <TestTimeUp onViewResults={handleViewResults} onCancel={handleViewResults} />
       )}
 
       {currentPage === 'exitConfirmed' && (
