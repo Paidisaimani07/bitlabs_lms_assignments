@@ -1,0 +1,28 @@
+{
+    "testName": "General Aptitude Test",
+    "duration": "1 hr",
+    "numberOfQuestions": 30,
+    "topicsCovered": ["Arithmetic", "Reasoning", "Comprehension"],
+    "questions": [
+      {
+        "id": 1,
+        "question": "Nayak is staying at a hotel that charges $10 per night plus tax for a room. A tax of 8% is applied to the room rate, and an additional onetime untaxed fee of $5.00 is charged by the hotel. Which of the following represents Nayak's total charge, in dollars, for staying x nights?",
+        "options": ["ASCIIMATH=(10+0.08x)+5", "ASCIIMATH=1.08(10x)+5", "ASCIIMATH=1.08(10x+5)", "ASCIIMATH=1.08(10+5)x"],
+        "answer": "ASCIIMATH=1.08(10x)+5"
+      },
+      {
+        "id": 2,
+        "question": "Mary is 8 years older than John. In 4 years, John will be half Mary's age. How old is John now?",
+        "options": ["4 years", "12 years", "14 years", "16 years"],
+        "answer": "4 years"
+      },
+      {
+        "id": 3,
+        "question": "A train running at the speed of 60 km/hr crosses a pole in 9 seconds. What is the length of the train?",
+        "options": ["120 Metres", "180 Metres", "324 Metres", "150 Metres"],
+        "answer": "150 Metres"
+      }
+      
+    ]
+  }
+ 
