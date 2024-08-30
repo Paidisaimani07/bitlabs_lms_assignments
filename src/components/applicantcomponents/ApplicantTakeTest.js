@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import aptitudeQuestions from './aptitude_questions.json';
-import technicalQuestions from './technical_questions.json';
-import './ApplicantTakeTest.css';
+import aptitudeQuestions from './questions/aptitude_questions.json';
+import technicalQuestions from './questions/technical_questions.json';
+import './css/ApplicantTakeTest.css';
 import Logo from '../../images/artboard.svg';
 import TestExitPopup from './TestExitPopup';
+import TestTimeUp from './TestTimeUp';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import { useUserContext } from '../common/UserProvider';
+import TestPassAcknowledgment from './TestPassAcknowledgment';
+import TestFailAcknowledgment from './TestFailAcknowledgment';
+
+const shuffleArray = (array) => {
+  return array.sort(() => Math.random() - 0.5);
+};
 
 const ApplicantTakeTest = () => {
   const [currentPage, setCurrentPage] = useState('instructions');
@@ -14,21 +23,32 @@ const ApplicantTakeTest = () => {
   const [timer, setTimer] = useState(3600); // Assuming 1 hour (3600 seconds)
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
+  const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState({ questions: [], duration: 0, numberOfQuestions: 0, topicsCovered: [] });
+  const [acknowledgmentVisible, setAcknowledgmentVisible] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { testName } = location.state || {};
+  const { user } = useUserContext();
+  const userId = user.id;
 
   useEffect(() => {
     // Load questions and set timer based on the test name
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(60 * 60); // 60 minutes for General Aptitude Test
+      setTimer(0.1* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
     }
   }, [testName]);
+
+  useEffect(() => {
+    // Shuffle the questions array when the component mounts
+    const shuffled = shuffleArray(questions.questions);
+    setShuffledQuestions(shuffled);
+  }, [questions.questions]);
   
 
   useEffect(() => {
@@ -54,7 +74,7 @@ const ApplicantTakeTest = () => {
 
   const handleNextQuestion = () => {
     if (!selectedOptions[currentQuestionIndex]) {
-      setValidationMessage('Please provide your answer to move to the next question.');
+      setValidationMessage('Please provide your answer to move to the next question');
       return;
     }
     setValidationMessage('');
@@ -69,21 +89,79 @@ const ApplicantTakeTest = () => {
     }
   };
 
+  // const handleOptionChange = (event) => {
+  //   setSelectedOptions({
+  //     ...selectedOptions,
+  //     [currentQuestionIndex]: event.target.value,
+  //   });
+  // };
+
   const handleOptionChange = (event) => {
+    const selectedOption = event.target.value;
     setSelectedOptions({
       ...selectedOptions,
-      [currentQuestionIndex]: event.target.value,
+      [currentQuestionIndex]: selectedOption,
     });
   };
 
+  
+
+  const calculateScore = () => {
+    let correctAnswers = 0;
+    questions.questions.forEach((question, index) => {
+      if (selectedOptions[index] === question.answer) {
+        correctAnswers += 1;
+      }
+    });
+     const calculatedScore = (correctAnswers / questions.questions.length) * 100;
+    setScore(calculatedScore);
+    return calculatedScore;
+  };
+
+  
   const handleSubmitTest = () => {
     if (!selectedOptions[currentQuestionIndex]) {
       setValidationMessage('Please provide your answer to submit the test.');
       return;
     }
     setValidationMessage('');
-    // Handle test submission logic here
+  
+    const calculatedScore = calculateScore();
+    const testStatus = calculatedScore >= 70 ? 'P' : 'F';
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    // Submit the test result to the API
+    fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Test submitted successfully:', data);
+      })
+      .catch((error) => {
+        console.error('Error submitting the test:', error);
+      });
+  
+    // Show the acknowledgment popup based on the test result
+    if (testStatus === 'P') {
+      setCurrentPage('passAcknowledgment');
+    } else {
+      setCurrentPage('failAcknowledgment');
+    }
   };
+  
 
   const handleExit = () => {
     setShowExitPopup(true); // Show exit confirmation popup
@@ -91,7 +169,7 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
-    navigate(-1); // Navigate back to the previous page
+    navigate("/applicant-verified-badges"); // Navigate back to the previous page
   };
 
   const handleCancelExit = () => {
@@ -102,14 +180,73 @@ const ApplicantTakeTest = () => {
     setCurrentPage('timesup');
   };
 
+  const handleTimesUpClose = () => {
+    setCurrentPage(false);
+  };
+
+  const handleClosePopup = () => {
+    setCurrentPage('instructions'); // Or navigate to a different page if needed
+  };
+
+  const handleTakeTest = (testName) => {
+    console.log("Test Button Clicked");
+    setAcknowledgmentVisible(false); // Hide the acknowledgment component
+    window.location.reload();
+    navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
+  };
+
+  const handleViewResults = () => {
+    if (!selectedOptions[currentQuestionIndex]) {
+      setValidationMessage('Please provide your answer to submit the test.');
+      return;
+    }
+    setValidationMessage('');
+  
+    const calculatedScore = calculateScore();
+    const testStatus = calculatedScore >= 70 ? 'P' : 'F';
+    const jwtToken = localStorage.getItem('jwtToken');
+    
+    // Submit the test result to the API
+    fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
+        },
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Test submitted successfully:', data);
+      })
+      .catch((error) => {
+        console.error('Error submitting the test:', error);
+      });
+  
+    // Show the acknowledgment popup based on the test result
+    if (testStatus === 'P') {
+      setCurrentPage('passAcknowledgment');
+    } else {
+      setCurrentPage('failAcknowledgment');
+    }
+  };
+
   return (
     <div className="test-container">
       <header className="test-header">
-        <img className="top-left-svg" src={Logo} alt="Logo" />
+        <img className="logo1" src={Logo} alt="Logo" />
         <button className="exit-btn" onClick={handleExit}>
           Exit&nbsp;
           <svg
-            style={{ marginTop: '-4px' }}
+            className='exit-svg'
+            style={{ marginTop: '-3px' }}
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -148,7 +285,7 @@ const ApplicantTakeTest = () => {
       {currentPage === 'instructions' && (
         <div className="instructions-page">
           <div className="instructions-header">
-            <div style={{ marginLeft: '20px' }}>
+            <div style={{ marginLeft: '2%' }}>
               <h2 className="text-name">{testName}</h2>
               <div className="duration-container">
                 <div className="duration-box">
@@ -175,17 +312,18 @@ const ApplicantTakeTest = () => {
             </div>
           </div>
           <br />
-          <div className="instructions" style={{ paddingLeft: '30px' }}>
+          <div className="instructions" style={{ paddingLeft: '2%' }}>
             <span className="instructions-title">Instructions</span>
             <ul className="instructions-list">
-              <li>You need to score at least 70% to pass the exam</li>
-              <li>Once started, the test cannot be paused or reattempted during the same session</li>
-              <li>If you score below 70%, you can retake the exam after 7 days</li>
-              <li>Ensure all questions are answered before submitting, as your first submission will be final</li>
-              <li>Please complete the test independently. External help is prohibited</li>
+              <li>You need to score at least 70% to pass the exam.</li>
+              <li>Once started, the test cannot be paused or reattempted during the same session.</li>
+              <li>Do not refresh the page during the test.</li>
+              <li>If you score below 70%, you can retake the exam after 7 days.</li>
+              <li>Ensure all questions are answered before submitting, as your first submission will be final.</li>
+              <li>All the questions are mandatory.</li>
+              <li>Please complete the test independently. External help is prohibited.</li>
               <li>
-                Make sure your device is fully charged and has a stable internet connection before
-                starting the test.
+              Make sure your device is fully charged and has a stable internet connection before starting the test.
               </li>
             </ul>
           </div>
@@ -200,15 +338,15 @@ const ApplicantTakeTest = () => {
       {currentPage === 'test' && (
         <div className="test-page">
           <div className="header">
-            <h3 className="text-name">
-              <span style={{color:'#000000'}}>{testName}</span>
+            <h3>
+              <span className="text-name">{testName}</span>
               <h4 className='test-sub'>
                 Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
               </h4>
             </h3>
             <div className="right-content">
               <div className="timer">
-              <svg  style={{marginBottom:'3px'}} xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
+              <svg className='timer-svg' style={{marginBottom:'3px'}} xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
   <g clip-path="url(#clip0_2734_1347)">
     <path d="M9 17.375C13.1421 17.375 16.5 14.0171 16.5 9.875C16.5 5.73286 13.1421 2.375 9 2.375C4.85786 2.375 1.5 5.73286 1.5 9.875C1.5 14.0171 4.85786 17.375 9 17.375Z" stroke="#F46F16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M9 5.375V9.875L12 11.375" stroke="#F46F16" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -218,7 +356,7 @@ const ApplicantTakeTest = () => {
       <rect width="18" height="18" fill="white" transform="translate(0 0.875)"/>
     </clipPath>
   </defs>
-</svg>&nbsp;
+</svg>&nbsp;&nbsp;
 <span>
   {new Date(timer * 1000).toISOString().substr(14, 5)}
 </span>
@@ -228,27 +366,27 @@ const ApplicantTakeTest = () => {
           </div>
           <div className="separator"></div>
           <div className="question">
-            <ul>
-              <li>
-                <p>{questions.questions[currentQuestionIndex].question}</p>
-              </li>
-              {questions.questions[currentQuestionIndex].options.map((option) => (
-                <li key={option}>
-                  <label>
-                    <input
-                      type="radio"
-                      value={option}
-                      checked={selectedOptions[currentQuestionIndex] === option}
-                      onChange={handleOptionChange}
-                    />
-                    {option}
-                  </label>
-                </li>
-              ))}
-                {validationMessage && <p className="validation">{validationMessage}</p>}
-            </ul>
-          
-          </div><br /><br /><br /><br /><br /><br /><br /><br />
+      <ul>
+        <li>
+          <p  className="question1">{currentQuestionIndex + 1}.&nbsp;{shuffledQuestions[currentQuestionIndex]?.question}</p>
+        </li>
+        {shuffledQuestions[currentQuestionIndex]?.options.map((option) => (
+          <li key={option}>
+            <label  className='question-label'>
+              <input
+                type="radio"
+                value={option}
+                checked={selectedOptions[currentQuestionIndex] === option}
+                onChange={handleOptionChange}
+                className='question-radio'
+              />
+              {option}
+            </label>
+          </li>
+        ))}
+        {validationMessage && <p className="validation">{validationMessage}</p>}
+      </ul>
+    </div><br /><br /><br /><br /><br /><br /><br /><br />
           <div className="footer1">
             <button
               disabled={currentQuestionIndex === 0}
@@ -270,12 +408,16 @@ const ApplicantTakeTest = () => {
         </div>
       )}
 
-      {currentPage === 'timesup' && (
-        <div className="timesup-popup">
-          <p>Time’s up!</p>
-          <p>Your progress has been saved. Please check your score.</p>
-          <button onClick={() => setCurrentPage('viewResults')}>View Results</button>
-        </div>
+     {currentPage === 'passAcknowledgment' && (
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score}  handleTakeTest={handleTakeTest}/>
+      )}
+      {currentPage === 'failAcknowledgment' && (
+        <TestFailAcknowledgment onClose={handleClosePopup} />
+      )}
+
+
+     {currentPage === 'timesup' && (
+        <TestTimeUp onViewResults={handleViewResults} onCancel={handleViewResults} />
       )}
 
       {currentPage === 'exitConfirmed' && (
