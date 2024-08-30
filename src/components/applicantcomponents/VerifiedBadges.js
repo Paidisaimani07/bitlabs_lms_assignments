@@ -2,35 +2,246 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './VerifiedBadges.css';
 import Taketest from '../../images/user/avatar/Taketest.png';
+import Verified from '../../images/user/avatar/Verified.png';
+import axios from 'axios';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import { useUserContext } from '../common/UserProvider';
 import { useNavigate, useLocation } from 'react-router-dom';
+
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
   const [currentStep, setCurrentStep] = useState(1); 
   const [hideSteps, setHideSteps] = useState(false); // New state variable
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 767);
+  const [isWideScreen, setIsWideScreen] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 767);
+  const isSmallScreen1 = window.innerWidth < 767;
+  const [testData, setTestData] = useState(null); 
+  const { user } = useUserContext();
+  const userId = user.id;
+  const [timer, setTimer] = useState(null);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [isTimerComplete, setIsTimerComplete] = useState(false); // Track if the timer has completed
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
-  // Update state based on window width
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+    
+        const newData = {
+          identifier: response.data.applicant.email,
+          password: response.data.applicant.password,
+          localResume: response.data.applicant.localResume,
+          firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
+        };
+  
+        // Store newData in local storage
+        localStorage.setItem('userData', JSON.stringify(newData));
+  
+        setUserData(newData);
+      } catch (error) {
+        console.error('Error updating profile status:', error);
+      }
+    };
+  
+    fetchUserData();
+  }, []);
+
+
+  useEffect(() => {
+    const fetchTestData = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applicant1/tests/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        setTestData(response.data);  // Use setTestData here
+      } catch (error) {
+        console.error('Error fetching test data:', error);
+      }
+    };
+
+    fetchTestData();
+  }, [user.id]);
+
+  useEffect(() => {
+    if (testData) {
+      const aptitudeTest = testData.find(test => test.testName.toLowerCase().includes('aptitude'));
+      const technicalTest = testData.find(test => test.testName.toLowerCase().includes('technical'));
+
+      if (aptitudeTest) {
+        if (aptitudeTest.testStatus.toLowerCase() === 'f') {
+          setCurrentStep(1); // Candidate failed the aptitude test
+          setHideSteps(false); // Ensure steps are not hidden
+
+          // Timer Logic for failed test
+          const testDateTime = new Date(
+            aptitudeTest.testDateTime[0], // Year
+            aptitudeTest.testDateTime[1] - 1, // Month (0-based index)
+            aptitudeTest.testDateTime[2], // Day
+            aptitudeTest.testDateTime[3], // Hours
+            aptitudeTest.testDateTime[4], // Minutes
+            aptitudeTest.testDateTime[5] // Seconds
+          );
+          const retakeDate = new Date(testDateTime);
+          retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
+
+          const calculateTimeLeft = () => {
+            const now = new Date();
+            const difference = retakeDate - now;
+
+            if (difference > 0) {
+              const timeLeft = {
+                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+              };
+              setTimer(timeLeft);
+              setIsTimerComplete(false); // Timer is still counting down
+            } else {
+              setTimer(null); // Timer has ended
+              setIsTimerComplete(true); // Timer completed
+              setIsDisabled(false); // Enable the button when timer ends
+            }
+          };
+
+          // Initial call and set interval for countdown
+          calculateTimeLeft();
+          const timerInterval = setInterval(calculateTimeLeft, 1000);
+
+          // Cleanup interval on component unmount
+          return () => clearInterval(timerInterval);
+
+        } else if(technicalTest.testStatus.toLowerCase() === 'f') {
+          setCurrentStep(2); // Candidate failed the aptitude test
+          setHideSteps(false); // Ensure steps are not hidden
+
+          // Timer Logic for failed test
+          const testDateTime = new Date(
+            technicalTest.testDateTime[0], // Year
+            technicalTest.testDateTime[1] - 1, // Month (0-based index)
+            technicalTest.testDateTime[2], // Day
+            technicalTest.testDateTime[3], // Hours
+            technicalTest.testDateTime[4], // Minutes
+            technicalTest.testDateTime[5] // Seconds
+          );
+          const retakeDate = new Date(testDateTime);
+          retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
+
+          const calculateTimeLeft = () => {
+            const now = new Date();
+            const difference = retakeDate - now;
+
+            if (difference > 0) {
+              const timeLeft = {
+                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+              };
+              setTimer(timeLeft);
+              setIsTimerComplete(false); // Timer is still counting down
+            } else {
+              setTimer(null); // Timer has ended
+              setIsTimerComplete(true); // Timer completed
+              setIsDisabled(false); // Enable the button when timer ends
+            }
+          };
+
+          // Initial call and set interval for countdown
+          calculateTimeLeft();
+          const timerInterval = setInterval(calculateTimeLeft, 1000);
+
+          // Cleanup interval on component unmount
+          return () => clearInterval(timerInterval);
+
+        }
+        else if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest && technicalTest.testStatus.toLowerCase() === 'p') {
+          setCurrentStep(3); // Candidate passed both tests
+          setHideSteps(true); // Hide steps if candidate passed both
+          setTimer(null); // Clear any existing timer
+          setIsDisabled(false); // Ensure button is enabled if both tests are passed
+
+        } else if (aptitudeTest.testStatus.toLowerCase() === 'p') {
+          setCurrentStep(2); // Candidate passed the aptitude test but not the technical test
+          setHideSteps(false); // Ensure steps are not hidden
+          setTimer(null); // Clear any existing timer
+          setIsDisabled(false); // Enable the button if only aptitude is passed
+
+        } else {
+          setCurrentStep(1); // Default to step 1 if no test data
+          setHideSteps(false); // Ensure steps are not hidden
+          setTimer(null); // Clear any existing timer
+          setIsDisabled(false); // Ensure button is enabled if no specific status
+        }
+      }
+    }
+  }, [testData]);
+
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 767);
+      setIsSmallScreen(window.innerWidth < 767);
     };
 
     window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  const linkStyle = {
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsWideScreen(window.innerWidth > 780);
+    };
+
+    // Initialize the state on component mount
+    handleResize();
+
+    // Add event listener for resize
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
+
+  const buttonStyle = () => ({
+    backgroundColor: isDisabled ? "#DDDDDD" : "#F46F16", // Grey when disabled, orange when active
+    color: isDisabled ? "#6c757d" : "#ffffff", // Text color based on active state
+    padding: '1px 10px',
+    borderRadius: '5px',
     textDecoration: 'none',
-    color: isHovered ? 'red' : 'blue', 
-  };
+    display: 'inline-block',
+    marginTop: '15px',
+    width: '121px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    cursor: isDisabled ? 'not-allowed' : 'pointer', // Show not-allowed cursor when disabled
+    position: 'relative', // Needed for the overlay to position correctly
+  });
+
+
+
 
   const spanStyle = {
     fontSize: '14px',
-    color: 'orange',
+    color: '#FFFFFF',
+    justifyContent: 'center',
+  alignItems: 'center',
+  textAlign: 'center',
+    
   };
 
   const steps = [
@@ -39,19 +250,16 @@ const VerifiedBadges = () => {
     { id: 3, label: "Verification done" },
   ];
 
-  const handleClick = (stepId) => {
-    setCurrentStep(stepId);
-    if (stepId === 3) {
-      setHideSteps(true); // Hide steps when stepId is 3
-      }
-  };
+ 
 
   const stepContainerStyle = {
     display: "flex",
     alignItems: "center",
-    justifyContent: "flex-start", 
+    justifyContent: "space-between", 
     width: "100%", 
-    margin: "20px auto",
+    // border:"2px solid red",
+    marginTop: "10px",
+    
   };
 
   const stepStyle = (stepId) => ({
@@ -86,12 +294,81 @@ const VerifiedBadges = () => {
 
   const lineStyle = (stepId) => ({
     height: "3px",
-    width: "180px", // Adjust width to connect steps closely
+    width: isSmallScreen ? 'clamp(30px, 25vw, 300px)' : 'clamp(30px, 12vw, 300px)', // Adjust values for small screens
     backgroundColor: stepId < currentStep ? "green" : "#ccc",
     margin: "0 -5px", // Overlap the line with the circle
     position: "relative", // Ensure the line is positioned
     zIndex: 1, // Lower z-index to be behind the circle
   });
+
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = screenWidth < 555;
+  const isBelow767px = screenWidth < 767;
+
+
+  const styles = {
+    cardContainer: {
+      backgroundColor: '#FFF9ED', // Light cream background
+      padding: '25px',
+      borderRadius: '12px',
+      display: 'flex',
+      flexDirection: isMobile ? 'column-reverse' : 'row', // Stack image on top of text on mobile
+      justifyContent: 'space-between', // Center items horizontally
+      alignItems: 'center',
+      width: '100%', // 80% of the parent container width
+      maxWidth: '900px', // Maximum width for the card
+      boxShadow: '0 1px 2px rgba(0,0,0,0.1)', // Light shadow for depth
+      marginLeft: isBelow767px ? '6px' : '0', // Add margin-left below 767px
+    },
+    textContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: isMobile ? 'center' : 'flex-start', // Center items horizontally on mobile
+      textAlign: isMobile ? 'center' : 'left', // Center text alignment on mobile
+    },
+    message: {
+      color: '#F67505', // Orange color
+      fontSize: '16px',
+      marginBottom: '10px',
+      marginTop: '10px',
+      fontWeight:'600',
+      fontfamily: 'Plus Jakarta Sans',
+      fontstyle:'normal'
+    },
+    nameContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: isMobile ? 'center' : 'flex-start', // Center items horizontally on mobile
+      marginTop: isMobile ? '5px' : '0', // Add margin-top on mobile if needed
+    },
+    name: {
+      fontSize: '24px',
+      fontWeight: 'bold',
+      color: '#333',
+      marginRight: '8px',
+    },
+    icon: {
+      color: '#F46F16', // Orange color for the checkmark icon
+      fontSize: '24px',
+    },
+    image: {
+      width: '71px',
+      height: 'auto',
+      objectFit: 'contain',
+      marginTop: '10px',
+    },
+  };
 
   const handleTakeTest = (testName) => {
 
@@ -109,17 +386,21 @@ const VerifiedBadges = () => {
                   <div className="title-dashboard">
                     <div className="title-dash flex2">Verified Badges</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}>Pre-Screened badge</h3>
+                    {!hideSteps &&(
                     <p>
                       Achieve your dream job faster by demonstrating your aptitude and technical skills
                     </p>
-                    
+                  )}
+
+                    <div style={{  marginTop:"10px",width: isSmallScreen ? "100%" : "50%" }}>
                     {!hideSteps &&(
-                    <div style={stepContainerStyle}>
+                    <div>
+                    <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%'}}>
                       {steps.map((step, index) => (
                         <React.Fragment key={step.id}>
                           <div
                             style={stepStyle(step.id)}
-                            onClick={() => handleClick(step.id)}
+                            // onClick={() => handleClick(step.id)}
                           >
                             <div style={circleStyle(step.id)}>
                               {step.id < currentStep ? "✓" : step.id === 3 ? (
@@ -143,18 +424,28 @@ const VerifiedBadges = () => {
                         </React.Fragment>
                       ))}
                     </div>
+                    </div>
                     )}
                      {!hideSteps &&(
                     <div style={stepContainerStyle}>
                       {steps.map((step) => (
-                        <div key={step.id} style={{margin:"0 1px", fontSize: "14px" }}>
-                          {step.label}
-                        </div>
+                       <p 
+                       key={step.id} 
+                       style={{
+                         fontSize: "14px",
+                         textAlign:"center",
+                         lineHeight:"1.2",
+                         width:'30%'
+                       }}>
+                       {step.label}
+                     </p>
                       ))}
                     </div>
                      )}
                   </div>
-                   
+
+
+                  </div> 
                 </div>
               </div>
             </div>
@@ -165,35 +456,45 @@ const VerifiedBadges = () => {
             {/* Conditional Rendering of Banners */}
             {currentStep === 1 && (
               <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
-                <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFF' }}>
-                  <div className={isMobile ? 'resumecard' : ''}>
-                    <div className="resumecard-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFF',width:'495px' }}>
+                <div className={!isWideScreen ? 'resumecard' : ''}>
+                    <div className="resumecard-content">
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">General Aptitude Test</h2>
-                          <div className="title-count">
-                            A Comprehensive Assessment to Measure Your Analytical and
-                            Reasoning Skills
+                          <div className="" style={{ fontSize: '18px',color:'#6F6F6F',lineHeight:'24px'}}>
+                            A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
-                        <div className="resumecard-button">
-                          <button
-                            className="button-link1"
-                            style={linkStyle}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                            onClick={() => handleTakeTest('General Aptitude Test')}
-                          >
-                            {/* <span className="button button-custom" style={spanStyle}>Take Test</span> */}
-                            <span className="button button-custom" style={spanStyle} >Take Test</span>
-                          </button>
-                        </div>
+                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative'}}>
+                        <button
+      style={buttonStyle()}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => handleTakeTest('General Aptitude Test')}
+    >
+      <span className="button button-custom" style={spanStyle}>
+        Take Test
+      </span>
+    </button>
+      {currentStep === 1 && timer && (
+        <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
+          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px' }}>Retake test after</p>
+          <div style={{ color: '#F3780D' }}>
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.days}</span>d{' '}
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.hours}</span>hrs{' '}
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.minutes}</span>mins
+</div>
+        </div>
+      )}
+    </div>
+
                       </div>
                       <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
                         <img
                           src={Taketest}
                           alt="Taketest"
-                          style={{ width: '', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
+                          style={{ width: '190px', height: '180px', objectFit: 'contain', marginTop: '5px',marginRight: '10px' }}
                         />
                       </div>
                     </div>
@@ -202,35 +503,45 @@ const VerifiedBadges = () => {
               </div>
             )}
             {currentStep === 2 && (
-              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
+              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox" style={{marginLeft: isSmallScreen1 ? '6px' : '0px',}}>
                 <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFF' }}>
-                  <div className={isMobile ? 'resumecard' : ''} >
-                    <div className="resumecard-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className={!isWideScreen ? 'resumecard' : ''}>
+                    <div className="resumecard-content">
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">Technical Test</h2>
-                          <div className="">
-                            A Comprehensive Assessment to Measure Your Technical Skills
+                          <div className=""style={{ fontSize: '18px',color:'#6F6F6F',lineHeight:'24px' }}>
+                          A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
-                        <div className="resumecard-button">
+                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                         <button
-                            className="button-link1"
-                            style={linkStyle}
-                            onMouseEnter={() => setIsHovered(true)}
-                            onMouseLeave={() => setIsHovered(false)}
-                            onClick={() => handleTakeTest('Technical Test')}
-                          >
-                            {/* <span className="button button-custom" style={spanStyle}>Take Test</span> */}
-                            <span className="button button-custom" style={spanStyle} >Take Test</span>
-                          </button>
-                        </div>
+      style={buttonStyle()}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClick={() => handleTakeTest('Technical Test')}
+    >
+      <span className="button button-custom" style={spanStyle}>
+        Take Test
+      </span>
+    </button>
+      {currentStep === 2 && timer && (
+        <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
+          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
+          <div style={{ color: '#F3780D' }}>
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.days}</span>d{' '}
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.hours}</span>hrs{' '}
+  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.minutes}</span>mins
+</div>
+        </div>
+      )}
+    </div>
                       </div>
                       <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
                         <img
                           src={Taketest}
                           alt="Taketest"
-                          style={{ width: '', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
+                          style={{ width: '190px', height: '180px', objectFit: 'contain', marginTop: '5px',marginRight: '10px' }}
                         />
                       </div>
                     </div>
@@ -240,56 +551,36 @@ const VerifiedBadges = () => {
             )}
 
 {currentStep === 3 && (
-              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
-                <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFAED' }}>
-                  <div className={isMobile ? 'resumecard' : ''}>
-                    <div className="resumecard-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div className="resumecard-text">
-                        <div className="resumecard-heading">
-                        <h2 style={{
-  color: '#F67505',
-  fontFamily: '"Plus Jakarta Sans", sans-serif',
-  fontSize: '18px',
-  fontStyle: 'normal',
-  fontWeight: 600,
-  lineHeight: '26px'
-}}>
-  Congratulations, You are now Verified
-</h2>
+            <div style={styles.cardContainer}>
+            <div style={styles.textContainer}>
+              <div style={styles.message}>Congratulations, You are now Verified</div>
+              <div style={styles.nameContainer}>
+              <span style={styles.name}>
+  {userData && userData.firstName ? userData.firstName : ''}
+</span>
 
-<div style={{
-  display: 'flex',
-  alignItems: 'center',
-  color: '#000',
-  fontFamily: '"Plus Jakarta Sans", sans-serif',
-  fontSize: '24px',
-  fontStyle: 'normal',
-  fontWeight: 400,
-  lineHeight: '26px',
-  marginTop: '10px'
-}}>
-  <span>Siva Sai Neeli</span>
-  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 38 38" fill="none" style={{marginLeft:"10px"}}>
-    <path d="M36.9317 16.6247L34.3469 13.6707C33.7931 13.1169 33.4238 12.0091 33.4238 11.2706V8.31668C33.4238 6.28583 31.7622 4.80885 29.916 4.80885H26.7774C26.0389 4.80885 24.9312 4.4396 24.3773 3.88574L21.4233 1.30102C20.131 0.193281 18.1001 0.193281 16.8078 1.30102L14.0384 3.88574C13.4846 4.4396 12.3768 4.80885 11.6383 4.80885H8.49974C6.46889 4.80885 4.9919 6.47046 4.9919 8.31668V11.4553C4.9919 12.1938 4.62266 13.3015 4.06879 13.8554L1.66869 16.8093C0.560956 18.1017 0.560956 20.1325 1.66869 21.4249L4.06879 24.3789C4.62266 24.9327 4.9919 26.0405 4.9919 26.779V29.9176C4.9919 31.9484 6.65351 33.4254 8.49974 33.4254H11.6383C12.3768 33.4254 13.4846 33.7946 14.0384 34.3485L16.9924 36.9332C18.2847 38.041 20.3156 38.041 21.608 36.9332L24.5619 34.3485C25.1158 33.7946 26.2235 33.4254 26.962 33.4254H30.1006C32.1315 33.4254 33.6084 31.7638 33.6084 29.9176V26.779C33.6084 26.0405 33.9777 24.9327 34.5316 24.3789L37.1163 21.4249C38.0394 20.1325 38.0394 17.9171 36.9317 16.6247ZM26.962 15.517L18.1001 24.3789C17.9155 24.5635 17.5463 24.7481 17.177 24.7481C16.8078 24.7481 16.4385 24.5635 16.2539 24.3789L11.8229 19.9479C11.2691 19.3941 11.2691 18.4709 11.8229 17.9171C12.3768 17.3632 13.2999 17.3632 13.8538 17.9171L17.3616 21.4249L24.9312 13.4861C25.485 12.9323 26.4082 12.9323 26.962 13.4861C27.5159 14.04 27.5159 14.9631 26.962 15.517Z" fill="#F46F16"/>
-  </svg>
-</div>
-
-                        </div>
-                      </div>
-                      <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
-                        <img
-                          src={Taketest}
-                          alt="Taketest"
-                          style={{ width: '', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 38 38"
+                  fill="none"
+                  style={styles.icon}
+                >
+                  <path
+                    d="M36.9317 16.6247L34.3469 13.6707C33.7931 13.1169 33.4238 12.0091 33.4238 11.2706V8.31668C33.4238 6.28583 31.7622 4.80885 29.916 4.80885H26.7774C26.0389 4.80885 24.9312 4.4396 24.3773 3.88574L21.4233 1.30102C20.131 0.193281 18.1001 0.193281 16.8078 1.30102L14.0384 3.88574C13.4846 4.4396 12.3768 4.80885 11.6383 4.80885H8.49974C6.46889 4.80885 4.9919 6.47046 4.9919 8.31668V11.4553C4.9919 12.1938 4.62266 13.3015 4.06879 13.8554L1.66869 16.8093C0.560956 18.1017 0.560956 20.1325 1.66869 21.4249L4.06879 24.3789C4.62266 24.9327 4.9919 26.0405 4.9919 26.779V29.9176C4.9919 31.9484 6.65351 33.4254 8.49974 33.4254H11.6383C12.3768 33.4254 13.4846 33.7946 14.0384 34.3485L16.9924 36.9332C18.2847 38.041 20.3156 38.041 21.608 36.9332L24.5619 34.3485C25.1158 33.7946 26.2235 33.4254 26.962 33.4254H30.1006C32.1315 33.4254 33.6084 31.7638 33.6084 29.9176V26.779C33.6084 26.0405 33.9777 24.9327 34.5316 24.3789L37.1163 21.4249C38.0394 20.1325 38.0394 17.9171 36.9317 16.6247ZM26.962 15.517L18.1001 24.3789C17.9155 24.5635 17.5463 24.7481 17.177 24.7481C16.8078 24.7481 16.4385 24.5635 16.2539 24.3789L11.8229 19.9479C11.2691 19.3941 11.2691 18.4709 11.8229 17.9171C12.3768 17.3632 13.2999 17.3632 13.8538 17.9171L17.3616 21.4249L24.9312 13.4861C25.485 12.9323 26.4082 12.9323 26.962 13.4861C27.5159 14.04 27.5159 14.9631 26.962 15.517Z"
+                    fill="#F46F16"
+                  />
+                </svg>
               </div>
+            </div>
+            <img
+              src={Verified}
+              alt="Verified"
+              style={styles.image}
+            />
+          </div>
             )}
-  
-  
           </div>
         </div>
       </div>
