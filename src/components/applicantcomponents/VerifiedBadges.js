@@ -78,7 +78,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
     if (status === 'FAILED') {
        // Convert `testFailedAt` to Date object, which is when the test failed
        
-      //const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
+      const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
       // Create a Date object by using the array elements
   const failedDate = new Date(
     testFailedAt[0], // year
@@ -145,18 +145,21 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
       {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
-          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest('General Aptitude Test') : null}>
+          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}>
             {isRetakeAvailable ? (
               'Retake Test'
             ) : (
               <>
-                Retake Test in&nbsp;
-                <span>
-                  {timeLeft.days > 0 && `${timeLeft.days}D `}
-                  {timeLeft.hours > 0 && `${timeLeft.hours}H `}
-                  {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
-                </span>
-              </>
+              <span>Retake Test in</span>
+              <br />
+              <div>
+                {timeLeft.days > 0 && `${timeLeft.days}D `}
+                {timeLeft.hours > 0 && `${timeLeft.hours}H `}
+                {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
+              </div>
+            </>
+            
+
             )}
           </div>
         )}
@@ -166,7 +169,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
           </div>
         )}
         {!status && (
-          <div className="test-action take" onClick={() => handleTakeTest('General Aptitude Test')}>
+          <div className="test-action take" onClick={() => handleTakeTest(skillName)}>
             Take Test <i className="fa fa-external-link" aria-hidden="true"></i>
           </div>
         )}
