@@ -403,7 +403,7 @@ const ApplicantDashboard = () => {
                   </div>
                   <div className="resumecard-button">
                     <Link
-                      // to="/applicant-verified-badges"
+                       to="/applicant-verified-badges"
                       className="button-link1"
                       style={linkStyle}
                       onMouseEnter={() => setIsHovered(true)}

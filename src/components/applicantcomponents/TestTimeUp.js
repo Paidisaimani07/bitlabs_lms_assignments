@@ -39,7 +39,7 @@ const TestTimeUp = ({ onViewResults, onCancel }) => {
 </svg>
         </div>
         <h2 className="timeup-title">Time’s Up</h2>
-        <p className="timeup-message">Your answers have been submitted and go check the results.</p>
+        <p className="timeup-message">Your progress has been saved. Please check your score</p>
         <button className="timeup-btn" onClick={onViewResults}>View Results</button>
       </div>
     </div>
