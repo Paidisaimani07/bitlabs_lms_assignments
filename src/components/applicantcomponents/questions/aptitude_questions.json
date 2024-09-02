@@ -38,7 +38,7 @@
     {
       "id": 6,
       "question": "The tariffs for crossing a part of highway are $8.50 for a bike and $10 for a car. During a two-hour period, a total of 187 bikes and cars crossed the bridge, and the total collected in tariffs was $1,338. Solving which of the following systems of equations yields the number of bikes, x, and the number of cars, y, that crossed the bridge during the two hours?",
-      "options": ["ASCIIMATH=x + y = 187 and 8.5x + 10y = 1338/2", "ASCIIMATH=x + y = 187 and 8.5x + 10y = 1338/2", "ASCIIMATH=x + y = 187 and 8.5x +10y = 1338", "ASCIIMATH=x + y = 187 and 8.5x + 10y = 1338 * 2"],
+      "options": ["ASCIIMATH=x + y = 187 and 18.5x + 10y = 1338/2", "ASCIIMATH=x + y = 187 and 8.5x + 10y = 1338/2", "ASCIIMATH=x + y = 187 and 8.5x +10y = 1338", "ASCIIMATH=x + y = 187 and 8.5x + 10y = 1338 * 2"],
       "answer": "ASCIIMATH=x + y = 187 and 8.5x +10y = 1338"
     },
 
