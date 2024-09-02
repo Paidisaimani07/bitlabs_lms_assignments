@@ -37,7 +37,7 @@ const ApplicantTakeTest = () => {
     // Load questions and set timer based on the test name
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(0.1* 60); // 60 minutes for General Aptitude Test
+      setTimer(60* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
@@ -409,7 +409,7 @@ const ApplicantTakeTest = () => {
       )}
 
      {currentPage === 'passAcknowledgment' && (
-        <TestPassAcknowledgment onClose={handleClosePopup} score={score}  handleTakeTest={handleTakeTest}/>
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName} handleTakeTest={handleTakeTest}/>
       )}
       {currentPage === 'failAcknowledgment' && (
         <TestFailAcknowledgment onClose={handleClosePopup} />
