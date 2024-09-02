@@ -2,7 +2,7 @@
   "testName": "General Aptitude Test",
   "duration": "30mins",
   "numberOfQuestions": 30,
-  "topicsCovered": ["Arithmetic", "Reasoning", "Comprehension"],
+  "topicsCovered": ["Programming Skills"],
   "questions": [
     {
       "id": 1,
@@ -22,78 +22,78 @@
       "options": ["A class can inherit from multiple classes", "A class can inherit from only one class", "Inheritance is not allowed in Java", "A class can inherit from multiple interfaces"],
       "answer": "A class can inherit from only one class"
     },
-  {
-      "id": 4,
-      "question": "4.Which of the following statements is true regarding a constructor in Java?",
-      "options": ["A constructor must have a return type.", "A constructor can be abstract.", "A constructor initializes an object.", "A constructor can be overridden."],
-      "answer": "A constructor initializes an object"
-    },
-  {
-      "id": 5,
-      "question": "5.Which of the following is not a feature of Java?",
-      "options": ["Platform independence.", "Memory management.", "Multiple inheritance via classes.", "Object-oriented programming."],
-      "answer": "Multiple inheritance via classes"
-    },
-  {
-      "id": 6,
-      "question": "6.Which of the following correctly declares an array of integers in Java?",
-      "options": ["int[] arr = new int[5];", "int arr[] = new int(5);", "arr = int[5] new;", "arr[] int = new int(5);"],
-      "answer": "int[] arr = new int[5];"
-    },
-  {
-      "id": 7,
-      "question": "7.Which of the following is the correct way to declare a constant in Java?",
-      "options": ["final int CONSTANT = 10;", "int final CONSTANT = 10;", "const int CONSTANT = 10;", "final int constant = 10;"],
-      "answer": "final int CONSTANT = 10;"
-    },
-  {
-      "id": 8,
-      "question": "8.Which of the following is true about the 'super' keyword in Java?",
-      "options": ["It is used to access parent class constructors", "It is used to invoke parent class methods", "It is used to refer to the parent class object", "All of the above"],
-      "answer": "All of the above"
-    },
-  {
-      "id": 9,
-      "question": "9.Which of the following statements is correct regarding exception handling in Java?",
-      "options": ["A try block can have multiple catch blocks", "A catch block can have multiple try blocks", "A finally block is mandatory after try block", "A try block must be followed by either catch or finally block"],
-      "answer": "A try block can have multiple catch blocks"
-    },
-  {
-      "id": 10,
-      "question": "10.Which of the following is true about abstract classes in Java?",
-      "options": ["They cannot have any method implementations.", "They can be instantiated.", "They can contain both abstract and concrete methods.", "They must be declared final."],
-      "answer": "They can contain both abstract and concrete methods."
-    },
-  {
-      "id": 11,
-      "question": "11.Which of the following methods is used to terminate a thread in Java?",
-      "options": ["terminate().", "stop().", "end().", "destroy()."],
-      "answer": "stop()."
-    },
-  {
-      "id": 12,
-      "question": "12.Which of the following is not a valid data type in Java?",
-      "options": ["short.", "byte.", "long.", "unsigned."],
-      "answer": "unsigned."
-    },
-  {
-      "id": 13,
-      "question": "13.Which of the following is true about interfaces in Java?",
-      "options": ["Interfaces can have method implementations.", "Interfaces can contain static methods with implementations.", "Interfaces cannot have any methods.", "Interfaces are used to achieve multiple inheritance."],
-      "answer": "Interfaces can contain static methods with implementations."
-    },
-  {
-      "id": 14,
-      "question": "14.Which of the following is correct about method overloading in Java?",
-      "options": ["Methods must have the same return type.", "Methods must have the same parameter type.", "Methods must have different method names.", "Methods must have a different parameter list."],
-      "answer": "Methods must have a different parameter list."
-    },
-  {
-      "id": 15,
-      "question":  "15.Which of the following is true about constructors in Java?",
-      "options": ["Constructors can be inherited.", "Constructors are not executed during object creation.", "Constructors do not have a return type.", "Constructors can be called explicitly."],
-      "answer": "Constructors do not have a return type."
-    }
-  
+	  {
+        "id": 4,
+        "question": "Which of the following statements is true regarding a constructor in Java?",
+        "options": ["A constructor must have a return type.", "A constructor can be abstract.", "A constructor initializes an object.", "A constructor can be overridden."],
+        "answer": "A constructor initializes an object"
+      },
+	  {
+        "id": 5,
+        "question": "Which of the following is not a feature of Java?",
+        "options": ["Platform independence.", "Memory management.", "Multiple inheritance via classes.", "Object-oriented programming."],
+        "answer": "Multiple inheritance via classes"
+      },
+	  {
+        "id": 6,
+        "question": "Which of the following correctly declares an array of integers in Java?",
+        "options": ["int[] arr = new int[5];", "int arr[] = new int(5);", "arr = int[5] new;", "arr[] int = new int(5);"],
+        "answer": "int[] arr = new int[5];"
+      },
+	  {
+        "id": 7,
+        "question": "Which of the following is the correct way to declare a constant in Java?",
+        "options": ["final int CONSTANT = 10;", "int final CONSTANT = 10;", "const int CONSTANT = 10;", "final int constant = 10;"],
+        "answer": "final int CONSTANT = 10;"
+      },
+	  {
+        "id": 8,
+        "question": "Which of the following is true about the 'super' keyword in Java?",
+        "options": ["It is used to access parent class constructors", "It is used to invoke parent class methods", "It is used to refer to the parent class object", "All of the above"],
+        "answer": "All of the above"
+      },
+	  {
+        "id": 9,
+        "question": "Which of the following statements is correct regarding exception handling in Java?",
+        "options": ["A try block can have multiple catch blocks", "A catch block can have multiple try blocks", "A finally block is mandatory after try block", "A try block must be followed by either catch or finally block"],
+        "answer": "A try block can have multiple catch blocks"
+      },
+	  {
+        "id": 10,
+        "question": "Which of the following is true about abstract classes in Java?",
+        "options": ["They cannot have any method implementations.", "They can be instantiated.", "They can contain both abstract and concrete methods.", "They must be declared final."],
+        "answer": "They can contain both abstract and concrete methods."
+      },
+	  {
+        "id": 11,
+        "question": "Which of the following methods is used to terminate a thread in Java?",
+        "options": ["terminate().", "stop().", "end().", "destroy()."],
+        "answer": "stop()."
+      },
+	  {
+        "id": 12,
+        "question": "Which of the following is not a valid data type in Java?",
+        "options": ["short.", "byte.", "long.", "unsigned."],
+        "answer": "unsigned."
+      },
+	  {
+        "id": 13,
+        "question": "Which of the following is true about interfaces in Java?",
+        "options": ["Interfaces can have method implementations.", "Interfaces can contain static methods with implementations.", "Interfaces cannot have any methods.", "Interfaces are used to achieve multiple inheritance."],
+        "answer": "Interfaces can contain static methods with implementations."
+      },
+	  {
+        "id": 14,
+        "question": "Which of the following is correct about method overloading in Java?",
+        "options": ["Methods must have the same return type.", "Methods must have the same parameter type.", "Methods must have different method names.", "Methods must have a different parameter list."],
+        "answer": "Methods must have a different parameter list."
+      },
+	  {
+        "id": 15,
+        "question":  "Which of the following is true about constructors in Java?",
+        "options": ["Constructors can be inherited.", "Constructors are not executed during object creation.", "Constructors do not have a return type.", "Constructors can be called explicitly."],
+        "answer": "Constructors do not have a return type."
+      }
+	
   ]
 }
