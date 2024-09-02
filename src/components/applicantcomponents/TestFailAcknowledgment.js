@@ -7,7 +7,7 @@ const TestFailAcknowledgment = () => {
   const navigate = useNavigate();
 
   const handleExit = () => {
-    navigate(-1); // Redirect to the home page or any desired route
+    navigate("/applicant-verified-badges"); // Redirect to the home page or any desired route
   };
 
   return (
