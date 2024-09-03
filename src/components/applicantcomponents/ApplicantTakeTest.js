@@ -365,28 +365,45 @@ const ApplicantTakeTest = () => {
             </div>
           </div>
           <div className="separator"></div>
-          <div className="question">
-      <ul>
-        <li>
-          <p  className="question1">{currentQuestionIndex + 1}.&nbsp;{shuffledQuestions[currentQuestionIndex]?.question}</p>
-        </li>
-        {shuffledQuestions[currentQuestionIndex]?.options.map((option) => (
-          <li key={option}>
-            <label  className='question-label'>
-              <input
-                type="radio"
-                value={option}
-                checked={selectedOptions[currentQuestionIndex] === option}
-                onChange={handleOptionChange}
-                className='question-radio'
-              />
-              {option}
-            </label>
-          </li>
-        ))}
-        {validationMessage && <p className="validation">{validationMessage}</p>}
-      </ul>
-    </div><br /><br /><br /><br /><br /><br /><br /><br />
+         <div className="question no-select">
+  <ul>
+    <li>
+      <p className="question1 no-select">
+        {currentQuestionIndex + 1}.&nbsp;
+        <span
+  dangerouslySetInnerHTML={{
+    __html: shuffledQuestions[currentQuestionIndex]?.question
+      .replace(/\n/g, '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;') // Replace newlines with <br/>
+      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;') // Replace tabs with four non-breaking spaces
+      .replace(/```/g, '') // Remove any Markdown code block delimiters
+  }}
+/>
+      </p>
+    </li>
+    {shuffledQuestions[currentQuestionIndex]?.options.map((option, index) => (
+      <li key={index}>
+        <label className="question-label no-select">
+          <input
+            type="radio"
+            value={option}
+            checked={selectedOptions[currentQuestionIndex] === option}
+            onChange={handleOptionChange}
+            className="question-radio"
+          />
+          <span
+          className="no-select"
+            dangerouslySetInnerHTML={{
+              __html: option.replace(/\n/g, '<br/>').replace(/```/g, ''),
+            }}
+          />
+        </label>
+      </li>
+    ))}
+    {validationMessage && <p className="validation">{validationMessage}</p>}
+  </ul>
+</div>
+
+    <br /><br /><br /><br /><br /><br /><br /><br />
           <div className="footer1">
             <button
               disabled={currentQuestionIndex === 0}

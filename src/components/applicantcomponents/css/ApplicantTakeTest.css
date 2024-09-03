@@ -352,7 +352,7 @@ margin-top: 10px;
     font-size: 16px !important;
     font-style: normal !important;
     font-weight: 500 !important;
-    line-height: 50px !important; /* 156.25% */
+    line-height: 40px !important; /* 156.25% */
     margin-top: 10px !important;
   }
 
@@ -369,7 +369,8 @@ margin-top: 10px;
 
   .question-label
   {
-    margin-left: 2%;
+    margin-left: 5%;
+    width: 100% !important;
    }
 
   /* Change the background color of the radio button itself */
@@ -420,5 +421,12 @@ margin-top: 10px;
   /* Optional: Hover effect */
   input[type="radio"]:hover {
     border-color: #F68318; /* Change border color on hover */
+  }
+  
+  .no-select {
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Chrome, Safari, Opera */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
   }
   
