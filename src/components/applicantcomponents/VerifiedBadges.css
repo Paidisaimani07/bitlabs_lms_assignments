@@ -118,8 +118,28 @@ line-height: 26px;
   gap: 8px; /* Adjust the gap between cards */
 }
 
+/* Media query for mobile screens */
+@media (max-width: 750px) {
+  .skill-badge-container {
+    justify-content: center; /* Center items horizontally */
+    gap: 8px; /* Adjust the gap between cards */
+    margin-left: 12px;
+  }
+  
+}
 
+@media (max-width: 380px) {
+  .skill-badge-container {
+    gap: 1px; /* Even smaller gap for narrow screens */
+    justify-content: center; /* Center items horizontally */
+    margin-left: 12px;
+  }
 
+  .col-lg-10.col-md-12 {
+    padding: 0px; /* Remove padding on very small screens */
+  }
+  
+}
 
 .skill-badge-card {
   background: #FFFFFF;

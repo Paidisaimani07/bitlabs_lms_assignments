@@ -18,6 +18,23 @@ import HTMLTest from './questions/HTML.json';
 import JavaScriptTest from './questions/Javascript.json';
 import JavaTest from './questions/Java.json';
 import CppTest from './questions/Cpp.json';
+import DjangoTest from './questions/Django.json';
+import HibernateTest from './questions/Hibernate.json';
+import SeleniumTest from './questions/Selenium.json';
+import CSharpTest from './questions/CSharp.json';
+import CTest from './questions/C.json';
+import DotNetTest from './questions/DotNet.json';
+import RegressionTest from './questions/Regression Testing.json';
+import SpringTest from './questions/Spring.json';
+import MonogoTest from './questions/MongoDB.json';
+import FlaskTest from './questions/Flask.json';
+import ServletsTest from './questions/Servlets.json';
+import JspTest from './questions/Jsp.json';
+import TSTest from './questions/TS.json';
+import CSSTest from './questions/CSS.json';
+import AngularTest from './questions/Angular.json';
+import ManualTestingTest from './questions/ManualTesting.json';
+import VueTest from './questions/Vue.json';
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
@@ -43,6 +60,8 @@ const ApplicantTakeTest = () => {
 
   useEffect(() => {
     // Load questions and set timer based on the test name
+    
+    console.log(testName);
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
       setTimer(0.1* 60); // 60 minutes for General Aptitude Test
@@ -56,6 +75,12 @@ const ApplicantTakeTest = () => {
       setQuestions(ReactTest);
       setTimer(30*60);
     }else if(testName === 'SQL'){
+      setQuestions(SQLTest);
+      setTimer(30*60);
+    }else if(testName === 'MySQL'){
+      setQuestions(SQLTest);
+      setTimer(30*60);
+    }else if(testName === 'SQL-Server'){
       setQuestions(SQLTest);
       setTimer(30*60);
     }else if(testName === 'Python'){
@@ -72,6 +97,57 @@ const ApplicantTakeTest = () => {
       setTimer(30*60);
     }else if(testName === 'C++'){
       setQuestions(CppTest);
+      setTimer(30*60);
+    }else if(testName === 'Django'){
+      setQuestions(DjangoTest);
+      setTimer(30*60);
+    }else if(testName === 'Hibernate'){
+      setQuestions(HibernateTest);
+      setTimer(30*60);
+    }else if(testName === 'Selenium'){
+      setQuestions(SeleniumTest);
+      setTimer(30*60);
+    }else if(testName === 'C Sharp'){
+      setQuestions(CSharpTest);
+      setTimer(30*60);
+    }else if(testName === 'C'){
+      setQuestions(CTest);
+      setTimer(30*60);
+    }else if(testName == '.Net'){
+      setQuestions(DotNetTest);
+      setTimer(30*60);
+    }else if(testName == 'Regression Testing'){
+      setQuestions(RegressionTest);
+      setTimer(30*60);
+    }else if(testName == 'Spring'){
+      setQuestions(SpringTest);
+      setTimer(30*60);
+    }else if(testName == 'Mongo DB'){
+      setQuestions(MonogoTest);
+      setTimer(30*60);
+    }else if(testName == 'Flask'){
+      setQuestions(FlaskTest);
+      setTimer(30*60);
+    }else if(testName == 'Servlets'){
+      setQuestions(ServletsTest);
+      setTimer(30*60);
+    }else if(testName == 'JSP'){
+      setQuestions(JspTest);
+      setTimer(30*60);
+    }else if(testName == 'TypeScript'){
+      setQuestions(TSTest);
+      setTimer(30*60);
+    }else if(testName == 'CSS'){
+      setQuestions(CSSTest);
+      setTimer(30*60);
+    }else if(testName == 'Angular'){
+      setQuestions(AngularTest);
+      setTimer(30*60);
+    }else if(testName == 'Manual Testing'){
+      setQuestions(ManualTestingTest);
+      setTimer(30*60);
+    }else if(testName == 'Vue'){
+      setQuestions(VueTest);
       setTimer(30*60);
     }
   }, [testName]);

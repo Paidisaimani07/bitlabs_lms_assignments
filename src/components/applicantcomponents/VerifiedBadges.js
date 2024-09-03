@@ -33,6 +33,10 @@ import sqlServerPNG from '../../images/Icons1/Icons/SQL-Server.svg';
 import djangoPNG from '../../images/Icons1/Icons/Django.svg';
 import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Verified from '../../images/user/avatar/Verified.png';
+
+
+
 
 const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
   const [timeLeft, setTimeLeft] = useState({});
@@ -78,7 +82,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
     if (status === 'FAILED') {
        // Convert `testFailedAt` to Date object, which is when the test failed
        
-      const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
+      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
       // Create a Date object by using the array elements
   const failedDate = new Date(
     testFailedAt[0], // year
@@ -145,14 +149,27 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
       {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
-          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}>
+          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
+          style={{
+            backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0', // Red background if retake is available, grey otherwise
+            color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
+            cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
+            padding: '20px', // Adjust padding as needed
+            borderRadius: '5px', // Rounded corners
+            textAlign: 'center' // Center text
+          }}
+          >
             {isRetakeAvailable ? (
-              'Retake Test'
+                <>
+                Retake Test
+                <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
+              </>
             ) : (
               <>
-              <span>Retake Test in</span>
-              <br />
+              
               <div>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
+              <br />&nbsp;&nbsp;&nbsp;&nbsp;
                 {timeLeft.days > 0 && `${timeLeft.days}D `}
                 {timeLeft.hours > 0 && `${timeLeft.hours}H `}
                 {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
@@ -177,15 +194,6 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
     </div>
   );
 };
-
-
-
-import Verified from '../../images/user/avatar/Verified.png';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import { useUserContext } from '../common/UserProvider';
-import { useNavigate, useLocation } from 'react-router-dom';
-
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
