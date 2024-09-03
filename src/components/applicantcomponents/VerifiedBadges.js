@@ -107,7 +107,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
           const days = Math.floor(difference / (1000 * 60 * 60 * 24));
           const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
           const minutes = Math.floor((difference / 1000 / 60) % 60);
-
+      
           return { days, hours, minutes };
         } else {
           setIsRetakeAvailable(true);
@@ -806,7 +806,8 @@ const VerifiedBadges = () => {
         </div>
       </div>
       <div className="row mr-0 ml-10">
-  <h3>Skills Badges</h3>
+  <h3 className='skillBadgeHeading'>Skills Badges</h3>
+  
   <div className="col-lg-10 col-md-12">
     <div className="skill-badge-container">
       {skillBadges.skillsRequired.map((skill) => (

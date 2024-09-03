@@ -237,7 +237,7 @@ const ApplicantTakeTest = () => {
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
     const jwtToken = localStorage.getItem('jwtToken');
-    if(testName === 'General Apptitude Test' || testName === 'Technical Test'){
+    if(testName === 'General Aptitude Test' || testName === 'Technical Test'){
        // Submit the test result to the API
     fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
       method: 'POST',
@@ -302,6 +302,31 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
+    if(testStarted){
+      const calculatedScore = calculateScore();
+      const skillBadgeStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
+      const jwtToken = localStorage.getItem('jwtToken');
+      // Submit the skill badge information to the API
+  fetch(`${apiUrl}/skill-badges/save`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      applicantId: userId, // Use the applicant's ID
+      skillBadgeName: testName, // Use the test name as the skill badge name
+      status: skillBadgeStatus, // Use PASS or FAILED based on score
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Skill badge saved successfully:', data);
+    })
+    .catch((error) => {
+      console.error('Error saving the skill badge:', error);
+    });
+    }
     navigate("/applicant-verified-badges"); // Navigate back to the previous page
   };
 

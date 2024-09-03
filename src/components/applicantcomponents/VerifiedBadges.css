@@ -117,6 +117,20 @@ line-height: 26px;
   flex-wrap: wrap;
   gap: 8px; /* Adjust the gap between cards */
 }
+.skillBadgeHeading{
+  padding-left: 20px;
+  margin-bottom: 20px;
+ 
+}
+.skill-badge-card {
+  background: #FFFFFF;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  text-align: center;
+  width: 180px;
+  height: 220px;
+  margin-bottom: 10px;
+}
 
 /* Media query for mobile screens */
 @media (max-width: 750px) {
@@ -125,7 +139,11 @@ line-height: 26px;
     gap: 8px; /* Adjust the gap between cards */
     margin-left: 12px;
   }
-  
+  .skillBadgeHeading{
+    padding-left: 45px;
+    
+   
+  }
 }
 
 @media (max-width: 380px) {
@@ -138,19 +156,25 @@ line-height: 26px;
   .col-lg-10.col-md-12 {
     padding: 0px; /* Remove padding on very small screens */
   }
-  
-}
 
-.skill-badge-card {
-  background: #FFFFFF;
+  .skillBadgeHeading{
+    padding-left: 25px;
+  }
+
+  .skill-badge-card {
+    background: #FFFFFF;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 16px;
   text-align: center;
-  width: 180px;
+  width: 170px;
   height: 220px;
   margin-bottom: 10px;
+    
+  }
+  
+ 
+  
 }
-
 
 .badge {
   background: #FFFFFF;
