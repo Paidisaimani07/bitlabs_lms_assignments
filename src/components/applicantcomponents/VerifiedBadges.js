@@ -20,7 +20,7 @@ const VerifiedBadges = () => {
   const { user } = useUserContext();
   const userId = user.id;
   const [timer, setTimer] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [isTimerComplete, setIsTimerComplete] = useState(false); // Track if the timer has completed
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
@@ -224,24 +224,44 @@ const VerifiedBadges = () => {
     textDecoration: 'none',
     display: 'inline-block',
     marginTop: '15px',
-    width: '121px',
+    width: 'clamp(100px, 20vw, 120px)',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
     cursor: isDisabled ? 'not-allowed' : 'pointer', // Show not-allowed cursor when disabled
     position: 'relative', // Needed for the overlay to position correctly
+    height: 'clamp(40px, 6vw, 40px)', 
   });
+ 
 
+
+ // Update button state based on the presence of the timer and current step
+ useEffect(() => {
+  console.log(`currentStep: ${currentStep}, timer: ${timer}`); // Debugging statement
+  if (timer) {
+    if (currentStep === 1 || currentStep === 2) {
+      console.log("Timer present, disabling button"); // Debugging statement
+      setIsDisabled(true); // Set button to be disabled (grey) when timer is present
+    } else {
+      console.log("No timer or not in step 1 or 2, enabling button"); // Debugging statement
+      setIsDisabled(false); // Otherwise, keep button active (orange)
+    }
+  } else {
+    console.log("No timer, enabling button"); // Debugging statement
+    setIsDisabled(false); // No timer, so keep button active (orange)
+  }
+}, [currentStep, timer]);
 
 
 
   const spanStyle = {
-    fontSize: '14px',
+    fontSize: '17px',
     color: '#FFFFFF',
     justifyContent: 'center',
   alignItems: 'center',
   textAlign: 'center',
-    
+  
+  
   };
 
   const steps = [
@@ -375,6 +395,8 @@ const VerifiedBadges = () => {
     navigate('/applicant-take-test', { state: { testName } });
   };
 
+  
+
   return (
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
@@ -466,25 +488,26 @@ const VerifiedBadges = () => {
                             A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
-                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative'}}>
-                        <button
-      style={buttonStyle()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => handleTakeTest('General Aptitude Test')}
-    >
-      <span className="button button-custom" style={spanStyle}>
-        Take Test
-      </span>
-    </button>
+                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+      <button
+        style={buttonStyle()}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={!isDisabled ? () => handleTakeTest('General Aptitude Test') : null} // Conditionally add onClick
+      >
+        <span style={spanStyle}>
+          Take Test
+        </span>
+      </button>
+      
       {currentStep === 1 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px' }}>Retake test after</p>
           <div style={{ color: '#F3780D' }}>
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.days}</span>d{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.hours}</span>hrs{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.minutes}</span>mins
-</div>
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>d{' '}
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>hrs{' '}
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>mins
+          </div>
         </div>
       )}
     </div>
@@ -516,15 +539,15 @@ const VerifiedBadges = () => {
                         </div>
                         <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                         <button
-      style={buttonStyle()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => handleTakeTest('Technical Test')}
-    >
-      <span className="button button-custom" style={spanStyle}>
-        Take Test
-      </span>
-    </button>
+    style={buttonStyle()}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+    onClick={!isDisabled ? () => handleTakeTest('Technical Test') : null} // Conditionally add onClick
+  >
+    <span style={spanStyle}>
+      Take Test
+    </span>
+  </button>
       {currentStep === 2 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
