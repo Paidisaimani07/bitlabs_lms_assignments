@@ -121,7 +121,7 @@ const VerifiedBadges = () => {
           // Cleanup interval on component unmount
           return () => clearInterval(timerInterval);
 
-        } else if(technicalTest.testStatus.toLowerCase() === 'f') {
+        } else if(aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest) {
           setCurrentStep(2); // Candidate failed the aptitude test
           setHideSteps(false); // Ensure steps are not hidden
 
