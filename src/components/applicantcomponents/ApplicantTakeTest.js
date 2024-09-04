@@ -303,8 +303,6 @@ const ApplicantTakeTest = () => {
   const handleConfirmExit = () => {
     setShowExitPopup(false);
     if(testStarted){
-      const calculatedScore = calculateScore();
-      const skillBadgeStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the skill badge information to the API
   fetch(`${apiUrl}/skill-badges/save`, {
@@ -316,7 +314,7 @@ const ApplicantTakeTest = () => {
     body: JSON.stringify({
       applicantId: userId, // Use the applicant's ID
       skillBadgeName: testName, // Use the test name as the skill badge name
-      status: skillBadgeStatus, // Use PASS or FAILED based on score
+      status: 'FAILED', // Use PASS or FAILED based on score
     }),
   })
     .then((response) => response.json())
