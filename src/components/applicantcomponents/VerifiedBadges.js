@@ -266,6 +266,31 @@ const VerifiedBadges = () => {
   }, [user.id]);
 
   useEffect(() => {
+    const fetchSkillBadges = async () => {
+      try {
+        // Assuming JWT token is stored in localStorage
+        const jwtToken = localStorage.getItem('jwtToken'); // Retrieve from localStorage
+        console.log(jwtToken);
+
+        const skillBadgesResponse = await axios.get(`${apiUrl}/skill-badges/${userId}/skill-badges`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Pass the JWT token in headers
+          },
+        });
+
+        const skillBadgeData = skillBadgesResponse.data;
+        setSkillBadges(skillBadgeData); // Update state with the fetched data
+        // setSkillsRequired(skillBadgeData.skillsRequired);
+        // setApplicantSkillBadges(skillBadgeData.applicantSkillBadges);
+      } catch (error) {
+        console.error('Error fetching skill badges:', error);
+      } 
+    };
+
+    fetchSkillBadges();
+  }, [userId]);
+  
+  useEffect(() => {
     if (testData) {
       const aptitudeTest = testData.find(test => test.testName.toLowerCase().includes('aptitude'));
       const technicalTest = testData.find(test => test.testName.toLowerCase().includes('technical'));
@@ -391,30 +416,7 @@ const VerifiedBadges = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const fetchSkillBadges = async () => {
-      try {
-        // Assuming JWT token is stored in localStorage
-        const jwtToken = localStorage.getItem('jwtToken'); // Retrieve from localStorage
-        console.log(jwtToken);
-
-        const skillBadgesResponse = await axios.get(`${apiUrl}/skill-badges/${userId}/skill-badges`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`, // Pass the JWT token in headers
-          },
-        });
-
-        const skillBadgeData = skillBadgesResponse.data;
-        setSkillBadges(skillBadgeData); // Update state with the fetched data
-        // setSkillsRequired(skillBadgeData.skillsRequired);
-        // setApplicantSkillBadges(skillBadgeData.applicantSkillBadges);
-      } catch (error) {
-        console.error('Error fetching skill badges:', error);
-      } 
-    };
-
-    fetchSkillBadges();
-  }, [userId]);
+ 
 
   
 
