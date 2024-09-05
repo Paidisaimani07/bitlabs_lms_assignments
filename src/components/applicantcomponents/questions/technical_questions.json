@@ -1,6 +1,6 @@
 {
   "testName": "Technical Test",
-  "duration": "30mins",
+  "duration": "30 mins",
   "numberOfQuestions": 30,
   "topicsCovered": ["Programming Skills"],
   "questions": [
