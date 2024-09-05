@@ -2,17 +2,209 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './VerifiedBadges.css';
 import Taketest from '../../images/user/avatar/Taketest.png';
-import Verified from '../../images/user/avatar/Verified.png';
-import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
+import axios from 'axios';
+import javaPNG from '../../images/Icons1/Icons/Java.svg';
+import htmlPNG from '../../images/Icons1/Icons/HTML.svg';
+import cssPNG from '../../images/Icons1/Icons/CSS.svg';
+import mysqlPNG from '../../images/Icons1/Icons/MySQL.svg';
+import angularPNG from '../../images/Icons1/Icons/Angular.svg';
+import reactPNG from '../../images/Icons1/Icons/React.svg';
+import manualTestingPNG from '../../images/Icons1/Icons/Manual Testing.svg';
+import sqlPNG from '../../images/Icons1/Icons/SQL.svg';
+import jspPNG from '../../images/Icons1/Icons/JSP.svg';
+import cPlusPlusPNG from '../../images/Icons1/Icons/C++.svg';
+import paythonPNG from '../../images/Icons1/Icons/Python.svg';
+import regressionPNG from '../../images/Icons1/Icons/Regression Testing.svg';
+import hibernatePNG from '../../images/Icons1/Icons/Hibernate.svg';
+import netPNG from '../../images/Icons1/Icons/Dot Net.svg';
+import servletsPNG from '../../images/Icons1/Icons/Servlets.svg';
+import typeScriptPNG from '../../images/Icons1/Icons/TypeScript.svg';
+import cSharpPNG from '../../images/Icons1/Icons/C Sharp.svg';
+import cPNG from '../../images/Icons1/Icons/C.svg';
+import seleniumPNG from '../../images/Icons1/Icons/Selenium.svg';
+import javaScriptPNG from '../../images/Icons1/Icons/JavaScript.svg';
+import springPNG from '../../images/Icons1/Icons/Spring.svg';
+import springBootPNG from '../../images/Icons1/Icons/Spring Boot.svg';
+import vuePNG from '../../images/Icons1/Icons/Vue.svg';
+import mongodbPNG from '../../images/Icons1/Icons/Mongo DB.svg';
+import sqlServerPNG from '../../images/Icons1/Icons/SQL-Server.svg';
+import djangoPNG from '../../images/Icons1/Icons/Django.svg';
+import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Verified from '../../images/user/avatar/Verified.png';
 
+
+
+
+const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
+  const [timeLeft, setTimeLeft] = useState({});
+  const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
+  const navigate = useNavigate();
+
+    // Map skill names to images
+    const skillImages = {
+      'JAVA': javaPNG,
+      'HTML': htmlPNG,
+      'CSS': cssPNG,
+      'Python': paythonPNG,
+      'MySQL' : mysqlPNG,
+      'Angular' : angularPNG,
+      'React' : reactPNG,
+      'Manual Testing' : manualTestingPNG,
+      "SQL" : sqlPNG,
+      "JSP" : jspPNG,
+      "C++" : cPlusPlusPNG,
+      "Regression Testing" : regressionPNG,
+      "Hibernate" : hibernatePNG,
+      ".Net" : netPNG,
+      "Servlets" : servletsPNG,
+      "TypeScript" : typeScriptPNG,
+      "C Sharp" : cSharpPNG,
+      "C" : cPNG,
+      "Selenium" : seleniumPNG,
+      "JavaScript" : javaScriptPNG,
+      "Spring" : springPNG,
+      "Spring Boot" : springBootPNG,
+      "Vue" : vuePNG,
+      "Mongo DB" : mongodbPNG,
+      "SQL-Server" : sqlServerPNG,
+      "Django" : djangoPNG,
+      "Flask" : flaskPNG,
+      // Add other skills here...
+    };
+  
+    // Get the image based on skill name, default to javaPNG if not found
+    const skillImage = skillImages[skillName] || javaPNG;
+
+  useEffect(() => {
+    if (status === 'FAILED') {
+       // Convert `testFailedAt` to Date object, which is when the test failed
+       
+      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
+      // Create a Date object by using the array elements
+  const failedDate = new Date(
+    testFailedAt[0], // year
+    testFailedAt[1] - 1, // month (JavaScript Date is 0-based for months)
+    testFailedAt[2], // day
+    testFailedAt[3], // hour
+    testFailedAt[4], // minute
+    testFailedAt[5] // second
+    
+  );
+      
+      // Calculate the total 7 days (or 168 hours) from the failure time
+      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+
+
+      const calculateTimeLeft = () => {
+        const currentTime = new Date();
+        const difference = futureTime - currentTime;
+
+        if (difference > 0) {
+          const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((difference / 1000 / 60) % 60);
+      
+          return { days, hours, minutes };
+        } else {
+          setIsRetakeAvailable(true);
+          return null;
+        }
+      };
+
+      const timer = setInterval(() => {
+        const newTimeLeft = calculateTimeLeft();
+        if (newTimeLeft) {
+          setTimeLeft(newTimeLeft);
+        }
+      }, 1000); // Update every second
+
+      return () => clearInterval(timer); // Cleanup on unmount
+    }
+  }, [status]);
+
+  const handleTakeTest = (testName) => {
+
+    navigate('/applicant-take-test', { state: { testName } });
+  };
+
+  return (
+    <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
+      {/* Top Section: Status */}
+      <div className="status">
+        <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
+          &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
+        </span>
+      </div>
+
+      {/* Second Section: Badge */}
+      <div className="badge">
+        <img src={skillImage} alt={skillName} className="skill-image" />
+        <span className="skill-name">{skillName}</span>
+      </div>
+
+      {/* Third Section: Actions */}
+      <div className="test">
+        {status === 'FAILED' && (
+          <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
+          style={{
+            backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0', // Red background if retake is available, grey otherwise
+            color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
+            cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
+            padding: '20px', // Adjust padding as needed
+            borderRadius: '5px', // Rounded corners
+            textAlign: 'center' // Center text
+          }}
+          >
+            {isRetakeAvailable ? (
+                <>
+                Retake Test
+                <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
+              </>
+            ) : (
+              <>
+              
+              <div>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
+              <br />&nbsp;&nbsp;&nbsp;&nbsp;
+                {timeLeft.days > 0 && `${timeLeft.days}D `}
+                {timeLeft.hours > 0 && `${timeLeft.hours}H `}
+                {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
+              </div>
+            </>
+            
+
+            )}
+          </div>
+        )}
+        {status === 'PASSED' && (
+          <div className="test-action verified" onClick={retakeTest}>
+            <span className="tick-mark">✔&nbsp;Verified</span>
+          </div>
+        )}
+        {!status && (
+          <div className="test-action take" onClick={() => handleTakeTest(skillName)}>
+            Take Test <i className="fa fa-external-link" aria-hidden="true"></i>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
   const [currentStep, setCurrentStep] = useState(1); 
   const [hideSteps, setHideSteps] = useState(false); // New state variable
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 767);
+  const [skillBadges, setSkillBadges] = useState({ skillsRequired: [], applicantSkillBadges: [] }); // Initialize with default values
+
+  
+  
+ 
   const [isWideScreen, setIsWideScreen] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 767);
   const isSmallScreen1 = window.innerWidth < 767;
@@ -20,7 +212,7 @@ const VerifiedBadges = () => {
   const { user } = useUserContext();
   const userId = user.id;
   const [timer, setTimer] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [isTimerComplete, setIsTimerComplete] = useState(false); // Track if the timer has completed
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
@@ -121,7 +313,7 @@ const VerifiedBadges = () => {
           // Cleanup interval on component unmount
           return () => clearInterval(timerInterval);
 
-        } else if(technicalTest.testStatus.toLowerCase() === 'f') {
+        } else if(aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest) {
           setCurrentStep(2); // Candidate failed the aptitude test
           setHideSteps(false); // Ensure steps are not hidden
 
@@ -199,6 +391,32 @@ const VerifiedBadges = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchSkillBadges = async () => {
+      try {
+        // Assuming JWT token is stored in localStorage
+        const jwtToken = localStorage.getItem('jwtToken'); // Retrieve from localStorage
+        console.log(jwtToken);
+
+        const skillBadgesResponse = await axios.get(`${apiUrl}/skill-badges/${userId}/skill-badges`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Pass the JWT token in headers
+          },
+        });
+
+        const skillBadgeData = skillBadgesResponse.data;
+        setSkillBadges(skillBadgeData); // Update state with the fetched data
+        // setSkillsRequired(skillBadgeData.skillsRequired);
+        // setApplicantSkillBadges(skillBadgeData.applicantSkillBadges);
+      } catch (error) {
+        console.error('Error fetching skill badges:', error);
+      } 
+    };
+
+    fetchSkillBadges();
+  }, [userId]);
+
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -224,24 +442,44 @@ const VerifiedBadges = () => {
     textDecoration: 'none',
     display: 'inline-block',
     marginTop: '15px',
-    width: '121px',
+    width: 'clamp(100px, 20vw, 120px)',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
     cursor: isDisabled ? 'not-allowed' : 'pointer', // Show not-allowed cursor when disabled
     position: 'relative', // Needed for the overlay to position correctly
+    height: 'clamp(40px, 6vw, 40px)', 
   });
+ 
 
+
+ // Update button state based on the presence of the timer and current step
+ useEffect(() => {
+  console.log(`currentStep: ${currentStep}, timer: ${timer}`); // Debugging statement
+  if (timer) {
+    if (currentStep === 1 || currentStep === 2) {
+      console.log("Timer present, disabling button"); // Debugging statement
+      setIsDisabled(true); // Set button to be disabled (grey) when timer is present
+    } else {
+      console.log("No timer or not in step 1 or 2, enabling button"); // Debugging statement
+      setIsDisabled(false); // Otherwise, keep button active (orange)
+    }
+  } else {
+    console.log("No timer, enabling button"); // Debugging statement
+    setIsDisabled(false); // No timer, so keep button active (orange)
+  }
+}, [currentStep, timer]);
 
 
 
   const spanStyle = {
-    fontSize: '14px',
+    fontSize: '17px',
     color: '#FFFFFF',
     justifyContent: 'center',
   alignItems: 'center',
   textAlign: 'center',
-    
+  
+  
   };
 
   const steps = [
@@ -312,7 +550,7 @@ const VerifiedBadges = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const isMobile = screenWidth < 555;
+  // const isMobile = screenWidth < 555;
   const isBelow767px = screenWidth < 767;
 
 
@@ -375,6 +613,9 @@ const VerifiedBadges = () => {
     navigate('/applicant-take-test', { state: { testName } });
   };
 
+  const handleRetakeTest = () => {
+
+  }
   return (
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
@@ -466,25 +707,26 @@ const VerifiedBadges = () => {
                             A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
-                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative'}}>
-                        <button
-      style={buttonStyle()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => handleTakeTest('General Aptitude Test')}
-    >
-      <span className="button button-custom" style={spanStyle}>
-        Take Test
-      </span>
-    </button>
+                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+      <button
+        style={buttonStyle()}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={!isDisabled ? () => handleTakeTest('General Aptitude Test') : null} // Conditionally add onClick
+      >
+        <span style={spanStyle}>
+          Take Test
+        </span>
+      </button>
+      
       {currentStep === 1 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px' }}>Retake test after</p>
           <div style={{ color: '#F3780D' }}>
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.days}</span>d{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.hours}</span>hrs{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.minutes}</span>mins
-</div>
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>d{' '}
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>hrs{' '}
+            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>mins
+          </div>
         </div>
       )}
     </div>
@@ -516,15 +758,15 @@ const VerifiedBadges = () => {
                         </div>
                         <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                         <button
-      style={buttonStyle()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onClick={() => handleTakeTest('Technical Test')}
-    >
-      <span className="button button-custom" style={spanStyle}>
-        Take Test
-      </span>
-    </button>
+    style={buttonStyle()}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+    onClick={!isDisabled ? () => handleTakeTest('Technical Test') : null} // Conditionally add onClick
+  >
+    <span style={spanStyle}>
+      Take Test
+    </span>
+  </button>
       {currentStep === 2 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
@@ -584,6 +826,44 @@ const VerifiedBadges = () => {
           </div>
         </div>
       </div>
+      <div className="row mr-0 ml-10">
+  <h3 className='skillBadgeHeading'>Skills Badges</h3>
+  
+  <div className="col-lg-10 col-md-12">
+    <div className="skill-badge-container">
+      {skillBadges.skillsRequired.map((skill) => (
+       
+          <div className="skill-badge-card" key={skill.id}>
+            <SkillBadgeCard
+              key={skill.skillName}
+              skillName={skill.skillName}
+              status={skill.status}
+              retakeTest={() => handleRetakeTest()}
+              testFailedAt={skill.testTaken}
+            />
+          </div>
+        
+      ))}
+
+      {skillBadges.applicantSkillBadges.map((badge) => (
+        
+          <div className="skill-badge-card" key={badge.id}>
+            <SkillBadgeCard 
+              skillName={badge.skillBadge.name} 
+              status={badge.status} 
+              testFailedAt={badge.testTaken}
+            />
+          </div>
+        
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
+      
+
     </div>
   );
 };
