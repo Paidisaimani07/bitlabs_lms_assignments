@@ -22,6 +22,8 @@ import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 import JobWidget from './components/jobWidget';
 
+
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -85,6 +87,7 @@ function App() {
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-take-test" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
                 <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />

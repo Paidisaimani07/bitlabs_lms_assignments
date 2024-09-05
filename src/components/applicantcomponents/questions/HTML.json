@@ -1,0 +1,339 @@
+{
+    "testName": "HTML MCQ Test",
+    "duration": "1 hr",
+    "numberOfQuestions": 30,
+    "topicsCovered": ["HTML"],
+    "questions": [
+      {
+        "id": 1,
+        "question": "Which of the following is the correct syntax to create a hyperlink in HTML?",
+        "options": [
+          "<a href='url'>Link text</a>",
+          "<a>url</a>",
+          "<link href='url'>Link text</link>",
+          "<a link='url'>Link text</a>"
+        ],
+        "answer": "<a href='url'>Link text</a>"
+      },
+      {
+        "id": 2,
+        "question": "What is the purpose of the <meta> tag in HTML?",
+        "options": [
+          "To define the content type and character set",
+          "To link external stylesheets",
+          "To create a section in a document",
+          "To include images"
+        ],
+        "answer": "To define the content type and character set"
+      },
+      {
+        "id": 3,
+        "question": "Which HTML attribute is used to define inline styles?",
+        "options": [
+          "style",
+          "class",
+          "id",
+          "font"
+        ],
+        "answer": "style"
+      },
+      {
+        "id": 4,
+        "question": "What does the <input type='checkbox'> element allow the user to do?",
+        "options": [
+          "Select one or more options from a list",
+          "Select only one option from a list",
+          "Submit a form",
+          "Enter a date"
+        ],
+        "answer": "Select one or more options from a list"
+      },
+      {
+        "id": 5,
+        "question": "Which of the following is the correct way to create an ordered list in HTML?",
+        "options": [
+          "<ol><li>Item 1</li><li>Item 2</li></ol>",
+          "<ul><li>Item 1</li><li>Item 2</li></ul>",
+          "<list><item>Item 1</item><item>Item 2</item></list>",
+          "<ordered><li>Item 1</li><li>Item 2</li></ordered>"
+        ],
+        "answer": "<ol><li>Item 1</li><li>Item 2</li></ol>"
+      },
+      {
+        "id": 6,
+        "question": "What is the function of the <canvas> element in HTML5?",
+        "options": [
+          "To draw graphics via JavaScript",
+          "To play audio files",
+          "To create a form",
+          "To link to external stylesheets"
+        ],
+        "answer": "To draw graphics via JavaScript"
+      },
+      {
+        "id": 7,
+        "question": "Which of the following HTML tags is used to define a table header?",
+        "options": [
+          "<th>",
+          "<td>",
+          "<tr>",
+          "<header>"
+        ],
+        "answer": "<th>"
+      },
+      {
+        "id": 8,
+        "question": "What does the 'alt' attribute in an <img> tag specify?",
+        "options": [
+          "Alternative text for an image",
+          "The image's file path",
+          "The width of the image",
+          "The alignment of the image"
+        ],
+        "answer": "Alternative text for an image"
+      },
+      {
+        "id": 9,
+        "question": "Which of the following is correct about HTML forms?",
+        "options": [
+          "The <form> element is used to collect user input",
+          "The <input> element must be used inside a <form> element",
+          "The <form> element can only contain one input field",
+          "The <form> element is used to link to external scripts"
+        ],
+        "answer": "The <form> element is used to collect user input"
+      },
+      {
+        "id": 10,
+        "question": "How can you make a text bold in HTML?",
+        "options": [
+          "<b>Text</b>",
+          "<strong>Text</strong>",
+          "<bold>Text</bold>",
+          "Both <b> and <strong>"
+        ],
+        "answer": "Both <b> and <strong>"
+      },
+      {
+        "id": 11,
+        "question": "What is the correct HTML element for inserting a line break?",
+        "options": [
+          "<br>",
+          "<lb>",
+          "<break>",
+          "<line>"
+        ],
+        "answer": "<br>"
+      },
+      {
+        "id": 12,
+        "question": "Which attribute is used to specify a unique identifier for an HTML element?",
+        "options": [
+          "id",
+          "class",
+          "name",
+          "key"
+        ],
+        "answer": "id"
+      },
+      {
+        "id": 13,
+        "question": "How do you create a drop-down list in HTML?",
+        "options": [
+          "<select>",
+          "<list>",
+          "<dropdown>",
+          "<input type='dropdown'>"
+        ],
+        "answer": "<select>"
+      },
+      {
+        "id": 14,
+        "question": "Which HTML element is used to define important text?",
+        "options": [
+          "<strong>",
+          "<i>",
+          "<important>",
+          "<b>"
+        ],
+        "answer": "<strong>"
+      },
+      {
+        "id": 15,
+        "question": "Which HTML attribute is used to define the inline frame?",
+        "options": [
+          "iframe",
+          "src",
+          "frame",
+          "border"
+        ],
+        "answer": "iframe"
+      },
+      {
+        "id": 16,
+        "question": "What is the purpose of the 'charset' attribute in the <meta> tag?",
+        "options": [
+          "To specify the character encoding used in the document",
+          "To link to an external stylesheet",
+          "To define the page's description",
+          "To set the viewport"
+        ],
+        "answer": "To specify the character encoding used in the document"
+      },
+      {
+        "id": 17,
+        "question": "Which of the following HTML elements is used to define a navigation bar?",
+        "options": [
+          "<nav>",
+          "<navbar>",
+          "<menu>",
+          "<navigation>"
+        ],
+        "answer": "<nav>"
+      },
+      {
+        "id": 18,
+        "question": "Which HTML attribute specifies the URL of an external script file?",
+        "options": [
+          "src",
+          "href",
+          "link",
+          "script"
+        ],
+        "answer": "src"
+      },
+      {
+        "id": 19,
+        "question": "Which of the following is not a valid HTML5 tag?",
+        "options": [
+          "<footer>",
+          "<header>",
+          "<aside>",
+          "<dialog>"
+        ],
+        "answer": "<dialog>"
+      },
+      {
+        "id": 20,
+        "question": "How do you create a comment in HTML?",
+        "options": [
+          "<!-- Comment -->",
+          "<comment>Comment</comment>",
+          "// Comment",
+          "<! Comment>"
+        ],
+        "answer": "<!-- Comment -->"
+      },
+      {
+        "id": 21,
+        "question": "Which of the following HTML elements is used to define a section in a document?",
+        "options": [
+          "<section>",
+          "<div>",
+          "<article>",
+          "<span>"
+        ],
+        "answer": "<section>"
+      },
+      {
+        "id": 22,
+        "question": "Which attribute is used to open a link in a new tab or window?",
+        "options": [
+          "target='_blank'",
+          "target='_new'",
+          "rel='_blank'",
+          "href='_blank'"
+        ],
+        "answer": "target='_blank'"
+      },
+      {
+        "id": 23,
+        "question": "What is the purpose of the <fieldset> element in HTML?",
+        "options": [
+          "To group related elements in a form",
+          "To define a section in a document",
+          "To link to external scripts",
+          "To create a table"
+        ],
+        "answer": "To group related elements in a form"
+      },
+      {
+        "id": 24,
+        "question": "Which attribute in the <img> tag specifies the image source?",
+        "options": [
+          "src",
+          "href",
+          "alt",
+          "link"
+        ],
+        "answer": "src"
+      },
+      {
+        "id": 25,
+        "question": "Which element is used in HTML5 to embed a video in a web page?",
+        "options": [
+          "<video>",
+          "<embed>",
+          "<media>",
+          "<movie>"
+        ],
+        "answer": "<video>"
+      },
+      {
+        "id": 26,
+        "question": "Which of the following is the correct syntax for creating an email link in HTML?",
+        "options": [
+          "<a href='mailto:example@example.com'>Email Us</a>",
+          "<a mail='example@example.com'>Email Us</a>",
+          "<a email='example@example.com'>Email Us</a>",
+          "<a href='emailto:example@example.com'>Email Us</a>"
+        ],
+        "answer": "<a href='mailto:example@example.com'>Email Us</a>"
+      },
+      {
+        "id": 27,
+        "question": "What is the correct HTML tag for making a text area?",
+        "options": [
+          "<textarea>",
+          "<input type='textarea'>",
+          "<text>",
+          "<input type='text'>"
+        ],
+        "answer": "<textarea>"
+      },
+      {
+        "id": 28,
+        "question": "Which HTML element is used to define emphasized text?",
+        "options": [
+          "<em>",
+          "<strong>",
+          "<b>",
+          "<i>"
+        ],
+        "answer": "<em>"
+      },
+      {
+        "id": 29,
+        "question": "Which of the following elements can be used to create a numbered list?",
+        "options": [
+          "<ol>",
+          "<ul>",
+          "<list>",
+          "<dl>"
+        ],
+        "answer": "<ol>"
+      },
+      {
+        "id": 30,
+        "question": "Which of the following tags is used to create an image map in HTML?",
+        "options": [
+          "<map>",
+          "<imgmap>",
+          "<imagemap>",
+          "<mapimage>"
+        ],
+        "answer": "<map>"
+      }
+    ]
+  }
+  
