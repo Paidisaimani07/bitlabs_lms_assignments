@@ -14,7 +14,7 @@ import reactPNG from '../../images/Icons1/Icons/React.svg';
 import manualTestingPNG from '../../images/Icons1/Icons/Manual Testing.svg';
 import sqlPNG from '../../images/Icons1/Icons/SQL.svg';
 import jspPNG from '../../images/Icons1/Icons/JSP.svg';
-import cPlusPlusPNG from '../../images/Icons1/Icons/C++.svg';
+import cPlusPlusPNG from '../../images/Icons1/Icons/CPlusPlus.svg';
 import paythonPNG from '../../images/Icons1/Icons/Python.svg';
 import regressionPNG from '../../images/Icons1/Icons/Regression Testing.svg';
 import hibernatePNG from '../../images/Icons1/Icons/Hibernate.svg';
