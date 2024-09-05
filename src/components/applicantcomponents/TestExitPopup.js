@@ -1,7 +1,7 @@
 import React from 'react';
 import './css/TestExitPopup.css'; // Import CSS for styling
 
-const TestExitPopup = ({ onConfirm, onCancel }) => {
+const TestExitPopup = ({ onConfirm, onCancel,exitMessage }) => {
   return (
     <div className="exit-popup">
       <div className="exit-popup-content">
@@ -25,7 +25,8 @@ const TestExitPopup = ({ onConfirm, onCancel }) => {
           </div>
           <p className="exit-popup-title">Do you really want to exit?</p>
           <p className="exit-popup-message">
-          Exiting will erase your progress and prevent retaking the test for 7 days. Proceed?
+          {/* Exiting will erase your progress and prevent retaking the test for 7 days. Proceed? */}
+           {exitMessage}
           </p>
         </div>
         <div className="exit-popup-footer">

@@ -86,6 +86,7 @@ const ApplicantTakeTest = () => {
   const handleBackQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setValidationMessage('');
     }
   };
 
@@ -169,8 +170,63 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
-    navigate("/applicant-verified-badges"); // Navigate back to the previous page
+  
+    if(testStarted && testName !== 'General Aptitude Test' && testName !== 'Technical Test'){
+      const jwtToken = localStorage.getItem('jwtToken');
+      // Submit the skill badge information to the API
+  fetch(`${apiUrl}/skill-badges/save`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      applicantId: userId, // Use the applicant's ID
+      skillBadgeName: testName, // Use the test name as the skill badge name
+      status: 'FAILED', // Use PASS or FAILED based on score
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Skill badge saved successfully:', data);
+    })
+    .catch((error) => {
+      console.error('Error saving the skill badge:', error);
+    });
+    }
+    else if (testStarted) { // Ensure test has started
+      const calculatedScore = 0; // Calculate the test score
+      const testStatus = calculatedScore >= 70 ? 'P' : 'F'; // Determine pass/fail status
+      const jwtToken = localStorage.getItem('jwtToken');
+      // Submit the test result to the API
+      fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          testName,
+          testScore: calculatedScore,
+          testStatus,
+          applicant: {
+            id: userId,
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Test result submitted successfully:', data);
+        })
+        .catch((error) => {
+          console.error('Error submitting test result:', error);
+        });
+    }
+  
+    // Navigate to the next page after the API call
+    navigate("/applicant-verified-badges");
   };
+  
 
   const handleCancelExit = () => {
     setShowExitPopup(false); // Close the exit popup without navigating
@@ -189,19 +245,13 @@ const ApplicantTakeTest = () => {
   };
 
   const handleTakeTest = (testName) => {
-    console.log("Test Button Clicked");
     setAcknowledgmentVisible(false); // Hide the acknowledgment component
     window.location.reload();
     navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
   };
 
   const handleViewResults = () => {
-    if (!selectedOptions[currentQuestionIndex]) {
-      setValidationMessage('Please provide your answer to submit the test.');
-      return;
-    }
-    setValidationMessage('');
-  
+     
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
     const jwtToken = localStorage.getItem('jwtToken');
@@ -279,9 +329,12 @@ const ApplicantTakeTest = () => {
       </header>
 
       {showExitPopup && (
-        <TestExitPopup onConfirm={handleConfirmExit} onCancel={handleCancelExit} />
-      )}
-
+  <TestExitPopup
+    onConfirm={handleConfirmExit}
+    onCancel={handleCancelExit}
+    exitMessage={!testStarted ? undefined : "Exiting will erase your progress and prevent retaking the test for 7 days. Proceed?"}
+  />
+)}
       {currentPage === 'instructions' && (
         <div className="instructions-page">
           <div className="instructions-header">
@@ -339,7 +392,7 @@ const ApplicantTakeTest = () => {
         <div className="test-page">
           <div className="header">
             <h3>
-              <span className="text-name">{testName}</span>
+              <span className="text-name1">{testName}</span>
               <h4 className='test-sub'>
                 Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
               </h4>
