@@ -179,23 +179,20 @@ const ApplicantDashboard = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-
+  
         const data = response.data;
         setTestData(data);
-
-        // Check if any test status is "F" or "f"
-        const hasFailureStatus = data.some(test => test.testStatus.toLowerCase() === 'f');
-
-        // Determine if we should show the icon
-        const shouldShowIcon = !hasFailureStatus && data.every(test => test.testStatus.toLowerCase() === 'p');
-
-        setShowIcon(shouldShowIcon);
-
+  
+        // Check if both aptitude and technical tests have status "P" or "p"
+        const allTestsPassed = data.length >= 2 && data.every(test => test.testStatus.toLowerCase() === 'p');
+  
+        setShowIcon(allTestsPassed);
+  
       } catch (error) {
         console.error('Error fetching test data:', error);
       }
     };
-
+  
     fetchTestData();
   }, [user.id]);
 
