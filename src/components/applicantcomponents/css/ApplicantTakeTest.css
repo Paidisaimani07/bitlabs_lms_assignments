@@ -96,13 +96,14 @@
     font-style: normal;
     font-weight: 600;
     text-transform: capitalize;
+    margin-right: 2.5%;
 }
 
 @media (max-width: 480px) {
     .exit-btn 
     {
         width: 95px !important;
-        margin-right: -25px !important;
+        margin-right: -20px !important;
         font-size: 17px !important;
     }
     .exit-svg
@@ -223,13 +224,23 @@
 }
 
 .text-name {
-    color: #000000 !important;
+    color: #FF8E26 !important;
     font-family: "Plus Jakarta Sans" !important;
     font-size: 24px !important;
     font-style: normal !important;
     font-weight: 700 !important;
     line-height: 25px !important; /* 69.444% */
     text-transform: capitalize !important;
+}
+
+.text-name1 {
+  color: #000 !important;
+  font-family: "Plus Jakarta Sans" !important;
+  font-size: 24px !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  line-height: 25px !important; /* 69.444% */
+  text-transform: capitalize !important;
 }
 
 @media (max-width: 480px) {
@@ -369,7 +380,7 @@ margin-top: 10px;
 
   .question-label
   {
-    margin-left: 5%;
+    margin-left: 3%;
     width: 100% !important;
    }
 

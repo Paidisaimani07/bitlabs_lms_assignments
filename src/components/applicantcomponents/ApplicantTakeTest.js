@@ -194,6 +194,7 @@ const ApplicantTakeTest = () => {
   const handleBackQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setValidationMessage('');
     }
   };
 
@@ -302,7 +303,7 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
- 
+
     if(testStarted && testName !== 'General Aptitude Test' && testName !== 'Technical Test'){
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the skill badge information to the API
@@ -354,10 +355,11 @@ const ApplicantTakeTest = () => {
           console.error('Error submitting test result:', error);
         });
     }
- 
+
     // Navigate to the next page after the API call
     navigate("/applicant-verified-badges");
   };
+  
 
   const handleCancelExit = () => {
     setShowExitPopup(false); // Close the exit popup without navigating
@@ -376,19 +378,13 @@ const ApplicantTakeTest = () => {
   };
 
   const handleTakeTest = (testName) => {
-    console.log("Test Button Clicked");
     setAcknowledgmentVisible(false); // Hide the acknowledgment component
     window.location.reload();
     navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
   };
 
   const handleViewResults = () => {
-    if (!selectedOptions[currentQuestionIndex]) {
-      setValidationMessage('Please provide your answer to submit the test.');
-      return;
-    }
-    setValidationMessage('');
-  
+     
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
     const jwtToken = localStorage.getItem('jwtToken');
@@ -466,9 +462,12 @@ const ApplicantTakeTest = () => {
       </header>
 
       {showExitPopup && (
-        <TestExitPopup onConfirm={handleConfirmExit} onCancel={handleCancelExit} />
-      )}
-
+  <TestExitPopup
+    onConfirm={handleConfirmExit}
+    onCancel={handleCancelExit}
+    exitMessage={!testStarted ? undefined : "Exiting will erase your progress and prevent retaking the test for 7 days. Proceed?"}
+  />
+)}
       {currentPage === 'instructions' && (
         <div className="instructions-page">
           <div className="instructions-header">
@@ -526,7 +525,7 @@ const ApplicantTakeTest = () => {
         <div className="test-page">
           <div className="header">
             <h3>
-              <span className="text-name">{testName}</span>
+              <span className="text-name1">{testName}</span>
               <h4 className='test-sub'>
                 Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
               </h4>
