@@ -1,6 +1,6 @@
 {
   "testName": "General Aptitude Test",
-  "duration": "1hr",
+  "duration": "1 hr",
   "numberOfQuestions": 30,
   "topicsCovered": ["Arithmetic", "Reasoning", "Comprehension"],
   "questions": [
