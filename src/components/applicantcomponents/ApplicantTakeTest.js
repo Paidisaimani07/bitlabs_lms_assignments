@@ -10,6 +10,31 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import TestPassAcknowledgment from './TestPassAcknowledgment';
 import TestFailAcknowledgment from './TestFailAcknowledgment';
+import SpringBootTset from './questions/Spring Boot.json';
+import ReactTest from './questions/React.json';
+import SQLTest from './questions/SQL.json';
+import PaythonTest from './questions/Paython.json';
+import HTMLTest from './questions/HTML.json';
+import JavaScriptTest from './questions/Javascript.json';
+import JavaTest from './questions/Java.json';
+import CppTest from './questions/Cpp.json';
+import DjangoTest from './questions/Django.json';
+import HibernateTest from './questions/Hibernate.json';
+import SeleniumTest from './questions/Selenium.json';
+import CSharpTest from './questions/CSharp.json';
+import CTest from './questions/C.json';
+import DotNetTest from './questions/DotNet.json';
+import RegressionTest from './questions/Regression Testing.json';
+import SpringTest from './questions/Spring.json';
+import MonogoTest from './questions/MongoDB.json';
+import FlaskTest from './questions/Flask.json';
+import ServletsTest from './questions/Servlets.json';
+import JspTest from './questions/Jsp.json';
+import TSTest from './questions/TS.json';
+import CSSTest from './questions/CSS.json';
+import AngularTest from './questions/Angular.json';
+import ManualTestingTest from './questions/ManualTesting.json';
+import VueTest from './questions/Vue.json';
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
@@ -35,12 +60,95 @@ const ApplicantTakeTest = () => {
 
   useEffect(() => {
     // Load questions and set timer based on the test name
+    
+    console.log(testName);
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
       setTimer(60* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
+    }else if(testName === 'Spring Boot'){
+      setQuestions(SpringBootTset);
+      setTimer(30*60);
+    }else if(testName === 'React'){
+      setQuestions(ReactTest);
+      setTimer(30*60);
+    }else if(testName === 'SQL'){
+      setQuestions(SQLTest);
+      setTimer(30*60);
+    }else if(testName === 'MySQL'){
+      setQuestions(SQLTest);
+      setTimer(30*60);
+    }else if(testName === 'SQL-Server'){
+      setQuestions(SQLTest);
+      setTimer(30*60);
+    }else if(testName === 'Python'){
+      setQuestions(PaythonTest);
+      setTimer(30*60);
+    }else if(testName === 'HTML'){
+      setQuestions(HTMLTest);
+      setTimer(30*60);
+    }else if(testName === 'JavaScript'){
+      setQuestions(JavaScriptTest);
+      setTimer(30*60);
+    }else if(testName === 'Java'){
+      setQuestions(JavaTest);
+      setTimer(30*60);
+    }else if(testName === 'C++'){
+      setQuestions(CppTest);
+      setTimer(30*60);
+    }else if(testName === 'Django'){
+      setQuestions(DjangoTest);
+      setTimer(30*60);
+    }else if(testName === 'Hibernate'){
+      setQuestions(HibernateTest);
+      setTimer(30*60);
+    }else if(testName === 'Selenium'){
+      setQuestions(SeleniumTest);
+      setTimer(30*60);
+    }else if(testName === 'C Sharp'){
+      setQuestions(CSharpTest);
+      setTimer(30*60);
+    }else if(testName === 'C'){
+      setQuestions(CTest);
+      setTimer(30*60);
+    }else if(testName == '.Net'){
+      setQuestions(DotNetTest);
+      setTimer(30*60);
+    }else if(testName == 'Regression Testing'){
+      setQuestions(RegressionTest);
+      setTimer(30*60);
+    }else if(testName == 'Spring'){
+      setQuestions(SpringTest);
+      setTimer(30*60);
+    }else if(testName == 'Mongo DB'){
+      setQuestions(MonogoTest);
+      setTimer(30*60);
+    }else if(testName == 'Flask'){
+      setQuestions(FlaskTest);
+      setTimer(30*60);
+    }else if(testName == 'Servlets'){
+      setQuestions(ServletsTest);
+      setTimer(30*60);
+    }else if(testName == 'JSP'){
+      setQuestions(JspTest);
+      setTimer(30*60);
+    }else if(testName == 'TypeScript'){
+      setQuestions(TSTest);
+      setTimer(30*60);
+    }else if(testName == 'CSS'){
+      setQuestions(CSSTest);
+      setTimer(30*60);
+    }else if(testName == 'Angular'){
+      setQuestions(AngularTest);
+      setTimer(30*60);
+    }else if(testName == 'Manual Testing'){
+      setQuestions(ManualTestingTest);
+      setTimer(30*60);
+    }else if(testName == 'Vue'){
+      setQuestions(VueTest);
+      setTimer(30*60);
     }
   }, [testName]);
 
@@ -129,8 +237,8 @@ const ApplicantTakeTest = () => {
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
     const jwtToken = localStorage.getItem('jwtToken');
-    
-    // Submit the test result to the API
+    if(testName === 'General Aptitude Test' || testName === 'Technical Test'){
+       // Submit the test result to the API
     fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
       method: 'POST',
       headers: {
@@ -153,6 +261,31 @@ const ApplicantTakeTest = () => {
       .catch((error) => {
         console.error('Error submitting the test:', error);
       });
+    }else{
+
+      const skillBadgeStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
+      // Submit the skill badge information to the API
+  fetch(`${apiUrl}/skill-badges/save`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      applicantId: userId, // Use the applicant's ID
+      skillBadgeName: testName, // Use the test name as the skill badge name
+      status: skillBadgeStatus, // Use PASS or FAILED based on score
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Skill badge saved successfully:', data);
+    })
+    .catch((error) => {
+      console.error('Error saving the skill badge:', error);
+    });
+    }
+    
   
     // Show the acknowledgment popup based on the test result
     if (testStatus === 'P') {
@@ -169,7 +302,61 @@ const ApplicantTakeTest = () => {
 
   const handleConfirmExit = () => {
     setShowExitPopup(false);
-    navigate("/applicant-verified-badges"); // Navigate back to the previous page
+ 
+    if(testStarted && testName !== 'General Aptitude Test' && testName !== 'Technical Test'){
+      const jwtToken = localStorage.getItem('jwtToken');
+      // Submit the skill badge information to the API
+  fetch(`${apiUrl}/skill-badges/save`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      applicantId: userId, // Use the applicant's ID
+      skillBadgeName: testName, // Use the test name as the skill badge name
+      status: 'FAILED', // Use PASS or FAILED based on score
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('Skill badge saved successfully:', data);
+    })
+    .catch((error) => {
+      console.error('Error saving the skill badge:', error);
+    });
+    }
+    else if (testStarted) { // Ensure test has started
+      const calculatedScore = 0; // Calculate the test score
+      const testStatus = calculatedScore >= 70 ? 'P' : 'F'; // Determine pass/fail status
+      const jwtToken = localStorage.getItem('jwtToken');
+      // Submit the test result to the API
+      fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          testName,
+          testScore: calculatedScore,
+          testStatus,
+          applicant: {
+            id: userId,
+          },
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Test result submitted successfully:', data);
+        })
+        .catch((error) => {
+          console.error('Error submitting test result:', error);
+        });
+    }
+ 
+    // Navigate to the next page after the API call
+    navigate("/applicant-verified-badges");
   };
 
   const handleCancelExit = () => {
@@ -426,7 +613,7 @@ const ApplicantTakeTest = () => {
       )}
 
      {currentPage === 'passAcknowledgment' && (
-        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName} handleTakeTest={handleTakeTest}/>
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest}/>
       )}
       {currentPage === 'failAcknowledgment' && (
         <TestFailAcknowledgment onClose={handleClosePopup} />
