@@ -64,7 +64,7 @@ const ApplicantTakeTest = () => {
     console.log(testName);
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(60* 60); // 60 minutes for General Aptitude Test
+      setTimer(1* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
@@ -568,6 +568,7 @@ const ApplicantTakeTest = () => {
     </li>
     {shuffledQuestions[currentQuestionIndex]?.options.map((option, index) => (
       <li key={index}>
+        
         <label className="question-label no-select">
           <input
             type="radio"
@@ -583,6 +584,7 @@ const ApplicantTakeTest = () => {
             }}
           />
         </label>
+        
       </li>
     ))}
     {validationMessage && <p className="validation">{validationMessage}</p>}
@@ -612,10 +614,10 @@ const ApplicantTakeTest = () => {
       )}
 
      {currentPage === 'passAcknowledgment' && (
-        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest}/>
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest} setTestStarted={setTestStarted}/>
       )}
       {currentPage === 'failAcknowledgment' && (
-        <TestFailAcknowledgment onClose={handleClosePopup} />
+        <TestFailAcknowledgment onClose={handleClosePopup} setTestStarted={setTestStarted} />
       )}
 
 
