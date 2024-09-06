@@ -511,6 +511,9 @@ const ApplicantTakeTest = () => {
               <li>
               Make sure your device is fully charged and has a stable internet connection before starting the test.
               </li>
+              <li>
+              To avoid interruptions, take the test on a PC, as calls may disrupt it on mobile.
+              </li>
             </ul>
           </div>
           <div align="right">
@@ -568,6 +571,7 @@ const ApplicantTakeTest = () => {
     </li>
     {shuffledQuestions[currentQuestionIndex]?.options.map((option, index) => (
       <li key={index}>
+        
         <label className="question-label no-select">
           <input
             type="radio"
@@ -583,6 +587,7 @@ const ApplicantTakeTest = () => {
             }}
           />
         </label>
+        
       </li>
     ))}
     {validationMessage && <p className="validation">{validationMessage}</p>}
@@ -612,10 +617,10 @@ const ApplicantTakeTest = () => {
       )}
 
      {currentPage === 'passAcknowledgment' && (
-        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest}/>
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest} setTestStarted={setTestStarted}/>
       )}
       {currentPage === 'failAcknowledgment' && (
-        <TestFailAcknowledgment onClose={handleClosePopup} />
+        <TestFailAcknowledgment onClose={handleClosePopup} setTestStarted={setTestStarted} />
       )}
 
 
