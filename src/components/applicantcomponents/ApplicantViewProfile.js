@@ -300,17 +300,18 @@ const ApplicantViewProfile = () => {
         src={Profile_Certified}
         alt="Profile_Certified Badge"
         style={{
-          width: '37px',
-          height: '37px',
+          width: '32px',
+          height: '32px',
           marginLeft: '10px',
-          verticalAlign: 'middle'
+          verticalAlign: 'middle',
+          marginBottom: '8px'
         }}
       />
     )}
 
   </div>
 
-  <div style={{ color: 'white', display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+  <div style={{ color: 'white', display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
     <img
       src={Mail}
       alt="Email"
@@ -391,39 +392,48 @@ const ApplicantViewProfile = () => {
                   <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
                     
                     {/* Applicant's Skill Badges */}
-                    {profileData.applicant.applicantSkillBadges && profileData.applicant.applicantSkillBadges.map((badge, index) => (
-                     <React.Fragment key={badge.id}>
-                     <span>
-                       <a>
-                         <ul className="skill-but" style={{ backgroundColor: '#498C07', display: 'inline-flex', marginRight: '10px' }}>
-                           {/* Display Applicant Skill Badges in Green */}
-                           <li style={{ display: 'flex', alignItems: 'center' }}>
-                             {/* Conditionally render the Certified Badge image when status is PASSED */}
-                             {badge.status === 'PASSED' && (
-                               <img
-                                 src={Certified}
-                                 alt="Certified Badge"
-                                 style={{
-                                   width: '24px',
-                                   height: '24px',
-                                   marginRight: '8px'
-                                 }}
-                               />
-                             )}
-                             {badge.skillBadge.name}
-                           </li>
-                         </ul>
-                       </a>
-                     </span>
-                   </React.Fragment>                   
-                    ))}
+                    {profileData.applicant.applicantSkillBadges && 
+                        profileData.applicant.applicantSkillBadges
+                          .sort((a, b) => {
+                            // Sorting logic: PASSED badges come first
+                            if (a.status === 'PASSED' && b.status !== 'PASSED') return -1;
+                            if (a.status !== 'PASSED' && b.status === 'PASSED') return 1;
+                            return 0; // If both have the same status, keep their original order
+                          })
+                          .map((badge, index) => (
+                            <React.Fragment key={badge.id}>
+                              <span>
+                                <a>
+                                  <ul className="skill-but" style={{ backgroundColor: '#498C07', display: 'inline-flex', marginRight: '2px' }}>
+                                    {/* Display Applicant Skill Badges in Green */}
+                                    <li style={{ display: 'flex', alignItems: 'center' }}>
+                                      {/* Conditionally render the Certified Badge image when status is PASSED */}
+                                      {badge.status === 'PASSED' && (
+                                        <img
+                                          src={Certified}
+                                          alt="Certified Badge"
+                                          style={{
+                                            width: '24px',
+                                            height: '24px',
+                                            marginRight: '8px'
+                                          }}
+                                        />
+                                      )}
+                                      {badge.skillBadge.name}
+                                    </li>
+                                  </ul>
+                                </a>
+                              </span>
+                            </React.Fragment>
+                          ))
+                      }
 
                     {/* Skills Required */}
                     {profileData.skillsRequired && profileData.skillsRequired.map((skillReq, index) => (
                       <React.Fragment key={skillReq.id}>
                         <span>
                           <a>
-                            <ul className="skill-but" style={{ backgroundColor: '#498C07', display: 'inline-flex', marginRight: '10px' }}>
+                            <ul className="skill-but" style={{ backgroundColor: '#498C07', display: 'inline-flex', marginRight: '2px' }}>
                               {/* Display Skills Required in Blue */}
                               <li>{skillReq.skillName}</li>
                             </ul>
