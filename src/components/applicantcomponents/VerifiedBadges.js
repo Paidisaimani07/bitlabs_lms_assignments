@@ -717,8 +717,8 @@ const VerifiedBadges = () => {
         onClick={!isDisabled ? () => handleTakeTest('General Aptitude Test') : null} // Conditionally add onClick
       >
         <span style={spanStyle}>
-          Take Test
-        </span>
+      {isDisabled ? 'Retake test' : 'Take Test'} {/* Conditionally change button text */}
+    </span>
       </button>
       
       {currentStep === 1 && timer && (
@@ -766,7 +766,7 @@ const VerifiedBadges = () => {
     onClick={!isDisabled ? () => handleTakeTest('Technical Test') : null} // Conditionally add onClick
   >
     <span style={spanStyle}>
-      Take Test
+      {isDisabled ? 'Retake test' : 'Take Test'} {/* Conditionally change button text */}
     </span>
   </button>
       {currentStep === 2 && timer && (

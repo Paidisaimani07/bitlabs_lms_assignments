@@ -393,7 +393,24 @@ const ApplicantDashboard = () => {
               <div className="resumecard-content">
                 <div className="resumecard-text">
                   <div className="resumecard-heading">
-                    <h2 className="heading1">Earn Pre-Screened Badges</h2>
+                    <h2 className="heading1">Earn Pre-Screened Badges
+                    <span 
+  style={{ 
+    color: '#F00', // Red text color
+    border: '1px solid var(--Color-2, #F00)', // Red border
+    borderRadius: '13px', // Rounded corners
+    padding: '3px 8px', // Spacing around text
+    marginLeft: '15px', // Space between "Verified badges" and "New"
+    fontSize: '10px', // Adjust font size as needed
+    // fontFamily:'Inter',
+    fontStyle:'normal',
+    fontWeight:'500',
+    lineHeight:'normal',
+  }}
+>
+  New
+</span>
+                    </h2>
                     <div className="" style={{ fontSize: '16.8px', color: '#6F6F6F', fontWeight: '500', fontFamily: 'Plus Jakarta Sans', fontStyle: 'normal' }}>
                       Achieve your dream job faster by demonstrating your aptitude and technical skills.
                     </div>
