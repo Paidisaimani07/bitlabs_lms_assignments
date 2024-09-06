@@ -64,7 +64,7 @@ const ApplicantTakeTest = () => {
     console.log(testName);
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(1* 60); // 60 minutes for General Aptitude Test
+      setTimer(60* 60); // 60 minutes for General Aptitude Test
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
