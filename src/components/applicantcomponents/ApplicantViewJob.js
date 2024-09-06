@@ -58,6 +58,47 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     "SPRING BOOT":"https://upskill.bitlabs.in/course/view.php?id=23"
   };
 
+  const [skillBadges, setSkillBadges] = useState([]);
+  const [applicantSkillBadges, setApplicantSkillBadges] = useState([]);
+ 
+  const fetchSkillBadges = async () => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/skill-badges/${user.id}/skill-badges`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        }
+      );
+      const { skillsRequired, applicantSkillBadges } = response.data;
+      setSkillBadges(skillsRequired || []);
+      setApplicantSkillBadges(applicantSkillBadges || []);
+    } catch (error) {
+      console.error('Error fetching skill badges:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchSkillBadges();
+  }, []); // Runs once on component mount
+  
+  useEffect(() => {
+    console.log('Applicant Badges Updated:', applicantSkillBadges);
+  }, [applicantSkillBadges]); // Logs when `applicantSkillBadges` changes
+
+  // Function to check if the skill is passed
+  const isSkillPassed = (skillName) => {
+    console.log('Checking skill:', skillName);
+    console.log('Applicant Badges:', applicantSkillBadges);
+
+    return applicantSkillBadges.some(
+      (badge) => badge.skillBadge.name === skillName && badge.status === 'PASSED'
+    );
+  };
+
   const fetchJobDetails = async () => {
     try {
       const response = await axios.get(
@@ -299,26 +340,43 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         gap: '6px' /* Adjust the gap between items */
       }}
       >
-      {jobDetails.matchedSkills.map((skill, index) => (
-        <li key={index} style={{ marginBottom: '2px' }}> {/* Adjust the margin as needed */}
-          <a 
-            href="javascript:void(0);" 
-            style={{
-              backgroundColor: '#498C07', /* Green background color */
-              color: '#FFFF', /* White text color */
-              padding: '10px 12px', /* Padding around the text */
-              borderRadius: '50px', /* Rounded corners */
-              textDecoration: 'none', /* Remove underline */
-              height: '36px',
-              display: 'inline-block', /* Ensure padding is applied */
-              transition: 'background-color 0.3s', /* Smooth transition for hover effect */
-              marginBottom: '2px' /* Equal margin at the bottom */
-            }}
-          >
-            {skill.skillName}
-          </a>
-        </li>
-      ))}
+{jobDetails?.matchedSkills?.map((skill) => (
+  <li key={skill.skillName} style={{ marginBottom: '8px' }}>
+    <a
+      href="javascript:void(0);" // Avoid using `#`
+      onClick={(e) => e.preventDefault()} // Prevent default link behavior
+      style={{
+        backgroundColor: '#498C07', // Green background color
+        color: '#FFFFFF', // White text color
+        padding: '10px 12px', // Padding around the text
+        borderRadius: '50px', // Rounded corners
+        textDecoration: 'none', // Remove underline
+        height: '36px',
+        display: 'inline-flex', // Use inline-flex for better alignment
+        alignItems: 'center', // Vertically center items
+        transition: 'background-color 0.3s', // Smooth transition for hover effect
+      }}
+    >
+      {/* Conditionally render the tick mark if the skill is passed */}
+      {isSkillPassed(skill.skillName) && (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 13 13"
+          fill="none"
+          style={{ marginRight: '8px', verticalAlign: 'middle' }} // Adjust spacing and alignment
+        >
+          <path
+            d="M12.3726 5.23415L11.5331 4.28366C11.3532 4.10544 11.2333 3.749 11.2333 3.51138V2.56088C11.2333 1.90742 10.6937 1.43217 10.0941 1.43217H9.07477C8.83493 1.43217 8.47517 1.31336 8.29529 1.13514L7.33593 0.30346C6.91621 -0.0529761 6.25665 -0.0529761 5.83693 0.30346L4.93753 1.13514C4.75765 1.31336 4.39789 1.43217 4.15805 1.43217H3.13873C2.47917 1.43217 1.99949 1.96683 1.99949 2.56088V3.57079C1.99949 3.80841 1.87957 4.16485 1.69969 4.34306L0.92021 5.29356C0.560451 5.7094 0.560451 6.36287 0.92021 6.77871L1.69969 7.7292C1.87957 7.90742 1.99949 8.26386 1.99949 8.50148V9.51138C1.99949 10.1648 2.53913 10.6401 3.13873 10.6401H4.15805C4.39789 10.6401 4.75765 10.7589 4.93753 10.9371L5.89689 11.7688C6.31661 12.1252 6.97617 12.1252 7.39589 11.7688L8.35525 10.9371C8.53512 10.7589 8.89489 10.6401 9.13473 10.6401H10.154C10.8136 10.6401 11.2933 10.1054 11.2933 9.51138V8.50148C11.2933 8.26386 11.4132 7.90742 11.5931 7.7292L12.4325 6.77871C12.7323 6.36287 12.7323 5.64999 12.3726 5.23415ZM9.13473 4.87772L6.25665 7.7292C6.19669 7.78861 6.07677 7.84801 5.95685 7.84801C5.83693 7.84801 5.71701 7.78861 5.65705 7.7292L4.21801 6.30346C4.03813 6.12524 4.03813 5.82821 4.21801 5.64999C4.39789 5.47178 4.69769 5.47178 4.87757 5.64999L6.01681 6.77871L8.47517 4.22425C8.65505 4.04603 8.95485 4.04603 9.13473 4.22425C9.3146 4.40247 9.3146 4.6995 9.13473 4.87772Z"
+            fill="white"
+          />
+        </svg>
+      )}
+      {skill.skillName}
+    </a>
+  </li>
+))}
       {jobDetails.skillsRequired.map((skill, index) => (
         <li key={index} style={{ marginBottom: '2px' }}> {/* Adjust the margin as needed */}
           <a 
