@@ -452,6 +452,22 @@ function ApplicantNavBar() {
     </svg>
   </span>
   <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
+  <span 
+  style={{ 
+    color: '#F00', // Red text color
+    border: '1px solid var(--Color-2, #F00)', // Red border
+    borderRadius: '13px', // Rounded corners
+    padding: '3px 8px', // Spacing around text
+    marginLeft: '25px', // Space between "Verified badges" and "New"
+    fontSize: '10px', // Adjust font size as needed
+    // fontFamily:'Inter',
+    fontStyle:'normal',
+    fontWeight:'500',
+    lineHeight:'normal',
+  }}
+>
+  New
+</span>
 </Link>
           </li>
         
