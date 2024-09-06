@@ -511,6 +511,9 @@ const ApplicantTakeTest = () => {
               <li>
               Make sure your device is fully charged and has a stable internet connection before starting the test.
               </li>
+              <li>
+              To avoid interruptions, take the test on a PC, as calls may disrupt it on mobile.
+              </li>
             </ul>
           </div>
           <div align="right">
