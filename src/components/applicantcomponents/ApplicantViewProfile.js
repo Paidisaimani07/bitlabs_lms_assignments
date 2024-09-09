@@ -300,8 +300,8 @@ const ApplicantViewProfile = () => {
         src={Profile_Certified}
         alt="Profile_Certified Badge"
         style={{
-          width: '32px',
-          height: '32px',
+          width: '28px',
+          height: '28px',
           marginLeft: '10px',
           verticalAlign: 'middle',
           marginBottom: '8px'
@@ -415,7 +415,8 @@ const ApplicantViewProfile = () => {
                                           style={{
                                             width: '24px',
                                             height: '24px',
-                                            marginRight: '8px'
+                                            marginRight: '5px',
+                                            marginLeft: '-8px'
                                           }}
                                         />
                                       )}
