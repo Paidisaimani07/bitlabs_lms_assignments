@@ -43,61 +43,56 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
   const navigate = useNavigate();
 
-    // Map skill names to images
-    const skillImages = {
-      'JAVA': javaPNG,
-      'HTML': htmlPNG,
-      'CSS': cssPNG,
-      'Python': paythonPNG,
-      'MySQL' : mysqlPNG,
-      'Angular' : angularPNG,
-      'React' : reactPNG,
-      'Manual Testing' : manualTestingPNG,
-      "SQL" : sqlPNG,
-      "JSP" : jspPNG,
-      "C++" : cPlusPlusPNG,
-      "Regression Testing" : regressionPNG,
-      "Hibernate" : hibernatePNG,
-      ".Net" : netPNG,
-      "Servlets" : servletsPNG,
-      "TypeScript" : typeScriptPNG,
-      "C Sharp" : cSharpPNG,
-      "C" : cPNG,
-      "Selenium" : seleniumPNG,
-      "JavaScript" : javaScriptPNG,
-      "Spring" : springPNG,
-      "Spring Boot" : springBootPNG,
-      "Vue" : vuePNG,
-      "Mongo DB" : mongodbPNG,
-      "SQL-Server" : sqlServerPNG,
-      "Django" : djangoPNG,
-      "Flask" : flaskPNG,
-      // Add other skills here...
-    };
-  
-    // Get the image based on skill name, default to javaPNG if not found
-    const skillImage = skillImages[skillName] || javaPNG;
+  // Map skill names to images
+  const skillImages = {
+    'JAVA': javaPNG,
+    'HTML': htmlPNG,
+    'CSS': cssPNG,
+    'Python': paythonPNG,
+    'MySQL' : mysqlPNG,
+    'Angular' : angularPNG,
+    'React' : reactPNG,
+    'Manual Testing' : manualTestingPNG,
+    "SQL" : sqlPNG,
+    "JSP" : jspPNG,
+    "C++" : cPlusPlusPNG,
+    "Regression Testing" : regressionPNG,
+    "Hibernate" : hibernatePNG,
+    ".Net" : netPNG,
+    "Servlets" : servletsPNG,
+    "TypeScript" : typeScriptPNG,
+    "C Sharp" : cSharpPNG,
+    "C" : cPNG,
+    "Selenium" : seleniumPNG,
+    "JavaScript" : javaScriptPNG,
+    "Spring" : springPNG,
+    "Spring Boot" : springBootPNG,
+    "Vue" : vuePNG,
+    "Mongo DB" : mongodbPNG,
+    "SQL-Server" : sqlServerPNG,
+    "Django" : djangoPNG,
+    "Flask" : flaskPNG,
+  };
+
+  const skillImage = skillImages[skillName] || javaPNG;
 
   useEffect(() => {
     if (status === 'FAILED') {
-       // Convert `testFailedAt` to Date object, which is when the test failed
-       
-      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
-      // Create a Date object by using the array elements
-  const failedDate = new Date(
-    testFailedAt[0], // year
-    testFailedAt[1] - 1, // month (JavaScript Date is 0-based for months)
-    testFailedAt[2], // day
-    testFailedAt[3], // hour
-    testFailedAt[4], // minute
-    testFailedAt[5] // second
-    
-  );
+      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Test failed date array
+      const failedDate = new Date(
+        testFailedAt[0], testFailedAt[1] - 1, testFailedAt[2],
+        testFailedAt[3], testFailedAt[4], testFailedAt[5]
+      );
       
-      // Calculate the total 7 days (or 168 hours) from the failure time
-      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000 + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
 
+      // Check retake availability on initial load
+      const currentTime = new Date();
+      const initialDifference = futureTime - currentTime;
 
+      if (initialDifference <= 0) {
+        setIsRetakeAvailable(true);
+      }
 
       const calculateTimeLeft = () => {
         const currentTime = new Date();
@@ -107,13 +102,18 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
           const days = Math.floor(difference / (1000 * 60 * 60 * 24));
           const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
           const minutes = Math.floor((difference / 1000 / 60) % 60);
-      
+
           return { days, hours, minutes };
         } else {
           setIsRetakeAvailable(true);
           return null;
         }
       };
+
+      // Set initial time left if the test is not available
+      if (initialDifference > 0) {
+        setTimeLeft(calculateTimeLeft());
+      }
 
       const timer = setInterval(() => {
         const newTimeLeft = calculateTimeLeft();
@@ -127,56 +127,49 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   }, [status]);
 
   const handleTakeTest = (testName) => {
-
     navigate('/applicant-take-test', { state: { testName } });
   };
 
   return (
     <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
-      {/* Top Section: Status */}
       <div className="status">
         <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
           &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
         </span>
       </div>
 
-      {/* Second Section: Badge */}
       <div className="badge">
         <img src={skillImage} alt={skillName} className="skill-image" />
         <span className="skill-name">{skillName}</span>
       </div>
 
-      {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
           <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
-          style={{
-            backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0', // Red background if retake is available, grey otherwise
-            color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
-            cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
-            padding: '20px', // Adjust padding as needed
-            borderRadius: '5px', // Rounded corners
-            textAlign: 'center' // Center text
-          }}
+            style={{
+              backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0',
+              color: isRetakeAvailable ? '#ffffff' : '#000000',
+              cursor: isRetakeAvailable ? 'pointer' : 'default',
+              padding: '20px',
+              borderRadius: '5px',
+              textAlign: 'center'
+            }}
           >
             {isRetakeAvailable ? (
-                <>
+              <>
                 Retake Test
                 <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
               </>
             ) : (
               <>
-              
-              <div>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
-              <br />&nbsp;&nbsp;&nbsp;&nbsp;
-                {timeLeft.days > 0 && `${timeLeft.days}D `}
-                {timeLeft.hours > 0 && `${timeLeft.hours}H `}
-                {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
-              </div>
-            </>
-            
-
+                <div>
+                  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
+                  <br />&nbsp;&nbsp;&nbsp;&nbsp;
+                  {timeLeft?.days > 0 && `${timeLeft.days}d `}
+                  {timeLeft?.hours > 0 && `${timeLeft.hours}h `}
+                  {timeLeft?.minutes !== undefined && `${timeLeft.minutes}m`}
+                </div>
+              </>
             )}
           </div>
         )}
@@ -194,6 +187,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
     </div>
   );
 };
+
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
@@ -829,7 +823,7 @@ const VerifiedBadges = () => {
         </div>
       </div>
       <div className="row mr-0 ml-10">
-  <h3 className='skillBadgeHeading'>Skills Badges</h3>
+  <h3 className='skillBadgeHeading'>Skill Badges</h3>
   
   <div className="col-lg-10 col-md-12">
     <div className="skill-badge-container">
@@ -846,18 +840,18 @@ const VerifiedBadges = () => {
           </div>
         
       ))}
-
       {skillBadges.applicantSkillBadges.map((badge) => (
         
-          <div className="skill-badge-card" key={badge.id}>
-            <SkillBadgeCard 
-              skillName={badge.skillBadge.name} 
-              status={badge.status} 
-              testFailedAt={badge.testTaken}
-            />
-          </div>
-        
-      ))}
+        <div className="skill-badge-card" key={badge.id}>
+          <SkillBadgeCard 
+            skillName={badge.skillBadge.name} 
+            status={badge.status} 
+            testFailedAt={badge.testTaken}
+          />
+        </div>
+      
+    ))}
+     
     </div>
   </div>
 </div>
