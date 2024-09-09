@@ -1,6 +1,6 @@
 {
   "testName": "General Aptitude Test",
-  "duration": "1hr",
+  "duration": "1 hr",
   "numberOfQuestions": 30,
   "topicsCovered": ["Arithmetic", "Reasoning", "Comprehension"],
   "questions": [
@@ -30,11 +30,10 @@
     },
     {
       "id": 5,
-      "question": "At an animal conservatory, the mean age of all the male giraffes is 16 years, and the mean age of all female giraffes is 20 years. Which of the following must be true about the mean age m of the combined group of male and female giraffes at the animal conservatory?",
-      "options": ["ASCIIMATH=m>18", "ASCIIMATH=m<18", "ASCIIMATH=16<m<20", "ASCIIMATH=m=18"],
-      "answer": "ASCIIMATH=16<m<20"
+      "question": "A gym charges a membership fee of $30 per month plus an additional tax of 5% on the membership fee. The gym also charges a onetime registration fee of $20, which is not taxed. Which of the following represents the total charge, in dollars, for a person who stays for y months?",
+      "options": ["ASCIIMATH=30y + 0.05(30) + 20", "ASCIIMATH=1.05(30y) + 20", "ASCIIMATH=30(1+0.05y) + 20", "ASCIIMATH=1.05(30 + 20)y"],
+      "answer": "ASCIIMATH=1.05(30y) + 20"
     },
-
     {
       "id": 6,
       "question": "The tariffs for crossing a part of highway are $8.50 for a bike and $10 for a car. During a two-hour period, a total of 187 bikes and cars crossed the bridge, and the total collected in tariffs was $1,338. Solving which of the following systems of equations yields the number of bikes, x, and the number of cars, y, that crossed the bridge during the two hours?",

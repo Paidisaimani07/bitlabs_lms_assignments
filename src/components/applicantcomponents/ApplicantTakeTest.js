@@ -194,6 +194,7 @@ const ApplicantTakeTest = () => {
   const handleBackQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setValidationMessage('');
     }
   };
 
@@ -353,10 +354,11 @@ const ApplicantTakeTest = () => {
           console.error('Error submitting test result:', error);
         });
     }
- 
+
     // Navigate to the next page after the API call
     navigate("/applicant-verified-badges");
   };
+  
 
   const handleCancelExit = () => {
     setShowExitPopup(false); // Close the exit popup without navigating
@@ -375,7 +377,6 @@ const ApplicantTakeTest = () => {
   };
 
   const handleTakeTest = (testName) => {
-    console.log("Test Button Clicked");
     setAcknowledgmentVisible(false); // Hide the acknowledgment component
     window.location.reload();
     navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
@@ -493,9 +494,12 @@ const ApplicantTakeTest = () => {
       </header>
 
       {showExitPopup && (
-        <TestExitPopup onConfirm={handleConfirmExit} onCancel={handleCancelExit} />
-      )}
-
+  <TestExitPopup
+    onConfirm={handleConfirmExit}
+    onCancel={handleCancelExit}
+    exitMessage={!testStarted ? undefined : "Exiting will erase your progress and prevent retaking the test for 7 days. Proceed?"}
+  />
+)}
       {currentPage === 'instructions' && (
         <div className="instructions-page">
           <div className="instructions-header">
@@ -539,6 +543,9 @@ const ApplicantTakeTest = () => {
               <li>
               Make sure your device is fully charged and has a stable internet connection before starting the test.
               </li>
+              <li>
+              To avoid interruptions, take the test on a PC, as calls may disrupt it on mobile.
+              </li>
             </ul>
           </div>
           <div align="right">
@@ -553,7 +560,7 @@ const ApplicantTakeTest = () => {
         <div className="test-page">
           <div className="header">
             <h3>
-              <span className="text-name">{testName}</span>
+              <span className="text-name1">{testName}</span>
               <h4 className='test-sub'>
                 Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
               </h4>
@@ -596,6 +603,7 @@ const ApplicantTakeTest = () => {
     </li>
     {shuffledQuestions[currentQuestionIndex]?.options.map((option, index) => (
       <li key={index}>
+        
         <label className="question-label no-select">
           <input
             type="radio"
@@ -611,6 +619,7 @@ const ApplicantTakeTest = () => {
             }}
           />
         </label>
+        
       </li>
     ))}
     {validationMessage && <p className="validation">{validationMessage}</p>}
@@ -640,10 +649,10 @@ const ApplicantTakeTest = () => {
       )}
 
      {currentPage === 'passAcknowledgment' && (
-        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest}/>
+        <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest} setTestStarted={setTestStarted}/>
       )}
       {currentPage === 'failAcknowledgment' && (
-        <TestFailAcknowledgment onClose={handleClosePopup} />
+        <TestFailAcknowledgment onClose={handleClosePopup} setTestStarted={setTestStarted} />
       )}
 
 
