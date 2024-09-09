@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation,Link } from 'react-router-dom';
 import aptitudeQuestions from './questions/aptitude_questions.json';
 import technicalQuestions from './questions/technical_questions.json';
 import './css/ApplicantTakeTest.css';
@@ -44,6 +44,7 @@ const ApplicantTakeTest = () => {
   const [currentPage, setCurrentPage] = useState('instructions');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState({});
+  const [remainingTime, setRemainingTime] = useState(3600);
   const [testStarted, setTestStarted] = useState(false);
   const [timer, setTimer] = useState(3600); // Assuming 1 hour (3600 seconds)
   const [showExitPopup, setShowExitPopup] = useState(false);
@@ -51,7 +52,10 @@ const ApplicantTakeTest = () => {
   const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState({ questions: [], duration: 0, numberOfQuestions: 0, topicsCovered: [] });
   const [acknowledgmentVisible, setAcknowledgmentVisible] = useState(false);
+  const [showGoBackButton, setShowGoBackButton] = useState(false);
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { testName } = location.state || {};
@@ -159,25 +163,111 @@ const ApplicantTakeTest = () => {
   }, [questions.questions]);
   
 
+   const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const enterFullScreen = () => {
+    const elem = document.documentElement; // Make the entire document full screen
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      /* Firefox */
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      /* Chrome, Safari & Opera */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      /* IE/Edge */
+      elem.msRequestFullscreen();
+    }
+    setIsFullScreen(true);
+    setShowGoBackButton(false); // Hide the "Go Back to Test" button when entering full screen
+  };
+
+  const exitFullScreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+    setIsFullScreen(false);
+    setShowGoBackButton(true); // Show the "Go Back to Test" button when exiting full screen
+  };
+
   useEffect(() => {
-    if (testStarted) {
-      const interval = setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer <= 0) {
+    const onFullScreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullScreen(false);
+        setShowGoBackButton(true); // Show the "Go Back to Test" button when user exits full screen
+      } else {
+        setIsFullScreen(true);
+        setShowGoBackButton(false); // Hide the button when full screen is active
+      }
+    };
+
+    document.addEventListener('fullscreenchange', onFullScreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullScreenChange);
+    };
+  }, []);
+
+  const handleGoBackToTest = () => {
+    enterFullScreen();
+    setShowGoBackButton(false); // Hide the button when user goes back to full screen
+  };
+
+  useEffect(() => {
+    // Handle online/offline events
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => {
+      setIsOnline(false);
+      handleTestInterruption(); // Handle the case when the user loses connection
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
+    let interval;
+    if (testStarted && remainingTime > 0) {
+      interval = setInterval(() => {
+        setRemainingTime((prevTime) => {
+          if (prevTime <= 1) {
             clearInterval(interval);
-            handleTimesUp();
-            return 0;
+            return 0; // Ensure the timer doesn't go below 0
           }
-          return prevTimer - 1;
+          return prevTime - 1; // Decrease by 1 second
         });
       }, 1000);
-      return () => clearInterval(interval);
     }
-  }, [testStarted]);
+    return () => clearInterval(interval); // Cleanup on unmount or test stop
+  }, [testStarted, remainingTime]);
+
+  const handleTestInterruption = () => {
+      console.log("Test interrupted");
+      setTestStarted(false);
+      setCurrentPage('interrupted'); // Show a page or message indicating test interruption
+      // Optionally save the current state or handle submission logic here
+  };
 
   const startTest = () => {
     setCurrentPage('test');
     setTestStarted(true);
+    enterFullScreen();
   };
 
   const handleNextQuestion = () => {
@@ -198,12 +288,6 @@ const ApplicantTakeTest = () => {
     }
   };
 
-  // const handleOptionChange = (event) => {
-  //   setSelectedOptions({
-  //     ...selectedOptions,
-  //     [currentQuestionIndex]: event.target.value,
-  //   });
-  // };
 
   const handleOptionChange = (event) => {
     const selectedOption = event.target.value;
@@ -238,6 +322,9 @@ const ApplicantTakeTest = () => {
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
     const jwtToken = localStorage.getItem('jwtToken');
+
+    if (isOnline) {
+
     if(testName === 'General Aptitude Test' || testName === 'Technical Test'){
        // Submit the test result to the API
     fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
@@ -286,12 +373,18 @@ const ApplicantTakeTest = () => {
       console.error('Error saving the skill badge:', error);
     });
     }
-    
+  }
+  else {
+    // Notify the user about the loss of connection
+    setValidationMessage('No internet connection. Please check your connection and try again.');
+  }
   
     // Show the acknowledgment popup based on the test result
     if (testStatus === 'P') {
+      exitFullScreen();
       setCurrentPage('passAcknowledgment');
     } else {
+      exitFullScreen();
       setCurrentPage('failAcknowledgment');
     }
   };
@@ -525,7 +618,7 @@ const ApplicantTakeTest = () => {
       )}
 
       {currentPage === 'test' && (
-        <div className="test-page">
+        <div className={`test-page ${showGoBackButton ? 'blur-background' : ''}`}>
           <div className="header">
             <h3>
               <span className="text-name1">{testName}</span>
@@ -547,7 +640,8 @@ const ApplicantTakeTest = () => {
   </defs>
 </svg>&nbsp;&nbsp;
 <span>
-  {new Date(timer * 1000).toISOString().substr(14, 5)}
+  {/* {new Date(timer * 1000).toISOString().substr(14, 5)} */}
+  {formatTime(remainingTime)}
 </span>
 
               </div>
@@ -627,6 +721,30 @@ const ApplicantTakeTest = () => {
      {currentPage === 'timesup' && (
         <TestTimeUp onViewResults={handleViewResults} onCancel={handleViewResults} />
       )}
+
+     {showGoBackButton && (
+            <div className="go-back-button-overlay">
+             
+              <p><strong>You might not able to close the test as it disqualifies and makes you ineligible to give the test again until 7 days.</strong></p>
+              <br></br>
+              <button className="exit-popup-btn exit-popup-confirm-btn" onClick={handleGoBackToTest}>
+                Go Back to Test
+              </button>
+            </div>
+          )}
+
+{currentPage === 'interrupted' && (
+  <div className="go-back-button-overlay">
+    <p>Your test was interrupted. Please check your connection and try again.</p>
+    <br />
+    {/* This will only render the button when showGoBackButton is true */}
+    {showGoBackButton && (
+      <button className="exit-popup-btn exit-popup-confirm-btn" onClick={handleConfirmExit}>
+        Go Back to Test
+      </button>
+    )}
+  </div>
+)}
 
       {currentPage === 'exitConfirmed' && (
         <div className="exit-confirmation">
