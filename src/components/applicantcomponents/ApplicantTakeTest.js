@@ -180,7 +180,7 @@ const ApplicantTakeTest = () => {
     }else if(testName == 'Vue'){
       setQuestions(VueTest);
       setTimer(30* 60);
-      setRemainingTime(1 * 60);
+      setRemainingTime(30 * 60);
     }
   }, [testName]);
 
