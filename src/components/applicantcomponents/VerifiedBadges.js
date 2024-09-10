@@ -147,12 +147,16 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
         {status === 'FAILED' && (
           <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
             style={{
-              backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0',
+              backgroundColor: isRetakeAvailable ? '#374A70' : '#d3d3d3',
               color: isRetakeAvailable ? '#ffffff' : '#000000',
               cursor: isRetakeAvailable ? 'pointer' : 'default',
               padding: '20px',
-              borderRadius: '5px',
-              textAlign: 'center'
+              borderBottom: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,  
+              borderLeft: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,    
+              borderRight: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,  
+              textAlign: 'center',
+              border: `2px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,
+              alignItems: 'center',
             }}
           >
             {isRetakeAvailable ? (
