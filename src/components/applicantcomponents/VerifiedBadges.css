@@ -116,6 +116,7 @@ line-height: 26px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px; /* Adjust the gap between cards */
+  margin-bottom: 50px;
 }
 .skillBadgeHeading{
   padding-left: 20px;
@@ -171,10 +172,17 @@ line-height: 26px;
   margin-bottom: 12px;
     
   }
-  
+  /* Align single card in the last row with the starting position of the above cards
+  .skill-badge-container .skill-badge-card:nth-last-child(1):nth-child(odd) {
+    margin-left: 0; 
+  } 
+  */
  
   
 }
+
+  
+  
 
 .badge {
   background: #FFFFFF;
@@ -206,16 +214,22 @@ line-height: 26px;
 }
 
 .status-passed {
-  background-color: #0A8D08; /* Green for passed */
-  color: white;
+  background-color: #E4FFE4; /* Green for passed */
+  color: #0A8D08;
   border-radius: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 4px 6px;
   
 }
 
 .status-failed {
-  background-color: red; /* Red for failed */
-  color: white;
+  background-color: #FEE9E9; /* Red for failed */
+  color:red;
   border-radius: 10px;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 4px 6px;
   
 }
 
@@ -250,6 +264,7 @@ background-color: transparent;
 .test {
 text-align: left;
 margin-top: 20px;
+
 }
 
 .test-action {
