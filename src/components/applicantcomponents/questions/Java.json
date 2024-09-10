@@ -97,9 +97,9 @@
         "question": "What will be the output of the following code?\n\npublic class Test {\n    public static void main(String[] args) {\n        String str = \"Java\";\n        str.concat(\" is fun\");\n        System.out.println(str);\n    }\n}",
         "options": [
           "Java is fun",
-          "Java is fun",
+          "Java fun",
           "Java",
-          "Java is fun"
+          "Fun is Java"
         ],
         "answer": "Java"
       },
@@ -286,7 +286,7 @@
           "hello",
           "world",
           "hello world",
-          "world"
+          "hello rld"
         ],
         "answer": "world"
       },
