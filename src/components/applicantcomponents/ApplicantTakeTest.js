@@ -72,6 +72,7 @@ const ApplicantTakeTest = () => {
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
+      setRemainingTime(30 * 60);
     }else if(testName === 'Spring Boot'){
       setQuestions(SpringBootTset);
       setTimer(30 * 60);
@@ -179,7 +180,7 @@ const ApplicantTakeTest = () => {
     }else if(testName == 'Vue'){
       setQuestions(VueTest);
       setTimer(30* 60);
-      setRemainingTime(30 * 60);
+      setRemainingTime(1 * 60);
     }
   }, [testName]);
 
