@@ -14,7 +14,13 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
      specialization: applicantDetails&&applicantDetails.specialization || '',
     experience: applicantDetails&&applicantDetails.experience || '',
     preferredJobLocations: applicantDetails&&applicantDetails.preferredJobLocations || [],
-    skillsRequired:applicantDetails&&applicantDetails.skillsRequired|| [],
+    skillsRequired: [
+      ...(applicantDetails.skillsRequired || []),
+      ...(applicantDetails.applicant.applicantSkillBadges || []).map(badge => ({
+        skillName: badge.skillBadge.name,
+        experience: 0 // Assuming applicantSkillBadges doesn't have experience data
+      }))
+    ],
    
   });
   const [errors, setErrors] = useState({});
@@ -28,7 +34,13 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
         specialization: applicantDetails.specialization || '',
         experience: applicantDetails.experience || '',
         preferredJobLocations: applicantDetails.preferredJobLocations || [],
-        skillsRequired: applicantDetails.skillsRequired || [],
+        skillsRequired: [
+          ...(applicantDetails.skillsRequired || []),
+          ...(applicantDetails.applicant.applicantSkillBadges || []).map(badge => ({
+            skillName: badge.skillBadge.name,
+            experience: 0 // Assuming applicantSkillBadges doesn't have experience data
+          }))
+        ],
       });
     }
   }, [applicantDetails]);
@@ -175,7 +187,11 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
                 selected.map((option) => ({ id: option.valueOf, skillName: option.label, experience: 0 }))
               )
             }
-            selected={formValues.skillsRequired.map((skill) => ({ label: skill.skillName, value: skill.skillName }))}
+           // Display combined list of skillsRequired and applicantSkillBadges
+              selected={formValues.skillsRequired.map((skill) => ({
+                label: skill.skillName,
+                value: skill.skillName
+              }))}
             className="custom-typeahead2"
           />
           {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
