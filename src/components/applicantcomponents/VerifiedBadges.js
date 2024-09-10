@@ -469,7 +469,7 @@ const VerifiedBadges = () => {
 
 
   const spanStyle = {
-    fontSize: '17px',
+   fontSize: 'clamp(12px, 2vw, 17px)',
     color: '#FFFFFF',
     justifyContent: 'center',
   alignItems: 'center',
@@ -563,7 +563,7 @@ const VerifiedBadges = () => {
       maxWidth: '900px', // Maximum width for the card
       boxShadow: '0 1px 2px rgba(0,0,0,0.1)', // Light shadow for depth
       marginLeft: isBelow767px ? '6px' : '0', // Add margin-left below 767px
-      marginBottom:'20px'    },
+      marginBottom:'10px'    },
     textContainer: {
       display: 'flex',
       flexDirection: 'column',
@@ -680,16 +680,13 @@ const VerifiedBadges = () => {
                     </div>
                      )}
                   </div>
+                     {/* */}
 
 
                   </div> 
                 </div>
-              </div>
-            </div>
-          </section>
-        </div>
-        <div className="verified-badges-container1"style={{
-        marginLeft: screenWidth < 767 ? '10px' : '0px',
+                <div className="verified-badges-container1"style={{
+       marginTop:'20px'
       }} >
           <div className="pre-screened-badge">
             {/* Conditional Rendering of Banners */}
@@ -719,8 +716,8 @@ const VerifiedBadges = () => {
       
       {currentStep === 1 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
-          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px' }}>Retake test after</p>
-          <div style={{ color: '#F3780D' }}>
+          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',lineHeight:'15px' }}>Retake test after</p>
+          <div style={{ color: '#F3780D',marginTop:'10px' }}>
   {timer.days > 0 && (
     <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>
   )}
@@ -845,6 +842,12 @@ const VerifiedBadges = () => {
             )}
           </div>
         </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        {/*out side of stepper*/}
+
       </div>
       <div className="row mr-0 ml-10">
   <h3 className='skillBadgeHeading'>Skill Badges</h3>
