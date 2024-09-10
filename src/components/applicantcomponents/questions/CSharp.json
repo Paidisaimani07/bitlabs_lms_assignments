@@ -61,26 +61,27 @@
       },
       {
         "id": 6,
-        "question": "Which of the following is true about the `Span<T>` type in C#?",
+        "question": "Which of the following is true about the Span&lt;T&gt;It type in C#?",
         "options": [
-          "It represents a contiguous region of arbitrary memory.",
-          "It is limited to only managing arrays of value types.",
-          "It can be used to manage memory across the managed heap and unmanaged heap.",
-          "It must always be allocated on the heap."
+            "&lt;span&gt;It represents a contiguous region of arbitrary memory.&lt;/span&gt;",
+            "&lt;span&gt;It is limited to only managing arrays of value types.&lt;/span&gt;",
+            "&lt;span&gt;It can be used to manage memory across the managed heap and unmanaged heap.&lt;/span&gt;",
+            "&lt;span&gt;It must always be allocated on the heap.&lt;/span&gt;"
         ],
-        "answer": "It represents a contiguous region of arbitrary memory."
-      },
-      {
+        "answer": "&lt;span&gt;It represents a contiguous region of arbitrary memory.&lt;/span&gt;"
+    },
+    
+    {
         "id": 7,
-        "question": "How does the `Memory<T>` type differ from `Span<T>` in C#?",
+        "question": "How does the Memory&lt;T&gt;It type differ from Span&lt;T&gt;It in C#?",
         "options": [
-          "Memory<T> can be used with asynchronous methods, whereas Span<T> cannot.",
-          "Memory<T> is immutable while Span<T> is mutable.",
-          "Memory<T> only supports reference types, while Span<T> supports value types.",
-          "Memory<T> is a value type while Span<T> is a reference type."
+            "&lt;span&gt;Memory&lt;T&gt;It can be used with asynchronous methods, whereas Span&lt;T&gt;It cannot.&lt;/span&gt;",
+            "&lt;span&gt;Memory&lt;T&gt;It is immutable while Span&lt;T&gt;It is mutable.&lt;/span&gt;",
+            "&lt;span&gt;Memory&lt;T&gt;It only supports reference types, while Span&lt;T&gt;It supports value types.&lt;/span&gt;",
+            "&lt;span&gt;Memory&lt;T&gt;It is a value type while Span&lt;T&gt;It is a reference type.&lt;/span&gt;"
         ],
-        "answer": "Memory<T> can be used with asynchronous methods, whereas Span<T> cannot."
-      },
+        "answer": "&lt;span&gt;Memory&lt;T;It can be used with asynchronous methods, whereas Span&lt;T&gt;It cannot.&lt;/span&gt;"
+    },
       {
         "id": 8,
         "question": "What is the primary advantage of using `Unsafe` code in C#?",
@@ -176,7 +177,7 @@
           "It marks a method as asynchronous and allows the use of `await` within the method.",
           "It automatically makes all I/O-bound operations in the method asynchronous.",
           "It ensures that the method runs on a separate thread.",
-          "It forces a method to return a `Task` or `Task<T>`."
+          "It forces a method to return a `Task` or `Task&lt;T&gt;It`."
         ],
         "answer": "It marks a method as asynchronous and allows the use of `await` within the method."
       },
