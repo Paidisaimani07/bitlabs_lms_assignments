@@ -1,6 +1,6 @@
 {
     "testName": "Python Programming MCQ Test",
-    "duration": "1 hr",
+    "duration": "30 min",
     "numberOfQuestions": 30,
     "topicsCovered": ["Python Programming"],
     "questions": [

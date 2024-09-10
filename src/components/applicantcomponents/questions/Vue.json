@@ -1,6 +1,6 @@
 {
     "testName": "Vue.js MCQ Test",
-    "duration": "1 hr",
+    "duration": "30 min",
     "numberOfQuestions": 30,
     "topicsCovered": ["Vue.js"],
     "questions": [

@@ -70,85 +70,85 @@ const ApplicantTakeTest = () => {
       setTimer(30 * 60); // 30 minutes for Technical Test
     }else if(testName === 'Spring Boot'){
       setQuestions(SpringBootTset);
-      setTimer(60* 60);
+      setTimer(30 * 60);
     }else if(testName === 'React'){
       setQuestions(ReactTest);
-      setTimer(60* 60);
+      setTimer(30 * 60);
     }else if(testName === 'SQL'){
       setQuestions(SQLTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'MySQL'){
       setQuestions(SQLTest);
-      setTimer(60* 60);
+      setTimer(30 * 60);
     }else if(testName === 'SQL-Server'){
       setQuestions(SQLTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'Python'){
       setQuestions(PaythonTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'HTML'){
       setQuestions(HTMLTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'JavaScript'){
       setQuestions(JavaScriptTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'Java'){
       setQuestions(JavaTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'C++'){
       setQuestions(CppTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'Django'){
       setQuestions(DjangoTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'Hibernate'){
       setQuestions(HibernateTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'Selenium'){
       setQuestions(SeleniumTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'C Sharp'){
       setQuestions(CSharpTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName === 'C'){
       setQuestions(CTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == '.Net'){
       setQuestions(DotNetTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Regression Testing'){
       setQuestions(RegressionTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Spring'){
       setQuestions(SpringTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Mongo DB'){
       setQuestions(MonogoTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Flask'){
       setQuestions(FlaskTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Servlets'){
       setQuestions(ServletsTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'JSP'){
       setQuestions(JspTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'TypeScript'){
       setQuestions(TSTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'CSS'){
       setQuestions(CSSTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Angular'){
       setQuestions(AngularTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Manual Testing'){
       setQuestions(ManualTestingTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }else if(testName == 'Vue'){
       setQuestions(VueTest);
-      setTimer(60* 60);
+      setTimer(30* 60);
     }
   }, [testName]);
 
