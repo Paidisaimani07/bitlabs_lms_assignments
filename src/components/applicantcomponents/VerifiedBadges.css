@@ -117,9 +117,10 @@ line-height: 26px;
   flex-wrap: wrap;
   gap: 8px; /* Adjust the gap between cards */
   margin-bottom: 50px;
+  margin-left: 15px;
 }
 .skillBadgeHeading{
-  padding-left: 20px;
+  padding-left: 35px;
   margin-bottom: 20px;
  
 }
