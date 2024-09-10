@@ -1,6 +1,6 @@
 {
     "testName": "Django Test",
-    "duration": "1 hr",
+    "duration": "30 min",
     "numberOfQuestions": 30,
     "topicsCovered": ["Django"],
     "questions": [
