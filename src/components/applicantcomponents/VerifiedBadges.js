@@ -294,13 +294,20 @@ const VerifiedBadges = () => {
     if (testData) {
       const aptitudeTest = testData.find(test => test.testName.toLowerCase().includes('aptitude'));
       const technicalTest = testData.find(test => test.testName.toLowerCase().includes('technical'));
-
+  
       if (aptitudeTest) {
-        if (aptitudeTest.testStatus.toLowerCase() === 'f') {
+        // Prioritize checking if both tests are passed
+        if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest && technicalTest.testStatus.toLowerCase() === 'p') {
+          setCurrentStep(3); // Candidate passed both tests
+          setHideSteps(true); // Hide steps if candidate passed both
+          setTimer(null); // Clear any existing timer
+          setIsDisabled(false); // Ensure button is enabled if both tests are passed
+  
+        } else if (aptitudeTest.testStatus.toLowerCase() === 'f') {
           setCurrentStep(1); // Candidate failed the aptitude test
           setHideSteps(false); // Ensure steps are not hidden
-
-          // Timer Logic for failed test
+  
+          // Timer logic for failed aptitude test
           const testDateTime = new Date(
             aptitudeTest.testDateTime[0], // Year
             aptitudeTest.testDateTime[1] - 1, // Month (0-based index)
@@ -310,12 +317,14 @@ const VerifiedBadges = () => {
             aptitudeTest.testDateTime[5] // Seconds
           );
           const retakeDate = new Date(testDateTime);
-          retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
-
+          retakeDate.setDate(retakeDate.getDate() + 7); // Set retake date to 7 days later
+          retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
+          retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
+  
           const calculateTimeLeft = () => {
             const now = new Date();
             const difference = retakeDate - now;
-
+  
             if (difference > 0) {
               const timeLeft = {
                 days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -330,19 +339,20 @@ const VerifiedBadges = () => {
               setIsDisabled(false); // Enable the button when timer ends
             }
           };
-
+  
           // Initial call and set interval for countdown
           calculateTimeLeft();
           const timerInterval = setInterval(calculateTimeLeft, 1000);
-
+  
           // Cleanup interval on component unmount
           return () => clearInterval(timerInterval);
-
-        } else if(aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest) {
-          setCurrentStep(2); // Candidate failed the aptitude test
+  
+        } else if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest) {
+          // Check for technical test
+          setCurrentStep(2); // Candidate passed aptitude test but failed/didn't take technical test
           setHideSteps(false); // Ensure steps are not hidden
-
-          // Timer Logic for failed test
+  
+          // Timer logic for failed technical test
           const testDateTime = new Date(
             technicalTest.testDateTime[0], // Year
             technicalTest.testDateTime[1] - 1, // Month (0-based index)
@@ -353,11 +363,13 @@ const VerifiedBadges = () => {
           );
           const retakeDate = new Date(testDateTime);
           retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
-
+          retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
+          retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
+  
           const calculateTimeLeft = () => {
             const now = new Date();
             const difference = retakeDate - now;
-
+  
             if (difference > 0) {
               const timeLeft = {
                 days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -372,36 +384,24 @@ const VerifiedBadges = () => {
               setIsDisabled(false); // Enable the button when timer ends
             }
           };
-
+  
           // Initial call and set interval for countdown
           calculateTimeLeft();
           const timerInterval = setInterval(calculateTimeLeft, 1000);
-
+  
           // Cleanup interval on component unmount
           return () => clearInterval(timerInterval);
-
-        }
-        else if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest && technicalTest.testStatus.toLowerCase() === 'p') {
-          setCurrentStep(3); // Candidate passed both tests
-          setHideSteps(true); // Hide steps if candidate passed both
-          setTimer(null); // Clear any existing timer
-          setIsDisabled(false); // Ensure button is enabled if both tests are passed
-
-        } else if (aptitudeTest.testStatus.toLowerCase() === 'p') {
-          setCurrentStep(2); // Candidate passed the aptitude test but not the technical test
-          setHideSteps(false); // Ensure steps are not hidden
-          setTimer(null); // Clear any existing timer
-          setIsDisabled(false); // Enable the button if only aptitude is passed
-
+  
         } else {
-          setCurrentStep(1); // Default to step 1 if no test data
+          setCurrentStep(1); // Default to step 1 if no other condition is met
           setHideSteps(false); // Ensure steps are not hidden
           setTimer(null); // Clear any existing timer
-          setIsDisabled(false); // Ensure button is enabled if no specific status
+          setIsDisabled(false); // Enable the button
         }
       }
     }
   }, [testData]);
+  
 
   useEffect(() => {
     const handleResize = () => {
@@ -569,7 +569,7 @@ const VerifiedBadges = () => {
       maxWidth: '900px', // Maximum width for the card
       boxShadow: '0 1px 2px rgba(0,0,0,0.1)', // Light shadow for depth
       marginLeft: isBelow767px ? '6px' : '0', // Add margin-left below 767px
-    },
+      marginBottom:'20px'    },
     textContainer: {
       display: 'flex',
       flexDirection: 'column',
@@ -694,7 +694,9 @@ const VerifiedBadges = () => {
             </div>
           </section>
         </div>
-        <div className="verified-badges-container1" >
+        <div className="verified-badges-container1"style={{
+        marginLeft: screenWidth < 767 ? '10px' : '0px',
+      }} >
           <div className="pre-screened-badge">
             {/* Conditional Rendering of Banners */}
             {currentStep === 1 && (
@@ -725,10 +727,21 @@ const VerifiedBadges = () => {
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px' }}>Retake test after</p>
           <div style={{ color: '#F3780D' }}>
-            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>d{' '}
-            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>hrs{' '}
-            <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>mins
-          </div>
+  {timer.days > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>
+  )}
+  {timer.days > 0 && 'd '}
+  
+  {timer.hours > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>
+  )}
+  {timer.hours > 0 && 'h '}
+  
+  {timer.minutes > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>
+  )}
+  {timer.minutes > 0 && 'm'}
+</div>
         </div>
       )}
     </div>
@@ -773,9 +786,20 @@ const VerifiedBadges = () => {
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
           <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
           <div style={{ color: '#F3780D' }}>
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.days}</span>d{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.hours}</span>hrs{' '}
-  <span style={{ fontWeight: '700',fontSize:'20px' }}>{timer.minutes}</span>mins
+  {timer.days > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>
+  )}
+  {timer.days > 0 && 'd '}
+  
+  {timer.hours > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>
+  )}
+  {timer.hours > 0 && 'h '}
+  
+  {timer.minutes > 0 && (
+    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>
+  )}
+  {timer.minutes > 0 && 'm'}
 </div>
         </div>
       )}
