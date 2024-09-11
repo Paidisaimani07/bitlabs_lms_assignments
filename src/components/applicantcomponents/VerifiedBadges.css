@@ -120,9 +120,9 @@ line-height: 26px;
   margin-left: 15px;
 }
 .skillBadgeHeading{
-  padding-left: 35px;
-  margin-bottom: 20px;
  
+  margin-bottom: 20px;
+  margin-left: 20px;
 }
 .skill-badge-card {
   background: #FFFFFF;
@@ -137,50 +137,57 @@ line-height: 26px;
 /* Media query for mobile screens */
 @media (max-width: 750px) {
   .skill-badge-container {
-    justify-content: center; /* Center items horizontally */
-    gap: 8px; /* Adjust the gap between cards */
-    margin-left: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px; /* Even smaller gap for narrow screens */
+    justify-content: flex-start; /* Align items to the left */
+    padding-left: 22px; /* Add padding for space on the left */
   }
   .skillBadgeHeading{
     padding-left: 45px;
-    
+  }
+  /* Align the last card in the last row to the left when odd */
+  .skill-badge-container .skill-badge-card:nth-last-child(odd) {
+    margin-left: 0; 
    
   }
+
 }
 
 @media (max-width: 380px) {
   .skill-badge-container {
+    display: flex;
+    flex-wrap: wrap;
     gap: 1px; /* Even smaller gap for narrow screens */
-    justify-content: center; /* Center items horizontally */
-    margin-left: 12px;
+    justify-content: flex-start; /* Align items to the left */
+    padding-left: 22px; /* Add padding for space on the left */
   }
 
   .col-lg-10.col-md-12 {
     padding: 0px; /* Remove padding on very small screens */
   }
 
-  .skillBadgeHeading{
+  .skillBadgeHeading {
     padding-left: 25px;
   }
 
   .skill-badge-card {
     background: #FFFFFF;
-  border: 1px solid #ddd;
-  border-radius: 16px;
-  text-align: center;
-  width: 170px;
-  height: 220px;
-  margin-bottom: 12px;
-    
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    text-align: center;
+    width: 170px;
+    height: 220px;
+    margin-bottom: 12px;
   }
-  /* Align single card in the last row with the starting position of the above cards
-  .skill-badge-container .skill-badge-card:nth-last-child(1):nth-child(odd) {
+
+  /* Align the last card in the last row to the left when odd */
+  .skill-badge-container .skill-badge-card:nth-last-child(odd) {
     margin-left: 0; 
-  } 
-  */
- 
-  
+   
+  }
 }
+
 
   
   
