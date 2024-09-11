@@ -42,57 +42,62 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   const [timeLeft, setTimeLeft] = useState({});
   const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
   const navigate = useNavigate();
-
-  // Map skill names to images
-  const skillImages = {
-    'JAVA': javaPNG,
-    'HTML': htmlPNG,
-    'CSS': cssPNG,
-    'Python': paythonPNG,
-    'MySQL' : mysqlPNG,
-    'Angular' : angularPNG,
-    'React' : reactPNG,
-    'Manual Testing' : manualTestingPNG,
-    "SQL" : sqlPNG,
-    "JSP" : jspPNG,
-    "C++" : cPlusPlusPNG,
-    "Regression Testing" : regressionPNG,
-    "Hibernate" : hibernatePNG,
-    ".Net" : netPNG,
-    "Servlets" : servletsPNG,
-    "TypeScript" : typeScriptPNG,
-    "C Sharp" : cSharpPNG,
-    "C" : cPNG,
-    "Selenium" : seleniumPNG,
-    "JavaScript" : javaScriptPNG,
-    "Spring" : springPNG,
-    "Spring Boot" : springBootPNG,
-    "Vue" : vuePNG,
-    "Mongo DB" : mongodbPNG,
-    "SQL-Server" : sqlServerPNG,
-    "Django" : djangoPNG,
-    "Flask" : flaskPNG,
-  };
-
-  const skillImage = skillImages[skillName] || javaPNG;
+ 
+    // Map skill names to images
+    const skillImages = {
+      'JAVA': javaPNG,
+      'HTML': htmlPNG,
+      'CSS': cssPNG,
+      'Python': paythonPNG,
+      'MySQL' : mysqlPNG,
+      'Angular' : angularPNG,
+      'React' : reactPNG,
+      'Manual Testing' : manualTestingPNG,
+      "SQL" : sqlPNG,
+      "JSP" : jspPNG,
+      "C++" : cPlusPlusPNG,
+      "Regression Testing" : regressionPNG,
+      "Hibernate" : hibernatePNG,
+      ".Net" : netPNG,
+      "Servlets" : servletsPNG,
+      "TypeScript" : typeScriptPNG,
+      "C Sharp" : cSharpPNG,
+      "C" : cPNG,
+      "Selenium" : seleniumPNG,
+      "JavaScript" : javaScriptPNG,
+      "Spring" : springPNG,
+      "Spring Boot" : springBootPNG,
+      "Vue" : vuePNG,
+      "Mongo DB" : mongodbPNG,
+      "SQL-Server" : sqlServerPNG,
+      "Django" : djangoPNG,
+      "Flask" : flaskPNG,
+      // Add other skills here...
+    };
+  
+    // Get the image based on skill name, default to javaPNG if not found
+    const skillImage = skillImages[skillName] || javaPNG;
 
   useEffect(() => {
     if (status === 'FAILED') {
-      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Test failed date array
-      const failedDate = new Date(
-        testFailedAt[0], testFailedAt[1] - 1, testFailedAt[2],
-        testFailedAt[3], testFailedAt[4], testFailedAt[5]
-      );
+       // Convert `testFailedAt` to Date object, which is when the test failed
+       
+      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Exclude milliseconds
+      // Create a Date object by using the array elements
+  const failedDate = new Date(
+    testFailedAt[0], // year
+    testFailedAt[1] - 1, // month (JavaScript Date is 0-based for months)
+    testFailedAt[2], // day
+    testFailedAt[3], // hour
+    testFailedAt[4], // minute
+    testFailedAt[5] // second
+    
+  );
       
-      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000 + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
+      // Calculate the total 7 days (or 168 hours) from the failure time
+      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
-      // Check retake availability on initial load
-      const currentTime = new Date();
-      const initialDifference = futureTime - currentTime;
 
-      if (initialDifference <= 0) {
-        setIsRetakeAvailable(true);
-      }
 
       const calculateTimeLeft = () => {
         const currentTime = new Date();
@@ -102,18 +107,13 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
           const days = Math.floor(difference / (1000 * 60 * 60 * 24));
           const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
           const minutes = Math.floor((difference / 1000 / 60) % 60);
-
+      
           return { days, hours, minutes };
         } else {
           setIsRetakeAvailable(true);
           return null;
         }
       };
-
-      // Set initial time left if the test is not available
-      if (initialDifference > 0) {
-        setTimeLeft(calculateTimeLeft());
-      }
 
       const timer = setInterval(() => {
         const newTimeLeft = calculateTimeLeft();
@@ -127,53 +127,56 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   }, [status]);
 
   const handleTakeTest = (testName) => {
+
     navigate('/applicant-take-test', { state: { testName } });
   };
 
   return (
     <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
+      {/* Top Section: Status */}
       <div className="status">
         <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
           &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
         </span>
       </div>
 
+      {/* Second Section: Badge */}
       <div className="badge">
         <img src={skillImage} alt={skillName} className="skill-image" />
         <span className="skill-name">{skillName}</span>
       </div>
 
+      {/* Third Section: Actions */}
       <div className="test">
         {status === 'FAILED' && (
           <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
-            style={{
-              backgroundColor: isRetakeAvailable ? '#374A70' : '#d3d3d3',
-              color: isRetakeAvailable ? '#ffffff' : '#000000',
-              cursor: isRetakeAvailable ? 'pointer' : 'default',
-              padding: '20px',
-              borderBottom: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,  
-              borderLeft: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,    
-              borderRight: `8px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,  
-              textAlign: 'center',
-              border: `2px solid ${isRetakeAvailable ? '#374A70' : '#d3d3d3'}`,
-              alignItems: 'center',
-            }}
+          style={{
+            backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0', // Red background if retake is available, grey otherwise
+            color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
+            cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
+            padding: '20px', // Adjust padding as needed
+            borderRadius: '5px', // Rounded corners
+            textAlign: 'center' // Center text
+          }}
           >
             {isRetakeAvailable ? (
-              <>
+                <>
                 Retake Test
                 <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
               </>
             ) : (
               <>
-                <div>
-                  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
-                  <br />&nbsp;&nbsp;&nbsp;&nbsp;
-                  {timeLeft?.days > 0 && `${timeLeft.days}d `}
-                  {timeLeft?.hours > 0 && `${timeLeft.hours}h `}
-                  {timeLeft?.minutes !== undefined && `${timeLeft.minutes}m`}
-                </div>
-              </>
+              
+              <div>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
+              <br />&nbsp;&nbsp;&nbsp;&nbsp;
+                {timeLeft.days > 0 && `${timeLeft.days}D `}
+                {timeLeft.hours > 0 && `${timeLeft.hours}H `}
+                {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
+              </div>
+            </>
+            
+
             )}
           </div>
         )}
@@ -192,7 +195,6 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   );
 };
 
-
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
   const [currentStep, setCurrentStep] = useState(1); 
@@ -210,10 +212,11 @@ const VerifiedBadges = () => {
   const { user } = useUserContext();
   const userId = user.id;
   const [timer, setTimer] = useState(null);
-  const [isDisabled, setIsDisabled] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(!timer);
   const [isTimerComplete, setIsTimerComplete] = useState(false); // Track if the timer has completed
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -400,19 +403,32 @@ const VerifiedBadges = () => {
     }
   }, [testData]);
   
-
   useEffect(() => {
     const handleResize = () => {
+      setScreenSize(window.innerWidth);
       setIsSmallScreen(window.innerWidth < 767);
     };
 
+    // Initial check
+    handleResize();
+
+    // Add event listener
     window.addEventListener('resize', handleResize);
 
-    // Cleanup the event listener on component unmount
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+
+  const getWidthStyle = () => {
+    if (screenSize < 400) {
+      return 'clamp(30px, 25vw, 200px)'; // Small screens
+    } else if (screenSize < 767) {
+      return 'clamp(30px, 20vw, 250px)'; // Medium screens
+    } else {
+      return 'clamp(30px, 12vw, 300px)'; // Large screens
+    }
+  };
 
  
 
@@ -530,9 +546,12 @@ const VerifiedBadges = () => {
     marginRight: "-2px",
   };
 
+
+  const [screenSize, setScreenSize] = useState(window.innerWidth);
+
   const lineStyle = (stepId) => ({
     height: "3px",
-    width: isSmallScreen ? 'clamp(30px, 25vw, 300px)' : 'clamp(30px, 12vw, 300px)', // Adjust values for small screens
+    width: getWidthStyle(),
     backgroundColor: stepId < currentStep ? "green" : "#ccc",
     margin: "0 -5px", // Overlap the line with the circle
     position: "relative", // Ensure the line is positioned
@@ -552,6 +571,24 @@ const VerifiedBadges = () => {
 
   // const isMobile = screenWidth < 555;
   const isBelow767px = screenWidth < 767;
+
+  const [isImageVisible, setIsImageVisible] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsImageVisible(window.innerWidth >= 500);
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
 
 
   const styles = {
@@ -605,7 +642,9 @@ const VerifiedBadges = () => {
       height: 'auto',
       objectFit: 'contain',
       marginTop: '10px',
+      display: isImageVisible ? 'block' : 'none', // Conditionally hide image
     },
+   
   };
 
   const handleTakeTest = (testName) => {
@@ -690,7 +729,7 @@ const VerifiedBadges = () => {
                   </div> 
                 </div>
                 <div className="verified-badges-container1"style={{
-       marginTop:'20px'
+       marginTop:'10px'
       }} >
           <div className="pre-screened-badge">
             {/* Conditional Rendering of Banners */}
@@ -702,7 +741,7 @@ const VerifiedBadges = () => {
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">General Aptitude Test</h2>
-                          <div className="" style={{ fontSize: '18px',color:'#6F6F6F',lineHeight:'24px'}}>
+                          <div className="" style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'10px',marginBottom:'10px'}}>
                             A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
@@ -720,20 +759,20 @@ const VerifiedBadges = () => {
       
       {currentStep === 1 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
-          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',lineHeight:'15px' }}>Retake test after</p>
+          <p style={{ margin: 0, fontSize: 'clamp(11.5px, 2vw, 18px)', color: '#6D6D6D', marginBottom: '-5px',lineHeight:'15px' }}>Retake test after</p>
           <div style={{ color: '#F3780D',marginTop:'10px' }}>
   {timer.days > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.days}</span>
   )}
   {timer.days > 0 && 'd '}
   
   {timer.hours > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.hours}</span>
   )}
   {timer.hours > 0 && 'h '}
   
   {timer.minutes > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.minutes}</span>
   )}
   {timer.minutes > 0 && 'm'}
 </div>
@@ -762,7 +801,7 @@ const VerifiedBadges = () => {
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">Technical Test</h2>
-                          <div className=""style={{ fontSize: '18px',color:'#6F6F6F',lineHeight:'24px' }}>
+                          <div className=""style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'10px',marginBottom:'10px'}}>
                           A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
@@ -779,20 +818,24 @@ const VerifiedBadges = () => {
   </button>
       {currentStep === 2 && timer && (
         <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
-          <p style={{ margin: 0, fontSize: '15px', color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
+          <p style={{ margin: 0, fontSize: 'clamp(11.5px, 2vw, 18px)'
+, color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
           <div style={{ color: '#F3780D' }}>
   {timer.days > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.days}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
+    }}>{timer.days}</span>
   )}
   {timer.days > 0 && 'd '}
   
   {timer.hours > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.hours}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
+    }}>{timer.hours}</span>
   )}
   {timer.hours > 0 && 'h '}
   
   {timer.minutes > 0 && (
-    <span style={{ fontWeight: '700', fontSize: '20px' }}>{timer.minutes}</span>
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
+    }}>{timer.minutes}</span>
   )}
   {timer.minutes > 0 && 'm'}
 </div>
@@ -854,27 +897,26 @@ const VerifiedBadges = () => {
 
       </div>
       <div className="row mr-0 ml-10">
-  <h3 className='skillBadgeHeading'>Skill Badges</h3>
+  <h3 className='skillBadgeHeading'>Skills Badges</h3>
   
   <div className="col-lg-10 col-md-12">
     <div className="skill-badge-container">
-    {skillBadges.skillsRequired
-          .sort((a, b) => a.skillName.localeCompare(b.skillName)) // Sort skill names in ascending order
-          .map((skill) => (
-            <div className="skill-badge-card" key={skill.id}>
-              <SkillBadgeCard
-                key={skill.skillName}
-                skillName={skill.skillName}
-                status={skill.status}
-                retakeTest={() => handleRetakeTest()}
-                testFailedAt={skill.testTaken}
-              />
-            </div>
-          ))}
+      {skillBadges.skillsRequired.map((skill) => (
+       
+          <div className="skill-badge-card" key={skill.id}>
+            <SkillBadgeCard
+              key={skill.skillName}
+              skillName={skill.skillName}
+              status={skill.status}
+              retakeTest={() => handleRetakeTest()}
+              testFailedAt={skill.testTaken}
+            />
+          </div>
+        
+      ))}
 
-      {skillBadges.applicantSkillBadges
-        .sort((a, b) => a.skillBadge.name.localeCompare(b.skillBadge.name)) // Sort skill badges by name in ascending order
-        .map((badge) => (
+      {skillBadges.applicantSkillBadges.map((badge) => (
+        
           <div className="skill-badge-card" key={badge.id}>
             <SkillBadgeCard 
               skillName={badge.skillBadge.name} 
@@ -882,9 +924,8 @@ const VerifiedBadges = () => {
               testFailedAt={badge.testTaken}
             />
           </div>
-        ))}
-
-     
+        
+      ))}
     </div>
   </div>
 </div>
