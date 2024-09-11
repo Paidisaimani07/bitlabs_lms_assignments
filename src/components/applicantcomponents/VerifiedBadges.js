@@ -855,30 +855,32 @@ const VerifiedBadges = () => {
   
   <div className="col-lg-10 col-md-12">
     <div className="skill-badge-container">
-      {skillBadges.skillsRequired.map((skill) => (
-       
-          <div className="skill-badge-card" key={skill.id}>
-            <SkillBadgeCard
-              key={skill.skillName}
-              skillName={skill.skillName}
-              status={skill.status}
-              retakeTest={() => handleRetakeTest()}
-              testFailedAt={skill.testTaken}
+    {skillBadges.skillsRequired
+          .sort((a, b) => a.skillName.localeCompare(b.skillName)) // Sort skill names in ascending order
+          .map((skill) => (
+            <div className="skill-badge-card" key={skill.id}>
+              <SkillBadgeCard
+                key={skill.skillName}
+                skillName={skill.skillName}
+                status={skill.status}
+                retakeTest={() => handleRetakeTest()}
+                testFailedAt={skill.testTaken}
+              />
+            </div>
+          ))}
+
+      {skillBadges.applicantSkillBadges
+        .sort((a, b) => a.skillBadge.name.localeCompare(b.skillBadge.name)) // Sort skill badges by name in ascending order
+        .map((badge) => (
+          <div className="skill-badge-card" key={badge.id}>
+            <SkillBadgeCard 
+              skillName={badge.skillBadge.name} 
+              status={badge.status} 
+              testFailedAt={badge.testTaken}
             />
           </div>
-        
-      ))}
-      {skillBadges.applicantSkillBadges.map((badge) => (
-        
-        <div className="skill-badge-card" key={badge.id}>
-          <SkillBadgeCard 
-            skillName={badge.skillBadge.name} 
-            status={badge.status} 
-            testFailedAt={badge.testTaken}
-          />
-        </div>
-      
-    ))}
+        ))}
+
      
     </div>
   </div>
