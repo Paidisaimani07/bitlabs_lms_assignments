@@ -52,6 +52,7 @@ const ApplicantTakeTest = () => {
   const [score, setScore] = useState(0);
   const [questions, setQuestions] = useState({ questions: [], duration: 0, numberOfQuestions: 0, topicsCovered: [] });
   const [acknowledgmentVisible, setAcknowledgmentVisible] = useState(false);
+  const [isTestCompleted, setIsTestCompleted] = useState(false);
   const [showGoBackButton, setShowGoBackButton] = useState(false);
   const [shuffledQuestions, setShuffledQuestions] = useState([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -68,7 +69,8 @@ const ApplicantTakeTest = () => {
     console.log(testName);
     if (testName === 'General Aptitude Test') {
       setQuestions(aptitudeQuestions);
-      setTimer(60* 60); // 60 minutes for General Aptitude Test
+      setTimer(0.2* 60); // 60 minutes for General Aptitude Test
+      setRemainingTime(0.2 * 60);
     } else if (testName === 'Technical Test') {
       setQuestions(technicalQuestions);
       setTimer(30 * 60); // 30 minutes for Technical Test
@@ -229,13 +231,18 @@ const ApplicantTakeTest = () => {
     setShowGoBackButton(true); // Show the "Go Back to Test" button when exiting full screen
   };
 
+  const handleTestCompletion = () => {
+    setIsTestCompleted(true);
+    document.exitFullscreen();
+  };
+
   useEffect(() => {
     const onFullScreenChange = () => {
-      if (!document.fullscreenElement) {
-        setIsFullScreen(false);
+      if (!document.fullscreenElement && !isTestCompleted) {
+        //setIsFullScreen(false);
         setShowGoBackButton(true); // Show the "Go Back to Test" button when user exits full screen
       } else {
-        setIsFullScreen(true);
+        //setIsFullScreen(true);
         setShowGoBackButton(false); // Hide the button when full screen is active
       }
     };
@@ -276,6 +283,9 @@ const ApplicantTakeTest = () => {
         setRemainingTime((prevTime) => {
           if (prevTime <= 1) {
             clearInterval(interval);
+            handleTestCompletion();
+            setShowGoBackButton(false);
+            handleTimesUp();
             return 0; // Ensure the timer doesn't go below 0
           }
           return prevTime - 1; // Decrease by 1 second
@@ -406,13 +416,15 @@ const ApplicantTakeTest = () => {
     // Notify the user about the loss of connection
     setValidationMessage('No internet connection. Please check your connection and try again.');
   }
-  
+
+    handleTestCompletion();
+  setShowGoBackButton(false);
     // Show the acknowledgment popup based on the test result
     if (testStatus === 'P') {
-      exitFullScreen();
+     
       setCurrentPage('passAcknowledgment');
     } else {
-      exitFullScreen();
+      
       setCurrentPage('failAcknowledgment');
     }
   };
@@ -425,6 +437,8 @@ const ApplicantTakeTest = () => {
   const handleConfirmExit = () => {
     setShowExitPopup(false);
     if(testStarted && testName !== 'General Aptitude Test' && testName !== 'Technical Test'){
+      handleTestCompletion();
+    setShowGoBackButton(false);
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the skill badge information to the API
   fetch(`${apiUrl}/skill-badges/save`, {
@@ -448,6 +462,8 @@ const ApplicantTakeTest = () => {
     });
     }
     else if (testStarted) { // Ensure test has started
+      handleTestCompletion();
+    setShowGoBackButton(false);
       const calculatedScore = 0; // Calculate the test score
       const testStatus = calculatedScore >= 70 ? 'P' : 'F'; // Determine pass/fail status
       const jwtToken = localStorage.getItem('jwtToken');
@@ -475,7 +491,7 @@ const ApplicantTakeTest = () => {
           console.error('Error submitting test result:', error);
         });
     }
-
+    
     // Navigate to the next page after the API call
     navigate("/applicant-verified-badges");
   };
@@ -504,11 +520,6 @@ const ApplicantTakeTest = () => {
   };
 
   const handleViewResults = () => {
-    // if (!selectedOptions[currentQuestionIndex]) {
-    //   setValidationMessage('Please provide your answer to submit the test.');
-    //   return;
-    // }
-    // setValidationMessage('');
   
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
@@ -774,7 +785,7 @@ const ApplicantTakeTest = () => {
         <TestPassAcknowledgment onClose={handleClosePopup} score={score} testName={testName}  handleTakeTest={handleTakeTest} setTestStarted={setTestStarted}/>
       )}
       {currentPage === 'failAcknowledgment' && (
-        <TestFailAcknowledgment onClose={handleClosePopup} setTestStarted={setTestStarted} />
+        <TestFailAcknowledgment onClose={handleClosePopup} setTestStarted={setTestStarted} setShowGoBackButton={setShowGoBackButton} />
       )}
 
 
@@ -782,10 +793,10 @@ const ApplicantTakeTest = () => {
         <TestTimeUp onViewResults={handleViewResults} onCancel={handleViewResults} />
       )}
 
-     {showGoBackButton && (
+     {!isTestCompleted && showGoBackButton && (
             <div className="go-back-button-overlay">
              
-              <p><strong>You might not able to close the test as it disqualifies and makes you ineligible to give the test again until 7 days.</strong></p>
+              <p><strong>You won’t be able to continue the test and you’ll be ineligible to take this until 7 days. To avoid,</strong></p>
               <br></br>
               <button className="exit-popup-btn exit-popup-confirm-btn" onClick={handleGoBackToTest}>
                 Go Back to Test
@@ -795,14 +806,8 @@ const ApplicantTakeTest = () => {
 
 {currentPage === 'interrupted' && (
   <div className="go-back-button-overlay">
-    <p>Your test was interrupted. Please check your connection and try again.</p>
+    <p>Your test has been interrupted. Kindly try again later.</p>
     <br />
-    {/* This will only render the button when showGoBackButton is true */}
-    {showGoBackButton && (
-      <button className="exit-popup-btn exit-popup-confirm-btn" onClick={handleConfirmExit}>
-        Go Back to Test
-      </button>
-    )}
   </div>
 )}
 
