@@ -294,8 +294,7 @@ const ApplicantViewProfile = () => {
     <h3 style={{ color: 'white', fontWeight: 'bold', margin: 0 }}>
       {(profileData.basicDetails && profileData.basicDetails.firstName) || ''}{' '}
       {(profileData.basicDetails && profileData.basicDetails.lastName) || ''}
-    </h3>
-        {flag && (
+      {flag && (
       <img
         src={Profile_Certified}
         alt="Profile_Certified Badge"
@@ -308,6 +307,9 @@ const ApplicantViewProfile = () => {
         }}
       />
     )}
+      
+    </h3>
+        
 
   </div>
 
