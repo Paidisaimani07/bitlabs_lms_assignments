@@ -307,7 +307,7 @@ const VerifiedBadges = () => {
         } else if (aptitudeTest.testStatus.toLowerCase() === 'f') {
           setCurrentStep(1); // Candidate failed the aptitude test
           setHideSteps(false); // Ensure steps are not hidden
-  
+    
           // Timer logic for failed aptitude test
           const testDateTime = new Date(
             aptitudeTest.testDateTime[0], // Year
@@ -321,11 +321,11 @@ const VerifiedBadges = () => {
           retakeDate.setDate(retakeDate.getDate() + 7); // Set retake date to 7 days later
           retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
           retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
-  
+    
           const calculateTimeLeft = () => {
             const now = new Date();
             const difference = retakeDate - now;
-  
+    
             if (difference > 0) {
               const timeLeft = {
                 days: Math.floor(difference / (1000 * 60 * 60 * 24)),
@@ -340,64 +340,73 @@ const VerifiedBadges = () => {
               setIsDisabled(false); // Enable the button when timer ends
             }
           };
-  
+    
           // Initial call and set interval for countdown
           calculateTimeLeft();
           const timerInterval = setInterval(calculateTimeLeft, 1000);
-  
+    
           // Cleanup interval on component unmount
           return () => clearInterval(timerInterval);
-  
-        } else if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest) {
-          // Check for technical test
-          setCurrentStep(2); // Candidate passed aptitude test but failed/didn't take technical test
-          setHideSteps(false); // Ensure steps are not hidden
-  
-          // Timer logic for failed technical test
-          const testDateTime = new Date(
-            technicalTest.testDateTime[0], // Year
-            technicalTest.testDateTime[1] - 1, // Month (0-based index)
-            technicalTest.testDateTime[2], // Day
-            technicalTest.testDateTime[3], // Hours
-            technicalTest.testDateTime[4], // Minutes
-            technicalTest.testDateTime[5] // Seconds
-          );
-          const retakeDate = new Date(testDateTime);
-          retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
-          retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
-          retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
-  
-          const calculateTimeLeft = () => {
-            const now = new Date();
-            const difference = retakeDate - now;
-  
-            if (difference > 0) {
-              const timeLeft = {
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-              };
-              setTimer(timeLeft);
-              setIsTimerComplete(false); // Timer is still counting down
-            } else {
-              setTimer(null); // Timer has ended
-              setIsTimerComplete(true); // Timer completed
-              setIsDisabled(false); // Enable the button when timer ends
-            }
-          };
-  
-          // Initial call and set interval for countdown
-          calculateTimeLeft();
-          const timerInterval = setInterval(calculateTimeLeft, 1000);
-  
-          // Cleanup interval on component unmount
-          return () => clearInterval(timerInterval);
-  
-        } else {
-          setCurrentStep(1); // Default to step 1 if no other condition is met
-          setHideSteps(false); // Ensure steps are not hidden
-          setTimer(null); // Clear any existing timer
-          setIsDisabled(false); // Enable the button
+    
+        } else if (aptitudeTest.testStatus.toLowerCase() === 'p') {
+          // New condition: Passed aptitude test but no technical test taken yet
+          if (!technicalTest || !technicalTest.testStatus) {
+            setCurrentStep(2); // Move to technical test step if it's not taken yet
+            setHideSteps(false); // Ensure steps are not hidden
+            setTimer(null); // No timer is needed as the technical test hasn't been taken
+            setIsDisabled(false); // Enable the button for the technical test
+          } else if (technicalTest.testStatus.toLowerCase() === 'f') {
+            // Candidate failed the technical test
+            setCurrentStep(2); // Candidate passed aptitude but failed technical test
+            setHideSteps(false); // Ensure steps are not hidden
+    
+            // Timer logic for failed technical test
+            const testDateTime = new Date(
+              technicalTest.testDateTime[0], // Year
+              technicalTest.testDateTime[1] - 1, // Month (0-based index)
+              technicalTest.testDateTime[2], // Day
+              technicalTest.testDateTime[3], // Hours
+              technicalTest.testDateTime[4], // Minutes
+              technicalTest.testDateTime[5] // Seconds
+            );
+            const retakeDate = new Date(testDateTime);
+            retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
+            retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
+            retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
+    
+            const calculateTimeLeft = () => {
+              const now = new Date();
+              const difference = retakeDate - now;
+    
+              if (difference > 0) {
+                const timeLeft = {
+                  days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                  hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+                  minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+                };
+                setTimer(timeLeft);
+                setIsTimerComplete(false); // Timer is still counting down
+              } else {
+                setTimer(null); // Timer has ended
+                setIsTimerComplete(true); // Timer completed
+                setIsDisabled(false); // Enable the button when timer ends
+              }
+            };
+    
+            // Initial call and set interval for countdown
+            calculateTimeLeft();
+            const timerInterval = setInterval(calculateTimeLeft, 1000);
+    
+            // Cleanup interval on component unmount
+            return () => clearInterval(timerInterval);
+    
+          } else {
+            // Default to step 1 if no other condition is met
+            setCurrentStep(1);
+            setHideSteps(false);
+            setTimer(null);
+            setIsDisabled(false);
+          }
         }
       }
     }
