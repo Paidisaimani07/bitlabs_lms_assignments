@@ -1,6 +1,6 @@
 {
     "testName": "TypeScript MCQ Test",
-    "duration": "30 min",
+    "duration": "30 mins",
     "numberOfQuestions": 30,
     "topicsCovered": ["TypeScript"],
     "questions": [

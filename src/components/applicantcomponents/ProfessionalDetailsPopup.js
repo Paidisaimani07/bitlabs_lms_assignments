@@ -14,13 +14,16 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
      specialization: applicantDetails&&applicantDetails.specialization || '',
     experience: applicantDetails&&applicantDetails.experience || '',
     preferredJobLocations: applicantDetails&&applicantDetails.preferredJobLocations || [],
-    skillsRequired: [
+    skillsRequired : [
       ...(applicantDetails.skillsRequired || []),
-      ...(applicantDetails.applicant.applicantSkillBadges || []).map(badge => ({
-        skillName: badge.skillBadge.name,
-        experience: 0 // Assuming applicantSkillBadges doesn't have experience data
-      }))
+      ...(applicantDetails.applicant.applicantSkillBadges || [])
+        .filter(badge => badge.flag === 'added') // Filter out badges with flag 'removed'
+        .map(badge => ({
+          skillName: badge.skillBadge.name,
+          experience: 0 // Assuming applicantSkillBadges doesn't have experience data
+        }))
     ],
+    
    
   });
   const [errors, setErrors] = useState({});
@@ -34,12 +37,14 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
         specialization: applicantDetails.specialization || '',
         experience: applicantDetails.experience || '',
         preferredJobLocations: applicantDetails.preferredJobLocations || [],
-        skillsRequired: [
+        skillsRequired : [
           ...(applicantDetails.skillsRequired || []),
-          ...(applicantDetails.applicant.applicantSkillBadges || []).map(badge => ({
-            skillName: badge.skillBadge.name,
-            experience: 0 // Assuming applicantSkillBadges doesn't have experience data
-          }))
+          ...(applicantDetails.applicant.applicantSkillBadges || [])
+            .filter(badge => badge.flag === 'added') // Filter out badges with flag 'removed'
+            .map(badge => ({
+              skillName: badge.skillBadge.name,
+              experience: 0 // Assuming applicantSkillBadges doesn't have experience data
+            }))
         ],
       });
     }
