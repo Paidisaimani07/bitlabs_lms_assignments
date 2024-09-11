@@ -7951,9 +7951,8 @@ height: 40px!important;
 align-items: center!important;
 }
 
-
-
 .rbt-input-multi.form-control {
+  
 height: 50px !important;
 }
 
@@ -7962,6 +7961,17 @@ cursor: text;
  overflow: auto !important;
 position: relative;
 }
+
+/* Hide scroll arrows on WebKit browsers (like Chrome, Safari) */
+.rbt-input-multi::-webkit-scrollbar {
+  width: 8px; /* Adjust the scrollbar width */
+}
+
+.rbt-input-multi::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Scrollbar color */
+  border-radius: 10px; /* Rounded edges for the scrollbar */
+}
+
 .custom-typeahead1 {
 background-color: #f0f0f0; 
 border-radius: 8px; 
