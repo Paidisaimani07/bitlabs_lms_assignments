@@ -52,12 +52,12 @@
         "id": 5,
         "question": "Which of the following is the correct syntax for creating a thread in Java?",
         "options": [
-          "Thread t = new Thread();\n t.start();",
-          "Thread t = new Thread();\n t.run();",
-          "Thread t = new Thread(new Runnable());\n t.run();",
-          "Thread t = new Thread(new Runnable());\n t.start();"
+          "Thread t = new Thread();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t.start();",
+          "Thread t = new Thread();<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t.run();",
+          "Thread t = new Thread(new Runnable());<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t.run();",
+          "Thread t = new Thread(new Runnable());<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t.start();"
         ],
-        "answer": "Thread t = new Thread(new Runnable());\n t.start();"
+        "answer": "Thread t = new Thread(new Runnable());<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t.start();"
       },
       {
         "id": 6,

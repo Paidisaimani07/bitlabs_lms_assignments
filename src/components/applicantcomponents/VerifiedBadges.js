@@ -78,7 +78,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
 
   useEffect(() => {
     if (status === 'FAILED') {
-      // const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Test failed date array
+      const testFailedAt = [2024, 8, 20, 17, 32, 22];  // Test failed date array
       const failedDate = new Date(
         testFailedAt[0], testFailedAt[1] - 1, testFailedAt[2],
         testFailedAt[3], testFailedAt[4], testFailedAt[5]
