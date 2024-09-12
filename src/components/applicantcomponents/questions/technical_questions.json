@@ -79,7 +79,7 @@
     {
       "id": 13,
       "question": "What will be the output of the following code snippet? \n```\narr = [10, 20, 30, 40]\nresult = 0\nfor i in arr:\n    result += i * 2\nprint(result)\n```",
-      "options": ["100", "120", "140", "160"],
+      "options": ["100", "200", "140", "160"],
       "answer": "200"
     },
     {
