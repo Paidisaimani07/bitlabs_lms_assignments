@@ -43,13 +43,13 @@
       {
         "id": 4,
         "question": "How can you include external CSS files in an HTML document?",
-        "options": [
-          "<link rel='stylesheet' href='styles.css'>",
-          "<style src='styles.css'></style>",
-          "<import src='styles.css'>",
-          "<css src='styles.css'></css>"
+        "options": [ 
+          "&lt;link rel='stylesheet' href='styles.css'&gt;",
+          "&lt;style src='styles.css'&gt;&lt;/style&gt;",
+          "&lt;import src='styles.css'&gt;",
+          "&lt;css src='styles.css'&gt;&lt;/css&gt;"
         ],
-        "answer": "<link rel='stylesheet' href='styles.css'>",
+        "answer": "&lt;link rel='stylesheet' href='styles.css'gt;",
         "difficulty": "moderate"
       },
       {
