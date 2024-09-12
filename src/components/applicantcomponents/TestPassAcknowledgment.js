@@ -54,7 +54,7 @@ const TestPassAcknowledgment = ({ score, testName, handleTakeTest, setTestStarte
       return (
         <div className="acknowledgment-content">
           <img src={TestPass} className="acknowledgment-image" alt="Test Passed" />
-          <p className="acknowledgment-score">You Scored {score}%</p>
+          <p className="acknowledgment-score">You Scored {Math.round(score)}%</p>
           <p style={{ color: '#8C8C8C', fontSize: '24px', lineHeight: '30px' }}>
           Congratulations! You’re now verified for Technical test.
           </p>
@@ -72,7 +72,7 @@ const TestPassAcknowledgment = ({ score, testName, handleTakeTest, setTestStarte
       return (
         <div className="acknowledgment-content">
           <img src={TestPass} className="acknowledgment-image" alt="Test Passed" />
-          <p className="acknowledgment-score">You Scored {score}%</p>
+          <p className="acknowledgment-score">You Scored {Math.round(score)}%</p>
           <p style={{ color: '#8C8C8C', fontSize: '24px', lineHeight: '30px' }}>
           Congratulations! You’re now verified for {testName} test.
           </p>
