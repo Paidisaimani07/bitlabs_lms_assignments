@@ -95,7 +95,7 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
   );
       
       // Calculate the total 7 days (or 168 hours) from the failure time
-      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+      const futureTime = new Date(failedDate.getTime() + 7 * 24 * 60 * 60 * 1000 + (5 * 60 * 60 * 1000) + (30 * 60 * 1000));
 
 
 
@@ -170,9 +170,9 @@ const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt
               <div>
               <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
               <br />&nbsp;&nbsp;&nbsp;&nbsp;
-                {timeLeft.days > 0 && `${timeLeft.days}D `}
-                {timeLeft.hours > 0 && `${timeLeft.hours}H `}
-                {timeLeft.minutes !== undefined && `${timeLeft.minutes}M`}
+                {timeLeft.days > 0 && `${timeLeft.days}d `}
+                {timeLeft.hours > 0 && `${timeLeft.hours}h `}
+                {timeLeft.minutes !== undefined && `${timeLeft.minutes}m`}
               </div>
             </>
             
