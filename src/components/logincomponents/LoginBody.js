@@ -67,10 +67,17 @@ const login = useGoogleLogin({
       const email1 = res.data.email;
       const name1 = res.data.name;
       console.log('Second API');
-      let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-      const response1 = await axios.post(loginEndpoint, {
-        email: email1,
-      });
+      const loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
+
+        const response1 = await axios.post(loginEndpoint, {
+          email: email1,
+        }, {
+          headers: {
+            // Ensure no Authorization header is sent
+            'Authorization': '',
+          }
+        });
+
  
       console.log(response1);
       if (response1.status === 200) {
