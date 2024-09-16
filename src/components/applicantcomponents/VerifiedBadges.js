@@ -430,10 +430,10 @@ const VerifiedBadges = () => {
 
 
   const getWidthStyle = () => {
-    if (screenSize < 400) {
-      return 'clamp(30px, 25vw, 200px)'; // Small screens
+    if (screenSize < 430) {
+      return 'clamp(30px, 23vw, 200px)'; // Small screens
     } else if (screenSize < 767) {
-      return 'clamp(30px, 20vw, 250px)'; // Medium screens
+      return 'clamp(30px, 25vw, 250px)'; // Medium screens
     } else {
       return 'clamp(30px, 12vw, 300px)'; // Large screens
     }
@@ -624,7 +624,7 @@ const VerifiedBadges = () => {
       color: '#F67505', // Orange color
       fontSize: '16px',
       marginBottom: '10px',
-      marginTop: '10px',
+      marginTop: '-2px',
       fontWeight:'600',
       fontfamily: 'Plus Jakarta Sans',
       fontstyle:'normal'
@@ -637,11 +637,17 @@ const VerifiedBadges = () => {
       marginTop: isMobile ? '5px' : '0', // Add margin-top on mobile if needed
     },
     name: {
-      fontSize: '24px',
+      fontSize: 'clamp(17.2px, 4vw, 24px)',
       fontWeight: 'bold',
       color: '#333',
       marginRight: '8px',
-    },
+      marginLeft: '5px', // Adjust space between the last letter and the SVG
+      verticalAlign: 'middle', // Ensures the icon aligns vertically
+      },
+      lastLetterWrapper: {
+        display: 'inline-flex', // Keeps the SVG and last letter together
+        alignItems: 'center',   // Vertically aligns the last letter and the icon
+      },
     icon: {
       color: '#F46F16', // Orange color for the checkmark icon
       fontSize: '24px',
@@ -750,7 +756,7 @@ const VerifiedBadges = () => {
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">General Aptitude Test</h2>
-                          <div className="" style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'10px',marginBottom:'10px'}}>
+                          <div className="" style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'12px',marginBottom:'12px'}}>
                             A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
@@ -810,7 +816,7 @@ const VerifiedBadges = () => {
                       <div className="resumecard-text">
                         <div className="resumecard-heading">
                           <h2 className="heading1">Technical Test</h2>
-                          <div className=""style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'10px',marginBottom:'10px'}}>
+                          <div className=""style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'12px',marginBottom:'12px'}}>
                           A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
                           </div>
                         </div>
@@ -871,22 +877,30 @@ const VerifiedBadges = () => {
               <div style={styles.message}>Congratulations, You are now Verified</div>
               <div style={styles.nameContainer}>
               <span style={styles.name}>
-  {userData && userData.firstName ? userData.firstName : ''}
+  {userData && userData.firstName ? (
+    <>
+      {userData.firstName.slice(0, -1)}
+      <span style={styles.lastLetterWrapper}>
+        <span style={styles.lastLetter}>
+          {userData.firstName.slice(-1)}
+        </span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          viewBox="0 0 38 38"
+          fill="none"
+          style={styles.icon}
+        >
+          <path
+            d="M36.9317 16.6247L34.3469 13.6707C33.7931 13.1169 33.4238 12.0091 33.4238 11.2706V8.31668C33.4238 6.28583 31.7622 4.80885 29.916 4.80885H26.7774C26.0389 4.80885 24.9312 4.4396 24.3773 3.88574L21.4233 1.30102C20.131 0.193281 18.1001 0.193281 16.8078 1.30102L14.0384 3.88574C13.4846 4.4396 12.3768 4.80885 11.6383 4.80885H8.49974C6.46889 4.80885 4.9919 6.47046 4.9919 8.31668V11.4553C4.9919 12.1938 4.62266 13.3015 4.06879 13.8554L1.66869 16.8093C0.560956 18.1017 0.560956 20.1325 1.66869 21.4249L4.06879 24.3789C4.62266 24.9327 4.9919 26.0405 4.9919 26.779V29.9176C4.9919 31.9484 6.65351 33.4254 8.49974 33.4254H11.6383C12.3768 33.4254 13.4846 33.7946 14.0384 34.3485L16.9924 36.9332C18.2847 38.041 20.3156 38.041 21.608 36.9332L24.5619 34.3485C25.1158 33.7946 26.2235 33.4254 26.962 33.4254H30.1006C32.1315 33.4254 33.6084 31.7638 33.6084 29.9176V26.779C33.6084 26.0405 33.9777 24.9327 34.5316 24.3789L37.1163 21.4249C38.0394 20.1325 38.0394 17.9171 36.9317 16.6247ZM26.962 15.517L18.1001 24.3789C17.9155 24.5635 17.5463 24.7481 17.177 24.7481C16.8078 24.7481 16.4385 24.5635 16.2539 24.3789L11.8229 19.9479C11.2691 19.3941 11.2691 18.4709 11.8229 17.9171C12.3768 17.3632 13.2999 17.3632 13.8538 17.9171L17.3616 21.4249L24.9312 13.4861C25.485 12.9323 26.4082 12.9323 26.962 13.4861C27.5159 14.04 27.5159 14.9631 26.962 15.517Z"
+            fill="#F46F16"
+          />
+        </svg>
+      </span>
+    </>
+  ) : ''}
 </span>
-
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 38 38"
-                  fill="none"
-                  style={styles.icon}
-                >
-                  <path
-                    d="M36.9317 16.6247L34.3469 13.6707C33.7931 13.1169 33.4238 12.0091 33.4238 11.2706V8.31668C33.4238 6.28583 31.7622 4.80885 29.916 4.80885H26.7774C26.0389 4.80885 24.9312 4.4396 24.3773 3.88574L21.4233 1.30102C20.131 0.193281 18.1001 0.193281 16.8078 1.30102L14.0384 3.88574C13.4846 4.4396 12.3768 4.80885 11.6383 4.80885H8.49974C6.46889 4.80885 4.9919 6.47046 4.9919 8.31668V11.4553C4.9919 12.1938 4.62266 13.3015 4.06879 13.8554L1.66869 16.8093C0.560956 18.1017 0.560956 20.1325 1.66869 21.4249L4.06879 24.3789C4.62266 24.9327 4.9919 26.0405 4.9919 26.779V29.9176C4.9919 31.9484 6.65351 33.4254 8.49974 33.4254H11.6383C12.3768 33.4254 13.4846 33.7946 14.0384 34.3485L16.9924 36.9332C18.2847 38.041 20.3156 38.041 21.608 36.9332L24.5619 34.3485C25.1158 33.7946 26.2235 33.4254 26.962 33.4254H30.1006C32.1315 33.4254 33.6084 31.7638 33.6084 29.9176V26.779C33.6084 26.0405 33.9777 24.9327 34.5316 24.3789L37.1163 21.4249C38.0394 20.1325 38.0394 17.9171 36.9317 16.6247ZM26.962 15.517L18.1001 24.3789C17.9155 24.5635 17.5463 24.7481 17.177 24.7481C16.8078 24.7481 16.4385 24.5635 16.2539 24.3789L11.8229 19.9479C11.2691 19.3941 11.2691 18.4709 11.8229 17.9171C12.3768 17.3632 13.2999 17.3632 13.8538 17.9171L17.3616 21.4249L24.9312 13.4861C25.485 12.9323 26.4082 12.9323 26.962 13.4861C27.5159 14.04 27.5159 14.9631 26.962 15.517Z"
-                    fill="#F46F16"
-                  />
-                </svg>
               </div>
             </div>
             <img
