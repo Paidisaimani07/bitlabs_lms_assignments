@@ -3625,13 +3625,14 @@ white-space: nowrap;
 .userName-title{
 color: #333;
 font-family: "Plus Jakarta Sans";
-font-size: 30px;
+font-size: 25px;
 font-style: normal;
-font-weight: 600;
+font-weight: 700;
 line-height: 25px; 
 text-transform: capitalize;
 margin-left: 15px;
 display: block;
+margin-top: 10px;
 }
 
 
@@ -3644,7 +3645,7 @@ display: block;
 
 @media (max-width: 1020px) {
   .userName-title {
-    display: none;
+    /* display: none; */
   }
 }
 

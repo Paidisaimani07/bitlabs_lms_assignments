@@ -20,6 +20,8 @@ import PrivacyPolicy from './components/common/PrivacyPolicy';
 import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
+import JobWidget from './components/jobWidget';
+
 
 
 function App() {
@@ -67,6 +69,7 @@ function App() {
               <Route path="/privacypolicy" element={<PrivacyPolicy />} />
               <Route path="/cookiepolicy" element={<CookiePolicy />} />
               <Route path="/termsofservices" element={<TermsOfServices />} />
+  <Route path="/widget" element={<JobWidget />} />
               {isLoggedIn ? (
                 <>
                 <Route path="/applicanthome" element={<ApplicantHomePage />} />
@@ -82,7 +85,10 @@ function App() {
                 <Route path="/applicant-change-password" element={<ApplicantHomePage />} />
                 <Route path="/applicant-delete-profile" element={<ApplicantHomePage />} />
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
+                <Route path="/applicant-take-test" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
+                <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
                 <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                 <Route path="/recruiterhome" element={<RecruiterHomePage />} />
@@ -102,6 +108,8 @@ function App() {
                 <Route path="/view-resume/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-job" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
+
+              
                 </>
               ) : (
                 <Route path="/login" element={<Navigate to="/login" />} />

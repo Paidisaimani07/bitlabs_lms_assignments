@@ -52,7 +52,6 @@ useEffect(() => {
 
  
 const login = useGoogleLogin({
-
   onSuccess: async (response) => {
     try {
       console.log('First API');
@@ -66,50 +65,68 @@ const login = useGoogleLogin({
       );
       console.log(res);
       const email1 = res.data.email;
-      const name1= res.data.name;
+      const name1 = res.data.name;
       console.log('Second API');
-      let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-      const response1 = await axios.post(loginEndpoint, {
-        email: email1,
-        // utmSource : utmSource,
-      });
-     
+      const loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
+
+        const response1 = await axios.post(loginEndpoint, {
+          email: email1,
+        }, {
+          headers: {
+            // Ensure no Authorization header is sent
+            'Authorization': '',
+          }
+        });
+
+ 
       console.log(response1);
       if (response1.status === 200) {
         setErrorMessage('');
-        const userData = response1.data; 
+        const userData = response1.data;
         console.log('This is response: ', userData);
         console.log('This is token: ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
-
-        if(userData.utmSource === 'first time'){
-         const email = email1;
-         const name = name1;
-         const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
-         const webhookData = {
-          email,
-          name,
-          utmSource,
-          utmMedium,
-          utmCampaign,
-          utmContent,
-          utmTerm,
-         };
  
-         try {
-           const webhookResponse = await fetch(webhookUrl, {
-             method: 'POST',
-             headers: {
-               'Content-Type': 'application/json',
-             },
-             body: JSON.stringify(webhookData),
-           });
-        console.log('web hook excuted');
-        
-         }catch (error) {
-           console.error('Error sending first webhook:', error);
-           // Handle network errors or other exceptions
-         }
+        // Log the user's activity
+        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
+        const activityPayload = {
+          userId: userData.id,
+          actionType: "Login",
+        };
+ 
+        await axios.post(activityLogEndpoint, activityPayload, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+          },
+        });
+        console.log('Activity log submitted successfully.');
+ 
+        if (userData.utmSource === 'first time') {
+          const email = email1;
+          const name = name1;
+          const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+          const webhookData = {
+            email,
+            name,
+            utmSource,
+            utmMedium,
+            utmCampaign,
+            utmContent,
+            utmTerm,
+          };
+ 
+          try {
+            const webhookResponse = await fetch(webhookUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(webhookData),
+            });
+            console.log('Webhook executed');
+          } catch (error) {
+            console.error('Error sending first webhook:', error);
+          }
         }
  
         let userType1;
@@ -127,10 +144,10 @@ const login = useGoogleLogin({
         handleLogin();
  
         setUser(userData);
-        setUserType(userType1); 
+        setUserType(userType1);
         console.log('Login successful', userData);
         const userId = userData.id;
-        
+ 
         const jwtToken = localStorage.getItem('jwtToken');
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
           headers: {
@@ -138,38 +155,32 @@ const login = useGoogleLogin({
           },
         });
         const profileId = profileIdResponse.data;
-
+ 
         let resume;
         try {
-         const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
-       } catch (error) { 
-         resume=error.response.status;
-       }
-       
-       if (profileId !== 0 && resume === 404) {
-        console.log('checking ',jwtToken);
-        localStorage.setItem('jwtToken', userData.data.jwt);
-         navigate('/applicant-basic-details-form/3');
-      }
-       else if (profileId === 0 || resume === 404) {
-        console.log('checking ',jwtToken);
-        localStorage.setItem('jwtToken', userData.data.jwt);
-         navigate('/applicant-basic-details-form/1');
-       }
-      else{
-
-        localStorage.setItem('jwtToken', userData.data.jwt);
-        navigate('/applicanthome');
-        
-      }
-  
+          const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`);
+        } catch (error) {
+          resume = error.response.status;
+        }
+ 
+        if (profileId !== 0 && resume === 404) {
+          console.log('checking ', jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+          navigate('/applicant-basic-details-form/3');
+        } else if (profileId === 0 || resume === 404) {
+          console.log('checking ', jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+          navigate('/applicant-basic-details-form/1');
+        } else {
+          localStorage.setItem('jwtToken', userData.data.jwt);
+          navigate('/applicanthome');
+        }
       }
     } catch (err) {
       console.log(err);
     }
   },
-});
- 
+}); 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
   };
@@ -187,23 +198,22 @@ const login = useGoogleLogin({
     if (!isCandidateFormValid()) {
       return;
     }
- 
+   
     try {
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
       const response = await axios.post(loginEndpoint, {
         email: candidateEmail,
         password: candidatePassword,
       });
- 
-            if (response.status === 200) {
+   
+      if (response.status === 200) {
         setErrorMessage('');
         const userData = response.data;
         console.log('this is response ', userData);
         console.log('this is token ', userData.data.jwt);
         localStorage.setItem('jwtToken', userData.data.jwt);
- 
-       
- 
+   
+        let userType1;
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
           userType1 = 'jobseeker';
         } else if (userData.message.includes('ROLE_JOBRECRUITER')) {
@@ -213,66 +223,68 @@ const login = useGoogleLogin({
         }
         console.log('this userType ', userType1);
         localStorage.setItem('userType', userType1);
- 
+   
         setErrorMessage('');
         handleLogin();
- 
+   
         setUser(userData);
         setUserType(userData.userType);
         console.log('Login successful', userData);
         const userId = userData.id;
-
-         // Check the profile ID
-         const jwtToken = localStorage.getItem('jwtToken');
-         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-           headers: {
-             Authorization: `Bearer ${jwtToken}`,
-           },
-         });
-         const profileId = profileIdResponse.data;
-         let resume;
-         try {
+   
+        // Log the user activity
+        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
+        await axios.post(activityLogEndpoint, {
+          userId: userId,
+          actionType: "Login"
+        }, {
+          headers: {
+            Authorization: `Bearer ${userData.data.jwt}`,
+            'Content-Type': 'application/json',
+          },
+        });
+   
+        // Check the profile ID
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+        const profileId = profileIdResponse.data;
+        let resume;
+        try {
           const profileIdResponse1 = await axios.get(`${apiUrl}/resume/pdf/${userId}`); 
         } catch (error) { 
-          resume=error.response.status;
+          resume = error.response.status;
         }
         if (profileId !== 0 && resume === 404) {
-          console.log('checking ',jwtToken);
+          console.log('checking ', jwtToken);
           localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form/3');
+          navigate('/applicant-basic-details-form/3');
+        } else if (profileId === 0 || resume === 404) {
+          console.log('checking ', jwtToken);
+          localStorage.setItem('jwtToken', userData.data.jwt);
+          navigate('/applicant-basic-details-form/1');
+        } else {
+          localStorage.setItem('jwtToken', userData.data.jwt);
+          navigate('/applicanthome');
         }
-         else if (profileId === 0 || resume === 404) {
-          console.log('checking ',jwtToken);
-          localStorage.setItem('jwtToken', userData.data.jwt);
-           navigate('/applicant-basic-details-form/1');
-         }
-       else{
-       
-
-        localStorage.setItem('jwtToken', userData.data.jwt);
-         navigate('/applicanthome');
-       }
       }     
-
-    }
-    
-    catch (error) {
+    } catch (error) {
       console.log(error.response.data);
-      if(error.response.data==="Incorrect password") {
+      if (error.response.data === "Incorrect password") {
         setErrorMessage('Incorrect password.');
         console.error('login failed');
-      }
-      else if(error.response.data==="No account found with this email address") {
+      } else if (error.response.data === "No account found with this email address") {
         setErrorMessage('No account found with this email address.');
         console.error('login failed');
-      }
-      else{
+      } else {
         setErrorMessage('login failed. Please check your user name and password.');
       }
       console.error('Login failed', error);
     }
   };
-
   const isCandidateFormValid = () => {
     const emailError = validateEmail(candidateEmail);
     setCandidateEmailError(emailError);

@@ -21,6 +21,9 @@ import './modalpopup.css';
 import ProfessionalDetailsPopup from './ProfessionalDetailsPopup';
 import ResumeEditPopup from './ResumeEditPopup';
 import Snackbar from '../common/Snackbar';
+import Certified from '../../images/Certified.svg';
+import Profile_Certified from '../../images/Profile_Certified.svg';
+
 
 const ApplicantViewProfile = () => {
   const [profileData, setProfileData] = useState(null);
@@ -43,6 +46,7 @@ const ApplicantViewProfile = () => {
   const { user } = useUserContext();
   const id = user.id;
   const userId = user.id;
+  const [flag, setFlag] = useState(false);
   
   const checkAndShowAlert = (message) => {
     const alertShownBefore = localStorage.getItem('alertShown');
@@ -79,6 +83,32 @@ const ApplicantViewProfile = () => {
   const handleCloseSnackbar = (index) => {
     setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    const fetchTestData = async () => {
+      try {
+        const jwtToken = localStorage.getItem('jwtToken');
+        const response = await axios.get(`${apiUrl}/applicant1/tests/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        });
+  
+        const data = response.data;
+       
+  
+        // Check if both aptitude and technical tests have status "P" or "p"
+        const allTestsPassed = data.length >= 2 && data.every(test => test.testStatus.toLowerCase() === 'p');
+        console.log(allTestsPassed);
+        setFlag(allTestsPassed);
+  
+      } catch (error) {
+        console.error('Error fetching test data:', error);
+      }
+    };
+  
+    fetchTestData();
+  }, [user.id]);
 
   useEffect(() => {
     let count = 0;
@@ -259,20 +289,50 @@ const ApplicantViewProfile = () => {
               </div>
               <BasicDetailsEditPopup applicantDetails={profileData.basicDetails} />
             </Modal>
-            <div className="content">
-            <h3 style={{ color: 'white', fontWeight: 'bold', marginBottom: '10px' }}>
-                {(profileData.basicDetails && profileData.basicDetails.firstName) || ''}{' '}
-                {(profileData.basicDetails && profileData.basicDetails.lastName) || ''}
-              </h3>
-              <div className="details1">
-                <img src={Mail} alt="Email" className="icon1" />
-                {profileData.basicDetails && profileData.basicDetails.email || ''}
-              </div>
-              <div className="details1">
-                <img src={Phone} alt="Phone" className="icon1" />
-                {profileData.basicDetails && profileData.basicDetails.alternatePhoneNumber || ''}
-              </div>
-            </div>
+            <div style={{ textAlign: 'left' }}>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <h3 style={{ color: 'white', fontWeight: 'bold', margin: 0 }}>
+      {(profileData.basicDetails && profileData.basicDetails.firstName) || ''}{' '}
+      {(profileData.basicDetails && profileData.basicDetails.lastName) || ''}
+      {flag && (
+      <img
+        src={Profile_Certified}
+        alt="Profile_Certified Badge"
+        style={{
+          width: '28px',
+          height: '28px',
+          marginLeft: '10px',
+          verticalAlign: 'middle',
+          marginBottom: '8px'
+        }}
+      />
+    )}
+      
+    </h3>
+        
+
+  </div>
+
+  <div style={{ color: 'white', display: 'flex', alignItems: 'center', marginBottom: '2px' }}>
+    <img
+      src={Mail}
+      alt="Email"
+      style={{ marginRight: '8px' }}
+    />
+    <span>{profileData.basicDetails && profileData.basicDetails.email || ''}</span>
+  </div>
+  <div style={{ color: 'white', display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+    <img
+      src={Phone}
+      alt="Phone"
+      style={{ marginRight: '8px' }}
+    />
+    <span>{profileData.basicDetails && profileData.basicDetails.alternatePhoneNumber || ''}</span>
+  </div>
+</div>
+
+
+
           </div>
         </div>
       </div>
@@ -329,26 +389,67 @@ const ApplicantViewProfile = () => {
                 
               </div>
               <div className="inner">
-                
-                <div className="text-heading-profdata">Skills</div>
-                <div><ul className="author-list">
-              <li className='skills-list'>  {profileData.skillsRequired && profileData.skillsRequired.map((skill, index) => (
-  <React.Fragment key={skill.id}>
-    <span>
-      <a>
-        <ul className="skill-but">
-          <li >  {skill.skillName}</li>
-        </ul>
+                  <div className="text-heading-profdata">Skills</div>
+
+                  <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
+  
+  {/* Applicant's Skill Badges */}
+  {profileData.applicant.applicantSkillBadges && 
+    profileData.applicant.applicantSkillBadges
+      .filter(badge => badge.flag === 'added') // Filter badges based on flag
+      .sort((a, b) => {
+        // Sorting logic: PASSED badges come first
+        if (a.status === 'PASSED' && b.status !== 'PASSED') return -1;
+        if (a.status !== 'PASSED' && b.status === 'PASSED') return 1;
+        return 0; // If both have the same status, keep their original order
+      })
+      .map((badge, index) => (
+        <React.Fragment key={badge.id}>
+          <span>
+            <a>
+              <ul className="skill-but" style={{ backgroundColor: badge.flag === 'removed' ? '#D9534F' : '#498C07', display: 'inline-flex', marginRight: '2px' }}>
+                {/* Display Applicant Skill Badges with different colors based on flag */}
+                <li style={{ display: 'flex', alignItems: 'center' }}>
+                  {/* Conditionally render the Certified Badge image when status is PASSED */}
+                  {badge.status === 'PASSED' && (
+                    <img
+                      src={Certified}
+                      alt="Certified Badge"
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        marginRight: '5px',
+                        marginLeft: '-8px'
+                      }}
+                    />
+                  )}
+                  {badge.skillBadge.name}
+                </li>
+              </ul>
+            </a>
+          </span>
+        </React.Fragment>
+      ))
+  }
+
+  {/* Skills Required */}
+  {profileData.skillsRequired && profileData.skillsRequired.map((skillReq, index) => (
+    <React.Fragment key={skillReq.id}>
+      <span>
+        <a>
+          <ul className="skill-but" style={{ backgroundColor: '#498C07', display: 'inline-flex', marginRight: '2px' }}>
+            {/* Display Skills Required in Blue */}
+            <li>{skillReq.skillName}</li>
+          </ul>
         </a>
-    </span>
-    {index < profileData.skillsRequired.length - 1 && " "}
-  </React.Fragment>
-))}           </li>
-            </ul>
-            </div>
-                  
-             
-              </div>
+      </span>
+    </React.Fragment>
+  ))}
+
+</div>
+
+                </div>
+
               
               <div className="inner">
                 
