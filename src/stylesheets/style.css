@@ -3759,6 +3759,7 @@ text-transform: capitalize;
   visibility: visible; /* Ensure the icon is always visible */
   opacity: 1; /* Ensure the icon is always fully opaque */
   transition: opacity 0.3s ease, color 0.3s ease; /* Smooth transition for opacity and color */
+ 
 }
 
 .course-icon:hover {
