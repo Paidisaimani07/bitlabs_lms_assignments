@@ -3761,7 +3761,11 @@ text-transform: capitalize;
   transition: opacity 0.3s ease, color 0.3s ease; /* Smooth transition for opacity and color */
  
 }
-
+.external-link-image {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
 .course-icon:hover {
   opacity: 1; /* Ensure the icon is fully opaque on hover */
   color: black; /* Change icon color on hover */

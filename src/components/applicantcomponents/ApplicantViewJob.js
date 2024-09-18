@@ -15,6 +15,8 @@ import JavaScript from '../../images/JavaScript.svg';
 import ReactImg from '../../images/React.svg';
 import SpringBoot from '../../images/SpringBoot.svg';
 import alertcircle from '../../images/alert-circle 3.svg';
+import externallink2 from '../../images/external-link2.svg';
+
 
 
 import ScreeningQuestionsModal from './ScreeningQuestionsModal';
@@ -442,7 +444,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                                   >
                                     <div className="course-content">
                                       <img src={courseImageMap[course]} alt={course} className="course-image" />
-                                      <i className="fas fa-external-link course-icon"></i>
+                                      <img src={externallink2} className="external-link-image" />
                                     </div>
                                   </a>
                                 </li>
