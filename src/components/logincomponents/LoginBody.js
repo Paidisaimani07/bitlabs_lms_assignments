@@ -67,18 +67,20 @@ const login = useGoogleLogin({
       const email1 = res.data.email;
       const name1 = res.data.name;
       console.log('Second API');
-      const loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-
-        const response1 = await axios.post(loginEndpoint, {
-          email: email1,
-        }, {
-          headers: {
-            // Ensure no Authorization header is sent
-            'Authorization': '',
-          }
-        });
-
+      let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
+      // const response1 = await axios.post(loginEndpoint, {
+      //   email: email1,
+      // });
  
+      const response1 = await axios.post(loginEndpoint, {
+        email: email1,
+      }, {
+        headers: {
+          // Ensure no Authorization header is sent
+          'Authorization': '',
+        }
+      });
+
       console.log(response1);
       if (response1.status === 200) {
         setErrorMessage('');
@@ -201,9 +203,18 @@ const login = useGoogleLogin({
    
     try {
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
+      // const response = await axios.post(loginEndpoint, {
+      //   email: candidateEmail,
+      //   password: candidatePassword,
+      // });
       const response = await axios.post(loginEndpoint, {
         email: candidateEmail,
         password: candidatePassword,
+      }, {
+        headers: {
+          // Ensure no Authorization header is sent
+          'Authorization': '',
+        }
       });
    
       if (response.status === 200) {

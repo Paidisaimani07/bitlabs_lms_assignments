@@ -39,6 +39,7 @@ function App() {
     const jwtToken = localStorage.getItem('jwtToken');
     if (jwtToken) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+      delete axios.defaults.headers.common['Authorization'];
       setIsLoggedIn(true);
     }
     setCheckingAuth(false);
