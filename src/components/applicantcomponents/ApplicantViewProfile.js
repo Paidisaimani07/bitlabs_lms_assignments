@@ -117,7 +117,12 @@ const ApplicantViewProfile = () => {
     
     const fetchData = async () => {
       try {
-        profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`, {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`, // Add the JWT token in the Authorization header
+          },
+        });
         setProfileData(profileResponse.data);
         setBasicDetails(profileResponse.data.basicDetails);
         setExperience(profileResponse.data.experience);

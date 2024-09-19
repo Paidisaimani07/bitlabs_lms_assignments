@@ -47,10 +47,21 @@ function RecruiterLogin({handleLogin}) {
           loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`; 
         }
         console.log('Email:', email);
+        
+
+        // Explicitly remove the Authorization header for this request
+        delete axios.defaults.headers.common['Authorization'];
+
         const response = await axios.post(loginEndpoint, {
           email,
           password,
+        }, {
+          headers: {
+            // No Authorization header will be sent in this request
+          },
         });
+
+        
         if (response.status === 200) {
           setErrorMessage('');
           const userData = response.data;
