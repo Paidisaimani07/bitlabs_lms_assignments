@@ -625,6 +625,8 @@ errors.skillsRequired = skillsErrors;
          <option value="Thanjavur">Thanjavur</option>
          <option value="Pondicherry">Pondicherry</option>
          <option value="Vijayawada">Vijayawada</option>
+         <option value="Pune">Pune</option>
+         <option value="Gurgaon">Gurgaon</option>
         
     </select>
     {formErrors.location && (
