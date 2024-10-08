@@ -14,6 +14,7 @@ function RecruiterDashboard() {
     const { user } = useUserContext();
     const [loading, setLoading] = useState(true);
     const [contActiveJobs, setActiveCountJobs] = useState(0);
+    const [contInActiveJobs, setInActiveCountJobs] = useState(0);
     const [contJobApplicants, setJobApplicants] = useState(0);
     const [contJobHires, setJobHires] = useState(0);
     const [countInterviews, setInterviews] = useState(0);
@@ -52,6 +53,22 @@ function RecruiterDashboard() {
                 console.error('Error fetching team members:', error);
             });
     }, [user.id]); 
+
+    useEffect(() => {
+      const jwtToken = localStorage.getItem('jwtToken');
+      if (jwtToken) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+      }
+      axios
+          .get(`${apiUrl}/job/recruiterscountinactivejobs/${user.id}`)
+          .then((response) => {
+              setInActiveCountJobs(response.data);
+          })
+          .catch((error) => {
+              console.error('Error fetching team members:', error);
+          });
+  }, [user.id]); 
+
     useEffect(() => {
         const jwtToken = localStorage.getItem('jwtToken');
         if (jwtToken) {
@@ -224,7 +241,7 @@ function RecruiterDashboard() {
                         >
                           Closed Jobs
                         </span>
-                        <h3>{contActiveJobs}</h3>
+                        <h3>{contInActiveJobs}</h3>
                       </div>
                   </div>
                 </div>
