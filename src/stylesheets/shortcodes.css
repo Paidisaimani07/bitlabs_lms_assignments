@@ -12134,7 +12134,7 @@ margin-bottom: -30px;
 margin-top: 100px;
 font-size: 25px;
 font-weight: 700;
-margin-left: -200px;
+margin-left: -270px;
 color: #000;
 font-family: 'Plus Jakarta Sans', sans-serif;
 font-style: normal;
@@ -12261,24 +12261,28 @@ height: 100vh;
 object-fit: cover;
 }
 
+.responsive-image2 {
+  width: 50%;
+  object-fit: cover;
+  }
+
 @media (max-width: 640px) {
 .responsive-image1 {
   width: 100%;
-  
   object-fit: cover;
 }
 }
 
 
 @media (max-width: 1200px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   display: none;
 }
 }
 
 
 @media (max-width: 1220px) and (min-width: 1024px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 600px; 
   object-fit: cover;
 }
@@ -12286,7 +12290,7 @@ object-fit: cover;
 
 
 @media (max-width: 1024px) and (min-width: 970px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 550px; 
   object-fit: cover;
 }
@@ -12294,14 +12298,14 @@ object-fit: cover;
 
 
 @media (max-width: 970px) and (min-width: 915px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 500px;
   object-fit: cover;
 }
 }   
 
 @media (max-width: 915px) and (min-width: 890px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 470px; 
   
   object-fit: cover;
@@ -12310,7 +12314,7 @@ object-fit: cover;
 
 
 @media (max-width: 890px) and (min-width: 850px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 430px; 
  
   object-fit: cover;
@@ -12318,7 +12322,7 @@ object-fit: cover;
 }  
 
 @media (max-width: 850px) and (min-width: 767px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 420px; 
   
   object-fit: cover;
@@ -12326,21 +12330,21 @@ object-fit: cover;
 }
 
 @media (max-width: 767px) and (min-width: 740px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 400px; 
   
   object-fit: cover;
 }
 }
 @media (max-width: 740px) and (min-width: 650px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 380px; 
   object-fit: cover;
 }
 }
 
 @media (max-width: 650px) and (min-width: 525px) {
-.responsive-image {
+.responsive-image,.responsive-image2 {
   width: 330px; 
   object-fit: cover;
 }
@@ -12361,7 +12365,6 @@ text-transform: capitalize;
 }
 
 .find-your {
-
 color: #FFF;
 text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
 font-family: 'Plus Jakarta Sans', sans-serif;
@@ -12371,6 +12374,36 @@ font-weight: 700;
 line-height: 97px;
 text-transform: capitalize;
 }
+
+.find-your2 {
+  color: #FFF;
+  text-shadow: 0px 4px 19.6px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: calc(15px + 3vw);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 97px;
+  text-transform: capitalize;
+  }
+
+  @media (max-width: 1090px) {
+    .find-your2 {
+      font-size: 35px;
+    }
+  }
+  @media (max-width: 750px) {
+    .find-your2 {
+      font-size: 25px;
+      margin-bottom: -10px;
+    }
+  }
+
+  @media (max-width: 550px) {
+    .find-your2 {
+      font-size: 16px;
+      margin-bottom: -20px;
+    }
+  }
 
 .dream-job {
 
