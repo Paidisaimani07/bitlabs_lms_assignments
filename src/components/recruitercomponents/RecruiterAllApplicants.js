@@ -6,6 +6,11 @@ import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import BackButton from '../common/BackButton';
+import filtericon from '../../images/filter 2.svg';
+import verified123 from '../../images/verified123.svg';
+import arrowleft from '../../images/arrow-left.svg';
+
+
 
 $.DataTable = require('datatables.net')
  
@@ -34,7 +39,11 @@ function RecruiterAllApplicants() {
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
- 
+  const [showFilters, setShowFilters] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [initialData, setInitialData] = useState([]);
+
+
  
   const handleCheckboxChange2 = (applyjobid) => {
     setSelectedApplicants((prevSelected) => {
@@ -88,98 +97,98 @@ function RecruiterAllApplicants() {
  
   window.location.reload();
 };
-  const applyFilter = () => {
+const applyFilter = () => {
  
-    let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
-   
-   
+  let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
+ 
+ 
 const body = {
-  "name": filterOptions.nameFilter === "contains" ? "contains" : filterOptions.nameFilter === "is" ? "is" : null,
-  "email": filterOptions.emailFilter === "contains" ? "contains" : filterOptions.emailFilter === "is" ? "is" : null,
-  "mobilenumber": filterOptions.mobileFilter === "contains" ? "contains" : filterOptions.mobileFilter === "is" ? "is" : null,
-  "jobTitle": filterOptions.jobFilter === "contains" ? "contains" : filterOptions.jobFilter === "is" ? "is" : null,
-  "applicantStatus": filterOptions.statusFilter === "contains" ? "contains" : filterOptions.statusFilter === "is" ? "is" : null,
-  "skillName": filterOptions.skillFilter === "contains" ? "contains" : filterOptions.skillFilter === "is" ? "is" : null,
-  "minimumExperience": filterOptions.experienceFilter === "greaterThan" ? "greaterThan":filterOptions.experienceFilter === "lessThan" ? "lessThan" : filterOptions.experienceFilter === "is" ? "is" : null,
-  "location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null,
-  "minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
+"name": filterOptions.nameFilter === "contains" ? "contains" : filterOptions.nameFilter === "is" ? "is" : null,
+"email": filterOptions.emailFilter === "contains" ? "contains" : filterOptions.emailFilter === "is" ? "is" : null,
+"mobilenumber": filterOptions.mobileFilter === "contains" ? "contains" : filterOptions.mobileFilter === "is" ? "is" : null,
+"jobTitle": filterOptions.jobFilter === "contains" ? "contains" : filterOptions.jobFilter === "is" ? "is" : null,
+"applicantStatus": filterOptions.statusFilter === "contains" ? "contains" : filterOptions.statusFilter === "is" ? "is" : null,
+"skillName": filterOptions.skillFilter === "contains" ? "contains" : filterOptions.skillFilter === "is" ? "is" : null,
+"minimumExperience": filterOptions.experienceFilter === "greaterThan" ? "greaterThan":filterOptions.experienceFilter === "lessThan" ? "lessThan" : filterOptions.experienceFilter === "is" ? "is" : null,
+"location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null,
+"minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
 };
-    console.log(filterOptions);
-   
-    const token = localStorage.getItem('jwtToken');
-    console.log(token);
+  console.log(filterOptions);
  
-   
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
+  const token = localStorage.getItem('jwtToken');
+  console.log(token);
+
  
- 
-   fetch(url, {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(body)
+  const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+  };
+
+
+ fetch(url, {
+  method: 'POST',
+  headers: headers,
+  body: JSON.stringify(body)
 })
 .then(response => response.json())
 .then(data => {
-   
-   
-    console.log('testing ',count);
-    const $table = window.$(tableref.current);
-    $table.DataTable().clear().destroy();
  
-   
-    $table.DataTable({
-        responsive: true,
-        data: data,
-        columns: [
+ 
+  console.log('testing ',count);
+  const $table = window.$(tableref.current);
+  $table.DataTable().clear().destroy();
+
+ 
+  $table.DataTable({
+      responsive: true,
+      data: data,
+      columns: [
+        {
+          data: null,
+          render: function(data, type, row) {
+            return '<input type="radio" value="' + row.applyjobid + '" ' +
+              (selectedApplicant && selectedApplicant.applyjobid === row.applyjobid ? 'checked' : '') +
+              ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
+          }
+        },
+        {
+          data: 'name',
+          render: function(data, type, row) {
+            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+          }
+        },
+        {
+          data: 'email',
+          render: function(data, type, row) {
+            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+          }
+        },
+        {
+          data: 'mobilenumber',
+          render: function(data, type, row) {
+            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+          }
+        },
+          { data: 'jobTitle' },
+          { data: 'applicantStatus' },
+          // { data: 'experience' },
+         
+          // { data: 'minimumQualification' },
+       
           {
             data: null,
             render: function(data, type, row) {
-              return '<input type="radio" value="' + row.applyjobid + '" ' +
-                (selectedApplicant && selectedApplicant.applyjobid === row.applyjobid ? 'checked' : '') +
-                ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
+              return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
             }
-          },
-          {
-            data: 'name',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
-          },
-          {
-            data: 'email',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
-          },
-          {
-            data: 'mobilenumber',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
-          },
-            { data: 'jobTitle' },
-            { data: 'applicantStatus' },
-            { data: 'experience' },
-           
-            { data: 'minimumQualification' },
-         
-            {
-              data: null,
-              render: function(data, type, row) {
-                return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
-              }
-            }
-        ]
-    });
-    count=setCount(data.length);
- 
+          }
+      ]
+  });
+  count=setCount(data.length);
+
 })
 .catch(error => {
-    // Handle errors
-    console.error('Error fetching or processing data:', error);
+  // Handle errors
+  console.error('Error fetching or processing data:', error);
 });
 };
  
@@ -264,6 +273,7 @@ const handleTextFieldChange = (e) => {
     const applicantsArray = Object.values(response.data).flat();
     setCount(applicantsArray.length);
     setApplicants(applicantsArray);
+    setInitialData(applicantsArray);  // Store initial data
         const $table= window.$(tableref.current);
           const timeoutId = setTimeout(() => {  
            $table.DataTable().destroy();
@@ -437,38 +447,69 @@ const handleSelectChange = async (e) => {
                 <div className="title-dashboard">
                   
                   
-                  <div className="title-dash flex2"><BackButton />All Applicants : <h5 className="title-dash flex2">Total Applicants: {count}</h5></div>
-            
-                  
+                  <div className="title-dash flex2"><BackButton />All Applicants : <h5 className="title-dash flex2"> {count}</h5>
+                 
+                  </div>
+                    {/* Filter icon button */}
+                    <button
+                    className="filter-icon-button"
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{ 
+                      color: '#0A58CA', 
+                      backgroundColor: 'transparent', 
+                      border: 'none', 
+                      cursor: 'pointer',
+                      textDecoration: 'underline',  /* Adds underline to the text */
+                      display: 'flex', 
+                      position: 'absolute', 
+                      alignItems: 'center',
+                      paddingTop: '10px',
+                      
+                    }}
+                  >
+                    Filters
+                    <img src={filtericon} className="external-link-image" style={{ marginLeft: '1px', height: '20px' }} />
+                  </button>
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'900px' }}>
+                      <div className="controls" style={{ display: 'flex', gap: '10px' }}>
+                        <button className="export-buttonn" onClick={exportCSV}>
+                          ExportCSV
+                        </button>
+                        <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
+                          <option value="" disabled>
+                            Change Status
+                          </option>
+                          <option value="Screening">Screening</option>
+                          <option value="Shortlisted">Shortlisted</option>
+                          <option value="Interviewing">Interviewing</option>
+                          <option value="Selected">Selected</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-              <div className="col-lg-3 col-md-3">
-              <div className="controls">
-    
-  <button className="export-buttonn" onClick={exportCSV}>
-      ExportCSV
-    </button>
-    <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
-    <option value="" disabled>
-        Change Status
-      </option>
-      <option  value="Screening">Screening</option>
-      <option  value="Shortlisted">Shortlisted</option>
-      <option  value="Interviewing">Interviewing</option>
-      <option  value="Selected">Selected</option>
-     
-    </select>
-    
-                  </div>
-                  </div>
+              
             </div>
           </div>
         </section>
  
-       
+      
+
+      <div className={`filter-menu ${showFilters ? 'show' : ''}`}>
         <div className="table-container">
-              <h3 className="filter"><strong>Filters </strong></h3>
-              <div className="filters-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              <h3 className="filter"><strong>
+              <span
+            style={{ cursor: 'pointer', marginRight: '5px' }} // Add pointer cursor for the arrow
+            onClick={() => setShowFilters(!showFilters)} // Toggle filters visibility
+          >
+            <img src={arrowleft} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
+            </span>
+                Filters </strong></h3>
+              
                 {/* Filter section */}
                 <div className="filter-option">
   <div className="checkbox-label">
@@ -721,9 +762,9 @@ const handleSelectChange = async (e) => {
                       <button className="apply-button1" onClick={applyFilter}>Apply</button>
                       <button className="reset-button1" onClick={resetFilter}>Reset</button>
                       </div>
-              </div> 
+              
               </div>
-
+              </div>
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
             <div className="row">
@@ -753,11 +794,22 @@ const handleSelectChange = async (e) => {
                           <th>Mobile Number</th>
                           <th>Job Title</th>
                           <th>Applicant Status</th>
-                          <th>Experience</th>
                          
-                          <th>Qualification</th>
                          
                           <th>Resume</th>
+                          {/* <th>Experience</th>
+                         
+                         <th>Qualification</th>
+                          <th>Preffered Locations</th>
+                          <th>Speclization</th>
+                          <th>Apptitude Score</th>
+                          <th>Technical Score</th>
+                          <th>Pre-Screened</th>
+                          <th>Matching Skills</th>
+                          <th>Un-Matched Skills</th>
+                          <th>Additional Skills</th>
+                          <th>Tested Skills</th>
+                          <th>Job Match%</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -773,11 +825,82 @@ const handleSelectChange = async (e) => {
 />
                             </td>
                            
-<td>
-  <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <td>
+  <Link 
+    to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} 
+    style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
+  >
     {application.name}
+    
+    {application.preScreenedCondition === 'PreScreened' && (
+      <div style={{ display: 'inline-block', position: 'relative' }}>
+        <img 
+          src={verified123} 
+          className="external-link-image" 
+          style={{
+            marginLeft: '1px', 
+            width: '20px', 
+            height: '20.187px', 
+            flexShrink: 0 
+          }} 
+          onMouseEnter={() => setShowTooltip(true)} 
+          onMouseLeave={() => setShowTooltip(false)}
+        />
+        
+        {/* Tooltip */}
+        {showTooltip && (
+          <div style={{
+            position: 'absolute', 
+            top: '25px', 
+            left: '0', 
+            width: '600px', // Set width
+            height: '62.226px', // Set height
+            borderRadius: '8px', // Rounded corners
+            background: '#FFF', // Background color
+            boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)', // Box shadow
+            zIndex: 1,
+            display: 'flex', // Use flexbox
+            alignItems: 'center', // Center align items vertically
+            padding: '10px', // Add padding for spacing
+            boxSizing: 'border-box' // Include padding and border in the element's total width and height
+          }}>
+            <img 
+              src={verified123} 
+              alt="Pre-screened badge" 
+              style={{
+                width: '20px', 
+                height: '20.187px', 
+                marginRight: '20px',
+                marginLeft: '5px'
+              }}
+            />
+            <span style={{ whiteSpace: 'normal', color:'black' }}>
+              Pre-screened badges are issued to candidates who scored more than 70% in <br /> both Aptitude and Technical tests
+            </span>
+
+            {/* Pointer arrow on hover */}
+              {/* <div
+              style={{
+                position: 'absolute',
+                top: '0%', // Move it directly below the tooltip
+                left: '0%', // Center it horizontally relative to the tooltip
+                transform: 'translateX(-50%) rotate(-45deg)', // Center the arrow
+                width: '30px', // Arrow width should be 0
+                height: '10px', // Arrow height should be 0
+                borderTop: '10px solid transparent', // Top triangle part
+                borderBottom: '10px solid transparent', // Bottom triangle part
+                borderLeft: '10px solid #0583D2', // Arrow color
+              }}
+            /> */}
+
+          </div>
+        )}
+      </div>
+    )}
   </Link>
 </td>
+
+
  
                             <td>
                             <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
@@ -792,13 +915,100 @@ const handleSelectChange = async (e) => {
   </Link>
                               </td>
                             <td>{application.jobTitle}</td>
-                            <td>{application.applicantStatus}</td>
-                           
-                            <td>{application.experience}</td>
+                            <td style={{
+                                padding: '0px 10px', // Keep padding for the table cell
+                                textAlign: 'center',  // Center content in the cell
+                                verticalAlign: 'middle', // Align the content vertically in the middle
+                              }}>
+                                <div style={{
+                                  display: 'inline-flex',
+                                  justifyContent: 'flex-start',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                  borderRadius: '14px',
+                                  background: (() => {
+                                    switch (application.applicantStatus) {
+                                      case 'Shortlisted':
+                                        return '#DBFAEB';
+                                      case 'Selected':
+                                        return '#F9F5FF';
+                                      case 'Rejected':
+                                        return '#FFF3F4';
+                                      case 'Screening':
+                                        return '#EFFFD0';
+                                      case 'Interviewing':
+                                        return '#FFF2E1';
+                                      default:
+                                        return '#F8F8F8'; // Default background for unknown status
+                                    }
+                                  })(),
+                                  color: (() => {
+                                    switch (application.applicantStatus) {
+                                      case 'Shortlisted':
+                                        return '#2D6A4F';
+                                      case 'Selected':
+                                        return '#6C3FB6';
+                                      case 'Rejected':
+                                        return '#FF4D4F';
+                                      case 'Screening':
+                                        return '#718F00';
+                                      case 'Interviewing':
+                                        return '#F7B267';
+                                      default:
+                                        return '#000'; // Default color for unknown status
+                                    }
+                                  })(),
+                                  justifyContent: 'flex-start',
+                                  padding: '0px 10px' // Add padding inside the content for spacing
+                                }}>
+                                  {application.applicantStatus}
+                                </div>
+                              </td>
+
+                            <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View</Link></td>
+
+                            {/* <td>{application.experience}</td>
                            
                             <td>{application.minimumQualification}</td>
-                           
-                            <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View Resume</Link></td>
+                            <td>
+                              {application.preferredJobLocations.length > 3
+                                ? `${application.preferredJobLocations.slice(0, 3).join(", ")} +`
+                                : application.preferredJobLocations.join(", ")}
+                            </td>
+
+                            <td>{application.specialization}</td>
+
+                            <td>{application.apptitudeScore}</td>
+
+                            <td>{application.technicalScore}</td>
+                            <td>{application.preScreenedCondition}</td>
+
+                            <td>
+                              {application.matchedSkills.length > 3
+                                ? `${application.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                : application.matchedSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+
+                            <td>
+                              {application.nonMatchedSkills.length > 3
+                                ? `${application.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                : application.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+                            <td>
+                              {application.additionalSkills.length > 3
+                                ? `${application.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                : application.additionalSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+                            <td>
+                              {application.applicantSkillBadges && application.applicantSkillBadges.length > 3
+                                ? `${application.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} +`
+                                : application.applicantSkillBadges
+                                  ? application.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
+                                  : "No skills available"}
+                            </td>
+
+                            <td>{application.matchPercentage}%</td> */}
+
                           </tr>
                         ))}
                       </tbody>
