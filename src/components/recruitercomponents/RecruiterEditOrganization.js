@@ -188,18 +188,22 @@ function RecruiterEditOrganization() {
       isValid = false;
     }
 
-    if (!profile.headOffice.trim()) {
-      errors.headOffice = 'Head office address is required';
-      isValid = false;
-    } else if (profile.headOffice.trim().length < 3) {
-      errors.headOffice = 'Head office address must be at least 3 characters';
-      isValid = false;
-    }
+    //  if (profile.headOffice.trim().length < 3) {
+    //   errors.headOffice = 'Head office address must be at least 3 characters';
+    //   isValid = false;
+    // }
 
     if (!profile.aboutCompany.trim()) {
       errors.aboutCompany = 'About company is required';
       isValid = false;
+    } else if (profile.aboutCompany.length < 50) {
+      errors.aboutCompany = 'About company must be at least 50 characters long';
+      isValid = false;
+    } else if (profile.aboutCompany.length > 500) {
+      errors.aboutCompany = 'About company cannot exceed 500 characters';
+      isValid = false;
     }
+    
 
     // Validate social profiles
    // Inside your validateForm function
@@ -478,7 +482,7 @@ const urlPattern = new RegExp(
                               placeholder="Head Office Address"
                               value={profile.headOffice}
                               onChange={handleInputChange}
-                              required
+                           
                             />
                             {formErrors.headOffice && (
                               <div className="error-message">{formErrors.headOffice}</div>
