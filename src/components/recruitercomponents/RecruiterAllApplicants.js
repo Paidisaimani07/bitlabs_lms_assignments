@@ -36,6 +36,10 @@ function RecruiterAllApplicants() {
   const [minimumExperience, setMinimumExperience] = useState(0);
   const [location, setLocation] = useState(null);
   const [minimumQualification, setMinimumQualification] = useState(null);
+  const [specialization, setspecialization] = useState(null);
+  const [preScreenedCondition, setPreScreenedCondition] = useState(null);
+  const [apptitudeScore, setapptitudeScore] = useState(null);
+  
   const [count, setCount] = useState(0);
   const [selectedApplicants, setSelectedApplicants] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
@@ -76,8 +80,10 @@ function RecruiterAllApplicants() {
     skillFilter: false,
     experienceFilter: false,
     locationFilter: false,
-    minimumQualification: false
-   
+    minimumQualification: false,
+    specialization: false,
+    preScreenedCondition: false,
+    apptitudeScore: false
  
   });
  
@@ -98,99 +104,171 @@ function RecruiterAllApplicants() {
   window.location.reload();
 };
 const applyFilter = () => {
- 
-  let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
- 
- 
-const body = {
-"name": filterOptions.nameFilter === "contains" ? "contains" : filterOptions.nameFilter === "is" ? "is" : null,
-"email": filterOptions.emailFilter === "contains" ? "contains" : filterOptions.emailFilter === "is" ? "is" : null,
-"mobilenumber": filterOptions.mobileFilter === "contains" ? "contains" : filterOptions.mobileFilter === "is" ? "is" : null,
-"jobTitle": filterOptions.jobFilter === "contains" ? "contains" : filterOptions.jobFilter === "is" ? "is" : null,
-"applicantStatus": filterOptions.statusFilter === "contains" ? "contains" : filterOptions.statusFilter === "is" ? "is" : null,
-"skillName": filterOptions.skillFilter === "contains" ? "contains" : filterOptions.skillFilter === "is" ? "is" : null,
-"minimumExperience": filterOptions.experienceFilter === "greaterThan" ? "greaterThan":filterOptions.experienceFilter === "lessThan" ? "lessThan" : filterOptions.experienceFilter === "is" ? "is" : null,
-"location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null,
-"minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
-};
-  console.log(filterOptions);
- 
-  const token = localStorage.getItem('jwtToken');
-  console.log(token);
+  // Apply all filters on the frontend based on the selected options
+  console.log("Initial Data:", initialData);
+console.log("Type of Initial Data:", typeof initialData);
 
- 
-  const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json'
-  };
+  const filteredData = initialData.filter((applicant) => {
+    return (
+      (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
+      (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
+      (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
+      (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
+      (applicantStatus === "" || applyMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
+      (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
+      (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
+      (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
+      (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
+      (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
+      (preScreenedCondition === "" || applyMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
+      (apptitudeScore === null || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))
+      
+    );
+  });
 
-
- fetch(url, {
-  method: 'POST',
-  headers: headers,
-  body: JSON.stringify(body)
-})
-.then(response => response.json())
-.then(data => {
- 
- 
-  console.log('testing ',count);
+  // Update the DataTable with filtered data
   const $table = window.$(tableref.current);
   $table.DataTable().clear().destroy();
-
- 
+  
   $table.DataTable({
-      responsive: true,
-      data: data,
-      columns: [
-        {
-          data: null,
-          render: function(data, type, row) {
-            return '<input type="radio" value="' + row.applyjobid + '" ' +
-              (selectedApplicant && selectedApplicant.applyjobid === row.applyjobid ? 'checked' : '') +
-              ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
-          }
-        },
-        {
-          data: 'name',
-          render: function(data, type, row) {
-            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-          }
-        },
-        {
-          data: 'email',
-          render: function(data, type, row) {
-            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-          }
-        },
-        {
-          data: 'mobilenumber',
-          render: function(data, type, row) {
-            return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-          }
-        },
-          { data: 'jobTitle' },
-          { data: 'applicantStatus' },
-          // { data: 'experience' },
-         
-          // { data: 'minimumQualification' },
+    responsive: true,
+    searching: false, 
+    lengthChange: false,
+    info: false,
+    data: filteredData,
+    columns: [
+      {
+        data: null,
+        render: function(data, type, row) {
+          return '<input type="checkbox" value="' + row.applyjobid + '" ' +
+            (selectedApplicant && selectedApplicant.applyjobid === row.applyjobid ? 'checked' : '') +
+            ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
+        }
+      },
+      {
+        data: 'name',
+        render: function(data, type, row) {
+          return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+        }
+      },
+      {
+        data: 'email',
+        render: function(data, type, row) {
+          return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+        }
+      },
+      {
+        data: 'mobilenumber',
+        render: function(data, type, row) {
+          return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
+        }
+      },
+      { data: 'jobTitle' },
+      { data: 'applicantStatus' },
+      
+      {
+        data: null,
+        render: function(data, type, row) {
+          return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
+        }
+      },
+      { data: 'experience' },
+      { data: 'minimumQualification' },
+     
+            { // Preferred Job Locations - custom logic
+                data: 'preferredJobLocations',
+                render: function(data, type, row) {
+                    return data.length > 3 ? data.slice(0, 3).join(", ") + " +" : data.join(", ");
+                }
+            },
+            { data: 'specialization' }, // Maps to {application.specialization}
+            { data: 'apptitudeScore' }, // Maps to {application.apptitudeScore}
+            { data: 'technicalScore' }, // Maps to {application.technicalScore}
+            { data: 'preScreenedCondition' }, // Maps to {application.preScreenedCondition}
+            { // Matched Skills - custom logic
+                data: 'matchedSkills',
+                render: function(data, type, row) {
+                    return data.length > 3 ? data.slice(0, 3).map(skill => skill.skillName).join(", ") + " +" : data.map(skill => skill.skillName).join(", ");
+                }
+            },
+            { // Non-Matched Skills - custom logic
+                data: 'nonMatchedSkills',
+                render: function(data, type, row) {
+                    return data.length > 3 ? data.slice(0, 3).map(skill => skill.skillName).join(", ") + " +" : data.map(skill => skill.skillName).join(", ");
+                }
+            },
+            { // Additional Skills - custom logic
+                data: 'additionalSkills',
+                render: function(data, type, row) {
+                    return data.length > 3 ? data.slice(0, 3).map(skill => skill.skillName).join(", ") + " +" : data.map(skill => skill.skillName).join(", ");
+                }
+            },
+            { // Applicant Skill Badges - custom logic
+                data: 'applicantSkillBadges',
+                render: function(data, type, row) {
+                    if (data && data.length > 3) {
+                        return data.slice(0, 3).map(skill => skill.skillBadge.name).join(", ") + " +";
+                    } else if (data) {
+                        return data.map(skill => skill.skillBadge.name).join(", ");
+                    } else {
+                        return "No skills available";
+                    }
+                }
+            },
+            { data: 'matchPercentage', render: function(data, type, row) { return data + "%"; } } // Maps to {application.matchPercentage}%
        
-          {
-            data: null,
-            render: function(data, type, row) {
-              return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
-            }
-          }
-      ]
+    ]
   });
-  count=setCount(data.length);
 
-})
-.catch(error => {
-  // Handle errors
-  console.error('Error fetching or processing data:', error);
-});
+  setCount(filteredData.length);
 };
+
+// Helper functions to apply match types
+const applyMatchType = (value, filterValue, matchType) => {
+  if (!matchType || !filterValue) return true;
+
+  if (matchType === "contains") {
+    return value.toLowerCase().includes(filterValue.toLowerCase());
+  } else if (matchType === "is") {
+    return value.toLowerCase() === filterValue.toLowerCase();
+  }
+  return true;
+
+};
+
+const applyExperienceMatchType = (experience, filterValue, matchType) => {
+  if (!matchType || filterValue === null) return true;
+  
+  const exp = parseInt(experience.trim(), 10);
+  
+  if (matchType === "greaterThan") {
+    return exp > filterValue;
+  } else if (matchType === "lessThan") {
+    return exp < filterValue;
+  } else if (matchType === "is") {
+    return exp === filterValue;
+  }
+  return true;
+};
+
+const applyScoreMatchType = (score, filterValue, matchType) => {
+  
+  if (!matchType || filterValue === null) return true;
+  const parsedScore = typeof score === 'string' ? parseInt(score.trim(), 10) : score;
+  if (isNaN(parsedScore)) return false; // Handle cases where score is not a valid number
+  if (matchType === "greaterThan") {
+      return parsedScore > filterValue;
+  } else if (matchType === "lessThan") {
+      return parsedScore < filterValue;
+  } else if (matchType === "is") {
+      return parsedScore === filterValue;
+  }
+  
+  return true; // Default case
+};
+
+
+  
  
 const handleTextFieldChange = (e) => {
   const { id, value } = e.target;
@@ -222,6 +300,16 @@ const handleTextFieldChange = (e) => {
     case "minimumQualificationInput":
       setMinimumQualification(value);
       break;
+      case "specializationInput":
+        setspecialization(value);
+        break;
+        case "preScreenedConditionInput":
+          setPreScreenedCondition(value);
+          break;
+          case "apptitudeScoreInput":
+            setapptitudeScore(value);
+            break;
+           
     default:
       break;
   }
@@ -277,7 +365,7 @@ const handleTextFieldChange = (e) => {
         const $table= window.$(tableref.current);
           const timeoutId = setTimeout(() => {  
            $table.DataTable().destroy();
-            $table.DataTable({responsive:true});
+            $table.DataTable({responsive:true, searching: false, lengthChange: false, "info": false});
                   }, 500);
          return () => {
             isMounted.current = false;
@@ -354,7 +442,27 @@ const handleTextFieldChange = (e) => {
             ...prevState,
             minimumQualification: value
           }));
-          break;  
+          break;
+          case "specializationSelect":
+            setFilterOptions(prevState => ({
+              ...prevState,
+              specialization: value
+            }));
+            break; 
+            case "preScreenedConditionSelect":
+              setFilterOptions(prevState => ({
+                ...prevState,
+                preScreenedCondition: value
+              }));
+              break; 
+              case "apptitudeScoreFilterSelect":
+                setFilterOptions(prevState => ({
+                  ...prevState,
+                  apptitudeScore: value
+                }));
+                break; 
+              
+            
       default:
         break;
     }
@@ -542,6 +650,7 @@ const handleSelectChange = async (e) => {
           onChange={handleTextFieldChange}
           style={{ width: '100px', height: '20px' }}
         />
+          
       </div>
     </div>
   )}
@@ -758,6 +867,112 @@ const handleSelectChange = async (e) => {
                         </div>
                       )}
                     </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="specialization"
+                          checked={filterOptions.specialization}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="specialization">&nbsp;Specialization</label>
+                      </div>
+                      {filterOptions.specialization && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="specializationSelect"
+                              value={filterOptions.specializationSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="specializationInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="preScreenedCondition"
+                          checked={filterOptions.preScreenedCondition}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="preScreenedCondition">&nbsp;PreScreened</label>
+                      </div>
+                      {filterOptions.preScreenedCondition && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="preScreenedConditionSelect"
+                              value={filterOptions.preScreenedConditionSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="preScreenedConditionInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="apptitudeScore"
+                          checked={filterOptions.apptitudeScore}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="apptitudeScore">&nbsp;ApptitudeScore</label>
+                      </div>
+                      {filterOptions.apptitudeScore && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="apptitudeScoreFilterSelect"
+                              value={filterOptions.apptitudeScoreFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="greaterThan">greaterThan</option>
+                              <option value="lessThan">lessThan</option>
+                            </select>
+                          </div>
+                          <input
+                            type="text"
+                            id="apptitudeScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
                     <div>
                       <button className="apply-button1" onClick={applyFilter}>Apply</button>
                       <button className="reset-button1" onClick={resetFilter}>Reset</button>
@@ -797,7 +1012,7 @@ const handleSelectChange = async (e) => {
                          
                          
                           <th>Resume</th>
-                          {/* <th>Experience</th>
+                          <th>Experience</th>
                          
                          <th>Qualification</th>
                           <th>Preffered Locations</th>
@@ -809,21 +1024,27 @@ const handleSelectChange = async (e) => {
                           <th>Un-Matched Skills</th>
                           <th>Additional Skills</th>
                           <th>Tested Skills</th>
-                          <th>Job Match%</th> */}
+                          <th>Job Match%</th>
                         </tr>
                       </thead>
                       <tbody>
                       {Array.isArray(applicants) && applicants.map((application) => (
-                          <tr key={application.applyjobid}>
-                            <td>
-                            <input
-  type="checkbox"
-  value={application.applyjobid}
-  checked={selectedApplicants.includes(application.applyjobid)}
-  onChange={() => handleCheckboxChange2(application.applyjobid)}
-  name={`applicantCheckbox-${application.applyjobid}`}
-/>
-                            </td>
+                          <tr key={application.applyjobid} style={{
+                            backgroundColor: selectedApplicants.includes(application.applyjobid)
+                              ? "#F6F6F6"
+                              : "transparent",
+                          }}>
+                           
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  value={application.applyjobid}
+                                  checked={selectedApplicants.includes(application.applyjobid)}
+                                  onChange={() => handleCheckboxChange2(application.applyjobid)}
+                                  name={`applicantCheckbox-${application.applyjobid}`}
+                                />
+                              </td>
+                              
                            
                             <td>
   <Link 
@@ -967,7 +1188,7 @@ const handleSelectChange = async (e) => {
 
                             <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View</Link></td>
 
-                            {/* <td>{application.experience}</td>
+                            <td>{application.experience}</td>
                            
                             <td>{application.minimumQualification}</td>
                             <td>
@@ -1007,7 +1228,7 @@ const handleSelectChange = async (e) => {
                                   : "No skills available"}
                             </td>
 
-                            <td>{application.matchPercentage}%</td> */}
+                            <td>{application.matchPercentage}%</td>
 
                           </tr>
                         ))}
