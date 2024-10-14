@@ -627,12 +627,14 @@ tr {
 }
 
 thead tr th {
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #64666c;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: capitalize;
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    color: #121212;
     letter-spacing: 1.2px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 0px solid #e5e5e5;
     padding: 0px 16px 8px 16px;
 }
 
@@ -654,8 +656,11 @@ tbody tr td:last-child {
 
 tbody tr td {
     padding: 10px 10px 10px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 0px solid #e5e5e5;
     vertical-align: middle;
+    font-size: 14px;
+    font-weight: 400;
+    
 }
 
 tbody tr:last-child td {
@@ -1943,7 +1948,8 @@ tbody tr td:nth-child(2) {
 }
 
 .flat-dashboard-setting .profile-setting {
-    padding: 20px 20px 20px;
+    /* padding: 20px 20px 20px; */
+    padding: 0px;
     border-radius: 15px;
 }
 
