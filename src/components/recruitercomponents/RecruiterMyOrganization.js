@@ -4,6 +4,7 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import Snackbar from '../common/Snackbar';
+import $ from 'jquery';
  
 function RecruiterMyOrganization() {
    
@@ -19,12 +20,15 @@ function RecruiterMyOrganization() {
       twitter: '',
       instagram: '',
       youtube: '',
+      linkedin: '',
     });
+    const [imageSrc, setImageSrc] = useState('');
     const [token, setToken] = useState('');
     const [headOffice, setHeadOffice] = useState('');
     const [twitter, setTwitter] = useState('');
     const [instagram, setInstagram] = useState('');
     const [youtube, setYoutube] = useState('');
+    const [linkedin, setLinkedin] = useState('');
     const [formErrors, setFormErrors] = useState({
       companyName: '',
       website: '',
@@ -32,8 +36,11 @@ function RecruiterMyOrganization() {
       email: '',
       headOffice: '',
       instagram: '',
+      aboutCompany:'',
     });
- 
+    
+    const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
+    const [aboutCompany, setAboutCompany] = useState('');
     const user1 = useUserContext();
     const user = user1.user;
     const [isHovered, setIsHovered] = useState(false);
@@ -85,6 +92,13 @@ function RecruiterMyOrganization() {
         headOffice: '', 
       }));
     };
+    const handleAboutCompanyChange = (e) => {
+      setAboutCompany(e.target.value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        headOffice: '', 
+      }));
+    };
     const handleTwitterChange = (e) => {
       setTwitter(e.target.value);
       setFormErrors((prevErrors) => ({
@@ -104,6 +118,13 @@ function RecruiterMyOrganization() {
       setFormErrors((prevErrors) => ({
         ...prevErrors,
         youtube: '', 
+      }));
+    };
+    const handleLinkedinChange = (e) => {
+      setLinkedin(e.target.value);
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        linkedin: '', 
       }));
     };
     const handleEmailChange = (e) => {
@@ -141,14 +162,20 @@ function RecruiterMyOrganization() {
         errors.phoneNumber = 'Invalid phone number';
         isValid = false;
       }
-      if (!headOffice.trim()) {
-        errors.headOffice = 'Head office address is required';
-        isValid = false;
-      }
-      else if (headOffice.trim().length < 3) {
-        errors.headOffice = 'Head office address must be at least 3 characters';
-        isValid = false;
+    //   if (!headOffice.trim()) {
+    //     errors.headOffice = 'Head office address is required';
+    //     isValid = false;
+    //   }
+    //   else if (headOffice.trim().length < 3) {
+    //     errors.headOffice = 'Head office address must be at least 3 characters';
+    //     isValid = false;
+    // }
+    if (!aboutCompany.trim()) {
+      errors.aboutCompany = 'About company is required';
+      isValid = false;
     }
+
+
       if (instagram.trim() && !/^[a-zA-Z0-9_]+$/.test(instagram.trim())) {
         errors.instagram = 'Invalid Instagram handle';
         isValid = false;
@@ -159,6 +186,10 @@ function RecruiterMyOrganization() {
       }
       if (youtube.trim() && !/^[a-zA-Z0-9_]+$/.test(youtube.trim())) {
         errors.youtube = 'Invalid youtube handle';
+        isValid = false;
+      }
+      if (linkedin.trim() && !/^[a-zA-Z0-9_]+$/.test(linkedin.trim())) {
+        errors.youtube = 'Invalid linkedin handle';
         isValid = false;
       }
       setFormErrors(errors);
@@ -179,8 +210,10 @@ function RecruiterMyOrganization() {
                 twitter,
                 instagram,
                 youtube,
+                linkedin,
             ],
             headOffice,
+            aboutCompany,
           };
           const response = await fetch(`${apiUrl}/companyprofile/recruiters/company-profiles/${user.id}`, {
             method: 'POST',
@@ -204,6 +237,8 @@ function RecruiterMyOrganization() {
               setTwitter('');
               setInstagram('');
               setYoutube('');
+              setAboutCompany('');
+              setLinkedin('');
               setFormErrors({
                 companyName: '',
                 website: '',
@@ -211,6 +246,7 @@ function RecruiterMyOrganization() {
                 email: '',
                 headOffice: '',
                 instagram: '',
+                aboutCompany:'',
               });
             } else {
               
@@ -226,6 +262,8 @@ function RecruiterMyOrganization() {
         setTwitter('');
         setInstagram('');
         setYoutube('');
+        setAboutCompany('');
+        setLinkedin('');
         setFormErrors({
           companyName: '',
           website: '',
@@ -233,6 +271,8 @@ function RecruiterMyOrganization() {
           email: '',
           headOffice: '',
           instagram: '',
+          linkedin:'',
+          aboutCompany:'',
         });
             }
           } else {
@@ -273,6 +313,50 @@ function RecruiterMyOrganization() {
       }
     };
 
+    useEffect(() => {
+      const handleResize = () => {
+        setIsOpen(window.innerWidth >= 1302);
+      };
+       window.addEventListener('resize', handleResize);
+      $("#left-menu-btn").on("click", function(e) {
+        e.preventDefault();
+        if ($("body").hasClass("sidebar-enable") == true) {
+          $("body").removeClass("sidebar-enable");
+          $.cookie("isButtonActive", "0");
+        } else {
+          $("body").addClass("sidebar-enable");
+          $.cookie("isButtonActive", "1");
+        }
+        1400 <= $(window).width()
+          ? $("body").toggleClass("show-job")
+          : $("body").removeClass("show-job");
+        var width = $(window).width();
+        if (width < 1400) {
+          $.cookie('isButtonActive', null);
+        }
+      });
+      if ($.cookie("isButtonActive") == 1) {
+        $("body").addClass("sidebar-enable show-job");
+      }
+      fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
+      })
+        .then(response => response.blob())
+        .then(blob => {
+          const imageUrl = URL.createObjectURL(blob);
+          setImageSrc(imageUrl);
+        })
+        .catch(error => {
+          console.error('Error fetching image URL:', error);
+          setImageSrc(null);
+        });
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, [user.id]);
+
     const handleCloseSnackbar = () => {
       setSnackbar({ open: false, message: '', type: '' });
     };
@@ -300,17 +384,30 @@ function RecruiterMyOrganization() {
           <div className="profile-setting bg-white">
             <div className="author-profile flex2 border-bt">
               <div className="wrap-img flex2">
-                <div id="upload-profile">
-    <h5 class="fw-6">Upload Company Logo: </h5>
+           <div class="img-box relative">
+             <img
+                width="100px"
+                height="100px"
+                src={imageSrc || '../images/user/avatar/profile-pic.png'}
+                alt="Profile"
+                onError={() => setImageSrc('../images/user/avatar/profile-pic.png')}
+                style={{ borderRadius: '100%', position: 'relative',width:'100px',height:'100px' }}
+              />
+              </div>
+  <div className="upload-profile">
+            <div className="upload-section">
+              <div className="upload-photo">
+<h5 class="fw-6">Upload Company Logo: </h5>
     <h6>JPG or PNG</h6>
     <input
-      class="up-file"
+    
       id="tf-upload-img"
       type="file"
       name="logoFile"
       required=""
       onChange={handleFileSelect}
     />
+    <br></br>
     <button
       type="button"
       onClick={uploadPhoto}
@@ -321,14 +418,15 @@ function RecruiterMyOrganization() {
     >
       Upload Photo
     </button>
-    
-  </div>
+              </div>
+            </div>
+          </div>
               </div>
               <div className="wrap-img flex2">
               </div>
-              <div className="tt-button button-style">
+              {/* <div className="tt-button button-style">
                   <button type="submit" onClick={handleSubmit} className="button-status">Save Profile</button>
-              </div>
+              </div> */}
             </div>
             <div className="form-infor-profile">
               <h3 className="title-info">Information</h3>
@@ -403,7 +501,7 @@ function RecruiterMyOrganization() {
                 </div>               
             <div className="col-lg-6 col-md-6">
               <div className="text-editor-wrap border-bt">
-                <label className="title-user fw-7">Head Office Address<span className="color-red">*</span></label>
+                <label className="title-user fw-7">Head Office Address</label>
                 <fieldset className="info-wd">
                 <input
                   type="text"
@@ -420,6 +518,28 @@ function RecruiterMyOrganization() {
                     </fieldset>
               </div>
              </div>
+             <div className="about-company">
+            <h3>About</h3>
+            <br></br>
+            <div className="row">
+              <div className="col-md-12">
+                <label style={{color: '#64666C'}} className="title-user fw-7">About Company<span className="color-red">*</span></label>
+                <textarea
+                  rows="4"
+                  className='textarea'
+                  value={aboutCompany}
+                  onChange={handleAboutCompanyChange}
+                  required
+                  style={{borderRadius:'8px',border:'1px solid #E5E5E5',background:'#F5F5F5'}}
+                />
+                 {formErrors.aboutCompany && (
+                      <div className="error-message">{formErrors.aboutCompany}</div>
+                    )}
+              </div>
+            </div>
+            <br></br>
+          </div>
+         
              <div className="row">
               <div className="social-wrap">
                 <h3>Social Network</h3>
@@ -470,15 +590,40 @@ function RecruiterMyOrganization() {
                     )}
                     </fieldset>
                   </div>
+                  <div className="col-lg-6 col-md-6">
+                    <fieldset className="flex2">
+                      <span className="fa-brands fa-linkedin" />
+                      <input
+                    type="text"
+                    id="instagram"
+                    className="input-form2"
+                    placeholder="Linkedin"
+                    value={linkedin}
+                    onChange={handleLinkedinChange}
+                    required
+                  />
+                  {formErrors.linkedin && (
+                      <div className="error-message">{formErrors.linkedin}</div>
+                    )}
+                    </fieldset>
+                  </div>
+                  
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <div className="save-profile" align="right">
+            <button type="button" className="button-status" onClick={handleSubmit}>Save Profile</button>
+    </div>
       </div>
+
     </div>
+ 
     </div>
+   
     </div>
+   
     </form>
   </section>
  </div> 

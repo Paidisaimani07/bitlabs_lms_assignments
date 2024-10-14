@@ -20,6 +20,8 @@ import ViewApplicantResume from '../../components/recruitercomponents/ViewApplic
 import RecruiterViewJob from '../../components/recruitercomponents/RecruiterViewJob';
 import RecruiterRepostJob from '../../components/recruitercomponents/RecruiterRepostJob';
 import RecruiterPostJob2 from '../../components/recruitercomponents/RecruiterPostJob2';
+import RecruiterViewOrganization from '../../components/recruitercomponents/RecruiterViewOrganization';
+import RecruiterEditOrganization from '../../components/recruitercomponents/RecruiterEditOrganization';
 
 function RecruiterHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -82,6 +84,12 @@ function RecruiterHomePage() {
                     case `/recruiter-repost-job/${id}`:
                     setActiveRoute(`RecruiterRepostJob-${id}`);
                     break;
+                    case '/recruiter-view-organization':
+                      setActiveRoute('vieworganization');
+                      break;
+                      case '/recruiter-edit-organization':
+                        setActiveRoute('editorganization');
+                        break;
 
       default:
         setActiveRoute('');
@@ -96,6 +104,8 @@ function RecruiterHomePage() {
     <RecruiterNavBar />
      {activeRoute === 'dashboard' && <RecruiterDashboard />}
      {activeRoute === 'organization' && <RecruiterMyOrganization />}
+     {activeRoute === 'vieworganization' && <RecruiterViewOrganization />}
+     {activeRoute === 'editorganization' && <RecruiterEditOrganization />}
      {activeRoute === 'postjob' && <RecruiterPostJob />}
      {activeRoute === 'postjob2' && <RecruiterPostJob2 />}
      {activeRoute === 'jobopenings' && <RecruiterJobOpenings setSelectedJobId={setSelectedJobId} />}

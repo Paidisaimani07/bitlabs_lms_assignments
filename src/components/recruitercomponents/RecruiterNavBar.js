@@ -287,7 +287,7 @@ const iconStyle = {
           </li>
       
           <li>
-            <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
