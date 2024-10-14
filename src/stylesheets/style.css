@@ -4018,7 +4018,7 @@ text-transform: capitalize;
   gap: 15px;
   padding: 5px;
   background-color: #f9f9f9;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #c83232;
   border-radius: 8px;
   margin-bottom: 40px;
 }
@@ -4028,17 +4028,17 @@ text-transform: capitalize;
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   background-color: #ffffff;
-  padding: 10px;
+  /* padding: 10px; */
   border-radius: 6px;
   margin-right: 45px; /* Adjust this value to increase horizontal spacing */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
 }
 
 /* Container for the checkbox and label */
 .filter-option .checkbox-label {
   display: flex;
   align-items: center; /* Align checkbox and label inline */
-  margin-bottom: 2px; /* Space below the checkbox and label */
+ 
 }
 
 /* Label for each filter option */
@@ -4135,40 +4135,66 @@ text-transform: capitalize;
   position: relative; /* Required for absolute positioning of popup */
 }
 
-/* Popup styling */
+/* Popup styling
 .popup {
   position: absolute;
-  top: 100%; /* Position below the checkbox-label container */
+  top: 100%; 
   left: 0;
   background-color: white;
   border: 1px solid #ccc;
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 10; /* Ensure the popup appears above other elements */
+  z-index: 10; 
   display: flex;
   flex-direction: column;
-}
+} */
 
-/* Dropdown container */
-.dropdown-container1 {
-  margin-bottom: 10px; /* Space below the dropdown */
-}
+ /* Dropdown container  */
+/* .dropdown-container1 {
+  margin-bottom: 10px;
+} */
 
-.dropdown-container1 select {
+/* .dropdown-container1 select {
   padding: 0px;
   font-size: 14px;
   border-radius: 4px;
   border: 1px solid #ccc;
   background-color: #f8f8f8;
-}
+} */
 
 /* Text input */
-.popup input[type="text"] {
+/* .popup input[type="text"] {
   padding: 5px;
   font-size: 14px;
   border-radius: 4px;
   border: 1px solid #ccc;
   background-color: #f8f8f8;
+} */
+
+.filter-menu {
+  position: fixed;
+  right: -300px; /* Hide it off-screen */
+  top: 80px;
+  height: 100%;
+  width: 230px;
+  background-color: #FFFFFF;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 20px;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+}
+.filter-menu.show {
+  right: 0; /* Slide in when active */
 }
 
-  
+.filter-icon-button {
+  position: fixed;
+  /* top: 10px;
+  right: 10px; */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  /* padding: 10px; */
+  cursor: pointer;
+}
