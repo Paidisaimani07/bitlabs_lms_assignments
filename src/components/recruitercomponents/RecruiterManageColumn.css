@@ -1,0 +1,117 @@
+/* Sidebar.css */
+ 
+.sidebar {
+    position: fixed;
+    top: 0px; /* Move it 100px below from the top */
+    right: -300px; /* Start off the screen */
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    transition: right 0.3s ease;
+    z-index: 9999;
+    border-top-left-radius: 20px; /* Rounded top-left corner */
+    border-bottom-left-radius: 20px; /* Rounded bottom-left corner */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.2);
+    text-transform: none;
+    user-select: none; /* Standard syntax */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+  }
+  .sidebar h3{
+    margin-top: 75px;
+  }
+   
+  .sidebar.open {
+    right: 0;
+  }
+   
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+  }
+   
+  .filter-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 18px;
+  }
+   
+  .filter-button:focus {
+    outline: none;
+  }
+   
+  .apply-button1,
+  .reset-button1 {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+   
+  .apply-button1 {
+    background-color: #4CAF50;
+    color: white;
+  }
+   
+  .reset-button1 {
+    background-color: #f44336;
+    color: white;
+  }
+   
+   
+  ul {
+    padding-left: 0;
+    list-style-type: none;
+  }
+   
+  li {
+    margin-bottom: 10px;
+  }
+   
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+   
+  .sidebar ul li span{
+    position: relative;
+    top: -2px;
+  }
+   
+  #apply-button2 {
+    width: 150px;
+    padding: 10px;
+    background-color: hsl(16, 100%, 59%);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+   
+  #apply-button2:hover {
+    background-color: orangered;
+  }
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    font-size: medium;
+  }
+  .reset2-link{
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  .reset2-link{
+    color: orangered;
+  }

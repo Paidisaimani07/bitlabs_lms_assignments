@@ -1948,8 +1948,8 @@ tbody tr td:nth-child(2) {
 }
 
 .flat-dashboard-setting .profile-setting {
-    /* padding: 20px 20px 20px; */
-    padding: 0px;
+    padding: 20px 20px 20px;
+    /* padding: 0px; */
     border-radius: 15px;
 }
 
