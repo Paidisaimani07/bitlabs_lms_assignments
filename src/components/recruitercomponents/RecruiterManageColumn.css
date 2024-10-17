@@ -22,6 +22,12 @@
   }
   .sidebar h3{
     margin-top: 75px;
+    color: #121212;
+    font-family: "Plus Jakarta Sans";
+    font-size: 19.688px;
+    font-style: normal;
+    font-weight: 800;
+    margin-left: 15px;
   }
    
   .sidebar.open {
@@ -84,18 +90,30 @@
    
   .sidebar ul li span{
     position: relative;
+    color: #202020;
+font-family: "Plus Jakarta Sans";
+font-size: 14px;
+font-style: normal;
+font-weight: 400;
     top: -2px;
   }
    
   #apply-button2 {
-    width: 150px;
-    padding: 10px;
-    background-color: hsl(16, 100%, 59%);
+    font-family: "Plus Jakarta Sans";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+width: 149px;
+height: 37px;
+padding: 11px 59.177px 12px 49px;
+align-items: center;
+flex-shrink: 0;
     color: white;
     border: none;
-    border-radius: 5px;
+    
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    background: #F97316;
   }
    
   #apply-button2:hover {
@@ -113,5 +131,18 @@
     margin-top: 20px;
   }
   .reset2-link{
-    color: orangered;
+    color: #F97316;
+text-align: center;
+font-family: "Plus Jakarta Sans";
+font-size: 14px;
+font-style: normal;
+font-weight: 700;
+line-height: 14px; /* 100% */
+text-transform: capitalize;
+display: flex;
+width: 39.259px;
+height: 14px;
+flex-direction: column;
+justify-content: center;
+flex-shrink: 0;
   }
