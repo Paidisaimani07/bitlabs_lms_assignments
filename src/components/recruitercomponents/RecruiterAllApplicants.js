@@ -2307,9 +2307,9 @@ const exportCSV = () => {
                 <div className="profile-setting">
                 <div className="table-container-wrapper">
                   <div className="table-container">
-                  {isLoading ? (
+                  { isLoading ? (
                   <div>Loading...</div> // Display a spinner or loading text
-                      ) : applicants.length === 0 ? (
+                      ) : Array.isArray(applicants) && applicants.length === 0 ? (
                   <p>No Applicants are available.</p> // Display when there are no applicants
                       ) : (
                     <table ref={tableref} className="responsive-table">
