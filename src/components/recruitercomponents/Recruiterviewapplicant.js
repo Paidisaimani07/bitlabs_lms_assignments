@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useParams } from 'react-router-dom';
 import BackButton from '../common/BackButton';
-import Mail from '../../images/icons/mail.png';
-import Phone from '../../images/icons/phone.png';
+import Mail from '../../images/icons/mail1.png';
+import Phone from '../../images/icons/phone1.png';
 import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
 import { useLocation, Link } from 'react-router-dom';
+import Snackbar from '../common/Snackbar';
  
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -25,6 +26,14 @@ const Recruiterviewapplicant = () => {
   const [resumeFileName, setResumeFileName] = useState('');
   const [jobs, setJobs] = useState([]);
   const [screeningQuestions, setScreeningQuestions] = useState([]);
+  const [selectedApplicants, setSelectedApplicants] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedMenuOption, setSelectedMenuOption] = useState('All');
+  const isMounted = useRef(true);
+  const tableref=useRef(null);
+  const filterRef = useRef([]);
+  const [applicants, setApplicants] = useState([]);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
  
   const query = useQuery();
   const jobid = query.get('jobid');
@@ -135,7 +144,10 @@ const Recruiterviewapplicant = () => {
     }
   };
  
- 
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+    window.location.reload();
+  };
  
   const checkAndShowAlert = (message) => {
     const alertShownBefore = localStorage.getItem('alertShown');
@@ -197,6 +209,53 @@ const Recruiterviewapplicant = () => {
       isMounted = false;
     };
   }, [user, id]);
+
+  const handleSelectChange = async (e) => {
+    const newStatus = e.target.value;
+   
+    try {
+      if (selectedApplicants.length > 0 && newStatus) {
+        console.log("Selected Applicants:", selectedApplicants);
+        const updatePromises = selectedApplicants.map(async (selectedApplicant) => {
+          const applyJobId = selectedApplicant;
+          console.log("Apply Job ID:", applyJobId);
+          if (!applyJobId) {
+            console.error("applyjobid is undefined or null for:", selectedApplicant);
+            return null;
+          }
+   
+          const response = await axios.put(
+            `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
+          );
+          return { applyJobId, newStatus };
+        });
+   
+        const updatedResults = await Promise.all(updatePromises);
+   
+        const filteredResults = updatedResults.filter(result => result !== null);
+       
+        if (isMounted.current) {
+          const updatedApplicants = applicants.map((application) => {
+            const updatedResult = filteredResults.find(result => result.applyJobId === application.applyjobid);
+            if (updatedResult) {
+              return { ...application, applicantStatus: updatedResult.newStatus };
+            }
+            return application;
+          });
+          setApplicants(updatedApplicants);
+          setSelectedStatus(newStatus);
+          setSelectedApplicants([]);
+        }
+       
+       
+        const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
+        setSnackbar({ open: true, message: message1, type: 'success' });
+       
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
  
   if (loading) {
     return <div>Loading...</div>;
@@ -218,7 +277,7 @@ const Recruiterviewapplicant = () => {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
-                <div className="title-dash flex2"><BackButton /> Applicant's Profile</div>
+                <div className="title-dash flex2"><BackButton /> Applicants</div>
               </div>
             </div>
           </div>
@@ -236,8 +295,8 @@ const Recruiterviewapplicant = () => {
         marginBottom: '30px',
         borderRadius: '10px',
         padding: '30px',
-        color: 'white',
-        backgroundColor: '#00215E',
+        color: '#262626',
+        backgroundColor: '#ffffff',
        
       }}>
         <div className="tf-container">
@@ -268,24 +327,44 @@ const Recruiterviewapplicant = () => {
  
               <div className="content" style={{marginLeft:'20px'}}>
                
-              <h3 style={{ color: 'white' }}>
+              <h3 style={{ color: '#262626' }}>
   {profileData.basicDetails.firstName} {profileData.basicDetails.lastName}
 </h3>
  
                
-                <div style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
+                <div style={{ color: '#262626', display: 'flex', alignItems: 'center' }}>
                   <img src={Mail} alt="Email" className="icon1" style={{ marginRight: '10px' }} />
                   {profileData.basicDetails.email}
                 </div>
  
-                <div style={{ color: 'white', display: 'flex', alignItems: 'center' }}>
+                <div style={{ color: '#262626', display: 'flex', alignItems: 'center' }}>
                   <img src={Phone} alt="Phone" className="icon1" style={{ marginRight: '10px' }} />
                   {profileData.basicDetails.alternatePhoneNumber}
                 </div>
- 
+                  
               </div>
+              
             </div>
+            
+            <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'450px' }}>
+                      <div className="controls" style={{ display: 'flex', gap: '10px' }}>
+                        <button className="export-buttonn">
+                          Download PDF
+                        </button>
+                        <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
+                          <option value="" disabled>
+                            Change Status
+                          </option>
+                          <option value="Screening">Screening</option>
+                          <option value="Shortlisted">Shortlisted</option>
+                          <option value="Interviewing">Interviewing</option>
+                          <option value="Selected">Selected</option>
+                          <option value="Rejected">Rejected</option>
+                        </select>
+                      </div>
+                    </div>
           </div>
+          
         </div>
       </section>
  
@@ -521,6 +600,15 @@ const Recruiterviewapplicant = () => {
           </div>
         </div>
       </section>
+      {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
     </div>
   );
 };

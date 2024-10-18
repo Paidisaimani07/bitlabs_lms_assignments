@@ -5,6 +5,7 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
+import logos from '../../images/profileIcon.svg';
 
 
 function RecruiterNavBar() {
@@ -14,6 +15,7 @@ function RecruiterNavBar() {
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
+  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   
   const [isHovered, setIsHovered] = useState(false);
 
@@ -158,12 +160,17 @@ const iconStyle = {
     <div className="modal-menu__backdrop" />
     <div className="widget-filter">
       <div className="mobile-header">
-        <div id="logo" className="logo">
-          <a href="/recruiterhome">
-            <img className="site-logo" src="../images/logo.png" alt="Image" />
-          </a>
-          <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-        </div>
+      <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
+      
         <a className="title-button-group">
           <i className="icon-close" />
         </a>
@@ -180,22 +187,23 @@ const iconStyle = {
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
             {window.innerWidth < 1400 && (
-              <div className="hamburger-icon" onClick={handleToggleMenu}>
-                <span />
-                <span />
-                <span />
-              </div>
+              // <div className="hamburger-icon" onClick={handleToggleMenu}>
+              //   <span />
+              //   <span />
+              //   <span />
+              // </div>
+              <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
             )}
-              <div id="logo" className="logo">
-                <a href="/recruiterhome">
-                  <img
-                    className="profile-site-logo"
-                    src="../images/logo.png"
-                    alt="Image"
-                  />
-                </a>
-                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-              </div>
+                  <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
@@ -279,7 +287,7 @@ const iconStyle = {
           </li>
       
           <li>
-            <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
