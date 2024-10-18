@@ -441,6 +441,28 @@ filteredData.sort((a, b) => {
 });
 }
 
+const handleCheckboxChange3 = (applyjobid) => {
+  // Toggle the applicant's selection state
+  if (selectedApplicants.includes(applyjobid)) {
+    setSelectedApplicants(selectedApplicants.filter(id => id !== applyjobid));
+  } else {
+    setSelectedApplicants([...selectedApplicants, applyjobid]);
+  }
+
+  // Check if all checkboxes are selected
+  const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]');
+  const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+
+  // Uncheck the "Select All" checkbox if any individual checkbox is unchecked
+  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+  if (!allChecked) {
+    selectAllCheckbox.checked = false;
+  } else {
+    selectAllCheckbox.checked = true;
+  }
+};
+
+// Assuming this is your select all logic
 const handleFilterData = (event) => {
   const isChecked = event.target.checked;
   if (isChecked) {
@@ -449,11 +471,13 @@ const handleFilterData = (event) => {
   } else {
     setSelectedApplicants([]);
   }
- 
+
+  // Set all checkboxes' checked state to match the header checkbox
   document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]').forEach((checkbox) => {
     checkbox.checked = isChecked;
   });
 };
+
  
 const tableHeader=document.getElementById("tableHeader");
 tableHeader.innerHTML = `
@@ -503,8 +527,8 @@ const tableBody = document.getElementById("applicantTableBody");
       name="applicantCheckbox-${applicant.applyjobid}"
     />
   </td>
-  <td>
-  <a href="/viewapplicant/${applicant.id}" style="color: #0583D2; text-decoration: none;">
+  <td>   
+  <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
     ${applicant.name}
   </a>
   ${applicant.preScreenedCondition === 'PreScreened'
@@ -555,8 +579,8 @@ const tableBody = document.getElementById("applicantTableBody");
     : ''}
 </td>
 
-  <td><a href="/viewapplicant/${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
-  <td><a href="/viewapplicant/${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
+  <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
+  <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
   <td>${applicant.jobTitle}</td>
   <td style="padding: 0px 10px; text-align: center; vertical-align: middle;">
     <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
@@ -656,7 +680,7 @@ const tableBody = document.getElementById("applicantTableBody");
     const checkbox = row.querySelector(`input[type="checkbox"][value="${applicant.applyjobid}"]`);
  
     checkbox.addEventListener('change', () => {
-      handleCheckboxChange2(applicant.applyjobid);
+      handleCheckboxChange3(applicant.applyjobid);
     });
     });
  
@@ -995,7 +1019,7 @@ const handleTextFieldChange = (id, value) => {
         const $table= window.$(tableref.current);
           const timeoutId = setTimeout(() => {  
            $table.DataTable().destroy();
-            $table.DataTable({responsive:true, searching: false, lengthChange: false, "info": false});
+            $table.DataTable({responsive:true, searching: false, lengthChange: false, "info": false, paging:false});
                   }, 500);
          return () => {
             isMounted.current = false;

@@ -33,7 +33,12 @@ const Recruiterviewapplicant = () => {
   const fetchResume = async () => {
     try {
       console.log('Making resume API call...');
-      const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`);
+      const token = localStorage.getItem('jwtToken');
+      const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include JWT token
+        },
+      });
       console.log('Resume API call response:', resumeResponse);
  
       if (resumeResponse.data) {
@@ -55,7 +60,12 @@ const Recruiterviewapplicant = () => {
   const fetchActiveJob = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${apiUrl}/job/${jobid}`);
+      const token = localStorage.getItem('jwtToken');
+      const response = await axios.get(`${apiUrl}/job/${jobid}`, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include JWT token
+        },
+      });
       const job = response.data;
  
       if (job && job.screeningQuestions) {
@@ -83,7 +93,13 @@ const Recruiterviewapplicant = () => {
     const fetchResume = async () => {
       try {
         console.log('Making resume API call...');
-        const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`);
+        const token = localStorage.getItem('jwtToken');
+
+        const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include JWT token
+          },
+        });
         console.log('Resume API call response:', resumeResponse);
  
         if (resumeResponse.data) {
@@ -138,15 +154,26 @@ const Recruiterviewapplicant = () => {
     let profileResponse = null;
     let isMounted = true;
  
+    const token = localStorage.getItem('jwtToken');
     const fetchData = async () => {
       try {
-        profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view1`);
+        profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view1`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include JWT token
+          },
+        });
         // Sort skills once when setting the state
         const sortedSkills = profileResponse.data.skillsRequired.sort((a, b) => a.skillName.localeCompare(b.skillName));
         setProfileData({ ...profileResponse.data, skillsRequired: sortedSkills });
         count = 1;
  
-        const imageResponse = await axios.get(`${apiUrl}/applicant-image/getphoto1/${id}`, { responseType: 'arraybuffer' });
+        const imageResponse = await axios.get(`${apiUrl}/applicant-image/getphoto1/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
+          },
+          responseType: 'arraybuffer', // Set responseType to arraybuffer
+        });
+        
         const base64Image = btoa(
           new Uint8Array(imageResponse.data).reduce(
             (data, byte) => data + String.fromCharCode(byte),
