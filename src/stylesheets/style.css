@@ -711,7 +711,7 @@ input[type="color"],
   margin: 0px; 
   padding: 10px 0px 10px 0px;
   border-radius: 8px;
-  
+  margin-top: 15px;
 }
 
 .menu-list {

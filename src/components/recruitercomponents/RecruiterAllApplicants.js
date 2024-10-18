@@ -973,7 +973,11 @@ const handleTextFieldChange = (id, value) => {
       });
     };
   }, [selectedFilter]);
+
+  const [isLoading, setIsLoading] = useState(true); // Loading state
   const fetchAllApplicants = async () => {
+    setIsLoading(true); // Start loading
+
     try {
       const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants`);
     const applicantsArray = Object.values(response.data).flat();
@@ -1023,13 +1027,20 @@ const handleTextFieldChange = (id, value) => {
         const $table= window.$(tableref.current);
           const timeoutId = setTimeout(() => {  
            $table.DataTable().destroy();
-            $table.DataTable({responsive:true, searching: false, lengthChange: false, "info": false});
+            $table.DataTable({responsive:true, 
+              searching: false, 
+              lengthChange: false, 
+              "info": false,
+              paging: false, 
+            });
                   }, 500);
          return () => {
             isMounted.current = false;
          };
     } catch (error) {
       console.error('Error fetching applicants:', error);
+    }finally {
+      setIsLoading(false); // Stop loading
     }
   };
  
@@ -1337,6 +1348,53 @@ const exportCSV = () => {
     return (
       <div className="dashboard__content">
         <section className="page-title-dashboard">
+        <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ marginBottom: "-5px" }}>
+            <button
+                className="export-buttonn"
+                onClick={exportCSV}
+                style={{
+                  position: "absolute",
+                  right: "0",
+                  marginRight: "200px",
+                  top: "180px",
+                  zIndex: 2, // Higher z-index to keep button on top
+                }}
+            >
+                ExportCSV
+            </button>
+            </div>
+            
+            <select
+              className="status-select"
+              value={selectedStatus || ""}
+              onChange={handleSelectChange}
+              onFocus={(e) => (e.target.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")}
+              onBlur={(e) => (e.target.style.boxShadow = "none")}
+              style={{
+                position: "absolute",
+                right: "0",
+                marginRight: "20px",
+                top: "180px",
+                marginBottom: "10px",
+                zIndex: 1,
+                padding: "10px", // Add padding for better spacing
+                border: "1px solid #ccc", // Light border color
+                borderRadius: "4px", // Rounded corner
+                cursor: "pointer", // Pointer cursor for better UX
+                transition: "border-color 0.3s, box-shadow 0.3s", // Transition for focus effect
+              }}
+            >
+            <option value="" disabled hidden>
+                Change Status
+            </option>
+            <option value="Screening">Screening</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Interviewing">Interviewing</option>
+            <option value="Selected">Selected</option>
+            <option value="Rejected">Rejected</option>
+            </select>
+            </div>
           <div className="themes-container">
             <div className="row">
               <div className="col-lg-9 col-md-9">
@@ -1369,7 +1427,7 @@ const exportCSV = () => {
                   <div className="row">
                     <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'900px' }}>
                       <div className="controls" style={{ display: 'flex', gap: '10px' }}>
-                        <button className="export-buttonn" onClick={exportCSV}>
+                        {/* <button className="export-buttonn" onClick={exportCSV}>
                           ExportCSV
                         </button>
                         <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
@@ -1381,7 +1439,7 @@ const exportCSV = () => {
                           <option value="Interviewing">Interviewing</option>
                           <option value="Selected">Selected</option>
                           <option value="Rejected">Rejected</option>
-                        </select>
+                        </select> */}
                       </div>
                     </div>
                   </div>
@@ -2241,6 +2299,7 @@ const exportCSV = () => {
               {showFilters && <div className="backdrop"></div>}
         <section className="flat-dashboard-setting bg-white">
           <div className="themes-container">
+
             <div className="row">
             
      
@@ -2248,10 +2307,11 @@ const exportCSV = () => {
                 <div className="profile-setting">
                 <div className="table-container-wrapper">
                   <div className="table-container">
-                  {Array.isArray(applicants) && applicants.length === 0 ? (
-   
-                          <p>No Applicants are available.</p>
-                        ) : (
+                  {isLoading ? (
+                  <div>Loading...</div> // Display a spinner or loading text
+                      ) : applicants.length === 0 ? (
+                  <p>No Applicants are available.</p> // Display when there are no applicants
+                      ) : (
                     <table ref={tableref} className="responsive-table">
                       <thead id='tableHeader'>
                         <tr>
