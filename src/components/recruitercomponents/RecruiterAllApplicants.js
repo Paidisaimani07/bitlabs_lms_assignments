@@ -518,7 +518,7 @@ const tableBody = document.getElementById("applicantTableBody");
   tableBody.innerHTML = "";
  
  
-  filteredData.forEach((applicant) => {
+  filteredData.forEach((applicant,index) => {
    
     const row = document.createElement("tr");
    
@@ -546,24 +546,24 @@ const tableBody = document.getElementById("applicantTableBody");
           onMouseLeave="this.nextElementSibling.style.display='none';"
         />
         <div style="
-    display: none; 
-    position: absolute; 
-    bottom: 100%; 
-    left: 1200%; /* Adjust this value to position correctly */
-    top: 15px; 
-    transform: translateX(-50%); 
-    background-color: #fff; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
-    width: 550px; 
-    height: 80px; /* Set to auto to allow dynamic height */
-    white-space: normal; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    z-index: 1000;
-    overflow: hidden; /* Prevent overflow */
-    padding-right: 50px;
-    padding-top: 10px;
-">
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 1250%;
+            top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
+            transform: translateX(-50%);
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 615px;
+            height: 70px;
+            white-space: normal;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            z-index: 1000;
+            overflow: hidden;
+            padding-right: 50px;
+            padding-top: 5px;
+        ">
   <div style="
     display: flex; /* Use flexbox for alignment */
     align-items: center; /* Center the image and text vertically */
@@ -2381,7 +2381,7 @@ const exportCSV = () => {
                         </tr>
                       </thead>
                       <tbody id="applicantTableBody">
-                      {Array.isArray(applicants) && applicants.map((application) => (
+                      {Array.isArray(applicants) && applicants.map((application,index) => (
                           <tr key={application.applyjobid} style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid)
                               ? "#F6F6F6"
@@ -2425,7 +2425,7 @@ const exportCSV = () => {
           <div
             style={{
               position: 'absolute',
-              top: '25px',
+              top: index === applicants.length - 1 ? '-60px' : '25px',
               left: '0',
               width: '600px',
               height: '62.226px',
