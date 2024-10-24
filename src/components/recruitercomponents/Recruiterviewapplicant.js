@@ -11,6 +11,8 @@ import mortarboard1 from '../../images/icons/mortarboard1.png';
 import { useLocation, Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
  
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -33,6 +35,7 @@ const Recruiterviewapplicant = () => {
   const isMounted = useRef(true);
   const tableref=useRef(null);
   const filterRef = useRef([]);
+  const pageRef = useRef();
   const [applicants, setApplicants] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const [matchScore, setMatchScore] = useState(0);
@@ -182,6 +185,7 @@ const [applicants1, setApplicants1] = useState({
   const query = useQuery();
   const jobid = query.get('jobid');
   const  applicantId= query.get('appid');
+  const  applyid= query.get('applyid');
  
   const fetchResume = async () => {
     try {
@@ -274,7 +278,6 @@ const [applicants1, setApplicants1] = useState({
  
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
-    window.location.reload();
   };
  
   const checkAndShowAlert = (message) => {
@@ -361,53 +364,83 @@ const [applicants1, setApplicants1] = useState({
   }, [id, jobid]);
 
 
-  const handleSelectChange = async (e) => {
+  // const handleSelectChange1 = async (e) => {
+  //   const newStatus = e.target.value;
+   
+  //   try {
+    
+  //       console.log("Selected Applicants:", selectedApplicants);
+  //       const updatePromises = selectedApplicants.map(async (selectedApplicant) => {
+  //         const applyJobId = selectedApplicant;
+  //         console.log("Apply Job ID:", applyJobId);
+  //         if (!applyJobId) {
+  //           console.error("applyjobid is undefined or null for:", selectedApplicant);
+  //           return null;
+  //         }
+   
+  //         const response = await axios.put(
+  //           `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
+  //         );
+  //         return { applyJobId, newStatus };
+  //       });
+   
+  //       const message1 = `Status changed to <b>${newStatus}</b>`;
+  //       setSnackbar({ open: true, message: message1, type: 'success' });
+       
+      
+  //   } catch (error) {
+  //     console.error('Error updating status:', error);
+  //   }
+  // };
+ 
+  const handleSelectChange1 = async (e) => {
     const newStatus = e.target.value;
-   
+  
     try {
-      if (selectedApplicants.length > 0 && newStatus) {
-        console.log("Selected Applicants:", selectedApplicants);
-        const updatePromises = selectedApplicants.map(async (selectedApplicant) => {
-          const applyJobId = selectedApplicant;
-          console.log("Apply Job ID:", applyJobId);
-          if (!applyJobId) {
-            console.error("applyjobid is undefined or null for:", selectedApplicant);
-            return null;
-          }
-   
-          const response = await axios.put(
-            `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
-          );
-          return { applyJobId, newStatus };
-        });
-   
-        const updatedResults = await Promise.all(updatePromises);
-   
-        const filteredResults = updatedResults.filter(result => result !== null);
-       
-        if (isMounted.current) {
-          const updatedApplicants = applicants.map((application) => {
-            const updatedResult = filteredResults.find(result => result.applyJobId === application.applyjobid);
-            if (updatedResult) {
-              return { ...application, applicantStatus: updatedResult.newStatus };
-            }
-            return application;
-          });
-          setApplicants(updatedApplicants);
-          setSelectedStatus(newStatus);
-          setSelectedApplicants([]);
-        }
-       
-       
-        const message1 = `Status changed to <b>${newStatus}</b> for ${selectedApplicants.length} applicants`;
-        setSnackbar({ open: true, message: message1, type: 'success' });
-       
+      console.log("New Status:", newStatus);
+  
+      // Assuming 'applyJobId' is available directly (you can adjust as needed)
+      const applyJobId = applyid; // Replace with the correct applicant ID variable
+  
+      if (!applyJobId) {
+        console.error("applyJobId is undefined or null");
+        return;
       }
+  
+      // Make the API call to update status
+      const response = await axios.put(
+        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
+      );
+  
+      console.log("API Response:", response.data);
+  
+      // Show success message
+      const message1 = `Status changed to <b>${newStatus}</b>`;
+      setSnackbar({ open: true, message: message1, type: 'success' });
+  
     } catch (error) {
       console.error('Error updating status:', error);
+      setSnackbar({ open: true, message: 'Failed to update status', type: 'error' });
     }
   };
- 
+  
+  const handleDownloadPDF = async () => {
+    const element = pageRef.current;
+    
+    // Capture the current page as an image using html2canvas
+    const canvas = await html2canvas(element);
+    const imgData = canvas.toDataURL("image/png");
+
+    // Initialize jsPDF
+    const pdf = new jsPDF("p", "mm", "a4");
+    const imgWidth = 210; // width of the PDF page in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width; // scale image height
+
+    // Add the captured image to the PDF
+    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+    pdf.save("downloaded-page.pdf"); // Save the PDF file
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -420,6 +453,8 @@ const [applicants1, setApplicants1] = useState({
       </div>
     );
   }
+
+  
  
   return (
     <div className="dashboard__content">
@@ -435,7 +470,7 @@ const [applicants1, setApplicants1] = useState({
         </div>
       </section>
  
-     
+     <div  ref={pageRef} style={{ padding: '20px 0px 0px 0px' }}>
       <section className="candidates-section">
         <div className="tf-container">
           <div className="row">
@@ -498,10 +533,10 @@ const [applicants1, setApplicants1] = useState({
             
             <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'450px' }}>
                       <div className="controls" style={{ display: 'flex', gap: '10px' }}>
-                        <button className="export-buttonn">
+                        <button className="export-buttonn" onClick={handleDownloadPDF}>
                           Download PDF
                         </button>
-                        <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
+                        <select className="status-select" value={selectedStatus || ''} onChange={handleSelectChange1}>
                           <option value="" disabled>
                             Change Status
                           </option>
@@ -680,14 +715,14 @@ const [applicants1, setApplicants1] = useState({
                               </div>
                             </div>
                             <div style={{marginTop:'20px'}}>
-                            <span style={{marginLeft: '-40px',marginTop:'10px',color:'#A1A1A1',fontSize:'16px',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal',marginTop:'10px' }}>Experience In Years</span>
+                            <span style={{marginLeft: '-40px',marginTop:'10px',color:'#A1A1A1',fontSize:'16px',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal',marginTop:'10px' }}>Experience(in Years)</span>
                             <div className="detail" style={{fontSize:'16px', marginLeft: '-40px', fontWeight: 'bold', color: 'black' }}>
                               {profileData.experience}
                             </div>
                             </div>
                            
                             <div style={{marginTop:'20px'}}>
-                            <span style={{marginLeft: '-40px',marginTop:'10px',color:'#A1A1A1',fontSize:'16px',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal',marginTop:'10px' }}>Preferred Job Locations</span>
+                            <span style={{marginLeft: '-40px',marginTop:'10px',color:'#A1A1A1',fontSize:'16px',fontWeight:'500',fontFamily:'Plus Jakarta Sans',fontStyle:'normal',marginTop:'10px' }}>Preferred Location</span>
                             <div className="detail" style={{ fontSize:'16px',marginLeft: '-40px', fontWeight: 'bold', color: 'black' }}>
                               {profileData.preferredJobLocations && profileData.preferredJobLocations.map((location, index) => (
                                 <span key={index}>
@@ -847,6 +882,7 @@ const [applicants1, setApplicants1] = useState({
           </div>
         </div>
       </section>
+      </div>
       {snackbar.open && (
         <Snackbar
           message={snackbar.message}
