@@ -4477,7 +4477,7 @@
 /* Fix the width of the cards for screens above 1440px */
 @media (min-width: 1441px) {
   .group-col-2 .cl2 {
-    width: 700px; /* Set a fixed width for the cards */
+    width: auto; /* Set a fixed width for the cards */
     margin-left: 32px; /* Keep the margin or adjust as needed */
   }
 
