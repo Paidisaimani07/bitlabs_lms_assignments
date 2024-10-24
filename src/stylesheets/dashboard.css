@@ -1949,8 +1949,15 @@ tbody tr td:nth-child(2) {
 
 .flat-dashboard-setting .profile-setting {
     padding: 20px 20px 20px;
-    /* padding: 0px; */
     border-radius: 15px;
+    /* Default styles for smaller screens */
+}
+
+/* For screens above 1440px, apply width: min-content */
+@media (min-width: 1441px) {
+  .flat-dashboard-setting .profile-setting {
+    width:1026px; /* Set the width to min-content */
+  }
 }
 
 .flat-dashboard-setting .profile-setting-left {
@@ -4759,7 +4766,7 @@ input[type="radio"]:checked:after {
     }
 
     .left-menu {
-        z-index: 100;
+        z-index: 50;
         display: block !important;
         background: #fff;
         position: fixed;
