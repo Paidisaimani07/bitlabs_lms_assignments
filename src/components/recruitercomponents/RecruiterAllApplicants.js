@@ -1128,16 +1128,30 @@ const handleSelectChange = async (e) => {
 
  
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
-                            {application.email}
-  </Link>
+                            <Link
+  to={
+    application.preScreenedCondition === 'PreScreened'
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
+      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+  }
+  style={{ color: '#0583D2', textDecoration: 'none' }}
+>
+  {application.email}
+</Link>
   </td>
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
-                            {application.mobilenumber}
-  </Link>
+                            <Link
+  to={
+    application.preScreenedCondition === 'PreScreened'
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
+      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+  }
+  style={{ color: '#0583D2', textDecoration: 'none' }}
+>
+  {application.mobilenumber}
+</Link>
                               </td>
                             <td>{application.jobTitle}</td>
                             <td style={{
