@@ -8,6 +8,7 @@ import Mail from '../../images/icons/mail1.png';
 import Phone from '../../images/icons/phone1.png';
 import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
+import verified123 from '../../images/verified123.svg';
 import { useLocation, Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
@@ -32,6 +33,7 @@ const Recruiterviewapplicant = () => {
   const [selectedApplicants, setSelectedApplicants] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedMenuOption, setSelectedMenuOption] = useState('All');
+  const [showTooltip, setShowTooltip] = useState(false);
   const isMounted = useRef(true);
   const tableref=useRef(null);
   const filterRef = useRef([]);
@@ -186,6 +188,7 @@ const [applicants1, setApplicants1] = useState({
   const jobid = query.get('jobid');
   const  applicantId= query.get('appid');
   const  applyid= query.get('applyid');
+  const isPreScreened = query.get('preScreened') === 'true';
  
   const fetchResume = async () => {
     try {
@@ -514,8 +517,56 @@ const [applicants1, setApplicants1] = useState({
                
               <h3 style={{ color: '#262626' }}>
   {profileData.basicDetails.firstName} {profileData.basicDetails.lastName}
+  {isPreScreened && (
+        <div style={{ display: 'inline-block', position: 'relative' }}>
+        <img 
+          src={verified123} 
+          className="external-link-image" 
+          style={{
+            marginLeft: '1px', 
+            width: '20px', 
+            height: '20.187px', 
+            flexShrink: 0 
+          }} 
+          onMouseEnter={() => setShowTooltip(true)} 
+          onMouseLeave={() => setShowTooltip(false)}
+        />
+        
+        {/* Tooltip */}
+        {showTooltip && (
+          <div style={{
+            position: 'absolute', 
+            top: '25px', 
+            left: '0', 
+            width: '600px', // Set width
+            height: '62.226px', // Set height
+            borderRadius: '8px', // Rounded corners
+            background: '#FFF', // Background color
+            boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)', // Box shadow
+            zIndex: 1,
+            display: 'flex', // Use flexbox
+            alignItems: 'center', // Center align items vertically
+            padding: '10px', // Add padding for spacing
+            boxSizing: 'border-box' // Include padding and border in the element's total width and height
+          }}>
+            <img 
+              src={verified123} 
+              alt="Pre-screened badge" 
+              style={{
+                width: '20px', 
+                height: '20.187px', 
+                marginRight: '20px',
+                marginLeft: '5px'
+              }}
+            />
+            <span style={{ whiteSpace: 'normal', color:'black',fontSize:'14px',fontWeight:'normal' }}>
+              Pre-screened badges are issued to candidates who scored more than 70% in <br /> both Aptitude and Technical tests
+            </span>
+          </div>
+        )}
+      </div>
+      )}
 </h3>
- 
                
                 <div style={{ color: '#262626', display: 'flex', alignItems: 'center' }}>
                   <img src={Mail} alt="Email" className="icon1" style={{ marginRight: '10px' }} />

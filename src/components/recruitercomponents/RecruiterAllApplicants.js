@@ -1047,10 +1047,14 @@ const handleSelectChange = async (e) => {
                               
                            
                             <td>
-  <Link 
-    to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`} 
-    style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
-  >
+  <Link
+  to={
+    application.preScreenedCondition === 'PreScreened'
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
+      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+  }
+  style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
+>
     {application.name}
     
     {application.preScreenedCondition === 'PreScreened' && (
@@ -1124,14 +1128,14 @@ const handleSelectChange = async (e) => {
 
  
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.email}
   </Link>
   </td>
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
   </Link>
                               </td>
