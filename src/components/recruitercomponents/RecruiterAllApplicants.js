@@ -189,7 +189,7 @@ const [selectedCheckboxes, setSelectedCheckboxes] = useState({
   Qualification:false,
   "Location":false,
   Speclization: false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false,
   "Matching Skills":false,
   "Missing Skills":false,
@@ -233,7 +233,7 @@ const reset = () => {
   Qualification:false,
   "Location":false,
   Speclization: false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false,
   "Matching Skills":false,
   "Missing Skills":false,
@@ -545,7 +545,7 @@ function renderTableData() {
     ${selectedColumns.includes('Qualification') ? '<th>Qualification</th>' : ''}
     ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
     ${selectedColumns.includes('Speclization') ? '<th>Specialization</th>' : ''}
-    ${selectedColumns.includes('Apptitude Score') ? '<th>Apptitude Score</th>' : ''}
+    ${selectedColumns.includes('Aptitude Score') ? '<th>Aptitude Score</th>' : ''}
     ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
     ${selectedColumns.includes('Matching Skills') ? '<th>Matching Skills</th>' : ''}
     ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
@@ -644,7 +644,7 @@ function renderTableData() {
     <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
     <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
     <td>${applicant.jobTitle}</td>
-    <td style="padding: 0px 10px; text-align: center; vertical-align: middle;">
+    <td>
       <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
         (() => {
           switch (applicant.applicantStatus) {
@@ -697,7 +697,7 @@ function renderTableData() {
    
     ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
    
-    ${selectedColumns.includes("Apptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
+    ${selectedColumns.includes("Aptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
    
     ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
    
@@ -1469,7 +1469,7 @@ const exportCSV = () => {
         return cellContent;
       }
  
-      if (headerText === 'Apptitude Score') {
+      if (headerText === 'Aptitude Score') {
         return cellContent;
       }
  
@@ -1530,7 +1530,7 @@ const exportCSV = () => {
     if (selectedColumns.includes('Speclization')) {
       rowData.push(escapeCSVField(applicant.specialization));
     }
-    if (selectedColumns.includes('Apptitude Score')) {
+    if (selectedColumns.includes('Aptitude Score')) {
       rowData.push(applicant.apptitudeScore);
     }
     if (selectedColumns.includes('Technical Score')) {
@@ -1665,15 +1665,14 @@ const exportCSV = () => {
               style={{
                 position: "absolute",
                 right: "0",
-                marginRight: "20px",
+                marginRight: "25px",
                 top: "180px",
                 marginBottom: "10px",
                 zIndex: 1,
                 padding: "10px", // Add padding for better spacing
-                border: "1px solid #ccc", // Light border color
-                borderRadius: "4px", // Rounded corner
+                borderRadius: "9px", // Rounded corner
                 cursor: "pointer", // Pointer cursor for better UX
-                transition: "border-color 0.3s, box-shadow 0.3s", // Transition for focus effect
+                transition: "box-shadow 0.3s ease", // Transition for focus effect
               }}
             >
             <option value="" disabled hidden>
@@ -2164,7 +2163,7 @@ const exportCSV = () => {
                       )}
                     </div>}
 
-                    {selectedColumns.includes("Apptitude Score")&&
+                    {selectedColumns.includes("Aptitude Score")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
                         <input
@@ -2766,11 +2765,7 @@ const exportCSV = () => {
   </Link>
                               </td>
                             <td>{application.jobTitle}</td>
-                            <td style={{
-                                padding: '0px 10px', // Keep padding for the table cell
-                                textAlign: 'center',  // Center content in the cell
-                                verticalAlign: 'middle', // Align the content vertically in the middle
-                              }}>
+                            <td>
                                 <div style={{
                                   display: 'inline-flex',
                                   justifyContent: 'flex-start',
@@ -2825,7 +2820,7 @@ const exportCSV = () => {
                                 : application.preferredJobLocations.join(", ")}
                               </td>)}
                             {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
-                            {selectedColumns.includes("Apptitude Score") && (
+                            {selectedColumns.includes("Aptitude Score") && (
                               <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
                             )}
                             {selectedColumns.includes("Technical Score") && (
