@@ -615,14 +615,14 @@ const [applicants1, setApplicants1] = useState({
                           Download PDF
                         </button>
                         <select className="status-select" value={selectedStatus || ''} onChange={handleSelectChange1}>
-                          <option value="" disabled>
-                            Change Status
-                          </option>
-                          <option value="Screening">Screening</option>
-                          <option value="Shortlisted">Shortlisted</option>
-                          <option value="Interviewing">Interviewing</option>
-                          <option value="Selected">Selected</option>
-                          <option value="Rejected">Rejected</option>
+                        <option value="" disabled hidden>
+                Change Status
+            </option>
+            <option value="Screening">Screening</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Interviewing">Interviewing</option>
+            <option value="Selected">Selected</option>
+            <option value="Rejected">Rejected</option>
                         </select>
                       </div>
                     </div>
