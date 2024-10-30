@@ -203,6 +203,7 @@ const [errorMessage, setErrorMessage] = useState('');
 const [selectedColumns, setSelectedColumns] = useState([]);
 
 const toggleSidebar = () => {
+  setErrorMessage('')
   setIsOpen(!isOpen);
 };
 
@@ -325,16 +326,72 @@ const applyFilter = () => {
   // Apply all filters on the frontend based on the selected options
   setCurrentPage(1)
   setAppliedFilter(true)
-  // Check if at least one filter is selected
   const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
-
+  // console.log(isAnyFilterSelected)
   if (!isAnyFilterSelected) {
     // Show error message if no filter is selected
+    setErrorMessage('Please Select at least one filter')
     setShowError(true);
   } else {
-    // Apply filter logic here
-    setShowError(false);
-    // Your filter application logic
+    const selectedFilters = Object.entries(filterOptions)
+    .filter(([key, value]) => value)
+    .reduce((acc, [key, value]) => {
+      acc[key.replace('Filter', '')] = value;
+      return acc;
+    }, {});
+    let hasError = false;
+    if ('name' in selectedFilters && !name) {
+      hasError = true;
+    }
+    if ('email' in selectedFilters && !email) {
+      hasError = true;
+    }
+    if ('mobile' in selectedFilters && !mobileNumber) {
+      hasError = true;
+    }
+    if ('job' in selectedFilters && !jobTitle) {
+      hasError = true;
+    }
+    if ('status' in selectedFilters && !applicantStatus) {
+      hasError = true;
+    }
+    if ('experience' in selectedFilters && !minimumExperience) {
+      hasError = true;
+    }
+    if ('minimumQualification' in selectedFilters && !minimumQualification) {
+      hasError = true;
+    }
+    if ('preferredJobLocations' in selectedFilters && !preferredJobLocations) {
+      hasError = true;
+    }
+    if ('specialization' in selectedFilters && !specialization) {
+      hasError = true;
+    }
+    if ('matchedSkills' in selectedFilters && !matchedSkills) {
+      hasError = true;
+    }
+    if ('matchPercentage' in selectedFilters && !matchPercentage) {
+      hasError = true;
+    }
+    if ('nonMatchedSkills' in selectedFilters && !nonMatchedSkills) {
+      hasError = true;
+    }
+    if ('additionalSkills' in selectedFilters && !additionalSkills) {
+      hasError = true;
+    }
+    if ('applicantSkillBadges' in selectedFilters && !applicantSkillBadges) {
+      hasError = true;
+    }
+ 
+    // Set error message and show state based on the hasError flag
+    if (hasError) {
+      setErrorMessage('Field for selected filter is missing');
+      setShowError(true);
+      return;
+    } else {
+      setErrorMessage('');
+      setShowError(false);
+    }
   }
 
 
@@ -1711,7 +1768,7 @@ const exportCSV = () => {
                       
                     }}
                   >
-                    Filters
+                    Filter
                     <img src={filtericon} className="external-link-image" style={{ marginLeft: '1px', height: '20px' }} />
                   </button>
                   <div className="row">
@@ -1752,7 +1809,7 @@ const exportCSV = () => {
               <span
             style={{ cursor: 'pointer', marginRight: '16px', marginLeft: '-40px', position: 'relative'
             }} // Add pointer cursor for the arrow
-            onClick={() => setShowFilters(!showFilters)} // Toggle filters visibility
+            onClick={() => {setShowFilters(!showFilters);setErrorMessage('')}} // Toggle filters visibility
           >
             <img src={arrowleft} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
             </span>
@@ -2567,7 +2624,7 @@ const exportCSV = () => {
                       <button className="reset-button1" onClick={resetFilter}>Reset</button>
                       </div>
                     {/* Error message */}
-      {showError && (
+      {showError && errorMessage &&(
         <p style={{
           color: '#F83838',
           fontFamily: 'Plus Jakarta Sans',
@@ -2580,7 +2637,7 @@ const exportCSV = () => {
           marginLeft: '-40px',
           textAlign:'center'
         }}>
-          Please Select at least one filter
+          {errorMessage}
         </p>
       )}
               </div>
@@ -2629,8 +2686,8 @@ const exportCSV = () => {
                           <th>
                           <div >
                             <button onClick={toggleSidebar} className="filter-button" style={{marginLeft:'-10px'}}>
-                              {/* <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/>
-                               */}
+                            <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/>
+                               
                                <i class="fa fa-sliders" aria-hidden="true"></i>
                             </button>
  
@@ -2710,12 +2767,12 @@ const exportCSV = () => {
             height: '20.187px',
             flexShrink: 0
           }}
-          onMouseEnter={() => setTooltipVisibleId(application.id)}  // Show tooltip for this applicant
+          onMouseEnter={() => setTooltipVisibleId(index)}  // Show tooltip for this applicant
           onMouseLeave={() => setTooltipVisibleId(null)}  // Hide tooltip on mouse leave
         />
 
         {/* Tooltip */}
-        {tooltipVisibleId === application.id && (  // Only show tooltip if hovered
+        {tooltipVisibleId === index && (  // Only show tooltip if hovered
           <div
             style={{
               position: 'absolute',
