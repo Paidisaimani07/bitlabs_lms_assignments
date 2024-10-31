@@ -115,13 +115,13 @@ function RecruiterPostJob() {
     }
   }, [user.id, formLoaded]);
 
-  useEffect(() => {
-    if (approvalStatus && approvalStatus !== 'approved') {
-      alert("Sorry, you can't post the job until your profile is verified");
+  // useEffect(() => {
+  //   if (approvalStatus && approvalStatus !== 'approved') {
+  //     alert("Sorry, you can't post the job until your profile is verified");
      
-      window.location.href = '/recruiter-my-organization';
-    }
-  }, [approvalStatus]);
+  //     window.location.href = '/recruiter-my-organization';
+  //   }
+  // }, [approvalStatus]);
   const [formErrors, setFormErrors] = useState({
     jobTitle: '',
     minSalary: '',

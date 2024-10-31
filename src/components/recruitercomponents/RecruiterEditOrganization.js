@@ -24,7 +24,8 @@ function RecruiterEditOrganization() {
       linkedin: '',
     },
   });
-
+  const [logo, setLogo] = useState(null);
+  const [isLogoUploaded, setIsLogoUploaded] = useState(false); 
   const [headOffice, setHeadOffice] = useState('');
   const [twitter, setTwitter] = useState('');
   const [instagram, setInstagram] = useState('');
@@ -140,7 +141,7 @@ function RecruiterEditOrganization() {
 
   // Handle Input Changes
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, files } = e.target;
 
     switch (id) {
       case 'companyName':
@@ -170,6 +171,11 @@ function RecruiterEditOrganization() {
       case 'aboutCompany':
         setProfile({ ...profile, aboutCompany: value });
         break;
+        case 'logo':
+            if (files.length > 0) { // Check if a file is selected
+                setLogo(files[0]); // Set the logo file
+            }
+            break;
       // Handle other input fields
       default:
         break;
@@ -246,7 +252,10 @@ function RecruiterEditOrganization() {
       isValid = false;
     }
     
-
+    if (!isLogoUploaded) {
+      errors.logo = 'Company logo is required';
+      isValid = false;
+  }
     // Validate social profiles
    // Inside your validateForm function
 
@@ -351,7 +360,7 @@ const urlPattern = new RegExp(
           },
         }
       );
-
+      setIsLogoUploaded(true);
       setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
       fetchCompanyLogo(); // Refresh the logo
     } catch (error) {
@@ -425,7 +434,8 @@ const urlPattern = new RegExp(
                                 onMouseLeave={() => setIsHovered(false)}
                               >
                                 Upload Photo
-                              </button>
+                              </button><br></br>
+                              {formErrors.logo && <span className="error-message">{formErrors.logo}</span>}
                             </div>
                           </div>
                         </div>

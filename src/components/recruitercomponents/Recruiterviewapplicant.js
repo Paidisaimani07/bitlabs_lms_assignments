@@ -445,7 +445,7 @@ const [applicants1, setApplicants1] = useState({
       console.log("API Response:", response.data);
   
       // Show success message
-      const message1 = `Status changed to <b>${newStatus}</b>`;
+      const message1 = `Status changed to ${newStatus}`;
       setSnackbar({ open: true, message: message1, type: 'success' });
   
     } catch (error) {
