@@ -49,7 +49,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [resendOtpMessage, setResendOtpMessage] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-  const [message, setMessage] = useState('Welcome Back');
+  const [message, setMessage] = useState('Welcome Back!');
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
   const [recruiterEmail, setRecruiterEmail] = useState('');
   const [recruiterPassword, setRecruiterPassword] = useState('');
@@ -501,18 +501,18 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
 
@@ -520,7 +520,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const handleTabClick1 = (tab) => {
     setActiveTab(tab);
     if (tab === 'Candidate') {
-      setMessage('Welcome Back');
+      setMessage('Welcome Back!');
       console.log("login");
     } else if (tab === 'Employer') {
       setMessage('Hi Recruiter!');
@@ -579,7 +579,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       <div className="tf-container">
         <div className="row">
           <div className="wd-form-login tf-tab">
-          <div className="custom-div-style">
+          <div className="custom-div-style" style={{textAlign:"left"}}>
       {message}
     </div>
     <div className="myComponent">

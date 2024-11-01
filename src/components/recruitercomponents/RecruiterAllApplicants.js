@@ -332,6 +332,7 @@ const applyFilter = () => {
     // Show error message if no filter is selected
     setErrorMessage('Please Select at least one filter')
     setShowError(true);
+    return;
   } else {
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
@@ -1697,7 +1698,7 @@ const exportCSV = () => {
       <div className="dashboard__content">
         <section className="page-title-dashboard">
         <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ marginBottom: "-5px" }}>
+            <div style={{ marginBottom: window.innerWidth < 1001 ? "15px" : "-5px", }}>
             <button
                 className="export-buttonn"
                 onClick={exportCSV}
@@ -2625,7 +2626,7 @@ const exportCSV = () => {
                       </div>
                     {/* Error message */}
       {showError && errorMessage &&(
-        <p style={{
+        <span style={{
           color: '#F83838',
           fontFamily: 'Plus Jakarta Sans',
           fontSize: '14px',
@@ -2634,11 +2635,11 @@ const exportCSV = () => {
           borderRadius: '8px',
           background: '#FFF2F2',
           padding: '10px',
-          marginLeft: '-40px',
+          marginLeft: '-35px',
           textAlign:'center'
         }}>
           {errorMessage}
-        </p>
+        </span>
       )}
               </div>
               
@@ -2686,7 +2687,7 @@ const exportCSV = () => {
                           <th>
                           <div >
                             <button onClick={toggleSidebar} className="filter-button" style={{marginLeft:'-10px'}}>
-                            <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/>
+                            {/* <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/> */}
                                
                                <i class="fa fa-sliders" aria-hidden="true"></i>
                             </button>
@@ -2942,7 +2943,7 @@ const exportCSV = () => {
                             )}
 
  
-                            <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View</Link></td>
+                            <td><Link to={`/view-resume/${application.id}`}  target='_new' style={{ color: 'blue' }}>View</Link></td>
                             <td></td>
                            
                           </tr>
