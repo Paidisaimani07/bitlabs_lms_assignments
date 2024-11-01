@@ -561,7 +561,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       />
 
       <div style={{position:'absolute' , zIndex:'1' , display:'flex',bottom:0,justifyContent:'center',width:'100%'}}>
-        <h1 className='find-your2'>Find the Best freshers,fuel your workforce!</h1>
+        <h1 className='find-your2'>Find the Best freshers, fuel your workforce!</h1>
       </div>
       <div>
       <img

@@ -153,6 +153,11 @@ const iconStyle = {
   fontSize: '15px',
 };
 
+const handleMenuItemClick = () => {
+  if (window.innerWidth <= 1024) {
+    setIsOpen(!isOpen);
+  }
+};
 
   return (
 <div>
@@ -265,14 +270,14 @@ const iconStyle = {
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""}>
+            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
          
           <li>
-            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-submit dash-icon"></span>
 
               <span className="dash-titles">Posted Jobs</span>
@@ -280,14 +285,14 @@ const iconStyle = {
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-applicant dash-icon"></span>
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
       
           <li>
-            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
@@ -299,6 +304,7 @@ const iconStyle = {
       style={linkStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleMenuItemClick}
     >
       <span className=""></span>
       <span style={textStyle}>

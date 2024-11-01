@@ -614,7 +614,7 @@ const tableBody = document.getElementById("applicantTableBody");
           case 'Selected':
             return '#6C3FB6';
           case 'Rejected':
-            return '#FF4D4F';
+            return '#B02A37';
           case 'Screening':
             return '#718F00';
           case 'Interviewing':
@@ -1625,8 +1625,12 @@ const exportCSV = () => {
                           id="jobFilter"
                           checked={filterOptions.jobFilter}
                           onChange={handleCheckboxChange}
+                          disabled
                         />
-                        <label className="label" htmlFor="jobFilter">&nbsp;Job Title</label>
+                        <label className="label" htmlFor="jobFilter" style={{
+                          color: filterOptions.jobFilter ? 'inherit' : 'gray', // Change label color when disabled
+                          opacity: filterOptions.jobFilter ? 1 : 0.5 // Reduce opacity when disabled
+                        }}>&nbsp;Job Title</label>
                       </div>
                       {filterOptions.jobFilter && (
                         <div className="filter-details">
@@ -2511,7 +2515,7 @@ const exportCSV = () => {
                                       case 'Selected':
                                         return '#6C3FB6';
                                       case 'Rejected':
-                                        return '#FF4D4F';
+                                        return '#B02A37';
                                       case 'Screening':
                                         return '#718F00';
                                       case 'Interviewing':
