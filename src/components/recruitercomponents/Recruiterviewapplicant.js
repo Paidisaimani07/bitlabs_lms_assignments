@@ -445,7 +445,11 @@ const [applicants1, setApplicants1] = useState({
       console.log("API Response:", response.data);
   
       // Show success message
-      const message1 = `Status changed to <b>${newStatus}</b>`;
+      const message1 = (
+        <>
+          Status changed to <span style={{ fontWeight: 'bold' }}>{newStatus}</span>
+        </>
+      );
       setSnackbar({ open: true, message: message1, type: 'success' });
   
     } catch (error) {
@@ -609,7 +613,7 @@ const [applicants1, setApplicants1] = useState({
               
             </div>
             
-            <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'450px' }}>
+            <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'450px',marginLeft:'26px',marginBottom:'-10px' }}>
                       <div className="controls" style={{ display: 'flex', gap: '10px' }}>
                         <button className="export-buttonn" onClick={handleDownloadPDF}>
                           Download PDF
