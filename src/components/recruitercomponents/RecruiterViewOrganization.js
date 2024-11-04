@@ -49,7 +49,7 @@ const RecruiterViewOrganization = () => {
   // Redirect if profile is not approved
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
-      alert("Sorry, you can't post the job until your profile is verified");
+      // alert("Sorry, you can't post the job until your profile is verified");
       navigate('/recruiter-my-organization');
     }
   }, [approvalStatus, navigate]);
