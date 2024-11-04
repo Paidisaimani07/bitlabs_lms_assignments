@@ -332,6 +332,7 @@ const applyFilter = () => {
     // Show error message if no filter is selected
     setErrorMessage('Please Select at least one filter')
     setShowError(true);
+    return;
   } else {
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
@@ -649,7 +650,7 @@ function renderTableData() {
     <td>  
     <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
       ${applicant.name}
-    </a>
+    
     ${applicant.preScreenedCondition === 'PreScreened'
       ? `
         <div style="display: inline-block; position: relative;">
@@ -664,7 +665,7 @@ function renderTableData() {
               display: none;
               position: absolute;
               bottom: 100%;
-              left: 1250%;
+              left: 850%;
               top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
               transform: translateX(-50%);
               background-color: #fff;
@@ -696,6 +697,7 @@ function renderTableData() {
   </div>
         </div>`
       : ''}
+      </a>
   </td>
    
     <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
@@ -727,7 +729,7 @@ function renderTableData() {
             case 'Selected':
               return '#6C3FB6';
             case 'Rejected':
-              return '#FF4D4F';
+              return '#B02A37';
             case 'Screening':
               return '#718F00';
             case 'Interviewing':
@@ -1452,6 +1454,7 @@ setSnackbar({ open: true, message: message1, type: 'success' });
 const exportCSV = () => {
   const headers = [
     'Name',
+    'Pre-screened',
     'Email',
     'Mobile Number',
     'Job Title',
@@ -1460,7 +1463,7 @@ const exportCSV = () => {
     'Resume'
   ];
  
-  const capitalizedHeaders = headers.map(header => header.toUpperCase());
+  const capitalizedHeaders = headers.map(header => header);
  
   const escapeCSVField = (field) => {
     if (typeof field !== 'string') {
@@ -1489,7 +1492,10 @@ const exportCSV = () => {
       switch (index) {
         case 1:
           const enameElement = td.querySelector('a') || td.querySelector('Link');
-          return enameElement ? `${escapeCSVField(enameElement.textContent.trim())}` : '';
+          const applicantName = enameElement ? `${escapeCSVField(enameElement.textContent.trim())}` : '';
+ 
+          const preScreenedStatus = enameElement.querySelector('div img.external-link-image') ? "Verified" : "Not-verified";
+          return `${applicantName}, ${preScreenedStatus}`;
         case 2:
           console.log(cellContent);
           return cellContent;
@@ -1540,7 +1546,7 @@ const exportCSV = () => {
  
       if (headerText === 'Resume') {
         const resumeLink = td.querySelector('a')?.href;
-        return resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View Resume"")"` : 'N/A';
+        return resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
       }
  
       return cellContent;
@@ -1552,6 +1558,9 @@ const exportCSV = () => {
     const rowData = [];
  
     rowData.push(escapeCSVField(applicant.name)); // Name
+    const preScreenedStatus = applicant.preScreenedCondition==="PreScreened" ? "Verified" : "Not-verified";
+    // console.log(preScreenedStatus)
+    rowData.push(preScreenedStatus);
     rowData.push(escapeCSVField(applicant.email)); // Email
     rowData.push(escapeCSVField(applicant.mobilenumber)); // Mobile Number
     rowData.push(escapeCSVField(applicant.jobTitle)); // Job Title
@@ -1650,7 +1659,7 @@ const exportCSV = () => {
     }
  
     const resumeLink = `${window.location.origin}/view-resume/${applicant.id}`;
-    const hyperlinkFormula = resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View Resume"")"` : 'N/A';
+    const hyperlinkFormula = resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
     rowData.push(hyperlinkFormula);
  
     return rowData;
@@ -1697,7 +1706,7 @@ const exportCSV = () => {
       <div className="dashboard__content">
         <section className="page-title-dashboard">
         <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ marginBottom: "-5px" }}>
+            <div style={{ marginBottom: window.innerWidth < 1001 ? "15px" : "-5px", }}>
             <button
                 className="export-buttonn"
                 onClick={exportCSV}
@@ -1748,7 +1757,7 @@ const exportCSV = () => {
                 <div className="title-dashboard">
                   
                   
-                  <div className="title-dash flex2"><BackButton />All Applicants : <h5 className="title-dash flex2"> {count}</h5>
+                  <div className="title-dash flex2"><BackButton />Applicants : <h5 className="title-dash flex2"> {count}</h5>
                  
                   </div>
                     {/* Filter icon button */}
@@ -2625,7 +2634,7 @@ const exportCSV = () => {
                       </div>
                     {/* Error message */}
       {showError && errorMessage &&(
-        <p style={{
+        <span style={{
           color: '#F83838',
           fontFamily: 'Plus Jakarta Sans',
           fontSize: '14px',
@@ -2634,11 +2643,11 @@ const exportCSV = () => {
           borderRadius: '8px',
           background: '#FFF2F2',
           padding: '10px',
-          marginLeft: '-40px',
+          marginLeft: '-35px',
           textAlign:'center'
         }}>
           {errorMessage}
-        </p>
+        </span>
       )}
               </div>
               
@@ -2685,10 +2694,21 @@ const exportCSV = () => {
                           </th>
                           <th>
                           <div >
-                            <button onClick={toggleSidebar} className="filter-button" style={{marginLeft:'-10px'}}>
-                            <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/>
+                            <button onClick={toggleSidebar}   style={{
+    marginLeft: '-30px',
+     borderLeft: '2px solid red',  // Customize the width and color as needed
+    border: 'none', // Remove borders from other sides
+    backgroundcolor: 'gray', //
+  }}>
                                
-                               <i class="fa fa-sliders" aria-hidden="true"></i>
+                               <i class="fa fa-sliders" aria-hidden="true" style={{
+    marginRight: '8px',
+    position: 'relative',
+    left: '-10px',
+    borderLeft: '2px solid grey',
+    paddingLeft: '5px', // Adjust the padding to create space between the border and icon
+    top: '3px',
+  }}></i>
                             </button>
  
                             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -2716,7 +2736,7 @@ const exportCSV = () => {
                               <button id="apply-button2" onClick={handleApply} className="apply-button2">Apply</button>
                               <div className="reset2-link" onClick={reset}>Reset</div>
                               </div>
-                              {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '50px' }}>{errorMessage}</h5>}
+                              {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '10px' }}>{errorMessage}</h5>}
                             </div>
                             {isOpen && <div className="backdrop"></div>}
                           </div>
@@ -2870,7 +2890,7 @@ const exportCSV = () => {
                                       case 'Selected':
                                         return '#6C3FB6';
                                       case 'Rejected':
-                                        return '#FF4D4F';
+                                        return '#B02A37';
                                       case 'Screening':
                                         return '#718F00';
                                       case 'Interviewing':
@@ -2942,7 +2962,7 @@ const exportCSV = () => {
                             )}
 
  
-                            <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View</Link></td>
+                            <td><Link to={`/view-resume/${application.id}`}  target='_new' style={{ color: 'blue' }}>View</Link></td>
                             <td></td>
                            
                           </tr>

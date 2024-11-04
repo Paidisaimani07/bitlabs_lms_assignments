@@ -282,10 +282,17 @@ function RecruiterMyOrganization() {
           console.error('An error occurred:', error);
         }
       };
-    const handleFileSelect = (e) => {
-      const file = e.target.files[0];
-      setPhotoFile(file);
-    };
+      const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+       
+        // Check if file type is JPG or PNG
+        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+          setPhotoFile(file); // If valid, update the state
+        } else {
+          alert('Please select a JPG or PNG file.');
+          e.target.value = null; // Clear the input if file type is invalid
+        }
+      };
     const uploadPhoto = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
