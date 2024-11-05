@@ -330,7 +330,7 @@ const applyFilter = () => {
   // console.log(isAnyFilterSelected)
   if (!isAnyFilterSelected) {
     // Show error message if no filter is selected
-    setErrorMessage('Please Select at least one filter')
+    setErrorMessage('Please select at least one filter')
     setShowError(true);
     return;
   } else {
@@ -1705,8 +1705,8 @@ const exportCSV = () => {
     return (
       <div className="dashboard__content">
         <section className="page-title-dashboard">
-        <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ marginBottom: window.innerWidth < 1001 ? "15px" : "-5px", }}>
+        <div>
+            <div>
             <button
                 className="export-buttonn"
                 onClick={exportCSV}
@@ -2641,7 +2641,7 @@ const exportCSV = () => {
           fontWeight: '400',
           lineHeight: '25px',
           borderRadius: '8px',
-          background: '#FFF2F2',
+          //background: '#FFF2F2',
           padding: '10px',
           marginLeft: '-35px',
           textAlign:'center'
