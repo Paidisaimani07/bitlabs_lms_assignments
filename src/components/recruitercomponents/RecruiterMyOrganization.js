@@ -137,14 +137,14 @@ function RecruiterMyOrganization() {
     const validateForm = () => {
       let isValid = true;
       const errors = {};
-      if (!companyName.trim()) {
+      if (!companyName?.trim()) {
         errors.companyName = 'Company name is required';
         isValid = false;
-      } else if (companyName.trim().length < 3) {
+      } else if (companyName?.trim().length < 3) {
         errors.companyName = 'Company name must be at least 3 characters';
         isValid = false;
       }
-      if (!website.trim()) {
+      if (!website?.trim()) {
         errors.website = 'Website is required';
         isValid = false;
       } else {
@@ -154,11 +154,11 @@ function RecruiterMyOrganization() {
           isValid = false;
         }
       }
-      if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      if (email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
         errors.email = 'Invalid email address';
         isValid = false;
       }
-      if (phoneNumber.trim() && !/^[6-9]\d{9}$/.test(phoneNumber.trim())) {
+      if (phoneNumber?.trim() && !/^[6-9]\d{9}$/.test(phoneNumber.trim())) {
         errors.phoneNumber = 'Invalid phone number';
         isValid = false;
       }
@@ -170,25 +170,25 @@ function RecruiterMyOrganization() {
     //     errors.headOffice = 'Head office address must be at least 3 characters';
     //     isValid = false;
     // }
-    if (!aboutCompany.trim()) {
+    if (!aboutCompany?.trim()) {
       errors.aboutCompany = 'About company is required';
       isValid = false;
     }
 
 
-      if (instagram.trim() && !/^[a-zA-Z0-9_]+$/.test(instagram.trim())) {
+      if (instagram?.trim() && !/^[a-zA-Z0-9_]+$/.test(instagram.trim())) {
         errors.instagram = 'Invalid Instagram handle';
         isValid = false;
       }
-      if (twitter.trim() && !/^[a-zA-Z0-9_]+$/.test(twitter.trim())) {
+      if (twitter?.trim() && !/^[a-zA-Z0-9_]+$/.test(twitter?.trim())) {
         errors.twitter = 'Invalid twitter handle';
         isValid = false;
       }
-      if (youtube.trim() && !/^[a-zA-Z0-9_]+$/.test(youtube.trim())) {
+      if (youtube?.trim() && !/^[a-zA-Z0-9_]+$/.test(youtube?.trim())) {
         errors.youtube = 'Invalid youtube handle';
         isValid = false;
       }
-      if (linkedin.trim() && !/^[a-zA-Z0-9_]+$/.test(linkedin.trim())) {
+      if (linkedin?.trim() && !/^[a-zA-Z0-9_]+$/.test(linkedin?.trim())) {
         errors.youtube = 'Invalid linkedin handle';
         isValid = false;
       }
@@ -438,7 +438,7 @@ function RecruiterMyOrganization() {
             <div className="form-infor-profile">
               <h3 className="title-info">Information</h3>
               <div className="row">
-              <div className="col-lg-6 col-md-6">
+              <div className="col-lg-6 col-md-6" style={{height:formErrors.phoneNumber?"132px":""}}>
               <div className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">Company Full Name<span className="color-red">*</span></label>
                     <input
@@ -455,7 +455,7 @@ function RecruiterMyOrganization() {
                     )}
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6">
+                <div className="col-lg-6 col-md-6" style={{height:formErrors.companyName?"132px":""}}>
                 <div className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">Alternate Phone Number</label>
                     <input
@@ -471,7 +471,7 @@ function RecruiterMyOrganization() {
                     )}
                   </div>
                 </div>
-                <div className="col-lg-6 col-md-6">
+                <div className="col-lg-6 col-md-6" style={{height:formErrors.website?"132px":""}}>
                 <div className="dropdown titles-dropdown info-wd">
                   <fieldset>
                     <label className="title-user fw-7">Alternate Email</label>
@@ -489,7 +489,7 @@ function RecruiterMyOrganization() {
                   </fieldset>
                   </div>
                   </div>
-                  <div className="col-lg-6 col-md-6">
+                  <div className="col-lg-6 col-md-6" style={{height:formErrors.email?"132px":""}}>
                   <div className="dropdown titles-dropdown info-wd">
                     <label className="title-user fw-7">Website<span className="color-red">*</span></label>
                     <input

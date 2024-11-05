@@ -708,12 +708,17 @@ input[type="color"],
 }
 
 .flat-dashboard-setting {
-  margin: 0px; 
-  padding: 10px 0px 10px 0px;
+  margin: 0px;
+  padding: 10px 0px;
   border-radius: 8px;
   margin-top: 15px;
 }
 
+@media (max-width: 1000px) {
+  .flat-dashboard-setting {
+    margin-top: 30px;
+  }
+}
 .menu-list {
   display: flex;
   gap: 10px; 
