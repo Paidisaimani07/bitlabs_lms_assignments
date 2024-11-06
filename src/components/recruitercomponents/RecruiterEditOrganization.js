@@ -5,7 +5,7 @@ import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 import { useNavigate } from 'react-router-dom'; // Ensure react-router-dom is installed and set up
 
-function RecruiterEditOrganization() {
+function RecruiterEditOrganization({setImgSrc}) {
   const userContext = useUserContext();
   const user = userContext.user;
   const navigate = useNavigate();
@@ -304,12 +304,19 @@ const urlPattern = new RegExp(
           },
         }
       );
+       
+      // const imageUrl = URL.createObjectURL(photoFile);
+      // setImgSrc(imageUrl)
 
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
         type: 'success',
+        
       });
+
+      // const imageUrl = URL.createObjectURL(photoFile);
+      // setImgSrc(imageUrl)
 
       setIsProfileSubmitted(true);
       localStorage.setItem('isProfileSubmitted', 'true');
@@ -351,6 +358,8 @@ const urlPattern = new RegExp(
           },
         }
       );
+      const imageUrl = URL.createObjectURL(photoFile);
+      setImgSrc(imageUrl)
 
       setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
       fetchCompanyLogo(); // Refresh the logo

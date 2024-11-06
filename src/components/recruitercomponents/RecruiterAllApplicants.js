@@ -296,7 +296,7 @@ const m=new Map();
  
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
-    window.location.reload();
+    //window.location.reload();
   };
  
   const handleCheckboxChange = (event) => {
@@ -1262,6 +1262,8 @@ useEffect(() => {
 if (isMounted.current) {
 fetchAllApplicants();
 }
+isMounted.current = true;
+
 return () => {
 isMounted.current = false;
 };
@@ -1402,7 +1404,10 @@ isMounted.current = false;
   };
 const handleSelectChange = async (e) => {
   const newStatus = e.target.value;
- 
+  if(selectedApplicants.length === 0){
+    setSnackbar({open:true , message:'Please select atleast one applicant',type:'error'})
+    return;
+     }
   try {
     if (selectedApplicants.length > 0 && newStatus) {
       console.log("Selected Applicants:", selectedApplicants);
@@ -1434,6 +1439,7 @@ const handleSelectChange = async (e) => {
         });
         setApplicants(updatedApplicants);
         setSelectedStatus(newStatus);
+        setSelectedStatus("");
         setSelectedApplicants([]);
       }
      
@@ -1441,6 +1447,7 @@ const handleSelectChange = async (e) => {
       const applicantCount = selectedApplicants.length;
 const applicantLabel = applicantCount === 1 ? 'applicant' : 'applicants';
 const message1 = `Status changed to ${newStatus} for ${applicantCount} ${applicantLabel}`;
+
 
 setSnackbar({ open: true, message: message1, type: 'success' });
      
@@ -1718,7 +1725,7 @@ const exportCSV = () => {
                   zIndex: 2, // Higher z-index to keep button on top
                 }}
             >
-                ExportCSV
+                Export CSV
             </button>
             </div>
             
@@ -1757,7 +1764,7 @@ const exportCSV = () => {
                 <div className="title-dashboard">
                   
                   
-                  <div className="title-dash flex2"><BackButton />Applicants : <h5 className="title-dash flex2"> {count}</h5>
+                  <div className="title-dash flex2"><BackButton />All  Applicants : <h5 className="title-dash flex2"> {count}</h5>
                  
                   </div>
                     {/* Filter icon button */}
