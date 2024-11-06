@@ -8,10 +8,10 @@ import $ from 'jquery';
 import logos from '../../images/profileIcon.svg';
 
 
-function RecruiterNavBar() {
+function RecruiterNavBar({imageSrc,setImageSrc}) {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
-  const [imageSrc, setImageSrc] = useState('');
+  //const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
@@ -192,12 +192,13 @@ const handleMenuItemClick = () => {
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
             {window.innerWidth < 1400 && (
-              // <div className="hamburger-icon" onClick={handleToggleMenu}>
-              //   <span />
-              //   <span />
-              //   <span />
-              // </div>
-              <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
+              
+              <span
+  id="hamburger"
+  className={hamburgerClass}
+  onClick={handleToggleMenu}
+  style={{ marginRight: '10px' }} // Adjust the value as needed
+></span>
             )}
                   <div id="logo" className="logo">
                     <a href="/recruiterhome">
