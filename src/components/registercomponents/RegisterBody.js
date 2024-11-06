@@ -328,7 +328,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       return 'Please enter a valid email.';
     }
 
-    if (!excludedDomains.includes(domain)) {
+    if (excludedDomains.includes(domain)) {
       return 'Please enter your official email ID.';
     }
     return '';
@@ -655,8 +655,6 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                    
-       
                     </form>
               </div>
             </div>
@@ -669,7 +667,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     <input
                       type="text"
                       className="name"
-                      placeholder="Company name"
+                      placeholder="Company Name"
                       value={companyName}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
