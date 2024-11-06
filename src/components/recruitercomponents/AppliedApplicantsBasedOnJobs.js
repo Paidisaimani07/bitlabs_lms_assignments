@@ -1363,7 +1363,7 @@ const exportCSV = () => {
                   zIndex: 2, // Higher z-index to keep button on top
                 }}
             >
-                ExportCSV
+                Export CSV
             </button>
             </div>
             
@@ -1403,7 +1403,7 @@ const exportCSV = () => {
                 <div className="title-dashboard">
                   
                   
-                  <div className="title-dash flex2"><BackButton />All Applicants : <h5 className="title-dash flex2"> {count}</h5>
+                  <div className="title-dash flex2"><BackButton />Applicants : <h5 className="title-dash flex2"> {count}</h5>
                  
                   </div>
                     {/* Filter icon button */}
