@@ -19,6 +19,7 @@
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
+    overflow-y: auto;
   }
   .sidebar h3{
     margin-top: 75px;
@@ -123,7 +124,7 @@ flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 50px;
+    /* margin-top: 50px; */
     font-size: medium;
   }
   .reset2-link{
