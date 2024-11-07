@@ -103,17 +103,27 @@ function RecruiterPostJob() {
   useEffect(() => {
     const fetchApprovalStatus = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/companyprofile/companyprofile/approval-status/${user.id}`);
+        const token = localStorage.getItem('jwtToken'); // Get the token from storage or wherever it's stored
+        const response = await axios.get(
+          `${apiUrl}/companyprofile/companyprofile/approval-status/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}` // Add the token to the headers
+            }
+          }
+        );
         setApprovalStatus(response.data);
         setFormLoaded(true);
       } catch (error) {
         console.error('Approval Status Error:', error);
       }
     };
+    
     if (!formLoaded) {
       fetchApprovalStatus();
     }
   }, [user.id, formLoaded]);
+
 
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
