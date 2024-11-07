@@ -166,7 +166,7 @@ function RecruiterForgotPassword() {
   value={email}
   onChange={handleEmailChange}
   onBlur={handleEmailBlur}
-  disabled={isEmailFieldDisabled}
+  // disabled={isEmailFieldDisabled}
   className="input-style"
 />
 

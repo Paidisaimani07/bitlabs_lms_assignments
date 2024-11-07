@@ -570,7 +570,7 @@ function RecruiterPostJob() {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="themes-container">
               <div className="row">
-                <div className="col-lg-12 col-md-12 ">
+              <div className="col-lg-12 col-md-12 input-height">
                   <div className="post-new profile-setting bg-white">
                     <div className="wrap-titles">
                       <label className="title-user fw-7">Job Title<span className="color-red">*</span></label>
@@ -619,7 +619,7 @@ function RecruiterPostJob() {
                   </div>
                  </div>
                     <div className="row">
-                      <div className="col-lg-6 col-md-6">
+                    <div className={`col-lg-6 col-md-6 input-height ${formErrors.maximumExperience&& "conditional-height"}`} style={{height:formErrors.maximumExperience?"132px":""}}>
                         <div id="item_category" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Minimum Experience (in Years)<span className="color-red">*</span></label>
                           <input type="text"
@@ -634,7 +634,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-6">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.minimumExperience && "conditional-height"}`} style={{height:formErrors.minimumExperience?"132px":""}} >
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Maximum Experience (in Years)<span className="color-red">*</span></label>
                           <input type="text"
@@ -651,7 +651,7 @@ function RecruiterPostJob() {
                         </div>
                       </div>
 
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.minSalary && "conditional-height"}`} style={{height:formErrors.minSalary?"132px":""}}>
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Minimum Salary (in LPA)<span className="color-red">*</span></label>
                           <input type="text"
@@ -666,7 +666,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.minSalary && "conditional-height"}`} style={{height:formErrors.minSalary?"132px":""}}>
                         <div id="item_2" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Maximum Salary (in LPA)<span className="color-red">*</span></label>
                           <input
@@ -682,7 +682,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.specialization && "conditional-height"}`} style={{height:formErrors.specialization?"132px":""}}>
                         <div id="item_3" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Minimum Qualification<span className="color-red">*</span></label>
                           <select
@@ -706,7 +706,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.minimumQualification && "conditional-height"}`} style={{height:formErrors.minimumQualification?"132px":""}}>
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Specialization</label>
                           <select
@@ -727,7 +727,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.industryType && "conditional-height"}`} style={{height:formErrors.industryType?"132px":""}}>
                         <div id="item_apply" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Location<span className="color-red">*</span></label>
                           <select
@@ -758,7 +758,7 @@ function RecruiterPostJob() {
                           )}
                         </div>
                       </div>
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.location && "conditional-height"}`} style={{height:formErrors.location?"132px":""}}>
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">Industry Type</label>
                           <input
@@ -774,7 +774,7 @@ function RecruiterPostJob() {
                         </div>
                       </div>
                       
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.skills && "conditional-height"}`} style={{height:formErrors.skills?"132px":""}}>
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">
                             Job Type<span className="color-red">*</span>
@@ -795,7 +795,7 @@ function RecruiterPostJob() {
                         </div>
                       </div>
 
-                      <div className="col-lg-6 col-md-12">
+                      <div className={`col-lg-6 col-md-6 input-height ${formErrors.employeeType && "conditional-height"}`} style={{height:formErrors.employeeType?"132px":""}}>
                         <div id="item_1" className="dropdown titles-dropdown info-wd">
                           <label className="title-user fw-7">
                             Skills<span className="color-red">*</span>

@@ -5,15 +5,17 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
+import logos from '../../images/profileIcon.svg';
 
 
-function RecruiterNavBar() {
+function RecruiterNavBar({imageSrc,setImageSrc}) {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
-  const [imageSrc, setImageSrc] = useState('');
+  //const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
+  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   
   const [isHovered, setIsHovered] = useState(false);
 
@@ -151,6 +153,11 @@ const iconStyle = {
   fontSize: '15px',
 };
 
+const handleMenuItemClick = () => {
+  if (window.innerWidth <= 1024) {
+    setIsOpen(!isOpen);
+  }
+};
 
   return (
 <div>
@@ -158,12 +165,17 @@ const iconStyle = {
     <div className="modal-menu__backdrop" />
     <div className="widget-filter">
       <div className="mobile-header">
-        <div id="logo" className="logo">
-          <a href="/recruiterhome">
-            <img className="site-logo" src="../images/logo.png" alt="Image" />
-          </a>
-          <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-        </div>
+      <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
+      
         <a className="title-button-group">
           <i className="icon-close" />
         </a>
@@ -180,22 +192,24 @@ const iconStyle = {
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
             {window.innerWidth < 1400 && (
-              <div className="hamburger-icon" onClick={handleToggleMenu}>
-                <span />
-                <span />
-                <span />
-              </div>
+              
+              <span
+  id="hamburger"
+  className={hamburgerClass}
+  onClick={handleToggleMenu}
+  style={{ marginRight: '10px' }} // Adjust the value as needed
+></span>
             )}
-              <div id="logo" className="logo">
-                <a href="/recruiterhome">
-                  <img
-                    className="profile-site-logo"
-                    src="../images/logo.png"
-                    alt="Image"
-                  />
-                </a>
-                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-              </div>
+                  <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
@@ -257,14 +271,14 @@ const iconStyle = {
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""}>
+            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
          
           <li>
-            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-submit dash-icon"></span>
 
               <span className="dash-titles">Posted Jobs</span>
@@ -272,14 +286,14 @@ const iconStyle = {
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-applicant dash-icon"></span>
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
       
           <li>
-            <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
@@ -291,6 +305,7 @@ const iconStyle = {
       style={linkStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleMenuItemClick}
     >
       <span className=""></span>
       <span style={textStyle}>

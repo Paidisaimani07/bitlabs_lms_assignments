@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
@@ -8,6 +8,9 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
 import CryptoJS from "crypto-js";
+import Background from '../../images/user/avatar/Recruiterloginbg.png';
+import logo from '../../images/user/avatar/bitlabslogo.svg';
+import Backgroundimagemobile1 from '../../images/user/avatar/backgroundimage-mobile-recruiter.png';
 
  
  function RegisterBody({handleLogin}) {
@@ -47,7 +50,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [resendOtpMessage, setResendOtpMessage] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
- 
+  const [message, setMessage] = useState('Welcome Back!');
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
   const [recruiterEmail, setRecruiterEmail] = useState('');
   const [recruiterPassword, setRecruiterPassword] = useState('');
@@ -57,7 +60,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
- 
+
+ useEffect(()=>{
+  if (recruiterEmail || recruiterPassword){
+    setErrorMessage("")
+  }
+
+},[recruiterEmail,recruiterPassword])
  
  
  
@@ -228,6 +237,8 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
           setErrorMessage('Incorrect password');
     }
   };
+
+  
  
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -288,8 +299,17 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     if (!companyName.trim()) {
       return 'Company name is required.';
     }
-    if (!/^[a-zA-Z\s]+$/.test(companyName)) {
-      return 'Please enter a valid company name and should not have any numbers and special char.';
+    if (/^\s/.test(companyName)) {
+      return 'Company name should not start with a space.';
+    }
+    if (/\s$/.test(companyName)) {
+      return 'Company name should not end with a space.';
+    }
+    if (/ {2,}/.test(companyName)) {
+      return 'Company name should not contain consecutive spaces.';
+    }
+    if (!/^[\w .'&-]*$/.test(companyName)) {
+      return 'Company name can only contain letters, digits, and special characters (.\'&-).';
     }
     if (companyName.trim().length < 3) {
       return 'Company name should be at least three characters long.';
@@ -320,6 +340,10 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
       'tutanota.com',
     ];
     const domain = email.split('@')[1];
+    if (!email.includes('@')) {
+      return 'Please enter a valid email.';
+    }
+
     if (excludedDomains.includes(domain)) {
       return 'Please enter your official email ID.';
     }
@@ -486,6 +510,22 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     if (!email.trim()) {
       return 'Email is required.';
     }
+    const excludedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'outlook.com',
+      'aol.com',
+      'mail.com',
+      'icloud.com',
+      'zoho.com',
+      'yandex.com',
+      'protonmail.com',
+      'tutanota.com',
+    ];
+    const domain = email.split('@')[1];
+    if (excludedDomains.includes(domain)) {
+      return 'Please enter  official email ID.';
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? '' : 'Please enter a valid email address.';
   };
@@ -493,24 +533,30 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
 
 
   const handleTabClick1 = (tab) => {
     setActiveTab(tab);
+    if (tab === 'Candidate') {
+      setMessage('Welcome Back!');
+      console.log("login");
+    } else if (tab === 'Employer') {
+      setMessage('Hi Recruiter!');
+    }
   };
   
   const getTabStyle = (tab) => ({
@@ -532,24 +578,44 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
 
   return (
     <div className='full-page'>
-      <a id="scroll-top" />
-    <section className="account-section1">
-      <div className="tf-container1">
-        <div className="row">
-          <div className="wd-form-login2 tf-tab">
-          <h4 style={{ marginBottom: "40px" }}>
-    <a href="/"><img src={logoCompany1} width="80px" height="80px" alt="Company Logo" /></a>
-</h4>
+      <div style={{position:'relative'}}>
+      <img
+        src={Backgroundimagemobile1}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+          position: 'relative',
+          top: '0',
+          left: '0',
+          objectFit: 'cover',
+          zIndex: '1',
+        }}
+      />
 
-           
-          <div style={{
-      display: 'flex',
-      marginBottom: '18px',
-      border: '1.8px solid lightgrey',
-      borderRadius: '8px',
-      overflow: 'hidden',
-     
-    }}>
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',bottom:0,justifyContent:'center',width:'100%'}}>
+        <h1 className='find-your2'>Find the Best freshers, fuel your workforce!</h1>
+      </div>
+      <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+      </div>
+      <a id="scroll-top" />
+    <section className="account-section">
+      <div className="tf-container">
+        <div className="row">
+          <div className="wd-form-login tf-tab">
+          <div className="custom-div-style" style={{textAlign:"left"}}>
+      {message}
+    </div>
+    <div className="myComponent">
+        
       <div
   style={{
     ...getTabStyle('Candidate'),
@@ -569,8 +635,8 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
 >
   Sign Up
 </div>
+</div>
 
-    </div>
             
             <div className="content-tab">
               <div className="inner" style={{ display: activeTab === 'Candidate' ? 'block' : 'none' }}>
@@ -578,10 +644,11 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
               <div style={{ color: 'green', marginBottom: '10px' }}>{registrationSuccessMessage}</div>
             )}</span></p>
               <form onSubmit={handleRecruiterSubmit}>
-                      <div className="ip2">
+                      <div className="ip">
                        
                         <input
                           type="text"
+                          className="name"
                           placeholder="Email"
                           value={recruiterEmail}
                           onChange={(e) => {
@@ -593,9 +660,10 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                       </div>
                       <div className="ip">
                     
-                        <div className="inputs-group2 auth-pass-inputgroup">
+                        <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
+                            className="name"
                             placeholder="Password"
                             value={recruiterPassword}
                             onChange={(e) => {
@@ -619,8 +687,6 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                    
-       
                     </form>
               </div>
             </div>
@@ -628,11 +694,12 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
               <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
               
                 <form onSubmit={handleSubmit1}>
-                <div className="ip2">
+                <div className="ip">
                    
                     <input
                       type="text"
-                      placeholder="company name"
+                      className="name"
+                      placeholder="Company Name"
                       value={companyName}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
@@ -642,10 +709,11 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                     />
                      {employerNameError && <div className="error-message" style={{ textAlign: 'left' }}>{employerNameError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <input
                       type="email"
+                      className="name"
                       placeholder="Email"
                       value={employerEmail}
                      
@@ -657,10 +725,11 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                     />
                      {employerEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{employerEmailError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <input
                       type="text"
+                      className="name"
                       placeholder="Mobile Number"
                       value={employerMobileNumber}
                      
@@ -672,11 +741,12 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                     />
                     {employerMobileNumberError && <div className="error-message" style={{ textAlign: 'left' }}>{employerMobileNumberError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <div className="inputs-group2 auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
+                        className="name"
                         placeholder="Password"
                         value={employerPassword}
                        
@@ -727,7 +797,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
          <div className="helpful-line">Click on send OTP to verify your email</div>
         <button
           type="button"
-          class="custom-button"
+          // class="custom-button"
           onClick={handleSendOTP1}
           disabled={recruiterOTPSent || recruiterRegistrationInProgress || recruiterOTPSendingInProgress}
         >
@@ -748,6 +818,39 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
                 </form>
               </div>
             </div>
+            <div style={{position:'relative'}}>
+                <img
+  src={Background}
+  alt="Background"
+  className="responsive-image2"
+  style={{
+    position: "fixed",
+    top: "0px",
+    left: "-20px",
+    paddingRight: "10px"
+  }}
+  
+/>
+<div className='hide'>
+<div align='left' style={{position:'fixed' ,bottom:0,width:'30%',left:'5%',alignContent:'left'}}>
+        <h1 className='find-your2' style={{ marginBottom: '-50px',fontSize:'35px' }}>Find The</h1>
+        <h1 className='find-your2' style={{ marginBottom: '-50px',fontSize:'35px' }}>Best Freshers,</h1>
+        <h1 className='find-your2' style={{ marginBottom: '5px',fontSize:'35px' }}>Fuel Your Workforce!</h1>
+      </div>
+</div>
+
+<div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image1"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+
+</div>
           </div>
         </div>
       </div>
