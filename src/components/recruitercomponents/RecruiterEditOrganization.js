@@ -324,7 +324,7 @@ const urlPattern = new RegExp(
       // Delay navigation to allow Snackbar to display
       setTimeout(() => {
         navigate('/recruiter-view-organization');
-      }, 3000); // 2-second delay
+      }, 5000); // 2-second delay
     } catch (error) {
       console.error('Error updating profile:', error);
       setSnackbar({ open: true, message: 'Error updating profile', type: 'error' });

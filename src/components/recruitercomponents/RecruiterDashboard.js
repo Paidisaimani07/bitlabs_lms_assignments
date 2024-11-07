@@ -376,7 +376,7 @@ function RecruiterDashboard() {
                       <img
                             src={cert}
                             alt="Certificate"
-                            style={{ width: "164px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
+                            style={{ width: "164px", height: "auto;", objectFit:"contain", marginTop: "8px" }}
                           />
                           
                       </div>

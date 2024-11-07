@@ -693,7 +693,7 @@ const handleChange = (e) => {
                  
       
    
-    <div className="custom-div-style">
+    <div className="custom-div-style" style={{textAlign:"left"}}>
       {message}
     </div>
                 <div className="myComponent">
