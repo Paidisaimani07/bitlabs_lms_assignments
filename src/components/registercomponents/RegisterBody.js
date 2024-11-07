@@ -7,6 +7,7 @@ import OTPVerification1 from '../recruitercomponents/OTPVerification1';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
 
  
  function RegisterBody({handleLogin}) {
@@ -166,11 +167,20 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!isRecruiterFormValid()) {
       return;
     }
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.Utf8.parse(secretKey), {
+  iv: iv,
+  mode: CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.Pkcs7
+}).toString();
+
     try {
       let loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`;
       const response = await axios.post(loginEndpoint, {
         email: recruiterEmail,
-        password: recruiterPassword,
+        password: encryptedPassword,
+        iv: iv.toString(CryptoJS.enc.Base64),
       });
  
       console.log('Response:', response);
@@ -448,7 +458,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
   const handleOTPSendSuccess = () => {
 
-  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
@@ -687,6 +697,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     <p style={{ color: 'green' }}>OTP sent to your email. Please check and enter below:</p>
     <OTPVerification1
             email={employerEmail}
+            mobilenumber={employerMobileNumber}
             onOTPVerified={() => {
               setTimeout(() => {
                 setRecruiterOTPVerified(true);
