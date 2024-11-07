@@ -646,7 +646,7 @@ thead tr th {
     color: #121212;
     letter-spacing: 1.2px;
     border-bottom: 0px solid #e5e5e5;
-    padding: 0px 16px 8px 16px;
+    padding: 0px 0px 0px 10px;
 }
 
 thead tr th:last-child {
