@@ -433,10 +433,12 @@ input[type="checkbox"] {
   margin-bottom: 10px;
 }
 
+
 input[type="checkbox"]:checked {
   background-color: grey;
   accent-color: grey
 }
+
 
 textarea:-moz-placeholder,
 textarea::-moz-placeholder,
