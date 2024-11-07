@@ -5545,7 +5545,7 @@ width: 100%;
 
 .wd-form-login .btn-social img {
   margin-right: 10px;
-  margin-bottom: 30PX;
+  /* margin-bottom: 30PX; */
 }
 
 .wd-form-login button {

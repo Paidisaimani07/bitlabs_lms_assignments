@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
@@ -59,7 +59,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
- 
+
+ useEffect(()=>{
+  if (recruiterEmail || recruiterPassword){
+    setErrorMessage("")
+  }
+
+},[recruiterEmail,recruiterPassword])
  
  
  
@@ -493,6 +499,22 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const validateEmail = (email) => {
     if (!email.trim()) {
       return 'Email is required.';
+    }
+    const excludedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'outlook.com',
+      'aol.com',
+      'mail.com',
+      'icloud.com',
+      'zoho.com',
+      'yandex.com',
+      'protonmail.com',
+      'tutanota.com',
+    ];
+    const domain = email.split('@')[1];
+    if (excludedDomains.includes(domain)) {
+      return 'Please enter  official email ID.';
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? '' : 'Please enter a valid email address.';
