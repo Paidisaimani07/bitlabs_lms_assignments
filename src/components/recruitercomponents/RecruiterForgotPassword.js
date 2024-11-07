@@ -142,7 +142,7 @@ function RecruiterForgotPassword() {
     };
  
   return (
-    <div className='full-page'>
+    <div className='full-page' style={{backgroundColor:"white",width:"100%",height:"100vh"}}>
       <div>
         <section className="">
           <div className="tf-container">

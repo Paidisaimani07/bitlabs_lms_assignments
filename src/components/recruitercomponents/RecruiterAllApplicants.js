@@ -194,7 +194,7 @@ const [selectedCheckboxes, setSelectedCheckboxes] = useState({
   "Missing Skills":false,
   "Additional Skills":false,
   "Tested Skills":false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false
 });
 
@@ -235,7 +235,7 @@ const reset = () => {
   Qualification:false,
   "Location":false,
   Speclization: false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false,
   "Matching Skills":false,
   "Missing Skills":false,
@@ -1145,7 +1145,7 @@ tableHeader.innerHTML = `
   ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
   ${selectedColumns.includes('Additional Skills') ? '<th>Additional Skills</th>' : ''}
   ${selectedColumns.includes('Tested Skills') ? '<th>Tested Skills</th>' : ''}
-  ${selectedColumns.includes('Apptitude Score') ? '<th>Apptitude Score</th>' : ''}
+  ${selectedColumns.includes('Aptitude Score') ? '<th>Aptitude Score</th>' : ''}
   ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
   <th>Resume</th>
 `;
@@ -1325,7 +1325,7 @@ const tableBody = document.getElementById("applicantTableBody");
           : "No skills available"}
     </td>` : ''}
 
-  ${selectedColumns.includes("Apptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
+  ${selectedColumns.includes("Aptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
  
   ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
  
@@ -2072,7 +2072,7 @@ const exportCSV = () => {
         return cellContent;
       }
  
-      if (headerText === 'Apptitude Score') {
+      if (headerText === 'Aptitude Score') {
         return cellContent;
       }
  
@@ -2190,7 +2190,7 @@ const exportCSV = () => {
       rowData.push(escapeCSVField(testedSkills));
     }
 
-    if (selectedColumns.includes('Apptitude Score')) {
+    if (selectedColumns.includes('Aptitude Score')) {
       rowData.push(applicant.apptitudeScore); 
     }
     if (selectedColumns.includes('Technical Score')) {
@@ -3070,7 +3070,7 @@ const exportCSV = () => {
                       )}
                     </div>}
  
-                    {selectedColumns.includes("Apptitude Score")&&
+                    {selectedColumns.includes("Aptitude Score")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
                         <input
@@ -3410,15 +3410,15 @@ const exportCSV = () => {
                                   color: (() => {
                                     switch (application.applicantStatus) {
                                       case 'Shortlisted':
-                                        return '#2D6A4F';
+                                        return '#000';
                                       case 'Selected':
-                                        return '#6C3FB6';
+                                        return '#000';
                                       case 'Rejected':
-                                        return '#B02A37';
+                                        return '#000';
                                       case 'Screening':
-                                        return '#718F00';
+                                        return '#000';
                                       case 'Interviewing':
-                                        return '#F7B267';
+                                        return '#000';
                                       default:
                                         return '#000'; // Default color for unknown status
                                     }
@@ -3426,7 +3426,7 @@ const exportCSV = () => {
                                   justifyContent: 'flex-start',
                                   padding: '0px 10px' // Add padding inside the content for spacing
                                 }}>
-                                  {application.applicantStatus}
+                                  <b>{application.applicantStatus}</b>
                                 </div>
                               </td>
  
@@ -3479,7 +3479,7 @@ const exportCSV = () => {
                                   : "N/A"}
                             </td>
                             )}
-                            {selectedColumns.includes("Apptitude Score") && (
+                            {selectedColumns.includes("Aptitude Score") && (
                               <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
                             )}
                             {selectedColumns.includes("Technical Score") && (
