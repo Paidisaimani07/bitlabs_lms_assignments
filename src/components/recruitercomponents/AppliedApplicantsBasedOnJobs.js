@@ -77,6 +77,30 @@ function AppliedApplicantsBasedOnJobs() {
   const [availableSkillBadgesSuggestions, setAvailableSkillBadgesSuggestions] = useState([]);
   const [availablePreferedLocSuggestions, setAvailablePreferedLocSuggestions] = useState([]);
   const { id } = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [FilterData, setFilterData] = useState([]);
+  const [appliedFilter,setAppliedFilter]=useState(false)
+
+  const recordsPerPage = 10;
+  
+
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = applicants.slice(indexOfFirstRecord, indexOfLastRecord);
+  const totalPages = Math.ceil(applicants.length / recordsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+  
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
 
   const desiredOrder = [
     'New',
@@ -165,15 +189,15 @@ const validTeciSuggestions = availableTeciSuggestions
 const [selectedCheckboxes, setSelectedCheckboxes] = useState({
   Experience:false,
   Qualification:false,
-  "Location":false,
   Speclization: false,
-  "Apptitude Score": false,
-  "Technical Score": false,
+  "Location":false,
+  "Job Match%":false,
   "Matching Skills":false,
   "Missing Skills":false,
   "Additional Skills":false,
   "Tested Skills":false,
-  "Job Match%":false
+  "Apptitude Score": false,
+  "Technical Score": false
 });
 
 const [errorMessage, setErrorMessage] = useState('');
@@ -181,6 +205,8 @@ const [errorMessage, setErrorMessage] = useState('');
 const [selectedColumns, setSelectedColumns] = useState([]);
 
 const toggleSidebar = () => {
+  setShowError(false)
+  setErrorMessage('')
   setIsOpen(!isOpen);
 };
 
@@ -224,21 +250,23 @@ const reset = () => {
   toggleSidebar();
 };
  
-  const handleCheckboxChange2 = (applyjobid) => {
-    setSelectedApplicants((prevSelected) => {
-      if (prevSelected.includes(applyjobid)) {
-        // If the ID is already in the array, remove it (uncheck the box)
-        return prevSelected.filter((id) => id !== applyjobid);
-      } else {
-        // If the ID is not in the array, add it (check the box)
-        return [...prevSelected, applyjobid];
-      }
-    });
-  };
+const m=new Map();
+const handleCheckboxChange2 = (applyjobid) => {
+  m.set(currentPage,applyjobid);
+  setSelectedApplicants((prevSelected) => {
+    if (prevSelected.includes(applyjobid)) {
+      // If the ID is already in the array, remove it (uncheck the box)
+      return prevSelected.filter((id) => id !== applyjobid);
+    } else {
+      // If the ID is not in the array, add it (check the box)
+      return [...prevSelected, applyjobid];
+    }
+  });
+};
   const handleSelectAll = (event) => {
     const isChecked = event.target.checked;
     if (isChecked) {
-      const allIds = applicants.map(application => application.applyjobid);
+      const allIds = currentRecords.map(application => application.applyjobid);
       setSelectedApplicants(allIds);
     } else {
       setSelectedApplicants([]);
@@ -290,26 +318,624 @@ const reset = () => {
     }));
   };
   
-  const resetFilter = () => {
+  const uncheckAll1 = () => {
+    // Check if any of the states have filled data
+    const hasFilledData = [
+      name, email, mobileNumber, jobTitle, applicantStatus,
+      skillName, minimumExperience, location, minimumQualification,
+      specialization, preScreenedCondition, apptitudeScore,
+      technicalScore, matchPercentage, matchedSkills,
+      nonMatchedSkills, additionalSkills, applicantSkillBadges,
+      preferredJobLocations
+    ].some(value => value !== null && value !== '' && value !== 0); // Adjust this condition as needed
  
-  window.location.reload();
+    if (!hasFilledData) {
+      setFilterOptions(prevState =>
+        Object.keys(prevState).reduce((acc, key) => {
+          acc[key] = false;
+          return acc;
+        }, {})
+      );
+    }
+  };
+ 
+  const uncheckAll = () => {
+    setFilterOptions(prevState =>
+      Object.keys(prevState).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {})
+    );
+  };
+ 
+  const resetFilter = () => {
+  // Apply all filters on the frontend based on the selected options
+  console.log('controller came here');
+  setCurrentPage(1)
+  setAppliedFilter(true)
+ 
+ uncheckAll();
+ 
+ 
+ 
+    const selectedFilters = Object.entries(filterOptions)
+    .filter(([key, value]) => value)
+    .reduce((acc, [key, value]) => {
+      acc[key.replace('Filter', '')] = value;
+      return acc;
+    }, {});
+    let hasError = false;
+    if ('name' in selectedFilters && !name) {
+      hasError = true;
+    }
+    if ('email' in selectedFilters && !email) {
+      hasError = true;
+    }
+    if ('mobile' in selectedFilters && !mobileNumber) {
+      hasError = true;
+    }
+    if ('job' in selectedFilters && !jobTitle) {
+      hasError = true;
+    }
+    if ('status' in selectedFilters && !applicantStatus) {
+      hasError = true;
+    }
+    if ('experience' in selectedFilters && !minimumExperience) {
+      hasError = true;
+    }
+    if ('minimumQualification' in selectedFilters && !minimumQualification) {
+      hasError = true;
+    }
+    if ('preferredJobLocations' in selectedFilters && !preferredJobLocations) {
+      hasError = true;
+    }
+    if ('specialization' in selectedFilters && !specialization) {
+      hasError = true;
+    }
+    if ('matchedSkills' in selectedFilters && !matchedSkills) {
+      hasError = true;
+    }
+    if ('matchPercentage' in selectedFilters && !matchPercentage) {
+      hasError = true;
+    }
+    if ('nonMatchedSkills' in selectedFilters && !nonMatchedSkills) {
+      hasError = true;
+    }
+    if ('additionalSkills' in selectedFilters && !additionalSkills) {
+      hasError = true;
+    }
+    if ('applicantSkillBadges' in selectedFilters && !applicantSkillBadges) {
+      hasError = true;
+    }
+ 
+    // Set error message and show state based on the hasError flag
+    if (hasError) {
+      setErrorMessage('Field for selected filter is missing');
+      setShowError(true);
+      return;
+    } else {
+      setErrorMessage('');
+      setShowError(false);
+    }
+ 
+ 
+ 
+  const filteredData = initialData;
+  setFilterData(initialData)
+  console.log('Applicants before filtering:', filteredData);
+ 
+ 
+  if (filterOptions.applicantSkillBadges) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.applicantSkillBadges || applicant.applicantSkillBadges.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+ 
+  if (filterOptions.additionalSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.additionalSkills || applicant.additionalSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+ 
+  if (filterOptions.matchedSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.matchedSkills || applicant.matchedSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+  if (filterOptions.nonMatchedSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.nonMatchedSkills || applicant.nonMatchedSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+ 
+ 
+  if(filterOptions.matchPercentage ){
+          // Now, sort the filtered data based on matchPercentage filter
+         
+        filteredData.sort((a, b) => {
+          const scoreA = typeof a.matchPercentage === 'string' ? parseInt(a.matchPercentage.trim(), 10) : Math.round(a.matchPercentage);
+          const scoreB = typeof b.matchPercentage === 'string' ? parseInt(b.matchPercentage.trim(), 10) : Math.round(b.matchPercentage);
+ 
+          if (filterOptions.matchPercentage=== "ascending") {
+            return scoreA - scoreB; // Ascending order
+          } else if (filterOptions.matchPercentage === "descending") {
+            return scoreB - scoreA; // Descending order
+          }
+ 
+          return 0; // If no sorting is selected, return 0
+        });
+  }
+ 
+  if(filterOptions.technicalScore ){
+    // Now, sort the filtered data based on matchPercentage filter
+   
+  filteredData.sort((a, b) => {
+    const scoreA = typeof a.technicalScore === 'string' ? parseInt(a.technicalScore.trim(), 10) : Math.round(a.technicalScore);
+    const scoreB = typeof b.technicalScore === 'string' ? parseInt(b.technicalScore.trim(), 10) : Math.round(b.technicalScore);
+ 
+    if (filterOptions.technicalScore=== "ascending") {
+      return scoreA - scoreB; // Ascending order
+    } else if (filterOptions.technicalScore === "descending") {
+      return scoreB - scoreA; // Descending order
+    }
+ 
+    return 0; // If no sorting is selected, return 0
+  });
+}
+ 
+if(filterOptions.apptitudeScore ){
+  // Now, sort the filtered data based on matchPercentage filter
+ 
+filteredData.sort((a, b) => {
+  const scoreA = typeof a.apptitudeScore === 'string' ? parseInt(a.apptitudeScore.trim(), 10) : Math.round(a.apptitudeScore);
+  const scoreB = typeof b.apptitudeScore === 'string' ? parseInt(b.apptitudeScore.trim(), 10) : Math.round(b.apptitudeScore);
+ 
+  if (filterOptions.apptitudeScore=== "ascending") {
+    return scoreA - scoreB; // Ascending order
+  } else if (filterOptions.apptitudeScore === "descending") {
+    return scoreB - scoreA; // Descending order
+  }
+ 
+  return 0; // If no sorting is selected, return 0
+});
+}
+ 
+const handleCheckboxChange3 = (applyjobid) => {
+  // Toggle the applicant's selection state
+  setSelectedApplicants((prevSelected) => {
+    if (prevSelected.includes(applyjobid)) {
+      // If the ID is already in the array, remove it (uncheck the box)
+      return prevSelected.filter((id) => id !== applyjobid);
+    } else {
+      // If the ID is not in the array, add it (check the box)
+      return [...prevSelected, applyjobid];
+    }
+  });
+ 
+  // Check if all checkboxes are selected
+  const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]');
+  const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+ 
+  // Uncheck the "Select All" checkbox if any individual checkbox is unchecked
+  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+  if (!allChecked) {
+    selectAllCheckbox.checked = false;
+  } else {
+    selectAllCheckbox.checked = true;
+  }
+};
+ 
+// Assuming this is your select all logic
+const handleFilterData = (event) => {
+  const isChecked = event.target.checked;
+  if (isChecked) {
+    const allIds = FilterData.map(applicant => applicant.applyjobid);
+    setSelectedApplicants(allIds);
+  } else {
+    setSelectedApplicants([]);
+  }
+ 
+  // Set all checkboxes' checked state to match the header checkbox
+  document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]').forEach((checkbox) => {
+    checkbox.checked = isChecked;
+  });
+};
+ 
+const recordsPerPage = 10;
+let currentPage = 1;
+ 
+function handleNextPage1() {
+  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    renderTableData();  // Call the function to render data for the new page
+  }
+}
+ 
+function handlePreviousPage1() {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    renderTableData();  // Call the function to render data for the new page
+  }
+}
+ 
+function renderTableData() {
+  const tableHeader=document.getElementById("tableHeader");
+  tableHeader.innerHTML = `
+    <th>
+      <input
+      type="checkbox"
+      id="selectAllCheckbox"
+      />
+    </th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Mobile Number</th>
+    <th>Job Title</th>
+    <th>Applicant Status</th>
+    ${selectedColumns.includes('Experience') ? '<th>Experience</th>' : ''}
+    ${selectedColumns.includes('Qualification') ? '<th>Qualification</th>' : ''}
+    ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
+    ${selectedColumns.includes('Speclization') ? '<th>Specialization</th>' : ''}
+    ${selectedColumns.includes('Aptitude Score') ? '<th>Aptitude Score</th>' : ''}
+    ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
+    ${selectedColumns.includes('Matching Skills') ? '<th>Matching Skills</th>' : ''}
+    ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
+    ${selectedColumns.includes('Additional Skills') ? '<th>Additional Skills</th>' : ''}
+    ${selectedColumns.includes('Tested Skills') ? '<th>Tested Skills</th>' : ''}
+    ${selectedColumns.includes('Job Match%') ? '<th>Job Match%</th>' : ''}
+    <th>Resume</th>
+  `;
+   
+    const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+    selectAllCheckbox.addEventListener('change', handleFilterData);
+   
+   
+  const tableBody = document.getElementById("applicantTableBody");
+    tableBody.innerHTML = "";
+    if (filteredData.length === 0) {
+      // Display "No data found" message
+      const noDataRow = document.createElement("tr");
+      noDataRow.innerHTML = `
+        <td colspan="${selectedColumns.length + 7}" style="text-align: center;">
+          No Data Found</td>
+      `;
+      tableBody.appendChild(noDataRow);
+    }else{
+    const startIndex = (currentPage - 1) * recordsPerPage;
+    const endIndex = startIndex + recordsPerPage;
+   
+    const recordsToDisplay = filteredData.slice(startIndex, endIndex);
+    setFilterData(recordsToDisplay)
+   
+    recordsToDisplay.forEach((applicant,index) => {
+     
+      const row = document.createElement("tr");
+     
+      row.innerHTML = `
+    <td>
+      <input
+        type="checkbox"
+        value="${applicant.applyjobid}"
+        ${selectedApplicants.includes(applicant.applyjobid) ? 'checked' : ''}
+        name="applicantCheckbox-${applicant.applyjobid}"
+      />
+    </td>
+    <td>  
+    <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
+      ${applicant.name}
+   
+    ${applicant.preScreenedCondition === 'PreScreened'
+      ? `
+        <div style="display: inline-block; position: relative;">
+          <img
+            src="${verified123}"
+            alt="Verified"
+            style="width: 20px; height: 20px; margin-left: 5px;"
+            onMouseEnter="this.nextElementSibling.style.display='block';"
+            onMouseLeave="this.nextElementSibling.style.display='none';"
+          />
+          <div style="
+              display: none;
+              position: absolute;
+              bottom: 100%;
+              left: 850%;
+              top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
+              transform: translateX(-50%);
+              background-color: #fff;
+              border: 1px solid #ccc;
+              border-radius: 5px;
+              width: 615px;
+              height: 70px;
+              white-space: normal;
+              box-shadow: 0px 4px 15px 0px rgba(0,0,0,0.15);
+              z-index: 1000;
+              overflow: hidden;
+              padding-right: 50px;
+              padding-top: 5px;
+          ">
+    <div style="
+      display: flex; /* Use flexbox for alignment */
+      align-items: center; /* Center the image and text vertically */
+      padding: 5px; /* Add padding for the inner div */
+    ">
+      <img
+        src="${verified123}"
+        alt="Verified"
+        style="width: 20px; margin-right: 15px; margin-left: 10px;"
+      />
+      <span style="flex: 1; white-space: normal;">
+        Pre-screened badges are issued to candidates who scored more than 70% in both Aptitude and Technical tests.
+      </span>
+    </div>
+  </div>
+        </div>`
+      : ''}
+      </a>
+  </td>
+   
+    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
+    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
+    <td>${applicant.jobTitle}</td>
+    <td>
+      <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
+        (() => {
+          switch (applicant.applicantStatus) {
+            case 'Shortlisted':
+              return '#DBFAEB';
+            case 'Selected':
+              return '#F9F5FF';
+            case 'Rejected':
+              return '#FFF3F4';
+            case 'Screening':
+              return '#EFFFD0';
+            case 'Interviewing':
+              return '#FFF2E1';
+            default:
+              return '#F8F8F8'; // Default background for unknown status
+          }
+        })()
+      }; color: ${
+        (() => {
+          switch (applicant.applicantStatus) {
+            case 'Shortlisted':
+              return '#2D6A4F';
+            case 'Selected':
+              return '#6C3FB6';
+            case 'Rejected':
+              return '#B02A37';
+            case 'Screening':
+              return '#718F00';
+            case 'Interviewing':
+              return '#F7B267';
+            default:
+              return '#000'; // Default color for unknown status
+          }
+        })()
+      }; justify-content: flex-start; padding: 0px 10px;">
+        ${applicant.applicantStatus}
+      </div>
+    </td>
+   
+    ${selectedColumns.includes('Experience') ? `<td>${applicant.experience}</td>` : ''}
+   
+    ${selectedColumns.includes('Qualification') ? `<td>${applicant.qualification}</td>` : ''}
+   
+    ${selectedColumns.includes("Location") ? `
+      <td>
+        ${applicant.preferredJobLocations.length > 3
+          ? `${applicant.preferredJobLocations.slice(0, 3).join(", ")} ...`
+          : applicant.preferredJobLocations.join(", ")}
+      </td>` : ''}
+   
+    ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
+   
+    ${selectedColumns.includes("Aptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
+   
+    ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
+   
+    ${selectedColumns.includes("Matching Skills") ? `
+      <td>
+        ${applicant.matchedSkills.length > 3
+          ? `${applicant.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+          : applicant.matchedSkills.map(skill => skill.skillName).join(", ")}
+      </td>` : ''}
+   
+    ${selectedColumns.includes("Missing Skills") ? `
+      <td>
+        ${applicant.nonMatchedSkills.length > 3
+          ? `${applicant.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+          : applicant.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
+      </td>` : ''}
+   
+    ${selectedColumns.includes("Additional Skills") ? `
+      <td>
+        ${applicant.additionalSkills.length > 3
+          ? `${applicant.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+          : applicant.additionalSkills.map(skill => skill.skillName).join(", ")}
+      </td>` : ''}
+   
+    ${selectedColumns.includes("Tested Skills") ? `
+      <td>
+        ${applicant.applicantSkillBadges && applicant.applicantSkillBadges.length > 3
+          ? `${applicant.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
+          : applicant.applicantSkillBadges
+            ? applicant.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
+            : "No skills available"}
+      </td>` : ''}
+   
+    ${selectedColumns.includes("Job Match%") ? `<td>${applicant.matchPercentage}%</td>` : ''}
+   
+    <td><a href="/view-resume/${applicant.id}" style="color: blue;">View</a></td>
+  `;
+   
+   
+      tableBody.appendChild(row);
+   
+      const checkbox = row.querySelector(`input[type="checkbox"][value="${applicant.applyjobid}"]`);
+   
+      checkbox.addEventListener('change', () => {
+        handleCheckboxChange3(applicant.applyjobid);
+      });
+      });
+    }
+      function renderPagination() {
+        const totalPages = Math.ceil(filteredData.length / recordsPerPage);
+        const paginationContainer = document.createElement("div");
+        paginationContainer.className = "pagination-containers";
+     
+        paginationContainer.innerHTML = `
+          <button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+          <span>${currentPage}</span>
+          <button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+        `;
+     
+        // Clear existing pagination
+        let existingPaginationContainer = document.querySelector(".pagination-containers");
+        if (existingPaginationContainer) {
+          existingPaginationContainer.remove();
+        }
+   
+        let existsentirediv = document.querySelector(".entireDivClass");
+        if (existsentirediv) {
+          existsentirediv.remove();
+        }
+       
+        // Append new pagination controls
+        const entireDiv = document.createElement("div");
+        entireDiv.className = "entireDivClass";
+        entireDiv.appendChild(paginationContainer);
+        entireDiv.style.height = "50px";
+        entireDiv.style.display = "flex";
+        entireDiv.style.justifyContent = "flex-end"; // Align items to the right
+        entireDiv.style.alignItems = "center";
+     
+        const x = document.getElementsByClassName("profile-setting");
+        if (x[0]) {
+          x[0].appendChild(entireDiv);
+        }
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+   
+        // Ensure the elements exist before adding event listeners
+        if (prevButton) {
+            prevButton.addEventListener('click', handlePreviousPage1);
+        }
+   
+        if (nextButton) {
+            nextButton.addEventListener('click', handleNextPage1);
+        }
+   
+        if (filteredData.length === 0) {
+          // Optionally, you could disable the buttons or show a message
+          prevButton.disabled = true;
+          nextButton.disabled = true;
+        }
+      }
+      renderPagination();
+    }
+    setCount(filteredData.length);
+    renderTableData();
 };
 
 
 
 const applyFilter = () => {
   // Apply all filters on the frontend based on the selected options
-
+  setCurrentPage(1)
+  setAppliedFilter(true)
   // Check if at least one filter is selected
   const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
 
   if (!isAnyFilterSelected) {
     // Show error message if no filter is selected
+    setErrorMessage('Please Select at least one filter')
     setShowError(true);
+    return;
   } else {
-    // Apply filter logic here
-    setShowError(false);
-    // Your filter application logic
+    const selectedFilters = Object.entries(filterOptions)
+    .filter(([key, value]) => value) 
+    .reduce((acc, [key, value]) => {
+      acc[key.replace('Filter', '')] = value;
+      return acc;
+    }, {});
+    let hasError = false;
+    if ('name' in selectedFilters && !name) {
+      hasError = true;
+    }
+    if ('email' in selectedFilters && !email) {
+      hasError = true;
+    }
+    if ('mobile' in selectedFilters && !mobileNumber) {
+      hasError = true;
+    }
+    if ('job' in selectedFilters && !jobTitle) {
+      hasError = true;
+    }
+    if ('status' in selectedFilters && !applicantStatus) {
+      hasError = true;
+    }
+    if ('experience' in selectedFilters && !minimumExperience) {
+      hasError = true;
+    }
+    if ('minimumQualification' in selectedFilters && !minimumQualification) {
+      hasError = true;
+    }
+    if ('preferredJobLocations' in selectedFilters && !preferredJobLocations) {
+      hasError = true;
+    }
+    if ('specialization' in selectedFilters && !specialization) {
+      hasError = true;
+    }
+    if ('matchedSkills' in selectedFilters && !matchedSkills) {
+      hasError = true;
+    }
+    if ('matchPercentage' in selectedFilters && !matchPercentage) {
+      hasError = true;
+    }
+    if ('nonMatchedSkills' in selectedFilters && !nonMatchedSkills) {
+      hasError = true;
+    }
+    if ('additionalSkills' in selectedFilters && !additionalSkills) {
+      hasError = true;
+    }
+    if ('applicantSkillBadges' in selectedFilters && !applicantSkillBadges) {
+      hasError = true;
+    }
+  
+    // Set error message and show state based on the hasError flag
+    if (hasError) {
+      setErrorMessage('Field for selected filter is missing');
+      setShowError(true);
+      return;
+    } else {
+      setErrorMessage(''); 
+      setShowError(false); 
+    }
   }
 
 
@@ -329,7 +955,7 @@ const applyFilter = () => {
       (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
        (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
       (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
-      (technicalScore === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
+      (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
       (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
       (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
       (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
@@ -340,8 +966,8 @@ const applyFilter = () => {
       
     );
   });
-
-  console.log('Applicants before filtering:', filteredData);
+  setFilterData(filteredData)
+  // console.log('Applicants before filtering:', filteredData);
 
 
   if (filterOptions.applicantSkillBadges) {
@@ -472,7 +1098,7 @@ const handleCheckboxChange3 = (applyjobid) => {
 const handleFilterData = (event) => {
   const isChecked = event.target.checked;
   if (isChecked) {
-    const allIds = filteredData.map(applicant => applicant.applyjobid);
+    const allIds = FilterData.map(applicant => applicant.applyjobid);
     setSelectedApplicants(allIds);
   } else {
     setSelectedApplicants([]);
@@ -483,8 +1109,25 @@ const handleFilterData = (event) => {
     checkbox.checked = isChecked;
   });
 };
+const recordsPerPage = 10; 
+let currentPage = 1;
 
- 
+function handleNextPage1() {
+  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
+  if (currentPage < totalPages) {
+    currentPage += 1;
+    renderTableData();  // Call the function to render data for the new page
+  }
+}
+
+function handlePreviousPage1() {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    renderTableData();  // Call the function to render data for the new page
+  }
+}
+
+function renderTableData() {
 const tableHeader=document.getElementById("tableHeader");
 tableHeader.innerHTML = `
   <th>
@@ -500,15 +1143,15 @@ tableHeader.innerHTML = `
   <th>Applicant Status</th>
   ${selectedColumns.includes('Experience') ? '<th>Experience</th>' : ''}
   ${selectedColumns.includes('Qualification') ? '<th>Qualification</th>' : ''}
-  ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
   ${selectedColumns.includes('Speclization') ? '<th>Specialization</th>' : ''}
-  ${selectedColumns.includes('Apptitude Score') ? '<th>Apptitude Score</th>' : ''}
-  ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
+  ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
+  ${selectedColumns.includes('Job Match%') ? '<th>Job Match%</th>' : ''}
   ${selectedColumns.includes('Matching Skills') ? '<th>Matching Skills</th>' : ''}
   ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
   ${selectedColumns.includes('Additional Skills') ? '<th>Additional Skills</th>' : ''}
   ${selectedColumns.includes('Tested Skills') ? '<th>Tested Skills</th>' : ''}
-  ${selectedColumns.includes('Job Match%') ? '<th>Job Match%</th>' : ''}
+  ${selectedColumns.includes('Apptitude Score') ? '<th>Apptitude Score</th>' : ''}
+  ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
   <th>Resume</th>
 `;
  
@@ -518,9 +1161,22 @@ tableHeader.innerHTML = `
  
 const tableBody = document.getElementById("applicantTableBody");
   tableBody.innerHTML = "";
- 
- 
-  filteredData.forEach((applicant,index) => {
+  if (filteredData.length === 0) {
+    // Display "No data found" message
+    const noDataRow = document.createElement("tr");
+    noDataRow.innerHTML = `
+      <td colspan="${selectedColumns.length + 7}" style="text-align: center;">
+        No Data Found</td>
+    `;
+    tableBody.appendChild(noDataRow);
+  }else{
+  const startIndex = (currentPage - 1) * recordsPerPage;
+  const endIndex = startIndex + recordsPerPage;
+
+  const recordsToDisplay = filteredData.slice(startIndex, endIndex);
+  setFilterData(recordsToDisplay)
+  
+  recordsToDisplay.forEach((applicant,index) => {
    
     const row = document.createElement("tr");
    
@@ -536,12 +1192,12 @@ const tableBody = document.getElementById("applicantTableBody");
   <td>   
   <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
     ${applicant.name}
-  </a>
   ${applicant.preScreenedCondition === 'PreScreened'
     ? `
       <div style="display: inline-block; position: relative;">
         <img 
           src="${verified123}" 
+          class="external-link-image"
           alt="Verified" 
           style="width: 20px; height: 20px; margin-left: 5px;"
           onMouseEnter="this.nextElementSibling.style.display='block';" 
@@ -551,7 +1207,7 @@ const tableBody = document.getElementById("applicantTableBody");
             display: none;
             position: absolute;
             bottom: 100%;
-            left: 1250%;
+            left: 850%;
             top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
             transform: translateX(-50%);
             background-color: #fff;
@@ -560,7 +1216,7 @@ const tableBody = document.getElementById("applicantTableBody");
             width: 615px;
             height: 70px;
             white-space: normal;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            box-shadow: 0px 4px 15px 0px rgba(0,0,0,0.15);
             z-index: 1000;
             overflow: hidden;
             padding-right: 50px;
@@ -583,12 +1239,13 @@ const tableBody = document.getElementById("applicantTableBody");
 </div>
       </div>`
     : ''}
+    </a>
 </td>
 
   <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
   <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
   <td>${applicant.jobTitle}</td>
-  <td style="padding: 0px 10px; text-align: center; vertical-align: middle;">
+  <td>
     <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
       (() => {
         switch (applicant.applicantStatus) {
@@ -631,53 +1288,54 @@ const tableBody = document.getElementById("applicantTableBody");
   ${selectedColumns.includes('Experience') ? `<td>${applicant.experience}</td>` : ''}
  
   ${selectedColumns.includes('Qualification') ? `<td>${applicant.qualification}</td>` : ''}
+
+  ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
  
   ${selectedColumns.includes("Location") ? `
     <td>
       ${applicant.preferredJobLocations.length > 3
-        ? `${applicant.preferredJobLocations.slice(0, 3).join(", ")} +`
+        ? `${applicant.preferredJobLocations.slice(0, 3).join(", ")} ...`
         : applicant.preferredJobLocations.join(", ")}
     </td>` : ''}
- 
-  ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
- 
-  ${selectedColumns.includes("Apptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
- 
-  ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
+
+  ${selectedColumns.includes("Job Match%") ? `<td>${applicant.matchPercentage}%</td>` : ''}  
  
   ${selectedColumns.includes("Matching Skills") ? `
     <td>
       ${applicant.matchedSkills.length > 3
-        ? `${applicant.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+        ? `${applicant.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
         : applicant.matchedSkills.map(skill => skill.skillName).join(", ")}
     </td>` : ''}
  
   ${selectedColumns.includes("Missing Skills") ? `
     <td>
       ${applicant.nonMatchedSkills.length > 3
-        ? `${applicant.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+        ? `${applicant.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
         : applicant.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
     </td>` : ''}
  
   ${selectedColumns.includes("Additional Skills") ? `
     <td>
       ${applicant.additionalSkills.length > 3
-        ? `${applicant.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+        ? `${applicant.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
         : applicant.additionalSkills.map(skill => skill.skillName).join(", ")}
     </td>` : ''}
  
   ${selectedColumns.includes("Tested Skills") ? `
     <td>
       ${applicant.applicantSkillBadges && applicant.applicantSkillBadges.length > 3
-        ? `${applicant.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} +`
+        ? `${applicant.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
         : applicant.applicantSkillBadges
           ? applicant.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
           : "No skills available"}
     </td>` : ''}
+
+  ${selectedColumns.includes("Apptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
  
-  ${selectedColumns.includes("Job Match%") ? `<td>${applicant.matchPercentage}%</td>` : ''}
+  ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
  
   <td><a href="/view-resume/${applicant.id}" style="color: blue;">View</a></td>
+  <td></td>
 `;
  
  
@@ -689,8 +1347,64 @@ const tableBody = document.getElementById("applicantTableBody");
       handleCheckboxChange3(applicant.applyjobid);
     });
     });
- 
+  }
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredData.length / recordsPerPage);
+      const paginationContainer = document.createElement("div");
+      paginationContainer.className = "pagination-containers";
+    
+      paginationContainer.innerHTML = `
+        <button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
+        <span>${currentPage}</span>
+        <button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
+      `;
+    
+      // Clear existing pagination
+      let existingPaginationContainer = document.querySelector(".pagination-containers");
+      if (existingPaginationContainer) {
+        existingPaginationContainer.remove();
+      }
+
+      let existsentirediv = document.querySelector(".entireDivClass");
+      if (existsentirediv) {
+        existsentirediv.remove();
+      }
+      
+      // Append new pagination controls
+      const entireDiv = document.createElement("div");
+      entireDiv.className = "entireDivClass";
+      entireDiv.appendChild(paginationContainer);
+      entireDiv.style.height = "50px";
+      entireDiv.style.display = "flex";
+      entireDiv.style.justifyContent = "flex-end"; // Align items to the right
+      entireDiv.style.alignItems = "center";
+    
+      const x = document.getElementsByClassName("profile-setting");
+      if (x[0]) {
+        x[0].appendChild(entireDiv);
+      }
+      const prevButton = document.getElementById('prevButton');
+      const nextButton = document.getElementById('nextButton');
+
+      // Ensure the elements exist before adding event listeners
+      if (prevButton) {
+          prevButton.addEventListener('click', handlePreviousPage1);
+      }
+
+      if (nextButton) {
+          nextButton.addEventListener('click', handleNextPage1);
+      }
+
+      if (filteredData.length === 0) {
+        // Optionally, you could disable the buttons or show a message
+        prevButton.disabled = true;
+        nextButton.disabled = true;
+      }
+    }
+    renderPagination();
+  }
   setCount(filteredData.length);
+  renderTableData();
 };
 
 const applyMatchType = (value, filterValue, matchType) => {
@@ -1026,25 +1740,64 @@ const handleTextFieldChange = (id, value) => {
       )
     );
     
-        const $table= window.$(tableref.current);
-          const timeoutId = setTimeout(() => {  
-           $table.DataTable().destroy();
-            $table.DataTable({responsive:true, 
-              searching: false, 
-              lengthChange: false, 
-              "info": false,
-              paging: false, 
+    const $table= window.$(tableref.current);
+    const timeoutId = setTimeout(() => {  
+      if ($table.DataTable().data().length > 0) {
+        $table.DataTable().destroy();
+      }
+    
+      const dataTable = $table.DataTable({
+        responsive: true,
+        searching: false,
+        lengthChange: false,
+        info: false,
+        paging: false,
+        pageLength: 10, 
+        columnDefs: [
+          {
+              targets: [0,7],
+              orderable: false  
+          }
+        ]
+      });
+    
+      const pageInfo = dataTable.page.info(); 
+    
+      if (pageInfo && pageInfo.pages > 0) {
+        const totalPages = pageInfo.pages; 
+    
+        const paginationContainer = window.$('#paginationContainer');
+        paginationContainer.empty(); 
+    
+        for (let i = 0; i < totalPages; i++) {
+          const pageButton = window.$('<button>')
+            .text(i + 1)
+            .on('click', () => {
+              dataTable.page(i).draw(false); 
+            })
+            .css({
+              margin: '0 5px',
+              padding: '5px 10px',
+              cursor: 'pointer',
             });
-                  }, 500);
-         return () => {
-            isMounted.current = false;
-         };
-    } catch (error) {
-      console.error('Error fetching applicants:', error);
-    }finally {
-      setIsLoading(false); // Stop loading
-    }
-  };
+    
+          if (i === pageInfo.page) {
+            pageButton.prop('disabled', true);
+          }
+    
+          paginationContainer.append(pageButton);
+        }
+      }
+    }, 500);
+   return () => {
+      isMounted.current = false;
+   };
+} catch (error) {
+console.error('Error fetching applicants:', error);
+}finally {
+setIsLoading(false); // Stop loading
+}
+};
  
   useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
@@ -1233,6 +1986,7 @@ setSnackbar({ open: true, message: message1, type: 'success' });
 const exportCSV = () => {
   const headers = [
     'Name',
+    'Pre-screened',
     'Email',
     'Mobile Number',
     'Job Title',
@@ -1241,9 +1995,12 @@ const exportCSV = () => {
     'Resume'
   ];
  
-  const capitalizedHeaders = headers.map(header => header.toUpperCase());
+  const capitalizedHeaders = headers.map(header => header);
  
   const escapeCSVField = (field) => {
+    if (typeof field !== 'string') {
+      return ' '; 
+    }
     if (field.trim() === '') {
       return ' ';
     }
@@ -1267,9 +2024,11 @@ const exportCSV = () => {
       switch (index) {
         case 1:
           const enameElement = td.querySelector('a') || td.querySelector('Link');
-          return enameElement ? `${escapeCSVField(enameElement.textContent.trim())}` : '';
+          const applicantName = enameElement ? `${escapeCSVField(enameElement.textContent.trim())}` : '';
+
+          const preScreenedStatus = enameElement.querySelector('div img.external-link-image') ? "Verified" : "Not-verified";
+          return `${applicantName}, ${preScreenedStatus}`;
         case 2:
-          console.log(cellContent);
           return cellContent;
         case 3:
           const mobileNumber = cellContent.replace(/\D/g, '');
@@ -1295,7 +2054,7 @@ const exportCSV = () => {
         const locationText = cellContent;
         const locations = locationText.split(',');
         const displayedLocations = locations.length > 3
-          ? `${locations.slice(0, 3).join(", ")} +`
+          ? `${locations.slice(0, 3).join(", ")} ...`
           : locations.join(", ");
         return displayedLocations.trim();
       }
@@ -1318,7 +2077,7 @@ const exportCSV = () => {
  
       if (headerText === 'Resume') {
         const resumeLink = td.querySelector('a')?.href;
-        return resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View Resume"")"` : 'N/A';
+        return resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
       }
  
       return cellContent;
@@ -1327,11 +2086,138 @@ const exportCSV = () => {
     return rowData.slice(1);
   });
  
- 
- 
-  const selectedData = selectedApplicants.length > 0
-    ? allData.filter((row, index) => selectedApplicants.includes(applicants[index].applyjobid))
-    : allData;
+  let allData1 = applicants.map(applicant => {
+    const rowData = [];
+  
+    rowData.push(escapeCSVField(applicant.name)); // Name
+    // console.log(applicant.preScreenedCondition)
+    const preScreenedStatus = applicant.preScreenedCondition==="PreScreened" ? "Verified" : "Not-verified";
+    // console.log(preScreenedStatus)
+    rowData.push(preScreenedStatus);
+    rowData.push(escapeCSVField(applicant.email)); // Email
+    rowData.push(escapeCSVField(applicant.mobilenumber)); // Mobile Number
+    rowData.push(escapeCSVField(applicant.jobTitle)); // Job Title
+    rowData.push(escapeCSVField(applicant.applicantStatus)); // Applicant Status
+  
+    if (selectedColumns.includes('Experience')) {
+      rowData.push(escapeCSVField(applicant.experience));
+    }
+    if (selectedColumns.includes('Qualification')) {
+      rowData.push(escapeCSVField(applicant.qualification));
+    }
+
+    if (selectedColumns.includes('Speclization')) {
+      rowData.push(escapeCSVField(applicant.specialization));
+    }
+  
+    if (selectedColumns.includes('Location') && applicant.preferredJobLocations) {
+      let locations = applicant.preferredJobLocations;
+    
+      if (Array.isArray(locations)) {
+        locations = locations.map(location => location.trim());
+      } else if (typeof locations === 'string') {
+        locations = locations.split(',').map(location => location.trim());
+      } else {
+        locations = [];
+      }
+    
+      const displayedLocations = locations.length > 3 
+        ? `${locations.slice(0, 3).join(", ")} ...` 
+        : locations.join(", ");
+    
+      rowData.push(escapeCSVField(displayedLocations)); 
+    }
+
+    if (selectedColumns.includes('Job Match%')) {
+      rowData.push(`${applicant.matchPercentage}%`); 
+    }
+
+    // Matching Skills
+    if (selectedColumns.includes('Matching Skills')) {
+      let matchingSkills = applicant.matchedSkills;
+
+      if (Array.isArray(matchingSkills)) {
+        matchingSkills = matchingSkills.map(skill => skill.skillName).join(', ');
+      } else {
+        matchingSkills = ''; 
+      }
+
+      rowData.push(escapeCSVField(matchingSkills)); 
+    }
+
+    // Missing Skills
+    if (selectedColumns.includes('Missing Skills')) {
+      let missingSkills = applicant.nonMatchedSkills;
+
+      if (Array.isArray(missingSkills)) {
+        missingSkills = missingSkills.map(skill => skill.skillName).join(', ');
+      } else {
+        missingSkills = ''; 
+      }
+
+      rowData.push(escapeCSVField(missingSkills)); 
+    }
+
+    // Additional Skills
+    if (selectedColumns.includes('Additional Skills')) {
+      let additionalSkills = applicant.additionalSkills;
+
+      if (Array.isArray(additionalSkills)) {
+        additionalSkills = additionalSkills.map(skill => skill.skillName).join(', ');
+      } else {
+        additionalSkills = ''; 
+      }
+
+      rowData.push(escapeCSVField(additionalSkills)); 
+    }
+
+    if (selectedColumns.includes('Tested Skills')) {
+      let testedSkills = applicant.applicantSkillBadges;
+
+      if (Array.isArray(testedSkills)) {
+        testedSkills = testedSkills.map(skill => skill.skillBadge.name).join(', '); 
+      } else {
+        testedSkills = ''; 
+      }
+
+      rowData.push(escapeCSVField(testedSkills));
+    }
+
+    if (selectedColumns.includes('Apptitude Score')) {
+      rowData.push(applicant.apptitudeScore); 
+    }
+    if (selectedColumns.includes('Technical Score')) {
+      rowData.push(applicant.technicalScore); 
+    }
+  
+    const resumeLink = `${window.location.origin}/view-resume/${applicant.id}`;
+    const hyperlinkFormula = resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
+    rowData.push(hyperlinkFormula);
+
+    return rowData;
+});
+
+  // console.log(allData1)
+  
+  const selectedPages = new Set();
+  selectedApplicants.forEach(id => {
+    const pageNumber = m.get(id);
+    if (pageNumber) {
+      selectedPages.add(pageNumber);
+    }
+  });
+
+  let selectedData;
+  if (selectedPages.size > 1) {
+    // If selected data spans multiple pages, use allData
+    selectedData = allData; // or however you want to define this data
+  } else if (selectedApplicants.length > 0) {
+    // If there are selected applicants, filter based on those
+    selectedData = allData1.filter((row, index) => selectedApplicants.includes(applicants[index].applyjobid));
+  } else {
+    // Default to allData
+    selectedData = allData;
+  }
  
   selectedData.unshift(capitalizedHeaders);
  
@@ -1376,15 +2262,15 @@ const exportCSV = () => {
               style={{
                 position: "absolute",
                 right: "0",
-                marginRight: "20px",
+                marginRight: "25px",
                 top: "180px",
                 marginBottom: "10px",
                 zIndex: 1,
                 padding: "10px", // Add padding for better spacing
-                border: "1px solid #ccc", // Light border color
-                borderRadius: "4px", // Rounded corner
+                // border: "1px solid #ccc", // Light border color
+                borderRadius: "9px", // Rounded corner
                 cursor: "pointer", // Pointer cursor for better UX
-                transition: "border-color 0.3s, box-shadow 0.3s", // Transition for focus effect
+                transition: "box-shadow 0.3s ease", // Transition for focus effect
               }}
             >
             <option value="" disabled hidden>
@@ -1423,7 +2309,7 @@ const exportCSV = () => {
                       
                     }}
                   >
-                    Filters
+                    Filter
                     <img src={filtericon} className="external-link-image" style={{ marginLeft: '1px', height: '20px' }} />
                   </button>
                   <div className="row">
@@ -1464,9 +2350,9 @@ const exportCSV = () => {
               <span
             style={{ cursor: 'pointer', marginRight: '16px', marginLeft: '-40px', position: 'relative'
             }} // Add pointer cursor for the arrow
-            onClick={() => setShowFilters(!showFilters)} // Toggle filters visibility
+            onClick={() => {setShowFilters(!showFilters);setErrorMessage('')}} // Toggle filters visibility
           >
-            <img src={arrowleft} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
+            <img src={arrowleft} onClick={uncheckAll1} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
             </span>
              Filters </h3>
                 
@@ -1879,77 +2765,29 @@ const exportCSV = () => {
                       )}
                     </div>}
 
-                    {selectedColumns.includes("Apptitude Score")&&
+                    {selectedColumns.includes("Location")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
                         <input
                           type="checkbox"
-                          id="apptitudeScore"
-                          checked={filterOptions.apptitudeScore}
-                          onChange={handleCheckboxChange3}
+                          id="preferredJobLocations"
+                          checked={filterOptions.preferredJobLocations}
+                          onChange={handleCheckboxChange}
                         />
-                        <label className="label" htmlFor="apptitudeScore">&nbsp;Aptitude score</label>
+                        <label className="label" htmlFor="preferredJobLocations">&nbsp;Preferred-location</label>
                       </div>
-                      {filterOptions.apptitudeScore && (
+                      {filterOptions.preferredJobLocations && (
                         <div className="filter-details">
                           <div className="popup">
                           <div className="dropdown-container1">
                             <select
-                              id="apptitudeScoreFilterSelect"
-                              value={filterOptions.apptitudeScoreFilterSelect}
+                              id="preferredJobLocationsFilterSelect"
+                              value={filterOptions.preferredJobLocationsFilterSelect}
                               onChange={handleSelectChange1}
                             >
-                              <option value="ascending">Ascending</option>
-                              <option value="descending">Descending</option>
-                            </select>
-                          </div>
-                          {/* <input
-                            type="text"
-                            id="apptitudeScoreInput"
-                            placeholder="Enter value"
-                            onChange={handleTextFieldChange}
-                            style={{ width: '100px', height: '20px' }}
-                          /> */}
-                          {/* <Typeahead
-                            id="apptitudeScoreInput"  // Assign an ID to distinguish between inputs
-                            onChange={(selected) => {
-                              // Handle the case when a user selects an item
-                              handleTextFieldChange("apptitudeScoreInput", selected); 
-                            }}
-                            onInputChange={(text) => {
-                              // Handle the case when a user is typing
-                              handleTextFieldChange("apptitudeScoreInput", text);
-                            }}
-                            options={validAptiSuggestions}  // Options for typeahead
-                            placeholder="Type to search..."
-                          /> */}
-                        </div>
-                        </div>
-                      )}
-                    </div>}
-
-                    {selectedColumns.includes("Technical Score")&&
-                    <div className="filter-option">
-                      <div className="checkbox-label">
-                        <input
-                          type="checkbox"
-                          id="technicalScore"
-                          checked={filterOptions.technicalScore}
-                          onChange={handleCheckboxChange3}
-                        />
-                        <label className="label" htmlFor="technicalScore">&nbsp;Technical score</label>
-                      </div>
-                      {filterOptions.technicalScore && (
-                        <div className="filter-details">
-                          <div className="popup">
-                          <div className="dropdown-container1">
-                            <select
-                              id="technicalScoreFilterSelect"
-                              value={filterOptions.technicalScoreFilterSelect}
-                              onChange={handleSelectChange1}
-                            >
-                              <option value="ascending">Ascending</option>
-                              <option value="descending">Descending</option>
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
                             </select>
                           </div>
                           {/* <input
@@ -1959,24 +2797,24 @@ const exportCSV = () => {
                             onChange={handleTextFieldChange}
                             style={{ width: '100px', height: '20px' }}
                           /> */}
-                          {/* <Typeahead
-                            id="technicalScoreInput"  // Assign an ID to distinguish between inputs
+                          <Typeahead
+                            id="preferredJobLocationsInput"  // Assign an ID to distinguish between inputs
                             onChange={(selected) => {
                               // Handle the case when a user selects an item
-                              handleTextFieldChange("technicalScoreInput", selected); 
+                              handleTextFieldChange("preferredJobLocationsInput", selected); 
                             }}
                             onInputChange={(text) => {
                               // Handle the case when a user is typing
-                              handleTextFieldChange("technicalScoreInput", text);
+                              handleTextFieldChange("preferredJobLocationsInput", text);
                             }}
-                            options={validTeciSuggestions}  // Options for typeahead
+                            options={validPreferredLocSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
-                          /> */}
+                          />
                         </div>
                         </div>
                       )}
                     </div>}
-                     
+
                     {selectedColumns.includes("Job Match%")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
@@ -2026,8 +2864,8 @@ const exportCSV = () => {
                         </div>
                         </div>
                       )}
-                    </div>}
-
+                    </div>} 
+                    
                     {selectedColumns.includes("Matching Skills")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
@@ -2227,30 +3065,77 @@ const exportCSV = () => {
                         </div>
                       )}
                     </div>}
- 
-                    {selectedColumns.includes("Location")&&
+                    {selectedColumns.includes("Apptitude Score")&&
                     <div className="filter-option">
                       <div className="checkbox-label">
                         <input
                           type="checkbox"
-                          id="preferredJobLocations"
-                          checked={filterOptions.preferredJobLocations}
-                          onChange={handleCheckboxChange}
+                          id="apptitudeScore"
+                          checked={filterOptions.apptitudeScore}
+                          onChange={handleCheckboxChange3}
                         />
-                        <label className="label" htmlFor="preferredJobLocations">&nbsp;Preferred-location</label>
+                        <label className="label" htmlFor="apptitudeScore">&nbsp;Aptitude score</label>
                       </div>
-                      {filterOptions.preferredJobLocations && (
+                      {filterOptions.apptitudeScore && (
                         <div className="filter-details">
                           <div className="popup">
                           <div className="dropdown-container1">
                             <select
-                              id="preferredJobLocationsFilterSelect"
-                              value={filterOptions.preferredJobLocationsFilterSelect}
+                              id="apptitudeScoreFilterSelect"
+                              value={filterOptions.apptitudeScoreFilterSelect}
                               onChange={handleSelectChange1}
                             >
-                              <option value="is">is</option>
-                              <option value="contains">contains</option>
-                              
+                              <option value="ascending">Ascending</option>
+                              <option value="descending">Descending</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="apptitudeScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          {/* <Typeahead
+                            id="apptitudeScoreInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("apptitudeScoreInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("apptitudeScoreInput", text);
+                            }}
+                            options={validAptiSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          /> */}
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Technical Score")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="technicalScore"
+                          checked={filterOptions.technicalScore}
+                          onChange={handleCheckboxChange3}
+                        />
+                        <label className="label" htmlFor="technicalScore">&nbsp;Technical score</label>
+                      </div>
+                      {filterOptions.technicalScore && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="technicalScoreFilterSelect"
+                              value={filterOptions.technicalScoreFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="ascending">Ascending</option>
+                              <option value="descending">Descending</option>
                             </select>
                           </div>
                           {/* <input
@@ -2260,31 +3145,31 @@ const exportCSV = () => {
                             onChange={handleTextFieldChange}
                             style={{ width: '100px', height: '20px' }}
                           /> */}
-                          <Typeahead
-                            id="preferredJobLocationsInput"  // Assign an ID to distinguish between inputs
+                          {/* <Typeahead
+                            id="technicalScoreInput"  // Assign an ID to distinguish between inputs
                             onChange={(selected) => {
                               // Handle the case when a user selects an item
-                              handleTextFieldChange("preferredJobLocationsInput", selected); 
+                              handleTextFieldChange("technicalScoreInput", selected); 
                             }}
                             onInputChange={(text) => {
                               // Handle the case when a user is typing
-                              handleTextFieldChange("preferredJobLocationsInput", text);
+                              handleTextFieldChange("technicalScoreInput", text);
                             }}
-                            options={validPreferredLocSuggestions}  // Options for typeahead
+                            options={validTeciSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
-                          />
+                          /> */}
                         </div>
                         </div>
                       )}
                     </div>}
-                    
+ 
                     <div>
                       <button className="apply-button1" onClick={applyFilter}>Apply</button>
                       <button className="reset-button1" onClick={resetFilter}>Reset</button>
                       </div>
                     {/* Error message */}
-      {showError && (
-        <p style={{
+      {showError && errorMessage && (
+        <span style={{
           color: '#F83838',
           fontFamily: 'Plus Jakarta Sans',
           fontSize: '14px',
@@ -2293,11 +3178,11 @@ const exportCSV = () => {
           borderRadius: '8px',
           background: '#FFF2F2',
           padding: '10px',
-          marginLeft: '-40px',
+          marginLeft: '-35px',
           textAlign:'center'
         }}>
-          Please Select at least one filter
-        </p>
+          {errorMessage}
+        </span>
       )}
               </div>
               
@@ -2321,11 +3206,11 @@ const exportCSV = () => {
                     <table ref={tableref} className="responsive-table">
                       <thead id='tableHeader'>
                         <tr>
-                          <th>
+                          <th className='No'>
                             <input
                               type="checkbox"
                               onChange={handleSelectAll}
-                              checked={selectedApplicants.length === applicants.length}
+                              checked={selectedApplicants.length === currentRecords.length}
                             />
                           </th>
                  
@@ -2344,10 +3229,21 @@ const exportCSV = () => {
                           </th>
                           <th>
                           <div >
-                            <button onClick={toggleSidebar} className="filter-button" style={{marginLeft:'-10px'}}>
-                              {/* <FontAwesomeIcon icon={faSlidersH} style={{fontSize: '10px',width: '30px',height: '20px', color: 'gray',transform: 'rotate(180deg)'}}/>
-                               */}
-                               <i class="fa fa-sliders" aria-hidden="true"></i>
+                          <button onClick={toggleSidebar}   style={{
+    marginLeft: '-30px',
+     borderLeft: '2px solid red',  // Customize the width and color as needed
+    border: 'none', // Remove borders from other sides
+    backgroundcolor: 'gray', //
+  }}>
+                               
+                               <i class="fa fa-sliders" aria-hidden="true" style={{
+    marginRight: '8px',
+    position: 'relative',
+    left: '-10px',
+    borderLeft: '2px solid grey',
+    paddingLeft: '5px', // Adjust the padding to create space between the border and icon
+    top: '3px',
+  }}></i>
                             </button>
  
                             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -2375,7 +3271,7 @@ const exportCSV = () => {
                               <button id="apply-button2" onClick={handleApply} className="apply-button2">Apply</button>
                               <div className="reset2-link" onClick={reset}>Reset</div>
                               </div>
-                              {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '50px' }}>{errorMessage}</h5>}
+                              {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '10px' }}>{errorMessage}</h5>}
                             </div>
                             {isOpen && <div className="backdrop"></div>}
                           </div>
@@ -2387,7 +3283,7 @@ const exportCSV = () => {
                         </tr>
                       </thead>
                       <tbody id="applicantTableBody">
-                      {Array.isArray(applicants) && applicants.map((application,index) => (
+                      {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr key={application.applyjobid} style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid)
                               ? "#F6F6F6"
@@ -2470,16 +3366,15 @@ const exportCSV = () => {
  
                             <td>
                             <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
-                            {application.email}
-  </Link>
-  </td>
+                            {application.email}</Link>
+                            </td>
                        
                            
                             <td>
                             <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
-  </Link>
-                              </td>
+                            </Link>
+                            </td>
                             <td>{application.jobTitle}</td>
                             <td style={{
                                 padding: '0px 10px', // Keep padding for the table cell
@@ -2533,18 +3428,16 @@ const exportCSV = () => {
  
                               {selectedColumns.includes("Experience")&&(<td>{application.experience}</td>)}
                             {selectedColumns.includes("Qualification")&&(<td>{application.minimumQualification}</td>)}
+                            {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
                             {selectedColumns.includes("Location")&&(
                               <td>
                               {application.preferredJobLocations.length > 3
-                                ? `${application.preferredJobLocations.slice(0, 3).join(", ")} +`
+                                ? `${application.preferredJobLocations.slice(0, 3).join(", ")} ...`
                                 : application.preferredJobLocations.join(", ")}
                               </td>)}
-                            {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
-                            {selectedColumns.includes("Apptitude Score") && (
-                              <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
-                            )}
-                            {selectedColumns.includes("Technical Score") && (
-                              <td>{application.technicalScore === 0 ? 'N/A' : application.technicalScore}</td>
+
+                            {selectedColumns.includes("Job Match%") && (
+                              <td>{application.matchPercentage === 0 ? 'N/A' : `${application.matchPercentage}%`}</td>
                             )}
 
                             {/* {selectedColumns.includes("Pre-Screened")&&<td>{application.preScreenedCondition}</td>} */}
@@ -2553,7 +3446,7 @@ const exportCSV = () => {
                               {application.matchedSkills.length === 0
                               ? "N/A"
                               :application.matchedSkills.length > 3
-                                ? `${application.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                ? `${application.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
                                 : application.matchedSkills.map(skill => skill.skillName).join(", ")}
                             </td>
                             )}
@@ -2562,7 +3455,7 @@ const exportCSV = () => {
                               {application.nonMatchedSkills.length === 0
                               ? "N/A"
                               :application.nonMatchedSkills.length > 3
-                                ? `${application.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                ? `${application.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
                                 : application.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
                             </td>
                             )}
@@ -2570,23 +3463,24 @@ const exportCSV = () => {
                               {application.additionalSkills.length === 0
                               ? "N/A"
                               :application.additionalSkills.length > 3
-                                ? `${application.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} +`
+                                ? `${application.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
                                 : application.additionalSkills.map(skill => skill.skillName).join(", ")}
                             </td>
                             )}
                             {selectedColumns.includes("Tested Skills")&&(<td>
                               {application.applicantSkillBadges && application.applicantSkillBadges.length > 3
-                                ? `${application.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} +`
+                                ? `${application.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
                                 : application.applicantSkillBadges
                                   ? application.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
                                   : "N/A"}
                             </td>
+                            )} 
+                            {selectedColumns.includes("Apptitude Score") && (
+                              <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
                             )}
-                           {selectedColumns.includes("Job Match%") && (
-                              <td>{application.matchPercentage === 0 ? 'N/A' : `${application.matchPercentage}%`}</td>
+                            {selectedColumns.includes("Technical Score") && (
+                              <td>{application.technicalScore === 0 ? 'N/A' : application.technicalScore}</td>
                             )}
-
- 
                             <td><Link to={`/view-resume/${application.id}`} style={{ color: 'blue' }}>View</Link></td>
                             <td></td>
                            
@@ -2597,6 +3491,16 @@ const exportCSV = () => {
                         )}
                   </div>
                 </div>
+                {applicants.length > 0 && FilterData.length === 0 && !appliedFilter &&(
+                  <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                    Previous
+                  </button>
+                  <span>{currentPage}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                    Next
+                  </button>
+                </div>)}
                 </div>
               </div>
             </div>
