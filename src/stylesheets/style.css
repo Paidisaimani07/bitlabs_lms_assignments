@@ -433,6 +433,13 @@ input[type="checkbox"] {
   margin-bottom: 10px;
 }
 
+
+input[type="checkbox"]:checked {
+  background-color: grey;
+  accent-color: grey
+}
+
+
 textarea:-moz-placeholder,
 textarea::-moz-placeholder,
 input:-moz-placeholder,
@@ -708,12 +715,17 @@ input[type="color"],
 }
 
 .flat-dashboard-setting {
-  margin: 0px; 
-  padding: 10px 0px 10px 0px;
+  margin: 0px;
+  padding: 10px 0px;
   border-radius: 8px;
   margin-top: 15px;
 }
 
+@media (max-width: 1000px) {
+  .flat-dashboard-setting {
+    margin-top: 30px;
+  }
+}
 .menu-list {
   display: flex;
   gap: 10px; 
@@ -3393,7 +3405,7 @@ filter{
   padding: 11px 59.177px 12px 49px;
   height: 37px;
   border-radius: 4px;
- margin-top: 50px;
+ /* margin-top: 50px; */
   display: flex;
   width: 149px;
   flex-shrink: 0;
@@ -4057,7 +4069,7 @@ text-transform: capitalize;
 
 /* Label for each filter option */
 .filter-option .label {
-  margin-left: 10px; /* Space between checkbox and label */
+  margin-left: -2px; /* Space between checkbox and label */
   font-size: 14px;
   color: #333;
   margin-bottom: 10px;
@@ -4138,7 +4150,7 @@ background: #FFF;
 
 /* Label for each filter option */
 .label {
-  margin-left: 10px; /* Space between checkbox and label */
+  margin-left: 4px; /* Space between checkbox and label */
   font-size: 14px;
   color: #333;
 }

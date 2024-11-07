@@ -28,6 +28,7 @@ function RecruiterHomePage() {
   const location = useLocation();
   const [selectedJobId, setSelectedJobId] = useState('');
   const { id } = useParams();
+  const [imageSrc, setImageSrc] = useState('');
   const updateActiveRoute = () => {
     const pathname = location.pathname;
     
@@ -101,11 +102,12 @@ function RecruiterHomePage() {
   }, [location.pathname]);
   return (
     <div  class="dashboard show ">
-    <RecruiterNavBar />
+    <RecruiterNavBar imageSrc={imageSrc} setImageSrc={setImageSrc} />
+    
      {activeRoute === 'dashboard' && <RecruiterDashboard />}
      {activeRoute === 'organization' && <RecruiterMyOrganization />}
      {activeRoute === 'vieworganization' && <RecruiterViewOrganization />}
-     {activeRoute === 'editorganization' && <RecruiterEditOrganization />}
+     {activeRoute === 'editorganization' && <RecruiterEditOrganization setImgSrc={setImageSrc}/>}
      {activeRoute === 'postjob' && <RecruiterPostJob />}
      {activeRoute === 'postjob2' && <RecruiterPostJob2 />}
      {activeRoute === 'jobopenings' && <RecruiterJobOpenings setSelectedJobId={setSelectedJobId} />}

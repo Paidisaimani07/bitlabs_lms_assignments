@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
@@ -7,6 +7,7 @@ import OTPVerification1 from '../recruitercomponents/OTPVerification1';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
 import Background from '../../images/user/avatar/Recruiterloginbg.png';
 import logo from '../../images/user/avatar/bitlabslogo.svg';
 import Backgroundimagemobile1 from '../../images/user/avatar/backgroundimage-mobile-recruiter.png';
@@ -49,7 +50,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [resendOtpMessage, setResendOtpMessage] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-  const [message, setMessage] = useState('Welcome Back');
+  const [message, setMessage] = useState('Welcome Back!');
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
   const [recruiterEmail, setRecruiterEmail] = useState('');
   const [recruiterPassword, setRecruiterPassword] = useState('');
@@ -59,7 +60,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
- 
+
+ useEffect(()=>{
+  if (recruiterEmail || recruiterPassword){
+    setErrorMessage("")
+  }
+
+},[recruiterEmail,recruiterPassword])
  
  
  
@@ -169,11 +176,20 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!isRecruiterFormValid()) {
       return;
     }
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.Utf8.parse(secretKey), {
+  iv: iv,
+  mode: CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.Pkcs7
+}).toString();
+
     try {
       let loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`;
       const response = await axios.post(loginEndpoint, {
         email: recruiterEmail,
-        password: recruiterPassword,
+        password: encryptedPassword,
+        iv: iv.toString(CryptoJS.enc.Base64),
       });
  
       console.log('Response:', response);
@@ -328,7 +344,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       return 'Please enter a valid email.';
     }
 
-    if (!excludedDomains.includes(domain)) {
+    if (excludedDomains.includes(domain)) {
       return 'Please enter your official email ID.';
     }
     return '';
@@ -466,7 +482,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
   const handleOTPSendSuccess = () => {
 
-  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
@@ -494,6 +510,22 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!email.trim()) {
       return 'Email is required.';
     }
+    const excludedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'outlook.com',
+      'aol.com',
+      'mail.com',
+      'icloud.com',
+      'zoho.com',
+      'yandex.com',
+      'protonmail.com',
+      'tutanota.com',
+    ];
+    const domain = email.split('@')[1];
+    if (excludedDomains.includes(domain)) {
+      return 'Please enter  official email ID.';
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? '' : 'Please enter a valid email address.';
   };
@@ -501,18 +533,18 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
 
@@ -520,7 +552,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const handleTabClick1 = (tab) => {
     setActiveTab(tab);
     if (tab === 'Candidate') {
-      setMessage('Welcome Back');
+      setMessage('Welcome Back!');
       console.log("login");
     } else if (tab === 'Employer') {
       setMessage('Hi Recruiter!');
@@ -561,7 +593,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       />
 
       <div style={{position:'absolute' , zIndex:'1' , display:'flex',bottom:0,justifyContent:'center',width:'100%'}}>
-        <h1 className='find-your2'>Find the Best freshers,fuel your workforce!</h1>
+        <h1 className='find-your2'>Find the Best freshers, fuel your workforce!</h1>
       </div>
       <div>
       <img
@@ -579,7 +611,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       <div className="tf-container">
         <div className="row">
           <div className="wd-form-login tf-tab">
-          <div className="custom-div-style">
+          <div className="custom-div-style" style={{textAlign:"left"}}>
       {message}
     </div>
     <div className="myComponent">
@@ -655,8 +687,6 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                    
-       
                     </form>
               </div>
             </div>
@@ -669,7 +699,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     <input
                       type="text"
                       className="name"
-                      placeholder="Company name"
+                      placeholder="Company Name"
                       value={companyName}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
@@ -737,6 +767,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     <p style={{ color: 'green' }}>OTP sent to your email. Please check and enter below:</p>
     <OTPVerification1
             email={employerEmail}
+            mobilenumber={employerMobileNumber}
             onOTPVerified={() => {
               setTimeout(() => {
                 setRecruiterOTPVerified(true);

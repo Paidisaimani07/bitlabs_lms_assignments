@@ -5,7 +5,7 @@ import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 import { useNavigate } from 'react-router-dom'; // Ensure react-router-dom is installed and set up
 
-function RecruiterEditOrganization() {
+function RecruiterEditOrganization({setImgSrc}) {
   const userContext = useUserContext();
   const user = userContext.user;
   const navigate = useNavigate();
@@ -209,15 +209,15 @@ function RecruiterEditOrganization() {
     let isValid = true;
     const errors = {};
 
-    if (!profile.companyName.trim()) {
+    if (!profile.companyName?.trim()) {
       errors.companyName = 'Company name is required';
       isValid = false;
-    } else if (profile.companyName.trim().length < 3) {
+    } else if (profile.companyName?.trim().length < 3) {
       errors.companyName = 'Company name must be at least 3 characters';
       isValid = false;
     }
 
-    if (!profile.website.trim()) {
+    if (!profile.website?.trim()) {
       errors.website = 'Website is required';
       isValid = false;
     } else {
@@ -228,15 +228,16 @@ function RecruiterEditOrganization() {
       }
     }
 
-    if (profile.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email.trim())) {
+    if (profile.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email.trim())) {
       errors.email = 'Invalid email address';
       isValid = false;
     }
 
-    if (profile.phoneNumber.trim() && !/^[6-9]\d{9}$/.test(profile.phoneNumber.trim())) {
+    if (profile.phoneNumber?.trim() && !/^[6-9]\d{9}$/.test(profile.phoneNumber.trim())) {
       errors.phoneNumber = 'Invalid phone number';
       isValid = false;
     }
+
 
     if (!profile.aboutCompany.trim()) {
       errors.aboutCompany = 'About company is required';
@@ -261,7 +262,7 @@ const urlPattern = new RegExp(
   
   // Validate social profiles as URLs
   Object.entries(profile.socialProfiles).forEach(([key, value]) => {
-    if (value.trim() && !urlPattern.test(value.trim())) {
+    if (value?.trim() && !urlPattern.test(value?.trim())) {
       errors[key] = `Invalid ${key.charAt(0).toUpperCase() + key.slice(1)} URL`;
       isValid = false;
     }
@@ -303,12 +304,19 @@ const urlPattern = new RegExp(
           },
         }
       );
+       
+      // const imageUrl = URL.createObjectURL(photoFile);
+      // setImgSrc(imageUrl)
 
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
         type: 'success',
+        
       });
+
+      // const imageUrl = URL.createObjectURL(photoFile);
+      // setImgSrc(imageUrl)
 
       setIsProfileSubmitted(true);
       localStorage.setItem('isProfileSubmitted', 'true');
@@ -316,7 +324,7 @@ const urlPattern = new RegExp(
       // Delay navigation to allow Snackbar to display
       setTimeout(() => {
         navigate('/recruiter-view-organization');
-      }, 3000); // 2-second delay
+      }, 5000); // 2-second delay
     } catch (error) {
       console.error('Error updating profile:', error);
       setSnackbar({ open: true, message: 'Error updating profile', type: 'error' });
@@ -378,7 +386,7 @@ const urlPattern = new RegExp(
           },
         }
       );
-  
+
       // Check if the response is successful
       if (response.status !== 200) {
         throw new Error('Failed to upload logo.');
@@ -386,6 +394,7 @@ const urlPattern = new RegExp(
   
       setIsLogoUploaded(true);
       setSnackbar({ open: true, message: "Logo uploaded successfully!", type: "success" });
+
       fetchCompanyLogo(); // Refresh the logo
   
     } catch (error) {
@@ -468,7 +477,7 @@ const urlPattern = new RegExp(
                       <h3 className="title-info">Information</h3>
                       <div className="row">
                         {/* Company Full Name */}
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-6 col-md-6" style={{height:formErrors.phoneNumber?"132px":""}}>
                           <div className="dropdown titles-dropdown info-wd">
                             <label className="title-user fw-7">
                               Company Full Name<span className="color-red">*</span>
@@ -489,7 +498,7 @@ const urlPattern = new RegExp(
                         </div>
 
                         {/* Alternate Phone Number */}
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-6 col-md-6" style={{height:formErrors.companyName?"132px":""}}>
                           <div className="dropdown titles-dropdown info-wd">
                             <label className="title-user fw-7">Alternate Phone Number</label>
                             <input
@@ -507,7 +516,7 @@ const urlPattern = new RegExp(
                         </div>
 
                         {/* Alternate Email */}
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-6 col-md-6" style={{height:formErrors.website?"132px":""}}>
                           <div className="dropdown titles-dropdown info-wd">
                             <label className="title-user fw-7">Alternate Email</label>
                             <input
@@ -525,7 +534,7 @@ const urlPattern = new RegExp(
                         </div>
 
                         {/* Website */}
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-6 col-md-6" style={{height:formErrors.email?"132px":""}}>
                           <div className="dropdown titles-dropdown info-wd">
                             <label className="title-user fw-7">
                               Website<span className="color-red">*</span>

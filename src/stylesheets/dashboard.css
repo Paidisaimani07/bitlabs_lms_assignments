@@ -14,6 +14,10 @@
     color: #000;
 }
 
+.input-height{
+    height:"132px"
+}
+
 .dashboard a:hover {
     color: #fff;
 }
@@ -90,6 +94,12 @@
     color: #64666c;
     font-style: inherit;
 }
+
+@media (min-width: 768px) {
+    .conditional-height {
+      height: 132px;
+    }
+  }
 
 .dashboard .fs-16 {
     font-size: 16px;
@@ -451,7 +461,7 @@
 .button-custom {
     color: white;
     font-family: "Plus Jakarta Sans";
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 35px;
     text-align: center;
@@ -483,7 +493,7 @@
     text-align: center;
     width:120px;
     height: 45px;
-    margin-top: 10px;
+    margin-top: 20px;
     margin-bottom: 10px;
 }
 
@@ -636,7 +646,7 @@ thead tr th {
     color: #121212;
     letter-spacing: 1.2px;
     border-bottom: 0px solid #e5e5e5;
-    padding: 0px 16px 8px 16px;
+    padding: 0px 0px 0px 10px;
 }
 
 thead tr th:last-child {
@@ -5428,7 +5438,7 @@ input[type="radio"]:checked:after {
     }
 .certificatebox .card 
 {
-    padding: 30px !important;
+    padding: 20px !important;
     
 }
 

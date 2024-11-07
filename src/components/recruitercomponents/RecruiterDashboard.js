@@ -300,8 +300,9 @@ function RecruiterDashboard() {
                             // style={linkStyle}
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
+                            
                           >
-                            <span className="button button-custom">Post <span className="lowercase">a</span> Job</span>
+                            <span className="button button-custom" style={{marginLeft:"-5px"}}>Post <span className="lowercase">a</span> Job</span>
                           </Link>
                         </div>
                       </div>
@@ -367,7 +368,7 @@ function RecruiterDashboard() {
                             onMouseEnter={() => setIsHovered(true)}
                             onMouseLeave={() => setIsHovered(false)}
                           >
-                            <span className="button button-custom">Contact Us</span>
+                            <span className="button button-custom" style={{marginLeft:"-5px"}}>Contact Us</span>
                           </Link>
                         </div>
                       </div>
@@ -375,7 +376,7 @@ function RecruiterDashboard() {
                       <img
                             src={cert}
                             alt="Certificate"
-                            style={{ width: "164px", height: "auto;", objectFit:"contain", marginTop: "10px" }}
+                            style={{ width: "164px", height: "auto;", objectFit:"contain", marginTop: "8px" }}
                           />
                           
                       </div>

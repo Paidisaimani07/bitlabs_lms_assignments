@@ -13,7 +13,9 @@ import { useLocation, Link } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { PDFDocument } from 'pdf-lib';
+import pdfLogo from '../../images/user/avatar/PdfLogo.png'
+
  
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
@@ -49,6 +51,17 @@ const [applicants1, setApplicants1] = useState({
   aptitudeScore: 0,
   technicalScore: 0,
 });
+
+const [paddingRight, setPaddingRight] = useState(window.innerWidth > 1440 ? '330px' : '0px');
+ 
+useEffect(() => {
+  const handleResize = () => {
+    setPaddingRight(window.innerWidth > 1440 ? '380px' : '0px');
+  };
+ 
+  window.addEventListener('resize', handleResize);
+  return () => window.removeEventListener('resize', handleResize);
+}, []);
 
   const styles = {
     container: {
@@ -96,7 +109,7 @@ const [applicants1, setApplicants1] = useState({
        fontWeight: 'bold',
       lineHeight: '31.69px', /* 100% */
       textTransform: 'capitalize',
-      marginTop:'-30px'
+      marginTop:'-30px',
     },
     matchText:
     {
@@ -171,7 +184,6 @@ const [applicants1, setApplicants1] = useState({
       justifyContent: 'center',
       alignItems: 'center',
       gap: '10px',
-      borderRadius: '15px',
       border: '1px solid var(--Gray-400, #CED4DA)',
       marginTop:'5px'
     },
@@ -179,7 +191,8 @@ const [applicants1, setApplicants1] = useState({
     {
       borderRadius: '16px',
       border: '1px solid #D1D1D1',
-      padding: '20px'
+      padding: '20px',
+      
     },
    
   };
@@ -393,36 +406,6 @@ const [applicants1, setApplicants1] = useState({
     }
   }, [id, jobid]);
 
-
-  // const handleSelectChange1 = async (e) => {
-  //   const newStatus = e.target.value;
-   
-  //   try {
-    
-  //       console.log("Selected Applicants:", selectedApplicants);
-  //       const updatePromises = selectedApplicants.map(async (selectedApplicant) => {
-  //         const applyJobId = selectedApplicant;
-  //         console.log("Apply Job ID:", applyJobId);
-  //         if (!applyJobId) {
-  //           console.error("applyjobid is undefined or null for:", selectedApplicant);
-  //           return null;
-  //         }
-   
-  //         const response = await axios.put(
-  //           `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
-  //         );
-  //         return { applyJobId, newStatus };
-  //       });
-   
-  //       const message1 = `Status changed to <b>${newStatus}</b>`;
-  //       setSnackbar({ open: true, message: message1, type: 'success' });
-       
-      
-  //   } catch (error) {
-  //     console.error('Error updating status:', error);
-  //   }
-  // };
- 
   const handleSelectChange1 = async (e) => {
     const newStatus = e.target.value;
   
@@ -444,8 +427,9 @@ const [applicants1, setApplicants1] = useState({
   
       console.log("API Response:", response.data);
   
-      // Show success message
+
       const message1 = `Status changed to ${newStatus}`;
+
       setSnackbar({ open: true, message: message1, type: 'success' });
   
     } catch (error) {
@@ -454,22 +438,138 @@ const [applicants1, setApplicants1] = useState({
     }
   };
   
+  
   const handleDownloadPDF = async () => {
+    const resumeUrl = `${apiUrl}/resume/pdf/${id}`;
     const element = pageRef.current;
-    
-    // Capture the current page as an image using html2canvas
-    const canvas = await html2canvas(element);
+   
+    const wrapper = document.createElement('div');
+    wrapper.style.width = '1024px';
+    wrapper.style.position = 'absolute'; // Ensure it doesn't affect layout
+    wrapper.style.left = '-9999px'; // Place it off-screen
+    wrapper.style.backgroundColor = '#fff';
+    wrapper.style.margin = '0';  // Remove any margin
+    wrapper.style.padding = '0'; // Remove any padding
+    wrapper.style.top = '60px';  // Move the entire layout 50px from the top
+   
+    // Clone the original element
+    const clonedElement = element.cloneNode(true);
+    clonedElement.style.margin = '0';  // Ensure no margin on the cloned element
+    clonedElement.style.padding = '0'; // Ensure no padding on the cloned element
+   
+    // Adjust font size for headers (example)
+    const headElements = clonedElement.querySelectorAll('h4');
+    headElements.forEach(head => {
+      head.style.fontSize = '14px'; // Adjust the font size for headers
+    });
+   
+    // Create the containerDiv with the logo and text
+    const containerDiv = document.createElement('div');
+    containerDiv.style.position = 'absolute'; // Absolute positioning within clonedElement
+    containerDiv.style.top = '10px'; // Align to the top
+    containerDiv.style.right = '0'; // Align to the right
+    containerDiv.style.padding = '10px';
+    containerDiv.style.width = '200px';  // Fixed width of 200px
+    containerDiv.style.display = 'flex';
+    containerDiv.style.flexDirection = 'column';
+    containerDiv.style.alignItems = 'center';
+   
+    const textElement = document.createElement('p');
+    textElement.innerText = 'Report generated by:';
+    textElement.style.margin = '0';
+    textElement.style.fontSize = '16px';
+    textElement.style.color = 'gray';
+   
+    const imageLogo = new Image();
+    imageLogo.src = pdfLogo;  // Ensure pdfLogo is defined
+    imageLogo.style.width = '150px';
+    imageLogo.style.height = '50px';
+    imageLogo.style.marginTop = '5px';
+   
+    containerDiv.appendChild(textElement);
+    containerDiv.appendChild(imageLogo);
+   
+    const borderElements = clonedElement.querySelectorAll('.PdfBorder');
+    borderElements.forEach((el, index) => {
+      el.style.border = '2px solid lightgray'; 
+      el.style.paddingBottom = '50px';
+      if (index === 1 || index === 2) { 
+        el.style.boxShadow = 'none'; 
+        
+      }
+    });
+   
+    const firstElement = clonedElement.firstChild;  
+    if (firstElement) {
+      firstElement.appendChild(containerDiv);  
+    }
+   
+    wrapper.appendChild(clonedElement);
+    document.body.appendChild(wrapper); 
+   
+    const canvas = await html2canvas(wrapper, {
+      scale: 1, 
+      useCORS: true,
+      backgroundColor: '#fff', 
+      x: 0, 
+      y: 0  
+    });
+   
+    document.body.removeChild(wrapper);
+   
     const imgData = canvas.toDataURL("image/png");
-
-    // Initialize jsPDF
-    const pdf = new jsPDF("p", "mm", "a4");
-    const imgWidth = 210; // width of the PDF page in mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width; // scale image height
-
-    // Add the captured image to the PDF
-    pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-    pdf.save("downloaded-page.pdf"); // Save the PDF file
+   
+    const resumeResponse = await fetch(resumeUrl);
+    const resumeBlob = await resumeResponse.blob();
+    const resumePdfBytes = await resumeBlob.arrayBuffer();
+   
+    const { PDFDocument } = await import('pdf-lib');
+    const pdfDoc = await PDFDocument.create();
+   
+    const imgBytes = await fetch(imgData).then(res => res.arrayBuffer());
+    const img = await pdfDoc.embedPng(imgBytes);
+   
+    const a4Width = 595.28;
+    const a4Height = 841.89;
+   
+    let imgWidth = a4Width - 40;
+    let imgHeight = (canvas.height * imgWidth) / canvas.width;
+   
+    if (imgHeight > a4Height - 40) {
+      imgHeight = a4Height - 40;
+      imgWidth = (canvas.width * imgHeight) / canvas.height;
+    }
+   
+    const page = pdfDoc.addPage([a4Width, a4Height]);
+   
+    const yOffset = 50;
+    page.drawImage(img, {
+      x: (a4Width - imgWidth) / 2, 
+      y: a4Height - imgHeight - yOffset, 
+      width: imgWidth,
+      height: imgHeight,
+    });
+   
+    const resumePdf = await PDFDocument.load(await resumeBlob.arrayBuffer());
+    const resumePage = await pdfDoc.copyPages(resumePdf, resumePdf.getPageIndices());
+   
+    resumePage.forEach((page) => {
+      pdfDoc.addPage(page);
+    });
+   
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+   
+    const link = document.createElement('a');
+    link.href = url;
+    const resume = resumeFileName.slice(0, -4);
+    link.download = `${resume}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -492,32 +592,52 @@ const [applicants1, setApplicants1] = useState({
         <div className="themes-container">
           <div className="row">
             <div className="col-lg-12 col-md-12">
-              <div className="title-dashboard">
-                <div className="title-dash flex2"><BackButton /> Applicants</div>
+            <div className="title-dashboard">
+            <div className="title-dash flex2" style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <BackButton /> Applicants
               </div>
+              <span style={{paddingRight}}>
+                <button className="export-buttonn" onClick={handleDownloadPDF}>
+                  Download Profile
+                </button>
+                <select className="status-select" value={selectedStatus || ''} onChange={handleSelectChange1}>
+                  <option value="" disabled hidden>
+                    Change Status
+                  </option>
+                  <option value="Screening">Screening</option>
+                  <option value="Shortlisted">Shortlisted</option>
+                  <option value="Interviewing">Interviewing</option>
+                  <option value="Selected">Selected</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </span>
+            </div>
+          </div>
+
             </div>
           </div>
         </div>
       </section>
  
-     <div  ref={pageRef} style={{ padding: '20px 0px 0px 0px' }}>
+     <div>
       <section className="candidates-section">
         <div className="tf-container">
           <div className="row">
             <div className="col-lg-9">
+              <div ref={pageRef}>
             <section
       style={{
-        marginTop: '-30px',
         marginBottom: '30px',
         borderRadius: '10px',
         padding: '30px',
         color: '#262626',
         backgroundColor: '#ffffff',
-      }}>
+      }} className='PdfBorder'>
         <div className="tf-container">
           <div className="wd-author-page-title">
             <div className="author-archive-header">
-            <div
+            <div className='imgOne'
   style={{
     width: '80px',            
     height: '80px',            
@@ -542,8 +662,8 @@ const [applicants1, setApplicants1] = useState({
  
               <div className="content" style={{marginLeft:'20px'}}>
                
-              <h3 style={{ color: '#262626' }}>
-  {profileData.basicDetails.firstName} {profileData.basicDetails.lastName}
+              <h3 style={{ color: '#262626' }} >
+  <span className='textFont'>{profileData.basicDetails.firstName} {profileData.basicDetails.lastName}</span>
   {isPreScreened && (
         <div style={{ display: 'inline-block', position: 'relative' }}>
         <img 
@@ -597,42 +717,25 @@ const [applicants1, setApplicants1] = useState({
                
                 <div style={{ color: '#262626', display: 'flex', alignItems: 'center' }}>
                   <img src={Mail} alt="Email" className="icon1" style={{ marginRight: '10px' }} />
-                  {profileData.basicDetails.email}
+                  <span className='textFont'>{profileData.basicDetails.email}</span>
                 </div>
  
                 <div style={{ color: '#262626', display: 'flex', alignItems: 'center' }}>
                   <img src={Phone} alt="Phone" className="icon1" style={{ marginRight: '10px' }} />
-                  {profileData.basicDetails.alternatePhoneNumber}
+                  <span className='textFont'>{profileData.basicDetails.alternatePhoneNumber}</span>
                 </div>
                   
               </div>
               
             </div>
             
-            <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'450px' }}>
-                      <div className="controls" style={{ display: 'flex', gap: '10px' }}>
-                        <button className="export-buttonn" onClick={handleDownloadPDF}>
-                          Download PDF
-                        </button>
-                        <select className="status-select" value={selectedStatus || ''} onChange={handleSelectChange1}>
-                        <option value="" disabled hidden>
-                Change Status
-            </option>
-            <option value="Screening">Screening</option>
-            <option value="Shortlisted">Shortlisted</option>
-            <option value="Interviewing">Interviewing</option>
-            <option value="Selected">Selected</option>
-            <option value="Rejected">Rejected</option>
-                        </select>
-                      </div>
-                    </div>
           </div>
           
         </div>
       </section>
-      <div style={styles.container}>
+      <div style={styles.container} >
       {/* Match Score Section */}
-      <div style={styles.matchScoreContainer}>
+      <div className='PdfBorder' style={styles.matchScoreContainer}>
         <h3 style={styles.sectionHeader}>
         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
   <g clip-path="url(#clip0_3422_4787)">
@@ -675,7 +778,7 @@ const [applicants1, setApplicants1] = useState({
         </div>
 
       {/* Skill Analysis Section */}
-      <div style={styles.skillAnalysisContainer}>
+      <div style={styles.skillAnalysisContainer} className='PdfBorder'>
         <h3 style={styles.skillHeader}>
         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 25 25" fill="none">
   <g clip-path="url(#clip0_3422_4804)">
@@ -754,7 +857,7 @@ const [applicants1, setApplicants1] = useState({
  
               <article className="job-article tf-tab single-job stc2">
                 <div className="content-tab">
-                  <div style={{ backgroundColor: 'white', borderRadius: '10px', padding: '30px', marginBottom: '30px' }}>
+                  <div style={{ backgroundColor: 'white', borderRadius: '10px', padding: '30px', marginBottom: '30px' }} className='PdfBorder'>
                     <div className="inner-content">
                       <div style={{ display: 'flex', alignItems: 'center',marginBottom:'10px' }}>
                         <span style={{marginLeft:'-10px',marginTop:'1px',width:'24px'}}>
@@ -821,12 +924,12 @@ const [applicants1, setApplicants1] = useState({
                 <div>
                 <div>
  
-                <div className="author-archive-footer" style={{
+                <div className="author-archive-footer PdfBorder" style={{
                   backgroundColor: 'white',
                   marginTop: '10px',
                   borderRadius: '10px',
                   padding: '20px'
-                }}>
+                }} >
                   <div style={{ display: 'flex', alignItems: 'center'}}>
                     <span style={{marginTop:'-35px' }}>
                       <img src={Resume} alt="Resume" className="icon-prof" style={{ marginRight: '10px' }} />
@@ -835,7 +938,20 @@ const [applicants1, setApplicants1] = useState({
                       <h5 style={{ color: '#F97316', fontSize: '16px', padding: '5px', fontWeight: 'bold',marginLeft:'-10px',marginBottom:'10px'}}>
                         Resume
                       </h5>
-                      <div > <span style={{ cursor: 'pointer' }}  className="file-name-input-resume1" onClick={handleResumeClick1}>{resumeFileName}</span></div>
+                      <div > <span 
+      style={{ cursor: 'pointer' }}  
+      className="file-name-input-resume1" 
+      onClick={handleResumeClick1} // Open resume in a new tab
+    >
+      {/* <Link  
+        to={`${apiUrl}/resume/pdf/${id}`} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        style={{ textDecoration: 'none', color: '#0000EE' }}
+      > */}
+        {resumeFileName}
+      {/* </Link> */}
+    </span></div>
                     </div>
                   </div>
                 </div>
@@ -957,6 +1073,7 @@ const [applicants1, setApplicants1] = useState({
     </div>             
               </article>
             </div>
+            </div>
           </div>
         </div>
       </section>
@@ -975,4 +1092,3 @@ const [applicants1, setApplicants1] = useState({
 };
  
 export default Recruiterviewapplicant;
-
