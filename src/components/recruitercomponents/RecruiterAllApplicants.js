@@ -3410,15 +3410,15 @@ const exportCSV = () => {
                                   color: (() => {
                                     switch (application.applicantStatus) {
                                       case 'Shortlisted':
-                                        return '#000';
+                                        return '#146C43';
                                       case 'Selected':
-                                        return '#000';
+                                        return '#284DCB';
                                       case 'Rejected':
-                                        return '#000';
+                                        return '#B02A37';
                                       case 'Screening':
-                                        return '#000';
+                                        return '#577B0D';
                                       case 'Interviewing':
-                                        return '#000';
+                                        return '#CA6510';
                                       default:
                                         return '#000'; // Default color for unknown status
                                     }
@@ -3426,7 +3426,7 @@ const exportCSV = () => {
                                   justifyContent: 'flex-start',
                                   padding: '0px 10px' // Add padding inside the content for spacing
                                 }}>
-                                  <b>{application.applicantStatus}</b>
+                                  {application.applicantStatus}
                                 </div>
                               </td>
  
