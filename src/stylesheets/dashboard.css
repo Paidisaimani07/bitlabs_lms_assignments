@@ -2,8 +2,8 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    padding-right: 15px;
-    padding-left: 15px;
+    /* padding-right: 15px;
+    padding-left: 15px; */
     width: 100%;
     max-width: 100%;
 }
@@ -1959,7 +1959,7 @@ tbody tr td:nth-child(2) {
 }
 
 .flat-dashboard-setting .profile-setting {
-    padding: 20px 20px 20px;
+    padding: 10px 0px 0px 10px;
     border-radius: 15px;
     /* Default styles for smaller screens */
 }
@@ -4979,10 +4979,10 @@ input[type="radio"]:checked:after {
     
 }
 
-.inactive-job {
+/* .inactive-job {
     background-color: #f2f2f2;
     
-}
+} */
 
 .three-dots-menu {
     position: relative;

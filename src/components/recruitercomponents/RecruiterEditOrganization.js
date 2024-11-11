@@ -121,6 +121,11 @@ function RecruiterEditOrganization({setImgSrc}) {
   // Fetch Company Logo
   const fetchCompanyLogo = async () => {
     try {
+
+      const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }else{
       const response = await fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -132,6 +137,7 @@ function RecruiterEditOrganization({setImgSrc}) {
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
       setImageSrc(imageUrl);
+    }
     } catch (error) {
       console.error('Error fetching image URL:', error);
       setImageSrc(''); // Optionally set to a default image
