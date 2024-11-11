@@ -95,7 +95,10 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     gap: '10px',
     marginBottom: '5px',
   };
-
+  localStorage.removeItem('tableFilterData');
+  localStorage.removeItem('tableSelectedColumns');
+  localStorage.removeItem('tableSelectedCheckBoxes');
+  localStorage.removeItem('initialData');
   return (
     <div>
       <div className="dashboard__content">

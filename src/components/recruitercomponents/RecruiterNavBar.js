@@ -69,6 +69,15 @@ document.addEventListener("click", handleOutsideClick);
       .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          // Save the base64 encoded image in localStorage
+          localStorage.setItem(`companyLogo_${user.id}`, base64data);
+          // setImageSrc(base64data); // Optionally, set the image src directly after fetching
+        };
+        reader.readAsDataURL(blob);
+
       })
       .catch(error => {
         console.error('Error fetching image URL:', error);
