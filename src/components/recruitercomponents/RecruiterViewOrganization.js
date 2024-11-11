@@ -77,41 +77,49 @@ const RecruiterViewOrganization = () => {
     }
   }, [approvalStatus, user.id]);
   
+
   useEffect(() => {
     // Define an async function to fetch the logo
-    const fetchLogo = async () => {
-      try {
-        const token = localStorage.getItem('jwtToken');
+    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }
+  //   else{
+  //   const fetchLogo = async () => {
+  //     try {
+  //       const token = localStorage.getItem('jwtToken');
         
-        // Ensure token exists
-        if (token) {
-          const response = await fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+  //       // Ensure token exists
+  //       if (token) {
+  //         const response = await fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         });
   
-          // Check if the response is ok
-          if (!response.ok) {
-            throw new Error('Failed to fetch the logo');
-          }
+  //         // Check if the response is ok
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetch the logo');
+  //         }
   
-          const blob = await response.blob();
-          const imageUrl = URL.createObjectURL(blob);
-          setImageSrc(imageUrl);  // Update state with the image URL
-        } else {
-          // Handle the case where the token is missing
-          console.error('No JWT token found');
-          setImageSrc(null); // Set default or null image if no token is found
-        }
-      } catch (error) {
-        console.error('Error fetching image URL:', error);
-        setImageSrc(null); // Set default or null image on error
-      }
-    };
+  //         const blob = await response.blob();
+  //         const imageUrl = URL.createObjectURL(blob);
+  //         setImageSrc(imageUrl);  // Update state with the image URL
+  //       } else {
+  //         // Handle the case where the token is missing
+  //         console.error('No JWT token found');
+  //         setImageSrc(null); // Set default or null image if no token is found
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching image URL:', error);
+  //       setImageSrc(null); // Set default or null image on error
+  //     }
+  //   };
+  //   // Always call the fetch function inside the useEffect
+  //   fetchLogo();
+  // }
   
-    // Always call the fetch function inside the useEffect
-    fetchLogo();
+    
   
   }, [user.id]); // No condition outside the hook; always executed
 
@@ -125,7 +133,10 @@ const RecruiterViewOrganization = () => {
       aboutCompany,
       socialProfiles: [youtube, twitter, instagram, linkedin ] = {},
     } = organizationDetails;
-
+    localStorage.removeItem('tableFilterData');
+    localStorage.removeItem('tableSelectedColumns');
+    localStorage.removeItem('tableSelectedCheckBoxes');
+    localStorage.removeItem('initialData');
     return (
         <div className="dashboard__content">
           <section className="page-title-dashboard">
