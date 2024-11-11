@@ -86,6 +86,15 @@ function RecruiterAllApplicants() {
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = applicants.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(applicants.length / recordsPerPage);
+
+  // Function to save filters and columns before navigating away
+function saveTableState() {
+  console.log('cHECKING');
+  console.log('Filter Data:', FilterData);          // Log filter data
+  console.log('Selected Columns:', selectedColumns); // Log selected columns
+  localStorage.setItem('tableFilterData', JSON.stringify(FilterData));
+  localStorage.setItem('tableSelectedColumns', JSON.stringify(selectedColumns));
+}
  
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -1185,7 +1194,7 @@ const tableBody = document.getElementById("applicantTableBody");
     />
   </td>
   <td>   
-  <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
+  <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}"  style="color: #0583D2; text-decoration: none;">
     ${applicant.name}
   ${applicant.preScreenedCondition === 'PreScreened'
     ? `
@@ -1237,8 +1246,8 @@ const tableBody = document.getElementById("applicantTableBody");
     </a>
 </td>
 
-  <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
-    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
+  <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}"  style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
+    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}"  style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
   <td>${applicant.jobTitle}</td>
   <td>
     <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
@@ -1398,6 +1407,7 @@ const tableBody = document.getElementById("applicantTableBody");
     }
     renderPagination();
   }
+
   setCount(filteredData.length);
   renderTableData();
 };
@@ -1685,6 +1695,26 @@ const handleTextFieldChange = (id, value) => {
     };
   }, [selectedFilter]);
 
+  // useEffect(() => {
+  //   // Retrieve saved filter data and columns from local storage
+  //   const savedFilterData = localStorage.getItem('tableFilterData');
+  //   const savedColumns = localStorage.getItem('tableSelectedColumns');
+
+  //   // Set state if data exists
+  //   if (savedFilterData) {
+  //     setApplicants(JSON.parse(savedFilterData));
+  //   }
+  //   if (savedColumns) {
+  //     setSelectedColumns(JSON.parse(savedColumns));
+  //   }
+
+  //   // Optionally, clear storage if you only need it for the return
+  //   return () => {
+  //     localStorage.removeItem('tableFilterData');
+  //     localStorage.removeItem('tableSelectedColumns');
+  //   };
+  // }, []);
+
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const fetchAllApplicants = async () => {
     setIsLoading(true); // Start loading
@@ -1808,8 +1838,11 @@ const handleTextFieldChange = (id, value) => {
     if (jwtToken) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
     }
-    fetchAllApplicants();
+      fetchAllApplicants();
+    
   }, [user.id]);
+
+  
  
   const handleSelectChange1 = (e) => {
     
@@ -2360,7 +2393,11 @@ const exportCSV = () => {
             }} // Add pointer cursor for the arrow
             onClick={() => {setShowFilters(!showFilters);setErrorMessage('')}} // Toggle filters visibility
           >
-            <img src={arrowleft} onClick={uncheckAll1} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
+            <img src={arrowleft}onClick={() => { 
+                saveTableState();
+                uncheckAll1();  
+              }} 
+               style={{ height: '40px', width:'24px', marginTop: '7px' }} />
             </span>
              Filters </h3>
                 
@@ -3311,9 +3348,10 @@ const exportCSV = () => {
   <Link
   to={
     application.preScreenedCondition === 'PreScreened'
-      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
-      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true&flagForProfileBack=true`
+      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&flagForProfileBack=true`
   }
+  onClick={saveTableState}
   style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
 >
     {application.name}
@@ -3373,13 +3411,13 @@ const exportCSV = () => {
 </td>
 
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} onClick={saveTableState} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.email}</Link>
                             </td>
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
+                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} onClick={saveTableState} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
                             </Link>
                             </td>

@@ -202,7 +202,9 @@ useEffect(() => {
   const  applicantId= query.get('appid');
   const  applyid= query.get('applyid');
   const isPreScreened = query.get('preScreened') === 'true';
- 
+  localStorage.setItem('flagForProfileBack', true);
+
+
   const fetchResume = async () => {
     try {
       console.log('Making resume API call...');
