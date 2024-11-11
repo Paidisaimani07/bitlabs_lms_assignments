@@ -429,7 +429,9 @@ useEffect(() => {
   
       console.log("API Response:", response.data);
   
-      const message1 = `Status changed to <b>${newStatus}</b>`;
+
+      const message1 = `Status changed to ${newStatus}`;
+
       setSnackbar({ open: true, message: message1, type: 'success' });
   
     } catch (error) {
