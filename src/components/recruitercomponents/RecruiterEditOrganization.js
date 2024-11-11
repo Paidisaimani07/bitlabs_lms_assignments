@@ -23,8 +23,10 @@ function RecruiterEditOrganization({setImgSrc}) {
       youtube: '',
       linkedin: '',
     },
+    logo: null,
   });
-
+  const [logo, setLogo] = useState(null);
+  const [isLogoUploaded, setIsLogoUploaded] = useState(false); 
   const [headOffice, setHeadOffice] = useState('');
   const [twitter, setTwitter] = useState('');
   const [instagram, setInstagram] = useState('');
@@ -146,7 +148,7 @@ function RecruiterEditOrganization({setImgSrc}) {
 
   // Handle Input Changes
   const handleInputChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, files } = e.target;
 
     switch (id) {
       case 'companyName':
@@ -176,6 +178,12 @@ function RecruiterEditOrganization({setImgSrc}) {
       case 'aboutCompany':
         setProfile({ ...profile, aboutCompany: value });
         break;
+        case 'logo':
+          if (files.length > 0) {
+            setLogo(files[0]); // Set the logo file
+            setIsLogoUploaded(true); // Set to true when logo is uploaded
+          }
+          break;
       // Handle other input fields
       default:
         break;
@@ -236,12 +244,8 @@ function RecruiterEditOrganization({setImgSrc}) {
       isValid = false;
     }
 
-    //  if (profile.headOffice.trim().length < 3) {
-    //   errors.headOffice = 'Head office address must be at least 3 characters';
-    //   isValid = false;
-    // }
 
-    if (!profile.aboutCompany?.trim()) {
+    if (!profile.aboutCompany.trim()) {
       errors.aboutCompany = 'About company is required';
       isValid = false;
     } else if (profile.aboutCompany.length < 50) {
@@ -252,10 +256,6 @@ function RecruiterEditOrganization({setImgSrc}) {
       isValid = false;
     }
     
-
-    // Validate social profiles
-   // Inside your validateForm function
-
 // Define a URL validation regex
 const urlPattern = new RegExp(
     '^(https?:\\/\\/)?' + // Protocol (optional)
@@ -337,23 +337,51 @@ const urlPattern = new RegExp(
     }
   };
 
-  // Handle File Selection
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    setPhotoFile(file);
+ 
+  const handleFileSelect = async (event) => {
+    const file = event.target.files[0];
+  
+    if (file) {
+      // Check file type
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validTypes.includes(file.type)) {
+        setFormErrors({ logo: "Please upload a valid image file (JPEG, PNG, GIF)." });
+        return;
+      }
+  
+      // Check file size (limit to 2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      if (file.size > maxSize) {
+        setFormErrors({ logo: "File size should not exceed 2MB." });
+        return;
+      }
+  
+      // Set the selected file to state
+      setPhotoFile(file); // Save the file to state
+      setImageSrc(URL.createObjectURL(file)); // Optional: Display a preview
+      setFormErrors({ logo: '' }); // Clear previous errors
+  
+      // Call uploadPhoto with the selected file
+      await uploadPhoto(file); // Trigger the upload process
+    } else {
+      // Only set error if no logo is uploaded
+      if (!isLogoUploaded) {
+        setFormErrors({ logo: "Please upload a company logo." });
+      }
+    }
   };
-
+  
   // Upload Photo
-  const uploadPhoto = async () => {
-    if (!photoFile) {
+  const uploadPhoto = async (file) => {
+    if (!file) {
       setSnackbar({ open: true, message: 'Please select a file to upload.', type: 'error' });
       return;
     }
-
+  
     try {
       const formData = new FormData();
-      formData.append('logoFile', photoFile);
-
+      formData.append('logoFile', file); // Use the passed file
+  
       const response = await axios.post(
         `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
         formData,
@@ -364,14 +392,20 @@ const urlPattern = new RegExp(
           },
         }
       );
-      const imageUrl = URL.createObjectURL(photoFile);
-      setImgSrc(imageUrl)
 
-      setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
+      // Check if the response is successful
+      if (response.status !== 200) {
+        throw new Error('Failed to upload logo.');
+      }
+  
+      setIsLogoUploaded(true);
+      setSnackbar({ open: true, message: "Logo uploaded successfully!", type: "success" });
+
       fetchCompanyLogo(); // Refresh the logo
+  
     } catch (error) {
       console.error('Error uploading photo:', error);
-      setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
+      setSnackbar({ open: true, message: "An error occurred during upload.", type: "error" });
     }
   };
 
@@ -424,23 +458,21 @@ const urlPattern = new RegExp(
                               <h5 className="fw-6">Upload Company Logo:</h5>
                               <h6>JPG or PNG</h6>
                               <input
-                                id="tf-upload-img"
-                                type="file"
-                                name="logoFile"
-                                accept=".jpg,.jpeg,.png"
-                                onChange={handleFileSelect}
-                              />
-                              <br />
-                              <button
-                                type="button"
-                                onClick={uploadPhoto}
-                                className="btn-3"
-                                style={buttonStyle}
-                                onMouseEnter={() => setIsHovered(true)}
-                                onMouseLeave={() => setIsHovered(false)}
-                              >
-                                Upload Photo
-                              </button>
+          id="tf-upload-img"
+          type="file"
+          name="logoFile"
+          accept=".jpg,.jpeg,.png"
+          onChange={handleFileSelect}
+          style={{ display: 'none' }} // Hide the input
+        />
+        <button
+          type="button"
+          onClick={() => document.getElementById('tf-upload-img').click()}
+          style={buttonStyle}
+        >
+          Upload Photo
+        </button><br />
+        {formErrors.logo && <span className="error-message">{formErrors.logo}</span>}
                             </div>
                           </div>
                         </div>
