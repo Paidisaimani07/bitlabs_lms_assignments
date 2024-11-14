@@ -779,7 +779,6 @@ const applyFilter = () => {
   
   if(filterOptions.technicalScore ){
     // Now, sort the filtered data based on matchPercentage filter
-    
   filteredData.sort((a, b) => {
     const scoreA = typeof a.technicalScore === 'string' ? parseInt(a.technicalScore.trim(), 10) : Math.round(a.technicalScore);
     const scoreB = typeof b.technicalScore === 'string' ? parseInt(b.technicalScore.trim(), 10) : Math.round(b.technicalScore);
@@ -912,6 +911,8 @@ const applyScoreMatchType = (score, filterValue, matchType) => {
 
   return true;
 };
+
+
 
 
 const applySkillMatchType = (applicantSkills, filterSkills, matchType) => {

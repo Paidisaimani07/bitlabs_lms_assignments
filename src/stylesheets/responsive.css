@@ -24,16 +24,16 @@
   }
 
   .sticky-area-wrap .header-ct-right .account img {
-    width:30px !important;
-    height:30px !important;
+    width:40px !important;
+    height:40px !important;
     object-fit:cover;
     border-radius:50% !important;
   }
 
   @media only screen and (min-width: 360px) and (max-width: 2000px) {
     .sticky-area-wrap .header-ct-right .account img {
-      width:30px !important;
-      height:30px !important;
+      width:40px !important;
+      height:40px !important;
       object-fit:cover;
       border-radius:50% !important;
     }
