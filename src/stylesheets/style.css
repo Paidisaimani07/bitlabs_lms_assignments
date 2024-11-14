@@ -259,11 +259,6 @@ ol {
   padding: 0;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
-
 
 b,
 strong {
@@ -435,8 +430,8 @@ input[type="checkbox"] {
 
 
 input[type="checkbox"]:checked {
-  background-color: black;
-  accent-color: black
+  background-color: #5F5F5F;
+  accent-color: #5F5F5F
 }
 
 
