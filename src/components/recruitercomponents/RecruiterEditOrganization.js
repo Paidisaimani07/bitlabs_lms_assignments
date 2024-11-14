@@ -413,8 +413,8 @@ const urlPattern = new RegExp(
       setImageSrc(URL.createObjectURL(file)); // Optional: Display a preview
       setFormErrors({ logo: '' }); // Clear previous errors
   
-      // Call uploadPhoto with the selected file
-      await uploadPhoto(file); // Trigger the upload process
+      // // Call uploadPhoto with the selected file
+      // await uploadPhoto(file); // Trigger the upload process
     } else {
       // Only set error if no logo is uploaded
       if (!isLogoUploaded) {
