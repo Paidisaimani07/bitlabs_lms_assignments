@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 import { useNavigate } from 'react-router-dom'; // Ensure react-router-dom is installed and set up
+import RecruiterNavBar from '../../components/recruitercomponents/RecruiterNavBar';
 
 function RecruiterEditOrganization({setImgSrc}) {
   const userContext = useUserContext();
@@ -38,6 +39,9 @@ function RecruiterEditOrganization({setImgSrc}) {
   const [photoFile, setPhotoFile] = useState(null);
   const [imageSrc, setImageSrc] = useState('');
   const [token, setToken] = useState('');
+  const [selectedFileName, setSelectedFileName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  //const fileInputRef = useRef(null);
   const [isProfileSubmitted, setIsProfileSubmitted] = useState(
     localStorage.getItem('isProfileSubmitted') === 'true'
   );
@@ -56,15 +60,15 @@ function RecruiterEditOrganization({setImgSrc}) {
   });
   const [isHovered, setIsHovered] = useState(false);
 
-  const buttonStyle = {
+  const buttonStyle ={
     backgroundColor: isHovered ? '#ea670c' : '#F97316',
     color: 'white',
-    padding: '10px 15px',
+    padding: '7px 15px',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    marginLeft: '5px',
-    marginTop: '5px',
+    marginLeft: '0px',
+    marginTop: '0px',
     transition: 'background-color 0.3s ease',
   };
 
@@ -75,6 +79,11 @@ function RecruiterEditOrganization({setImgSrc}) {
       setToken(storedToken);
     }
   }, []);
+  useEffect(() =>{
+    fetchCompanyProfile();
+  },[]);
+
+  
 
   // Fetch Company Profile and Logo when token or user.id changes
   useEffect(() => {
@@ -87,6 +96,7 @@ function RecruiterEditOrganization({setImgSrc}) {
 
   // Fetch Company Profile
   const fetchCompanyProfile = async () => {
+    const token=localStorage.getItem('jwtToken');
     try {
       const response = await axios.get(
         `${apiUrl}/companyprofile/recruiter/getCompanyProfile/${user.id}`,
@@ -99,6 +109,7 @@ function RecruiterEditOrganization({setImgSrc}) {
       const { socialProfiles } = data;
 
       setProfile({
+
         companyName: data.companyName || '',
         website: data.website || '',
         phoneNumber: data.phoneNumber || '',
@@ -118,14 +129,16 @@ function RecruiterEditOrganization({setImgSrc}) {
     }
   };
 
+
   // Fetch Company Logo
   const fetchCompanyLogo = async () => {
-    try {
 
-      const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    // Define an async function to fetch the logo
+    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
     if (savedImage) {
       setImageSrc(savedImage);
     }else{
+    try {
       const response = await fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -137,11 +150,11 @@ function RecruiterEditOrganization({setImgSrc}) {
       const blob = await response.blob();
       const imageUrl = URL.createObjectURL(blob);
       setImageSrc(imageUrl);
-    }
     } catch (error) {
       console.error('Error fetching image URL:', error);
       setImageSrc(''); // Optionally set to a default image
     }
+  }
   };
 
   // Handle Input Changes
@@ -283,7 +296,7 @@ const urlPattern = new RegExp(
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     try {
       const requestData = {
         companyName: profile.companyName,
@@ -293,89 +306,153 @@ const urlPattern = new RegExp(
         headOffice: profile.headOffice,
         aboutCompany: profile.aboutCompany,
         socialProfiles: [
-            profile.socialProfiles.twitter,
-            profile.socialProfiles.instagram,
-            profile.socialProfiles.youtube,
-            profile.socialProfiles.linkedin,
+          profile.socialProfiles.twitter,
+          profile.socialProfiles.instagram,
+          profile.socialProfiles.youtube,
+          profile.socialProfiles.linkedin,
         ],
       };
+  
+      try {
+        await axios.put(
+          `${apiUrl}/companyprofile/companyprofile/update-companyprofile/${user.id}`,
+          requestData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        setSnackbar({ open: true, message: 'Error updating profile', type: 'error' });
+        return;
+      }
+      try {
+        const handleFileSelect = (e) => {
+          const file = e.target.files[0];
+          // uploadPhoto(file);
+          setPhotoFile(file);
+        };
+        if (photoFile) {
+          const formData = new FormData();
+          formData.append('logoFile', photoFile);
+  
+          await axios.post(
+            `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+           // Display the image temporarily in the UI
+    const imageUrl = URL.createObjectURL(photoFile);
+    setImageSrc(imageUrl);
 
-      await axios.put(
-        `${apiUrl}/companyprofile/companyprofile/update-companyprofile/${user.id}`,
-        requestData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+    // Convert image to base64 for storage in localStorage
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64data = reader.result;
+      
+      localStorage.setItem(`companyLogo_${user.id}`, base64data);
+    };
+    reader.readAsDataURL(photoFile);
+    
         }
-      );
-       
-      // const imageUrl = URL.createObjectURL(photoFile);
-      // setImgSrc(imageUrl)
-
+      } catch (error) {
+        console.error('Error uploading photo:', error);
+        setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
+        return;
+      }
       setSnackbar({
         open: true,
         message: 'Profile updated successfully',
         type: 'success',
-        
       });
-
-      // const imageUrl = URL.createObjectURL(photoFile);
-      // setImgSrc(imageUrl)
-
       setIsProfileSubmitted(true);
       localStorage.setItem('isProfileSubmitted', 'true');
 
-      // Delay navigation to allow Snackbar to display
       setTimeout(() => {
         navigate('/recruiter-view-organization');
-      }, 5000); // 2-second delay
+      }, 2000); // 2-second delay
+  
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setSnackbar({ open: true, message: 'Error updating profile', type: 'error' });
+      console.error('error:', error);
+      setSnackbar({ open: true, message:'error for updating company profile details', type: 'error' });
     }
   };
+  
+  
 
   // Handle File Selection
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     setPhotoFile(file);
   };
+  const handleFileSelect1 = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const validTypes = ['image/jpeg', 'image/png'];
+        const maxSize = 1* 1024 * 1024; 
 
-  // Upload Photo
-  const uploadPhoto = async () => {
-    if (!photoFile) {
-      setSnackbar({ open: true, message: 'Please select a file to upload.', type: 'error' });
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append('logoFile', photoFile);
-
-      const response = await axios.post(
-        `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
+        if (!validTypes.includes(file.type)) {
+            setSelectedFileName("");
+            setErrorMessage("Please upload a JPG or PNG file");
+            return;
         }
-      );
-      const imageUrl = URL.createObjectURL(photoFile);
-      setImgSrc(imageUrl)
 
-      setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
-      fetchCompanyLogo(); // Refresh the logo
-    } catch (error) {
-      console.error('Error uploading photo:', error);
-      setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
+        if (file.size > maxSize) {
+            setSelectedFileName("");
+            setErrorMessage("Please upload your file, which is less than 1MB");
+            return;
+        }
+        setSelectedFileName(file.name);
+        setErrorMessage("");
+        setPhotoFile(file);
     }
-  };
+};
 
-  // Handle Snackbar Close
+  const triggerFileInput = () => {
+    document.getElementById('tf-upload-img').click();
+  };
+ 
+  // Upload Photo
+  // const uploadPhoto = async () => {
+  //   if (!photoFile) {
+  //     setSnackbar({ open: true, message: 'Please select a file to upload.', type: 'error' });
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('logoFile', photoFile);
+
+  //     const response = await axios.post(
+  //       `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const imageUrl = URL.createObjectURL(photoFile);
+  //     setImgSrc(imageUrl)
+  //     setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
+  //     fetchCompanyLogo(); // Refresh the logo
+  //   } catch (error) {
+  //     console.error('Error uploading photo:', error);
+  //     setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
+  //   }
+  // };
+
+  // // Handle Snackbar Close
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
   };
@@ -390,6 +467,7 @@ const urlPattern = new RegExp(
                 <div className="title-dashboard">
                   {/* <BackButton /> */}
                   <div className="title-dash flex2">My Organization</div>
+                  <RecruiterNavBar imageSrc={imageSrc} setImageSrc={setImageSrc} />
                 </div>
               </div>
             </div>
@@ -418,35 +496,66 @@ const urlPattern = new RegExp(
                             }}
                           />
                         </div>
-                        <div className="upload-profile">
-                          <div className="upload-section">
-                            <div className="upload-photo">
-                              <h5 className="fw-6">Upload Company Logo:</h5>
-                              <h6>JPG or PNG</h6>
-                              <input
-                                id="tf-upload-img"
-                                type="file"
-                                name="logoFile"
-                                accept=".jpg,.jpeg,.png"
-                                onChange={handleFileSelect}
-                              />
-                              <br />
-                              <button
-                                type="button"
-                                onClick={uploadPhoto}
-                                className="btn-3"
-                                style={buttonStyle}
-                                onMouseEnter={() => setIsHovered(true)}
-                                onMouseLeave={() => setIsHovered(false)}
-                              >
-                                Upload Photo
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+                        <div className="upload-photo">
+      <h5 className="fw-6">Upload Company Logo:</h5>
+      <h6>JPG or PNG</h6>
+     
+      {/* Hidden File Input */}
+      <input
+        id="tf-upload-img"
+        type="file"
+        name="logoFile"
+        accept=".jpg,.jpeg,.png"
+        onChange={handleFileSelect1}
+        style={{ display: 'none' }}
+      />
+     
+      {/* Custom Input Box Display */}
+      {/* <div
+        onClick={triggerFileInput}
+        style={{
+          border: '1px solid #ccc',
+          padding: '8px',
+          cursor: 'pointer',
+          color:  'black',
+          textAlign:'center',
+        }}
+      >
+        {selectedFileName || 'Select File'}
+      </div> */}
+         {selectedFileName && (
+        <div style={{ marginBottom: '0px', color: 'black',  whiteSpace:'nowrap'}}>
+          {selectedFileName}
+        </div>
+      )}
+    
+ 
+      {/* Upload Button */}
+      <button
+        type="button"
+        onClick={triggerFileInput} // Click to trigger file input
+        className="btn-3"
+        style={buttonStyle}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        Select File
+      </button>
+      {errorMessage && (
+    <div style={{ color: 'red', marginTop: '10px' , whiteSpace:'nowrap',}}>
+      {errorMessage}
+    </div>
+  )}
+      </div>
+      <div>
+ 
+  </div>
+    </div>
+{/*     
                       </div>
                       {/* You can add more elements here if needed */}
-                    </div>
+
+                    </div> 
                     <div className="form-infor-profile">
                       <h3 className="title-info">Information</h3>
                       <div className="row">
