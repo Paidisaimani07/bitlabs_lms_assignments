@@ -260,7 +260,7 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
       </Link>
       
               <div className="header-customize-item account" onClick={toggleSubAccount}>
-                <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+                <img width="40px" height="40px" borderRadius="50px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
                   
                 </div>
