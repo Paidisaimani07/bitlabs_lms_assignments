@@ -841,6 +841,21 @@ tbody tr td:nth-child(2) {
     font-size: 15px;
     text-transform: capitalize;
 }
+.dashboard .save-button-status{
+    background-color: #F97316;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    width: 180px;
+    align-items: center;
+    height: 40px;
+    color: #fff;
+    font-size: 15px;
+    text-transform: capitalize;
+    margin-right: 25px;
+    margin-bottom: 30px;
+}
 
 .dashboard .button-status1 {
     background-color: #F97316;

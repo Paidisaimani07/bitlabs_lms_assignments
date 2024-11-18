@@ -808,7 +808,7 @@ const urlPattern = new RegExp(
                     {/* Save Profile Button */}
                     <div className="col-lg-12 col-md-12">
                       <div className="save-profile" align="right">
-                        <button type="submit" className="button-status">
+                        <button type="submit" className="save-button-status">
                           Save Profile
                         </button>
                       </div>
