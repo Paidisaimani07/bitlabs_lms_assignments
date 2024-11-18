@@ -2668,7 +2668,7 @@ const exportCSV = () => {
             
      
               <div className="col-lg-12 col-md-12" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-                <div className="profile-setting">
+                <div className="profile-setting" style={{width:'100%'}}>
                 <div className="table-container-wrapper">
                   <div className="table-container">
                   { isLoading ? (
