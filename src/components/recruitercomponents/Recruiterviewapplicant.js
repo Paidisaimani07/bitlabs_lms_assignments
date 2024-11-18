@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect,useRef, useCallback } from 'react';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
@@ -381,8 +381,10 @@ useEffect(() => {
       const data = response.data;
   
       if (data) {
+
         const { matchPercentage, matchedSkills, skillsRequired, additionalSkills ,applicantSkillBadges,aptitudeScore, technicalScore } = data;
-  
+        const Key = `applicantData_${id}_${jobid}`
+        localStorage.setItem(Key, JSON.stringify(data));
         // Update the state with dynamic values
         setMatchScore(matchPercentage || 0);
         setApplicants1((prev) => ({
@@ -404,7 +406,26 @@ useEffect(() => {
   
   useEffect(() => {
     if (id && jobid) {
-      fetchApplicantDetails();
+      const Key = `applicantData_${id}_${jobid}`;
+      const applicantdata = localStorage.getItem(Key);
+      
+        if (applicantdata) {
+        const storeddetails = JSON.parse(applicantdata);
+        setMatchScore(storeddetails.matchPercentage || 0);
+        setApplicants1((prev) => ({
+          ...prev,
+          matchedSkills: storeddetails.matchedSkills || [],
+          missingSkills: storeddetails.skillsRequired || [],
+          additionalSkills: storeddetails.additionalSkills || [],
+          VerifiedSkills: storeddetails.applicantSkillBadges || [],
+          aptitudeScore: storeddetails.aptitudeScore,
+          technicalScore: storeddetails.technicalScore,
+        }));
+       
+      } else {
+        fetchApplicantDetails();
+        
+      }
     }
   }, [id, jobid]);
 
@@ -586,7 +607,6 @@ useEffect(() => {
     );
   }
 
-  
  
   return (
     <div className="dashboard__content">
@@ -597,7 +617,7 @@ useEffect(() => {
             <div className="title-dashboard">
             <div className="title-dash flex2" style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <BackButton /> Applicants
+                <BackButton id={id} jobid={jobid}/> Applicants
               </div>
               <span style={{paddingRight}}>
                 <button className="export-buttonn" onClick={handleDownloadPDF}>

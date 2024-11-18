@@ -56,6 +56,7 @@ function RecruiterAllApplicants() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const [showFilters, setShowFilters] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [flagForManageColoumns, setflagForManageColoumns] = useState(false);
   const [tooltipVisibleId, setTooltipVisibleId] = useState(null);
   const [initialData, setInitialData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -239,6 +240,7 @@ const toggleSidebar = () => {
   setIsOpen(!isOpen);
 };
 
+
 const handleCheckboxs = (event) => {
   const { name, checked } = event.target;
   setSelectedCheckboxes((prev) => ({ ...prev, [name]: checked }));
@@ -254,7 +256,9 @@ const handleApply = () => {
     setErrorMessage('');
     // alert('Selected Columns: ' + selected.join(', '));
     setSelectedColumns(selected);
-    // reset();
+  localStorage.setItem('tableSelectedColumns', JSON.stringify(selected));
+  localStorage.setItem('tableSelectedCheckBoxes', JSON.stringify(selectedCheckboxes));
+    setflagForManageColoumns(true);
     toggleSidebar();
   }
 };
@@ -276,6 +280,8 @@ const reset = () => {
   });
   setSelectedColumns([]);
   setErrorMessage('');
+  localStorage.removeItem('tableSelectedColumns');
+  localStorage.removeItem('tableSelectedCheckBoxes');
   toggleSidebar();
 };
  
@@ -1108,8 +1114,14 @@ const handleTextFieldChange = (id, value) => {
     setIsLoading(true); // Start loading
     let applicantsArray;
     const flagForProfileBack=localStorage.getItem('tableFilterData');
+    const tableSelectedCheckBoxes1=localStorage.getItem('tableSelectedCheckBoxes');
+    const savedSelectedColoumns=localStorage.getItem('tableSelectedColumns');
     try {
       if(!flagForProfileBack){
+       if(tableSelectedCheckBoxes1){
+        setSelectedCheckboxes(JSON.parse(tableSelectedCheckBoxes1));
+        setSelectedColumns(JSON.parse(savedSelectedColoumns));
+       }
       const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants`);
        applicantsArray = Object.values(response.data).flat();
       setCount(applicantsArray.length);
@@ -2709,7 +2721,11 @@ const exportCSV = () => {
  
                             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
                               <h3>
-                                <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} onClick={toggleSidebar}/>
+                                <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} 
+                                onClick={() => { 
+                                  toggleSidebar();
+                                  // toggleSidebar1();  
+                                }} />
                                 Manage Columns
                               </h3><br/>
                              
