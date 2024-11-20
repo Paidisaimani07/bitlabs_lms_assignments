@@ -143,6 +143,12 @@ if (!parsedData || FilterData.length > 0) {
   
   // Remove duplicates from availableStatusSuggestions
   const uniqueStatusSuggestions = Array.from(new Set(availableStatusSuggestions));
+
+  const uniqueExpSuggestions = Array.from(new Set(availableExpSuggestions));
+
+  const uniqueQualSuggestions = Array.from(new Set(availableQualSuggestions));
+
+  const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
   
   // Filter uniqueStatusSuggestions to match the desired order
   const validStatusSuggestions = desiredOrder.filter(status =>
@@ -2102,7 +2108,7 @@ return (
                           // Handle the case when a user is typing
                           handleTextFieldChange("minimumExperience", text);
                         }}
-                        options={availableExpSuggestions}  // Options for typeahead
+                        options={uniqueExpSuggestions}  // Options for typeahead
                         placeholder="Type to search..."
                       />
                     </div>
@@ -2151,7 +2157,7 @@ return (
                           // Handle the case when a user is typing
                           handleTextFieldChange("minimumQualificationInput", text);
                         }}
-                        options={availableQualSuggestions}  // Options for typeahead
+                        options={uniqueQualSuggestions}  // Options for typeahead
                         placeholder="Type to search..."
                       />
                     </div>
@@ -2200,7 +2206,7 @@ return (
                           // Handle the case when a user is typing
                           handleTextFieldChange("specializationInput", text);
                         }}
-                        options={availableSpecSuggestions}  // Options for typeahead
+                        options={uniqueSpecSuggestions}  // Options for typeahead
                         placeholder="Type to search..."
                       />
                     </div>
@@ -2639,7 +2645,7 @@ return (
         
  
           <div className="col-lg-12 col-md-12" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-            <div className="profile-setting">
+            <div className="profile-setting" style={{width:'100%'}}>
             <div className="table-container-wrapper">
               <div className="table-container">
               { isLoading ? (

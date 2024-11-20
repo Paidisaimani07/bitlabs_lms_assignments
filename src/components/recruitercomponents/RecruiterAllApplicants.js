@@ -144,6 +144,16 @@ if (!parsedData || FilterData.length > 0) {
   // Remove duplicates from availableStatusSuggestions
   const uniqueStatusSuggestions = Array.from(new Set(availableStatusSuggestions));
   
+  const uniquejobtitleSuggestions = Array.from(new Set(availableJobTitleSuggestions));
+
+  const uniqueExpSuggestions = Array.from(new Set(availableExpSuggestions));
+
+  const uniqueQualSuggestions = Array.from(new Set(availableQualSuggestions));
+
+  const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
+
+
+
   // Filter uniqueStatusSuggestions to match the desired order
   const validStatusSuggestions = desiredOrder.filter(status =>
     uniqueStatusSuggestions.includes(status)
@@ -2020,7 +2030,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("jobTitle", text);
                             }}
-                            options={availableJobTitleSuggestions}  // Options for typeahead
+                            options={uniquejobtitleSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2131,7 +2141,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumExperience", text);
                             }}
-                            options={availableExpSuggestions}  // Options for typeahead
+                            options={uniqueExpSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2180,7 +2190,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumQualificationInput", text);
                             }}
-                            options={availableQualSuggestions}  // Options for typeahead
+                            options={uniqueQualSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2229,7 +2239,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("specializationInput", text);
                             }}
-                            options={availableSpecSuggestions}  // Options for typeahead
+                            options={uniqueSpecSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2763,7 +2773,7 @@ const exportCSV = () => {
                       {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr
                           key={application.applyjobid}
-                          onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`)} // Use navigate for row click
+                          onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&preScreened=${application.preScreenedCondition === 'PreScreened'?'true':'false'}`)} // Use navigate for row click
                           style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
                             cursor: "pointer",
