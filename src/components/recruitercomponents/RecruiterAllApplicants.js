@@ -591,24 +591,32 @@ function renderTableData() {
 
 
 const applyFilter = () => {
+  console.log("applyFilter method called");
   // Apply all filters on the frontend based on the selected options
+
+  
   setCurrentPage(1)
   setAppliedFilter(true)
   const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
-  // console.log(isAnyFilterSelected)
+  console.log("Is any filter selected:", isAnyFilterSelected); // NEW: Debug Log
+  //console.log(isAnyFilterSelected)
   if (!isAnyFilterSelected) {
+    console.log("No filter selected, showing error."); // NEW: Debug Log
     // Show error message if no filter is selected
     setErrorMessage('Please Select at least one filter')
     setShowError(true);
     return;
   } else {
+    console.log("Filters selected, proceeding with validations."); // NEW: Debug Log
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
     .reduce((acc, [key, value]) => {
       acc[key.replace('Filter', '')] = value;
       return acc;
     }, {});
+    console.log("Selected filters:", selectedFilters); // NEW: Debug Log
     let hasError = false;
+    // Validate fields based on selected filters
     if ('name' in selectedFilters && !name) {
       hasError = true;
     }
@@ -654,10 +662,12 @@ const applyFilter = () => {
  
     // Set error message and show state based on the hasError flag
     if (hasError) {
+      console.log("Validation failed, missing fields for selected filters."); // NEW: Debug Log
       setErrorMessage('Field for selected filter is missing');
       setShowError(true);
       return;
     } else {
+      console.log("Validation passed, proceeding to filtering logic."); // NEW: Debug Log
       setErrorMessage('');
       setShowError(false);
     }
@@ -665,10 +675,12 @@ const applyFilter = () => {
 
  
   const initialData1 = JSON.parse(localStorage.getItem('initialData'));
+  console.log("Initial data fetched:", initialData1 || initialData); // NEW: Debug Log
+
  let filteredData;
   if(!initialData1){
      filteredData = initialData.filter((applicant) => {
-      
+      console.log("Filtering applicant:", applicant); // NEW: Debug Log
       return (
         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
@@ -694,11 +706,13 @@ const applyFilter = () => {
         
       );
     });
+    console.log("Filtered data (without localStorage):", filteredData); // NEW: Debug Log
     setFilterData(filteredData)
+    
     }else{
  
     filteredData = initialData1.filter((applicant) => {
-      
+      console.log("Filtering applicant (localStorage):", applicant); // NEW: Debug Log
       return (
         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
@@ -724,6 +738,7 @@ const applyFilter = () => {
         
       );
     });
+    console.log("Filtered data (with localStorage):", filteredData); // NEW: Debug Log
     setFilterData(filteredData)
     }
 
@@ -881,17 +896,21 @@ const applyStatusMatchType = (value, filterValue, matchType) => {
 };
 
 const applyExperienceMatchType = (experience, filterValue, matchType) => {
+  console.log("applyExperienceMatchType called with:", { experience, filterValue, matchType }); // NEW: Debug Log
+
   if (!matchType || filterValue === null) return true;
   
   const exp = parseInt(experience.trim(), 10);
+  console.log("Parsed experience:", exp); // NEW: Debug Log
   
   if (matchType === "greaterThan") {
     return exp > filterValue;
   } else if (matchType === "lessThan") {
     return exp < filterValue;
   } else if (matchType === "is") {
-    return exp === filterValue;
+    return exp == filterValue;
   }
+
   return true;
 };
 
