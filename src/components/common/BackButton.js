@@ -12,8 +12,10 @@ const BackButton = ({id,jobid}) => {
          const storageKey = `applicantData_${id}_${jobid}`;
          localStorage.removeItem(storageKey); 
        }
-    // navigate('/recruiter-allapplicants');
-    navigate(-1); 
+  
+    navigate(-1);
+  
+     console.log("all applicants");
    };
    
   return (

@@ -144,6 +144,12 @@ if (!parsedData || FilterData.length > 0) {
   
   // Remove duplicates from availableStatusSuggestions
   const uniqueStatusSuggestions = Array.from(new Set(availableStatusSuggestions));
+
+  const uniqueExpSuggestions = Array.from(new Set(availableExpSuggestions));
+
+  const uniqueQualSuggestions = Array.from(new Set(availableQualSuggestions));
+
+  const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
   
   // Filter uniqueStatusSuggestions to match the desired order
   const validStatusSuggestions = desiredOrder.filter(status =>

@@ -144,6 +144,16 @@ if (!parsedData || FilterData.length > 0) {
   // Remove duplicates from availableStatusSuggestions
   const uniqueStatusSuggestions = Array.from(new Set(availableStatusSuggestions));
   
+  const uniquejobtitleSuggestions = Array.from(new Set(availableJobTitleSuggestions));
+
+  const uniqueExpSuggestions = Array.from(new Set(availableExpSuggestions));
+
+  const uniqueQualSuggestions = Array.from(new Set(availableQualSuggestions));
+
+  const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
+
+
+
   // Filter uniqueStatusSuggestions to match the desired order
   const validStatusSuggestions = desiredOrder.filter(status =>
     uniqueStatusSuggestions.includes(status)
@@ -581,24 +591,32 @@ function renderTableData() {
 
 
 const applyFilter = () => {
+  console.log("applyFilter method called");
   // Apply all filters on the frontend based on the selected options
+
+  
   setCurrentPage(1)
   setAppliedFilter(true)
   const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
-  // console.log(isAnyFilterSelected)
+  console.log("Is any filter selected:", isAnyFilterSelected); // NEW: Debug Log
+  //console.log(isAnyFilterSelected)
   if (!isAnyFilterSelected) {
+    console.log("No filter selected, showing error."); // NEW: Debug Log
     // Show error message if no filter is selected
     setErrorMessage('Please Select at least one filter')
     setShowError(true);
     return;
   } else {
+    console.log("Filters selected, proceeding with validations."); // NEW: Debug Log
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
     .reduce((acc, [key, value]) => {
       acc[key.replace('Filter', '')] = value;
       return acc;
     }, {});
+    console.log("Selected filters:", selectedFilters); // NEW: Debug Log
     let hasError = false;
+    // Validate fields based on selected filters
     if ('name' in selectedFilters && !name) {
       hasError = true;
     }
@@ -644,10 +662,12 @@ const applyFilter = () => {
  
     // Set error message and show state based on the hasError flag
     if (hasError) {
+      console.log("Validation failed, missing fields for selected filters."); // NEW: Debug Log
       setErrorMessage('Field for selected filter is missing');
       setShowError(true);
       return;
     } else {
+      console.log("Validation passed, proceeding to filtering logic."); // NEW: Debug Log
       setErrorMessage('');
       setShowError(false);
     }
@@ -655,10 +675,12 @@ const applyFilter = () => {
 
  
   const initialData1 = JSON.parse(localStorage.getItem('initialData'));
+  console.log("Initial data fetched:", initialData1 || initialData); // NEW: Debug Log
+
  let filteredData;
   if(!initialData1){
      filteredData = initialData.filter((applicant) => {
-      
+      console.log("Filtering applicant:", applicant); // NEW: Debug Log
       return (
         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
@@ -684,11 +706,13 @@ const applyFilter = () => {
         
       );
     });
+    console.log("Filtered data (without localStorage):", filteredData); // NEW: Debug Log
     setFilterData(filteredData)
+    
     }else{
  
     filteredData = initialData1.filter((applicant) => {
-      
+      console.log("Filtering applicant (localStorage):", applicant); // NEW: Debug Log
       return (
         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
@@ -714,6 +738,7 @@ const applyFilter = () => {
         
       );
     });
+    console.log("Filtered data (with localStorage):", filteredData); // NEW: Debug Log
     setFilterData(filteredData)
     }
 
@@ -871,17 +896,21 @@ const applyStatusMatchType = (value, filterValue, matchType) => {
 };
 
 const applyExperienceMatchType = (experience, filterValue, matchType) => {
+  console.log("applyExperienceMatchType called with:", { experience, filterValue, matchType }); // NEW: Debug Log
+
   if (!matchType || filterValue === null) return true;
   
   const exp = parseInt(experience.trim(), 10);
+  console.log("Parsed experience:", exp); // NEW: Debug Log
   
   if (matchType === "greaterThan") {
     return exp > filterValue;
   } else if (matchType === "lessThan") {
     return exp < filterValue;
   } else if (matchType === "is") {
-    return exp === filterValue;
+    return exp == filterValue;
   }
+
   return true;
 };
 
@@ -2020,7 +2049,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("jobTitle", text);
                             }}
-                            options={availableJobTitleSuggestions}  // Options for typeahead
+                            options={uniquejobtitleSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2131,7 +2160,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumExperience", text);
                             }}
-                            options={availableExpSuggestions}  // Options for typeahead
+                            options={uniqueExpSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2180,7 +2209,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumQualificationInput", text);
                             }}
-                            options={availableQualSuggestions}  // Options for typeahead
+                            options={uniqueQualSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2229,7 +2258,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("specializationInput", text);
                             }}
-                            options={availableSpecSuggestions}  // Options for typeahead
+                            options={uniqueSpecSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2668,7 +2697,7 @@ const exportCSV = () => {
             
      
               <div className="col-lg-12 col-md-12" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-                <div className="profile-setting">
+                <div className="profile-setting" style={{width:'100%'}}>
                 <div className="table-container-wrapper">
                   <div className="table-container">
                   { isLoading ? (
@@ -2763,7 +2792,11 @@ const exportCSV = () => {
                       {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr
                           key={application.applyjobid}
+<<<<<<< HEAD
                           //onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`)} // Use navigate for row click
+=======
+                          onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&preScreened=${application.preScreenedCondition === 'PreScreened'?'true':'false'}`)} // Use navigate for row click
+>>>>>>> 5f6ba2430b9b6b3bce1ae5d598d4936cb79c83f6
                           style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
                             cursor: "pointer",
