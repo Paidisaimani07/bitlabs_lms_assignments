@@ -9,7 +9,7 @@ import Phone from '../../images/icons/phone1.png';
 import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
 import verified123 from '../../images/verified123.svg';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import html2canvas from "html2canvas";
@@ -53,12 +53,11 @@ const [applicants1, setApplicants1] = useState({
 });
 
 const [paddingRight, setPaddingRight] = useState(window.innerWidth > 1440 ? '330px' : '0px');
- 
+
 useEffect(() => {
   const handleResize = () => {
     setPaddingRight(window.innerWidth > 1440 ? '380px' : '0px');
   };
- 
   window.addEventListener('resize', handleResize);
   return () => window.removeEventListener('resize', handleResize);
 }, []);
@@ -431,32 +430,23 @@ useEffect(() => {
 
   const handleSelectChange1 = async (e) => {
     const newStatus = e.target.value;
-  
     try {
-      console.log("New Status:", newStatus);
-  
-      // Assuming 'applyJobId' is available directly (you can adjust as needed)
-      const applyJobId = applyid; // Replace with the correct applicant ID variable
-  
+      const applyJobId = applyid; 
       if (!applyJobId) {
-        console.error("applyJobId is undefined or null");
         return;
       }
-  
-      // Make the API call to update status
+      const token = localStorage.getItem('jwtToken');
       const response = await axios.put(
-        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
+        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
       );
-  
-      console.log("API Response:", response.data);
-  
-
       const message1 = `Status changed to ${newStatus}`;
-
       setSnackbar({ open: true, message: message1, type: 'success' });
-  
     } catch (error) {
-      console.error('Error updating status:', error);
       setSnackbar({ open: true, message: 'Failed to update status', type: 'error' });
     }
   };
@@ -617,7 +607,7 @@ useEffect(() => {
             <div className="title-dashboard">
             <div className="title-dash flex2" style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <BackButton id={id} jobid={jobid}/> Applicants
+                <BackButton  id={id} jobid={jobid}/> Applicants
               </div>
               <span style={{paddingRight}}>
                 <button className="export-buttonn" onClick={handleDownloadPDF}>

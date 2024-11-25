@@ -3,14 +3,14 @@ import { Link, useNavigate} from 'react-router-dom';
 
 const BackButton = ({id,jobid}) => {
   const navigate = useNavigate();
+  
 
   const handleClick = (e) => {
     e.preventDefault();
       
        if (id && jobid) {
          const storageKey = `applicantData_${id}_${jobid}`;
-         localStorage.removeItem(storageKey);
-         console.log(`Removed ${storageKey} from localStorage`);
+         localStorage.removeItem(storageKey); 
        }
   
     navigate(-1);

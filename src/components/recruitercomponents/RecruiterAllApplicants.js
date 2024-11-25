@@ -2792,7 +2792,7 @@ const exportCSV = () => {
                       {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr
                           key={application.applyjobid}
-                          onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&preScreened=${application.preScreenedCondition === 'PreScreened'?'true':'false'}`)} // Use navigate for row click
+                          //onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`)} // Use navigate for row click
                           style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
                             cursor: "pointer",
@@ -2821,7 +2821,7 @@ const exportCSV = () => {
   <Link
   to={
     application.preScreenedCondition === 'PreScreened'
-      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
       : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
   }
   style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}

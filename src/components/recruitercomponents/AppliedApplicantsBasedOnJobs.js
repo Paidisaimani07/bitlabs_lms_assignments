@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { useNavigate, useParams } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import $ from 'jquery';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import BackButton from '../common/BackButton';
 import filtericon from '../../images/filter 2.svg';
@@ -14,6 +13,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import "./RecruiterManageColumn.css"
+import { right } from '@popperjs/core';
 
 
 $.DataTable = require('datatables.net')
@@ -56,6 +56,7 @@ function AppliedApplicantsBasedOnJobs() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const [showFilters, setShowFilters] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [flagForManageColoumns, setflagForManageColoumns] = useState(false);
   const [tooltipVisibleId, setTooltipVisibleId] = useState(null);
   const [initialData, setInitialData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -76,21 +77,21 @@ function AppliedApplicantsBasedOnJobs() {
   const [availableAdditonalSkillSuggestions, setAvailableAdditonalSkillSuggestions] = useState([]);
   const [availableSkillBadgesSuggestions, setAvailableSkillBadgesSuggestions] = useState([]);
   const [availablePreferedLocSuggestions, setAvailablePreferedLocSuggestions] = useState([]);
-  const { id } = useParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [FilterData, setFilterData] = useState([]);
-  const [appliedFilter,setAppliedFilter]=useState(false)
+  const [appliedFilter,setAppliedFilter]=useState(false);
   const navigate = useNavigate();
-
+  const { id } = useParams();
+ 
   const recordsPerPage = 10;
-  
-
+ 
+ 
   const indexOfLastRecord = currentPage * recordsPerPage;
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = applicants.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(applicants.length / recordsPerPage);
 
-    // Function to save filters and columns before navigating away
+  // Function to save filters and columns before navigating away
 function saveTableState() {
   const savedFilterData = localStorage.getItem('tableFilterData');
 const parsedData = savedFilterData ? JSON.parse(savedFilterData) : null;
@@ -106,14 +107,14 @@ if (!parsedData || FilterData.length > 0) {
   }
   
 }
-
+ 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(prevPage => prevPage + 1);
     }
   };
-  
-
+ 
+ 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
@@ -232,7 +233,7 @@ const [selectedCheckboxes, setSelectedCheckboxes] = useState({
   "Missing Skills":false,
   "Additional Skills":false,
   "Tested Skills":false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false
 });
 
@@ -245,6 +246,7 @@ const toggleSidebar = () => {
   setErrorMessage('')
   setIsOpen(!isOpen);
 };
+
 
 const handleCheckboxs = (event) => {
   const { name, checked } = event.target;
@@ -261,7 +263,9 @@ const handleApply = () => {
     setErrorMessage('');
     // alert('Selected Columns: ' + selected.join(', '));
     setSelectedColumns(selected);
-    // reset();
+  localStorage.setItem('tableSelectedColumns', JSON.stringify(selected));
+  localStorage.setItem('tableSelectedCheckBoxes', JSON.stringify(selectedCheckboxes));
+    setflagForManageColoumns(true);
     toggleSidebar();
   }
 };
@@ -273,7 +277,7 @@ const reset = () => {
   Qualification:false,
   "Location":false,
   Speclization: false,
-  "Apptitude Score": false,
+  "Aptitude Score": false,
   "Technical Score": false,
   "Matching Skills":false,
   "Missing Skills":false,
@@ -283,22 +287,24 @@ const reset = () => {
   });
   setSelectedColumns([]);
   setErrorMessage('');
+  localStorage.removeItem('tableSelectedColumns');
+  localStorage.removeItem('tableSelectedCheckBoxes');
   toggleSidebar();
 };
  
 const m=new Map();
-const handleCheckboxChange2 = (applyjobid) => {
-  m.set(currentPage,applyjobid);
-  setSelectedApplicants((prevSelected) => {
-    if (prevSelected.includes(applyjobid)) {
-      // If the ID is already in the array, remove it (uncheck the box)
-      return prevSelected.filter((id) => id !== applyjobid);
-    } else {
-      // If the ID is not in the array, add it (check the box)
-      return [...prevSelected, applyjobid];
-    }
-  });
-};
+  const handleCheckboxChange2 = (applyjobid) => {
+    m.set(currentPage,applyjobid);
+    setSelectedApplicants((prevSelected) => {
+      if (prevSelected.includes(applyjobid)) {
+        // If the ID is already in the array, remove it (uncheck the box)
+        return prevSelected.filter((id) => id !== applyjobid);
+      } else {
+        // If the ID is not in the array, add it (check the box)
+        return [...prevSelected, applyjobid];
+      }
+    });
+  };
   const handleSelectAll = (event) => {
     const isChecked = event.target.checked;
     if (isChecked) {
@@ -335,7 +341,7 @@ const handleCheckboxChange2 = (applyjobid) => {
  
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
-    window.location.reload();
+    //window.location.reload();
   };
  
   const handleCheckboxChange = (event) => {
@@ -385,12 +391,14 @@ const handleCheckboxChange2 = (applyjobid) => {
   };
  
   const resetFilter = () => {
-  console.log('controller came here');
+  // Apply all filters on the frontend based on the selected options
   setCurrentPage(1)
   setAppliedFilter(true)
  
  uncheckAll();
-
+ 
+ 
+ 
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
     .reduce((acc, [key, value]) => {
@@ -450,7 +458,6 @@ const handleCheckboxChange2 = (applyjobid) => {
       setErrorMessage('');
       setShowError(false);
     }
- 
  
  
     const initialData1 = JSON.parse(localStorage.getItem('initialData'));
@@ -463,253 +470,13 @@ const handleCheckboxChange2 = (applyjobid) => {
     filteredData = initialData;
     setFilterData(filteredData)
   }
- 
- 
-  if (filterOptions.applicantSkillBadges) {
-    // Iterate in reverse to safely remove elements from the array
-    for (let i = filteredData.length - 1; i >= 0; i--) {
-      const applicant = filteredData[i];
-      // Check if matchedSkills exists and is not empty
-      if (!applicant.applicantSkillBadges || applicant.applicantSkillBadges.length === 0) {
-        // Remove the applicant if matchedSkills is not valid
-        filteredData.splice(i, 1);
-      }
-    }
-  }
- 
-  if (filterOptions.additionalSkills) {
-    // Iterate in reverse to safely remove elements from the array
-    for (let i = filteredData.length - 1; i >= 0; i--) {
-      const applicant = filteredData[i];
-      // Check if matchedSkills exists and is not empty
-      if (!applicant.additionalSkills || applicant.additionalSkills.length === 0) {
-        // Remove the applicant if matchedSkills is not valid
-        filteredData.splice(i, 1);
-      }
-    }
-  }
- 
-  if (filterOptions.matchedSkills) {
-    // Iterate in reverse to safely remove elements from the array
-    for (let i = filteredData.length - 1; i >= 0; i--) {
-      const applicant = filteredData[i];
-      // Check if matchedSkills exists and is not empty
-      if (!applicant.matchedSkills || applicant.matchedSkills.length === 0) {
-        // Remove the applicant if matchedSkills is not valid
-        filteredData.splice(i, 1);
-      }
-    }
-  }
-  if (filterOptions.nonMatchedSkills) {
-    // Iterate in reverse to safely remove elements from the array
-    for (let i = filteredData.length - 1; i >= 0; i--) {
-      const applicant = filteredData[i];
-      // Check if matchedSkills exists and is not empty
-      if (!applicant.nonMatchedSkills || applicant.nonMatchedSkills.length === 0) {
-        // Remove the applicant if matchedSkills is not valid
-        filteredData.splice(i, 1);
-      }
-    }
-  }
- 
- 
-  if(filterOptions.matchPercentage ){
-          // Now, sort the filtered data based on matchPercentage filter
-         
-        filteredData.sort((a, b) => {
-          const scoreA = typeof a.matchPercentage === 'string' ? parseInt(a.matchPercentage.trim(), 10) : Math.round(a.matchPercentage);
-          const scoreB = typeof b.matchPercentage === 'string' ? parseInt(b.matchPercentage.trim(), 10) : Math.round(b.matchPercentage);
- 
-          if (filterOptions.matchPercentage=== "ascending") {
-            return scoreA - scoreB; // Ascending order
-          } else if (filterOptions.matchPercentage === "descending") {
-            return scoreB - scoreA; // Descending order
-          }
- 
-          return 0; // If no sorting is selected, return 0
-        });
-  }
- 
-  if(filterOptions.technicalScore ){
-    // Now, sort the filtered data based on matchPercentage filter
-   
-  filteredData.sort((a, b) => {
-    const scoreA = typeof a.technicalScore === 'string' ? parseInt(a.technicalScore.trim(), 10) : Math.round(a.technicalScore);
-    const scoreB = typeof b.technicalScore === 'string' ? parseInt(b.technicalScore.trim(), 10) : Math.round(b.technicalScore);
- 
-    if (filterOptions.technicalScore=== "ascending") {
-      return scoreA - scoreB; // Ascending order
-    } else if (filterOptions.technicalScore === "descending") {
-      return scoreB - scoreA; // Descending order
-    }
- 
-    return 0; // If no sorting is selected, return 0
-  });
-}
- 
-if(filterOptions.apptitudeScore ){
-  // Now, sort the filtered data based on matchPercentage filter
- 
-filteredData.sort((a, b) => {
-  const scoreA = typeof a.apptitudeScore === 'string' ? parseInt(a.apptitudeScore.trim(), 10) : Math.round(a.apptitudeScore);
-  const scoreB = typeof b.apptitudeScore === 'string' ? parseInt(b.apptitudeScore.trim(), 10) : Math.round(b.apptitudeScore);
- 
-  if (filterOptions.apptitudeScore=== "ascending") {
-    return scoreA - scoreB; // Ascending order
-  } else if (filterOptions.apptitudeScore === "descending") {
-    return scoreB - scoreA; // Descending order
-  }
- 
-  return 0; // If no sorting is selected, return 0
-});
-}
- 
-function renderTableData() {
-  setApplicants(filteredData);
-}
-    setCount(filteredData.length);
-    renderTableData();
-};
-
-
-
-const applyFilter = () => {
-  // Apply all filters on the frontend based on the selected options
-  setCurrentPage(1)
-  setAppliedFilter(true)
-  const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
-  // console.log(isAnyFilterSelected)
-  if (!isAnyFilterSelected) {
-    // Show error message if no filter is selected
-    setErrorMessage('Please Select at least one filter')
-    setShowError(true);
-    return;
-  } else {
-    const selectedFilters = Object.entries(filterOptions)
-    .filter(([key, value]) => value)
-    .reduce((acc, [key, value]) => {
-      acc[key.replace('Filter', '')] = value;
-      return acc;
-    }, {});
-    let hasError = false;
-    if ('name' in selectedFilters && !name) {
-      hasError = true;
-    }
-    if ('email' in selectedFilters && !email) {
-      hasError = true;
-    }
-    if ('mobile' in selectedFilters && !mobileNumber) {
-      hasError = true;
-    }
-    if ('job' in selectedFilters && !jobTitle) {
-      hasError = true;
-    }
-    if ('status' in selectedFilters && !applicantStatus) {
-      hasError = true;
-    }
-    if ('experience' in selectedFilters && !minimumExperience) {
-      hasError = true;
-    }
-    if ('minimumQualification' in selectedFilters && !minimumQualification) {
-      hasError = true;
-    }
-    if ('preferredJobLocations' in selectedFilters && !preferredJobLocations) {
-      hasError = true;
-    }
-    if ('specialization' in selectedFilters && !specialization) {
-      hasError = true;
-    }
-    if ('matchedSkills' in selectedFilters && !matchedSkills) {
-      hasError = true;
-    }
-    if ('matchPercentage' in selectedFilters && !matchPercentage) {
-      hasError = true;
-    }
-    if ('nonMatchedSkills' in selectedFilters && !nonMatchedSkills) {
-      hasError = true;
-    }
-    if ('additionalSkills' in selectedFilters && !additionalSkills) {
-      hasError = true;
-    }
-    if ('applicantSkillBadges' in selectedFilters && !applicantSkillBadges) {
-      hasError = true;
-    }
- 
-    // Set error message and show state based on the hasError flag
-    if (hasError) {
-      setErrorMessage('Field for selected filter is missing');
-      setShowError(true);
-      return;
-    } else {
-      setErrorMessage('');
-      setShowError(false);
-    }
-  }
-
-  const initialData1 = JSON.parse(localStorage.getItem('initialData'));
-  let filteredData;
-   if(!initialData1){
-      filteredData = initialData.filter((applicant) => {
-       
-       return (
-         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
-         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
-         (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
-         (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
-         (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
-         (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
-         (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
-         (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
-         (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
-         (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
-         (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
-          (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
-         (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
-         (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
-         (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
-         (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
-         (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
-         (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
-         (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
-         
-         
-         
-       );
-     });
-     setFilterData(filteredData)
-     }else{
+    
   
-     filteredData = initialData1.filter((applicant) => {
-       
-       return (
-         (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
-         (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
-         (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
-         (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
-         (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
-         (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
-         (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
-         (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
-         (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
-         (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
-         (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
-          (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
-         (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
-         (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
-         (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
-         (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
-         (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
-         (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
-         (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
-         
-         
-         
-       );
-     });
-     setFilterData(filteredData)
-     }
-
-
+  
+  
+  
+ 
+ 
   if (filterOptions.applicantSkillBadges) {
     // Iterate in reverse to safely remove elements from the array
     for (let i = filteredData.length - 1; i >= 0; i--) {
@@ -811,10 +578,258 @@ filteredData.sort((a, b) => {
 
 function renderTableData() {
   setApplicants(filteredData);
+} 
+
+
+    setCount(filteredData.length);
+    renderTableData();
+};
+
+
+
+const applyFilter = () => {
+  // Apply all filters on the frontend based on the selected options
+  setCurrentPage(1)
+  setAppliedFilter(true)
+  const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
+  // console.log(isAnyFilterSelected)
+  if (!isAnyFilterSelected) {
+    // Show error message if no filter is selected
+    setErrorMessage('Please Select at least one filter')
+    setShowError(true);
+    return;
+  } else {
+    const selectedFilters = Object.entries(filterOptions)
+    .filter(([key, value]) => value)
+    .reduce((acc, [key, value]) => {
+      acc[key.replace('Filter', '')] = value;
+      return acc;
+    }, {});
+    let hasError = false;
+    if ('name' in selectedFilters && !name) {
+      hasError = true;
+    }
+    if ('email' in selectedFilters && !email) {
+      hasError = true;
+    }
+    if ('mobile' in selectedFilters && !mobileNumber) {
+      hasError = true;
+    }
+    if ('job' in selectedFilters && !jobTitle) {
+      hasError = true;
+    }
+    if ('status' in selectedFilters && !applicantStatus) {
+      hasError = true;
+    }
+    if ('experience' in selectedFilters && !minimumExperience) {
+      hasError = true;
+    }
+    if ('minimumQualification' in selectedFilters && !minimumQualification) {
+      hasError = true;
+    }
+    if ('preferredJobLocations' in selectedFilters && !preferredJobLocations) {
+      hasError = true;
+    }
+    if ('specialization' in selectedFilters && !specialization) {
+      hasError = true;
+    }
+    if ('matchedSkills' in selectedFilters && !matchedSkills) {
+      hasError = true;
+    }
+    if ('matchPercentage' in selectedFilters && !matchPercentage) {
+      hasError = true;
+    }
+    if ('nonMatchedSkills' in selectedFilters && !nonMatchedSkills) {
+      hasError = true;
+    }
+    if ('additionalSkills' in selectedFilters && !additionalSkills) {
+      hasError = true;
+    }
+    if ('applicantSkillBadges' in selectedFilters && !applicantSkillBadges) {
+      hasError = true;
+    }
+ 
+    // Set error message and show state based on the hasError flag
+    if (hasError) {
+      setErrorMessage('Field for selected filter is missing');
+      setShowError(true);
+      return;
+    } else {
+      setErrorMessage('');
+      setShowError(false);
+    }
+  }
+
+ 
+  const initialData1 = JSON.parse(localStorage.getItem('initialData'));
+ let filteredData;
+  if(!initialData1){
+     filteredData = initialData.filter((applicant) => {
+      
+      return (
+        (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
+        (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
+        (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
+        (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
+        (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
+        (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
+        (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
+        (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
+        (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
+        (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
+        (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
+         (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
+        (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
+        (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
+        (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
+        (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
+        (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
+        (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
+        (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
+        
+        
+        
+      );
+    });
+    setFilterData(filteredData)
+    }else{
+ 
+    filteredData = initialData1.filter((applicant) => {
+      
+      return (
+        (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
+        (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
+        (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
+        (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
+        (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
+        (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
+        (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
+        (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
+        (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
+        (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
+        (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
+         (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
+        (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
+        (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
+        (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
+        (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
+        (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
+        (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
+        (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
+        
+        
+        
+      );
+    });
+    setFilterData(filteredData)
+    }
+
+
+  if (filterOptions.applicantSkillBadges) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.applicantSkillBadges || applicant.applicantSkillBadges.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+
+  if (filterOptions.additionalSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.additionalSkills || applicant.additionalSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+
+  if (filterOptions.matchedSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.matchedSkills || applicant.matchedSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+  if (filterOptions.nonMatchedSkills) {
+    // Iterate in reverse to safely remove elements from the array
+    for (let i = filteredData.length - 1; i >= 0; i--) {
+      const applicant = filteredData[i];
+      // Check if matchedSkills exists and is not empty
+      if (!applicant.nonMatchedSkills || applicant.nonMatchedSkills.length === 0) {
+        // Remove the applicant if matchedSkills is not valid
+        filteredData.splice(i, 1);
+      }
+    }
+  }
+  
+
+  if(filterOptions.matchPercentage ){
+          // Now, sort the filtered data based on matchPercentage filter
+          
+        filteredData.sort((a, b) => {
+          const scoreA = typeof a.matchPercentage === 'string' ? parseInt(a.matchPercentage.trim(), 10) : Math.round(a.matchPercentage);
+          const scoreB = typeof b.matchPercentage === 'string' ? parseInt(b.matchPercentage.trim(), 10) : Math.round(b.matchPercentage);
+
+          if (filterOptions.matchPercentage=== "ascending") {
+            return scoreA - scoreB; // Ascending order
+          } else if (filterOptions.matchPercentage === "descending") {
+            return scoreB - scoreA; // Descending order
+          }
+
+          return 0; // If no sorting is selected, return 0
+        });
+  }
+  
+  if(filterOptions.technicalScore ){
+    // Now, sort the filtered data based on matchPercentage filter
+  filteredData.sort((a, b) => {
+    const scoreA = typeof a.technicalScore === 'string' ? parseInt(a.technicalScore.trim(), 10) : Math.round(a.technicalScore);
+    const scoreB = typeof b.technicalScore === 'string' ? parseInt(b.technicalScore.trim(), 10) : Math.round(b.technicalScore);
+
+    if (filterOptions.technicalScore=== "ascending") {
+      return scoreA - scoreB; // Ascending order
+    } else if (filterOptions.technicalScore === "descending") {
+      return scoreB - scoreA; // Descending order
+    }
+
+    return 0; // If no sorting is selected, return 0
+  });
+}
+
+if(filterOptions.apptitudeScore ){
+  // Now, sort the filtered data based on matchPercentage filter
+ 
+filteredData.sort((a, b) => {
+  const scoreA = typeof a.apptitudeScore === 'string' ? parseInt(a.apptitudeScore.trim(), 10) : Math.round(a.apptitudeScore);
+  const scoreB = typeof b.apptitudeScore === 'string' ? parseInt(b.apptitudeScore.trim(), 10) : Math.round(b.apptitudeScore);
+
+  if (filterOptions.apptitudeScore=== "ascending") {
+    return scoreA - scoreB; // Ascending order
+  } else if (filterOptions.apptitudeScore === "descending") {
+    return scoreB - scoreA; // Descending order
+  }
+
+  return 0; // If no sorting is selected, return 0
+});
+}
+
+function renderTableData() {
+  setApplicants(filteredData);
 }
   setCount(filteredData.length);
   renderTableData();
 };
+
 
 const applyMatchType = (value, filterValue, matchType) => {
   // Ensure value and filterValue are both strings
@@ -909,6 +924,8 @@ const applyScoreMatchType = (score, filterValue, matchType) => {
 
   return true;
 };
+
+
 
 
 const applySkillMatchType = (applicantSkills, filterSkills, matchType) => {
@@ -1104,9 +1121,15 @@ const handleTextFieldChange = (id, value) => {
     setIsLoading(true); // Start loading
     let applicantsArray;
     const flagForProfileBack=localStorage.getItem('tableFilterData');
+    const tableSelectedCheckBoxes1=localStorage.getItem('tableSelectedCheckBoxes');
+    const savedSelectedColoumns=localStorage.getItem('tableSelectedColumns');
     try {
       if(!flagForProfileBack){
-      const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants/${id}`);
+       if(tableSelectedCheckBoxes1){
+        setSelectedCheckboxes(JSON.parse(tableSelectedCheckBoxes1));
+        setSelectedColumns(JSON.parse(savedSelectedColoumns));
+       }
+       const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants/${id}`);
        applicantsArray = Object.values(response.data).flat();
       setCount(applicantsArray.length);
       setApplicants(applicantsArray);
@@ -1222,11 +1245,8 @@ const handleTextFieldChange = (id, value) => {
     if (savedColumns) {
       setSelectedColumns(JSON.parse(savedColumns));
       setSelectedCheckboxes(JSON.parse(savedCheckBoxes))
-      
     }
-    
    setInitialData(initialData1);
-    // Optionally, clear storage if you only need it for the return
     return () => {
       localStorage.removeItem('tableFilterData');
       localStorage.removeItem('tableSelectedColumns');
@@ -1239,6 +1259,16 @@ const handleTextFieldChange = (id, value) => {
       setIsLoading(false); // Stop loading
     }
   };
+
+
+  useEffect(() => {
+    if (isMounted.current) {
+      fetchAllApplicants();
+    }
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
  
   useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
@@ -1375,7 +1405,10 @@ const handleTextFieldChange = (id, value) => {
   };
 const handleSelectChange = async (e) => {
   const newStatus = e.target.value;
- 
+  if(selectedApplicants.length === 0){
+    setSnackbar({open:true , message:'Please select atleast one applicant',type:'error'})
+    return;
+     }
   try {
     if (selectedApplicants.length > 0 && newStatus) {
       console.log("Selected Applicants:", selectedApplicants);
@@ -1407,6 +1440,7 @@ const handleSelectChange = async (e) => {
         });
         setApplicants(updatedApplicants);
         setSelectedStatus(newStatus);
+        setSelectedStatus("");
         setSelectedApplicants([]);
       }
      
@@ -1414,6 +1448,7 @@ const handleSelectChange = async (e) => {
       const applicantCount = selectedApplicants.length;
 const applicantLabel = applicantCount === 1 ? 'applicant' : 'applicants';
 const message1 = `Status changed to ${newStatus} for ${applicantCount} ${applicantLabel}`;
+
 
 setSnackbar({ open: true, message: message1, type: 'success' });
      
@@ -1440,7 +1475,7 @@ const exportCSV = () => {
  
   const escapeCSVField = (field) => {
     if (typeof field !== 'string') {
-      return ' '; 
+      return ' ';
     }
     if (field.trim() === '') {
       return ' ';
@@ -1466,7 +1501,7 @@ const exportCSV = () => {
         case 1:
           const enameElement = td.querySelector('a') || td.querySelector('Link');
           const applicantName = enameElement ? `${escapeCSVField(enameElement.textContent.trim())}` : '';
-
+ 
           const preScreenedStatus = enameElement.querySelector('div img.external-link-image') ? "Verified" : "Not-verified";
           return `${applicantName}, ${preScreenedStatus}`;
         case 2:
@@ -1504,7 +1539,7 @@ const exportCSV = () => {
         return cellContent;
       }
  
-      if (headerText === 'Apptitude Score') {
+      if (headerText === 'Aptitude Score') {
         return cellContent;
       }
  
@@ -1528,12 +1563,10 @@ const exportCSV = () => {
  
     return rowData.slice(1);
   });
- 
   let allData1 = applicants.map(applicant => {
     const rowData = [];
-  
+ 
     rowData.push(escapeCSVField(applicant.name)); // Name
-    // console.log(applicant.preScreenedCondition)
     const preScreenedStatus = applicant.preScreenedCondition==="PreScreened" ? "Verified" : "Not-verified";
     // console.log(preScreenedStatus)
     rowData.push(preScreenedStatus);
@@ -1541,7 +1574,7 @@ const exportCSV = () => {
     rowData.push(escapeCSVField(applicant.mobilenumber)); // Mobile Number
     rowData.push(escapeCSVField(applicant.jobTitle)); // Job Title
     rowData.push(escapeCSVField(applicant.applicantStatus)); // Applicant Status
-  
+ 
     if (selectedColumns.includes('Experience')) {
       rowData.push(escapeCSVField(applicant.experience));
     }
@@ -1555,7 +1588,7 @@ const exportCSV = () => {
   
     if (selectedColumns.includes('Location') && applicant.preferredJobLocations) {
       let locations = applicant.preferredJobLocations;
-    
+   
       if (Array.isArray(locations)) {
         locations = locations.map(location => location.trim());
       } else if (typeof locations === 'string') {
@@ -1567,8 +1600,8 @@ const exportCSV = () => {
       const displayedLocations = locations.length > 3 
         ? `${locations.slice(0, 3).join(", ")} ...` 
         : locations.join(", ");
-    
-      rowData.push(escapeCSVField(displayedLocations)); 
+   
+      rowData.push(escapeCSVField(displayedLocations));
     }
 
     if (selectedColumns.includes('Job Match%')) {
@@ -1626,7 +1659,7 @@ const exportCSV = () => {
       rowData.push(escapeCSVField(testedSkills));
     }
 
-    if (selectedColumns.includes('Apptitude Score')) {
+    if (selectedColumns.includes('Aptitude Score')) {
       rowData.push(applicant.apptitudeScore); 
     }
     if (selectedColumns.includes('Technical Score')) {
@@ -1664,6 +1697,7 @@ const exportCSV = () => {
     selectedData = allData;
   }
  
+ 
   selectedData.unshift(capitalizedHeaders);
  
   const csvContent = selectedData.map(row => row.join(',')).join('\n');
@@ -1678,119 +1712,119 @@ const exportCSV = () => {
    
  
    
-return (
-  <div className="dashboard__content">
-    <section className="page-title-dashboard">
-    <div>
+    return (
+      <div className="dashboard__content">
+        <section className="page-title-dashboard">
         <div>
-        <button
-            className="export-buttonn"
-            onClick={exportCSV}
-            style={{
-              position: "absolute",
-              right: "0",
-              marginRight: "200px",
-              top: "180px",
-              zIndex: 2, // Higher z-index to keep button on top
-            }}
-        >
-            Export CSV
-        </button>
-        </div>
-        
-        <select
-          className="status-select"
-          value={selectedStatus || ""}
-          onChange={handleSelectChange}
-          onFocus={(e) => (e.target.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")}
-          onBlur={(e) => (e.target.style.boxShadow = "none")}
-          style={{
-            position: "absolute",
-            right: "0",
-            marginRight: "25px",
-            top: "180px",
-            marginBottom: "10px",
-            zIndex: 1,
-            padding: "10px", // Add padding for better spacing
-            // border: "1px solid #ccc", // Light border color
-            borderRadius: "9px", // Rounded corner
-            cursor: "pointer", // Pointer cursor for better UX
-            transition: "box-shadow 0.3s ease", // Transition for focus effect
-          }}
-        >
-        <option value="" disabled hidden>
-            Change Status
-        </option>
-        <option value="Screening">Screening</option>
-        <option value="Shortlisted">Shortlisted</option>
-        <option value="Interviewing">Interviewing</option>
-        <option value="Selected">Selected</option>
-        <option value="Rejected">Rejected</option>
-        </select>
-        </div>
-      <div className="themes-container">
-        <div className="row">
-          <div className="col-lg-9 col-md-9">
-            <div className="title-dashboard">
-              
-              
-              <div className="title-dash flex2"><BackButton />All  Applicants : <h5 className="title-dash flex2"> {count}</h5>
-             
-              </div>
-                {/* Filter icon button */}
-                <button
-                className="filter-icon-button"
-                onClick={() => setShowFilters(!showFilters)}
-                style={{ 
-                  color: '#0A58CA', 
-                  backgroundColor: 'transparent', 
-                  border: 'none', 
-                  cursor: 'pointer',
-                  textDecoration: 'underline',  /* Adds underline to the text */
-                  display: 'flex', 
-                  position: 'absolute', 
-                  alignItems: 'center',
-                  paddingTop: '10px',
-                  
+            <div>
+            <button
+                className="export-buttonn"
+                onClick={exportCSV}
+                style={{
+                  position: "absolute",
+                  right: "0",
+                  marginRight: "200px",
+                  top: "180px",
+                  zIndex: 2, // Higher z-index to keep button on top
                 }}
-              >
-                Filter
-                <img src={filtericon} className="external-link-image" style={{ marginLeft: '1px', height: '20px' }} />
-              </button>
-              <div className="row">
-                <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'900px' }}>
-                  <div className="controls" style={{ display: 'flex', gap: '10px' }}>
-                    {/* <button className="export-buttonn" onClick={exportCSV}>
-                      ExportCSV
-                    </button>
-                    <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
-                      <option value="" disabled>
-                        Change Status
-                      </option>
-                      <option value="Screening">Screening</option>
-                      <option value="Shortlisted">Shortlisted</option>
-                      <option value="Interviewing">Interviewing</option>
-                      <option value="Selected">Selected</option>
-                      <option value="Rejected">Rejected</option>
-                    </select> */}
+            >
+                Export CSV
+            </button>
+            </div>
+            
+            <select
+              className="status-select"
+              value={selectedStatus || ""}
+              onChange={handleSelectChange}
+              onFocus={(e) => (e.target.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)")}
+              onBlur={(e) => (e.target.style.boxShadow = "none")}
+              style={{
+                position: "absolute",
+                right: "0",
+                marginRight: "25px",
+                top: "180px",
+                marginBottom: "10px",
+                zIndex: 1,
+                padding: "10px", // Add padding for better spacing
+                // border: "1px solid #ccc", // Light border color
+                borderRadius: "9px", // Rounded corner
+                cursor: "pointer", // Pointer cursor for better UX
+                transition: "box-shadow 0.3s ease", // Transition for focus effect
+              }}
+            >
+            <option value="" disabled hidden>
+                Change Status
+            </option>
+            <option value="Screening">Screening</option>
+            <option value="Shortlisted">Shortlisted</option>
+            <option value="Interviewing">Interviewing</option>
+            <option value="Selected">Selected</option>
+            <option value="Rejected">Rejected</option>
+            </select>
+            </div>
+          <div className="themes-container">
+            <div className="row">
+              <div className="col-lg-9 col-md-9">
+                <div className="title-dashboard">
+                  
+                  
+                  <div className="title-dash flex2"><BackButton />Applicants : <h5 className="title-dash flex2"> {count}</h5>
+                 
                   </div>
+                    {/* Filter icon button */}
+                    <button
+                    className="filter-icon-button"
+                    onClick={() => setShowFilters(!showFilters)}
+                    style={{ 
+                      color: '#0A58CA', 
+                      backgroundColor: 'transparent', 
+                      border: 'none', 
+                      cursor: 'pointer',
+                      textDecoration: 'underline',  /* Adds underline to the text */
+                      display: 'flex', 
+                      position: 'absolute', 
+                      alignItems: 'center',
+                      paddingTop: '10px',
+                      
+                    }}
+                  >
+                    Filter
+                    <img src={filtericon} className="external-link-image" style={{ marginLeft: '1px', height: '20px' }} />
+                  </button>
+                  <div className="row">
+                    <div className="col-lg-12 col-md-12" style={{ display: 'flex', justifyContent: 'flex-end', paddingLeft:'900px' }}>
+                      <div className="controls" style={{ display: 'flex', gap: '10px' }}>
+                        {/* <button className="export-buttonn" onClick={exportCSV}>
+                          ExportCSV
+                        </button>
+                        <select className="status-select" value={selectedStatus} onChange={handleSelectChange}>
+                          <option value="" disabled>
+                            Change Status
+                          </option>
+                          <option value="Screening">Screening</option>
+                          <option value="Shortlisted">Shortlisted</option>
+                          <option value="Interviewing">Interviewing</option>
+                          <option value="Selected">Selected</option>
+                          <option value="Rejected">Rejected</option>
+                        </select> */}
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
+              
             </div>
           </div>
-          
-        </div>
-      </div>
-    </section>
+        </section>
+ 
+      
 
-  
-
-  <div className={`filter-menu ${showFilters ? 'show' : ''}`}>
-  
-    <div className="table-container">
-    
-    <h3 className="filter">
+      <div className={`filter-menu ${showFilters ? 'show' : ''}`}>
+      
+        <div className="table-container">
+        
+        <h3 className="filter">
               
               <span
             style={{ cursor: 'pointer', marginRight: '16px', marginLeft: '-40px', position: 'relative'
@@ -1804,156 +1838,156 @@ return (
                style={{ height: '40px', width:'24px', marginTop: '7px' }} />
             </span>
              Filters </h3>
-            
-            {/* Filter section */}
-            <div className="filter-option">
-<div className="checkbox-label">
-<input
-  type="checkbox"
-  id="nameFilter"
-  checked={filterOptions.nameFilter}
-  onChange={handleCheckboxChange}
-  style={{ width: 'auto' }} 
-/>
-<label className="label" htmlFor="nameFilter">Name</label>
-</div>
-{filterOptions.nameFilter && (
-<div className="filter-details">
-  <div className="popup">
-    <div className="dropdown-container1">
-      <select
-        id="nameFilterSelect"
-        value={filterOptions.nameFilterSelect}
-        onChange={handleSelectChange1}
-      >
-        <option value="is">is</option>
-        <option value="contains">contains</option>
-      </select>
-    </div>
-    {/* <input
-      type="text"
-      id="name"
-      placeholder="Enter value"
-      onChange={handleTextFieldChange}
-      style={{ width: '100px', height: '20px' }}
-    /> */}
-            <Typeahead
-              id="name"  // Assign an ID to distinguish between inputs
-              onChange={(selected) => {
-                // Handle the case when a user selects an item
-                handleTextFieldChange("name", selected); 
-              }}
-              onInputChange={(text) => {
-                // Handle the case when a user is typing
-                handleTextFieldChange("name", text);
-              }}
-              options={availableNameSuggestions}  // Options for typeahead
-              placeholder="Type to search..."
-            />
-                    
-                  </div>
-                </div>
-              )}
-             </div>
-
+                
+                {/* Filter section */}
                 <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="emailFilter"
-                      checked={filterOptions.emailFilter}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="emailFilter">Email</label>
-                  </div>
-                  {filterOptions.emailFilter && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="emailFilterSelect"
-                          value={filterOptions.emailFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                        </select>
+  <div className="checkbox-label">
+    <input
+      type="checkbox"
+      id="nameFilter"
+      checked={filterOptions.nameFilter}
+      onChange={handleCheckboxChange}
+      style={{ width: 'auto' }} 
+    />
+    <label className="label" htmlFor="nameFilter">Name</label>
+  </div>
+  {filterOptions.nameFilter && (
+    <div className="filter-details">
+      <div className="popup">
+        <div className="dropdown-container1">
+          <select
+            id="nameFilterSelect"
+            value={filterOptions.nameFilterSelect}
+            onChange={handleSelectChange1}
+          >
+            <option value="is">is</option>
+            <option value="contains">contains</option>
+          </select>
+        </div>
+        {/* <input
+          type="text"
+          id="name"
+          placeholder="Enter value"
+          onChange={handleTextFieldChange}
+          style={{ width: '100px', height: '20px' }}
+        /> */}
+                <Typeahead
+                  id="name"  // Assign an ID to distinguish between inputs
+                  onChange={(selected) => {
+                    // Handle the case when a user selects an item
+                    handleTextFieldChange("name", selected); 
+                  }}
+                  onInputChange={(text) => {
+                    // Handle the case when a user is typing
+                    handleTextFieldChange("name", text);
+                  }}
+                  options={availableNameSuggestions}  // Options for typeahead
+                  placeholder="Type to search..."
+                />
+                        
                       </div>
-                      {/* <input
-                        type="text"
-                        id="email"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="email"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("email", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("email", text);
-                        }}
-                        options={availableEmailSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
                     </div>
                   )}
-                </div>
+                 </div>
 
-
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="mobileFilter"
-                      checked={filterOptions.mobileFilter}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="mobileFilter">Mobile Number</label>
-                  </div>
-                  {filterOptions.mobileFilter && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="mobileFilterSelect"
-                          value={filterOptions.mobileFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                        </select>
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="emailFilter"
+                          checked={filterOptions.emailFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="emailFilter">Email</label>
                       </div>
-                      {/* <input
-                        type="text"
-                        id="mobileNumber"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="mobileNumber"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("mobileNumber", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("mobileNumber", text);
-                        }}
-                        options={availableMobileSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
+                      {filterOptions.emailFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="emailFilterSelect"
+                              value={filterOptions.emailFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="email"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="email"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("email", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("email", text);
+                            }}
+                            options={availableEmailSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
                     </div>
-                    </div>
-                  )}
-                </div>
 
-                <div className="filter-option">
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="mobileFilter"
+                          checked={filterOptions.mobileFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="mobileFilter">Mobile Number</label>
+                      </div>
+                      {filterOptions.mobileFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="mobileFilterSelect"
+                              value={filterOptions.mobileFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="mobileNumber"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="mobileNumber"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("mobileNumber", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("mobileNumber", text);
+                            }}
+                            options={availableMobileSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
                       <div className="checkbox-label">
                         <input
                           type="checkbox"
@@ -2005,984 +2039,988 @@ return (
                       )}
                     </div>
 
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="statusFilter"
-                      checked={filterOptions.statusFilter}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="statusFilter">&nbsp;Application Status</label>
-                  </div>
-                  {filterOptions.statusFilter && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        {/* <select
-                          id="statusFilterSelect"
-                          value={filterOptions.statusFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                        </select> */}
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="applicantStatus"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="applicantStatus"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("applicantStatus", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("applicantStatus", text);
-                        }}
-                        options={validStatusSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="preScreenedCondition"
-                      checked={filterOptions.preScreenedCondition}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="preScreenedCondition">&nbsp;Pre-screened</label>
-                  </div>
-                </div>
-
-                 
-                {selectedColumns.includes("Experience")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="experienceFilter"
-                      checked={filterOptions.experienceFilter}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="experienceFilter">&nbsp;Experience</label>
-                  </div>
-                  {filterOptions.experienceFilter && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="experienceFilterSelect"
-                          value={filterOptions.experienceFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="greaterThan">greaterThan</option>
-                          <option value="lessThan">lessThan</option>
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="minimumExperience"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="minimumExperience"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("minimumExperience", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("minimumExperience", text);
-                        }}
-                        options={uniqueExpSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Qualification")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="minimumQualification"
-                      checked={filterOptions.minimumQualification}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="minimumQualification">&nbsp;Qualification</label>
-                  </div>
-                  {filterOptions.minimumQualification && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="minimumQualificationSelect"
-                          value={filterOptions.minimumQualificationSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="minimumQualificationInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="minimumQualificationInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("minimumQualificationInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("minimumQualificationInput", text);
-                        }}
-                        options={uniqueQualSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Speclization")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="specialization"
-                      checked={filterOptions.specialization}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="specialization">&nbsp;Specialization</label>
-                  </div>
-                  {filterOptions.specialization && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="specializationSelect"
-                          value={filterOptions.specializationSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="specializationInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="specializationInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("specializationInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("specializationInput", text);
-                        }}
-                        options={uniqueSpecSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Location")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="preferredJobLocations"
-                      checked={filterOptions.preferredJobLocations}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="preferredJobLocations">&nbsp;Preferred-location</label>
-                  </div>
-                  {filterOptions.preferredJobLocations && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="preferredJobLocationsFilterSelect"
-                          value={filterOptions.preferredJobLocationsFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="preferredJobLocationsInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("preferredJobLocationsInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("preferredJobLocationsInput", text);
-                        }}
-                        options={validPreferredLocSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Job Match%")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="matchPercentage"
-                      checked={filterOptions.matchPercentage}
-                      onChange={handleCheckboxChange3}
-                    />
-                    <label className="label" htmlFor="matchPercentage">&nbsp; Job Match %</label>
-                  </div>
-                  {filterOptions.matchPercentage && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="matchPercentageFilterSelect"
-                          value={filterOptions.matchPercentageFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          
-                            <option value="ascending">Ascending</option>
-                            <option value="descending">Descending</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      {/* <Typeahead
-                        id="matchPercentageInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("matchPercentageInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("matchPercentageInput", text);
-                        }}
-                        options={validJobMatchSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      /> */}
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Matching Skills")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="matchedSkills"
-                      checked={filterOptions.matchedSkills}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="matchedSkills">&nbsp;Matching skills</label>
-                  </div>
-                  {filterOptions.matchedSkills && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="matchedSkillsFilterSelect"
-                          value={filterOptions.matchedSkillsFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="matchedSkillsInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("matchedSkillsInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("matchedSkillsInput", text);
-                        }}
-                        options={validJobMatchSkillSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-                
-                {selectedColumns.includes("Missing Skills")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="nonMatchedSkills"
-                      checked={filterOptions.nonMatchedSkills}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="nonMatchedSkills">&nbsp;Missing skills</label>
-                  </div>
-                  {filterOptions.nonMatchedSkills && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="nonMatchedSkillsFilterSelect"
-                          value={filterOptions.nonMatchedSkillsFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="nonMatchedSkillsInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("nonMatchedSkillsInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("nonMatchedSkillsInput", text);
-                        }}
-                        options={validNonMatchSkillSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-        
-                {selectedColumns.includes("Additional Skills")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="additionalSkills"
-                      checked={filterOptions.additionalSkills}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="additionalSkills">&nbsp;Additional skills</label>
-                  </div>
-                  {filterOptions.additionalSkills && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="additionalSkillsFilterSelect"
-                          value={filterOptions.additionalSkillsFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="additionalSkillsInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("additionalSkillsInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("additionalSkillsInput", text);
-                        }}
-                        options={validAdditonalSkillSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-                
-                {selectedColumns.includes("Tested Skills")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="applicantSkillBadges"
-                      checked={filterOptions.applicantSkillBadges}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label className="label" htmlFor="applicantSkillBadges">&nbsp;Tested skills</label>
-                  </div>
-                  {filterOptions.applicantSkillBadges && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="applicantSkillBadgesFilterSelect"
-                          value={filterOptions.applicantSkillBadgesFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="is">is</option>
-                          <option value="contains">contains</option>
-                          
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      <Typeahead
-                        id="applicantSkillBadgesInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("applicantSkillBadgesInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("applicantSkillBadgesInput", text);
-                        }}
-                        options={validSkillBadgesSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      />
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Aptitude Score")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="apptitudeScore"
-                      checked={filterOptions.apptitudeScore}
-                      onChange={handleCheckboxChange3}
-                    />
-                    <label className="label" htmlFor="apptitudeScore">&nbsp;Aptitude score</label>
-                  </div>
-                  {filterOptions.apptitudeScore && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="apptitudeScoreFilterSelect"
-                          value={filterOptions.apptitudeScoreFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="ascending">Ascending</option>
-                          <option value="descending">Descending</option>
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="apptitudeScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      {/* <Typeahead
-                        id="apptitudeScoreInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("apptitudeScoreInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("apptitudeScoreInput", text);
-                        }}
-                        options={validAptiSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      /> */}
-                    </div>
-                    </div>
-                  )}
-                </div>}
-
-                {selectedColumns.includes("Technical Score")&&
-                <div className="filter-option">
-                  <div className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      id="technicalScore"
-                      checked={filterOptions.technicalScore}
-                      onChange={handleCheckboxChange3}
-                    />
-                    <label className="label" htmlFor="technicalScore">&nbsp;Technical score</label>
-                  </div>
-                  {filterOptions.technicalScore && (
-                    <div className="filter-details">
-                      <div className="popup">
-                      <div className="dropdown-container1">
-                        <select
-                          id="technicalScoreFilterSelect"
-                          value={filterOptions.technicalScoreFilterSelect}
-                          onChange={handleSelectChange1}
-                        >
-                          <option value="ascending">Ascending</option>
-                          <option value="descending">Descending</option>
-                        </select>
-                      </div>
-                      {/* <input
-                        type="text"
-                        id="technicalScoreInput"
-                        placeholder="Enter value"
-                        onChange={handleTextFieldChange}
-                        style={{ width: '100px', height: '20px' }}
-                      /> */}
-                      {/* <Typeahead
-                        id="technicalScoreInput"  // Assign an ID to distinguish between inputs
-                        onChange={(selected) => {
-                          // Handle the case when a user selects an item
-                          handleTextFieldChange("technicalScoreInput", selected); 
-                        }}
-                        onInputChange={(text) => {
-                          // Handle the case when a user is typing
-                          handleTextFieldChange("technicalScoreInput", text);
-                        }}
-                        options={validTeciSuggestions}  // Options for typeahead
-                        placeholder="Type to search..."
-                      /> */}
-                    </div>
-                    </div>
-                  )}
-                </div>}
-                
-                <div>
-                  <button className="apply-button1" onClick={applyFilter}>Apply</button>
-                  <button className="reset-button1" onClick={resetFilter}>Reset</button>
-                </div>
-                {/* Error message */}
-  {showError && errorMessage &&(
-    <span style={{
-      color: '#F83838',
-      fontFamily: 'Plus Jakarta Sans',
-      fontSize: '14px',
-      fontWeight: '400',
-      lineHeight: '25px',
-      borderRadius: '8px',
-      //background: '#FFF2F2',
-      padding: '10px',
-      marginLeft: '-35px',
-      textAlign:'center'
-    }}>
-      {errorMessage}
-    </span>
-  )}
-          </div>
-          
-          </div>
-          {showFilters && <div className="backdrop"></div>}
-    <section className="flat-dashboard-setting bg-white">
-      <div className="themes-container">
-
-        <div className="row">
-        
- 
-          <div className="col-lg-12 col-md-12" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
-            <div className="profile-setting" style={{width:'100%'}}>
-            <div className="table-container-wrapper">
-              <div className="table-container">
-              { isLoading ? (
-              <div style={{paddingLeft:'10px'}}>Loading...</div> // Display a spinner or loading text
-                  ) : Array.isArray(applicants) && applicants.length === 0 ? (
-              <p style={{paddingLeft:'10px'}}>No Applicants are available.</p> // Display when there are no applicants
-                  ) : (
-                <table ref={tableref} className="responsive-table">
-                  <thead id='tableHeader'>
-                    <tr>
-                      <th className='No'>
+                    <div className="filter-option">
+                      <div className="checkbox-label">
                         <input
                           type="checkbox"
-                          onChange={handleSelectAll}
-                          checked={selectedApplicants.length === currentRecords.length} 
+                          id="statusFilter"
+                          checked={filterOptions.statusFilter}
+                          onChange={handleCheckboxChange}
                         />
-                      </th>
-             
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Mobile Number</th>
-                      <th>Job Title</th>
-                      <th>Applicant Status</th>
-                      {selectedColumns.map((column, index) => (
-                        <th key={index}>
-                          {column.replace(/([A-Z])/g, ' $1').trim()}
-                        </th>
-                      ))}
-                      <th>
-                        Resume
-                      </th>
-                      <th>
-                      <div >
-                        <button onClick={toggleSidebar}   style={{
-marginLeft: '-30px',
- borderLeft: '2px solid red',  // Customize the width and color as needed
-border: 'none', // Remove borders from other sides
-backgroundcolor: 'gray', //
-}}>
-                           
-                           <i class="fa fa-sliders" aria-hidden="true" style={{
-marginRight: '8px',
-position: 'relative',
-left: '-10px',
-borderLeft: '2px solid grey',
-paddingLeft: '5px', // Adjust the padding to create space between the border and icon
-top: '3px',
-}}></i>
-                        </button>
-
-                        <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-                          <h3>
-                            <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} onClick={toggleSidebar}/>
-                            Manage Columns
-                          </h3><br/>
-                         
-                          <ul style={{ marginLeft: '50px' }}>
-                            {Object.keys(selectedCheckboxes).map((key, index) => (
-                              <li key={index} style={{ marginBottom: '10px', position: 'relative' }}>
-                                <input
-                                  type="checkbox"
-                                  name={key}
-                                  checked={selectedCheckboxes[key]}
-                                  onChange={handleCheckboxs}
-                                />
-                                <span>
-                                  {key.replace(/([A-Z])/g, ' $1').trim()}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                          <div className='buttons'>
-                          <button id="apply-button2" onClick={handleApply} className="apply-button2">Apply</button>
-                          <div className="reset2-link" onClick={reset}>Reset</div>
-                          </div>
-                          {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '10px' }}>{errorMessage}</h5>}
-                        </div>
-                        {isOpen && <div className="backdrop"></div>}
+                        <label className="label" htmlFor="statusFilter">&nbsp;Application Status</label>
                       </div>
-                      </th>
-                      
+                      {filterOptions.statusFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            {/* <select
+                              id="statusFilterSelect"
+                              value={filterOptions.statusFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select> */}
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="applicantStatus"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="applicantStatus"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("applicantStatus", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("applicantStatus", text);
+                            }}
+                            options={validStatusSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="preScreenedCondition"
+                          checked={filterOptions.preScreenedCondition}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="preScreenedCondition">&nbsp;Pre-screened</label>
+                      </div>
+                    </div>
+
                      
-                     
-                     
-                    </tr>
-                  </thead>
-                  <tbody id="applicantTableBody">
-                  {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
-                      <tr
-                      key={application.applyjobid}
-                      onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`)} // Use navigate for row click
-                      style={{
-                        backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
-                        cursor: "pointer",
-                        transition: "background-color 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!selectedApplicants.includes(application.applyjobid)) {
-                          e.currentTarget.style.backgroundColor = "#F6F6F6"; 
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent";
-                      }}
-                    >
-                          <td onClick={(e) => e.stopPropagation()}>
+                    {selectedColumns.includes("Experience")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="experienceFilter"
+                          checked={filterOptions.experienceFilter}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="experienceFilter">&nbsp;Experience</label>
+                      </div>
+                      {filterOptions.experienceFilter && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="experienceFilterSelect"
+                              value={filterOptions.experienceFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="greaterThan">greaterThan</option>
+                              <option value="lessThan">lessThan</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="minimumExperience"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="minimumExperience"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("minimumExperience", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("minimumExperience", text);
+                            }}
+                            options={availableExpSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Qualification")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="minimumQualification"
+                          checked={filterOptions.minimumQualification}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="minimumQualification">&nbsp;Qualification</label>
+                      </div>
+                      {filterOptions.minimumQualification && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="minimumQualificationSelect"
+                              value={filterOptions.minimumQualificationSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="minimumQualificationInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="minimumQualificationInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("minimumQualificationInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("minimumQualificationInput", text);
+                            }}
+                            options={availableQualSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Speclization")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="specialization"
+                          checked={filterOptions.specialization}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="specialization">&nbsp;Specialization</label>
+                      </div>
+                      {filterOptions.specialization && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="specializationSelect"
+                              value={filterOptions.specializationSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="specializationInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="specializationInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("specializationInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("specializationInput", text);
+                            }}
+                            options={availableSpecSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Location")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="preferredJobLocations"
+                          checked={filterOptions.preferredJobLocations}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="preferredJobLocations">&nbsp;Preferred-location</label>
+                      </div>
+                      {filterOptions.preferredJobLocations && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="preferredJobLocationsFilterSelect"
+                              value={filterOptions.preferredJobLocationsFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="preferredJobLocationsInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("preferredJobLocationsInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("preferredJobLocationsInput", text);
+                            }}
+                            options={validPreferredLocSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Job Match%")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="matchPercentage"
+                          checked={filterOptions.matchPercentage}
+                          onChange={handleCheckboxChange3}
+                        />
+                        <label className="label" htmlFor="matchPercentage">&nbsp; Job Match %</label>
+                      </div>
+                      {filterOptions.matchPercentage && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="matchPercentageFilterSelect"
+                              value={filterOptions.matchPercentageFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              
+                                <option value="ascending">Ascending</option>
+                                <option value="descending">Descending</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          {/* <Typeahead
+                            id="matchPercentageInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("matchPercentageInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("matchPercentageInput", text);
+                            }}
+                            options={validJobMatchSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          /> */}
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Matching Skills")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="matchedSkills"
+                          checked={filterOptions.matchedSkills}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="matchedSkills">&nbsp;Matching skills</label>
+                      </div>
+                      {filterOptions.matchedSkills && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="matchedSkillsFilterSelect"
+                              value={filterOptions.matchedSkillsFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="matchedSkillsInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("matchedSkillsInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("matchedSkillsInput", text);
+                            }}
+                            options={validJobMatchSkillSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+                    
+                    {selectedColumns.includes("Missing Skills")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="nonMatchedSkills"
+                          checked={filterOptions.nonMatchedSkills}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="nonMatchedSkills">&nbsp;Missing skills</label>
+                      </div>
+                      {filterOptions.nonMatchedSkills && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="nonMatchedSkillsFilterSelect"
+                              value={filterOptions.nonMatchedSkillsFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="nonMatchedSkillsInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("nonMatchedSkillsInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("nonMatchedSkillsInput", text);
+                            }}
+                            options={validNonMatchSkillSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+            
+                    {selectedColumns.includes("Additional Skills")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="additionalSkills"
+                          checked={filterOptions.additionalSkills}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="additionalSkills">&nbsp;Additional skills</label>
+                      </div>
+                      {filterOptions.additionalSkills && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="additionalSkillsFilterSelect"
+                              value={filterOptions.additionalSkillsFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="additionalSkillsInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("additionalSkillsInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("additionalSkillsInput", text);
+                            }}
+                            options={validAdditonalSkillSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+                    
+                    {selectedColumns.includes("Tested Skills")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="applicantSkillBadges"
+                          checked={filterOptions.applicantSkillBadges}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label className="label" htmlFor="applicantSkillBadges">&nbsp;Tested skills</label>
+                      </div>
+                      {filterOptions.applicantSkillBadges && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="applicantSkillBadgesFilterSelect"
+                              value={filterOptions.applicantSkillBadgesFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="is">is</option>
+                              <option value="contains">contains</option>
+                              
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          <Typeahead
+                            id="applicantSkillBadgesInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("applicantSkillBadgesInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("applicantSkillBadgesInput", text);
+                            }}
+                            options={validSkillBadgesSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          />
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+ 
+                    {selectedColumns.includes("Aptitude Score")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="apptitudeScore"
+                          checked={filterOptions.apptitudeScore}
+                          onChange={handleCheckboxChange3}
+                        />
+                        <label className="label" htmlFor="apptitudeScore">&nbsp;Aptitude score</label>
+                      </div>
+                      {filterOptions.apptitudeScore && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="apptitudeScoreFilterSelect"
+                              value={filterOptions.apptitudeScoreFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="ascending">Ascending</option>
+                              <option value="descending">Descending</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="apptitudeScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          {/* <Typeahead
+                            id="apptitudeScoreInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("apptitudeScoreInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("apptitudeScoreInput", text);
+                            }}
+                            options={validAptiSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          /> */}
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+
+                    {selectedColumns.includes("Technical Score")&&
+                    <div className="filter-option">
+                      <div className="checkbox-label">
+                        <input
+                          type="checkbox"
+                          id="technicalScore"
+                          checked={filterOptions.technicalScore}
+                          onChange={handleCheckboxChange3}
+                        />
+                        <label className="label" htmlFor="technicalScore">&nbsp;Technical score</label>
+                      </div>
+                      {filterOptions.technicalScore && (
+                        <div className="filter-details">
+                          <div className="popup">
+                          <div className="dropdown-container1">
+                            <select
+                              id="technicalScoreFilterSelect"
+                              value={filterOptions.technicalScoreFilterSelect}
+                              onChange={handleSelectChange1}
+                            >
+                              <option value="ascending">Ascending</option>
+                              <option value="descending">Descending</option>
+                            </select>
+                          </div>
+                          {/* <input
+                            type="text"
+                            id="technicalScoreInput"
+                            placeholder="Enter value"
+                            onChange={handleTextFieldChange}
+                            style={{ width: '100px', height: '20px' }}
+                          /> */}
+                          {/* <Typeahead
+                            id="technicalScoreInput"  // Assign an ID to distinguish between inputs
+                            onChange={(selected) => {
+                              // Handle the case when a user selects an item
+                              handleTextFieldChange("technicalScoreInput", selected); 
+                            }}
+                            onInputChange={(text) => {
+                              // Handle the case when a user is typing
+                              handleTextFieldChange("technicalScoreInput", text);
+                            }}
+                            options={validTeciSuggestions}  // Options for typeahead
+                            placeholder="Type to search..."
+                          /> */}
+                        </div>
+                        </div>
+                      )}
+                    </div>}
+                    
+                    <div>
+                      <button className="apply-button1" onClick={applyFilter}>Apply</button>
+                      <button className="reset-button1" onClick={resetFilter}>Reset</button>
+                    </div>
+                    {/* Error message */}
+      {showError && errorMessage &&(
+        <span style={{
+          color: '#F83838',
+          fontFamily: 'Plus Jakarta Sans',
+          fontSize: '14px',
+          fontWeight: '400',
+          lineHeight: '25px',
+          borderRadius: '8px',
+          //background: '#FFF2F2',
+          padding: '10px',
+          marginLeft: '-35px',
+          textAlign:'center'
+        }}>
+          {errorMessage}
+        </span>
+      )}
+              </div>
+              
+              </div>
+              {showFilters && <div className="backdrop"></div>}
+        <section className="flat-dashboard-setting bg-white">
+          <div className="themes-container">
+
+            <div className="row">
+            
+     
+              <div className="col-lg-12 col-md-12" style={{ paddingLeft: '0px', paddingRight: '0px' }}>
+                <div className="profile-setting">
+                <div className="table-container-wrapper">
+                  <div className="table-container">
+                  { isLoading ? (
+                  <div style={{paddingLeft:'10px'}}>Loading...</div> // Display a spinner or loading text
+                      ) : Array.isArray(applicants) && applicants.length === 0 ? (
+                  <p style={{paddingLeft:'10px'}}>No Applicants are available.</p> // Display when there are no applicants
+                      ) : (
+                    <table ref={tableref} className="responsive-table">
+                      <thead id='tableHeader'>
+                        <tr>
+                          <th className='No'>
                             <input
                               type="checkbox"
-                              value={application.applyjobid}
-                              checked={selectedApplicants.includes(application.applyjobid)}
-                              onChange={() => handleCheckboxChange2(application.applyjobid)}
-                              name={`applicantCheckbox-${application.applyjobid}`}
+                              onChange={handleSelectAll}
+                              checked={selectedApplicants.length === currentRecords.length} 
                             />
-                          </td>
+                          </th>
                  
-                        <td>
-<Link
-to={
-application.preScreenedCondition === 'PreScreened'
-  ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
-  : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
-}
-style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Mobile Number</th>
+                          <th>Job Title</th>
+                          <th>Applicant Status</th>
+                          {selectedColumns.map((column, index) => (
+                            <th key={index}>
+                              {column.replace(/([A-Z])/g, ' $1').trim()}
+                            </th>
+                          ))}
+                          <th>
+                            Resume
+                          </th>
+                          <th>
+                          <div >
+                            <button onClick={toggleSidebar}   style={{
+    marginLeft: '-30px',
+     borderLeft: '2px solid red',  // Customize the width and color as needed
+    border: 'none', // Remove borders from other sides
+    backgroundcolor: 'gray', //
+  }}>
+                               
+                               <i class="fa fa-sliders" aria-hidden="true" style={{
+    marginRight: '8px',
+    position: 'relative',
+    left: '-10px',
+    borderLeft: '2px solid grey',
+    paddingLeft: '5px', // Adjust the padding to create space between the border and icon
+    top: '3px',
+  }}></i>
+                            </button>
+ 
+                            <div className={`sidebar ${isOpen ? 'open' : ''}`}>
+                              <h3>
+                                <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} 
+                                onClick={() => { 
+                                  toggleSidebar();
+                                  // toggleSidebar1();  
+                                }} />
+                                Manage Columns
+                              </h3><br/>
+                             
+                              <ul style={{ marginLeft: '50px' }}>
+                                {Object.keys(selectedCheckboxes).map((key, index) => (
+                                  <li key={index} style={{ marginBottom: '10px', position: 'relative' }}>
+                                    <input
+                                      type="checkbox"
+                                      name={key}
+                                      checked={selectedCheckboxes[key]}
+                                      onChange={handleCheckboxs}
+                                    />
+                                    <span>
+                                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                              <div className='buttons'>
+                              <button id="apply-button2" onClick={handleApply} className="apply-button2">Apply</button>
+                              <div className="reset2-link" onClick={reset}>Reset</div>
+                              </div>
+                              {errorMessage && <h5 style={{ color: 'red', textAlign: 'center',marginLeft:'10px', marginTop: '10px' }}>{errorMessage}</h5>}
+                            </div>
+                            {isOpen && <div className="backdrop"></div>}
+                          </div>
+                          </th>
+                          
+                         
+                         
+                         
+                        </tr>
+                      </thead>
+                      <tbody id="applicantTableBody">
+                      {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
+                          <tr
+                          key={application.applyjobid}
+                          //onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`)} // Use navigate for row click
+                          style={{
+                            backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
+                            cursor: "pointer",
+                            transition: "background-color 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!selectedApplicants.includes(application.applyjobid)) {
+                              e.currentTarget.style.backgroundColor = "#F6F6F6"; 
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent";
+                          }}
+                        >
+                              <td onClick={(e) => e.stopPropagation()}>
+                                <input
+                                  type="checkbox"
+                                  value={application.applyjobid}
+                                  checked={selectedApplicants.includes(application.applyjobid)}
+                                  onChange={() => handleCheckboxChange2(application.applyjobid)}
+                                  name={`applicantCheckbox-${application.applyjobid}`}
+                                />
+                              </td>
+                     
+                            <td>
+  <Link
+  to={
+    application.preScreenedCondition === 'PreScreened'
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+      : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+  }
+  style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
 >
-{application.name}
+    {application.name}
 
-{application.preScreenedCondition === 'PreScreened' && (
-  <div style={{ display: 'inline-block', position: 'relative' }}>
-    <img
-      src={verified123}
-      className="external-link-image"
-      style={{
-        marginLeft: '1px',
-        width: '20px',
-        height: '20.187px',
-        flexShrink: 0
-      }}
-      onMouseEnter={() => setTooltipVisibleId(index)}  // Show tooltip for this applicant
-      onMouseLeave={() => setTooltipVisibleId(null)}  // Hide tooltip on mouse leave
-    />
-
-    {/* Tooltip */}
-    {tooltipVisibleId === index && (  // Only show tooltip if hovered
-      <div
-        style={{
-          position: 'absolute',
-          top: index === currentRecords.length - 1 ? '-60px' : '25px',
-          left: '0',
-          width: '600px',
-          height: '62.226px',
-          borderRadius: '8px',
-          background: '#FFF',
-          boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)',
-          zIndex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          padding: '10px',
-          boxSizing: 'border-box',
-        }}
-      >
+    {application.preScreenedCondition === 'PreScreened' && (
+      <div style={{ display: 'inline-block', position: 'relative' }}>
         <img
           src={verified123}
-          alt="Pre-screened badge"
+          className="external-link-image"
           style={{
+            marginLeft: '1px',
             width: '20px',
             height: '20.187px',
-            marginRight: '20px',
-            marginLeft: '5px',
+            flexShrink: 0
           }}
+          onMouseEnter={() => setTooltipVisibleId(index)}  // Show tooltip for this applicant
+          onMouseLeave={() => setTooltipVisibleId(null)}  // Hide tooltip on mouse leave
         />
-        <span style={{ whiteSpace: 'normal', color: 'black' }}>
-          Pre-screened badges are issued to candidates who scored more than 70% in <br /> both Aptitude and Technical tests
-        </span>
+
+        {/* Tooltip */}
+        {tooltipVisibleId === index && (  // Only show tooltip if hovered
+          <div
+            style={{
+              position: 'absolute',
+              top: index === currentRecords.length - 1 ? '-60px' : '25px',
+              left: '0',
+              width: '600px',
+              height: '62.226px',
+              borderRadius: '8px',
+              background: '#FFF',
+              boxShadow: '0px 4px 15px 0px rgba(0, 0, 0, 0.15)',
+              zIndex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              padding: '10px',
+              boxSizing: 'border-box',
+            }}
+          >
+            <img
+              src={verified123}
+              alt="Pre-screened badge"
+              style={{
+                width: '20px',
+                height: '20.187px',
+                marginRight: '20px',
+                marginLeft: '5px',
+              }}
+            />
+            <span style={{ whiteSpace: 'normal', color: 'black' }}>
+              Pre-screened badges are issued to candidates who scored more than 70% in <br /> both Aptitude and Technical tests
+            </span>
+          </div>
+        )}
       </div>
     )}
-  </div>
-)}
-</Link>
+  </Link>
 </td>
 
-                        <td>
-                        {application.email}
-                        </td>
-                   
+                            <td>
+                            {application.email}
+                            </td>
                        
-                        <td>
-                        {application.mobilenumber}
-                        </td>
-                        <td>{application.jobTitle}</td>
-                        <td>
-                            <div style={{
-                              display: 'inline-flex',
-                              justifyContent: 'flex-start',
-                              alignItems: 'center',
-                              gap: '10px',
-                              borderRadius: '14px',
-                              background: (() => {
-                                switch (application.applicantStatus) {
-                                  case 'Shortlisted':
-                                    return '#DBFAEB';
-                                  case 'Selected':
-                                    return '#E5EBFF';
-                                  case 'Rejected':
-                                    return '#FFF3F4';
-                                  case 'Screening':
-                                    return '#EFFFD0';
-                                  case 'Interviewing':
-                                    return '#FFF2E1';
-                                  default:
-                                    return '#F8F8F8'; // Default background for unknown status
-                                }
-                              })(),
-                              color: (() => {
-                                switch (application.applicantStatus) {
-                                  case 'Shortlisted':
-                                    return '#146C43';
-                                  case 'Selected':
-                                    return '#284DCB';
-                                  case 'Rejected':
-                                    return '#B02A37';
-                                  case 'Screening':
-                                    return '#577B0D';
-                                  case 'Interviewing':
-                                    return '#CA6510';
-                                  default:
-                                    return '#000'; // Default color for unknown status
-                                }
-                              })(),
-                              justifyContent: 'flex-start',
-                              padding: '0px 10px' // Add padding inside the content for spacing
-                            }}>
-                              {application.applicantStatus}
-                            </div>
-                          </td>
+                           
+                            <td>
+                            {application.mobilenumber}
+                            </td>
+                            <td>{application.jobTitle}</td>
+                            <td>
+                                <div style={{
+                                  display: 'inline-flex',
+                                  justifyContent: 'flex-start',
+                                  alignItems: 'center',
+                                  gap: '10px',
+                                  borderRadius: '14px',
+                                  background: (() => {
+                                    switch (application.applicantStatus) {
+                                      case 'Shortlisted':
+                                        return '#DBFAEB';
+                                      case 'Selected':
+                                        return '#E5EBFF';
+                                      case 'Rejected':
+                                        return '#FFF3F4';
+                                      case 'Screening':
+                                        return '#EFFFD0';
+                                      case 'Interviewing':
+                                        return '#FFF2E1';
+                                      default:
+                                        return '#F8F8F8'; // Default background for unknown status
+                                    }
+                                  })(),
+                                  color: (() => {
+                                    switch (application.applicantStatus) {
+                                      case 'Shortlisted':
+                                        return '#146C43';
+                                      case 'Selected':
+                                        return '#284DCB';
+                                      case 'Rejected':
+                                        return '#B02A37';
+                                      case 'Screening':
+                                        return '#577B0D';
+                                      case 'Interviewing':
+                                        return '#CA6510';
+                                      default:
+                                        return '#000'; // Default color for unknown status
+                                    }
+                                  })(),
+                                  justifyContent: 'flex-start',
+                                  padding: '0px 10px' // Add padding inside the content for spacing
+                                }}>
+                                  {application.applicantStatus}
+                                </div>
+                              </td>
+ 
+                            {selectedColumns.includes("Experience")&&(<td>{application.experience}</td>)}
+                            {selectedColumns.includes("Qualification")&&(<td>{application.minimumQualification}</td>)}
+                            {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
+                            {selectedColumns.includes("Location")&&(
+                              <td>
+                              {application.preferredJobLocations.length > 3
+                                ? `${application.preferredJobLocations.slice(0, 3).join(", ")} ...`
+                                : application.preferredJobLocations.join(", ")}
+                              </td>)}
 
-                        {selectedColumns.includes("Experience")&&(<td>{application.experience}</td>)}
-                        {selectedColumns.includes("Qualification")&&(<td>{application.minimumQualification}</td>)}
-                        {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
-                        {selectedColumns.includes("Location")&&(
-                          <td>
-                          {application.preferredJobLocations.length > 3
-                            ? `${application.preferredJobLocations.slice(0, 3).join(", ")} ...`
-                            : application.preferredJobLocations.join(", ")}
-                          </td>)}
+                            {selectedColumns.includes("Job Match%") && (
+                              <td>{application.matchPercentage === 0 ? 'N/A' : `${application.matchPercentage}%`}</td>
+                            )}
 
-                        {selectedColumns.includes("Job Match%") && (
-                          <td>{application.matchPercentage === 0 ? 'N/A' : `${application.matchPercentage}%`}</td>
+                            {/* {selectedColumns.includes("Pre-Screened")&&<td>{application.preScreenedCondition}</td>} */}
+                            {selectedColumns.includes("Matching Skills")&&(
+                            <td>
+                              {application.matchedSkills.length === 0
+                              ? "N/A"
+                              :application.matchedSkills.length > 3
+                                ? `${application.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+                                : application.matchedSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+                            )}
+                            {selectedColumns.includes("Missing Skills")&&(
+                            <td>
+                              {application.nonMatchedSkills.length === 0
+                              ? "N/A"
+                              :application.nonMatchedSkills.length > 3
+                                ? `${application.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+                                : application.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+                            )}
+                            {selectedColumns.includes("Additional Skills")&&(<td>
+                              {application.additionalSkills.length === 0
+                              ? "N/A"
+                              :application.additionalSkills.length > 3
+                                ? `${application.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
+                                : application.additionalSkills.map(skill => skill.skillName).join(", ")}
+                            </td>
+                            )}
+                            {selectedColumns.includes("Tested Skills")&&(<td>
+                              {application.applicantSkillBadges && application.applicantSkillBadges.length > 3
+                                ? `${application.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
+                                : application.applicantSkillBadges
+                                  ? application.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
+                                  : "N/A"}
+                            </td>
+                            )}
+                            {selectedColumns.includes("Aptitude Score") && (
+                              <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
+                            )}
+                            {selectedColumns.includes("Technical Score") && (
+                              <td>{application.technicalScore === 0 ? 'N/A' : application.technicalScore}</td>
+                            )}
+                            <td onClick={(e) => e.stopPropagation()}>
+                            <a 
+                              href="#" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleResumeClick1();
+                              }} 
+                              style={{ color: '#0583D2', textDecoration: 'none', cursor: 'pointer' }}
+                            >
+                              View
+                            </a>
+                            </td>
+                            <td></td>
+                           
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                         )}
-
-                        {/* {selectedColumns.includes("Pre-Screened")&&<td>{application.preScreenedCondition}</td>} */}
-                        {selectedColumns.includes("Matching Skills")&&(
-                        <td>
-                          {application.matchedSkills.length === 0
-                          ? "N/A"
-                          :application.matchedSkills.length > 3
-                            ? `${application.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-                            : application.matchedSkills.map(skill => skill.skillName).join(", ")}
-                        </td>
-                        )}
-                        {selectedColumns.includes("Missing Skills")&&(
-                        <td>
-                          {application.nonMatchedSkills.length === 0
-                          ? "N/A"
-                          :application.nonMatchedSkills.length > 3
-                            ? `${application.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-                            : application.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
-                        </td>
-                        )}
-                        {selectedColumns.includes("Additional Skills")&&(<td>
-                          {application.additionalSkills.length === 0
-                          ? "N/A"
-                          :application.additionalSkills.length > 3
-                            ? `${application.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-                            : application.additionalSkills.map(skill => skill.skillName).join(", ")}
-                        </td>
-                        )}
-                        {selectedColumns.includes("Tested Skills")&&(<td>
-                          {application.applicantSkillBadges && application.applicantSkillBadges.length > 3
-                            ? `${application.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
-                            : application.applicantSkillBadges
-                              ? application.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
-                              : "N/A"}
-                        </td>
-                        )}
-                        {selectedColumns.includes("Aptitude Score") && (
-                          <td>{application.apptitudeScore === 0 ? 'N/A' : application.apptitudeScore}</td>
-                        )}
-                        {selectedColumns.includes("Technical Score") && (
-                          <td>{application.technicalScore === 0 ? 'N/A' : application.technicalScore}</td>
-                        )}
-                        <td onClick={(e) => e.stopPropagation()}>
-                        <a 
-                          href="#" 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleResumeClick1();
-                          }} 
-                          style={{ color: '#0583D2', textDecoration: 'none', cursor: 'pointer' }}
-                        >
-                          View
-                        </a>
-                        </td>
-                        <td></td>
-                       
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                    )}
+                  </div>
+                </div>
+                {applicants.length > 0 && FilterData.length === 0 && !appliedFilter &&(
+                  <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                    Previous
+                  </button>
+                  <span>{currentPage}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                    Next
+                  </button>
+                </div>)}
+                </div>
               </div>
             </div>
-            {applicants.length > 0 && FilterData.length === 0 && !appliedFilter &&(
-              <div className="pagination-controls">
-              <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                Previous
-              </button>
-              <span>{currentPage}</span>
-              <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-                Next
-              </button>
-            </div>)}
-            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    {snackbar.open && (
-    <Snackbar
-      message={snackbar.message}
-      type={snackbar.type}
-      onClose={handleCloseSnackbar}
-      link={snackbar.link}
-      linkText={snackbar.linkText}
-    />
-  )}
-  </div>
-);
+        {snackbar.open && (
+        <Snackbar
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={handleCloseSnackbar}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      )}
+      </div>
+    );
   }
   export default AppliedApplicantsBasedOnJobs;
