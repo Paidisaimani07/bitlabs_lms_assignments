@@ -2792,11 +2792,7 @@ const exportCSV = () => {
                       {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr
                           key={application.applyjobid}
-<<<<<<< HEAD
                           //onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`)} // Use navigate for row click
-=======
-                          onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&preScreened=${application.preScreenedCondition === 'PreScreened'?'true':'false'}`)} // Use navigate for row click
->>>>>>> 5f6ba2430b9b6b3bce1ae5d598d4936cb79c83f6
                           style={{
                             backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
                             cursor: "pointer",
