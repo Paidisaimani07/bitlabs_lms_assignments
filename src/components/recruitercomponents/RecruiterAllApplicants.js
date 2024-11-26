@@ -1458,7 +1458,7 @@ const applyExperienceMatchType = (experience, filterValue, matchType) => {
   } else if (matchType === "lessThan") {
     return exp < filterValue;
   } else if (matchType === "is") {
-    return exp === filterValue;
+    return exp == filterValue;
   }
   return true;
 };
@@ -3200,7 +3200,7 @@ const exportCSV = () => {
             
      
               <div className="col-lg-12 col-md-12">
-                <div className="profile-setting">
+                <div className="profile-setting" style={{ width: '100%'}}>
                 <div className="table-container-wrapper">
                   <div className="table-container">
                   { isLoading ? (

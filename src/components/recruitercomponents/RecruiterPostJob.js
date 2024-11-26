@@ -12,6 +12,8 @@ import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
+  
+  const [URLInput, setURLInput] = useState(""); // Define the URLInput state
   const [jobTitle, setJobTitle] = useState("");
   const [formLoaded, setFormLoaded] = useState(false);
   const [minimumExperience, setMinimumExperience] = useState("");
@@ -37,6 +39,206 @@ function RecruiterPostJob() {
   const user1 = useUserContext();
   const user = user1.user;
   const locationState = useLocation().state;
+
+  const handlePostJob = async (e) => {
+    e.preventDefault(); // Prevent default form submission
+    const errors = {};
+  let isValid = true;
+
+  if (selectedOption === "externalWebsite") {
+    if (!URLInput.trim()) {
+      isValid = false;
+      errors.url = "URL is required";
+    } else if (!urlRegex.test(URLInput)) {
+      isValid = false;
+      errors.url = "Please enter a valid URL";
+    }
+  }
+
+  if (!minSalary.trim()) {
+    errors.minSalary = 'Minimum salary is required.';
+    isValid = false;
+  }
+  else {
+    errors.minSalary = '';
+  }
+  if (!maxSalary.trim()) {
+    errors.maxSalary = 'Maximum salary is required.';
+    isValid = false;
+  } else if (parseInt(minSalary) > parseInt(maxSalary)) {
+    errors.maxSalary = 'Maximum salary should be greater than or equal to minimum salary.';
+    isValid = false;
+  } else {
+    errors.maxSalary = '';
+  }
+
+  if (!jobTitle.trim()) {
+    isValid = false;
+    errors.jobTitle = 'Job title is required.';
+  } else {
+    errors.jobTitle = '';
+  }
+
+  if (!description.trim() || description.trim().length < 15) {
+    errors.description = 'Description is required and must be at least 15 characters long.';
+    isValid = false;
+  } else {
+    errors.description = '';
+  }
+
+  if (!minimumExperience.trim()) {
+    setMinimumExperience('');
+    isValid = false;
+    errors.minimumExperience = 'Minimum experience is required.';
+  } else {
+    errors.minimumExperience = '';
+  }
+  if (!maximumExperience.trim()) {
+    errors.maximumExperience = 'Maximum experience is required.';
+    isValid = false;
+  } else if (parseInt(minimumExperience) > parseInt(maximumExperience)) {
+    errors.maximumExperience = 'Maximum experience should be greater than or equal to minimum experience.';
+    isValid = false;
+  } else {
+    errors.maximumExperience = '';
+  }
+
+  if (!minimumQualification.trim()) {
+    errors.minimumQualification = 'Minimum qualification is required.';
+    isValid = false;
+  } else {
+    errors.minimumQualification = '';
+  }
+
+  if (skillsRequired.length === 0) {
+    errors.skills = 'Skills are required';
+    isValid = false;
+  } else {
+    errors.skills = ""; 
+  }
+
+  if (!location.trim()) {
+    errors.location = 'Location is required.';
+    isValid = false;
+  } else if (!/^[a-zA-Z]+$/.test(location.trim())) {
+    errors.location = 'Location should contain only alphabets.';
+    isValid = false;
+  } else {
+    errors.location = '';
+  }
+
+  if (!employeeType.trim()) {
+    errors.employeeType = 'Job type is required.';
+    isValid = false;
+  } else {
+    errors.employeeType = '';
+  }
+
+  setFormErrors(errors); // Update the form errors state
+
+  if (isValid) {
+    // Proceed with the job posting logic
+    console.log("Form is valid. Proceeding with job posting.");
+  } else {
+    console.log("Form validation failed.");
+  }
+
+  
+  
+  try {
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (!jwtToken) {
+      setSnackbar({ open: true, message: 'Authentication token missing', type: 'error' });
+      return;
+    }
+  
+    const headers = {
+      Authorization: `Bearer ${jwtToken}`,
+      'Content-Type': 'application/json',
+    };
+  
+    // Construct form data from state or other sources
+    const formData = {
+      jobTitle,
+      description,
+      minSalary,
+      maxSalary,
+      location,
+      employeeType,
+      skillsRequired,
+      minimumExperience,
+      maximumExperience,
+      minimumQualification,
+      selectedOption, // Optional field if it exists
+    };
+  
+    console.log('Payload being sent to API:', formData);
+  
+    // Call the Save Job API
+    const jobResponse = await axios.post(
+      `${apiUrl}/job/recruiters/saveJob/${user.id}`,
+      formData,
+      { headers }
+    );
+  
+    console.log('Job saved successfully:', jobResponse.data);
+    setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
+  
+  } catch (error) {
+    if (error.response) {
+      console.error('Response status:', error.response.status);
+      console.error('Response data:', error.response.data);
+      setSnackbar({
+        open: true,
+        message: `Error: ${error.response.data.message || 'Unable to save job.'}`,
+        type: 'error',
+      });
+    } else if (error.request) {
+      console.error('Request made but no response:', error.request);
+      setSnackbar({
+        open: true,
+        message: 'No response from server. Please try again later.',
+        type: 'error',
+      });
+    } else {
+      console.error('Unexpected error:', error.message);
+      setSnackbar({
+        open: true,
+        message: `Unexpected error: ${error.message}`,
+        type: 'error',
+      });
+    }
+  }
+  };
+
+  const handleCloseSnackbar1 = () => {
+    setSnackbar({ open: false, message: '', type: '' });
+    setTimeout(() => {
+      navigate('/recruiter-postjob'); // Redirect after closing Snackbar
+    }, 2000);
+  };
+
+  const [selectedOption, setSelectedOption] = useState("bitlabsJobs");
+  
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+ // URL validation regex
+const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
+
+ const handleJobTitleChange1 = (event) => {
+  const value = event.target.value;
+  setURLInput(value);
+
+  // Clear or set URL error dynamically
+  setFormErrors((prevErrors) => ({
+    ...prevErrors,
+    url: urlRegex.test(value) || !value.trim() ? "" : "Please enter a valid URL",
+  }));
+};
+
+
 
   useEffect(() => {
     // Load data from local storage or passed state
@@ -78,27 +280,12 @@ function RecruiterPostJob() {
       skillsRequired: formattedSkillsRequired,
       description,
       uploadDocument,
+      sourceType: selectedOption, // Include the selected option in the form data
+      externalURL: selectedOption === "externalWebsite" ? URLInput : null, // Only add URL if applicable
     };
 
     localStorage.setItem('jobDetails', JSON.stringify(formData));
     navigate('/recruiter-postjob2');
-     
-  //   // const jwtToken = localStorage.getItem('jwtToken');
-  //   // const headers = {
-  //   //   Authorization: `Bearer ${jwtToken}`,
-  //   //   'Content-Type': 'application/json',
-  //   // };
-  //   // axios
-  //   //   .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers })
-  //   //   .then((response) => {
-  //   //     console.log('API Response:', response.data);
-       
-  //   //    setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
-  //   //     clearForm();
-  //   //   })
-  //   //   .catch((error) => {
-  //   //     console.error('API Error:', error);
-  //   //   });
   };
   useEffect(() => {
     const fetchApprovalStatus = async () => {
@@ -168,6 +355,18 @@ function RecruiterPostJob() {
   const validateForm = () => {
     let isValid = true;
     const errors = {};
+    
+
+    if (selectedOption === "externalWebsite") {
+      if (!URLInput.trim()) {
+        isValid = false;
+        errors.url = "URL is required";
+      } else if (!urlRegex.test(URLInput)) {
+        isValid = false;
+        errors.url = "Please enter a valid URL";
+      }
+    }
+
     if (!jobTitle.trim()) {
       isValid = false;
       errors.jobTitle = 'Job title is required.';
@@ -175,13 +374,10 @@ function RecruiterPostJob() {
       errors.jobTitle = '';
     }
     if (!minimumExperience.trim()) {
-      
-    
       setMinimumExperience('');
       isValid = false;
       errors.minimumExperience = 'Minimum experience is required.';
     } else {
-      
       errors.minimumExperience = '';
     }
     if (!maximumExperience.trim()) {
@@ -820,18 +1016,165 @@ function RecruiterPostJob() {
                             <div className="error-message">{formErrors.skills}</div>
                           )}
                         </div>
-
+                          
                       </div>
-                    </div>
+                      <div 
+  className="form-infor flex flat-form" 
+  style={{ 
+    borderTop: "2px solid #E8E8E8", 
+    width: "97%", // Adjust the width dynamically
+    marginLeft: "auto", 
+    marginRight: "auto", // Centers the line
+    marginBottom: "16px" // Adds space below the line
+  }}
+>
+  {/* <div className="info-box info-wd"></div> */}
+</div>
+<label 
+  className="title-user fw-7" 
+  style={{ 
+    color: "#64666C", 
+    fontFamily: "Plus Jakarta Sans", 
+    fontSize: "18px", 
+    fontStyle: "normal", 
+    fontWeight: "700", 
+    lineHeight: "26px"
+  }}
+>
+  Get Applicants on
+</label>
 
-                    <div className="form-infor flex flat-form">
-                      <div className="info-box info-wd">
-                      </div>
+<div style={{ marginTop: "10px" }}>
+<label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+        <input
+          type="radio"
+          name="applicantSource"
+          value="bitlabsJobs"
+          defaultChecked
+          onChange={(e) => {
+            handleOptionChange(e);
+            setFormErrors({ url: "" }); // Clear URL error if switching to Bitlabs Jobs
+          }}
+          //onChange={handleOptionChange}
+          style={{
+            marginRight: "8px",
+            appearance: "none",
+            width: "20px",
+            height: "20px",
+            borderRadius: "50%",
+            border: "2px solid #64666C",
+            position: "relative",
+          }}
+        />
+        <span
+          style={{
+            position: "absolute",
+            top: "4px",
+            left: "4px",
+            width: "12px",
+            height: "12px",
+            backgroundColor: "#F97316",
+            borderRadius: "50%",
+            display: "none",
+          }}
+        ></span>
+        Bitlabs Jobs
+      </label>
+
+      <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+        <input
+          type="radio"
+          name="applicantSource"
+          value="externalWebsite"
+          onChange={handleOptionChange}
+          style={{
+            marginRight: "8px",
+            appearance: "none",
+            width: "20px",
+            height: "20px",
+            borderRadius: "50%",
+            border: "2px solid #64666C",
+            position: "relative",
+          }}
+        />
+        <span
+          style={{
+            position: "absolute",
+            top: "4px",
+            left: "4px",
+            width: "12px",
+            height: "12px",
+            backgroundColor: "#F97316",
+            borderRadius: "50%",
+            display: "none",
+          }}
+        ></span>
+        External Website
+      </label>
+
+      {selectedOption === "externalWebsite" && (
+  <>
+    <fieldset className="info-wd" style={{ marginTop: "16px", marginBottom: "10px" }}>
+      <input
+        type="text"
+        placeholder="URL"
+        className="input-form"
+        value={URLInput}
+        onChange={handleJobTitleChange1}
+        required
+        style={{
+          width: "100%",
+          padding: "8px",
+          fontSize: "16px",
+          border: formErrors.url ? "1px solid red" : "1px solid #ccc",
+          borderRadius: "4px",
+        }}
+      />
+      {formErrors.url && (
+        <div
+          className="error-message"
+          style={{
+            color: "red",
+            fontSize: "12px",
+            marginTop: "4px",
+          }}
+        >
+          {formErrors.url}
+        </div>
+      )}
+    </fieldset>
+
+    {/* Show Back and Post Job buttons */}
+    <div className="form-group" align="right">
+  <button
+    type="button" // Use "button" to avoid default form submission
+    onClick={handlePostJob } 
+    className="button-status"
+  >
+    Post Job
+  </button>
+</div>
+  </>
+)}
+</div>
+
+
                     </div>
-                    <div className="form-group" align='right'>
-                      {/* <button type="submit" onClick={handleSubmit} className='button-status'>Next</button> */}
-                      <button onClick={handleNext} className='button-status'>Next</button>
-                    </div>
+                    {snackbar.open && (
+  <div className={`snackbar snackbar-${snackbar.type}`}>
+    {snackbar.message}
+    <button onClick={handleCloseSnackbar1}>Close</button>
+  </div>
+)}
+                    
+                    {selectedOption !== "externalWebsite" && (
+ 
+  <div className="form-group" align="right">
+    <button onClick={handleNext} className="button-status">
+      Next
+    </button>
+  </div>
+)}
                   </div>
                 </div>
               </div>
