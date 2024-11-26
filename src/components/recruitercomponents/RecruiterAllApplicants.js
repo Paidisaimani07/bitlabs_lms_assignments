@@ -152,6 +152,12 @@ if (!parsedData || FilterData.length > 0) {
 
   const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
 
+  const uniqueEmailSuggestions = Array.from(new Set(availableEmailSuggestions));
+  
+  const uniqueMobileSuggestions = Array.from(new Set(availableMobileSuggestions));
+  //availableNameSuggestions
+  const uniqueNameSuggestions = Array.from(new Set(availableNameSuggestions));
+
 
 
   // Filter uniqueStatusSuggestions to match the desired order
@@ -1903,7 +1909,7 @@ const exportCSV = () => {
                     // Handle the case when a user is typing
                     handleTextFieldChange("name", text);
                   }}
-                  options={availableNameSuggestions}  // Options for typeahead
+                  options={uniqueNameSuggestions}  // Options for typeahead
                   placeholder="Type to search..."
                 />
                         
@@ -1952,7 +1958,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("email", text);
                             }}
-                            options={availableEmailSuggestions}  // Options for typeahead
+                            options={uniqueEmailSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2001,7 +2007,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("mobileNumber", text);
                             }}
-                            options={availableMobileSuggestions}  // Options for typeahead
+                            options={uniqueMobileSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
