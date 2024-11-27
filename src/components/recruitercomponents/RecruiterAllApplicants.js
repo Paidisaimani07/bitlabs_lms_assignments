@@ -2827,7 +2827,7 @@ const exportCSV = () => {
   <Link
   to={
     application.preScreenedCondition === 'PreScreened'
-      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
+      ? `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}&preScreened=true`
       : `/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`
   }
   style={{ color: '#0583D2', textDecoration: 'none', position: 'relative' }}
