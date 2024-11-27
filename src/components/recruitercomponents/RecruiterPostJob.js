@@ -13,7 +13,7 @@ import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
   
-  const [URLInput, setURLInput] = useState(""); // Define the URLInput state
+  const [jobURL, setjobURL] = useState(""); // Define the jobURL state
   const [jobTitle, setJobTitle] = useState("");
   const [formLoaded, setFormLoaded] = useState(false);
   const [minimumExperience, setMinimumExperience] = useState("");
@@ -46,12 +46,15 @@ function RecruiterPostJob() {
   let isValid = true;
 
   if (selectedOption === "externalWebsite") {
-    if (!URLInput.trim()) {
+    if (!jobURL.trim()) {
       isValid = false;
       errors.url = "URL is required";
-    } else if (!urlRegex.test(URLInput)) {
-      isValid = false;
-      errors.url = "Please enter a valid URL";
+    } else {
+      const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
+      if (!urlRegex.test(jobURL)) {
+        isValid = false;
+        errors.url = "Please enter a valid URL";
+      }
     }
   }
 
@@ -157,7 +160,6 @@ function RecruiterPostJob() {
       'Content-Type': 'application/json',
     };
   
-    // Construct form data from state or other sources
     const formData = {
       jobTitle,
       description,
@@ -169,7 +171,7 @@ function RecruiterPostJob() {
       minimumExperience,
       maximumExperience,
       minimumQualification,
-      URLInput,
+      jobURL: jobURL && jobURL.trim() !== "" ? jobURL.trim() : "https://www.bitlabs.in/jobs", // Use user-entered URL or default
     };
   
     console.log('Payload being sent to API:', formData);
@@ -227,14 +229,19 @@ function RecruiterPostJob() {
  // URL validation regex
 const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
 
- const handleJobTitleChange1 = (event) => {
+const handleJobTitleChange1 = (event) => {
   const value = event.target.value;
-  setURLInput(value);
+  setjobURL(value);
 
-  // Clear or set URL error dynamically
+  // Enhanced regex for URL validation
+  const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?(\?[\w\-=&%]*)?(#[\w\-]*)?$/i;
+
+  // Dynamically validate the URL and set errors
   setFormErrors((prevErrors) => ({
     ...prevErrors,
-    url: urlRegex.test(value) || !value.trim() ? "" : "Please enter a valid URL",
+    url: value.trim() === "" || urlRegex.test(value)
+      ? "" // No error if the field is empty or the URL is valid
+      : "Please enter a valid URL.",
   }));
 };
 
@@ -281,7 +288,7 @@ const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
       description,
       uploadDocument,
       sourceType: selectedOption, // Include the selected option in the form data
-      externalURL: selectedOption === "externalWebsite" ? URLInput : null, // Only add URL if applicable
+      jobURL: selectedOption === "externalWebsite" ? jobURL : "https://www.bitlabs.in/jobs", // Default URL for non-externalWebsite
     };
 
     localStorage.setItem('jobDetails', JSON.stringify(formData));
@@ -358,10 +365,10 @@ const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
     
 
     if (selectedOption === "externalWebsite") {
-      if (!URLInput.trim()) {
+      if (!jobURL.trim()) {
         isValid = false;
         errors.url = "URL is required";
-      } else if (!urlRegex.test(URLInput)) {
+      } else if (!urlRegex.test(jobURL)) {
         isValid = false;
         errors.url = "Please enter a valid URL";
       }
@@ -1119,7 +1126,7 @@ const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
         type="text"
         placeholder="URL"
         className="input-form"
-        value={URLInput}
+        value={jobURL}
         onChange={handleJobTitleChange1}
         required
         style={{
