@@ -169,7 +169,7 @@ function RecruiterPostJob() {
       minimumExperience,
       maximumExperience,
       minimumQualification,
-      selectedOption, // Optional field if it exists
+      URLInput,
     };
   
     console.log('Payload being sent to API:', formData);
