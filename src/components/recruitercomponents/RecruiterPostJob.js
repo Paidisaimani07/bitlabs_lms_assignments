@@ -192,11 +192,11 @@ function RecruiterPostJob() {
     if (error.response) {
       console.error('Response status:', error.response.status);
       console.error('Response data:', error.response.data);
-      setSnackbar({
-        open: true,
-        message: `Error: ${error.response.data.message || 'Unable to save job.'}`,
-        type: 'error',
-      });
+      // setSnackbar({
+      //   open: true,
+      //   message: `Error: ${error.response.data.message || 'Unable to save job.'}`,
+      //   type: 'error',
+      // });
     } else if (error.request) {
       console.error('Request made but no response:', error.request);
       setSnackbar({
