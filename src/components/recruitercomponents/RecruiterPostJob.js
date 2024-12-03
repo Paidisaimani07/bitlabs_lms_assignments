@@ -167,6 +167,8 @@ function RecruiterPostJob() {
       maxSalary,
       location,
       employeeType,
+      industryType,
+      specialization,
       skillsRequired,
       minimumExperience,
       maximumExperience,
