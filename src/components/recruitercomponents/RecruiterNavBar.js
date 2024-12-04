@@ -11,7 +11,6 @@ import logos from '../../images/profileIcon.svg';
 function RecruiterNavBar({imageSrc,setImageSrc}) {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
-  //const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
@@ -35,6 +34,7 @@ function RecruiterNavBar({imageSrc,setImageSrc}) {
 
 
 document.addEventListener("click", handleOutsideClick);
+
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 1302);
@@ -60,6 +60,12 @@ document.addEventListener("click", handleOutsideClick);
     if ($.cookie("isButtonActive") == 1) {
       $("body").addClass("sidebar-enable show-job");
     }
+
+    // Define an async function to fetch the logo
+    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }else{
     fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -69,11 +75,21 @@ document.addEventListener("click", handleOutsideClick);
       .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          // Save the base64 encoded image in localStorage
+          localStorage.setItem(`companyLogo_${user.id}`, base64data);
+          // setImageSrc(base64data); // Optionally, set the image src directly after fetching
+        };
+        reader.readAsDataURL(blob);
+
       })
       .catch(error => {
         console.error('Error fetching image URL:', error);
         setImageSrc(null);
       });
+    }
       return () => {
         window.removeEventListener('resize', handleResize);
       };
@@ -159,6 +175,11 @@ const handleMenuItemClick = () => {
   }
 };
 
+const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }
+
   return (
 <div>
   <div className="menu-mobile-popup">
@@ -239,7 +260,7 @@ const handleMenuItemClick = () => {
       </Link>
       
               <div className="header-customize-item account" onClick={toggleSubAccount}>
-                <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+                <img width="40px" height="40px" borderRadius="50px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
                   
                 </div>

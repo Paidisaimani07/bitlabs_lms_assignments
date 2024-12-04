@@ -3,7 +3,7 @@ import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import $ from 'jquery';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import BackButton from '../common/BackButton';
 import filtericon from '../../images/filter 2.svg';
@@ -13,6 +13,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import "./RecruiterManageColumn.css"
+import { right } from '@popperjs/core';
 
 
 $.DataTable = require('datatables.net')
@@ -55,6 +56,7 @@ function RecruiterAllApplicants() {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
   const [showFilters, setShowFilters] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [flagForManageColoumns, setflagForManageColoumns] = useState(false);
   const [tooltipVisibleId, setTooltipVisibleId] = useState(null);
   const [initialData, setInitialData] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,7 +79,8 @@ function RecruiterAllApplicants() {
   const [availablePreferedLocSuggestions, setAvailablePreferedLocSuggestions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [FilterData, setFilterData] = useState([]);
-  const [appliedFilter,setAppliedFilter]=useState(false)
+  const [appliedFilter,setAppliedFilter]=useState(false);
+  const navigate = useNavigate();
  
   const recordsPerPage = 10;
  
@@ -86,6 +89,23 @@ function RecruiterAllApplicants() {
   const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
   const currentRecords = applicants.slice(indexOfFirstRecord, indexOfLastRecord);
   const totalPages = Math.ceil(applicants.length / recordsPerPage);
+
+  // Function to save filters and columns before navigating away
+function saveTableState() {
+  const savedFilterData = localStorage.getItem('tableFilterData');
+const parsedData = savedFilterData ? JSON.parse(savedFilterData) : null;
+const initialData3 = localStorage.getItem('initialData');
+const parsedData1 = initialData3 ? JSON.parse(initialData3) : null;
+if (!parsedData || FilterData.length > 0) {
+  localStorage.setItem('tableFilterData', JSON.stringify(FilterData));
+}
+  localStorage.setItem('tableSelectedColumns', JSON.stringify(selectedColumns));
+  localStorage.setItem('tableSelectedCheckBoxes', JSON.stringify(selectedCheckboxes));
+  if(!parsedData1){
+    localStorage.setItem('initialData', JSON.stringify(initialData));
+  }
+  
+}
  
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -97,6 +117,18 @@ function RecruiterAllApplicants() {
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
+
+  const handleResumeClick1 = async () => {
+    try {
+      console.log(user.id)
+      const response = await axios.get(`${apiUrl}/resume/pdf/${user.id}`, { responseType: 'blob' });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error fetching resume:', error);
     }
   };
 
@@ -112,6 +144,22 @@ function RecruiterAllApplicants() {
   // Remove duplicates from availableStatusSuggestions
   const uniqueStatusSuggestions = Array.from(new Set(availableStatusSuggestions));
   
+  const uniquejobtitleSuggestions = Array.from(new Set(availableJobTitleSuggestions));
+
+  const uniqueExpSuggestions = Array.from(new Set(availableExpSuggestions));
+
+  const uniqueQualSuggestions = Array.from(new Set(availableQualSuggestions));
+
+  const uniqueSpecSuggestions = Array.from(new Set(availableSpecSuggestions));
+
+  const uniqueEmailSuggestions = Array.from(new Set(availableEmailSuggestions));
+  
+  const uniqueMobileSuggestions = Array.from(new Set(availableMobileSuggestions));
+  //availableNameSuggestions
+  const uniqueNameSuggestions = Array.from(new Set(availableNameSuggestions));
+
+
+
   // Filter uniqueStatusSuggestions to match the desired order
   const validStatusSuggestions = desiredOrder.filter(status =>
     uniqueStatusSuggestions.includes(status)
@@ -208,6 +256,7 @@ const toggleSidebar = () => {
   setIsOpen(!isOpen);
 };
 
+
 const handleCheckboxs = (event) => {
   const { name, checked } = event.target;
   setSelectedCheckboxes((prev) => ({ ...prev, [name]: checked }));
@@ -223,7 +272,9 @@ const handleApply = () => {
     setErrorMessage('');
     // alert('Selected Columns: ' + selected.join(', '));
     setSelectedColumns(selected);
-    // reset();
+  localStorage.setItem('tableSelectedColumns', JSON.stringify(selected));
+  localStorage.setItem('tableSelectedCheckBoxes', JSON.stringify(selectedCheckboxes));
+    setflagForManageColoumns(true);
     toggleSidebar();
   }
 };
@@ -245,6 +296,8 @@ const reset = () => {
   });
   setSelectedColumns([]);
   setErrorMessage('');
+  localStorage.removeItem('tableSelectedColumns');
+  localStorage.removeItem('tableSelectedCheckBoxes');
   toggleSidebar();
 };
  
@@ -416,10 +469,21 @@ const m=new Map();
     }
  
  
- 
-  const filteredData = initialData;
-  setFilterData(initialData)
-  //console.log('Applicants before filtering:', filteredData);
+    const initialData1 = JSON.parse(localStorage.getItem('initialData'));
+    let filteredData;
+   
+  if(initialData1){
+  filteredData = initialData1;
+    setFilterData(filteredData)
+  }else{
+    filteredData = initialData;
+    setFilterData(filteredData)
+  }
+    
+  
+  
+  
+  
  
  
   if (filterOptions.applicantSkillBadges) {
@@ -521,340 +585,11 @@ filteredData.sort((a, b) => {
 });
 }
 
-const handleCheckboxChange3 = (applyjobid) => {
-  // Toggle the applicant's selection state
-  setSelectedApplicants((prevSelected) => {
-    if (prevSelected.includes(applyjobid)) {
-      // If the ID is already in the array, remove it (uncheck the box)
-      return prevSelected.filter((id) => id !== applyjobid);
-    } else {
-      // If the ID is not in the array, add it (check the box)
-      return [...prevSelected, applyjobid];
-    }
-  });
-
-  // Check if all checkboxes are selected
-  const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]');
-  const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
-
-  // Uncheck the "Select All" checkbox if any individual checkbox is unchecked
-  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-  if (!allChecked) {
-    selectAllCheckbox.checked = false;
-  } else {
-    selectAllCheckbox.checked = true;
-  }
-};
-
-// Assuming this is your select all logic
-const handleFilterData = (event) => {
-  const isChecked = event.target.checked;
-  if (isChecked) {
-    const allIds = FilterData.map(applicant => applicant.applyjobid);
-    setSelectedApplicants(allIds);
-  } else {
-    setSelectedApplicants([]);
-  }
-
-  // Set all checkboxes' checked state to match the header checkbox
-  document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]').forEach((checkbox) => {
-    checkbox.checked = isChecked;
-  });
-};
-
-const recordsPerPage = 10;
-let currentPage = 1;
- 
-function handleNextPage1() {
-  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-  if (currentPage < totalPages) {
-    currentPage += 1;
-    renderTableData();  // Call the function to render data for the new page
-  }
-}
- 
-function handlePreviousPage1() {
-  if (currentPage > 1) {
-    currentPage -= 1;
-    renderTableData();  // Call the function to render data for the new page
-  }
-}
- 
 function renderTableData() {
-  const tableHeader=document.getElementById("tableHeader");
-  tableHeader.innerHTML = `
-    <th>
-      <input
-      type="checkbox"
-      id="selectAllCheckbox"
-      />
-    </th>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Mobile Number</th>
-    <th>Job Title</th>
-    <th>Applicant Status</th>
-    ${selectedColumns.includes('Experience') ? '<th>Experience</th>' : ''}
-    ${selectedColumns.includes('Qualification') ? '<th>Qualification</th>' : ''}
-    ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
-    ${selectedColumns.includes('Speclization') ? '<th>Specialization</th>' : ''}
-    ${selectedColumns.includes('Aptitude Score') ? '<th>Aptitude Score</th>' : ''}
-    ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
-    ${selectedColumns.includes('Matching Skills') ? '<th>Matching Skills</th>' : ''}
-    ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
-    ${selectedColumns.includes('Additional Skills') ? '<th>Additional Skills</th>' : ''}
-    ${selectedColumns.includes('Tested Skills') ? '<th>Tested Skills</th>' : ''}
-    ${selectedColumns.includes('Job Match%') ? '<th>Job Match%</th>' : ''}
-    <th>Resume</th>
-  `;
-   
-    const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-    selectAllCheckbox.addEventListener('change', handleFilterData);
-   
-   
-  const tableBody = document.getElementById("applicantTableBody");
-    tableBody.innerHTML = "";
-    if (filteredData.length === 0) {
-      // Display "No data found" message
-      const noDataRow = document.createElement("tr");
-      noDataRow.innerHTML = `
-        <td colspan="${selectedColumns.length + 7}" style="text-align: center;">
-          No Data Found</td>
-      `;
-      tableBody.appendChild(noDataRow);
-    }else{
-    const startIndex = (currentPage - 1) * recordsPerPage;
-    const endIndex = startIndex + recordsPerPage;
-   
-    const recordsToDisplay = filteredData.slice(startIndex, endIndex);
-    setFilterData(recordsToDisplay)
-   
-    recordsToDisplay.forEach((applicant,index) => {
-     
-      const row = document.createElement("tr");
-     
-      row.innerHTML = `
-    <td>
-      <input
-        type="checkbox"
-        value="${applicant.applyjobid}"
-        ${selectedApplicants.includes(applicant.applyjobid) ? 'checked' : ''}
-        name="applicantCheckbox-${applicant.applyjobid}"
-      />
-    </td>
-    <td>  
-    <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
-      ${applicant.name}
-    
-    ${applicant.preScreenedCondition === 'PreScreened'
-      ? `
-        <div style="display: inline-block; position: relative;">
-          <img
-            src="${verified123}"
-            alt="Verified"
-            style="width: 20px; height: 20px; margin-left: 5px;"
-            onMouseEnter="this.nextElementSibling.style.display='block';"
-            onMouseLeave="this.nextElementSibling.style.display='none';"
-          />
-          <div style="
-              display: none;
-              position: absolute;
-              bottom: 100%;
-              left: 850%;
-              top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
-              transform: translateX(-50%);
-              background-color: #fff;
-              border: 1px solid #ccc;
-              border-radius: 5px;
-              width: 615px;
-              height: 70px;
-              white-space: normal;
-              box-shadow: 0px 4px 15px 0px rgba(0,0,0,0.15);
-              z-index: 1000;
-              overflow: hidden;
-              padding-right: 50px;
-              padding-top: 5px;
-          ">
-    <div style="
-      display: flex; /* Use flexbox for alignment */
-      align-items: center; /* Center the image and text vertically */
-      padding: 5px; /* Add padding for the inner div */
-    ">
-      <img
-        src="${verified123}"
-        alt="Verified"
-        style="width: 20px; margin-right: 15px; margin-left: 10px;"
-      />
-      <span style="flex: 1; white-space: normal;">
-        Pre-screened badges are issued to candidates who scored more than 70% in both Aptitude and Technical tests.
-      </span>
-    </div>
-  </div>
-        </div>`
-      : ''}
-      </a>
-  </td>
-   
-    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
-    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
-    <td>${applicant.jobTitle}</td>
-    <td>
-      <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
-        (() => {
-          switch (applicant.applicantStatus) {
-            case 'Shortlisted':
-              return '#DBFAEB';
-            case 'Selected':
-              return '#F9F5FF';
-            case 'Rejected':
-              return '#FFF3F4';
-            case 'Screening':
-              return '#EFFFD0';
-            case 'Interviewing':
-              return '#FFF2E1';
-            default:
-              return '#F8F8F8'; // Default background for unknown status
-          }
-        })()
-      }; color: ${
-        (() => {
-          switch (applicant.applicantStatus) {
-            case 'Shortlisted':
-              return '#2D6A4F';
-            case 'Selected':
-              return '#6C3FB6';
-            case 'Rejected':
-              return '#B02A37';
-            case 'Screening':
-              return '#718F00';
-            case 'Interviewing':
-              return '#F7B267';
-            default:
-              return '#000'; // Default color for unknown status
-          }
-        })()
-      }; justify-content: flex-start; padding: 0px 10px;">
-        ${applicant.applicantStatus}
-      </div>
-    </td>
-   
-    ${selectedColumns.includes('Experience') ? `<td>${applicant.experience}</td>` : ''}
-   
-    ${selectedColumns.includes('Qualification') ? `<td>${applicant.qualification}</td>` : ''}
-   
-    ${selectedColumns.includes("Location") ? `
-      <td>
-        ${applicant.preferredJobLocations.length > 3
-          ? `${applicant.preferredJobLocations.slice(0, 3).join(", ")} +`
-          : applicant.preferredJobLocations.join(", ")}
-      </td>` : ''}
-   
-    ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
-   
-    ${selectedColumns.includes("Aptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
-   
-    ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
-   
-    ${selectedColumns.includes("Matching Skills") ? `
-      <td>
-        ${applicant.matchedSkills.length > 3
-          ? `${applicant.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-          : applicant.matchedSkills.map(skill => skill.skillName).join(", ")}
-      </td>` : ''}
-   
-    ${selectedColumns.includes("Missing Skills") ? `
-      <td>
-        ${applicant.nonMatchedSkills.length > 3
-          ? `${applicant.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-          : applicant.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
-      </td>` : ''}
-   
-    ${selectedColumns.includes("Additional Skills") ? `
-      <td>
-        ${applicant.additionalSkills.length > 3
-          ? `${applicant.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-          : applicant.additionalSkills.map(skill => skill.skillName).join(", ")}
-      </td>` : ''}
-   
-    ${selectedColumns.includes("Tested Skills") ? `
-      <td>
-        ${applicant.applicantSkillBadges && applicant.applicantSkillBadges.length > 3
-          ? `${applicant.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
-          : applicant.applicantSkillBadges
-            ? applicant.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
-            : "No skills available"}
-      </td>` : ''}
-   
-    ${selectedColumns.includes("Job Match%") ? `<td>${applicant.matchPercentage}%</td>` : ''}
-   
-    <td><a href="/view-resume/${applicant.id}" style="color: blue;">View</a></td>
-  `;
-   
-   
-      tableBody.appendChild(row);
-   
-      const checkbox = row.querySelector(`input[type="checkbox"][value="${applicant.applyjobid}"]`);
-   
-      checkbox.addEventListener('change', () => {
-        handleCheckboxChange3(applicant.applyjobid);
-      });
-      });
-    }
-      function renderPagination() {
-        const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-        const paginationContainer = document.createElement("div");
-        paginationContainer.className = "pagination-containers";
-     
-        paginationContainer.innerHTML = `
-          <button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
-          <span>${currentPage}</span>
-          <button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
-        `;
-     
-        // Clear existing pagination
-        let existingPaginationContainer = document.querySelector(".pagination-containers");
-        if (existingPaginationContainer) {
-          existingPaginationContainer.remove();
-        }
-   
-        let existsentirediv = document.querySelector(".entireDivClass");
-        if (existsentirediv) {
-          existsentirediv.remove();
-        }
-       
-        // Append new pagination controls
-        const entireDiv = document.createElement("div");
-        entireDiv.className = "entireDivClass";
-        entireDiv.appendChild(paginationContainer);
-        entireDiv.style.height = "50px";
-        entireDiv.style.display = "flex";
-        entireDiv.style.justifyContent = "flex-end"; // Align items to the right
-        entireDiv.style.alignItems = "center";
-     
-        const x = document.getElementsByClassName("profile-setting");
-        if (x[0]) {
-          x[0].appendChild(entireDiv);
-        }
-        const prevButton = document.getElementById('prevButton');
-        const nextButton = document.getElementById('nextButton');
-   
-        // Ensure the elements exist before adding event listeners
-        if (prevButton) {
-            prevButton.addEventListener('click', handlePreviousPage1);
-        }
-   
-        if (nextButton) {
-            nextButton.addEventListener('click', handleNextPage1);
-        }
-   
-        if (filteredData.length === 0) {
-          // Optionally, you could disable the buttons or show a message
-          prevButton.disabled = true;
-          nextButton.disabled = true;
-        }
-      }
-      renderPagination();
-    }
+  setApplicants(filteredData);
+} 
+
+
     setCount(filteredData.length);
     renderTableData();
 };
@@ -862,24 +597,32 @@ function renderTableData() {
 
 
 const applyFilter = () => {
+  console.log("applyFilter method called");
   // Apply all filters on the frontend based on the selected options
+
+  
   setCurrentPage(1)
   setAppliedFilter(true)
   const isAnyFilterSelected = Object.values(filterOptions).some((filter) => filter);
-  // console.log(isAnyFilterSelected)
+  console.log("Is any filter selected:", isAnyFilterSelected); // NEW: Debug Log
+  //console.log(isAnyFilterSelected)
   if (!isAnyFilterSelected) {
+    console.log("No filter selected, showing error."); // NEW: Debug Log
     // Show error message if no filter is selected
     setErrorMessage('Please Select at least one filter')
     setShowError(true);
     return;
   } else {
+    console.log("Filters selected, proceeding with validations."); // NEW: Debug Log
     const selectedFilters = Object.entries(filterOptions)
     .filter(([key, value]) => value)
     .reduce((acc, [key, value]) => {
       acc[key.replace('Filter', '')] = value;
       return acc;
     }, {});
+    console.log("Selected filters:", selectedFilters); // NEW: Debug Log
     let hasError = false;
+    // Validate fields based on selected filters
     if ('name' in selectedFilters && !name) {
       hasError = true;
     }
@@ -925,44 +668,85 @@ const applyFilter = () => {
  
     // Set error message and show state based on the hasError flag
     if (hasError) {
+      console.log("Validation failed, missing fields for selected filters."); // NEW: Debug Log
       setErrorMessage('Field for selected filter is missing');
       setShowError(true);
       return;
     } else {
+      console.log("Validation passed, proceeding to filtering logic."); // NEW: Debug Log
       setErrorMessage('');
       setShowError(false);
     }
   }
 
+ 
+  const initialData1 = JSON.parse(localStorage.getItem('initialData'));
+  console.log("Initial data fetched:", initialData1 || initialData); // NEW: Debug Log
 
-  const filteredData = initialData.filter((applicant) => {
-      
-    return (
-      (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
-      (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
-      (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
-      (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
-      (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
-      (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
-      (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
-      (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
-      (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
-      (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
-      (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
-       (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
-      (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
-      (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
-      (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
-      (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
-      (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
-      (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
-      (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
-      
-      
-      
-    );
-  });
-  setFilterData(filteredData)
+ let filteredData;
+  if(!initialData1){
+     filteredData = initialData.filter((applicant) => {
+      console.log("Filtering applicant:", applicant); // NEW: Debug Log
+      return (
+        (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
+        (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
+        (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
+        (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
+        (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
+        (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
+        (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
+        (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
+        (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
+        (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
+        (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
+         (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
+        (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
+        (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
+        (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
+        (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
+        (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
+        (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
+        (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
+        
+        
+        
+      );
+    });
+    console.log("Filtered data (without localStorage):", filteredData); // NEW: Debug Log
+    setFilterData(filteredData)
+    
+    }else{
+ 
+    filteredData = initialData1.filter((applicant) => {
+      console.log("Filtering applicant (localStorage):", applicant); // NEW: Debug Log
+      return (
+        (name === "" || applyMatchType(applicant.name, name, filterOptions.nameFilter)) &&
+        (email === "" || applyMatchType(applicant.email, email, filterOptions.emailFilter)) &&
+        (mobileNumber === "" || applyMatchType(applicant.mobilenumber, mobileNumber, filterOptions.mobileFilter)) &&
+        (jobTitle === "" || applyMatchType(applicant.jobTitle, jobTitle, filterOptions.jobFilter)) &&
+        (applicantStatus === "" || applyStatusMatchType(applicant.applicantStatus, applicantStatus, filterOptions.statusFilter)) &&
+        (skillName === "" || applyMatchType(applicant.skillName, skillName, filterOptions.skillFilter)) &&
+        (location === "" || applyMatchType(applicant.location, location, filterOptions.locationFilter)) &&
+        (minimumExperience === null || applyExperienceMatchType(applicant.experience, minimumExperience, filterOptions.experienceFilter)) &&
+        (minimumQualification === "" || applyMatchType(applicant.minimumQualification, minimumQualification, filterOptions.minimumQualification))&&
+        (specialization === "" || applyMatchType(applicant.specialization, specialization, filterOptions.specialization))&&
+        (preScreenedCondition === "" || applyScreenedMatchType(applicant.preScreenedCondition, preScreenedCondition, filterOptions.preScreenedCondition))&&
+         (apptitudeScore === "" || applyScoreMatchType(applicant.apptitudeScore, apptitudeScore, filterOptions.apptitudeScore))&&
+        (technicalScore === "" || applyScoreMatchType(applicant.technicalScore, technicalScore, filterOptions.technicalScore))&&
+        (matchPercentage === "" || applyScoreMatchType(applicant.matchPercentage, matchPercentage, filterOptions.matchPercentage))&&
+        (matchedSkills === "" || applySkillMatchType(applicant.matchedSkills, matchedSkills, filterOptions.matchedSkills))&&
+        (nonMatchedSkills === "" || applySkillMatchType(applicant.nonMatchedSkills, nonMatchedSkills, filterOptions.nonMatchedSkills))&&
+        (additionalSkills === "" || applySkillMatchType(applicant.additionalSkills, additionalSkills, filterOptions.additionalSkills))&&
+        (preferredJobLocations === "" || applyLocationMatchType(applicant.preferredJobLocations, preferredJobLocations, filterOptions.preferredJobLocations))&&
+        (applicantSkillBadges === "" || applySkillBadgeMatchType(applicant.applicantSkillBadges, applicantSkillBadges, filterOptions.applicantSkillBadges))
+        
+        
+        
+      );
+    });
+    console.log("Filtered data (with localStorage):", filteredData); // NEW: Debug Log
+    setFilterData(filteredData)
+    }
 
 
   if (filterOptions.applicantSkillBadges) {
@@ -1032,7 +816,6 @@ const applyFilter = () => {
   
   if(filterOptions.technicalScore ){
     // Now, sort the filtered data based on matchPercentage filter
-    
   filteredData.sort((a, b) => {
     const scoreA = typeof a.technicalScore === 'string' ? parseInt(a.technicalScore.trim(), 10) : Math.round(a.technicalScore);
     const scoreB = typeof b.technicalScore === 'string' ? parseInt(b.technicalScore.trim(), 10) : Math.round(b.technicalScore);
@@ -1064,343 +847,13 @@ filteredData.sort((a, b) => {
 });
 }
 
-const handleCheckboxChange3 = (applyjobid) => {
-  // Toggle the applicant's selection state
-  setSelectedApplicants((prevSelected) => {
-    if (prevSelected.includes(applyjobid)) {
-      // If the ID is already in the array, remove it (uncheck the box)
-      return prevSelected.filter((id) => id !== applyjobid);
-    } else {
-      // If the ID is not in the array, add it (check the box)
-      return [...prevSelected, applyjobid];
-    }
-  });
-
-  // Check if all checkboxes are selected
-  const allCheckboxes = document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]');
-  const allChecked = Array.from(allCheckboxes).every(checkbox => checkbox.checked);
-
-  // Uncheck the "Select All" checkbox if any individual checkbox is unchecked
-  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-  if (!allChecked) {
-    selectAllCheckbox.checked = false;
-  } else {
-    selectAllCheckbox.checked = true;
-  }
-};
-
-// Assuming this is your select all logic
-const handleFilterData = (event) => {
-  const isChecked = event.target.checked;
-  if (isChecked) {
-    const allIds = FilterData.map(applicant => applicant.applyjobid);
-    setSelectedApplicants(allIds);
-  } else {
-    setSelectedApplicants([]);
-  }
-
-  // Set all checkboxes' checked state to match the header checkbox
-  document.querySelectorAll('input[type="checkbox"][name^="applicantCheckbox-"]').forEach((checkbox) => {
-    checkbox.checked = isChecked;
-  });
-};
-const recordsPerPage = 10; 
-let currentPage = 1;
-
-function handleNextPage1() {
-  const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-  if (currentPage < totalPages) {
-    currentPage += 1;
-    renderTableData();  // Call the function to render data for the new page
-  }
-}
-
-function handlePreviousPage1() {
-  if (currentPage > 1) {
-    currentPage -= 1;
-    renderTableData();  // Call the function to render data for the new page
-  }
-}
-
 function renderTableData() {
-const tableHeader=document.getElementById("tableHeader");
-tableHeader.innerHTML = `
-  <th>
-    <input
-    type="checkbox"
-    id="selectAllCheckbox"
-    />
-  </th>
-  <th>Name</th>
-  <th>Email</th>
-  <th>Mobile Number</th>
-  <th>Job Title</th>
-  <th>Applicant Status</th>
-  ${selectedColumns.includes('Experience') ? '<th>Experience</th>' : ''}
-  ${selectedColumns.includes('Qualification') ? '<th>Qualification</th>' : ''}
-  ${selectedColumns.includes('Speclization') ? '<th>Specialization</th>' : ''}
-  ${selectedColumns.includes('Location') ? '<th>Location</th>' : ''}
-  ${selectedColumns.includes('Job Match%') ? '<th>Job Match%</th>' : ''}
-  ${selectedColumns.includes('Matching Skills') ? '<th>Matching Skills</th>' : ''}
-  ${selectedColumns.includes('Missing Skills') ? '<th>Missing Skills</th>' : ''}
-  ${selectedColumns.includes('Additional Skills') ? '<th>Additional Skills</th>' : ''}
-  ${selectedColumns.includes('Tested Skills') ? '<th>Tested Skills</th>' : ''}
-  ${selectedColumns.includes('Aptitude Score') ? '<th>Aptitude Score</th>' : ''}
-  ${selectedColumns.includes('Technical Score') ? '<th>Technical Score</th>' : ''}
-  <th>Resume</th>
-`;
- 
-  const selectAllCheckbox = document.getElementById("selectAllCheckbox");
-  selectAllCheckbox.addEventListener('change', handleFilterData);
- 
- 
-const tableBody = document.getElementById("applicantTableBody");
-  tableBody.innerHTML = "";
-  if (filteredData.length === 0) {
-    // Display "No data found" message
-    const noDataRow = document.createElement("tr");
-    noDataRow.innerHTML = `
-      <td colspan="${selectedColumns.length + 7}" style="text-align: center;">
-        No Data Found</td>
-    `;
-    tableBody.appendChild(noDataRow);
-  }else{
-  const startIndex = (currentPage - 1) * recordsPerPage;
-  const endIndex = startIndex + recordsPerPage;
-
-  const recordsToDisplay = filteredData.slice(startIndex, endIndex);
-  setFilterData(recordsToDisplay)
-  
-  recordsToDisplay.forEach((applicant,index) => {
-   
-    const row = document.createElement("tr");
-   
-    row.innerHTML = `
-  <td>
-    <input
-      type="checkbox"
-      value="${applicant.applyjobid}"
-      ${selectedApplicants.includes(applicant.applyjobid) ? 'checked' : ''}
-      name="applicantCheckbox-${applicant.applyjobid}"
-    />
-  </td>
-  <td>   
-  <a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">
-    ${applicant.name}
-  ${applicant.preScreenedCondition === 'PreScreened'
-    ? `
-      <div style="display: inline-block; position: relative;">
-        <img 
-          src="${verified123}" 
-          class="external-link-image"
-          alt="Verified" 
-          style="width: 20px; height: 20px; margin-left: 5px;"
-          onMouseEnter="this.nextElementSibling.style.display='block';" 
-          onMouseLeave="this.nextElementSibling.style.display='none';"
-        />
-        <div style="
-            display: none;
-            position: absolute;
-            bottom: 100%;
-            left: 850%;
-            top: ${index === filteredData.length - 1 ? '-70px' : '25px'};
-            transform: translateX(-50%);
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 615px;
-            height: 70px;
-            white-space: normal;
-            box-shadow: 0px 4px 15px 0px rgba(0,0,0,0.15);
-            z-index: 1000;
-            overflow: hidden;
-            padding-right: 50px;
-            padding-top: 5px;
-        ">
-  <div style="
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Center the image and text vertically */
-    padding: 5px; /* Add padding for the inner div */
-  ">
-    <img 
-      src="${verified123}" 
-      alt="Verified" 
-      style="width: 20px; margin-right: 15px; margin-left: 10px;" 
-    />
-    <span style="flex: 1; white-space: normal;">
-      Pre-screened badges are issued to candidates who scored more than 70% in both Aptitude and Technical tests.
-    </span>
-  </div>
-</div>
-      </div>`
-    : ''}
-    </a>
-</td>
-
-  <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.email}</a></td>
-    <td><a href="/viewapplicant/${applicant.id}?jobid=${applicant.jobId}&appid=${applicant.id}" style="color: #0583D2; text-decoration: none;">${applicant.mobilenumber}</a></td>
-  <td>${applicant.jobTitle}</td>
-  <td>
-    <div style="display: inline-flex; justify-content: flex-start; align-items: center; gap: 10px; border-radius: 14px; background: ${
-      (() => {
-        switch (applicant.applicantStatus) {
-          case 'Shortlisted':
-            return '#DBFAEB';
-          case 'Selected':
-            return '#F9F5FF';
-          case 'Rejected':
-            return '#FFF3F4';
-          case 'Screening':
-            return '#EFFFD0';
-          case 'Interviewing':
-            return '#FFF2E1';
-          default:
-            return '#F8F8F8'; // Default background for unknown status
-        }
-      })()
-    }; color: ${
-      (() => {
-        switch (applicant.applicantStatus) {
-          case 'Shortlisted':
-            return '#2D6A4F';
-          case 'Selected':
-            return '#6C3FB6';
-          case 'Rejected':
-            return '#B02A37';
-          case 'Screening':
-            return '#718F00';
-          case 'Interviewing':
-            return '#F7B267';
-          default:
-            return '#000'; // Default color for unknown status
-        }
-      })()
-    }; justify-content: flex-start; padding: 0px 10px;">
-      ${applicant.applicantStatus}
-    </div>
-  </td>
- 
-  ${selectedColumns.includes('Experience') ? `<td>${applicant.experience}</td>` : ''}
- 
-  ${selectedColumns.includes('Qualification') ? `<td>${applicant.qualification}</td>` : ''}
-
-  ${selectedColumns.includes("Speclization") ? `<td>${applicant.specialization}</td>` : ''}
- 
-  ${selectedColumns.includes("Location") ? `
-    <td>
-      ${applicant.preferredJobLocations.length > 3
-        ? `${applicant.preferredJobLocations.slice(0, 3).join(", ")} ...`
-        : applicant.preferredJobLocations.join(", ")}
-    </td>` : ''}
-
-  ${selectedColumns.includes("Job Match%") ? `<td>${applicant.matchPercentage}%</td>` : ''}  
- 
-  ${selectedColumns.includes("Matching Skills") ? `
-    <td>
-      ${applicant.matchedSkills.length > 3
-        ? `${applicant.matchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-        : applicant.matchedSkills.map(skill => skill.skillName).join(", ")}
-    </td>` : ''}
- 
-  ${selectedColumns.includes("Missing Skills") ? `
-    <td>
-      ${applicant.nonMatchedSkills.length > 3
-        ? `${applicant.nonMatchedSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-        : applicant.nonMatchedSkills.map(skill => skill.skillName).join(", ")}
-    </td>` : ''}
- 
-  ${selectedColumns.includes("Additional Skills") ? `
-    <td>
-      ${applicant.additionalSkills.length > 3
-        ? `${applicant.additionalSkills.slice(0, 3).map(skill => skill.skillName).join(", ")} ...`
-        : applicant.additionalSkills.map(skill => skill.skillName).join(", ")}
-    </td>` : ''}
- 
-  ${selectedColumns.includes("Tested Skills") ? `
-    <td>
-      ${applicant.applicantSkillBadges && applicant.applicantSkillBadges.length > 3
-        ? `${applicant.applicantSkillBadges.slice(0, 3).map(skill => skill.skillBadge.name).join(", ")} ...`
-        : applicant.applicantSkillBadges
-          ? applicant.applicantSkillBadges.map(skill => skill.skillBadge.name).join(", ")
-          : "No skills available"}
-    </td>` : ''}
-
-  ${selectedColumns.includes("Aptitude Score") ? `<td>${applicant.apptitudeScore}</td>` : ''}
- 
-  ${selectedColumns.includes("Technical Score") ? `<td>${applicant.technicalScore}</td>` : ''}
- 
-  <td><a href="/view-resume/${applicant.id}" style="color: blue;">View</a></td>
-  <td></td>
-`;
- 
- 
-    tableBody.appendChild(row);
- 
-    const checkbox = row.querySelector(`input[type="checkbox"][value="${applicant.applyjobid}"]`);
- 
-    checkbox.addEventListener('change', () => {
-      handleCheckboxChange3(applicant.applyjobid);
-    });
-    });
-  }
-    function renderPagination() {
-      const totalPages = Math.ceil(filteredData.length / recordsPerPage);
-      const paginationContainer = document.createElement("div");
-      paginationContainer.className = "pagination-containers";
-    
-      paginationContainer.innerHTML = `
-        <button id="prevButton" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
-        <span>${currentPage}</span>
-        <button id="nextButton" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>
-      `;
-    
-      // Clear existing pagination
-      let existingPaginationContainer = document.querySelector(".pagination-containers");
-      if (existingPaginationContainer) {
-        existingPaginationContainer.remove();
-      }
-
-      let existsentirediv = document.querySelector(".entireDivClass");
-      if (existsentirediv) {
-        existsentirediv.remove();
-      }
-      
-      // Append new pagination controls
-      const entireDiv = document.createElement("div");
-      entireDiv.className = "entireDivClass";
-      entireDiv.appendChild(paginationContainer);
-      entireDiv.style.height = "50px";
-      entireDiv.style.display = "flex";
-      entireDiv.style.justifyContent = "flex-end"; // Align items to the right
-      entireDiv.style.alignItems = "center";
-    
-      const x = document.getElementsByClassName("profile-setting");
-      if (x[0]) {
-        x[0].appendChild(entireDiv);
-      }
-      const prevButton = document.getElementById('prevButton');
-      const nextButton = document.getElementById('nextButton');
-
-      // Ensure the elements exist before adding event listeners
-      if (prevButton) {
-          prevButton.addEventListener('click', handlePreviousPage1);
-      }
-
-      if (nextButton) {
-          nextButton.addEventListener('click', handleNextPage1);
-      }
-
-      if (filteredData.length === 0) {
-        // Optionally, you could disable the buttons or show a message
-        prevButton.disabled = true;
-        nextButton.disabled = true;
-      }
-    }
-    renderPagination();
-  }
+  setApplicants(filteredData);
+}
   setCount(filteredData.length);
   renderTableData();
 };
+
 
 const applyMatchType = (value, filterValue, matchType) => {
   // Ensure value and filterValue are both strings
@@ -1449,9 +902,12 @@ const applyStatusMatchType = (value, filterValue, matchType) => {
 };
 
 const applyExperienceMatchType = (experience, filterValue, matchType) => {
+  console.log("applyExperienceMatchType called with:", { experience, filterValue, matchType }); // NEW: Debug Log
+
   if (!matchType || filterValue === null) return true;
   
   const exp = parseInt(experience.trim(), 10);
+  console.log("Parsed experience:", exp); // NEW: Debug Log
   
   if (matchType === "greaterThan") {
     return exp > filterValue;
@@ -1460,6 +916,7 @@ const applyExperienceMatchType = (experience, filterValue, matchType) => {
   } else if (matchType === "is") {
     return exp == filterValue;
   }
+
   return true;
 };
 
@@ -1495,6 +952,8 @@ const applyScoreMatchType = (score, filterValue, matchType) => {
 
   return true;
 };
+
+
 
 
 const applySkillMatchType = (applicantSkills, filterSkills, matchType) => {
@@ -1688,13 +1147,22 @@ const handleTextFieldChange = (id, value) => {
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const fetchAllApplicants = async () => {
     setIsLoading(true); // Start loading
-
+    let applicantsArray;
+    const flagForProfileBack=localStorage.getItem('tableFilterData');
+    const tableSelectedCheckBoxes1=localStorage.getItem('tableSelectedCheckBoxes');
+    const savedSelectedColoumns=localStorage.getItem('tableSelectedColumns');
     try {
+      if(!flagForProfileBack){
+       if(tableSelectedCheckBoxes1){
+        setSelectedCheckboxes(JSON.parse(tableSelectedCheckBoxes1));
+        setSelectedColumns(JSON.parse(savedSelectedColoumns));
+       }
       const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants`);
-    const applicantsArray = Object.values(response.data).flat();
-    setCount(applicantsArray.length);
-    setApplicants(applicantsArray);
-    setInitialData(applicantsArray);  // Store initial data
+       applicantsArray = Object.values(response.data).flat();
+      setCount(applicantsArray.length);
+      setApplicants(applicantsArray);
+      setInitialData(applicantsArray);
+      // Store initial data
     // Extract names from applicants and update availableSuggestions
      // Update all suggestion arrays based on the applicants' data
      setAvailableNameSuggestions(applicantsArray.map(applicant => applicant.name));
@@ -1787,12 +1255,39 @@ const handleTextFieldChange = (id, value) => {
          return () => {
             isMounted.current = false;
          };
+      }else{
+       
+    const savedFilterData = localStorage.getItem('tableFilterData');
+    const savedColumns = localStorage.getItem('tableSelectedColumns');
+    const savedCheckBoxes = localStorage.getItem('tableSelectedCheckBoxes');
+    const initialData1 = localStorage.getItem('initialData');
+
+    // Set state if data exists
+    if (savedFilterData) {
+      setApplicants(JSON.parse(savedFilterData));
+      const parsedData = JSON.parse(savedFilterData);
+      if (parsedData.length > 0) {
+        setCount(parsedData.length);  // Use parsedData.length to set count
+      }
+    }
+    if (savedColumns) {
+      setSelectedColumns(JSON.parse(savedColumns));
+      setSelectedCheckboxes(JSON.parse(savedCheckBoxes))
+    }
+   setInitialData(initialData1);
+    return () => {
+      localStorage.removeItem('tableFilterData');
+      localStorage.removeItem('tableSelectedColumns');
+    };
+      }
+     
     } catch (error) {
       console.error('Error fetching applicants:', error);
     }finally {
       setIsLoading(false); // Stop loading
     }
   };
+
 
   useEffect(() => {
     if (isMounted.current) {
@@ -2085,8 +1580,10 @@ const exportCSV = () => {
       }
  
       if (headerText === 'Resume') {
-        const resumeLink = td.querySelector('a')?.href;
-        return resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
+        const resumeLink = `${apiUrl}/resume/pdf/${user.id}`;
+        return resumeLink 
+          ? `"=HYPERLINK(""${resumeLink}"", ""${resumeLink}"")"` 
+          : 'N/A';
       }
  
       return cellContent;
@@ -2197,8 +1694,10 @@ const exportCSV = () => {
       rowData.push(applicant.technicalScore); 
     }
   
-    const resumeLink = `${window.location.origin}/view-resume/${applicant.id}`;
-    const hyperlinkFormula = resumeLink ? `"=HYPERLINK(""${resumeLink}"", ""View"")"` : 'N/A';
+    const resumeLink = `${apiUrl}/view-resume/${applicant.id}`;
+    const hyperlinkFormula = resumeLink 
+      ? `"=HYPERLINK(""${resumeLink}"", ""${resumeLink}"")"` 
+      : 'N/A';
     rowData.push(hyperlinkFormula);
 
     return rowData;
@@ -2353,14 +1852,18 @@ const exportCSV = () => {
       
         <div className="table-container">
         
-              <h3 className="filter">
+        <h3 className="filter">
               
               <span
             style={{ cursor: 'pointer', marginRight: '16px', marginLeft: '-40px', position: 'relative'
             }} // Add pointer cursor for the arrow
             onClick={() => {setShowFilters(!showFilters);setErrorMessage('')}} // Toggle filters visibility
           >
-            <img src={arrowleft} onClick={uncheckAll1} style={{ height: '40px', width:'24px', marginTop: '7px' }} />
+            <img src={arrowleft}onClick={() => { 
+                saveTableState();
+                uncheckAll1();  
+              }} 
+               style={{ height: '40px', width:'24px', marginTop: '7px' }} />
             </span>
              Filters </h3>
                 
@@ -2406,7 +1909,7 @@ const exportCSV = () => {
                     // Handle the case when a user is typing
                     handleTextFieldChange("name", text);
                   }}
-                  options={availableNameSuggestions}  // Options for typeahead
+                  options={uniqueNameSuggestions}  // Options for typeahead
                   placeholder="Type to search..."
                 />
                         
@@ -2455,7 +1958,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("email", text);
                             }}
-                            options={availableEmailSuggestions}  // Options for typeahead
+                            options={uniqueEmailSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2504,7 +2007,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("mobileNumber", text);
                             }}
-                            options={availableMobileSuggestions}  // Options for typeahead
+                            options={uniqueMobileSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2552,7 +2055,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("jobTitle", text);
                             }}
-                            options={availableJobTitleSuggestions}  // Options for typeahead
+                            options={uniquejobtitleSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2663,7 +2166,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumExperience", text);
                             }}
-                            options={availableExpSuggestions}  // Options for typeahead
+                            options={uniqueExpSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2712,7 +2215,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("minimumQualificationInput", text);
                             }}
-                            options={availableQualSuggestions}  // Options for typeahead
+                            options={uniqueQualSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -2761,7 +2264,7 @@ const exportCSV = () => {
                               // Handle the case when a user is typing
                               handleTextFieldChange("specializationInput", text);
                             }}
-                            options={availableSpecSuggestions}  // Options for typeahead
+                            options={uniqueSpecSuggestions}  // Options for typeahead
                             placeholder="Type to search..."
                           />
                         </div>
@@ -3198,15 +2701,15 @@ const exportCSV = () => {
 
             <div className="row">
             
-     
               <div className="col-lg-12 col-md-12">
                 <div className="profile-setting" style={{ width: '100%'}}>
+
                 <div className="table-container-wrapper">
                   <div className="table-container">
                   { isLoading ? (
-                  <div>Loading...</div> // Display a spinner or loading text
+                  <div style={{paddingLeft:'10px'}}>Loading...</div> // Display a spinner or loading text
                       ) : Array.isArray(applicants) && applicants.length === 0 ? (
-                  <p>No Applicants are available.</p> // Display when there are no applicants
+                  <p style={{paddingLeft:'10px'}}>No Applicants are available.</p> // Display when there are no applicants
                       ) : (
                     <table ref={tableref} className="responsive-table">
                       <thead id='tableHeader'>
@@ -3253,7 +2756,11 @@ const exportCSV = () => {
  
                             <div className={`sidebar ${isOpen ? 'open' : ''}`}>
                               <h3>
-                                <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} onClick={toggleSidebar}/>
+                                <FontAwesomeIcon icon={faArrowLeft} style={{ marginRight: '20px', fontSize:'18px' }} 
+                                onClick={() => { 
+                                  toggleSidebar();
+                                  // toggleSidebar1();  
+                                }} />
                                 Manage Columns
                               </h3><br/>
                              
@@ -3291,13 +2798,22 @@ const exportCSV = () => {
                       {Array.isArray(currentRecords) && currentRecords.map((application,index) => (
                           <tr
                           key={application.applyjobid}
+                          //onClick={() => navigate(`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}&applyid=${application.applyjobid}`)} // Use navigate for row click
                           style={{
-                            backgroundColor: selectedApplicants.includes(application.applyjobid)
-                              ? "#F6F6F6"
-                              : "transparent",
+                            backgroundColor: selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent",
+                            cursor: "pointer",
+                            transition: "background-color 0.3s ease",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!selectedApplicants.includes(application.applyjobid)) {
+                              e.currentTarget.style.backgroundColor = "#F6F6F6"; 
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = selectedApplicants.includes(application.applyjobid) ? "#F6F6F6" : "transparent";
                           }}
                         >
-                              <td>
+                              <td onClick={(e) => e.stopPropagation()}>
                                 <input
                                   type="checkbox"
                                   value={application.applyjobid}
@@ -3373,15 +2889,12 @@ const exportCSV = () => {
 </td>
 
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
-                            {application.email}</Link>
+                            {application.email}
                             </td>
                        
                            
                             <td>
-                            <Link to={`/viewapplicant/${application.id}?jobid=${application.jobId}&appid=${application.id}`} style={{ color: '#0583D2', textDecoration: 'none' }}>
                             {application.mobilenumber}
-                            </Link>
                             </td>
                             <td>{application.jobTitle}</td>
                             <td>
@@ -3396,7 +2909,7 @@ const exportCSV = () => {
                                       case 'Shortlisted':
                                         return '#DBFAEB';
                                       case 'Selected':
-                                        return '#F9F5FF';
+                                        return '#E5EBFF';
                                       case 'Rejected':
                                         return '#FFF3F4';
                                       case 'Screening':
@@ -3430,7 +2943,7 @@ const exportCSV = () => {
                                 </div>
                               </td>
  
-                              {selectedColumns.includes("Experience")&&(<td>{application.experience}</td>)}
+                            {selectedColumns.includes("Experience")&&(<td>{application.experience}</td>)}
                             {selectedColumns.includes("Qualification")&&(<td>{application.minimumQualification}</td>)}
                             {selectedColumns.includes("Speclization")&&(<td>{application.specialization}</td>)}
                             {selectedColumns.includes("Location")&&(
@@ -3485,7 +2998,18 @@ const exportCSV = () => {
                             {selectedColumns.includes("Technical Score") && (
                               <td>{application.technicalScore === 0 ? 'N/A' : application.technicalScore}</td>
                             )}
-                            <td><Link to={`/view-resume/${application.id}`} target='_new' style={{ color: 'blue' }}>View</Link></td>
+                            <td onClick={(e) => e.stopPropagation()}>
+                            <a 
+                              href="#" 
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleResumeClick1();
+                              }} 
+                              style={{ color: '#0583D2', textDecoration: 'none', cursor: 'pointer' }}
+                            >
+                              View
+                            </a>
+                            </td>
                             <td></td>
                            
                           </tr>

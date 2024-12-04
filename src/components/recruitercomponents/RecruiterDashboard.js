@@ -160,7 +160,11 @@ function RecruiterDashboard() {
         fontWeight: '600',
        
       };
-
+      localStorage.removeItem('tableFilterData');
+      localStorage.removeItem('tableSelectedColumns');
+      localStorage.removeItem('tableSelectedCheckBoxes');
+      localStorage.removeItem('initialData');
+      
   return (
     <div>
   

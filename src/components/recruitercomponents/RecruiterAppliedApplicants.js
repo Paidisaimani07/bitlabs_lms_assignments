@@ -457,7 +457,7 @@ const handleSelectChange = async (e) => {
             <div className="col-lg-2 col-md-2" style={{ borderRight: '1px solid black', paddingLeft: '1px', paddingRight: '0px' }}>
         {/* <!-- First Section --> */}
        
-<div className="profile-setting">
+<div className="profile-setting" style={{width:'100%'}}>
   <div className="table-container-wrapper">
     <div className="table-container">
     <h3 className="filter"><strong>Filters </strong></h3>

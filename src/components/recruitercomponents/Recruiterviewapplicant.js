@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from 'react';
+import React, { useState, useEffect,useRef, useCallback } from 'react';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
@@ -9,7 +9,7 @@ import Phone from '../../images/icons/phone1.png';
 import Resume from '../../images/icons/resume.png';
 import mortarboard1 from '../../images/icons/mortarboard1.png';
 import verified123 from '../../images/verified123.svg';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import html2canvas from "html2canvas";
@@ -53,12 +53,11 @@ const [applicants1, setApplicants1] = useState({
 });
 
 const [paddingRight, setPaddingRight] = useState(window.innerWidth > 1440 ? '330px' : '0px');
- 
+
 useEffect(() => {
   const handleResize = () => {
     setPaddingRight(window.innerWidth > 1440 ? '380px' : '0px');
   };
- 
   window.addEventListener('resize', handleResize);
   return () => window.removeEventListener('resize', handleResize);
 }, []);
@@ -202,7 +201,9 @@ useEffect(() => {
   const  applicantId= query.get('appid');
   const  applyid= query.get('applyid');
   const isPreScreened = query.get('preScreened') === 'true';
- 
+
+
+
   const fetchResume = async () => {
     try {
       console.log('Making resume API call...');
@@ -379,8 +380,10 @@ useEffect(() => {
       const data = response.data;
   
       if (data) {
+
         const { matchPercentage, matchedSkills, skillsRequired, additionalSkills ,applicantSkillBadges,aptitudeScore, technicalScore } = data;
-  
+        const Key = `applicantData_${id}_${jobid}`
+        localStorage.setItem(Key, JSON.stringify(data));
         // Update the state with dynamic values
         setMatchScore(matchPercentage || 0);
         setApplicants1((prev) => ({
@@ -402,36 +405,48 @@ useEffect(() => {
   
   useEffect(() => {
     if (id && jobid) {
-      fetchApplicantDetails();
+      const Key = `applicantData_${id}_${jobid}`;
+      const applicantdata = localStorage.getItem(Key);
+      
+        if (applicantdata) {
+        const storeddetails = JSON.parse(applicantdata);
+        setMatchScore(storeddetails.matchPercentage || 0);
+        setApplicants1((prev) => ({
+          ...prev,
+          matchedSkills: storeddetails.matchedSkills || [],
+          missingSkills: storeddetails.skillsRequired || [],
+          additionalSkills: storeddetails.additionalSkills || [],
+          VerifiedSkills: storeddetails.applicantSkillBadges || [],
+          aptitudeScore: storeddetails.aptitudeScore,
+          technicalScore: storeddetails.technicalScore,
+        }));
+       
+      } else {
+        fetchApplicantDetails();
+        
+      }
     }
   }, [id, jobid]);
 
   const handleSelectChange1 = async (e) => {
     const newStatus = e.target.value;
-  
     try {
-      console.log("New Status:", newStatus);
-  
-      // Assuming 'applyJobId' is available directly (you can adjust as needed)
-      const applyJobId = applyid; // Replace with the correct applicant ID variable
-  
+      const applyJobId = applyid; 
       if (!applyJobId) {
-        console.error("applyJobId is undefined or null");
         return;
       }
-  
-      // Make the API call to update status
+      const token = localStorage.getItem('jwtToken');
       const response = await axios.put(
-        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
+        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
       );
-  
-      console.log("API Response:", response.data);
-  
-      const message1 = `Status changed to <b>${newStatus}</b>`;
+      const message1 = `Status changed to ${newStatus}`;
       setSnackbar({ open: true, message: message1, type: 'success' });
-  
     } catch (error) {
-      console.error('Error updating status:', error);
       setSnackbar({ open: true, message: 'Failed to update status', type: 'error' });
     }
   };
@@ -582,7 +597,6 @@ useEffect(() => {
     );
   }
 
-  
  
   return (
     <div className="dashboard__content">
@@ -593,7 +607,7 @@ useEffect(() => {
             <div className="title-dashboard">
             <div className="title-dash flex2" style={{ maxWidth: '1440px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <BackButton /> Applicants
+                <BackButton  id={id} jobid={jobid}/> Applicants
               </div>
               <span style={{paddingRight}}>
                 <button className="export-buttonn" onClick={handleDownloadPDF}>

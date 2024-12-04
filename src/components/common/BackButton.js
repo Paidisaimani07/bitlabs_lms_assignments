@@ -1,15 +1,23 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import { Link, useNavigate} from 'react-router-dom';
 
-const BackButton = () => {
+const BackButton = ({id,jobid}) => {
   const navigate = useNavigate();
+  
 
   const handleClick = (e) => {
     e.preventDefault();
-    console.log("Back button is clicked",e);
-    navigate(-1); 
-  };
-
+      
+       if (id && jobid) {
+         const storageKey = `applicantData_${id}_${jobid}`;
+         localStorage.removeItem(storageKey); 
+       }
+  
+    navigate(-1);
+  
+     console.log("all applicants");
+   };
+   
   return (
     <div className="back-to-previous pb-4">
       <Link to="#" className="back-link" onClick={handleClick} style={{ display: 'flex', alignItems: 'center' }}>

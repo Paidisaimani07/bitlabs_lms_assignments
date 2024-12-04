@@ -300,13 +300,12 @@ const handleJobTitleChange1 = (event) => {
   }, [user.id, formLoaded]);
 
 
-  useEffect(() => {
-    if (approvalStatus && approvalStatus !== 'approved') {
-      alert("Sorry, you can't post the job until your profile is verified");
-     
-      window.location.href = '/recruiter-my-organization';
-    }
-  }, [approvalStatus]);
+  // useEffect(() => {
+  //   if (approvalStatus && approvalStatus !== 'approved') {
+  //     alert("Sorry, you can't post the job until your profile is verified");     
+  //     window.location.href = '/recruiter-my-organization';
+  //   }
+  // }, [approvalStatus]);
   const [formErrors, setFormErrors] = useState({
     jobTitle: '',
     minSalary: '',
@@ -741,7 +740,10 @@ const handleJobTitleChange1 = (event) => {
     setIsActive(false);
 
   };
-
+  localStorage.removeItem('tableFilterData');
+  localStorage.removeItem('tableSelectedColumns');
+  localStorage.removeItem('tableSelectedCheckBoxes');
+  localStorage.removeItem('initialData');
   return (
     <div>
       <div className="dashboard__content">
