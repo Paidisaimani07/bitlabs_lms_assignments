@@ -19,6 +19,22 @@ function RecruiterViewJob({ selectedJobId }) {
   const jobId = new URLSearchParams(location.search).get('jobId');
   const [menuOpen, setMenuOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+  const[applicantcount,setApplicantCount] = useState(0);
+  const[applicants,setApplicants] = useState();
+
+
+  useEffect(() => {
+    const fetchApplicantCount = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/applyjob/appliedapplicants/${selectedJobId}`);
+        const applicantsArray = Object.values(response.data || {}).flat();
+        setApplicantCount(applicantsArray.length);
+      } catch (error) {
+        console.error("Error fetching applicant count:", error);
+      }
+    };
+      fetchApplicantCount();
+    }, [user.id]);
 
   const fetchJobDetails = async () => {
     try {
@@ -180,7 +196,61 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
                   
-                    <div className="title-dash flex2"><BackButton />Full Job Details</div>
+                  <div className="title-dash flex2" style={{ display: 'flex', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
+    <BackButton />Full Job Details
+  </div>
+ 
+  <div style={{ display: 'flex', alignItems: 'center', fontSize: '16px', marginLeft:'12px' }}>
+    {/* SVG Icon */}
+    <svg
+      width="21"
+      height="21"
+      viewBox="0 0 21 21"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ marginRight: '6px' }}
+    >
+      <g clipPath="url(#clip0_3427_6096)">
+        <path
+          d="M14.4909 18V16.3333C14.4909 15.4493 14.1397 14.6014 13.5146 13.9763C12.8895 13.3512 12.0416 13 11.1576 13H4.49093C3.60687 13 2.75902 13.3512 2.1339 13.9763C1.50878 14.6014 1.15759 15.4493 1.15759 16.3333V18"
+          stroke="grey"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7.8243 9.66667C9.66525 9.66667 11.1576 8.17428 11.1576 6.33333C11.1576 4.49238 9.66525 3 7.8243 3C5.98335 3 4.49097 4.49238 4.49097 6.33333C4.49097 8.17428 5.98335 9.66667 7.8243 9.66667Z"
+          stroke="grey"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M19.491 18.0001V16.3334C19.4904 15.5948 19.2446 14.8774 18.7921 14.2937C18.3396 13.7099 17.7061 13.293 16.991 13.1084"
+          stroke="grey"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M13.6576 3.1084C14.3746 3.29198 15.0101 3.70898 15.464 4.29366C15.9178 4.87833 16.1641 5.59742 16.1641 6.33757C16.1641 7.07771 15.9178 7.7968 15.464 8.38147C15.0101 8.96615 14.3746 9.38315 13.6576 9.56673"
+          stroke="grey"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_3427_6096">
+          <rect width="20" height="20" fill="white" transform="translate(0.32428 0.5)" />
+        </clipPath>
+      </defs>
+    </svg>
+    <span style={{marginRight: '4px',color:'#959799'}}>{applicantcount}</span>
+    <span style = {{color:'#959799'}}>Applicants</span>
+  </div>
+</div>
                   </div>
                 </div>
               </div>
