@@ -43,182 +43,166 @@ function RecruiterPostJob() {
   const handlePostJob = async (e) => {
     e.preventDefault(); // Prevent default form submission
     const errors = {};
-  let isValid = true;
-
-  if (selectedOption === "externalWebsite") {
-    if (!jobURL.trim()) {
-      isValid = false;
-      errors.url = "URL is required";
-    } else {
-      const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
-      if (!urlRegex.test(jobURL)) {
+    let isValid = true;
+  
+    // Validation logic
+    if (selectedOption === "externalWebsite") {
+      if (!jobURL.trim()) {
         isValid = false;
-        errors.url = "Please enter a valid URL";
+        errors.url = "URL is required";
+      } else {
+        const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
+        if (!urlRegex.test(jobURL)) {
+          isValid = false;
+          errors.url = "Please enter a valid URL";
+        }
       }
     }
-  }
-
-  if (!minSalary.trim()) {
-    errors.minSalary = 'Minimum salary is required.';
-    isValid = false;
-  }
-  else {
-    errors.minSalary = '';
-  }
-  if (!maxSalary.trim()) {
-    errors.maxSalary = 'Maximum salary is required.';
-    isValid = false;
-  } else if (parseInt(minSalary) > parseInt(maxSalary)) {
-    errors.maxSalary = 'Maximum salary should be greater than or equal to minimum salary.';
-    isValid = false;
-  } else {
-    errors.maxSalary = '';
-  }
-
-  if (!jobTitle.trim()) {
-    isValid = false;
-    errors.jobTitle = 'Job title is required.';
-  } else {
-    errors.jobTitle = '';
-  }
-
-  if (!description.trim() || description.trim().length < 15) {
-    errors.description = 'Description is required and must be at least 15 characters long.';
-    isValid = false;
-  } else {
-    errors.description = '';
-  }
-
-  if (!minimumExperience.trim()) {
-    setMinimumExperience('');
-    isValid = false;
-    errors.minimumExperience = 'Minimum experience is required.';
-  } else {
-    errors.minimumExperience = '';
-  }
-  if (!maximumExperience.trim()) {
-    errors.maximumExperience = 'Maximum experience is required.';
-    isValid = false;
-  } else if (parseInt(minimumExperience) > parseInt(maximumExperience)) {
-    errors.maximumExperience = 'Maximum experience should be greater than or equal to minimum experience.';
-    isValid = false;
-  } else {
-    errors.maximumExperience = '';
-  }
-
-  if (!minimumQualification.trim()) {
-    errors.minimumQualification = 'Minimum qualification is required.';
-    isValid = false;
-  } else {
-    errors.minimumQualification = '';
-  }
-
-  if (skillsRequired.length === 0) {
-    errors.skills = 'Skills are required';
-    isValid = false;
-  } else {
-    errors.skills = ""; 
-  }
-
-  if (!location.trim()) {
-    errors.location = 'Location is required.';
-    isValid = false;
-  } else if (!/^[a-zA-Z]+$/.test(location.trim())) {
-    errors.location = 'Location should contain only alphabets.';
-    isValid = false;
-  } else {
-    errors.location = '';
-  }
-
-  if (!employeeType.trim()) {
-    errors.employeeType = 'Job type is required.';
-    isValid = false;
-  } else {
-    errors.employeeType = '';
-  }
-
-  setFormErrors(errors); // Update the form errors state
-
-  if (isValid) {
-    // Proceed with the job posting logic
-    console.log("Form is valid. Proceeding with job posting.");
-  } else {
-    console.log("Form validation failed.");
-  }
-
   
+    if (!minSalary.trim()) {
+      errors.minSalary = 'Minimum salary is required.';
+      isValid = false;
+    }
   
-  try {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (!jwtToken) {
-      setSnackbar({ open: true, message: 'Authentication token missing', type: 'error' });
+    if (!maxSalary.trim()) {
+      errors.maxSalary = 'Maximum salary is required.';
+      isValid = false;
+    } else if (parseInt(minSalary) > parseInt(maxSalary)) {
+      errors.maxSalary = 'Maximum salary should be greater than or equal to minimum salary.';
+      isValid = false;
+    }
+  
+    if (!jobTitle.trim()) {
+      isValid = false;
+      errors.jobTitle = 'Job title is required.';
+    }
+  
+    if (!description.trim() || description.trim().length < 15) {
+      errors.description = 'Description is required and must be at least 15 characters long.';
+      isValid = false;
+    }
+  
+    if (!minimumExperience.trim()) {
+      isValid = false;
+      errors.minimumExperience = 'Minimum experience is required.';
+    }
+  
+    if (!maximumExperience.trim()) {
+      errors.maximumExperience = 'Maximum experience is required.';
+      isValid = false;
+    } else if (parseInt(minimumExperience) > parseInt(maximumExperience)) {
+      errors.maximumExperience = 'Maximum experience should be greater than or equal to minimum experience.';
+      isValid = false;
+    }
+  
+    if (!minimumQualification.trim()) {
+      errors.minimumQualification = 'Minimum qualification is required.';
+      isValid = false;
+    }
+  
+    if (skillsRequired.length === 0) {
+      errors.skills = 'Skills are required.';
+      isValid = false;
+    }
+  
+    if (!location.trim()) {
+      errors.location = 'Location is required.';
+      isValid = false;
+    } else if (!/^[a-zA-Z]+$/.test(location.trim())) {
+      errors.location = 'Location should contain only alphabets.';
+      isValid = false;
+    }
+  
+    if (!employeeType.trim()) {
+      errors.employeeType = 'Job type is required.';
+      isValid = false;
+    }
+  
+    // Update the form errors state
+    setFormErrors(errors);
+  
+    // Stop execution if validation fails
+    if (!isValid) {
+      console.log("Form validation failed. API call will not be made.");
       return;
     }
   
-    const headers = {
-      Authorization: `Bearer ${jwtToken}`,
-      'Content-Type': 'application/json',
-    };
+    // Proceed with API call if the form is valid
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      if (!jwtToken) {
+        setSnackbar({ open: true, message: 'Authentication token missing', type: 'error' });
+        return;
+      }
   
-    const formData = {
-      jobTitle,
-      description,
-      minSalary,
-      maxSalary,
-      location,
-      employeeType,
-      industryType,
-      specialization,
-      skillsRequired,
-      minimumExperience,
-      maximumExperience,
-      minimumQualification,
-      jobURL: jobURL && jobURL.trim() !== "" ? jobURL.trim() : "https://www.bitlabs.in/jobs", // Use user-entered URL or default
-    };
+      const headers = {
+        Authorization: `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json',
+      };
   
-    console.log('Payload being sent to API:', formData);
+      const formData = {
+        jobTitle,
+        description,
+        minSalary,
+        maxSalary,
+        location,
+        employeeType,
+        industryType,
+        specialization,
+        skillsRequired,
+        minimumExperience,
+        maximumExperience,
+        minimumQualification,
+        ...(jobURL && jobURL.trim() !== "" && { jobURL: jobURL.trim() }),
+      };
   
-    // Call the Save Job API
-    const jobResponse = await axios.post(
-      `${apiUrl}/job/recruiters/saveJob/${user.id}`,
-      formData,
-      { headers }
-    );
+      console.log('Payload being sent to API:', formData);
   
-    console.log('Job saved successfully:', jobResponse.data);
-    setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });
+      // Call the Save Job API
+      const jobResponse = await axios.post(
+        `${apiUrl}/job/recruiters/saveJob/${user.id}`,
+        formData,
+        { headers }
+      );
   
-  } catch (error) {
-    if (error.response) {
-      console.error('Response status:', error.response.status);
-      console.error('Response data:', error.response.data);
-      // setSnackbar({
-      //   open: true,
-      //   message: `Error: ${error.response.data.message || 'Unable to save job.'}`,
-      //   type: 'error',
-      // });
-    } else if (error.request) {
-      console.error('Request made but no response:', error.request);
-      setSnackbar({
-        open: true,
-        message: 'No response from server. Please try again later.',
-        type: 'error',
-      });
-    } else {
-      console.error('Unexpected error:', error.message);
-      setSnackbar({
-        open: true,
-        message: `Unexpected error: ${error.message}`,
-        type: 'error',
-      });
+      console.log('Job posted successfully:', jobResponse.data);
+      // Simulating a success flow
+  setSnackbar({ open: true, message: 'Job posted successfully', type: 'success' });
+        // Call clearForm immediately after setting the Snackbar
+clearForm();
+
+  // Navigate after 2 seconds
+  setTimeout(() => {
+    console.log("Navigating to recruiter-postjob");
+    navigate('/recruiter-postjob');
+  }, 2000);
+
+    } catch (error) {
+      if (error.response) {
+        console.error('Response status:', error.response.status);
+        console.error('Response data:', error.response.data);
+      } else if (error.request) {
+        console.error('Request made but no response:', error.request);
+        setSnackbar({
+          open: true,
+          message: 'No response from server. Please try again later.',
+          type: 'error',
+        });
+      } else {
+        console.error('Unexpected error:', error.message);
+        setSnackbar({
+          open: true,
+          message: `Unexpected error: ${error.message}`,
+          type: 'error',
+        });
+      }
     }
-  }
   };
 
   const handleCloseSnackbar1 = () => {
     setSnackbar({ open: false, message: '', type: '' });
     setTimeout(() => {
-      navigate('/recruiter-postjob'); // Redirect after closing Snackbar
+      navigate('/recruiter-postjob');
     }, 2000);
   };
 
@@ -360,6 +344,7 @@ const handleJobTitleChange1 = (event) => {
     setUploadDocument(null);
     setFileName('No selected file');
     setImage(null);
+    setjobURL('');
   };
   const validateForm = () => {
     let isValid = true;
@@ -745,6 +730,11 @@ const handleJobTitleChange1 = (event) => {
 
    const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
+    // Navigate after 2 seconds
+  setTimeout(() => {
+    console.log("Navigating to recruiter-postjob");
+    navigate('/recruiter-postjob');
+  }, 2000);
   };
   
   const handleFocus = () => {
