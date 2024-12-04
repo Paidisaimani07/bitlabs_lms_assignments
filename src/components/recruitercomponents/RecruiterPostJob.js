@@ -345,6 +345,7 @@ const handleJobTitleChange1 = (event) => {
     setFileName('No selected file');
     setImage(null);
     setjobURL('');
+    
   };
   const validateForm = () => {
     let isValid = true;
