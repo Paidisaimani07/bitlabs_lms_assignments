@@ -171,11 +171,6 @@ function RecruiterPostJob() {
         // Call clearForm immediately after setting the Snackbar
 clearForm();
 
-  // Navigate after 2 seconds
-  setTimeout(() => {
-    console.log("Navigating to recruiter-postjob");
-    navigate('/recruiter-postjob');
-  }, 2000);
 
     } catch (error) {
       if (error.response) {
@@ -345,7 +340,7 @@ const handleJobTitleChange1 = (event) => {
     setFileName('No selected file');
     setImage(null);
     setjobURL('');
-    
+
   };
   const validateForm = () => {
     let isValid = true;
