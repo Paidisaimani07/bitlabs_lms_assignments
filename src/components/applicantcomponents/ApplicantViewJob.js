@@ -17,8 +17,6 @@ import SpringBoot from '../../images/SpringBoot.svg';
 import alertcircle from '../../images/alert-circle 3.svg';
 import externallink2 from '../../images/external-link2.svg';
 
-
-
 import ScreeningQuestionsModal from './ScreeningQuestionsModal';
 
 import Modal from './AppliedjobsModal';
@@ -38,6 +36,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const [isScreeningModalOpen, setScreeningModalOpen] = useState(false);
   const [screeningQuestions, setScreeningQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
+  const [visited, setVisited] = useState(false);
 
   const courseImageMap = {
     'HTML&CSS': HTMLCSS,
@@ -131,12 +130,98 @@ const ApplicantViewJob = ({ selectedJobId }) => {
     fetchJobDetails();
   }, [jobId]);
 
-   const handleApplyNow = async () => {
-    if (jobDetails.screeningQuestions && jobDetails.screeningQuestions.length > 0) {
-      setScreeningQuestions(jobDetails.screeningQuestions);
-      setScreeningModalOpen(true);
+  //  const handleApplyNow = async () => {
+  //   if (jobDetails.screeningQuestions && jobDetails.screeningQuestions.length > 0) {
+  //     setScreeningQuestions(jobDetails.screeningQuestions);
+  //     setScreeningModalOpen(true);
+  //   } else {
+  //     await applyJob();
+  //   }
+  // };
+
+  const handleApplyNow = async () => {
+    if (jobDetails.jobURL.includes('https://www.bitlabs.in/jobs')) {
+      // Internal job: Check if there are screening questions
+      if (jobDetails.screeningQuestions && jobDetails.screeningQuestions.length > 0) {
+        // Handle screening questions
+        setScreeningQuestions(jobDetails.screeningQuestions);
+        setScreeningModalOpen(true); // Open modal for screening questions
+      } else {
+        // Apply directly to internal job if no screening questions
+        await handleInternalJobApply(); // Apply for internal job without screening questions
+      }
     } else {
-      await applyJob();
+      // External job: No screening questions, just track the visit and apply
+      await handleExternalJobVisit(); // For external jobs, handle visit and open URL
+    }
+  };
+  
+
+  const handleInternalJobApply = async () => {
+    try {
+      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+      });
+      const profileId = profileIdResponse.data;
+
+      if (profileId === 0) {
+        navigate('/applicant-basic-details-form');
+        return;
+      }
+
+      const response = await axios.post(
+        `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
+        {},
+        { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
+      );
+      const { applied } = response.data;
+
+      localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
+      setApplied(applied);
+      fetchJobDetails();
+      setModalOpen(true);
+    } catch (error) {
+      console.error('Error applying for the job:', error);
+      setSnackbar({
+        open: true,
+        message: 'Job has already been applied by the applicant.',
+        link: '/applicant-applied-jobs',
+        linkText: 'View Applied Jobs',
+        type: 'error',
+      });
+    }
+  };
+
+  const handleExternalJobVisit = async () => {
+    if (!visited) {
+      try {
+        await axios.post(`${apiUrl}/jobVisit/applicant/track-visit`, { jobId }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+        });
+        setVisited(true);
+        const response = await axios.post(
+          `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
+          {},
+          { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
+        );
+        const { applied } = response.data;
+  
+        localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
+        setApplied(applied);
+        fetchJobDetails();
+        // Add logic to move job to Applied Jobs section if necessary
+      } catch (error) {
+        console.error('Error tracking visit:', error);
+      }
+    }
+    window.open(jobDetails.jobURL, '_blank');
+  };
+
+  const handleApply = () => {
+    if (jobDetails.jobURL.includes('https://www.bitlabs.in/jobs')) {
+      handleInternalJobApply();
+    } else {
+      handleExternalJobVisit();
     }
   };
 
@@ -278,26 +363,54 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                                 </span>
                               </div>
                               <div className="button-readmore">
-                                <div style={{ display: 'flex', alignItems: 'center' }}>
-                                  <button
-                                    className={`btn-apply btn-popup ${applied ? 'applied' : ''}`}
-                                    onClick={handleApplyNow}
-                                    disabled={jobDetails.jobStatus === 'Already Applied'}
-                                    style={{
-                                      backgroundColor: jobDetails.jobStatus === 'Already Applied' ? '#FEF1E8' : '#F97316',
-                                      cursor: 'pointer',
-                                      height: '40px',
-                                      color: '#F97316',
-                                      borderRadius: '8px',
-                                      backgroundColor: '#FFFFFF',
-                                      opacity: '80%',
-                                      borderColor: '#F97316',
-                                    }}
-                                  >
-                                    <span className="icon-send"></span>&nbsp;
-                                    {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
-                                  </button>
-                                </div>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+        {jobDetails.jobURL.includes('https://www.bitlabs.in/jobs') ? (
+          // Internal job: Show Apply button
+          <button
+            className={`btn-apply ${applied ? 'applied' : ''}`}
+            onClick={handleApplyNow}
+            disabled={jobDetails.jobStatus === 'Already Applied'}
+            style={{
+              backgroundColor: applied ? '#FEF1E8' : '#F97316',
+              cursor: 'pointer',
+              height: '40px',
+              color: '#F97316',
+              borderRadius: '8px',
+              backgroundColor: '#FFFFFF',
+              opacity: '80%',
+              borderColor: '#F97316',
+            }}
+          >
+            <span className="icon-send"></span>&nbsp;
+            {jobDetails.jobStatus === 'Already Applied' ? 'Applied' : 'Apply Now'}
+          </button>
+        ) : (
+          // External job: Show Apply and Visited buttons separately
+          <div>
+  <button
+    className="btn-apply"
+    onClick={handleExternalJobVisit}
+    disabled={jobDetails.jobStatus === 'Already Applied'}
+    style={{
+      backgroundColor: applied ? '#08921E' : '#F97316',
+      cursor: 'pointer',
+      height: '40px',
+      color: '#FFFFFF',
+      borderRadius: '8px',
+      opacity: '80%',
+    }}
+  >
+    <span
+      className={jobDetails.jobStatus === 'Already Applied' ? 'fa fa-check' : 'fa fa-external-link'}
+      style={{ fontSize: '14px' }}
+    ></span>
+    &nbsp;&nbsp;
+    {jobDetails.jobStatus === 'Already Applied' ? 'Visited' : 'Apply'}
+  </button>
+</div>
+
+        )}
+      </div>
                               </div>
                             </div>
                           </div>
@@ -453,9 +566,6 @@ const ApplicantViewJob = ({ selectedJobId }) => {
                           </div>
                         </div>
                       )}
-
-
-
                   </article>
                 </div>
               </div>
