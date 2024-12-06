@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import { useNavigate } from "react-router-dom";
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
 
 function ApplicantChangePassword() {
   const { user } = useUserContext();
@@ -78,13 +79,54 @@ function ApplicantChangePassword() {
     if (!validateForm()) {
       return;
     }
-    const formData = {
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+    // Generate a random IV for each encryption
+    const ivOld = CryptoJS.lib.WordArray.random(16);
+    const ivNew = CryptoJS.lib.WordArray.random(16);
+  
+    // Encrypt oldPassword
+    const encryptedOldPassword = CryptoJS.AES.encrypt(
       oldPassword,
+      CryptoJS.enc.Utf8.parse(secretKey),
+      {
+        iv: ivOld,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    ).toString();
+  
+    // Encrypt newPassword
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
       newPassword,
-      confirmedPassword,
+      CryptoJS.enc.Utf8.parse(secretKey),
+      {
+        iv: ivNew,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    ).toString();
+  
+    const formData = {
+      oldPassword: encryptedOldPassword,
+      newPassword: encryptedNewPassword,
+      ivOld: ivOld.toString(CryptoJS.enc.Base64), // Send IV for oldPassword
+      ivNew: ivNew.toString(CryptoJS.enc.Base64), // Send IV for newPassword
     };
+  
     try {
-      const response = await axios.post(`${apiUrl}/applicant/authenticateUsers/${user.id}`, formData);
+      const jwtToken =localStorage.getItem('jwtToken'); // Replace with the actual JWT token
+
+const response = await axios.post(
+  `${apiUrl}/applicant/authenticateUsers/${user.id}`, 
+  formData, 
+  {
+    headers: {
+      Authorization: `Bearer ${jwtToken}`,
+      // Add other headers if required, e.g., Content-Type
+    }
+  }
+);
+
       if (response.data === 'Password updated and stored') {
       
        setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
