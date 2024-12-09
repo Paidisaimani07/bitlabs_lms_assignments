@@ -6,6 +6,7 @@ import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
 import logos from '../../images/profileIcon.svg';
+import ModalLogout from '../common/ModalLogout';
 
 
 function RecruiterNavBar({imageSrc,setImageSrc}) {
@@ -15,7 +16,7 @@ function RecruiterNavBar({imageSrc,setImageSrc}) {
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
-  
+  const [showModal, setShowModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleSubAccount = () => {
@@ -95,16 +96,18 @@ document.addEventListener("click", handleOutsideClick);
       };
   }, [user.id]);
 
-  const logout = () => {
-    
-     const confirm = window.confirm("Do you want to log out?");
-     console.log("confirm is:",confirm);
-     if(confirm===true){
-       clearJWTToken();
-         window.location.href = "/";
-     }else {
-     }
- }
+  const handleLogout =  () => {
+    console.log('Logout button clicked');
+    try {
+       
+       localStorage.removeItem('jwtToken');
+       localStorage.removeItem('user');
+       localStorage.removeItem('userType');
+      window.location.href = "https://www.bitlabs.in/jobs";
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
  const handleToggleMenu = () => {
   console.log("function called..")
   setIsOpen(!isOpen);
@@ -273,10 +276,14 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
                     </a>
                   </div>
                   <div className="sub-account-item">
-                    <a onClick={logout}>
-                      <span className="icon-log-out" /> Log Out
-                    </a>
-                  </div>
+  <a
+    onClick={() => {
+      setShowModal(true);
+    }}
+  >
+    <span className="icon-log-out" /> Log Out
+  </a>
+</div>
                 </div>
               </div>
             </div>
@@ -287,6 +294,11 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
     </div>
 
   </header>
+  <ModalLogout
+                                       isOpen={showModal}
+                                       onClose={() => setShowModal(false)}
+                                       onConfirm={handleLogout}
+                                    />
   {(
   <div className={`left-menu ${isOpen ? 'open' : ''}`}>
       <div id="sidebar-menu">
