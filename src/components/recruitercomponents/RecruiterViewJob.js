@@ -241,7 +241,7 @@ const handleStatusChange = async (jobId, newStatus, action) => {
       </defs>
     </svg>
     <span style={{ color: '#000000', fontSize: '14px', fontWeight: '500', marginLeft: '-5px' }}>
-      {count} Applicants
+    {count} {count === 1 ? 'Applicant' : 'Applicants'}
     </span>
   </>
 ) : null}
