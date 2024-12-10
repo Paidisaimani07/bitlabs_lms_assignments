@@ -390,7 +390,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   <button
     className="btn-apply"
     onClick={handleExternalJobVisit}
-    disabled={jobDetails.jobStatus === 'Already Applied'}
+    // disabled={jobDetails.jobStatus === 'Already Applied'}
     style={{
       backgroundColor: applied ? '#08921E' : '#F97316',
       cursor: 'pointer',
