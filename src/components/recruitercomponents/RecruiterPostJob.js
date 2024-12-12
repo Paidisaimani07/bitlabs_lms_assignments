@@ -49,15 +49,17 @@ function RecruiterPostJob() {
     if (selectedOption === "externalWebsite") {
       if (!jobURL.trim()) {
         isValid = false;
-        errors.url = "URL is required";
+        errors.url = "Please provide URL";
       } else {
-        const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?$/i;
+        // Updated regex to allow special characters
+        const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=+#]*)?$/i;
         if (!urlRegex.test(jobURL)) {
           isValid = false;
           errors.url = "Please enter a valid URL";
         }
       }
     }
+     
   
     if (!minSalary.trim()) {
       errors.minSalary = 'Minimum salary is required.';
@@ -215,14 +217,15 @@ const handleJobTitleChange1 = (event) => {
   setjobURL(value);
 
   // Enhanced regex for URL validation
-  const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?(\?[\w\-=&%]*)?(#[\w\-]*)?$/i;
+  //const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?(\?[\w\-=&%]*)?(#[\w\-]*)?$/i;
+  const urlRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/;
 
   // Dynamically validate the URL and set errors
   setFormErrors((prevErrors) => ({
     ...prevErrors,
     url: value.trim() === "" || urlRegex.test(value)
-      ? "" // No error if the field is empty or the URL is valid
-      : "Please enter a valid URL.",
+      ? ""
+      : "Please enter a valid URL",
   }));
 };
 
@@ -349,7 +352,7 @@ const handleJobTitleChange1 = (event) => {
     if (selectedOption === "externalWebsite") {
       if (!jobURL.trim()) {
         isValid = false;
-        errors.url = "URL is required";
+        errors.url = "URL is required..";
       } else if (!urlRegex.test(jobURL)) {
         isValid = false;
         errors.url = "Please enter a valid URL";
@@ -1022,7 +1025,8 @@ const handleJobTitleChange1 = (event) => {
     width: "97%", // Adjust the width dynamically
     marginLeft: "auto", 
     marginRight: "auto", // Centers the line
-    marginBottom: "16px" // Adds space below the line
+    marginBottom: "16px", // Adds space below the line
+    marginTop:"15px"
   }}
 >
   {/* <div className="info-box info-wd"></div> */}
@@ -1075,7 +1079,7 @@ const handleJobTitleChange1 = (event) => {
             display: "none",
           }}
         ></span>
-        Bitlabs Jobs
+        bitlabs Jobs
       </label>
 
       <label style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
@@ -1114,7 +1118,7 @@ const handleJobTitleChange1 = (event) => {
     <fieldset className="info-wd" style={{ marginTop: "16px", marginBottom: "10px" }}>
       <input
         type="text"
-        placeholder="URL"
+        placeholder="Website URL"
         className="input-form"
         value={jobURL}
         onChange={handleJobTitleChange1}
@@ -1142,13 +1146,13 @@ const handleJobTitleChange1 = (event) => {
     </fieldset>
 
     {/* Show Back and Post Job buttons */}
-    <div className="form-group" align="right">
+    <div className="form-group" align="right" style={{marginTop:"20px"}}>
   <button
     type="button" // Use "button" to avoid default form submission
     onClick={handlePostJob } 
     className="button-status"
   >
-    Post Job
+    Post
   </button>
 </div>
   </>
