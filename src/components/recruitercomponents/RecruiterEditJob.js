@@ -120,6 +120,8 @@ const RecruiterEditJob = ({selectedJobId}) => {
           skillsRequired: [{ skillName: '', minimumExperience: '' }],
           jobHighlights: "",
           description: "",
+          screeningQuestions: [{ id: '', questionText: '', answers: [] }], // Add this field
+          jobURL: null, // Include jobURL in the initial state
         });
 
        
@@ -157,6 +159,12 @@ const RecruiterEditJob = ({selectedJobId}) => {
               })),
               jobHighlights: jobDataFromApi.jobHighlights,
               description: jobDataFromApi.description,
+              screeningQuestions: jobDataFromApi.screeningQuestions.map(question => ({
+                id: question.id,
+                questionText: question.questionText,
+                answers: question.answers,
+              })), // Map the screening questions
+              jobURL: jobDataFromApi.jobURL, // Include jobURL
             });
      
             setLoading(false);
@@ -846,6 +854,44 @@ errors.skillsRequired = skillsErrors;
   )}
 </div>
       </div>
+      <>
+      {jobData.jobURL === "https://www.bitlabs.in/jobs" || !jobData.jobURL ? (
+        <div className="col-lg-12 col-md-12">
+          <label className="title-user fw-7">Screening Questions</label>
+          {jobData.screeningQuestions.map((question, index) => (
+            <div key={question.id} className="question-block">
+              <p
+                style={{
+                  color: '#000',
+                  fontFamily: 'Plus Jakarta Sans',
+                  fontSize: '15px',
+                  fontStyle: 'normal',
+                  fontWeight: 500,
+                  marginBottom: '10px'
+                }}
+              >
+                {index + 1}. {question.questionText}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="col-lg-12 col-md-12">
+          <label className="title-user fw-7">URL</label>
+          <p
+          style={{
+            borderRadius: '8px',
+            border: '1px solid #E5E5E5',
+            background: '#F5F5F5',
+            padding: '8px',
+            marginBottom: '15px',
+            marginTop: '15px'
+          }}
+          >{jobData.jobURL}</p>
+        </div>
+      )}
+    </>
+
                   </div>
                 <div className="form-infor flex flat-form">
                   <div className="info-box info-wd">
