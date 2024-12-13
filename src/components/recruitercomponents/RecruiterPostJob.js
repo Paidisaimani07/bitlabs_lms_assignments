@@ -52,7 +52,7 @@ function RecruiterPostJob() {
         errors.url = "Please provide URL";
       } else {
         // Updated regex to allow special characters
-        const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=+#]*)?$/i;
+        const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9 &\-]+(\.[a-zA-Z0-9 &\-]+)*)(\/[\w\-./?%&=+#]*)?$/i;
         if (!urlRegex.test(jobURL)) {
           isValid = false;
           errors.url = "Please enter a valid URL";
@@ -210,7 +210,8 @@ clearForm();
   };
 
  // URL validation regex
-const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
+//const urlRegex = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*\/?$/;
+const urlRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/;
 
 const handleJobTitleChange1 = (event) => {
   const value = event.target.value;
@@ -218,14 +219,14 @@ const handleJobTitleChange1 = (event) => {
 
   // Enhanced regex for URL validation
   //const urlRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-./?%&=]*)?(\?[\w\-=&%]*)?(#[\w\-]*)?$/i;
-  const urlRegex = /^(https?:\/\/|www\.)[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+$/;
+  const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9 &\-]+(\.[a-zA-Z0-9 &\-]+)*)(\/[\w\-./?%&=+#]*)?$/i;
 
   // Dynamically validate the URL and set errors
   setFormErrors((prevErrors) => ({
     ...prevErrors,
     url: value.trim() === "" || urlRegex.test(value)
       ? ""
-      : "Please enter a valid URL",
+      : "Please enter a valid URL...",
   }));
 };
 
