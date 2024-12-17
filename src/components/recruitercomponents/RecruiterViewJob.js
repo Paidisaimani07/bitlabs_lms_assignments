@@ -19,6 +19,9 @@ function RecruiterViewJob({ selectedJobId }) {
   const jobId = new URLSearchParams(location.search).get('jobId');
   const [menuOpen, setMenuOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+  const [count, setCount] = useState(0);
+
+  const jobURL = jobDetails?.jobURL;
 
   const fetchJobDetails = async () => {
     try {
@@ -140,7 +143,23 @@ function RecruiterViewJob({ selectedJobId }) {
   };
 
 
-   
+  const fetchAllApplicants = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/applyjob/appliedapplicants/${selectedJobId}`);
+    const applicantsArray = Object.values(response.data).flat();
+    setCount(applicantsArray.length);
+    } catch (error) {
+      console.error('Error fetching applicants:', error);
+    }
+  };
+ 
+  useEffect(() => {
+    const jwtToken = localStorage.getItem('jwtToken');
+    if (jwtToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+    }
+    fetchAllApplicants();
+  }, [user.id]);
 
 const handleStatusChange = async (jobId, newStatus, action) => {
     try {
@@ -180,7 +199,55 @@ const handleStatusChange = async (jobId, newStatus, action) => {
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
                   
-                    <div className="title-dash flex2"><BackButton />Full Job Details</div>
+                    <div className="title-dash flex2"><BackButton />Full Job Details
+                    &nbsp;&nbsp;&nbsp;&nbsp; 
+                    {jobURL === "https://www.bitlabs.in/jobs" || jobURL === null ? (
+  <>
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 21 21" fill="none">
+      <g clipPath="url(#clip0_3427_6096)">
+        <path
+          d="M14.4909 18V16.3333C14.4909 15.4493 14.1397 14.6014 13.5146 13.9763C12.8895 13.3512 12.0416 13 11.1576 13H4.49093C3.60687 13 2.75902 13.3512 2.1339 13.9763C1.50878 14.6014 1.15759 15.4493 1.15759 16.3333V18"
+          stroke="black"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7.8243 9.66667C9.66525 9.66667 11.1576 8.17428 11.1576 6.33333C11.1576 4.49238 9.66525 3 7.8243 3C5.98335 3 4.49097 4.49238 4.49097 6.33333C4.49097 8.17428 5.98335 9.66667 7.8243 9.66667Z"
+          stroke="black"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M19.491 18.0001V16.3334C19.4904 15.5948 19.2446 14.8774 18.7921 14.2937C18.3396 13.7099 17.7061 13.293 16.991 13.1084"
+          stroke="black"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M13.6576 3.1084C14.3746 3.29198 15.0101 3.70898 15.464 4.29366C15.9178 4.87833 16.1641 5.59742 16.1641 6.33757C16.1641 7.07771 15.9178 7.7968 15.464 8.38147C15.0101 8.96615 14.3746 9.38315 13.6576 9.56673"
+          stroke="black"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_3427_6096">
+          <rect width="20" height="20" fill="white" transform="translate(0.32428 0.5)" />
+        </clipPath>
+      </defs>
+    </svg>
+    <span style={{ color: '#000000', fontSize: '14px', fontWeight: '500', marginLeft: '-5px' }}>
+    {count} {count === 1 ? 'Applicant' : 'Applicants'}
+    </span>
+  </>
+) : null}
+
+
+                    </div>
                   </div>
                 </div>
               </div>
@@ -228,8 +295,6 @@ const handleStatusChange = async (jobId, newStatus, action) => {
             Edit Job
           </Link>
           )}
-       
-
 {jobStatus === 'active' ? (
   <Link onClick={() => handleStatusChange(selectedJobId, 'inactive', 'Close')}>
     Close Job
@@ -276,16 +341,83 @@ const handleStatusChange = async (jobId, newStatus, action) => {
 <span style={{fontSize:'12px'}}>Posted on {formatDate(jobDetails.creationDate)}</span></span>
                               </div>
                               <div className="button-readmore">
-                              <Link to={`/appliedapplicantsbasedonjob/${selectedJobId}`} className="custom-link">
-                            <button
-                              type="button"
-                              
-                              className={`button-status ${jobDetails.status === 'Inactive' ? 'disabled-button' : ''}`}
-                            
-                            >
-                              View Applicants
-                            </button>
-                          </Link>
+                              <div>
+
+      {jobURL === "https://www.bitlabs.in/jobs" || jobURL === null ? (
+
+        <Link
+
+          to={`/appliedapplicantsbasedonjob/${selectedJobId}`}
+
+          className="custom-link"
+
+        >
+
+          <button
+
+            type="button"
+
+            className={`button-status ${
+
+              jobDetails.status === 'Inactive' ? 'disabled-button' : ''
+
+            }`}
+
+          >
+
+            View Applicants
+
+          </button>
+
+        </Link>
+
+      ) : (
+
+        <div
+
+  style={{
+
+    backgroundColor: '#F6F6F6',
+
+    borderRadius: '5px',
+
+    border: '1px solid #D9DFE6',
+
+    padding: '4px', // Optional: Adds padding for better appearance
+
+  }}
+
+>
+
+<span
+
+  style={{
+
+    color: '#000',
+
+    fontFamily: '"Plus Jakarta Sans", sans-serif',
+
+    fontSize: '16px',
+
+    fontStyle: 'normal',
+
+    fontWeight: 500,
+
+    lineHeight: '25px',
+
+  }}
+
+>
+
+  Visitor Count: {count || '0'}
+
+</span>
+
+</div>
+
+      )}
+
+    </div>
                               </div>
                             </div>
                           </div>

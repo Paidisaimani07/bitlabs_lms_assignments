@@ -2,8 +2,8 @@
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    padding-right: 15px;
-    padding-left: 15px;
+    /* padding-right: 15px;
+    padding-left: 15px; */
     width: 100%;
     max-width: 100%;
 }
@@ -12,6 +12,10 @@
     display: inline-block;
     cursor: pointer;
     color: #000;
+}
+
+.input-height{
+    height:"132px"
 }
 
 .dashboard a:hover {
@@ -90,6 +94,12 @@
     color: #64666c;
     font-style: inherit;
 }
+
+@media (min-width: 768px) {
+    .conditional-height {
+      height: 132px;
+    }
+  }
 
 .dashboard .fs-16 {
     font-size: 16px;
@@ -250,7 +260,7 @@
     font-style: normal;
     font-weight: 600;
     line-height: 25px;
-    padding-bottom: 16px;
+    padding-bottom: 0px;
 }
 
 
@@ -451,7 +461,7 @@
 .button-custom {
     color: white;
     font-family: "Plus Jakarta Sans";
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 500;
     line-height: 35px;
     text-align: center;
@@ -481,9 +491,10 @@
     display: inline-block;
     border-radius: 8px;
     text-align: center;
-    margin-top: 16px;
-    width: 127px;
-    height: 47px;
+    width:120px;
+    height: 45px;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 
@@ -627,13 +638,15 @@ tr {
 }
 
 thead tr th {
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #64666c;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: capitalize;
+    font-family: "Plus Jakarta Sans";
+    font-style: normal;
+    color: #121212;
     letter-spacing: 1.2px;
-    border-bottom: 1px solid #e5e5e5;
-    padding: 0px 16px 8px 16px;
+    border-bottom: 0px solid #e5e5e5;
+    padding: 0px 0px 0px 10px;
 }
 
 thead tr th:last-child {
@@ -654,8 +667,11 @@ tbody tr td:last-child {
 
 tbody tr td {
     padding: 10px 10px 10px;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 0px solid #e5e5e5;
     vertical-align: middle;
+    font-size: 14px;
+    font-weight: 400;
+    
 }
 
 tbody tr:last-child td {
@@ -665,7 +681,7 @@ tbody tr:last-child td {
 }
 
 tbody tr td:nth-child(1) {
-    width: 36.7%;
+    width: 20px;
 }
 
 tbody tr td:nth-child(2) {
@@ -824,6 +840,21 @@ tbody tr td:nth-child(2) {
     color: #fff;
     font-size: 15px;
     text-transform: capitalize;
+}
+.dashboard .save-button-status{
+    background-color: #F97316;
+    font-weight: 700;
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    width: 180px;
+    align-items: center;
+    height: 40px;
+    color: #fff;
+    font-size: 15px;
+    text-transform: capitalize;
+    margin-right: 25px;
+    margin-bottom: 30px;
 }
 
 .dashboard .button-status1 {
@@ -1130,7 +1161,7 @@ tbody tr td:nth-child(2) {
   opacity: 1;
   transition: left 0.6s ease-in-out;
     width: 280px;
-    z-index: 100;
+    z-index: 50;
     background: #fff;
     bottom: 0;
     position: fixed;
@@ -1943,8 +1974,16 @@ tbody tr td:nth-child(2) {
 }
 
 .flat-dashboard-setting .profile-setting {
-    padding: 20px 20px 20px;
+    padding: 10px 0px 0px 10px;
     border-radius: 15px;
+    /* Default styles for smaller screens */
+}
+
+/* For screens above 1440px, apply width: min-content */
+@media (min-width: 1441px) {
+  .flat-dashboard-setting .profile-setting {
+    width:1026px; /* Set the width to min-content */
+  }
 }
 
 .flat-dashboard-setting .profile-setting-left {
@@ -4753,7 +4792,7 @@ input[type="radio"]:checked:after {
     }
 
     .left-menu {
-        z-index: 100;
+        z-index: 50;
         display: block !important;
         background: #fff;
         position: fixed;
@@ -4955,10 +4994,10 @@ input[type="radio"]:checked:after {
     
 }
 
-.inactive-job {
+/* .inactive-job {
     background-color: #f2f2f2;
     
-}
+} */
 
 .three-dots-menu {
     position: relative;
@@ -5189,7 +5228,7 @@ input[type="radio"]:checked:after {
 }
 
 .color-icon-2 {
-    background: rgba(255, 102, 51, 0.10);
+    background:rgba(39, 118, 237, 0.10);
 }
 
 .color-icon-3 {
@@ -5335,13 +5374,14 @@ input[type="radio"]:checked:after {
 
     .resumecard .resumecard-button {
         order: 4;
+        
     }
 }
 
 .resumecard {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: space-between;
+    /* align-items: center; */
 }
 
 .resumecard-content {
@@ -5396,13 +5436,13 @@ input[type="radio"]:checked:after {
 
 @media only screen and (min-width: 1132px) and (max-width: 1300px){
 .resumecard-heading .heading1 {
-    padding-top:15px !important;
+    padding-top:10px !important;
 }
 }
 
 @media only screen and (min-width: 1423px) and (max-width: 1540px){
     .resumecard-heading .heading1 {
-        padding-top:15px !important;
+        padding-top:10px !important;
     }
     }
 
@@ -5413,7 +5453,7 @@ input[type="radio"]:checked:after {
     }
 .certificatebox .card 
 {
-    padding: 30px !important;
+    padding: 20px !important;
     
 }
 
@@ -5510,7 +5550,7 @@ line-height: 25px;
     .title-count {
     margin-left:0px;
       font-size: 12px !important;
-      line-height: 1.5 !important;
+      line-height: 1.2 !important;
     }
   }
 

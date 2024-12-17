@@ -5,16 +5,18 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
+import logos from '../../images/profileIcon.svg';
+import ModalLogout from '../common/ModalLogout';
 
 
-function RecruiterNavBar() {
+function RecruiterNavBar({imageSrc,setImageSrc}) {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302);
   const { user } = useUserContext();
-  const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   const location = useLocation();
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
-  
+  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
+  const [showModal, setShowModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
   const toggleSubAccount = () => {
@@ -33,6 +35,7 @@ function RecruiterNavBar() {
 
 
 document.addEventListener("click", handleOutsideClick);
+
   useEffect(() => {
     const handleResize = () => {
       setIsOpen(window.innerWidth >= 1302);
@@ -58,6 +61,12 @@ document.addEventListener("click", handleOutsideClick);
     if ($.cookie("isButtonActive") == 1) {
       $("body").addClass("sidebar-enable show-job");
     }
+
+    // Define an async function to fetch the logo
+    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }else{
     fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
@@ -67,26 +76,38 @@ document.addEventListener("click", handleOutsideClick);
       .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          // Save the base64 encoded image in localStorage
+          localStorage.setItem(`companyLogo_${user.id}`, base64data);
+          // setImageSrc(base64data); // Optionally, set the image src directly after fetching
+        };
+        reader.readAsDataURL(blob);
+
       })
       .catch(error => {
         console.error('Error fetching image URL:', error);
         setImageSrc(null);
       });
+    }
       return () => {
         window.removeEventListener('resize', handleResize);
       };
   }, [user.id]);
 
-  const logout = () => {
-    
-     const confirm = window.confirm("Do you want to log out?");
-     console.log("confirm is:",confirm);
-     if(confirm===true){
-       clearJWTToken();
-         window.location.href = "/";
-     }else {
-     }
- }
+  const handleLogout =  () => {
+    console.log('Logout button clicked');
+    try {
+       
+       localStorage.removeItem('jwtToken');
+       localStorage.removeItem('user');
+       localStorage.removeItem('userType');
+      window.location.href = "https://www.bitlabs.in/jobs";
+    } catch (error) {
+      console.error('Logout failed', error);
+    }
+  };
  const handleToggleMenu = () => {
   console.log("function called..")
   setIsOpen(!isOpen);
@@ -151,6 +172,16 @@ const iconStyle = {
   fontSize: '15px',
 };
 
+const handleMenuItemClick = () => {
+  if (window.innerWidth <= 1024) {
+    setIsOpen(!isOpen);
+  }
+};
+
+const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }
 
   return (
 <div>
@@ -158,12 +189,17 @@ const iconStyle = {
     <div className="modal-menu__backdrop" />
     <div className="widget-filter">
       <div className="mobile-header">
-        <div id="logo" className="logo">
-          <a href="/recruiterhome">
-            <img className="site-logo" src="../images/logo.png" alt="Image" />
-          </a>
-          <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-        </div>
+      <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
+      
         <a className="title-button-group">
           <i className="icon-close" />
         </a>
@@ -180,22 +216,24 @@ const iconStyle = {
           <div className="sticky-area-wrap">
             <div className="header-ct-left">
             {window.innerWidth < 1400 && (
-              <div className="hamburger-icon" onClick={handleToggleMenu}>
-                <span />
-                <span />
-                <span />
-              </div>
+              
+              <span
+  id="hamburger"
+  className={hamburgerClass}
+  onClick={handleToggleMenu}
+  style={{ marginRight: '10px' }} // Adjust the value as needed
+></span>
             )}
-              <div id="logo" className="logo">
-                <a href="/recruiterhome">
-                  <img
-                    className="profile-site-logo"
-                    src="../images/logo.png"
-                    alt="Image"
-                  />
-                </a>
-                <p className="para1">A <a href="https://www.tekworks.in/" target='_blank'><span style={{color:'#808080'}}>TekWorks</span></a> Product</p>
-              </div>
+                  <div id="logo" className="logo">
+                    <a href="/recruiterhome">
+                      <img
+                        className="site-logo"
+                       
+                        src={logos}
+                        alt="Image"
+                      />
+                    </a>
+                  </div>
             </div>
             <div className="header-ct-center"></div>
             <div className="header-ct-right">
@@ -225,7 +263,7 @@ const iconStyle = {
       </Link>
       
               <div className="header-customize-item account" onClick={toggleSubAccount}>
-                <img width="40px" height="30px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+                <img width="40px" height="40px" borderRadius="50px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
                 <div className="name">
                   
                 </div>
@@ -238,10 +276,14 @@ const iconStyle = {
                     </a>
                   </div>
                   <div className="sub-account-item">
-                    <a onClick={logout}>
-                      <span className="icon-log-out" /> Log Out
-                    </a>
-                  </div>
+  <a
+    onClick={() => {
+      setShowModal(true);
+    }}
+  >
+    <span className="icon-log-out" /> Log Out
+  </a>
+</div>
                 </div>
               </div>
             </div>
@@ -252,19 +294,24 @@ const iconStyle = {
     </div>
 
   </header>
+  <ModalLogout
+                                       isOpen={showModal}
+                                       onClose={() => setShowModal(false)}
+                                       onConfirm={handleLogout}
+                                    />
   {(
   <div className={`left-menu ${isOpen ? 'open' : ''}`}>
       <div id="sidebar-menu">
         <ul className="downmenu list-unstyled" id="side-menu">
           <li>
-            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""}>
+            <Link to="/recruiterhome" className={location.pathname === "/recruiterhome" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-dashboard dash-icon"></span>
               <span className="dash-titles">Dashboard</span>
             </Link>
           </li>
          
           <li>
-            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-submit dash-icon"></span>
 
               <span className="dash-titles">Posted Jobs</span>
@@ -272,14 +319,14 @@ const iconStyle = {
             </Link>
           </li>
           <li>
-            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-allapplicants" className={location.pathname === "/recruiter-allapplicants" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-applicant dash-icon"></span>
               <span className="dash-titles">Applicants</span>
             </Link>
           </li>
       
           <li>
-            <Link to="/recruiter-my-organization" className={location.pathname === "/recruiter-my-organization" ? "tf-effect active" : ""}>
+            <Link to="/recruiter-view-organization" className={location.pathname === "/recruiter-view-organization" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-mypackage dash-icon"></span>
               <span className="dash-titles">My Organization</span>
             </Link>
@@ -291,6 +338,7 @@ const iconStyle = {
       style={linkStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleMenuItemClick}
     >
       <span className=""></span>
       <span style={textStyle}>

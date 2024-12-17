@@ -11,6 +11,7 @@ import logo from '../../images/user/avatar/bitlabslogo.svg';
 
 import Backgroundimagemobile from '../../images/user/avatar/backgroundimage-mobile.png';
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
 
 
 function LoginBody({ handleLogin }) {
@@ -150,7 +151,10 @@ const login = useGoogleLogin({
         console.log('Login successful', userData);
         const userId = userData.id;
  
-        const jwtToken = localStorage.getItem('jwtToken');
+        let jwtToken = localStorage.getItem('jwtToken');
+        if(!jwtToken){
+          jwtToken=userData.data.jwt;
+        }
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -200,16 +204,22 @@ const login = useGoogleLogin({
     if (!isCandidateFormValid()) {
       return;
     }
+
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+const encryptedPassword = CryptoJS.AES.encrypt(candidatePassword, CryptoJS.enc.Utf8.parse(secretKey), {
+  iv: iv,
+  mode: CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.Pkcs7
+}).toString();
+
    
     try {
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-      // const response = await axios.post(loginEndpoint, {
-      //   email: candidateEmail,
-      //   password: candidatePassword,
-      // });
       const response = await axios.post(loginEndpoint, {
         email: candidateEmail,
-        password: candidatePassword,
+        password: encryptedPassword,
+        iv: iv.toString(CryptoJS.enc.Base64),
       }, {
         headers: {
           // Ensure no Authorization header is sent
@@ -256,7 +266,10 @@ const login = useGoogleLogin({
         });
    
         // Check the profile ID
-        const jwtToken = localStorage.getItem('jwtToken');
+        let jwtToken = localStorage.getItem('jwtToken');
+        if(!jwtToken){
+          jwtToken=userData.data.jwt;
+        }
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -539,18 +552,13 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
    if (!password.trim()) {
      return 'Password is required.';
    }
-   if (password.length < 6) {
-     return 'Password must be at least 6 characters long.';
+   // Regular expression to match the password criteria
+   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+   if (!passwordRegex.test(password)) {
+       return 'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, one special character, and no spaces.';
    }
-   if (!/[A-Z]/.test(password)) {
-     return 'Password must contain at least one uppercase letter.';
-   }
-   if (!/[^A-Za-z0-9]/.test(password)) {
-     return 'Password must contain at least one special character (non-alphanumeric).';
-   }
-   if (/\s/.test(password)) {
-     return 'Password cannot contain spaces.';
-   }
+
    return '';
  };
  const isMobileNumberValid = (mobilenumber) => {
@@ -595,6 +603,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
   setCandidateEmailError1(emailError);
   setCandidateMobileNumberError(mobileNumberError);
   setCandidatePasswordError1(passwordError);
+  console.log("validating form1 ",passwordError);
   return !(nameError || emailError || mobileNumberError || passwordError);
 };
  
@@ -693,7 +702,7 @@ const handleChange = (e) => {
                  
       
    
-    <div className="custom-div-style">
+    <div className="custom-div-style" style={{textAlign:"left"}}>
       {message}
     </div>
                 <div className="myComponent">

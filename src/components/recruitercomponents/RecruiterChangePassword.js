@@ -4,11 +4,12 @@ import axios from 'axios';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
  
 function RecruiterChangePassword() {
   const { user } = useUserContext();
-  const [oldpassword, setOldPassword] = useState('');
-  const [newpassword, setNewPassword] = useState('');
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [confirmedPassword, setConfirmedPassword] = useState('');
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -24,17 +25,17 @@ function RecruiterChangePassword() {
     let isValid = true;
     const errors = {};
  
-    if (!oldpassword.trim()) {
+    if (!oldPassword.trim()) {
       errors.oldPassword = 'Old password is required.';
       isValid = false;
     } else {
       errors.oldPassword = '';
     }
  
-    if (!newpassword.trim()) {
+    if (!newPassword.trim()) {
       errors.newPassword = 'New password is required.';
       isValid = false;
-    } else if (!isValidPassword(newpassword)) {
+    } else if (!isValidPassword(newPassword)) {
       errors.newPassword =
         'New password must be at least 6 characters long, contain one uppercase letter, one lowercase letter, one number, one special character, and no spaces.';
       isValid = false;
@@ -45,7 +46,7 @@ function RecruiterChangePassword() {
     if (!confirmedPassword.trim()) {
       errors.confirmedPassword = 'Confirm password is required.';
       isValid = false;
-    } else if (newpassword !== confirmedPassword) {
+    } else if (newPassword !== confirmedPassword) {
       errors.confirmedPassword = 'Passwords do not match.';
       isValid = false;
     } else {
@@ -72,38 +73,74 @@ function RecruiterChangePassword() {
     }
   };
  
+
   const handleChangePassword = async (e) => {
     e.preventDefault();
- 
+  
     if (!validateForm()) {
       return;
     }
- 
-    const formData = {
-      oldpassword,
-      newpassword,
-      confirmedPassword,
-    };
- 
-    try {
-      const response = await axios.post(`${apiUrl}/recuriters/authenticateRecruiter/${user.id}`, formData);
-      if (response.data === 'Password updated and stored') {
-      
-       setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
-      } else if(response.data==='your new password should not be same as old password'){
-       
-        setSnackbar({ open: true, message: 'New password should not be same as old password.', type: 'error' });
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+    // Generate a random IV for each encryption
+    const ivOld = CryptoJS.lib.WordArray.random(16);
+    const ivNew = CryptoJS.lib.WordArray.random(16);
+  
+    // Encrypt oldPassword
+    const encryptedOldPassword = CryptoJS.AES.encrypt(
+      oldPassword,
+      CryptoJS.enc.Utf8.parse(secretKey),
+      {
+        iv: ivOld,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
       }
-      else {
-      
-       setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
+    ).toString();
+  
+    // Encrypt newPassword
+    const encryptedNewPassword = CryptoJS.AES.encrypt(
+      newPassword,
+      CryptoJS.enc.Utf8.parse(secretKey),
+      {
+        iv: ivNew,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7,
+      }
+    ).toString();
+  
+    const formData = {
+      oldPassword: encryptedOldPassword,
+      newPassword: encryptedNewPassword,
+      ivOld: ivOld.toString(CryptoJS.enc.Base64), // Send IV for oldPassword
+      ivNew: ivNew.toString(CryptoJS.enc.Base64), // Send IV for newPassword
+    };
+  
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+  
+      const response = await axios.post(
+        `${apiUrl}/recuriters/authenticateRecruiter/${user.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.data === "Password updated and stored") {
+        setSnackbar({ open: true, message: "Password changed successfully", type: "success" });
+      } else if (response.data === "your new password should not be same as old password") {
+        setSnackbar({ open: true, message: "New password should not be same as old password.", type: "error" });
+      } else {
+        setSnackbar({ open: true, message: "Password change failed. Old password is wrong.", type: "error" });
       }
     } catch (error) {
-      console.error('Password change failed. Old password is wrong.:', error);
-      
-      setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
+      console.error("Password change failed. Old password is wrong:", error);
+      setSnackbar({ open: true, message: "Password change failed. Old password is wrong.", type: "error" });
     }
   };
+  
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     return passwordRegex.test(password);
@@ -144,7 +181,7 @@ function RecruiterChangePassword() {
                             <input
                               type={showOldPassword ? 'text' : 'password'}
                               className="input-form password-input"
-                              value={oldpassword}
+                              value={oldPassword}
                               onChange={(e) => setOldPassword(e.target.value)}
                               onBlur={() => validateForm()}
                               required=""
@@ -166,7 +203,7 @@ function RecruiterChangePassword() {
                             <input
                               type={showNewPassword ? 'text' : 'password'}
                               className="input-form"
-                              value={newpassword}
+                              value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
                               onBlur={() => validateForm()}
                               required=""

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import{ apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
@@ -7,6 +7,10 @@ import OTPVerification1 from '../recruitercomponents/OTPVerification1';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
+import CryptoJS from "crypto-js";
+import Background from '../../images/user/avatar/Recruiterloginbg.png';
+import logo from '../../images/user/avatar/bitlabslogo.svg';
+import Backgroundimagemobile1 from '../../images/user/avatar/backgroundimage-mobile-recruiter.png';
 
  
  function RegisterBody({handleLogin}) {
@@ -46,7 +50,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
   const [resendOtpMessage, setResendOtpMessage] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
- 
+  const [message, setMessage] = useState('Welcome Back!');
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState('');
   const [recruiterEmail, setRecruiterEmail] = useState('');
   const [recruiterPassword, setRecruiterPassword] = useState('');
@@ -56,7 +60,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
  const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
- 
+
+ useEffect(()=>{
+  if (recruiterEmail || recruiterPassword){
+    setErrorMessage("")
+  }
+
+},[recruiterEmail,recruiterPassword])
  
  
  
@@ -166,11 +176,20 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!isRecruiterFormValid()) {
       return;
     }
+    const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
+const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.Utf8.parse(secretKey), {
+  iv: iv,
+  mode: CryptoJS.mode.CBC,
+  padding: CryptoJS.pad.Pkcs7
+}).toString();
+
     try {
       let loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`;
       const response = await axios.post(loginEndpoint, {
         email: recruiterEmail,
-        password: recruiterPassword,
+        password: encryptedPassword,
+        iv: iv.toString(CryptoJS.enc.Base64),
       });
  
       console.log('Response:', response);
@@ -218,6 +237,8 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
           setErrorMessage('Incorrect password');
     }
   };
+
+  
  
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -278,8 +299,17 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!companyName.trim()) {
       return 'Company name is required.';
     }
-    if (!/^[a-zA-Z\s]+$/.test(companyName)) {
-      return 'Please enter a valid company name and should not have any numbers and special char.';
+    if (/^\s/.test(companyName)) {
+      return 'Company name should not start with a space.';
+    }
+    if (/\s$/.test(companyName)) {
+      return 'Company name should not end with a space.';
+    }
+    if (/ {2,}/.test(companyName)) {
+      return 'Company name should not contain consecutive spaces.';
+    }
+    if (!/^[\w .'&-]*$/.test(companyName)) {
+      return 'Company name can only contain letters, digits, and special characters (.\'&-).';
     }
     if (companyName.trim().length < 3) {
       return 'Company name should be at least three characters long.';
@@ -310,6 +340,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       'tutanota.com',
     ];
     const domain = email.split('@')[1];
+    if (!email.includes('@')) {
+      return 'Please enter a valid email.';
+    }
+
     if (excludedDomains.includes(domain)) {
       return 'Please enter your official email ID.';
     }
@@ -319,18 +353,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+     // Regular expression to match the password criteria
+     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+
+     if (!passwordRegex.test(password)) {
+         return 'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, one special character, and no spaces.';
+     }
     return '';
   };
   const isMobileNumberValid = (mobilenumber) => {
@@ -448,7 +476,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   };
   const handleOTPSendSuccess = () => {
 
-  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'error' });
+  setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
   const handleOTPSendFail = () => {
@@ -476,6 +504,22 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!email.trim()) {
       return 'Email is required.';
     }
+    const excludedDomains = [
+      'gmail.com',
+      'yahoo.com',
+      'outlook.com',
+      'aol.com',
+      'mail.com',
+      'icloud.com',
+      'zoho.com',
+      'yandex.com',
+      'protonmail.com',
+      'tutanota.com',
+    ];
+    const domain = email.split('@')[1];
+    if (excludedDomains.includes(domain)) {
+      return 'Please enter  official email ID.';
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email) ? '' : 'Please enter a valid email address.';
   };
@@ -483,24 +527,30 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     if (!password.trim()) {
       return 'Password is required.';
     }
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long.';
-    }
-    if (!/[A-Z]/.test(password)) {
-      return 'Password must contain at least one uppercase letter.';
-    }
-    if (!/[^A-Za-z0-9]/.test(password)) {
-      return 'Password must contain at least one special character (non-alphanumeric).';
-    }
-    if (/\s/.test(password)) {
-      return 'Password cannot contain spaces.';
-    }
+    // if (password.length < 6) {
+    //   return 'Password must be at least 6 characters long.';
+    // }
+    // if (!/[A-Z]/.test(password)) {
+    //   return 'Password must contain at least one uppercase letter.';
+    // }
+    // if (!/[^A-Za-z0-9]/.test(password)) {
+    //   return 'Password must contain at least one special character (non-alphanumeric).';
+    // }
+    // if (/\s/.test(password)) {
+    //   return 'Password cannot contain spaces.';
+    // }
     return '';
   };
 
 
   const handleTabClick1 = (tab) => {
     setActiveTab(tab);
+    if (tab === 'Candidate') {
+      setMessage('Welcome Back!');
+      console.log("login");
+    } else if (tab === 'Employer') {
+      setMessage('Hi Recruiter!');
+    }
   };
   
   const getTabStyle = (tab) => ({
@@ -522,24 +572,44 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
 
   return (
     <div className='full-page'>
-      <a id="scroll-top" />
-    <section className="account-section1">
-      <div className="tf-container1">
-        <div className="row">
-          <div className="wd-form-login2 tf-tab">
-          <h4 style={{ marginBottom: "40px" }}>
-    <a href="/"><img src={logoCompany1} width="80px" height="80px" alt="Company Logo" /></a>
-</h4>
+      <div style={{position:'relative'}}>
+      <img
+        src={Backgroundimagemobile1}
+        alt="Background"
+        className="responsive-image1"
+        style={{
+          position: 'relative',
+          top: '0',
+          left: '0',
+          objectFit: 'cover',
+          zIndex: '1',
+        }}
+      />
 
-           
-          <div style={{
-      display: 'flex',
-      marginBottom: '18px',
-      border: '1.8px solid lightgrey',
-      borderRadius: '8px',
-      overflow: 'hidden',
-     
-    }}>
+      <div style={{position:'absolute' , zIndex:'1' , display:'flex',bottom:0,justifyContent:'center',width:'100%'}}>
+        <h1 className='find-your2'>Find the Best freshers, fuel your workforce!</h1>
+      </div>
+      <div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+      </div>
+      <a id="scroll-top" />
+    <section className="account-section">
+      <div className="tf-container">
+        <div className="row">
+          <div className="wd-form-login tf-tab">
+          <div className="custom-div-style" style={{textAlign:"left"}}>
+      {message}
+    </div>
+    <div className="myComponent">
+        
       <div
   style={{
     ...getTabStyle('Candidate'),
@@ -559,8 +629,8 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
 >
   Sign Up
 </div>
+</div>
 
-    </div>
             
             <div className="content-tab">
               <div className="inner" style={{ display: activeTab === 'Candidate' ? 'block' : 'none' }}>
@@ -568,10 +638,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               <div style={{ color: 'green', marginBottom: '10px' }}>{registrationSuccessMessage}</div>
             )}</span></p>
               <form onSubmit={handleRecruiterSubmit}>
-                      <div className="ip2">
+                      <div className="ip">
                        
                         <input
                           type="text"
+                          className="name"
                           placeholder="Email"
                           value={recruiterEmail}
                           onChange={(e) => {
@@ -583,9 +654,10 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                       </div>
                       <div className="ip">
                     
-                        <div className="inputs-group2 auth-pass-inputgroup">
+                        <div className="inputs-group auth-pass-inputgroup">
                           <input
                             type={showPassword ? 'text' : 'password'}
+                            className="name"
                             placeholder="Password"
                             value={recruiterPassword}
                             onChange={(e) => {
@@ -609,8 +681,6 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                         </a>
                       </div>
                       {errorMessage && <div className="error-message">{errorMessage}</div>}
-                    
-       
                     </form>
               </div>
             </div>
@@ -618,11 +688,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
               <div className="inner" style={{ display: activeTab === 'Employer' ? 'block' : 'none' }}>
               
                 <form onSubmit={handleSubmit1}>
-                <div className="ip2">
+                <div className="ip">
                    
                     <input
                       type="text"
-                      placeholder="company name"
+                      className="name"
+                      placeholder="Company Name"
                       value={companyName}
                       onChange={(e) => {
                         setCompanyName(e.target.value);
@@ -632,10 +703,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerNameError && <div className="error-message" style={{ textAlign: 'left' }}>{employerNameError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <input
                       type="email"
+                      className="name"
                       placeholder="Email"
                       value={employerEmail}
                      
@@ -647,10 +719,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                      {employerEmailError && <div className="error-message" style={{ textAlign: 'left' }}>{employerEmailError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <input
                       type="text"
+                      className="name"
                       placeholder="Mobile Number"
                       value={employerMobileNumber}
                      
@@ -662,11 +735,12 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                     />
                     {employerMobileNumberError && <div className="error-message" style={{ textAlign: 'left' }}>{employerMobileNumberError}</div>}
                   </div>
-                  <div className="ip2">
+                  <div className="ip">
                     
                     <div className="inputs-group2 auth-pass-inputgroup">
                       <input
                         type={showPassword ? 'text' : 'password'}
+                        className="name"
                         placeholder="Password"
                         value={employerPassword}
                        
@@ -687,6 +761,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     <p style={{ color: 'green' }}>OTP sent to your email. Please check and enter below:</p>
     <OTPVerification1
             email={employerEmail}
+            mobilenumber={employerMobileNumber}
             onOTPVerified={() => {
               setTimeout(() => {
                 setRecruiterOTPVerified(true);
@@ -716,7 +791,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
          <div className="helpful-line">Click on send OTP to verify your email</div>
         <button
           type="button"
-          class="custom-button"
+          // class="custom-button"
           onClick={handleSendOTP1}
           disabled={recruiterOTPSent || recruiterRegistrationInProgress || recruiterOTPSendingInProgress}
         >
@@ -737,6 +812,39 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
                 </form>
               </div>
             </div>
+            <div style={{position:'relative'}}>
+                <img
+  src={Background}
+  alt="Background"
+  className="responsive-image2"
+  style={{
+    position: "fixed",
+    top: "0px",
+    left: "-20px",
+    paddingRight: "10px"
+  }}
+  
+/>
+<div className='hide'>
+<div align='left' style={{position:'fixed' ,bottom:0,width:'30%',left:'5%',alignContent:'left'}}>
+        <h1 className='find-your2' style={{ marginBottom: '-50px',fontSize:'35px' }}>Find The</h1>
+        <h1 className='find-your2' style={{ marginBottom: '-50px',fontSize:'35px' }}>Best Freshers,</h1>
+        <h1 className='find-your2' style={{ marginBottom: '5px',fontSize:'35px' }}>Fuel Your Workforce!</h1>
+      </div>
+</div>
+
+<div>
+      <img
+        src={logo}
+        alt="logo"
+        className="logo-image1"
+        style={{
+          zIndex: '1',
+        }}
+      />
+    </div>
+
+</div>
           </div>
         </div>
       </div>

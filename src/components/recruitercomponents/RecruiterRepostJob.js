@@ -55,46 +55,59 @@ const RecruiterRepostJob = ({selectedJobId}) => {
             setSkillsRequired(jobData.skillsRequired);
           }, [jobData.skillsRequired]);
  
-    useEffect(() => {
-        console.log("data fetching..");
-        const fetchJobData = async () => {
-          const jwtToken = localStorage.getItem('jwtToken');
-          if (jwtToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-          }
-     
-          try {
-            const response = await axios.get(`${apiUrl}/job/${selectedJobId}/${user.id}`);
-            const jobDataFromApi = response.data;
-     
-            setJobData({
-              jobTitle: jobDataFromApi.jobTitle,
-              minimumExperience: jobDataFromApi.minimumExperience,
-              maximumExperience: jobDataFromApi.maximumExperience,
-              minSalary: jobDataFromApi.minSalary,
-              maxSalary: jobDataFromApi.maxSalary,
-              location: jobDataFromApi.location,
-              employeeType: jobDataFromApi.employeeType,
-              industryType: jobDataFromApi.industryType,
-              minimumQualification: jobDataFromApi.minimumQualification,
-              specialization: jobDataFromApi.specialization,
-              skillsRequired: jobDataFromApi.skillsRequired.map(skill => ({
-                skillName: skill.skillName,
-                minimumExperience: skill.minimumExperience,
-              })),
-              jobHighlights: jobDataFromApi.jobHighlights,
-              description: jobDataFromApi.description,
-            });
-     
-            setLoading(false);
-          } catch (error) {
-            console.error('Error fetching job data:', error);
-            setLoading(false);
-          }
-        };
-     
-        fetchJobData();
-      }, [selectedJobId, user.id]);
+          useEffect(() => {
+            console.log("Data fetching started...");
+            
+            const fetchJobData = async () => {
+              const jwtToken = localStorage.getItem('jwtToken');
+              if (jwtToken) {
+                axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+                console.log("JWT Token set in headers:", jwtToken);
+              }
+              
+              try {
+                console.log(`Fetching job data for job ID: ${selectedJobId}, user ID: ${user.id}`);
+                
+                const response = await axios.get(`${apiUrl}/job/${selectedJobId}/${user.id}`);
+                const jobDataFromApi = response.data;
+          
+                console.log("API Response Data:", jobDataFromApi);
+                
+                setJobData({
+                  jobTitle: jobDataFromApi.jobTitle,
+                  minimumExperience: jobDataFromApi.minimumExperience,
+                  maximumExperience: jobDataFromApi.maximumExperience,
+                  minSalary: jobDataFromApi.minSalary,
+                  maxSalary: jobDataFromApi.maxSalary,
+                  location: jobDataFromApi.location,
+                  employeeType: jobDataFromApi.employeeType,
+                  industryType: jobDataFromApi.industryType,
+                  minimumQualification: jobDataFromApi.minimumQualification,
+                  specialization: jobDataFromApi.specialization,
+                  skillsRequired: jobDataFromApi.skillsRequired.map((skill) => ({
+                    skillName: skill.skillName,
+                    minimumExperience: skill.minimumExperience,
+                  })),
+                  jobHighlights: jobDataFromApi.jobHighlights,
+                  description: jobDataFromApi.description,
+                });
+          
+                console.log("Job data set to state:", {
+                  jobTitle: jobDataFromApi.jobTitle,
+                  minimumExperience: jobDataFromApi.minimumExperience,
+                  maximumExperience: jobDataFromApi.maximumExperience,
+                });
+          
+                setLoading(false);
+                console.log("Data fetching completed successfully.");
+              } catch (error) {
+                console.error("Error fetching job data:", error);
+                setLoading(false);
+              }
+            };
+          
+            fetchJobData();
+          }, [selectedJobId, user.id]);
 
      
    
