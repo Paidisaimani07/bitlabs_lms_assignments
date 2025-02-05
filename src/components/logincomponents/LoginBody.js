@@ -107,29 +107,69 @@ const login = useGoogleLogin({
         if (userData.utmSource === 'first time') {
           const email = email1;
           const name = name1;
-          const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
-          const webhookData = {
-            email,
-            name,
-            utmSource,
-            utmMedium,
-            utmCampaign,
-            utmContent,
-            utmTerm,
+
+          const leadData = {
+            data: [
+              {
+                First_Name: candidateName,
+                Email: candidateEmail1,
+                Phone: candidateMobileNumber,
+                Mobile: candidateMobileNumber,
+                Lead_Status: "Attempted to Contact",
+                Lead_Source: utmSource,
+                Industry: "Software",
+                UTM_Source: utmSource,
+                UTM_Medium: utmMedium,
+                UTM_Campaign: utmCampaign,
+                UTM_Content: utmContent,
+                UTM_Term: utmTerm
+              }
+            ],
+            trigger: ["approval", "workflow", "blueprint"]
           };
- 
+          
+        
           try {
-            const webhookResponse = await fetch(webhookUrl, {
-              method: 'POST',
+           // const jwtToken = localStorage.getItem("jwtToken"); // Assuming JWT is stored in local storage after login
+        
+            const response = await axios.post(`${apiUrl}/api/zoho/submit-lead`, leadData, {
               headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
+               
               },
-              body: JSON.stringify(webhookData),
             });
-            console.log('Webhook executed');
+        
+            if (response.status === 200) {
+              console.log("Lead submitted successfully!");
+            } else {
+              console.error("Failed to submit lead", response.data);
+            }
           } catch (error) {
-            console.error('Error sending first webhook:', error);
+            console.error("Error submitting lead:", error.response ? error.response.data : error.message);
           }
+          // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+          // const webhookData = {
+          //   email,
+          //   name,
+          //   utmSource,
+          //   utmMedium,
+          //   utmCampaign,
+          //   utmContent,
+          //   utmTerm,
+          // };
+ 
+          // try {
+          //   const webhookResponse = await fetch(webhookUrl, {
+          //     method: 'POST',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //     },
+          //     body: JSON.stringify(webhookData),
+          //   });
+          //   console.log('Webhook executed');
+          // } catch (error) {
+          //   console.error('Error sending first webhook:', error);
+          // }
         }
  
         let userType1;
@@ -451,7 +491,6 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
      setCandidateRegistrationSuccess(true);
      setRegistrationSuccessMessage('Registration successful!');
      setActiveTab('Candidate');
-     console.log('Registration successful', response.data);
      setCandidateName('');
      setCandidateEmail1('');
      setCandidateMobileNumber('');
@@ -461,33 +500,74 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
         const email = candidateEmail1;
         const name = candidateName;
         const mobilenumber= candidateMobileNumber;
-        const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
-        const webhookData = {
-         //userId,
-         email,
-         name,
-         mobilenumber,
-         utmSource,
-         utmMedium,
-         utmCampaign,
-         utmContent,
-         utmTerm,
-        };
+      //   const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+      //   const webhookData = {
+      //    //userId,
+      //    email,
+      //    name,
+      //    mobilenumber,
+      //    utmSource,
+      //    utmMedium,
+      //    utmCampaign,
+      //    utmContent,
+      //    utmTerm,
+      //   };
 
-        try {
-          const webhookResponse = await fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(webhookData),
-          });
-       console.log('web hook excuted');
+      //   try {
+      //     const webhookResponse = await fetch(webhookUrl, {
+      //       method: 'POST',
+      //       headers: {
+      //         'Content-Type': 'application/json',
+      //       },
+      //       body: JSON.stringify(webhookData),
+      //     });
+      //  console.log('web hook excuted');
        
-        }catch (error) {
-          console.error('Error sending first webhook:', error);
-          // Handle network errors or other exceptions
+      //   }catch (error) {
+      //     console.error('Error sending first webhook:', error);
+      //     // Handle network errors or other exceptions
+      //   }
+
+      const leadData = {
+        data: [
+          {
+            First_Name: candidateName,
+            Email: candidateEmail1,
+            Phone: candidateMobileNumber,
+            Mobile: candidateMobileNumber,
+            Lead_Status: "Attempted to Contact",
+            Lead_Source: utmSource,
+            Industry: "Software",
+            UTM_Source: utmSource,
+            UTM_Medium: utmMedium,
+            UTM_Campaign: utmCampaign,
+            UTM_Content: utmContent,
+            UTM_Term: utmTerm
+          }
+        ],
+        trigger: ["approval", "workflow", "blueprint"]
+      };
+      
+    
+      try {
+       // const jwtToken = localStorage.getItem("jwtToken"); // Assuming JWT is stored in local storage after login
+    
+        const response = await axios.post(`${apiUrl}/api/zoho/submit-lead`, leadData, {
+          headers: {
+            "Content-Type": "application/json",
+           
+          },
+        });
+    
+        if (response.status === 200) {
+          console.log("Lead submitted successfully!");
+        } else {
+          console.error("Failed to submit lead", response.data);
         }
+      } catch (error) {
+        console.error("Error submitting lead:", error.response ? error.response.data : error.message);
+      }
+
      if (candidateOTPSent && candidateOTPVerified) {
        navigate('/candidate', { state: { registrationSuccess: true } });
      }
