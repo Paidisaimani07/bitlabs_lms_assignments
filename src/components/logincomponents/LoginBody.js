@@ -112,6 +112,7 @@ const login = useGoogleLogin({
             data: [
               {
                 First_Name: candidateName,
+                Last_Name: candidateName,
                 Email: candidateEmail1,
                 Phone: candidateMobileNumber,
                 Mobile: candidateMobileNumber,
@@ -532,6 +533,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
         data: [
           {
             First_Name: candidateName,
+            Last_Name: candidateName,
             Email: candidateEmail1,
             Phone: candidateMobileNumber,
             Mobile: candidateMobileNumber,
