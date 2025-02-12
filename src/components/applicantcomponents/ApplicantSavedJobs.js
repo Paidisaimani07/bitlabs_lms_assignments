@@ -14,6 +14,16 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const navigate = useNavigate();
   const [snackbars, setSnackbars] = useState([]);
   const location = useLocation();
+  const [page, setPage] = useState(1);
+    const [size, setSize] = useState(3); // Set the size of jobs per request
+    const [savedJobs, setSavedJobs] = useState([]);
+    const [savedJobsPage, setSavedJobsPage] = useState(1);
+    const [totalSavedJobs, setTotalSavedJobs] = useState(0);
+    const [totalSavedPages, setTotalSavedPages] = useState(1);
+    const [savedHasMore, setSavedHasMore] = useState(true);
+   
+    const jwtToken = user.data.jwt;
+ 
  
   useEffect(() => {
     const fetchData = async () => {
@@ -28,30 +38,55 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
  
     fetchData();
   }, []);
- 
-  const fetchSavedJobs = async () => {
+  const fetchSavedJobCount = async () => {
     try {
-      const authToken = localStorage.getItem('jwtToken');
- 
-      const response = await axios.get(
-        `${apiUrl}/savedjob/getSavedJobs/${applicantId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
- 
-      const jobsData = response.data;
-      setJobs(jobsData);
+      const response = await axios.get(`${apiUrl}/savedjob/countSavedJobs/${applicantId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      const count = response.data;
+      setTotalSavedJobs(count);
+      setTotalSavedPages(Math.ceil(count / size));
     } catch (error) {
-      console.error('Error fetching saved jobs:', error);
+      console.error("Error fetching saved job count:", error);
+    }
+  };
+  const fetchSavedJobs = async (pageNum = 1) => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/savedjob/getSavedJobs/${applicantId}?page=${pageNum}&size=${size}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+ 
+      const newJobs = Array.isArray(response.data.content) ? response.data.content : [];
+setJobs(newJobs);
+ 
+ 
+      setSavedJobs(newJobs);
+      setSavedJobsPage(pageNum);
+      setSavedHasMore(newJobs.length === size);
+    } catch (error) {
+      console.error("Error fetching saved jobs:", error);
     } finally {
       setLoading(false);
     }
   };
  
+  // Pagination Handlers
+  const handlePreviousSavedPage = () => {
+    if (savedJobsPage > 1) fetchSavedJobs(savedJobsPage - 1);
+  };
+ 
+  const handleNextSavedPage = () => {
+    if (savedJobsPage < totalSavedPages) fetchSavedJobs(savedJobsPage + 1);
+  };
+ 
+  const handleSavedPageClick = (pageNum) => {
+    fetchSavedJobs(pageNum);
+  };
+ 
+  // Fetch Saved Jobs on Component Mount
   useEffect(() => {
+    fetchSavedJobCount();
     fetchSavedJobs();
   }, [applicantId]);
  
@@ -88,6 +123,8 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       if (response.status === 200) {
         // Update the jobs state to remove the job immediately
         setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+        setSavedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+ 
         addSnackbar({ message: 'Job removed', type: 'success' });
       }
     } catch (error) {
@@ -116,7 +153,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
                   <div className="row">
                     <div className="col-lg-12 col-md-12 ">
                       <div className="title-dashboard">
-
+ 
                         <div className="title-dash flex2">My Saved Jobs</div>
                       </div>
                     </div>
@@ -217,6 +254,66 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
           </div>
         </div>
       )}
+      {/* <div className="pagination">
+  <button onClick={handlePreviousSavedPage} disabled={savedJobsPage === 1}>Previous</button>
+  {Array.from({ length: totalSavedPages }, (_, i) => (
+    <button key={i + 1} onClick={() => handleSavedPageClick(i + 1)} className={savedJobsPage === i + 1 ? 'active' : ''}>
+      {i + 1}
+    </button>
+  ))}
+  <button onClick={handleNextSavedPage} disabled={savedJobsPage === totalSavedPages}>Next</button>
+</div> */}
+  <div className="pagination" style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px", gap: "10px" }}>
+  <button
+    onClick={handlePreviousSavedPage}
+    className="arrow-button"
+    disabled={savedJobsPage === 1}
+    style={savedJobsPage === 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+  >
+    &lsaquo;
+  </button>
+ 
+  {/* Page Numbers */}
+  {Array.from({ length: totalSavedPages }, (_, i) => i + 1)
+    .filter((pageNumber) => {
+      return (
+        pageNumber <= 2 || // First two pages
+        pageNumber >= totalSavedPages - 1 || // Last two pages
+        (pageNumber >= savedJobsPage - 1 && pageNumber <= savedJobsPage + 1) // Two pages before and after current
+      );
+    })
+    .reduce((acc, pageNumber, index, array) => {
+      if (index > 0 && pageNumber !== array[index - 1] + 1) {
+        acc.push("...");
+      }
+      acc.push(pageNumber);
+      return acc;
+    }, [])
+    .map((pageNumber, index) =>
+      pageNumber === "..." ? (
+        <span key={index} style={{ padding: "0 5px" }}>...</span>
+      ) : (
+        <button
+          key={pageNumber}
+          onClick={() => handleSavedPageClick(pageNumber)}
+          className={savedJobsPage === pageNumber ? "active" : ""}
+          style={{ marginBottom: " 5px" }}
+        >
+          {pageNumber}
+        </button>
+      )
+    )}
+ 
+  <button
+    onClick={handleNextSavedPage}
+    className="arrow-button"
+    disabled={savedJobsPage === totalSavedPages}
+    style={savedJobsPage === totalSavedPages ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+  >
+    &rsaquo;
+  </button>
+</div>
+ 
       {snackbars.map((snackbar, index) => (
         <Snackbar
           key={index}

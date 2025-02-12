@@ -13,8 +13,8 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
 import ModalWrapper from './ModalWrapper';
 import Button from '@mui/material/Button';
 import ResumeBuilder from './ResumeBuilder';
-
-
+ 
+ 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
   const { user } = useUserContext();
@@ -31,23 +31,23 @@ const ApplicantDashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [isWideScreen, setIsWideScreen] = useState(false);
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsWideScreen(window.innerWidth > 780);
     };
-
+ 
     // Initialize the state on component mount
     handleResize();
-
+ 
     // Add event listener for resize
     window.addEventListener('resize', handleResize);
-
+ 
     // Cleanup the event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-
+ 
+ 
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
@@ -58,22 +58,22 @@ const ApplicantDashboard = () => {
           },
         });
         const profileId = profileIdResponse.data;
-
+ 
        
         if (profileId === 0) {
-          navigate('/applicant-basic-details-form'); 
+          navigate('/applicant-basic-details-form');
         } else {
-          setLoading(false); 
+          setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
       }
     };
-
+ 
     checkUserProfile();
   }, [userId, navigate]);
-
-
+ 
+ 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -83,28 +83,28 @@ const ApplicantDashboard = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-    
+   
         const newData = {
           identifier: response.data.applicant.email,
           password: response.data.applicant.password,
           localResume: response.data.applicant.localResume,
           firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
         };
-  
+ 
         // Store newData in local storage
         localStorage.setItem('userData', JSON.stringify(newData));
-  
+ 
         setUserData(newData);
       } catch (error) {
         console.error('Error updating profile status:', error);
       }
     };
-  
+ 
     fetchUserData();
   }, []);
-  
-
-
+ 
+ 
+ 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
     if (storedToken) {
@@ -165,10 +165,10 @@ const ApplicantDashboard = () => {
         console.error('Error fetching team members:', error);
       });
   }, [user.id]);
-
+ 
   const [testData, setTestData] = useState([]);
   const [showIcon, setShowIcon] = useState(false);
-
+ 
   {/* tests api */}
   useEffect(() => {
     const fetchTestData = async () => {
@@ -179,48 +179,48 @@ const ApplicantDashboard = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-  
+ 
         const data = response.data;
         setTestData(data);
-  
+ 
         // Check if both aptitude and technical tests have status "P" or "p"
         const allTestsPassed = data.length >= 2 && data.every(test => test.testStatus.toLowerCase() === 'p');
-  
+ 
         setShowIcon(allTestsPassed);
-  
+ 
       } catch (error) {
         console.error('Error fetching test data:', error);
       }
     };
-  
+ 
     fetchTestData();
   }, [user.id]);
-
+ 
   const handleRedirect = () => {
-
+ 
     navigate("/applicant-find-jobs");
   };
-
+ 
   const handleRedirect1 = () => {
-
+ 
     navigate("/applicant-applied-jobs");
   };
-
+ 
   const handleRedirect2 = () => {
-
+ 
     navigate("/applicant-saved-jobs");
   };
-
+ 
   const Buildresume = () => {
     navigate("/applicant-resume-builder");
   };
-
+ 
   const location = useLocation();
   const linkStyle = {
     backgroundColor: isHovered ? '#ea670c' : '#F97316',
     display: 'inline-block',
   };
-
+ 
   const spanStyle = {
     color: 'white',
     fontFamily: 'Plus Jakarta Sans',
@@ -229,8 +229,9 @@ const ApplicantDashboard = () => {
    
   };
   // const [showIcon, setShowIcon] = useState(false); // Set to true or false to show/hide the SVG
-
-  return (
+ 
+ 
+ return (
     <div>
       {loading ? null : (
         <div className="dashboard__content">
@@ -238,7 +239,7 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard">
-                  
+                 
                 <div className="userName-title">
       Hi {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}
       {showIcon && (
@@ -249,7 +250,7 @@ const ApplicantDashboard = () => {
         </span>
       )}
     </div>
-
+ 
                 </div>
               </div>
             </div>
@@ -281,11 +282,13 @@ const ApplicantDashboard = () => {
                           >
                             Recommended Jobs
                           </span>
+                          {/* <h3>{contRecJobs-contSavedJobs}</h3> */}
                           <h3>{contRecJobs}</h3>
-
+ 
+ 
                         </div>
                     </div>
-
+ 
                   </div>
                 </div>
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
@@ -360,7 +363,7 @@ const ApplicantDashboard = () => {
                           <div className="resumecard-button">
                             <Link
                               onClick={openModal}
-                              
+                             
                               className={'button-link1'}
                               style={linkStyle}
                               onMouseEnter={() => setIsHovered(true)}
@@ -394,8 +397,8 @@ const ApplicantDashboard = () => {
                 <div className="resumecard-text">
                   <div className="resumecard-heading">
                     <h2 className="heading1">Earn Pre-Screened Badges
-                    <span 
-  style={{ 
+                    <span
+  style={{
     color: '#F00', // Red text color
     border: '1px solid var(--Color-2, #F00)', // Red border
     borderRadius: '13px', // Rounded corners
@@ -427,7 +430,7 @@ const ApplicantDashboard = () => {
                     </Link>
                   </div>
                 </div>
-                
+               
                 <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
                   <img
                     src={Taketest}
@@ -441,10 +444,10 @@ const ApplicantDashboard = () => {
         </div>
       )}
                 {/* New one*/}
-
+ 
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                   <div className="card " style={{ cursor: "pointer" }}>
-                    <div className="resumecard" > 
+                    <div className="resumecard" >
                       <div className="resumecard-content">
                         <div className="resumecard-text">
                           <div className="resumecard-heading">
@@ -485,5 +488,5 @@ const ApplicantDashboard = () => {
     </div>
   );
 };
-
+ 
 export default ApplicantDashboard;
