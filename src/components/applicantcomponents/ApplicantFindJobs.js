@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import axiosInstance from "../../services/axiosInstance";
+import axios from  'axios';
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import Spinner from "../common/Spinner";
@@ -31,7 +31,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
  
   const fetchProfileId = async () => {
     try {
-      const profileRes = await axiosInstance.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+      const profileRes = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       setProfileId(profileRes.data);
@@ -44,7 +44,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
  
   const fetchJobCount = async () => {
     try {
-      const response = await axiosInstance.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, {
+      const response = await axios.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       const count = response.data; // Get total job count
@@ -63,7 +63,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
           ? `${apiUrl}/job/promote/${userId}/yes`
           : `${apiUrl}/recommendedjob/findrecommendedjob/${userId}?page=${pageNum}&size=${size}`;
  
-      const response = await axiosInstance.get(url, {
+      const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
  
@@ -80,7 +80,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
  
   const handleSaveJob = async (jobId) => {
     try {
-      await axiosInstance.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, null, {
+      await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, null, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       addSnackbar({ message: "Job saved successfully.", link: "/applicant-saved-jobs", linkText: "View Saved Jobs", type: "success" });
@@ -138,6 +138,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
  
   return (
     <div>
+     {loading ? null : (
       <div className="dashboard__content">
         <div className="row mr-0 ml-10">
           <div className="col-lg-12 col-md-12">
@@ -272,7 +273,8 @@ function ApplicantFindJobs({ setSelectedJobId }) {
           </div>
         </div>
       </div>
- 
+    )
+}
       {snackbars.map((snackbar, index) => (
         <Snackbar
           key={index}

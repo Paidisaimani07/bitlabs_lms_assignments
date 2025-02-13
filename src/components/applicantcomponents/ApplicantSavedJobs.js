@@ -15,7 +15,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const [snackbars, setSnackbars] = useState([]);
   const location = useLocation();
   const [page, setPage] = useState(1);
-    const [size, setSize] = useState(3); // Set the size of jobs per request
+    const [size, setSize] = useState(4) // Set the size of jobs per request
     const [savedJobs, setSavedJobs] = useState([]);
     const [savedJobsPage, setSavedJobsPage] = useState(1);
     const [totalSavedJobs, setTotalSavedJobs] = useState(0);
@@ -254,15 +254,7 @@ setJobs(newJobs);
           </div>
         </div>
       )}
-      {/* <div className="pagination">
-  <button onClick={handlePreviousSavedPage} disabled={savedJobsPage === 1}>Previous</button>
-  {Array.from({ length: totalSavedPages }, (_, i) => (
-    <button key={i + 1} onClick={() => handleSavedPageClick(i + 1)} className={savedJobsPage === i + 1 ? 'active' : ''}>
-      {i + 1}
-    </button>
-  ))}
-  <button onClick={handleNextSavedPage} disabled={savedJobsPage === totalSavedPages}>Next</button>
-</div> */}
+      {/* pagination */}
   <div className="pagination" style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px", gap: "10px" }}>
   <button
     onClick={handlePreviousSavedPage}
