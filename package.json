@@ -2,6 +2,9 @@
   "name": "talentstreamfrontendkarun",
   "version": "0.1.0",
   "private": true,
+   "engines": {
+    "node": ">=22.11.0"
+  },
   "dependencies": {
     "@ant-design/colors": "^7.0.2",
     "@emotion/react": "^11.11.4",
@@ -47,7 +50,7 @@
     "react-quill": "^2.0.0",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.18.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-semicircle-progressbar": "^1.1.0",
     "react-spinners": "^0.13.8",
     "react-table": "^7.8.0",
@@ -55,7 +58,9 @@
     "swiper": "^11.0.6",
     "web-vitals": "^2.1.4",
     "wow.js": "^1.2.2",
-    "npmlog": "^6.0.0"
+    "npmlog": "^6.0.0",
+    "ajv": "^8.12.0",
+     "ajv-keywords": "^5.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
