@@ -42,11 +42,11 @@ useEffect(() => {
   const params = new URLSearchParams(location.search);
 
  // Update state variables with UTM parameters from URL if available
- setUtmSource(params.get('utm_source') || 'bitlabs.in');
- setUtmMedium(params.get('utm_medium') || 'bitlabs.in');
- setUtmCampaign(params.get('utm_campaign') || 'bitlabs.in');
- setUtmContent(params.get('utm_content') || 'bitlabs.in');
- setUtmTerm(params.get('utm_term') || 'bitlabs.in');
+ setUtmSource(params.get('utm_source') || 'bitlabs.in/jobs');
+ setUtmMedium(params.get('utm_medium') || 'bitlabs.in/jobs');
+ setUtmCampaign(params.get('utm_campaign') || 'bitlabs.in/jobs');
+ setUtmContent(params.get('utm_content') || 'bitlabs.in/jobs');
+ setUtmTerm(params.get('utm_term') || 'bitlabs.in/jobs');
 
 
 }, [location, navigate]);
@@ -111,32 +111,30 @@ const login = useGoogleLogin({
           const leadData = {
             data: [
               {
-                First_Name: candidateName,
                 Last_Name: candidateName,
                 Email: candidateEmail1,
                 Phone: candidateMobileNumber,
-                Mobile: candidateMobileNumber,
                 Lead_Status: "Attempted to Contact",
-                Lead_Source: utmSource,
+                Lead_Source: utmSource || "Direct",  // Set a default if empty
                 Industry: "Software",
-                UTM_Source: utmSource,
-                UTM_Medium: utmMedium,
-                UTM_Campaign: utmCampaign,
-                UTM_Content: utmContent,
-                UTM_Term: utmTerm
-              }
+                Mobile: candidateMobileNumber,
+                Utm_Source_TS: utmSource || "Unknown",
+                Utm_Medium_TS: utmMedium || "Unknown",
+                Utm_Campaign_TS: utmCampaign || "Unknown",
+                Utm_Content_TS: utmContent || "Unknown",
+                Utm_Term_TS: utmTerm || "Unknown",
+              },
             ],
-            trigger: ["approval", "workflow", "blueprint"]
           };
+          
           
         
           try {
            // const jwtToken = localStorage.getItem("jwtToken"); // Assuming JWT is stored in local storage after login
         
-            const response = await axios.post(`${apiUrl}/api/zoho/submit-lead`, leadData, {
+            const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {
               headers: {
                 "Content-Type": "application/json",
-               
               },
             });
         
@@ -532,32 +530,30 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
       const leadData = {
         data: [
           {
-            First_Name: candidateName,
             Last_Name: candidateName,
             Email: candidateEmail1,
             Phone: candidateMobileNumber,
-            Mobile: candidateMobileNumber,
             Lead_Status: "Attempted to Contact",
-            Lead_Source: utmSource,
+            Lead_Source: utmSource || "Direct",  // Set a default if empty
             Industry: "Software",
-            UTM_Source: utmSource,
-            UTM_Medium: utmMedium,
-            UTM_Campaign: utmCampaign,
-            UTM_Content: utmContent,
-            UTM_Term: utmTerm
-          }
+            Mobile: candidateMobileNumber,
+            Utm_Source_TS: utmSource || "Unknown",
+            Utm_Medium_TS: utmMedium || "Unknown",
+            Utm_Campaign_TS: utmCampaign || "Unknown",
+            Utm_Content_TS: utmContent || "Unknown",
+            Utm_Term_TS: utmTerm || "Unknown",
+          },
         ],
-        trigger: ["approval", "workflow", "blueprint"]
       };
+      
       
     
       try {
        // const jwtToken = localStorage.getItem("jwtToken"); // Assuming JWT is stored in local storage after login
     
-        const response = await axios.post(`${apiUrl}/api/zoho/submit-lead`, leadData, {
+        const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {
           headers: {
             "Content-Type": "application/json",
-           
           },
         });
     
@@ -588,6 +584,10 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
        }
    }
  };
+
+
+
+
  const isFullNameValid = (fullName) => {
    if (!fullName.trim()) {
      return 'Full name is required.';
