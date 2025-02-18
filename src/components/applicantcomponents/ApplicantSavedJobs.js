@@ -57,7 +57,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
  
-      const newJobs = Array.isArray(response.data.content) ? response.data.content : [];
+      const newJobs = Array.isArray(response.data) ? response.data : [];
 setJobs(newJobs);
  
  
