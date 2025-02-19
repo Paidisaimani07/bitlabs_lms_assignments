@@ -11,131 +11,147 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [profileid1, setProfileId] = useState(null);
-  const [snackbars, setSnackbars] = useState([]);
-  const [page, setPage] = useState(1);
-  const [size] = useState(16); // Set the size of jobs per request
+  const [page, setPage] = useState(0); // Start at page 0
+  const [size] = useState(16); // Number of jobs per request
   const [hasMore, setHasMore] = useState(true);
-  const [totalPages, setTotalPages] = useState(1); // For total pages
-  const [totalJobCount, setTotalJobCount] = useState(0); // Total jobs count
- 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useUserContext();
-  const userId = user.id;
-  const jwtToken = user.data.jwt;
- 
-  useEffect(() => {
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalJobCount, setTotalJobCount] = useState(0);
+  const [snackbars, setSnackbars] = useState([]);// added snackbar
+const navigate = useNavigate();
+const location = useLocation();
+const { user } = useUserContext();
+const userId = user.id;
+const jwtToken = user.data.jwt;
+
+// added snack bar for pagination 
+const addSnackbar = (snackbar) => {
+  setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+};
+
+// Fetch jobs only when profile ID is available
+const fetchJobs = async (pageNum = 0, profileId = profileid1) => {
+  if (!profileId) return; // Avoid fetching if profileId is not available
+
+  setLoading(true);
+  try {
+    const url =
+      profileId === 0
+        ? `${apiUrl}/job/promote/${userId}/yes`
+        : `${apiUrl}/recommendedjob/findrecommendedjob/${userId}?page=${pageNum}&size=${size}`;
+
+    const response = await axios.get(url, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
+
+    const newJobs = response.data;
+    
+    setHasMore(newJobs.length === size); // If less than `size`, no more pages
+
+    // Clear the jobs when navigating to a new page (reset for page 0)
+    if (pageNum === 0) {
+      setJobs(newJobs); // Set only the jobs of the current page
+    } else {
+      setJobs(newJobs); // Reset jobs when switching pages
+    }
+
+    setPage(pageNum); // Update the current page
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+// Fetch profile ID only if it's not already set
+const fetchProfileId = async () => {
+  if (profileid1) return; // Prevent re-fetching if profileId is already set
+
+  try {
+    const profileRes = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
+    setProfileId(profileRes.data); // Set profile ID
+    fetchJobCount(); // Fetch the total job count after setting profile ID
+    fetchJobs(0, profileRes.data); // Fetch the first page of jobs
+  } catch (error) {
+    console.error("Error fetching profile ID:", error);
+  }
+};
+
+// Fetch total job count
+const fetchJobCount = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, {
+      headers: { Authorization: `Bearer ${jwtToken}` },
+    });
+    const count = response.data;
+    setTotalJobCount(count);
+    setTotalPages(Math.ceil(count / size)); // Calculate total pages
+  } catch (error) {
+    console.error("Error fetching job count:", error);
+  }
+};
+
+// Fetch profile ID and jobs when JWT token or profile ID changes
+useEffect(() => {
+  if (jwtToken) {
     localStorage.setItem("jwtToken", jwtToken);
     fetchProfileId();
-  }, []);
- 
-  const fetchProfileId = async () => {
-    try {
-      const profileRes = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
-      setProfileId(profileRes.data);
-      fetchJobCount(); // Fetch the total job count
-      fetchJobs(1, profileRes.data); // Load first page of jobs based on profile
-    } catch (error) {
-      console.error("Error fetching profile ID:", error);
-    }
-  };
- 
-  const fetchJobCount = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
-      const count = response.data; // Get total job count
-      setTotalJobCount(count);
-      setTotalPages(Math.ceil(count / size)); // Calculate total pages
-    } catch (error) {
-      console.error("Error fetching job count:", error);
-    }
-  };
- 
-  const fetchJobs = async (pageNum = 1, profileId = profileid1) => {
-    setLoading(true);
-    try {
-      const url =
-        profileId === 0
-          ? `${apiUrl}/job/promote/${userId}/yes`
-          : `${apiUrl}/recommendedjob/findrecommendedjob/${userId}?page=${pageNum}&size=${size}`;
- 
-      const response = await axios.get(url, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
- 
-      const newJobs = response.data;
-      if (newJobs.length < size) setHasMore(false);
-      setJobs(newJobs); // Set only the current page jobs
-      setPage(pageNum);
-    } catch (error) {
-      console.error("Error fetching jobs:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
- 
+  }
+}, [jwtToken]); // Only run when jwtToken changes
+
+// Handle page change
+const handlePreviousPage = () => {
+  if (page > 0) fetchJobs(page - 1, profileid1);
+};
+
+const handleNextPage = () => {
+  if (page < totalPages) fetchJobs(page + 1, profileid1);
+};
+
+const handlePageClick = (pageNum) => {
+  fetchJobs(pageNum, profileid1);
+};
+
+  
+
   const handleSaveJob = async (jobId) => {
     try {
       await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, null, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      addSnackbar({ message: "Job saved successfully.", link: "/applicant-saved-jobs", linkText: "View Saved Jobs", type: "success" });
+  
+      // Remove the job from the UI without reloading
+      setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+  
+      addSnackbar({ 
+        message: "Job saved successfully.", 
+        link: "/applicant-saved-jobs", 
+        linkText: "View Saved Jobs", 
+        type: "success",
+      });
+  
     } catch (error) {
       console.error("Error saving job:", error);
       addSnackbar({ message: "Error saving job. Please try again later.", type: "error" });
     }
   };
- 
-  const addSnackbar = (snackbar) => {
-    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  
+  const handleApplyNowClick = (jobId) => {
+    setSelectedJobId(jobId);
+    // navigate('/applicant-view-job', { state: { from: location.pathname } });
   };
  
-    const handleApplyNowClick = (jobId) => {
+
+  const handleApplyNowClickView = (jobId) => {
     setSelectedJobId(jobId);
     navigate('/applicant-view-job', { state: { from: location.pathname } });
   };
- 
- 
+
   const handleCloseSnackbar = (index) => {
-        setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
-      };
- 
-  const handlePreviousPage = () => {
-    if (page > 1) fetchJobs(page - 1);
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
   };
- 
-  const handleNextPage = () => {
-    if (page < totalPages) fetchJobs(page + 1);
-  };
- 
-  const handlePageClick = (pageNum) => {
-    fetchJobs(pageNum);
-  };
- 
-  const generatePageNumbers = () => {
-    const pages = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      pages.push(1);
-      if (page > 3) pages.push('...');
-      let start = Math.max(2, page - 1);
-      let end = Math.min(totalPages - 1, page + 1);
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-      if (page < totalPages - 2) pages.push('...');
-      pages.push(totalPages);
-    }
-    return pages;
-  };
- 
   return (
     <div>
      {loading ? null : (
@@ -220,7 +236,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
                                   <li>
                                   {job && (
                                         <button
-                                         // onClick={() => handleApplyNowClick(job.id)}
+                                         onClick={() => handleApplyNowClickView(job.id)}
                                           className="button-status1"
                                         >
                                           View Job
@@ -242,32 +258,58 @@ function ApplicantFindJobs({ setSelectedJobId }) {
   <button
     onClick={handlePreviousPage}
     className="arrow-button"
-    disabled={page === 1}
-    style={page === 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+    disabled={page === 0}
+    style={page === 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
   >
     <span aria-hidden="true">&lsaquo;</span> {/* Left Arrow */}
   </button>
- 
+
   {/* Page Numbers */}
-  {generatePageNumbers().map((number, index) => (
-    <button
-      key={index}
-      onClick={() => handlePageClick(number)}
-      className={`pagination-button ${number === page ? "active" : ""}`}
-    >
-      {number}
-    </button>
-  ))}
- 
+  {Array.from({ length: totalPages }, (_, i) => i) // Start from 0 internally
+    .map((pageNumber) => pageNumber + 1) // Adjust for UI display
+    .filter((pageNumber) => {
+      return (
+        pageNumber <= 2 || // First two pages
+        pageNumber >= totalPages - 1 || // Last two pages
+        (pageNumber >= page && pageNumber <= page + 2) // Two pages before and after current
+      );
+    })
+    .reduce((acc, pageNumber, index, array) => {
+      if (
+        index > 0 &&
+        pageNumber !== array[index - 1] + 1 && // Add ellipsis only if there is a gap between page numbers
+        !(array[index - 1] === 1 && pageNumber === 2) // Prevent ellipsis before 1
+      ) {
+        acc.push("...");
+      }
+      acc.push(pageNumber);
+      return acc;
+    }, [])
+    .map((pageNumber, index) =>
+      pageNumber === "..." ? (
+        <span key={index} style={{ padding: "0 5px" }}>...</span>
+      ) : (
+        <button
+          key={pageNumber}
+          onClick={() => handlePageClick(pageNumber - 1)} // Convert back to 0-based index for API call
+          className={page === pageNumber - 1 ? "active" : ""}
+          style={{ marginBottom: "5px" }}
+        >
+          {pageNumber}
+        </button>
+      )
+    )}
+
   <button
     onClick={handleNextPage}
     className="arrow-button"
-    disabled={page === totalPages}
-    style={page === totalPages ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+    disabled={page === totalPages-1}
+    style={page === totalPages-1 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
   >
     <span aria-hidden="true">&rsaquo;</span> {/* Right Arrow */}
   </button>
 </div>
+
  
             </section>
           </div>
