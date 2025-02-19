@@ -14,12 +14,11 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const navigate = useNavigate();
   const [snackbars, setSnackbars] = useState([]);
   const location = useLocation();
-  const [page, setPage] = useState(1);
-    const [size, setSize] = useState(4) // Set the size of jobs per request
+    const [size, setSize] = useState(10) // Set the size of jobs per request
     const [savedJobs, setSavedJobs] = useState([]);
     const [savedJobsPage, setSavedJobsPage] = useState(1);
     const [totalSavedJobs, setTotalSavedJobs] = useState(0);
-    const [totalSavedPages, setTotalSavedPages] = useState(1);
+    const [totalSavedPages, setTotalSavedPages] = useState(0);
     const [savedHasMore, setSavedHasMore] = useState(true);
    
     const jwtToken = user.data.jwt;
@@ -50,7 +49,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       console.error("Error fetching saved job count:", error);
     }
   };
-  const fetchSavedJobs = async (pageNum = 1) => {
+  const fetchSavedJobs = async (pageNum = 0) => {
     setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/savedjob/getSavedJobs/${applicantId}?page=${pageNum}&size=${size}`, {
@@ -73,7 +72,7 @@ setJobs(newJobs);
  
   // Pagination Handlers
   const handlePreviousSavedPage = () => {
-    if (savedJobsPage > 1) fetchSavedJobs(savedJobsPage - 1);
+    if (savedJobsPage > 0) fetchSavedJobs(savedJobsPage - 1);
   };
  
   const handleNextSavedPage = () => {
@@ -100,39 +99,78 @@ setJobs(newJobs);
     return (amountInRupees *1).toFixed(2); // Assuming salary is in rupees
   };
  
-  const handleApplyNowClick = (jobId,e) => {
+  // const handleApplyNowClick = (jobId,e) => {
+  //   if (e) e.stopPropagation();
+  //   setSelectedJobId(jobId);
+   
+  //   navigate('/applicant-view-job',{state:{from:location.pathname}});
+  // };
+ 
+  // const handleRemoveJob = async (jobId, e) => {
+  //   e.stopPropagation();
+  //   try {
+  //     const authToken = localStorage.getItem('jwtToken');
+  //     const response = await axios.delete(
+  //       `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${authToken}`,
+  //         },
+  //       }
+  //     );
+ 
+  //     if (response.status === 200) {
+  //       // Update the jobs state to remove the job immediately
+  //       setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+  //       setSavedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
+ 
+  //       addSnackbar({ message: 'Job removed', type: 'success' });
+  //     }
+  //   } catch (error) {
+  //     addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
+  //     console.error('Error removing job:', error);
+  //   }
+  // };
+ 
+
+
+  const handleApplyNowClick = (jobId, e) => {
     if (e) e.stopPropagation();
     setSelectedJobId(jobId);
-   
-    navigate('/applicant-view-job',{state:{from:location.pathname}});
-  };
- 
-  const handleRemoveJob = async (jobId, e) => {
+
+    // Update jobs and savedJobs state immediately after applying
+    setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+    setSavedJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+
+    navigate('/applicant-view-job', { state: { from: location.pathname } });
+};
+
+const handleRemoveJob = async (jobId, e) => {
     e.stopPropagation();
     try {
-      const authToken = localStorage.getItem('jwtToken');
-      const response = await axios.delete(
-        `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
+        const authToken = localStorage.getItem('jwtToken');
+        const response = await axios.delete(
+            `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${authToken}`,
+                },
+            }
+        );
+
+        if (response.status === 200) {
+            // Remove the job from both lists immediately after it has been successfully removed
+            setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+            setSavedJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+
+            addSnackbar({ message: 'Job removed Successfully', type: 'success' });
         }
-      );
- 
-      if (response.status === 200) {
-        // Update the jobs state to remove the job immediately
-        setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
-        setSavedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
- 
-        addSnackbar({ message: 'Job removed', type: 'success' });
-      }
     } catch (error) {
-      addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
-      console.error('Error removing job:', error);
+        addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
+        console.error('Error removing job:', error);
     }
-  };
- 
+};
+
  
   const addSnackbar = (snackbar) => {
     setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
@@ -255,23 +293,24 @@ setJobs(newJobs);
         </div>
       )}
       {/* pagination */}
-  <div className="pagination" style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px", gap: "10px" }}>
+      <div className="pagination" style={{ display: "flex", justifyContent: "flex-end", marginTop: "20px", gap: "10px" }}>
   <button
     onClick={handlePreviousSavedPage}
     className="arrow-button"
-    disabled={savedJobsPage === 1}
-    style={savedJobsPage === 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+    disabled={savedJobsPage === 0} // Disable when on the first page (0-based index)
+    style={savedJobsPage === 0 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
   >
     &lsaquo;
   </button>
- 
+
   {/* Page Numbers */}
-  {Array.from({ length: totalSavedPages }, (_, i) => i + 1)
+  {Array.from({ length: totalSavedPages }, (_, i) => i) // Start from 0 internally
+    .map((pageNumber) => pageNumber + 1) // Adjust for UI display
     .filter((pageNumber) => {
       return (
         pageNumber <= 2 || // First two pages
         pageNumber >= totalSavedPages - 1 || // Last two pages
-        (pageNumber >= savedJobsPage - 1 && pageNumber <= savedJobsPage + 1) // Two pages before and after current
+        (pageNumber >= savedJobsPage + 1 && pageNumber <= savedJobsPage + 3) // Adjust for the range
       );
     })
     .reduce((acc, pageNumber, index, array) => {
@@ -287,24 +326,25 @@ setJobs(newJobs);
       ) : (
         <button
           key={pageNumber}
-          onClick={() => handleSavedPageClick(pageNumber)}
-          className={savedJobsPage === pageNumber ? "active" : ""}
-          style={{ marginBottom: " 5px" }}
+          onClick={() => handleSavedPageClick(pageNumber - 1)} // Convert to 0-based index for backend
+          className={savedJobsPage + 1 === pageNumber ? "active" : ""} // UI shows 1-based index
+          style={{ marginBottom: "5px" }}
         >
           {pageNumber}
         </button>
       )
     )}
- 
+
   <button
     onClick={handleNextSavedPage}
     className="arrow-button"
-    disabled={savedJobsPage === totalSavedPages}
-    style={savedJobsPage === totalSavedPages ? { opacity: 0.5, cursor: "not-allowed" } : {}}
+    disabled={savedJobsPage === totalSavedPages - 1} // Disable when on the last page (0-based index)
+    style={savedJobsPage === totalSavedPages - 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}}
   >
     &rsaquo;
   </button>
 </div>
+
  
       {snackbars.map((snackbar, index) => (
         <Snackbar
