@@ -82,6 +82,7 @@ const login = useGoogleLogin({
         }
       });
 
+
       console.log(response1);
       if (response1.status === 200) {
         setErrorMessage('');
@@ -114,7 +115,7 @@ const login = useGoogleLogin({
                 Last_Name: candidateName,
                 Email: candidateEmail1,
                 Phone: candidateMobileNumber,
-                Lead_Status: "Attempted to Contact",
+                Lead_Status: "signedup",
                 Lead_Source: utmSource || "Direct",  // Set a default if empty
                 Industry: "Software",
                 Mobile: candidateMobileNumber,
@@ -146,6 +147,16 @@ const login = useGoogleLogin({
           } catch (error) {
             console.error("Error submitting lead:", error.response ? error.response.data : error.message);
           }
+
+      
+          const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${candidateEmail}`);
+          const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+     
+          if (zohoUserId) {
+            sessionStorage.setItem("zohoUserId", zohoUserId);  // Store Zoho User ID in session
+            console.log("Zoho User ID:", zohoUserId);
+          }
+
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
           // const webhookData = {
           //   email,
@@ -170,6 +181,7 @@ const login = useGoogleLogin({
           //   console.error('Error sending first webhook:', error);
           // }
         }
+
  
         let userType1;
         if (userData.message.includes('ROLE_JOBAPPLICANT')) {
@@ -309,6 +321,16 @@ const encryptedPassword = CryptoJS.AES.encrypt(candidatePassword, CryptoJS.enc.U
         if(!jwtToken){
           jwtToken=userData.data.jwt;
         }
+
+          // ✅ Fetch Zoho User ID based on email
+      const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${candidateEmail}`);
+      const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+ 
+      if (zohoUserId) {
+        sessionStorage.setItem("zohoUserId", zohoUserId);  // Store Zoho User ID in session
+        console.log("Zoho User ID:", zohoUserId);
+      }
+
         const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
           headers: {
             Authorization: `Bearer ${jwtToken}`,
@@ -348,6 +370,8 @@ const encryptedPassword = CryptoJS.AES.encrypt(candidatePassword, CryptoJS.enc.U
       console.error('Login failed', error);
     }
   };
+
+
   const isCandidateFormValid = () => {
     const emailError = validateEmail(candidateEmail);
     setCandidateEmailError(emailError);
@@ -533,7 +557,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
             Last_Name: candidateName,
             Email: candidateEmail1,
             Phone: candidateMobileNumber,
-            Lead_Status: "Attempted to Contact",
+            Lead_Status: "signedup",
             Lead_Source: utmSource || "Direct",  // Set a default if empty
             Industry: "Software",
             Mobile: candidateMobileNumber,
