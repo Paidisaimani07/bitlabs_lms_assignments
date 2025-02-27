@@ -225,7 +225,7 @@ if (!applicant.mobilenumber) {
   
   const makeApiCall2 = async () => {
    
-
+ 
     const applicantProfileDTO={
       basicDetails: basicDetails,
       skillsRequired: skillsRequired,
@@ -234,7 +234,7 @@ if (!applicant.mobilenumber) {
       specialization,
       preferredJobLocations,
     }
-  
+ 
     if (!validateForm1()) {
       console.log(" returned in validation");
       return false;
@@ -243,48 +243,126 @@ if (!applicant.mobilenumber) {
       const jwtToken = localStorage.getItem('jwtToken');
       console.log(" returned during api call");
      
-      const putProfileResponse = await axios.post(
-        `${apiUrl}/applicantprofile/createprofile/${user.id}`,
-        applicantProfileDTO,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-      console.log(" returned after api call");
-
+      // const putProfileResponse = await axiosInstance.post(
+      //   `${apiUrl}/applicantprofile/createprofile/${user.id}`,
+      //   applicantProfileDTO,
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${jwtToken}`,
+      //     },
+      //   }
+      // );
+      // console.log(" returned after api call");
+ 
      // Transform the payload
-const transformedApplicantProfileDTO = {
+ 
+     const putProfileResponse = await axios.post(
+      `${apiUrl}/applicantprofile/createprofile/${user.id}`,
+      applicantProfileDTO,
+      {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      }
+    );
+ 
+    console.log("Profile successfully created in the system.");
+ 
+ 
+  const MAX_RETRIES = 50; // Maximum retry attempts
+let retryCount = 0;
+ 
+async function updateZohoCRM() {
+  const zohoUpdateData = {
+    data: [
+      {
+        Owner: { id: "4569859000019865042" },
+        Last_Name: basicDetails.lastName,
+        First_Name: basicDetails.firstName,
+        Email: basicDetails.email,
+        Phone: basicDetails.alternatePhoneNumber,
+        Lead_Status: "completed profile",
+        Industry: "Software",
+        Technical_Skills: applicantProfileDTO.skillsRequired
+        .map(skill => skill.skillName.toLowerCase()),
+        Specialization: applicantProfileDTO.specialization,
+        Education_Qualifications: applicantProfileDTO.qualification,
+        Degree_level: applicantProfileDTO.qualification,
+        Total_work_experience_in_years: applicantProfileDTO.experience,
+        Preferred_Job_Locations: applicantProfileDTO.preferredJobLocations.join(", "),
+      },
+    ],
+  };
+  const zohoUserId = sessionStorage.getItem('zohoUserId');
+ 
+  while (retryCount < MAX_RETRIES) {
+    try {
+      const response = await axios.put(
+        `${apiUrl}/zoho/update/${zohoUserId}`,
+        zohoUpdateData
+      );
+ 
+      if (response.status === 200 || response.status === 201) {
+        console.log("✅ Lead successfully updated in Zoho CRM.");
+        return response; // Exit function on success
+      }
+ 
+    } catch (error) {
+      const status = error.response?.status;
+ 
+      if (status === 401) {
+        console.error("🔴 Unauthorized (401). Stopping retries.");
+        break; // Stop retrying on 401
+      }
+ 
+      if (status === 403 || status === 500) {
+        console.warn(`⚠️ Error ${status}. Retrying (${retryCount + 1}/${MAX_RETRIES})...`);
+        retryCount++;
+        await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait before retrying
+      } else {
+        console.error(`🚨 Unexpected Error: ${status}`, error);
+        break; // Stop retrying on any other error
+      }
+    }
+  }
+ 
+  console.error("❌ Max retries reached. Could not update Zoho CRM.");
+}
+ 
+// Call the function
+await updateZohoCRM();
+ 
+ 
+     const transformedApplicantProfileDTO = {
   ...applicantProfileDTO,
   locations: applicantProfileDTO.preferredJobLocations.join(','),
   skills: applicantProfileDTO.skillsRequired.map(skill => skill.skillName).join(','),
 };
-
+ 
 delete transformedApplicantProfileDTO.preferredJobLocations;
 delete transformedApplicantProfileDTO.skillsRequired;
-
-const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
-const webhookPayload = {
-  userId: user.id,
-  profileData: transformedApplicantProfileDTO,
-};
-
-const webhookResponse = await fetch(webhookUrl, {
-  method: 'POST',
-  headers: {
-      'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(webhookPayload),
-});
-
-    if (!webhookResponse.ok) {
-      throw new Error('Failed to send data to the webhook');
-    }
-
-    console.log('Webhook response:', await webhookResponse.json());
-
-    
+ 
+// const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
+// const webhookPayload = {
+//   userId: user.id,
+//   profileData: transformedApplicantProfileDTO,
+// };
+ 
+// const webhookResponse = await fetch(webhookUrl, {
+//   method: 'POST',
+//   headers: {
+//       'Content-Type': 'application/json',
+//   },
+//   body: JSON.stringify(webhookPayload),
+// });
+ 
+//     if (!webhookResponse.ok) {
+//       throw new Error('Failed to send data to the webhook');
+//     }
+ 
+//     console.log('Webhook response:', await webhookResponse.json());
+ 
+   
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
