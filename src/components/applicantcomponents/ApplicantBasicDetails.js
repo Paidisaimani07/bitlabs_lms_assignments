@@ -282,6 +282,7 @@ async function updateZohoCRM() {
         Email: basicDetails.email,
         Phone: basicDetails.alternatePhoneNumber,
         Lead_Status: "completed profile",
+        Status_TS: "Completed Profile",
         Industry: "Software",
         Technical_Skills: applicantProfileDTO.skillsRequired
         .map(skill => skill.skillName.toLowerCase()),
