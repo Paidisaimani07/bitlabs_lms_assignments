@@ -67,6 +67,7 @@ const login = useGoogleLogin({
       console.log(res);
       const email1 = res.data.email;
       const name1 = res.data.name;
+
       console.log('Second API');
       let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
       // const response1 = await axios.post(loginEndpoint, {
@@ -112,13 +113,12 @@ const login = useGoogleLogin({
           const leadData = {
             data: [
               {
-                Last_Name: candidateName,
-                Email: candidateEmail1,
-                Phone: candidateMobileNumber,
+                Last_Name: name1,
+                Email: email1,
                 Lead_Status: "signedup",
+                Status_TS: "Signed-Up",
                 Lead_Source: utmSource || "Direct",  // Set a default if empty
                 Industry: "Software",
-                Mobile: candidateMobileNumber,
                 Utm_Source_TS: utmSource || "Unknown",
                 Utm_Medium_TS: utmMedium || "Unknown",
                 Utm_Campaign_TS: utmCampaign || "Unknown",
@@ -128,34 +128,25 @@ const login = useGoogleLogin({
             ],
           };
           
-          
-        
           try {
-           // const jwtToken = localStorage.getItem("jwtToken"); // Assuming JWT is stored in local storage after login
-        
-            const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            });
-        
-            if (response.status === 200) {
-              console.log("Lead submitted successfully!");
-            } else {
-              console.error("Failed to submit lead", response.data);
-            }
-          } catch (error) {
-            console.error("Error submitting lead:", error.response ? error.response.data : error.message);
-          }
-
-      
-          const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${candidateEmail}`);
+          const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
           const zohoUserId = zohoResponse.data?.data?.[0]?.id;
-     
-          if (zohoUserId) {
-            sessionStorage.setItem("zohoUserId", zohoUserId);  // Store Zoho User ID in session
+
+          if (zohoUserId !== undefined) {
+            sessionStorage.setItem("zohoUserId", zohoUserId);
             console.log("Zoho User ID:", zohoUserId);
           }
+          else{
+           await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {});
+           const zohoResponse1 = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
+           const zohoUserId1 = zohoResponse1.data?.data?.[0]?.id;
+          sessionStorage.setItem("zohoUserId", zohoUserId1);
+          }
+        } catch (error) {
+          console.error("Error submitting lead:", error.response ? error.response.data : error.message);
+        }
+
+
 
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
           // const webhookData = {
@@ -558,6 +549,7 @@ const [candidatePasswordError1, setCandidatePasswordError1] = useState('');
             Email: candidateEmail1,
             Phone: candidateMobileNumber,
             Lead_Status: "signedup",
+            Status_TS: "Signed-Up",
             Lead_Source: utmSource || "Direct",  // Set a default if empty
             Industry: "Software",
             Mobile: candidateMobileNumber,
