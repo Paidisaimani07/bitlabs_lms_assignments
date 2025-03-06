@@ -128,25 +128,62 @@ const login = useGoogleLogin({
             ],
           };
           
-          try {
-          const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
-          const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+        //   try {
+        //   const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
+        //   const zohoUserId = zohoResponse.data?.data?.[0]?.id;
 
-          if (zohoUserId !== undefined) {
+        //   if (zohoUserId !== undefined) {
+        //     sessionStorage.setItem("zohoUserId", zohoUserId);
+        //     console.log("Zoho User ID:", zohoUserId);
+        //   }
+        //   else{
+        //    await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {});
+        //    const zohoResponse1 = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
+        //    const zohoUserId1 = zohoResponse1.data?.data?.[0]?.id;
+        //   sessionStorage.setItem("zohoUserId", zohoUserId1);
+        //   }
+        // } catch (error) {
+        //   console.error("Error submitting lead:", error.response ? error.response.data : error.message);
+        // }
+
+        try {
+       
+          const zohoResponse = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
+          const zohoUserId = zohoResponse.data?.data?.[1]?.id || null;
+          console.log("Zoho:", zohoUserId);
+  
+          if (zohoUserId) {
             sessionStorage.setItem("zohoUserId", zohoUserId);
             console.log("Zoho User ID:", zohoUserId);
           }
           else{
-           await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {});
-           const zohoResponse1 = await axios.get(`${apiUrl}/zoho/searchlead/${email1}`);
-           const zohoUserId1 = zohoResponse1.data?.data?.[0]?.id;
-          sessionStorage.setItem("zohoUserId", zohoUserId1);
+            try {
+              // Create the Zoho lead
+              const createResponse = await axios.post(`${apiUrl}/zoho/create-lead`, leadData);
+        
+              if (createResponse.status === 201 || createResponse.status === 200) {  
+                  // Extract ID directly from the create response
+                  const zohoUserId = createResponse.data?.data?.[0]?.details?.id || null;
+                  console.log("Zoho User ID:", zohoUserId);
+      
+                  if (zohoUserId) {
+                      sessionStorage.setItem("zohoUserId", zohoUserId);
+                    
+                  } else {
+                      console.warn("Zoho user ID not found in the response.");
+                  }
+              } else {
+                  console.warn("Zoho lead creation failed.");
+              }
+          } catch (error) {
+              console.error("Error occurred while creating Zoho lead:", error);
           }
-        } catch (error) {
-          console.error("Error submitting lead:", error.response ? error.response.data : error.message);
-        }
+          }
 
 
+         } catch (error) {
+           console.error("Error submitting lead:", error.response ? error.response.data : error.message);
+         }
 
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
           // const webhookData = {
