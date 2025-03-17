@@ -1,69 +1,114 @@
 import { apiUrl } from '../../services/ApplicantAPIService';
 import axios from 'axios';
 
-function ZohoCRMService (){
- const Createlead = async(leadData)=> {  
+function ZohoCRMService() {
+  const createLead = async (leadData) => {
+    try {
+      const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  try {
-    const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData,{
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.status === 200 || response.status === 201) {
-      console.log("Lead submitted successfully", response.data);
-      return response.data?.[0].details.id;
-    } else {
-      console.error("Failed to submit lead", response.data);
+      if (response.status === 200 || response.status === 201) {
+        console.log("Lead submitted successfully", response.data);
+        return response.data?.[0]?.details?.id || null;
+      } else {
+        console.error("Failed to submit lead", response.data);
+        return null;
+      }
+    } catch (error) {
+      const errorMessage = error.response ? error.response.data : error.message;
+      console.error("Error submitting lead:", errorMessage);
+      throw new Error(`Failed to create lead: ${errorMessage}`);
     }
-  } catch (error) {
-    console.error("Error submitting lead:", error.response ? error.response.data : error.message);
-  }
-}
+  };
 
-const Searchlead = async(email) => {
-  try {
-    const response = await axios.get(`${apiUrl}/zoho/searchlead/${email}`)
+  const searchLead = async (email) => {
+    if (!email) {
+      console.error("Email is required for searching leads");
+      return null;
+    }
 
+    try {
+      const response = await axios.get(`${apiUrl}/zoho/searchlead/${encodeURIComponent(email)}`);
+
+      if (response.status === 200 || response.status === 201) {
+        const leadId = response.data?.data?.[0]?.id || null;
+        console.log("Lead search result:", leadId ? "Found" : "Not found");
+        return leadId;
+      } else {
+        console.error("Failed to find lead", response.data);
+        return null;
+      }
+    } catch (error) {
+      const errorMessage = error.response ? error.response.data : error.message;
+      console.error("Error finding lead:", errorMessage);
+      throw new Error(`Failed to search lead: ${errorMessage}`);
+    }
+  };
+
+  //retry on failure
+  const retryOperation = async (operation, maxRetries = 3, delay = 1000) => {
+    let lastError;
     
-    if (response.status === 200 || response.status === 201) {
-      console.log("Lead found ", response);
-      return response.data?.data?.[0]?.id ;
-      
-    } else {
-      console.error("Failed to find lead", response.data);
-      
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await operation();
+      } catch (error) {
+        lastError = error;
+        console.log(`Attempt ${attempt} failed: ${error.message}`);
+        
+        if (attempt < maxRetries) {
+          console.log(`Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          delay *= 2; //exponential bckoff 
+        }
+      }
     }
-  } catch (error) {
-    console.error("Error finding lead:", error.response ? error.response.data : error.message);
-  }
+    
+    throw lastError;
+  };
+
+  const handleLead = async (leadData, retryOptions = { maxRetries: 3, delay: 1000 }) => {
+    if (!leadData || !leadData.data || !leadData.data[0] || !leadData.data[0].Email) {
+      console.error("Invalid lead data structure");
+      return null;
+    }
+
+    try {
+      const email = leadData.data[0].Email;
+      
+      const zohoUserId = await retryOperation(
+        async () => await searchLead(email),
+        retryOptions.maxRetries,
+        retryOptions.delay
+      );
+
+      if (zohoUserId) {
+        console.log("Lead already exists with ID:", zohoUserId);
+        return zohoUserId;
+      } else {
+        console.log("Creating new lead...");
+        
+        return await retryOperation(
+          async () => await createLead(leadData),
+          retryOptions.maxRetries,
+          retryOptions.delay
+        );
+      }
+    } catch (error) {
+      console.error("Error handling lead after all retry attempts:", error.message);
+      return null;
+    }
+  };
+
+  return {
+    createLead,
+    searchLead,
+    handleLead,
+    retryOperation
+  };
 }
 
-const handleLead= async (leadData)=>{
-
-  try{
-  const zohoUserId = await Searchlead(leadData.data?.[0].Email);
- 
-  if (zohoUserId) {
-    console.log("Lead already exists!");
-    return zohoUserId;
-  } 
-  else{
-    console.log("Creating new lead...");
-    return await Createlead(leadData);
-  }
-  
-}catch(error){
-  console.error("Error handling lead:", error.response ? error.response.data : error.message);
-  
-}
-
-}
-return{
-  Createlead,
-  Searchlead,
-  handleLead
-}
-}
 export default ZohoCRMService;
