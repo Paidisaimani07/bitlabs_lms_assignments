@@ -9,10 +9,12 @@ function ZohoCRMService() {
           'Content-Type': 'application/json',
         },
       });
-
+      console.log("response", response.data?.data?.[0].details.id);
       if (response.status === 200 || response.status === 201) {
-        console.log("Lead submitted successfully", response.data);
-        return response.data?.[0]?.details?.id || null;
+       
+        // console.log("Lead submitted successfully", res.data[0].details.id);
+
+        return response.data?.data?.[0].details.id || null;
       } else {
         console.error("Failed to submit lead", response.data);
         return null;
