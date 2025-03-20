@@ -133,25 +133,7 @@ function LoginBody({ handleLogin }) {
           console.log("Zoho User ID from login page :", id);
           sessionStorage.setItem("zohoUserId", id);
           
-          // try {
-          //   const zohoResponse = Createlead(email1);
-          //   const zohoUserId = zohoResponse.data?.data?.[0]?.id;
 
-          //   if (zohoUserId !== undefined) {
-          //     sessionStorage.setItem("zohoUserId", zohoUserId);
-          //     console.log("Zoho User ID:", zohoUserId);
-          //   } else {
-          //     Createlead(leadData);
-          //     const zohoResponse1 = Searchlead(email1);
-          //     const zohoUserId1 = zohoResponse1.data?.data?.[0]?.id;
-          //     sessionStorage.setItem("zohoUserId", zohoUserId1);
-          //   }
-          // } catch (error) {
-          //   console.error(
-          //     "Error submitting lead:",
-          //     error.response ? error.response.data : error.message
-          //   );
-          // }
 
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
           // const webhookData = {
