@@ -121,11 +121,11 @@ function LoginBody({ handleLogin }) {
                 Status_TS: "Signed-Up",
                 Lead_Source: utmSource || "Direct", // Set a default if empty
                 Industry: "Software",
-                Utm_Source_TS: utmSource || "Unknown",
-                Utm_Medium_TS: utmMedium || "Unknown",
-                Utm_Campaign_TS: utmCampaign || "Unknown",
-                Utm_Content_TS: utmContent || "Unknown",
-                Utm_Term_TS: utmTerm || "Unknown",
+                Utm_Source_TS: utmSource || "",
+                Utm_Medium_TS: utmMedium || "",
+                Utm_Campaign_TS: utmCampaign || "",
+                Utm_Content_TS: utmContent || "",
+                Utm_Term_TS: utmTerm || "",
               },
             ],
           };
