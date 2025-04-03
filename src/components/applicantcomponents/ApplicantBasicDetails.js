@@ -281,7 +281,7 @@ async function updateZohoCRM() {
         First_Name: basicDetails.firstName,
         Email: basicDetails.email,
         Phone: basicDetails.alternatePhoneNumber,
-        Lead_Status: "completed profile",
+        // Lead_Status: "completed profile",
         Status_TS: "Completed Profile",
         Industry: "Software",
         Technical_Skills: applicantProfileDTO.skillsRequired
