@@ -117,9 +117,9 @@ function LoginBody({ handleLogin }) {
               {
                 Last_Name: name1,
                 Email: email1,
-                Lead_Status: "signedup",
+                // Lead_Status: "signedup",
                 Status_TS: "Signed-Up",
-                Lead_Source: utmSource || "Direct", // Set a default if empty
+                // Lead_Source: utmSource || "Direct", // Set a default if empty
                 Industry: "Software",
                 Utm_Source_TS: utmSource || "Unknown",
                 Utm_Medium_TS: utmMedium || "Unknown",
@@ -129,10 +129,12 @@ function LoginBody({ handleLogin }) {
               },
             ],
           };
+
           const id = await handleLead(leadData);
           console.log("Zoho User ID from login page :", id);
           sessionStorage.setItem("zohoUserId", id);
     
+
 
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
           // const webhookData = {

@@ -35,6 +35,7 @@ import CSSTest from './questions/CSS.json';
 import AngularTest from './questions/Angular.json';
 import ManualTestingTest from './questions/ManualTesting.json';
 import VueTest from './questions/Vue.json';
+import axios from 'axios';
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
@@ -350,7 +351,7 @@ const ApplicantTakeTest = () => {
   };
 
   
-  const handleSubmitTest = () => {
+  const handleSubmitTest = async () => {
     if (!selectedOptions[currentQuestionIndex]) {
       setValidationMessage('Please provide your answer to submit the test.');
       return;
@@ -388,7 +389,6 @@ const ApplicantTakeTest = () => {
         console.error('Error submitting the test:', error);
       });
     }else{
-
       const skillBadgeStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
       // Submit the skill badge information to the API
   fetch(`${apiUrl}/skill-badges/save`, {
@@ -411,6 +411,35 @@ const ApplicantTakeTest = () => {
       console.error('Error saving the skill badge:', error);
     });
     }
+
+    // Update Zoho API
+    const roundedScore = Math.round(calculatedScore);
+    const zohoPayload = {
+      data: [{
+      Owner: { id: "4569859000019865042" },
+      ...(testName === 'General Aptitude Test' && {
+      GAT: testStatus === 'P' ? 'PASS' : 'FAIL',
+      GAT_Score: roundedScore
+      }),
+      ...(testName === 'Technical Test' && {
+      TT: testStatus === 'P' ? 'PASS' : 'FAIL',
+      TT_Score: roundedScore
+      }),
+      }]
+    };
+
+    const zohoUserId = sessionStorage.getItem('zohoUserId');
+    const response = await axios.put(`${apiUrl}/zoho/update/${zohoUserId}`, zohoPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    if (response.status === 200 || response.status === 201) {
+      console.log("Zoho API updated successfully", response.data);
+    } else {
+      console.error("Failed to update Zoho API", response.data);
+    }
+    
   }
   else {
     // Notify the user about the loss of connection
