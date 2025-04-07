@@ -615,7 +615,7 @@ function LoginBody({ handleLogin }) {
             Email: candidateEmail1,
             Phone: candidateMobileNumber,
             Status_TS: "Signed-Up",
-            Lead_Source: utmSource || "Direct", // Set a default if empty
+            // Lead_Source: utmSource || "Direct", // Set a default if empty
             Industry: "Software",
             Mobile: candidateMobileNumber,
             Utm_Source_TS: utmSource || "Unknown",
