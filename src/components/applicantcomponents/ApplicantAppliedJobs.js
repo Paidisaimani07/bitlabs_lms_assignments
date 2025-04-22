@@ -11,7 +11,7 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
   const { user } = useUserContext();
   const applicantId = user.id;
   const navigate = useNavigate();
-  const pageSize = 2; // for Pagination page Size
+  const pageSize = 10; // for Pagination page Size
   const [pageNum, setPageNum] = useState(0); // for pagination page numbers
   const [totalPages, setTotalPages] = useState(1);//for pagination total pages
 // for previous page pagination
