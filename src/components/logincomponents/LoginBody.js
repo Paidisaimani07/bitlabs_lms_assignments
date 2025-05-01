@@ -676,14 +676,13 @@ function LoginBody({ handleLogin }) {
     if (!email.trim()) {
       return "Email is required.";
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email) ? "" : "Please enter a valid email address.";
-  };
-  const isEmailValid1 = (email) => {
-    if (!email.trim()) {
-      return "Email is required.";
+ 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org)$/i;
+    if (!emailRegex.test(email)) {
+      return "Please enter a valid email address.";
     }
-    const excludedDomains = [
+ 
+    const allowedDomains = [
       "gmail.com",
       "yahoo.com",
       "outlook.com",
@@ -695,10 +694,13 @@ function LoginBody({ handleLogin }) {
       "protonmail.com",
       "tutanota.com",
     ];
-    const domain = email.split("@")[1];
-    if (excludedDomains.includes(domain)) {
-      return "Please enter your official email ID.";
+ 
+    const domain = email.trim().toLowerCase().split("@")[1];
+ 
+    if (!allowedDomains.includes(domain)) {
+      return "Please enter a valid email address";
     }
+ 
     return "";
   };
   const isPasswordValid = (password) => {
