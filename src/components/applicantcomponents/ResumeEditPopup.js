@@ -35,7 +35,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
         setError('Only PDF files are allowed.');
         setResumeFile(null);
         setFileName(''); 
-      } else if (file.size > 1048576) { 
+      } else if (file.size > 5*1024*1024) { 
         setError('File size should be less than 1MB.');
         setResumeFile(null);
         setFileName(''); 
@@ -60,7 +60,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
       const formData = new FormData();
       formData.append('resume', resumeFile);
       const response = await axios.post(
-        `${apiUrl}/resume/upload/${user.id}`,
+        `${apiUrl}/applicant-pdf/${user.id}/upload`,
         formData,
         {
           headers: {
