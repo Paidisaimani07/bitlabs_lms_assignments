@@ -16,11 +16,11 @@ const UploadImageComponent = ({ id}) => {
     const fileExtension = file.name.split('.').pop().toLowerCase();
 
     if (fileExtension === 'jpeg' || fileExtension === 'jpg' || fileExtension === 'png') {
-      if (file.size < 1048576) { 
+      if (file.size < 5*1024*1024) { 
         setPhotoFile(file);
         setError('');
       } else {
-        setError('File size must be less than 1 MB.');
+        setError('File size must be less than 5 MB.');
         setPhotoFile(null);
       }
     } else {
