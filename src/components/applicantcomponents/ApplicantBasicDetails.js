@@ -577,7 +577,8 @@ delete transformedApplicantProfileDTO.skillsRequired;
       const formData = new FormData();
       formData.append('resume', resumeFile);
       const response = await axios.post(
-        `${apiUrl}/resume/upload/${user.id}`,
+        `${apiUrl}/applicant-pdf/${user.id}/upload`,
+
         formData,
         {
           headers: {
@@ -828,6 +829,11 @@ delete transformedApplicantProfileDTO.skillsRequired;
           marginRight: '20px',
           boxSizing: 'border-box',
           cursor: 'pointer',
+          position: 'relative',
+          width: '60%',
+          color: '#333',
+          background: 'transparent',
+          backgroundColor: '#F5F5F5',
         }}
       > 
       <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
@@ -846,17 +852,35 @@ delete transformedApplicantProfileDTO.skillsRequired;
             height: '100%',
             border: 'none',
             background: 'transparent',
-            paddingLeft: '40px',
-            boxSizing: 'border-box',
-            cursor: 'pointer',
+            height: '40px', // adjust as needed
+ 
+      paddingLeft: '20px',
+      paddingRight: '100px', // make room for button
+      boxSizing: 'border-box',
+      cursor: 'pointer',
+      backgroundColor: '#F5F5F5',
+      color: '#333',
+      fontSize: '15px',
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
           }}
         />
-      </div>
       <button
         type="button"
-        onClick={triggerFileInputClick}
-        className="btn-3"
+
+        onClick={(e) => {
+
+          e.stopPropagation();
+        
+          triggerFileInputClick();
+        
+        }}
+        
         style={{
+        
+          position: 'absolute',     
+          top: '50%',   
+          right: '10px',
+          transform: 'translateY(-50%)',
           backgroundColor: '#7E7E7E',
           color: 'white',
           padding: '10px 15px',
@@ -868,6 +892,7 @@ delete transformedApplicantProfileDTO.skillsRequired;
       >
         Browse
       </button>
+      </div>
 
     </div>
  {errorMessage && (
@@ -877,31 +902,12 @@ delete transformedApplicantProfileDTO.skillsRequired;
   )}
               </div>
               <br></br>
-              <p style={{ marginRight: '5px' }}><strong>Or</strong></p>
               <br></br>
               <ModalWrapper1 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
       </ModalWrapper1>
       {error && <div className="error-message">{error}</div>}
-              <div id="item_2" className="col-lg-6 col-md-12" style={{ display: 'flex', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  onClick={openModal}
-                  className="btn-3"
-                  style={{
-                    backgroundColor: '#7E7E7E',
-                    color: 'white',
-                    padding: '10px 15px',
-                    border: 'none',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    marginTop: '5px',
-                    textTransform:'none',
-                  }}
-                >
-                  Build Your Resume
-                </button>
-              </div>
+              
 
               
               <ModalComponent
