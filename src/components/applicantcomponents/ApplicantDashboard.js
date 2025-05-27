@@ -18,7 +18,6 @@ import appStoreIcon from "../../images/dashboard/mobilebanners/appstoreicon.png"
 import playStore from "../../images/dashboard/mobilebanners/playstore.png";
 
 
-
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
   const { user } = useUserContext();
@@ -35,6 +34,7 @@ const ApplicantDashboard = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const [isWideScreen, setIsWideScreen] = useState(false);
+  const [hiredCount, setHiredCount] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -50,6 +50,42 @@ const ApplicantDashboard = () => {
     // Cleanup the event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    const fetchHiredCount = async () => {
+      try {
+        const token = localStorage.getItem('jwtToken'); // Get JWT token from storage
+
+        const response = await axios.get(
+          `${apiUrl}/api/hiredCount/1`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Attach JWT token
+            },
+          }
+        );
+        console.log('Hired Count Response:', response.data); // Log the response for debugging
+
+        setHiredCount(response.data); // Store API response
+        console.log("hired count", hiredCount)
+      } catch (error) {
+        console.error('Error fetching hired count:', error);
+      }
+    };
+
+    fetchHiredCount();
+  }, []);
+
+  useEffect(() => {
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+  `;
+  document.head.appendChild(style);
+}, []);
 
 
   useEffect(() => {
@@ -388,56 +424,116 @@ const ApplicantDashboard = () => {
                     </div>
                   </div>
                 </div>
-                <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3 mb-3 ml-2 certificatebox responsive-margin">
-                  <div
-                    className="d-flex flex-wrap flex-md-nowrap align-items-center h-100 "
-                    style={{
-                      background: 'linear-gradient(90deg, #FF8C00 0%, #FFA500 100%)',
-                      fontFamily: 'Plus Jakarta Sans',
-                      fontWeight: '500',
-                      borderRadius: '12px',
-                      color: '#fff',
-                      overflow: 'visible',
-                      margin: "5px"
-                    }}
-                  >
-                    {/* App Image - using marginTop to float up */}
+                         <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 certificatebox">
+  <div
+    className="card"
+    style={{
+      background: 'linear-gradient(90deg, #FF8C00 0%, #FFA500 100%)',
+      padding: '18px',
+      borderRadius: '12px',
+    }}
+  >
+    <div className="d-flex flex-column flex-md-row align-items-center justify-content-between"   style={{
+          borderRadius: '12px',
+          fontFamily: 'Plus Jakarta Sans',
+          fontWeight: '500',
+          color: '#fff',
+          padding: '0px',
+          overflow: 'visible',
+        }}>
+      {/* Left: App Image */}
+      <div className="mb-3 mb-md-0" style={{ flexShrink: 0, marginRight: '20px' }}>
+        <img
+          src={SmartPhone}
+          alt="App Preview"
+          style={{
+            width: '100%',
+            maxWidth: '180px',
+            height: 'auto',
+            objectFit: 'contain',
+            marginLeft: '10px',
+            marginTop: '-22px',
+          }}
+        />
+      </div>
 
-                    <div className="mb-0 pb-0 ml-8 " style={{ marginTop: '-25px', marginRight: '20px', flexShrink: 0, }}>
-                      <img
-                        src={SmartPhone}
-                        alt="App Preview"
-                        style={{
-                          width: '231px',
-                          height: '254px',
-                          objectFit: 'contain',
-                          marginBottom: '0px',
-                          marginTop: "-40px",
-                          marginLeft: '60px',
-                        }}
-                      />
+      {/* Middle: Text + App Links */}
+      <div className="flex-grow-1 text-center text-md-start" style={{ minWidth: '250px', padding: '10px' }}>
+        <p style={{ margin: 0, fontSize: '16px', color: '#fff' }}>
+          Why open laptop when jobs can be right in your pocket.
+        </p>
+        <p style={{ margin: '5px 0', fontWeight: '700', color: '#fff' }}>
+          Download the app now!
+        </p>
+        <div
+          className="d-flex justify-content-center justify-content-md-start flex-wrap"
+          style={{ gap: '10px', marginTop: '10px' }}
+        >
+          <img
+            src={appStoreIcon}
+            alt="App Store"
+            style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
+          />
+          <img
+            src={playStore}
+            alt="Google Play"
+            style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
+          />
+        </div>
+      </div>
 
+      {/* Vertical Line - Hidden on Mobile */}
+      <div className="d-none d-md-block" style={{ padding: '0 20px' }}>
+        <svg width="2" height="163" viewBox="0 0 1 163" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="0.5" y1="0" x2="0.5" y2="163" stroke="#EFE3E3" />
+        </svg>
+      </div>
 
-                    </div>
+      {/* Right: Candidates Placed */}
+      <div
+        className="text-center text-md-start"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          paddingRight: '20px',
+          marginTop: '20px',
+        }}
+      >
+        {/* SVG Icon */}
+        <svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g clipPath="url(#clip0_7138_3587)">
+            <path d="M19.125 21.25C13.2664 21.25 8.5 16.4836 8.5 10.625C8.5 4.76638 13.2664 0 19.125 0C24.9836 0 29.75 4.76638 29.75 10.625C29.75 16.4836 24.9836 21.25 19.125 21.25Z" fill="white"/>
+            <path d="M10.0938 25.5C4.52625 25.5 0 30.0263 0 35.5938V43.0313C0 43.9025 0.7225 44.625 1.59375 44.625H21.25V37.7188C21.25 33.7238 24.225 30.43 28.0713 29.8563C28.6238 28.2413 29.665 26.8813 31.0037 25.9038C28.8787 25.296 28.764 25.5 10.0938 25.5Z" fill="white"/>
+            <path d="M47.2813 34H44.625V32.4062C44.625 30.3556 42.9569 28.6875 40.9063 28.6875H35.5938C33.5432 28.6875 31.875 30.3556 31.875 32.4062V34H29.2188C28.1733 34 27.2319 34.4356 26.5562 35.1326L38.25 41.2335L49.9439 35.1326C49.2682 34.4356 48.3268 34 47.2813 34ZM35.0625 34V32.4062C35.0625 32.113 35.3005 31.875 35.5938 31.875H40.9063C41.1995 31.875 41.4375 32.113 41.4375 32.4062V34H35.0625Z" fill="white"/>
+            <path d="M38.9874 44.4444C38.5262 44.6845 37.9737 44.6845 37.5147 44.4444L25.5 38.1756V47.2812C25.5 49.3318 27.1681 51 29.2188 51H47.2812C49.3319 51 51 49.3318 51 47.2812V38.1756L38.9874 44.4444Z" fill="white"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_7138_3587">
+              <rect width="51" height="58" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
 
+        {/* Text */}
+        <div>
+          <div
+            style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              animation: 'bounce 1.5s infinite ease-in-out',
+              color: '#fff',
+            }}
+          >
+            {hiredCount}+
+          </div>
+          <div style={{ fontSize: '16px', fontWeight: '700', color: '#fff' }}>Candidates Placed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-
-                    {/* Text + Store Links */}
-                    <div className="m-8 " style={{ flex: 1, minWidth: '250px', margin: "10px" }}>
-                      <p style={{ margin: 0, fontSize: '16px', color: '#fff' }}>
-                        Why open laptop when jobs can be right in your pocket.
-                      </p>
-                      <p style={{ margin: '5px 0', fontWeight: '700', color: '#fff' }}>
-                        Download the app now!
-                      </p>
-                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '10px' }}>
-                        <img src={appStoreIcon} alt="App Store" style={{ height: '36px', width: '121px', }} />
-                        <img src={playStore} alt="Google Play" style={{ height: '36px', width: '121px' }} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* New one*/}
                 {!showIcon && (
                   <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                     <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3', fontFamily: 'Plus Jakarta Sans', fontWeight: '500' }}>
