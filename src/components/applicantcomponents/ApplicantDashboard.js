@@ -16,8 +16,8 @@ import ResumeBuilder from './ResumeBuilder';
 import SmartPhone from "../../images/dashboard/mobilebanners/smartphone.png"
 import appStoreIcon from "../../images/dashboard/mobilebanners/appstoreicon.png";
 import playStore from "../../images/dashboard/mobilebanners/playstore.png";
-
-
+ 
+ 
 const ApplicantDashboard = () => {
   const [token, setToken] = useState('');
   const { user } = useUserContext();
@@ -35,27 +35,27 @@ const ApplicantDashboard = () => {
   const closeModal = () => setIsModalOpen(false);
   const [isWideScreen, setIsWideScreen] = useState(false);
   const [hiredCount, setHiredCount] = useState(null);
-
+ 
   useEffect(() => {
     const handleResize = () => {
       setIsWideScreen(window.innerWidth > 780);
     };
-
+ 
     // Initialize the state on component mount
     handleResize();
-
+ 
     // Add event listener for resize
     window.addEventListener('resize', handleResize);
-
+ 
     // Cleanup the event listener on component unmount
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
+ 
   useEffect(() => {
     const fetchHiredCount = async () => {
       try {
         const token = localStorage.getItem('jwtToken'); // Get JWT token from storage
-
+ 
         const response = await axios.get(
           `${apiUrl}/api/hiredCount/1`,
           {
@@ -65,17 +65,17 @@ const ApplicantDashboard = () => {
           }
         );
         console.log('Hired Count Response:', response.data); // Log the response for debugging
-
+ 
         setHiredCount(response.data); // Store API response
         console.log("hired count", hiredCount)
       } catch (error) {
         console.error('Error fetching hired count:', error);
       }
     };
-
+ 
     fetchHiredCount();
   }, []);
-
+ 
   useEffect(() => {
   const style = document.createElement('style');
   style.innerHTML = `
@@ -86,8 +86,8 @@ const ApplicantDashboard = () => {
   `;
   document.head.appendChild(style);
 }, []);
-
-
+ 
+ 
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
@@ -98,8 +98,8 @@ const ApplicantDashboard = () => {
           },
         });
         const profileId = profileIdResponse.data;
-
-
+ 
+ 
         if (profileId === 0) {
           navigate('/applicant-basic-details-form');
         } else {
@@ -109,11 +109,11 @@ const ApplicantDashboard = () => {
         console.error('Error fetching profile ID:', error);
       }
     };
-
+ 
     checkUserProfile();
   }, [userId, navigate]);
-
-
+ 
+ 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -123,28 +123,28 @@ const ApplicantDashboard = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-
+ 
         const newData = {
           identifier: response.data.applicant.email,
           password: response.data.applicant.password,
           localResume: response.data.applicant.localResume,
           firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
         };
-
+ 
         // Store newData in local storage
         localStorage.setItem('userData', JSON.stringify(newData));
-
+ 
         setUserData(newData);
       } catch (error) {
         console.error('Error updating profile status:', error);
       }
     };
-
+ 
     fetchUserData();
   }, []);
-
-
-
+ 
+ 
+ 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
     if (storedToken) {
@@ -205,10 +205,10 @@ const ApplicantDashboard = () => {
         console.error('Error fetching team members:', error);
       });
   }, [user.id]);
-
+ 
   const [testData, setTestData] = useState([]);
   const [showIcon, setShowIcon] = useState(false);
-
+ 
   {/* tests api */ }
   useEffect(() => {
     const fetchTestData = async () => {
@@ -219,54 +219,54 @@ const ApplicantDashboard = () => {
             Authorization: `Bearer ${jwtToken}`,
           },
         });
-
+ 
         const data = response.data;
         setTestData(data);
-
+ 
         // Check if both aptitude and technical tests have status "P" or "p"
         const allTestsPassed = data.length >= 2 && data.every(test => test.testStatus.toLowerCase() === 'p');
-
+ 
         setShowIcon(allTestsPassed);
-
+ 
       } catch (error) {
         console.error('Error fetching test data:', error);
       }
     };
-
+ 
     fetchTestData();
   }, [user.id]);
-
+ 
   const handleRedirect = () => {
-
+ 
     navigate("/applicant-find-jobs");
   };
-
+ 
   const handleRedirect1 = () => {
-
+ 
     navigate("/applicant-applied-jobs");
   };
-
+ 
   const handleRedirect2 = () => {
-
+ 
     navigate("/applicant-saved-jobs");
   };
-
+ 
   const Buildresume = () => {
     navigate("/applicant-resume-builder");
   };
-
+ 
   const location = useLocation();
   const linkStyle = {
     backgroundColor: isHovered ? '#ea670c' : '#F97316',
     display: 'inline-block',
   };
-
+ 
   const spanStyle = {
     color: 'white',
     fontFamily: 'Plus Jakarta Sans',
     fontSize: '15px',
     fontWeight: '600',
-
+ 
   };
   // const [showIcon, setShowIcon] = useState(false); // Set to true or false to show/hide the SVG
   useEffect(() => {
@@ -317,7 +317,7 @@ const ApplicantDashboard = () => {
     }
   `}</style>
                   </div>
-
+ 
                   <div className="userName-title">
                     Hi {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}
                     {showIcon && (
@@ -328,7 +328,7 @@ const ApplicantDashboard = () => {
                       </span>
                     )}
                   </div>
-
+ 
                 </div>
               </div>
             </div>
@@ -361,10 +361,10 @@ const ApplicantDashboard = () => {
                           Recommended Jobs
                         </span>
                         <h3>{contRecJobs}</h3>
-
+ 
                       </div>
                     </div>
-
+ 
                   </div>
                 </div>
                 <div className="col-12 col-xxl-3 col-xl-4 col-lg-4 col-md-12 col-sm-12 display-flex">
@@ -424,13 +424,16 @@ const ApplicantDashboard = () => {
                     </div>
                   </div>
                 </div>
-                         <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 certificatebox">
+
+                
+                         <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 certificatebox" style={{ width: isWideScreen ? "": "96%"}}>
   <div
     className="card"
     style={{
       background: 'linear-gradient(90deg, #FF8C00 0%, #FFA500 100%)',
       padding: '18px',
       borderRadius: '12px',
+      
     }}
   >
     <div className="d-flex flex-column flex-md-row align-items-center justify-content-between"   style={{
@@ -447,18 +450,20 @@ const ApplicantDashboard = () => {
           src={SmartPhone}
           alt="App Preview"
           style={{
-            width: '100%',
-            maxWidth: '180px',
-            height: 'auto',
-            objectFit: 'contain',
-            marginLeft: '10px',
-            marginTop: '-22px',
+         width: '103%',
+  maxWidth: 'unset',
+  // height: '150%',
+  // objectFit: 'none',
+  marginLeft: '5px',
+  marginTop: '-110px',
+  position: 'relative',
+  bottom: '-23px',
           }}
         />
       </div>
-
+ 
       {/* Middle: Text + App Links */}
-      <div className="flex-grow-1 text-center text-md-start" style={{ minWidth: '250px', padding: '10px' }}>
+      <div className="flex-grow-1 text-center text-md-start" style={{ minWidth: '250px', padding: '8px' }}>
         <p style={{ margin: 0, fontSize: '16px', color: '#fff' }}>
           Why open laptop when jobs can be right in your pocket.
         </p>
@@ -481,14 +486,14 @@ const ApplicantDashboard = () => {
           />
         </div>
       </div>
-
+ 
       {/* Vertical Line - Hidden on Mobile */}
-      <div className="d-none d-md-block" style={{ padding: '0 20px' }}>
+      <div className="d-none d-md-block" style={{ padding: '0 15px' }}>
         <svg width="2" height="163" viewBox="0 0 1 163" fill="none" xmlns="http://www.w3.org/2000/svg">
           <line x1="0.5" y1="0" x2="0.5" y2="163" stroke="#EFE3E3" />
         </svg>
       </div>
-
+ 
       {/* Right: Candidates Placed */}
       <div
         className="text-center text-md-start"
@@ -514,12 +519,12 @@ const ApplicantDashboard = () => {
             </clipPath>
           </defs>
         </svg>
-
+ 
         {/* Text */}
         <div>
           <div
             style={{
-              fontSize: '24px',
+              fontSize: '22px',
               fontWeight: '700',
               animation: 'bounce 1.5s infinite ease-in-out',
               color: '#fff',
@@ -533,7 +538,7 @@ const ApplicantDashboard = () => {
     </div>
   </div>
 </div>
-
+ 
                 {!showIcon && (
                   <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                     <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3', fontFamily: 'Plus Jakarta Sans', fontWeight: '500' }}>
@@ -575,7 +580,7 @@ const ApplicantDashboard = () => {
                               </Link>
                             </div>
                           </div>
-
+ 
                           <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
                             <img
                               src={Taketest}
@@ -589,7 +594,7 @@ const ApplicantDashboard = () => {
                   </div>
                 )}
                 {/* New one*/}
-
+ 
                 <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
                   <div className="card " style={{ cursor: "pointer" }}>
                     <div className="resumecard" >
@@ -633,5 +638,5 @@ const ApplicantDashboard = () => {
     </div>
   );
 };
-
+ 
 export default ApplicantDashboard;
