@@ -21,6 +21,7 @@ import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 import JobWidget from './components/jobWidget';
+import ChatBotWidget from './ChatBotWidget';
 
 
 
@@ -121,6 +122,7 @@ function App() {
           </Router>
         )}
       </UserProvider>
+      <ChatBotWidget />
     </div>
   );
 }
