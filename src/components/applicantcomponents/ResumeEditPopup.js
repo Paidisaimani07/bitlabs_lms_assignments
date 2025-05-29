@@ -126,7 +126,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
     <input
       type="text"
       value={fileName}
-      // className="file-name-input-resume"
+      readOnly
  
       onChange={handleInputChange}
       style={{
