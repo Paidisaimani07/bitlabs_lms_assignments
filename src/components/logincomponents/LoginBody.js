@@ -195,8 +195,15 @@ function LoginBody({ handleLogin }) {
 
           let resume;
           try {
+            const jwtToken = localStorage.getItem("jwtToken");
             const profileIdResponse1 = await axios.get(
-              `${apiUrl}/resume/pdf/${userId}`
+              `${apiUrl}/resume/pdf/${userId}`,
+               {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+              },
+            },
+
             );
           } catch (error) {
             resume = error.response.status;
@@ -335,8 +342,15 @@ function LoginBody({ handleLogin }) {
         const profileId = profileIdResponse.data;
         let resume;
         try {
-          const profileIdResponse1 = await axios.get(
-            `${apiUrl}/resume/pdf/${userId}`
+              const jwtToken = localStorage.getItem("jwtToken")
+              const profileIdResponse1 = await axios.get(
+            `${apiUrl}/resume/pdf/${userId}`,
+               {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+              },
+            }
+ 
           );
         } catch (error) {
           resume = error.response.status;

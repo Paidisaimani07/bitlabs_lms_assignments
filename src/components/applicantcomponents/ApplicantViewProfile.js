@@ -217,8 +217,9 @@ const ApplicantViewProfile = () => {
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          }
-        }, { responseType: 'blob' });
+          }, responseType: 'blob' 
+        },
+        );
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
