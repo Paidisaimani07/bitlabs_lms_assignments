@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import './ChatBotWidget.css'; // Make sure this CSS file exists
+import { apiUrl } from './services/ApplicantAPIService.js'; // Adjust the import path as necessary
 
 const ChatBotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,15 +11,23 @@ const ChatBotWidget = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const chatRef = useRef(null);
+  const chatIconRef = useRef(null);
+
 
   const toggleChat = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (chatRef.current && !chatRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
+  const handleClickOutside = (event) => {
+  if (
+    chatRef.current &&
+    !chatRef.current.contains(event.target) &&
+    chatIconRef.current &&
+    !chatIconRef.current.contains(event.target)
+  ) {
+    setIsOpen(false);
+  }
+};
+
 
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -39,7 +48,7 @@ const ChatBotWidget = () => {
 
     try {
       const res = await axios.post(
-       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyA5tN62QyMYjBNonduJGWzBlGY4q4_jvrs',
+       `${apiUrl}/api/gemini/chat`,
         {
           contents: [{ parts: [{ text: input }] }]
         }
@@ -56,7 +65,7 @@ const ChatBotWidget = () => {
   return (
     <>
       {/* Chat Icon Button */}
-      <div className="chat-icon" onClick={toggleChat}>
+<div className="chat-icon" ref={chatIconRef} onClick={toggleChat}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 495.07 470.51" width="48" height="48">
           <defs>
             <style>
@@ -82,7 +91,48 @@ const ChatBotWidget = () => {
       {/* Chat Window */}
       {isOpen && (
         <div className="chatbox" ref={chatRef}>
-          <div className="chat-header">JobGenie AI</div>
+          <div className="chat-header">JobGenie AI
+            <div className="chat-actions">
+    {/* Refresh Button */}
+    <svg
+      onClick={() => {
+        setMessages([{ sender: 'bot', text: 'Hey there 👋\nHow can I help you today?' }]);
+        setInput('');
+      }}
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ cursor: 'pointer', marginRight: '22px' , marginTop: '5px' }}
+    >
+      <polyline points="23 4 23 10 17 10" />
+      <path d="M20.49 15A9 9 0 1 1 23 10" />
+    </svg>
+
+    {/* Close Button */}
+    <svg
+      onClick={() => setIsOpen(false)}
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{ cursor: 'pointer' }}
+    >
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  </div>
+          </div>
           <div className="chat-body">
             {messages.map((msg, i) => (
               <div key={i} className={`chat-bubble ${msg.sender}`}>
