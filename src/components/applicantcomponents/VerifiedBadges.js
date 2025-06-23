@@ -264,6 +264,9 @@ const VerifiedBadges = () => {
     };
 
     fetchTestData();
+    if(testData === null){
+      fetchTestData();
+    }
   }, [user.id]);
 
   useEffect(() => {
@@ -331,6 +334,7 @@ const VerifiedBadges = () => {
                 days: Math.floor(difference / (1000 * 60 * 60 * 24)),
                 hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
                 minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+                seconds: Math.floor((difference % (1000 * 60)) / 1000),
               };
               setTimer(timeLeft);
               setIsTimerComplete(false); // Timer is still counting down
@@ -383,6 +387,7 @@ const VerifiedBadges = () => {
                   days: Math.floor(difference / (1000 * 60 * 60 * 24)),
                   hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
                   minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+                  seconds: Math.floor((difference % (1000 * 60)) / 1000),
                 };
                 setTimer(timeLeft);
                 setIsTimerComplete(false); // Timer is still counting down
@@ -790,6 +795,10 @@ const VerifiedBadges = () => {
     <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.minutes}</span>
   )}
   {timer.minutes > 0 && 'm'}
+  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && (
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.seconds}</span>
+  )}
+  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && 'sec'}
 </div>
         </div>
       )}
@@ -853,6 +862,11 @@ const VerifiedBadges = () => {
     }}>{timer.minutes}</span>
   )}
   {timer.minutes > 0 && 'm'}
+  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && (
+    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.seconds}</span>
+  )}
+  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && 'sec'}
+  
 </div>
         </div>
       )}
