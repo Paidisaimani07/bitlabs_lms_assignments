@@ -35,7 +35,8 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
       setFormValues({
         qualification: applicantDetails.qualification || '',
         specialization: applicantDetails.specialization || '',
-        experience: applicantDetails.experience || '',
+         experience: applicantDetails.experience?.toString() || '',
+ 
         preferredJobLocations: applicantDetails.preferredJobLocations || [],
         skillsRequired : [
           ...(applicantDetails.skillsRequired || []),
@@ -208,17 +209,21 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     options={yearsOptions}
     placeholder="*Experience in Years"
     onChange={(selected) => {
-      const experienceValue = selected.length > 0 ? selected[0].label.split(' ')[0] : '';
-      handleInputChange('experience', experienceValue);
-    }}
-    selected={
-      formValues.experience
-        ? [{ label: `${formValues.experience}`, value: formValues.experience }]
-        : []
-    }
+              const experienceValue = selected.length > 0 ? selected[0].label : '';
+              handleInputChange('experience', experienceValue); // keep it string
+            }}
+            selected={
+              formValues.experience
+                ? yearsOptions.filter(option => option.label === formValues.experience)
+                : []
+            }
     className="custom-typeahead"
     labelKey="label"
     single
+    inputProps={{ readOnly: true }}   
+    onInputChange={() => {}}         
+    filterBy={() => true}  
+ 
   />
   {errors.experience && <div className="error-message">{errors.experience}</div>}
 </div>
