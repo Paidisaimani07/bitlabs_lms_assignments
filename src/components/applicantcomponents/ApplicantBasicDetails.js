@@ -31,6 +31,7 @@ const ApplicantBasicDetails = () => {
   const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [resumeUploaded, setResumeUploaded] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
@@ -381,6 +382,7 @@ delete transformedApplicantProfileDTO.skillsRequired;
         addSnackbar({ message: 'File size should be less than 5MB and Only PDF allowed.', type: 'error' });
         setErrorMessage('File size should be less than 5MB and Only PDF allowed.');
         setSelectedFile(null);
+        setResumeUploaded(false);
         return;
       }
   
@@ -389,12 +391,14 @@ delete transformedApplicantProfileDTO.skillsRequired;
         addSnackbar({ message: 'Only PDF file types are allowed.', type: 'error' });
         setErrorMessage('Only PDF file types are allowed.');
         setSelectedFile(null);
+        setResumeUploaded(false);
         return;
       }
   
       setErrorMessage('');
       setResumeFile(file);
       setSelectedFile(file);
+      setResumeUploaded(true);
     }
   };
   
@@ -733,6 +737,9 @@ delete transformedApplicantProfileDTO.skillsRequired;
           onChange={handleQualificationChange}
           selected={qualification ? [qualification] : []}
           className="input-form typeahead"
+          inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
         />
         {errors.qualification && <div className="error-message">{errors.qualification}</div>}
       </div>
@@ -745,6 +752,9 @@ delete transformedApplicantProfileDTO.skillsRequired;
           onChange={handleSpecializationChange}
           selected={specialization ? [specialization] : []}
           className="input-form typeahead"
+          inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
         />
         {errors.specialization && <div className="error-message">{errors.specialization}</div>}
       </div>
@@ -789,11 +799,14 @@ delete transformedApplicantProfileDTO.skillsRequired;
         <Typeahead
           id="preferredJobLocations"
           multiple
-          options={cities}
+          options={cities.filter(city => !preferredJobLocations.includes(city))}
           placeholder="*Preferred Job Locations"
           onChange={handlePreferredJobLocationsChange}
           selected={preferredJobLocations}
           className="input-form typeahead"
+          inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
         />
         {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
       </div>
@@ -994,8 +1007,18 @@ delete transformedApplicantProfileDTO.skillsRequired;
               <button type="button" onClick={handleNext} className="form-button" >Next</button>
             )}
             {currentStage === 3 && (
-              <button type="submit" className="form-button">Submit</button>
-            )}
+  <button
+    type="submit"
+    className="form-button"
+    disabled={!resumeUploaded}
+    style={{
+      opacity: resumeUploaded ? 1 : 0.6,
+      cursor: resumeUploaded ? 'pointer' : 'not-allowed',
+    }}
+  >
+    Submit
+  </button>
+)}
           </div>
         </form>
       </div>
