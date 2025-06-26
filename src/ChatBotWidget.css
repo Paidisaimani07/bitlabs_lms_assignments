@@ -16,8 +16,8 @@
   position: fixed;
   bottom: 80px;
   right: 20px;
-  width: 340px;
-  height: 450px;
+  width: 320px;
+  height: 410px;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -29,7 +29,7 @@
 }
 
 .chat-header {
-  background-color: #F97316;
+  background-color: #f86b05;
   color: white;
   font-weight: bold;
   padding: 15px;
@@ -46,7 +46,7 @@
 .chat-bubble {
   display: flex;
   margin: 8px 0;
-  max-width: 80%;
+  max-width: 95%;
 }
 
 .chat-bubble.bot {
@@ -67,7 +67,7 @@
 }
 
 .chat-bubble.user .bubble-content {
-  background-color: #7f56d9;
+  background-color: #F97316;
   color: white;
 }
 
@@ -96,4 +96,19 @@
   padding: 0 16px;
   cursor: pointer;
   font-size: 16px;
+}
+
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.chat-actions {
+  display: flex;
+  align-items: center;
 }
