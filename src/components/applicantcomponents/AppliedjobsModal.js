@@ -116,11 +116,17 @@ const Modal = ({ onClose }) => {
                 </div>
  
                 <div className="d-flex flex-column align-items-center">
-                  <img
-                    src={playStore}
-                    alt="Play Store"
-                    style={{ height: '30px', width: '30px', objectFit: 'contain' }}
-                  />
+                  <a
+                            href="https://play.google.com/store/apps/details?id=com.bigtimes"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={playStore}
+                              alt="Google Play"
+                              style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
+                            />
+                          </a>
                   <p style={{ fontSize: '11px', marginTop: '4px', color: '#000' }}>Play Store</p>
                 </div>
               </div>
