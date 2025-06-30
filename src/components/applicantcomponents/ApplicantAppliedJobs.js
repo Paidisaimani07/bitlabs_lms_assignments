@@ -30,7 +30,13 @@ function ApplicantAppliedJobs({ setSelectedJobId }) {
                         const jwtToken = localStorage.getItem('jwtToken');
                        
                         // Fetch applied jobs count
-                        const countRes = await axios.get(`${apiUrl}/applyjob/countAppliedJobs/${applicantId}`);
+                        const countRes = await axios.get(`${apiUrl}/applyjob/countAppliedJobs/${applicantId}`,
+                          {
+                            headers: {
+                              Authorization: `Bearer ${jwtToken}`,
+                            },
+                          }
+                        );
                         const totalJobs = countRes.data || 0;
                         setTotalPages(Math.ceil(totalJobs / pageSize));
                  
