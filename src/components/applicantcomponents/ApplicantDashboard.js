@@ -480,7 +480,7 @@ const ApplicantDashboard = () => {
             style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
           />
           <a
-                            href="https://play.google.com/store/apps/details?id=com.bigtimes"
+                            href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
