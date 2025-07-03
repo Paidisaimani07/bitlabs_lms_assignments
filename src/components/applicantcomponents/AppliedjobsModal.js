@@ -117,7 +117,7 @@ const Modal = ({ onClose }) => {
  
                 <div className="d-flex flex-column align-items-center">
                   <a
-                            href="https://play.google.com/store/apps/details?id=com.bigtimes"
+                            href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=jobcard-ps-button&utm_medium=bj-apply-now-ps-app&utm_campaign=bj-ps-int-apply-now"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
