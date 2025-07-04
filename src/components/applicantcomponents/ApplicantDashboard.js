@@ -479,11 +479,17 @@ const ApplicantDashboard = () => {
             alt="App Store"
             style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
           />
-          <img
-            src={playStore}
-            alt="Google Play"
-            style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
-          />
+          <a
+                            href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={playStore}
+                              alt="Google Play"
+                              style={{ height: '36px', width: 'auto', maxWidth: '100%' }}
+                            />
+                          </a>
         </div>
       </div>
  

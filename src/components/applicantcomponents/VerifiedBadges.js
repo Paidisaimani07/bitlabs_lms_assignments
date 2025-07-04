@@ -263,10 +263,9 @@ const VerifiedBadges = () => {
       }
     };
 
+    setTimeout(() => {
     fetchTestData();
-    if(testData === null){
-      fetchTestData();
-    }
+    }, 500);
   }, [user.id]);
 
   useEffect(() => {
@@ -291,7 +290,9 @@ const VerifiedBadges = () => {
       } 
     };
 
+   setTimeout(() => {
     fetchSkillBadges();
+    }, 500);
   }, [userId]);
   
   useEffect(() => {

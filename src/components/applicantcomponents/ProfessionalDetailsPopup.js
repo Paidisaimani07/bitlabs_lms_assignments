@@ -165,6 +165,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             onChange={handleQualificationChange}
             selected={formValues.qualification ? [formValues.qualification] : []}
             className="custom-typeahead"
+            inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
           />
           {errors.qualification && <div className="error-message">{errors.qualification}</div>}
         </div>
@@ -177,6 +180,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             onChange={handleSpecializationChange}
             selected={formValues.specialization ? [formValues.specialization] : []}
             className="custom-typeahead"
+            inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
           />
           {errors.specialization && <div className="error-message">{errors.specialization}</div>}
         </div>
@@ -239,6 +245,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     selected={formValues.preferredJobLocations.map((city) => ({ label: city, value: city }))}
     className="custom-typeahead2"
     labelKey="label"
+    inputProps={{ readOnly: true }}  
+        onInputChange={() => {}}        
+        filterBy={() => true}  
   />
   {errors.preferredJobLocations && (
     <div className="error-message">{errors.preferredJobLocations}</div>
