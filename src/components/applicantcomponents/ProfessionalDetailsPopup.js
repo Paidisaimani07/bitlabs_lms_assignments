@@ -247,7 +247,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     labelKey="label"
     inputProps={{ readOnly: true }}  
         onInputChange={() => {}}        
-        filterBy={() => true}  
+        filterBy={(option) =>
+    !formValues.preferredJobLocations.includes(option.value)
+       } 
   />
   {errors.preferredJobLocations && (
     <div className="error-message">{errors.preferredJobLocations}</div>
