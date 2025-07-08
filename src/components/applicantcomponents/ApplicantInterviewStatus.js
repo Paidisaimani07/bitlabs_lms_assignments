@@ -88,7 +88,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
   };
 
   useEffect(() => {
-    if (jobId) {
+    if (jobId && applyJobId) {
       fetchJobStatus();
     }
   }, [applyJobId,jobId]);

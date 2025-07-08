@@ -151,9 +151,13 @@ const ChatBotWidget = () => {
               placeholder="Message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              onKeyDown={(e) => {
+  if (e.key === 'Enter' && !loading) {
+    sendMessage();
+  }
+}}
             />
-            <button onClick={sendMessage}>➤</button>
+            <button onClick={sendMessage} disabled={loading}>➤</button>
           </div>
         </div>
       )}
