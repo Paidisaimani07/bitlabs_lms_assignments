@@ -30,6 +30,94 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
   const [snackbars, setSnackbars] = useState([]);
   const user1 = useUserContext();
   const user = user1.user;
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const [isSkillsMenuOpen, setIsSkillsMenuOpen] = useState(false);
+  const [isExperienceMenuOpen, setIsExperienceMenuOpen] = useState(false);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  //media query for the dropdown
+  const dropdownStyle = {
+    width: '100%',
+    maxHeight:
+      screenWidth <= 480
+        ? '100px'
+        : screenWidth <= 768
+          ? '140px'
+          : screenWidth <= 1024
+            ? '150px'
+            : screenWidth <= 1440
+              ? '180px'
+              : '200px',
+    overflowY: 'auto',
+    margin: 0,
+    padding: 0,
+    listStyle: 'none',
+    border: '1px solid #ccc',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    backgroundColor: 'white',
+    position: 'absolute',
+    zIndex: 1000,
+  };
+
+  const menuItemStyle = {
+    padding:
+      screenWidth <= 480
+        ? '0px 5px'
+        : screenWidth <= 768
+          ? '0.5px 5px'
+          : screenWidth <= 1024
+            ? '1px 7px'
+            : screenWidth <= 1440
+              ? '1px 9px'
+              : '2px 5px',
+    fontSize:
+      screenWidth <= 480
+        ? '14px'
+        : screenWidth <= 768
+          ? '13px'
+          : screenWidth <= 1024
+            ? '14px'
+            : screenWidth <= 1440
+              ? '15px'
+              : '16px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  
+  };
+
+  const noMatchesStyle = {
+    padding:
+      screenWidth <= 480
+        ? '4px 6px'
+        : screenWidth <= 768
+          ? '0.5px 5px'
+          : screenWidth <= 1024
+            ? '2px 3px'
+            : screenWidth <= 1440
+              ? '6px 10px'
+              : 'px 5px',
+    fontSize:
+      screenWidth <= 480
+        ? '12px'
+        : screenWidth <= 768
+          ? '13px'
+          : screenWidth <= 1024
+            ? '14px'
+            : screenWidth <= 1440
+              ? '15px'
+              : '16px',
+    color: '#e9ecef',
+    textAlign: 'center',
+  };
+
   useEffect(() => {
     if (applicantDetails) {
       setFormValues({
@@ -165,7 +253,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             onChange={handleQualificationChange}
             selected={formValues.qualification ? [formValues.qualification] : []}
             className="custom-typeahead"
-            inputProps={{ readOnly: true }}  
+            inputProps={{ readOnly: true,
+               style: { backgroundColor: '#F5F5F5' },
+            }}  
         onInputChange={() => {}}        
         filterBy={() => true}  
           />
@@ -180,7 +270,9 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             onChange={handleSpecializationChange}
             selected={formValues.specialization ? [formValues.specialization] : []}
             className="custom-typeahead"
-            inputProps={{ readOnly: true }}  
+            inputProps={{ readOnly: true,
+               style: { backgroundColor: '#F5F5F5' },
+             }}  
         onInputChange={() => {}}        
         filterBy={() => true}  
           />
@@ -193,19 +285,68 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             multiple
             options={skillsOptions.map((skill) => ({ label: skill, value: skill }))}
             placeholder="*Skills Required"
-            onChange={(selected) =>
+            open={isSkillsMenuOpen}
+            onFocus={() => setIsSkillsMenuOpen(true)}
+            onBlur={() => setTimeout(() => setIsSkillsMenuOpen(false), 150)}
+            onInputChange={() => setIsSkillsMenuOpen(true)}
+            inputProps={{
+               style: { backgroundColor: '#F5F5F5' },
+              onClick: () => setIsSkillsMenuOpen(true), // Ensures dropdown opens again when clicked
+            }}
+            onChange={(selected) => {
+              const wasItemRemoved = selected.length < formValues.skillsRequired.length;
+ 
               handleInputChange(
                 'skillsRequired',
-                selected.map((option) => ({ id: option.valueOf, skillName: option.label, experience: 0 }))
-              )
-            }
-           // Display combined list of skillsRequired and applicantSkillBadges
-              selected={formValues.skillsRequired.map((skill) => ({
-                label: skill.skillName,
-                value: skill.skillName
-              }))}
+                selected.map((option) => ({
+                  id: option.valueOf,
+                  skillName: option.label,
+                  experience: 0,
+                }))
+              );
+ 
+              if (wasItemRemoved && selected.length === 0) {
+                setTimeout(() => setIsSkillsMenuOpen(true), 160); // Reopen if all removed
+              } else {
+                setIsSkillsMenuOpen(false); // Close after selection
+              }
+            }}
+            selected={formValues.skillsRequired.map((skill) => ({
+              label: skill.skillName,
+              value: skill.skillName,
+            }))}
             className="custom-typeahead2"
-          />
+            labelKey="label"
+            renderMenu={(results, menuProps) => (
+              <ul {...menuProps} style={dropdownStyle}>
+                {results.length === 0 ? (
+                  <li style={noMatchesStyle}>No matches found</li>
+                ) : (
+                  results.map((option, index) => (
+                    <li
+                      key={index}
+                      style={menuItemStyle}
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // Prevent blur before change
+                        const updated = [
+                          ...formValues.skillsRequired,
+                          {
+                            id: option.valueOf,
+                            skillName: option.label,
+                            experience: 0,
+                          },
+                        ];
+                        handleInputChange('skillsRequired', updated);
+                        setIsSkillsMenuOpen(false); // Close after selection
+                      }}
+                    >
+                      {option.label}
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
+             />
           {errors.skillsRequired && <div className="error-message">{errors.skillsRequired}</div>}
         </div>
  
@@ -214,22 +355,56 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     id="experience"
     options={yearsOptions}
     placeholder="*Experience in Years"
-    onChange={(selected) => {
+    open={isExperienceMenuOpen}
+            onFocus={() => setIsExperienceMenuOpen(true)}
+            onBlur={() => setTimeout(() => setIsExperienceMenuOpen(false), 150)}
+            onInputChange={() => setIsExperienceMenuOpen(true)}
+            onChange={(selected) => {
               const experienceValue = selected.length > 0 ? selected[0].label : '';
-              handleInputChange('experience', experienceValue); // keep it string
+              handleInputChange('experience', experienceValue);
+              setIsExperienceMenuOpen(false);
             }}
             selected={
               formValues.experience
-                ? yearsOptions.filter(option => option.label === formValues.experience)
+                ? yearsOptions.filter(
+                  (option) => option.label === formValues.experience
+                )
                 : []
             }
-    className="custom-typeahead"
-    labelKey="label"
-    single
-    inputProps={{ readOnly: true }}   
-    onInputChange={() => {}}         
-    filterBy={() => true}  
- 
+            className="custom-typeahead"
+            labelKey="label"
+            single
+            inputProps={{
+              readOnly: true,
+               style: { backgroundColor: '#F5F5F5' },
+              onClick: () => setIsExperienceMenuOpen(true), // ✅ Reopen dropdown on input click
+            }}
+            filterBy={() => true}
+            renderMenu={(results, menuProps) => (
+              <ul {...menuProps} style={dropdownStyle}>
+                {results.length === 0 ? (
+                  <li style={noMatchesStyle}>No matches found</li>
+                ) : (
+                  results.map((option, index) => (
+                    <li
+                      key={index}
+                      style={{
+                        ...menuItemStyle,
+                        fontWeight:
+                          option.label === formValues.experience ? 'bold' : 'normal',
+                      }}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleInputChange('experience', option.label);
+                        setIsExperienceMenuOpen(false);
+                      }}
+                    >
+                      {option.label}
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
   />
   {errors.experience && <div className="error-message">{errors.experience}</div>}
 </div>
@@ -239,17 +414,44 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
     multiple
     options={cities.map((city) => ({ label: city, value: city }))}
     placeholder="*Preferred Job Locations"
-    onChange={(selected) =>
-      handleInputChange('preferredJobLocations', selected.map((option) => option.value))
-    }
-    selected={formValues.preferredJobLocations.map((city) => ({ label: city, value: city }))}
-    className="custom-typeahead2"
-    labelKey="label"
-    inputProps={{ readOnly: true }}  
-        onInputChange={() => {}}        
-        filterBy={(option) =>
-    !formValues.preferredJobLocations.includes(option.value)
-       } 
+    onChange={(selected) => {
+              const uniqueCities = Array.from(new Set(selected.map(option => option.value)));
+              handleInputChange('preferredJobLocations', uniqueCities);
+              setTimeout(() => setIsLocationMenuOpen(true), 160);
+            }}
+            selected={formValues.preferredJobLocations.map(city => ({ label: city, value: city }))}
+            className="custom-typeahead2"
+            labelKey="label"
+            inputProps={{}}
+            filterBy={(option) =>
+              !formValues.preferredJobLocations.includes(option.value)
+            }
+            open={isLocationMenuOpen}
+            onInputChange={() => setIsLocationMenuOpen(true)}
+            onFocus={() => setIsLocationMenuOpen(true)}
+            onBlur={() => setTimeout(() => setIsLocationMenuOpen(false), 150)}
+            renderMenu={(results, menuProps) => (
+              <ul {...menuProps} style={dropdownStyle}>
+                {results.length === 0 ? (
+                  <li style={noMatchesStyle}>No matches found</li>
+                ) : (
+                  results.map((option, index) => (
+                    <li
+                      key={index}
+                      onClick={() => {
+                        const updated = [...formValues.preferredJobLocations, option.value];
+                        handleInputChange('preferredJobLocations', updated);
+                        setIsLocationMenuOpen(true);
+                      }}
+                      style={menuItemStyle}
+                    >
+                      {option.label}
+                    </li>
+                  ))
+                )}
+              </ul>
+            )}
+   
   />
   {errors.preferredJobLocations && (
     <div className="error-message">{errors.preferredJobLocations}</div>
