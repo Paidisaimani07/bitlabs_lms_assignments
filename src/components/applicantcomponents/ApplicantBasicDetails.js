@@ -21,6 +21,9 @@ const ApplicantBasicDetails = () => {
   let { number } = useParams();
   
   number = parseInt(number, 10);
+  const [isExperienceMenuOpen, setIsExperienceMenuOpen] = useState(false);
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const [isSkillsMenuOpen, setIsSkillsMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(number);
   const [snackbars, setSnackbars] = useState([]);
@@ -153,7 +156,23 @@ const handlePreferredJobLocationsChange = (selected) => {
     setLoading(false);
   }, []);
   
-  
+   useEffect(() => {
+    const setFavicon = (url) => {
+      let link = document.querySelector("link[rel*='icon']");
+
+      // if (!link) {
+      //   link = document.createElement('link');
+      //   link.rel = 'icon';
+      //   document.head.appendChild(link);
+      // }
+
+      link.type = 'image/png';
+      link.href = url;
+    };
+    console.log("image inserted ")
+    setFavicon('/images/favicon.png'); // Path to your favicon
+  }, []);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -778,16 +797,77 @@ delete transformedApplicantProfileDTO.skillsRequired;
         id="experience"
         options={yearsOptions}
         placeholder="*Experience in Years"
-        onChange={(selected) => {
-                  const selectedValue = selected.length > 0 ? selected[0].label : '';
-                  setExperience(selectedValue); // always string
+         open={isExperienceMenuOpen}
+                onFocus={() => {
+                  setIsExperienceMenuOpen(true);
+                  setIsLocationMenuOpen?.(false);
                 }}
-                selected={yearsOptions.filter(option => option.label === `${experience}`)}
+                onBlur={() => {
+                  setTimeout(() => setIsExperienceMenuOpen(false), 150); // allow selection to register
+                }}
+                onInputChange={() => { }}
+                inputProps={{ readOnly: true, style: { cursor: 'pointer' } }}
+                filterBy={() => true}
+                highlightOnlyResult={false}
+                renderMenuItemChildren={(option) => (
+                  <div
+                    style={{
+                      padding: '8px 12px',
+                      fontWeight: option.label === experience ? 'bold' : 'normal',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {option.label}
+                  </div>
+                )}
+                renderMenu={(results, menuProps) => (
+                  <ul
+                    {...menuProps}
+                    style={{
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      margin: 0,
+                      padding: 0,
+                      listStyle: 'none',
+                      border: '1px solid #ccc',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                      backgroundColor: 'white',
+                      position: 'absolute',
+                      zIndex: 1000,
+                      width: '100%',
+                    }}
+                  >
+                    {results.map((option, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setExperience(option.label);
+                          setIsExperienceMenuOpen(false);
+                          // Optional blur
+                          setTimeout(() => {
+                            const inputEl = document.querySelector('#experience input');
+                            if (inputEl) inputEl.blur();
+                          }, 0);
+                        }}
+                        style={{
+                          padding: '3px 7px',
+                          fontSize: '16px',
+                          fontWeight: option.label === experience ? 'bold' : 'normal',
+                          cursor: 'pointer',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                        }}
+                      >
+                        {option.label}
+                      </li>
+                    ))}
+                  </ul>
+                )}
         className="input-form typeahead"
-        single
-        inputProps={{ readOnly: true }}   
-        onInputChange={() => {}}        
-        filterBy={() => true}  
+        single  
+             
+        selected={experience ? [experience] : []}
  
       />
       {!experience && errors.experience && (
@@ -801,12 +881,83 @@ delete transformedApplicantProfileDTO.skillsRequired;
           multiple
           options={cities.filter(city => !preferredJobLocations.includes(city))}
           placeholder="*Preferred Job Locations"
-          onChange={handlePreferredJobLocationsChange}
-          selected={preferredJobLocations}
-          className="input-form typeahead"
-          inputProps={{ readOnly: true }}  
-        onInputChange={() => {}}        
-        filterBy={() => true}  
+           onChange={(selected) => {
+                  handlePreferredJobLocationsChange(selected);
+                  if (selected.length < preferredJobLocations.length) {
+                    setTimeout(() => setIsLocationMenuOpen(true), 160); // Delay to override blur
+                  } else {
+                    setIsLocationMenuOpen(false);
+                  }
+                }}
+                selected={preferredJobLocations}
+                className="input-form typeahead"
+                inputProps={{}}
+                onInputChange={() => {
+                  setIsLocationMenuOpen(true); // Keep dropdown open on typing
+                }}
+                filterBy={(option) => !preferredJobLocations.includes(option)}
+                labelKey={(option) => option}
+                open={isLocationMenuOpen}
+                onFocus={() => {
+                  setIsLocationMenuOpen(true);
+                  setIsExperienceMenuOpen && setIsExperienceMenuOpen(false);
+                }}
+                onBlur={() => {
+                  setTimeout(() => setIsLocationMenuOpen(false), 150); // Allow time for item click
+                }}
+                renderMenu={(results, menuProps) => (
+                  <ul
+                    {...menuProps}
+                    style={{
+                      maxHeight: '190px',
+                      overflowY: 'auto',
+                      margin: 0,
+                      padding: 0,
+                      listStyle: 'none',
+                      border: '1px solid #ccc',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                      backgroundColor: 'white',
+                      position: 'absolute',
+                      zIndex: 1000,
+                      width: '100%',
+                    }}
+                  >
+                    {results.length === 0 ? (
+                      <li
+                        style={{
+                          padding: '6px 10px',
+                          fontSize: '16px',
+                          color: '#999',
+                          textAlign: 'center',
+                        }}
+                      >
+                        No matches found
+                      </li>
+                    ) : (
+                      results.map((option, index) => (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            const updated = [...preferredJobLocations, option];
+                            handlePreferredJobLocationsChange(updated);
+                            setIsLocationMenuOpen(false);
+                          }}
+                          style={{
+                            padding: '1px 10px',
+                            fontSize: '16px',
+                            fontWeight: preferredJobLocations.includes(option) ? 'bold' : 'normal',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
+                          {option}
+                        </li>
+                      ))
+                    )}
+                  </ul>
+                )}
         />
         {errors.preferredJobLocations && <div className="error-message">{errors.preferredJobLocations}</div>}
       </div>
