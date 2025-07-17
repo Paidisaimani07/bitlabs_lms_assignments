@@ -78,6 +78,7 @@ function LoginBody({ handleLogin }) {
           loginEndpoint,
           {
             email: email1,
+            utmSource: utmSource,
           },
           {
             headers: {
@@ -567,7 +568,7 @@ function LoginBody({ handleLogin }) {
     try {
       setCandidateRegistrationInProgress(true);
       const modifiedUtmSource = utmSource.includes("bitlabs.in/jobs")
-        ? "first time"
+        ? "Web login"
         : utmSource;
       const response = await axios.post(`${apiUrl}/applicant/saveApplicant`, {
         name: candidateName,
