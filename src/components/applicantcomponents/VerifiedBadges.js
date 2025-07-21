@@ -34,6 +34,7 @@ import djangoPNG from '../../images/Icons1/Icons/Django.svg';
 import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Verified from '../../images/user/avatar/Verified.png';
+import { ClipLoader } from 'react-spinners';
 
 
 
@@ -216,7 +217,7 @@ const VerifiedBadges = () => {
   const [isTimerComplete, setIsTimerComplete] = useState(false); // Track if the timer has completed
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
-  
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -285,6 +286,9 @@ const VerifiedBadges = () => {
         setSkillBadges(skillBadgeData); // Update state with the fetched data
         // setSkillsRequired(skillBadgeData.skillsRequired);
         // setApplicantSkillBadges(skillBadgeData.applicantSkillBadges);
+        if(skillBadgeData){
+          setLoading(false);
+        }
       } catch (error) {
         console.error('Error fetching skill badges:', error);
       } 
@@ -677,6 +681,9 @@ const VerifiedBadges = () => {
 
   }
   return (
+    loading ?         <div className="spinner-container">
+          <ClipLoader color="#F97316" loading={loading} size={30}/>
+        </div>: (
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
         <div className="col-lg-12 col-md-12">
@@ -972,7 +979,7 @@ const VerifiedBadges = () => {
 
       
 
-    </div>
+    </div>)
   );
 };
 

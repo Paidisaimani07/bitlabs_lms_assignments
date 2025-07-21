@@ -37,7 +37,9 @@ const ApplicantTakeTest = () => {
   const { testName } = location.state || {};
   const { user } = useUserContext();
   const userId = user.id;
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [violationDetected, setViolationDetected] = useState(false);
+  const [violationCount, setViolationCount] = useState(0);
  useEffect(() => {
  
 const fetchQuestion = async() => {
@@ -65,7 +67,11 @@ const fetchQuestion = async() => {
   }, [testName])
  
 
-
+  window.addEventListener('keydown', function (e) {
+  if ((e.key === 'F5') || (e.ctrlKey && e.key === 'r')) {
+    e.preventDefault();
+  }
+  });
   useEffect(() => {
     // Shuffle the questions array when the component mounts
     const shuffled = shuffleArray(questions.questions);
@@ -113,7 +119,9 @@ const fetchQuestion = async() => {
 
   const handleTestCompletion = () => {
     setIsTestCompleted(true);
-    exitFullScreen();
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+       exitFullScreen();
+   }
   };
 
   useEffect(() => {
@@ -136,6 +144,7 @@ const fetchQuestion = async() => {
 
   const handleGoBackToTest = () => {
     enterFullScreen();
+    setViolationDetected(false);
     setShowGoBackButton(false); // Hide the button when user goes back to full screen
   };
 
@@ -155,6 +164,71 @@ const fetchQuestion = async() => {
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
+
+  useEffect(() => {
+    if(violationCount === 2){
+       handleSubmitTest();
+    }
+  }, [violationCount]);
+
+  useEffect(() => {
+    const handleViolation = async (reason) => {
+      if (!isTestCompleted && !violationDetected) {
+        console.warn(`Violation detected: ${reason}`);
+        setViolationDetected(true);
+       if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+        exitFullScreen();
+    }
+        setViolationCount(violationCount + 1);
+      }
+    };
+ 
+    const handleFullScreenChange = () => {
+      if (!document.fullscreenElement && testStarted && !isTestCompleted) {
+        handleViolation('Exited fullscreen');
+      }
+    };
+ 
+    const handleVisibilityChange = () => {
+      if (document.hidden && testStarted && !isTestCompleted) {
+        handleViolation('Tab switch or minimized');
+      }
+    };
+ 
+    const handleWindowBlur = () => {
+      if (testStarted && !isTestCompleted) {
+        handleViolation('Window lost focus');
+      }
+    };
+ 
+    const handleKeyDown = (e) => {
+      if (
+        testStarted &&
+        !isTestCompleted &&
+        !violationDetected &&
+        (
+          e.key === 'Meta' ||
+          e.key === 'Alt' ||
+          (e.ctrlKey && e.key === 'Tab') ||
+          (e.altKey && e.key === 'Tab')
+        )
+      ) {
+        handleViolation('Prohibited key press');
+      }
+    };
+ 
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('keydown', handleKeyDown);
+ 
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [testStarted, isTestCompleted, violationDetected]);
 
   useEffect(() => {
     let interval;
@@ -231,10 +305,12 @@ const fetchQuestion = async() => {
 
   
   const handleSubmitTest = async () => {
-    if (!selectedOptions[currentQuestionIndex]) {
+    if (!selectedOptions[currentQuestionIndex] && !violationDetected) {
       setValidationMessage('Please provide your answer to submit the test.');
       return;
     }
+     if (isSubmitting) return;
+  setIsSubmitting(true);
     setValidationMessage('');
   
     const calculatedScore = calculateScore();
@@ -242,7 +318,7 @@ const fetchQuestion = async() => {
     const jwtToken = localStorage.getItem('jwtToken');
 
     if (isOnline) {
-
+    try {
     if(testName === 'General Aptitude Test' || testName === 'Technical Test'){
        // Submit the test result to the API
     fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
@@ -318,13 +394,15 @@ const fetchQuestion = async() => {
     } else {
       console.error("Failed to update Zoho API", response.data);
     }
-    
+  } 
+  catch (error) {
+    if (!navigator.onLine || error.message === 'Failed to fetch') {
+      setValidationMessage('Network error. Please check your connection and try again.');
+      setCurrentPage('interrupted');
+    }
+    return;
   }
-  else {
-    // Notify the user about the loss of connection
-    setValidationMessage('No internet connection. Please check your connection and try again.');
   }
-
     handleTestCompletion();
   setShowGoBackButton(false);
     // Show the acknowledgment popup based on the test result
@@ -399,7 +477,9 @@ const fetchQuestion = async() => {
           console.error('Error submitting test result:', error);
         });
     }
-    
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+  exitFullScreen();
+}
     // Navigate to the next page after the API call
     navigate("/applicant-verified-badges");
   };
@@ -586,6 +666,9 @@ const fetchQuestion = async() => {
               <li>
               To avoid interruptions, take the test on a PC, as calls may disrupt it on mobile.
               </li>
+              <li>
+              Any attempt to switch tabs, change windows, or engage in suspicious activity will result in automatic test submission.
+              </li>
             </ul>
           </div>
           <div align="right">
@@ -681,7 +764,7 @@ const fetchQuestion = async() => {
                 Next
               </button>
             ) : (
-              <button onClick={handleSubmitTest} className="navigation-btn">
+              <button onClick={handleSubmitTest} disabled={isSubmitting} className="navigation-btn">
                 Submit
               </button>
             )}
@@ -700,17 +783,24 @@ const fetchQuestion = async() => {
      {currentPage === 'timesup' && (
         <TestTimeUp onViewResults={handleViewResults} onCancel={handleViewResults} />
       )}
-
-     {!isTestCompleted && showGoBackButton && (
-            <div className="go-back-button-overlay">
-             
-              <p><strong>You won’t be able to continue the test and you’ll be ineligible to take this until 7 days. To avoid,</strong></p>
-              <br></br>
-              <button className="exit-popup-btn exit-popup-confirm-btn" onClick={handleGoBackToTest}>
-                Go Back to Test
-              </button>
-            </div>
-          )}
+      {violationDetected && !isTestCompleted && (
+    <div className="go-back-button-overlay">
+      <p>
+        <strong>
+          {isSubmitting
+            ? 'This test has been terminated and submitted automatically due to repeated exam violations.'
+            : 'Shortcuts are not allowed during the test. If any such action is detected again, your test will be automatically submitted.'}
+        </strong>
+      </p>
+      <br />
+      <button className="exit-popup-btn exit-popup-confirm-btn"
+        onClick={!isSubmitting ? handleGoBackToTest : undefined}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Submitting' : 'Go Back to Test'}
+      </button>
+    </div>
+)}
 
 {currentPage === 'interrupted' && (
   <div className="go-back-button-overlay">
