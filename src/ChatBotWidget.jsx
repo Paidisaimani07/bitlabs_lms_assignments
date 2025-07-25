@@ -4,6 +4,7 @@ import './ChatBotWidget.css'; // Make sure this CSS file exists
 import { apiUrl } from './services/ApplicantAPIService.js'; // Adjust the import path as necessary
 
 const ChatBotWidget = () => {
+   const [cancelTokenSource, setCancelTokenSource] = useState(null);//update
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'Hey there 👋\nHow can I help you today?' }
@@ -40,27 +41,46 @@ const ChatBotWidget = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
+ 
     const userMsg = { sender: 'user', text: input };
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
-
+ 
+    //update
+    const source = axios.CancelToken.source();
+    setCancelTokenSource(source);
     try {
       const res = await axios.post(
        `${apiUrl}/api/gemini/chat`,
         {
           contents: [{ parts: [{ text: input }] }]
+        },
+        {
+          cancelToken: source.token, // update
         }
       );
       const botReply = res.data.candidates[0].content.parts[0].text;
       setMessages((prev) => [...prev, { sender: 'bot', text: botReply }]);
-    } catch {
+    } catch(error) {
+      //update
+       if (axios.isCancel(error)) {
+      setMessages((prev) => [...prev, { sender: 'bot', text: 'Cancelled.' }]);
+    } else {
       setMessages((prev) => [...prev, { sender: 'bot', text: 'Sorry, something went wrong.' }]);
+    }
     } finally {
       setLoading(false);
+      setCancelTokenSource(null); // update
     }
   };
+    const handleCancel = () => {
+  if (cancelTokenSource) {
+    cancelTokenSource.cancel();
+    setLoading(false);
+    setCancelTokenSource(null);
+  }
+};
 
   return (
     <>
@@ -145,19 +165,26 @@ const ChatBotWidget = () => {
               </div>
             )}
           </div>
-          <div className="chat-input-area">
-            <input
+         <div className="chat-input-area">
+            {/* update */}
+            <textarea
               type="text"
               placeholder="Message..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-  if (e.key === 'Enter' && !loading) {
+  if (e.key === 'Enter' && !loading && !e.shiftKey) {
+    e.preventDefault();//update
     sendMessage();
   }
 }}
+rows={1}
             />
-            <button onClick={sendMessage} disabled={loading}>➤</button>
+            {loading ? (
+              <button onClick={handleCancel} className='button-cancel'>Cancel</button>
+            ) : (
+              <button onClick={sendMessage}>➤</button>
+            )}
           </div>
         </div>
       )}
