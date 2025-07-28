@@ -99,41 +99,6 @@ setJobs(newJobs);
     return (amountInRupees *1).toFixed(2); // Assuming salary is in rupees
   };
  
-  // const handleApplyNowClick = (jobId,e) => {
-  //   if (e) e.stopPropagation();
-  //   setSelectedJobId(jobId);
-   
-  //   navigate('/applicant-view-job',{state:{from:location.pathname}});
-  // };
- 
-  // const handleRemoveJob = async (jobId, e) => {
-  //   e.stopPropagation();
-  //   try {
-  //     const authToken = localStorage.getItem('jwtToken');
-  //     const response = await axios.delete(
-  //       `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${authToken}`,
-  //         },
-  //       }
-  //     );
- 
-  //     if (response.status === 200) {
-  //       // Update the jobs state to remove the job immediately
-  //       setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
-  //       setSavedJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
- 
-  //       addSnackbar({ message: 'Job removed', type: 'success' });
-  //     }
-  //   } catch (error) {
-  //     addSnackbar({ message: 'Error removing job. Please try again later.', type: 'error' });
-  //     console.error('Error removing job:', error);
-  //   }
-  // };
- 
-
-
   const handleApplyNowClick = (jobId, e) => {
     if (e) e.stopPropagation();
     setSelectedJobId(jobId);
@@ -142,7 +107,7 @@ setJobs(newJobs);
     setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
     setSavedJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
 
-    navigate('/applicant-view-job', { state: { from: location.pathname } });
+    navigate(`/applicant-view-job?jobId=${jobId}`, { state: { from: location.pathname } });
 };
 
 const handleRemoveJob = async (jobId, e) => {
