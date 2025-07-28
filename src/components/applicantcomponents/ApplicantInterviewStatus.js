@@ -128,7 +128,7 @@ const ApplicantInterviewStatus = ({ selectedJobId, setSelectedJobId }) => {
 
   const handleViewJobDetails = () => {
     setSelectedJobId(jobId);
-    navigate(`/applicant-view-job`, { state: { from: location.pathname } });
+    navigate(`/applicant-view-job?jobId=${jobId}`, { state: { from: location.pathname } });
   };
 
   return (

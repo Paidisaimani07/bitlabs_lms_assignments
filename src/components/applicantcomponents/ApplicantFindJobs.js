@@ -137,16 +137,10 @@ const handlePageClick = (pageNum) => {
       addSnackbar({ message: "Error saving job. Please try again later.", type: "error" });
     }
   };
-  
-  const handleApplyNowClick = (jobId) => {
-    setSelectedJobId(jobId);
-    // navigate('/applicant-view-job', { state: { from: location.pathname } });
-  };
- 
 
   const handleApplyNowClickView = (jobId) => {
     setSelectedJobId(jobId);
-    navigate('/applicant-view-job', { state: { from: location.pathname } });
+    navigate(`/applicant-view-job?jobId=${jobId}`, { state: { from: location.pathname } });
   };
 
   const handleCloseSnackbar = (index) => {
@@ -182,7 +176,7 @@ const handlePageClick = (pageNum) => {
                       ) : (
                         jobs.map((job) => (
                           <div className="features-job cl2 bg-white" key={job.id} onClick={(e) => {
-                            handleApplyNowClick(job.id, e);
+    
                             setSelectedJobId(job.id);
                         }}
                          >
