@@ -4,12 +4,15 @@
   right: 20px;
   background-color: #F97316;
   color: white;
+  border: none;
   border-radius: 50%;
   padding: 15px;
   font-size: 22px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  transition: background-color 0.3s, transform 0.2s;
+  outline: none;
 }
 
 .chatbox {
@@ -29,6 +32,9 @@
 }
 
 .chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f86b05;
   color: white;
   font-weight: bold;
@@ -119,14 +125,6 @@
 }
 
 
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-}
 
 .chat-actions {
   display: flex;
