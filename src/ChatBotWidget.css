@@ -4,12 +4,15 @@
   right: 20px;
   background-color: #F97316;
   color: white;
+  border: none;
   border-radius: 50%;
   padding: 15px;
   font-size: 22px;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  transition: background-color 0.3s, transform 0.2s;
+  outline: none;
 }
 
 .chatbox {
@@ -29,6 +32,9 @@
 }
 
 .chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f86b05;
   color: white;
   font-weight: bold;
@@ -46,7 +52,7 @@
 .chat-bubble {
   display: flex;
   margin: 8px 0;
-  max-width: 95%;
+  max-width: 100%;
 }
 
 .chat-bubble.bot {
@@ -58,6 +64,7 @@
 }
 
 .bubble-content {
+  max-width: 270px;
   background-color: #ece9fc;
   padding: 10px 14px;
   border-radius: 14px;
@@ -78,7 +85,7 @@
   background: #fff;
 }
 
-.chat-input-area input {
+.chat-input-area textarea {
   flex: 1;
   border: none;
   padding: 10px;
@@ -86,6 +93,25 @@
   background: #f3f3f3;
   margin-right: 10px;
   outline: none;
+  max-height: 45px;
+  overflow-y: auto;      
+  scrollbar-width: none;
+  resize: none;
+}
+
+.chat-input-area textarea::-webkit-scrollbar {
+  display: none;
+}
+
+/* update */
+.chat-input-area .button-cancel {
+  background: #F97316;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 12px;
 }
 
 .chat-input-area button {
@@ -99,14 +125,6 @@
 }
 
 
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-}
 
 .chat-actions {
   display: flex;
