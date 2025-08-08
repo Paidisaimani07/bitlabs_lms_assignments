@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate,useParams } from 'react-router-dom';
 import 'react-international-phone/style.css';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
 import './ApplicantBasicDetails1.css';
 import Logo from '../../images/artboard.svg';
@@ -15,33 +14,55 @@ import ModalComponent from './ModalComponent';
 import ModalWrapper1 from './ModalWrapper1';
 import ResumeBuilder from './ResumeBuilder';
 import Snackbar from '../common/Snackbar';
+import PropTypes from 'prop-types';
+
+const Stepper = ({ currentStage, steps }) => {
+  return (
+    <div className="stepper">
+      {steps.map((step, index) => (
+        <div key={step} className="step-item">
+          {index !== 0 && (
+            <div
+              className={`step-line ${currentStage > index ? 'completed' : ''
+                }`}
+            ></div>
+          )}
+          <div
+            className={`step-circle ${currentStage === index + 1 ? 'active' : ''
+              } ${currentStage > index + 1 ? 'completed' : ''}`}
+          >
+            {currentStage > index + 1 ? '✔' : index + 1}
+          </div>
+          <p className="step-label">{step}</p>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+Stepper.propTypes = {
+  currentStage: PropTypes.number.isRequired,
+  steps: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 const ApplicantBasicDetails = () => {
   const { user } = useUserContext();
   let { number } = useParams();
-  
   number = parseInt(number, 10);
   const [isExperienceMenuOpen, setIsExperienceMenuOpen] = useState(false);
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
-  const [isSkillsMenuOpen, setIsSkillsMenuOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [currentStage, setCurrentStage] = useState(number);
   const [snackbars, setSnackbars] = useState([]);
-  const [error, setError] = useState('');
-  const [isNextDisabled, setIsNextDisabled] = useState(true);
-  const [isFormValid, setIsFormValid] = useState(false);
-  const[imageSrc, setImageSrc]= useState();
-  const [shouldBeHidden, setShouldBeHidden] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [resumeUploaded, setResumeUploaded] = useState(false);
+  const [isResponseSubmitted, setIsResponseSubmitted] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
-    email: user.email || "",
-    mobilenumber: user.mobilenumber || "",
+    email: user.email || '',
+    mobilenumber: user.mobilenumber || '',
   });
-  const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
     firstName: applicant.firstName,
@@ -49,12 +70,7 @@ const ApplicantBasicDetails = () => {
     alternatePhoneNumber: applicant.mobilenumber,
     email: applicant.email,
   };
-  const applicantProfileDTO = {
-    basicDetails: basicDetails,
-  };
   const [errors, setErrors] = useState({});
-
-
   const handleQualificationChange = (selected) => {
     setQualification(selected[0] || null);
     setSpecialization(null);
@@ -130,13 +146,8 @@ const handlePreferredJobLocationsChange = (selected) => {
 
 
   const [experience, setExperience] = useState('');
-  const [skills, setSkills] = useState([]);
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
   const [qualification, setQualification] = useState('');
   const [specialization, setSpecialization] = useState('');
-  const [selectedCities, setSelectedCities] = useState([]);
-  const [selectedSkills, setSelectedSkills] = useState([]);
   const [preferredJobLocations, setPreferredJobLocations] = useState([]);
   const [skillsRequired, setSkillsRequired] = useState([]);
   const navigate = useNavigate();
@@ -150,52 +161,17 @@ const handlePreferredJobLocationsChange = (selected) => {
 
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
   const skillsOptions = ['Java', 'C', 'C++', 'C Sharp', 'Python', 'HTML', 'CSS', 'JavaScript', 'TypeScript', 'Angular', 'React', 'Vue', 'JSP', 'Servlets', 'Spring', 'Spring Boot', 'Hibernate', '.Net', 'Django', 'Flask', 'SQL', 'MySQL', 'SQL-Server', 'Mongo DB', 'Selenium', 'Regression Testing', 'Manual Testing'];
-  const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada', 'Pune', 'Gurgaon'];
-
-  useEffect(() => {
-    setLoading(false);
-  }, []);
+  const cities = ['Chennai', 'Thiruvananthapuram', 'Bangalore', 'Hyderabad', 'Coimbatore', 'Kochi', 'Madurai', 'Mysore', 'Thanjavur', 'Pondicherry', 'Vijayawada', 'Pune', 'Gurgaon'];  
   
-   useEffect(() => {
+  useEffect(() => {
     const setFavicon = (url) => {
       let link = document.querySelector("link[rel*='icon']");
-
-      // if (!link) {
-      //   link = document.createElement('link');
-      //   link.rel = 'icon';
-      //   document.head.appendChild(link);
-      // }
-
       link.type = 'image/png';
       link.href = url;
     };
     console.log("image inserted ")
     setFavicon('/images/favicon.png'); // Path to your favicon
   }, []);
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
-        const newData = {
-          identifier: response.data.email,
-          password: response.data.password,
-        };
-        setRequestData(newData);
-
-      
-       
-      } catch (error) {
-        console.error('Error fetching applicant data:', error);
-      }
-    };
-    fetchData();
-  }, [user.id]);
-
-  useEffect(() => {
-    console.log(isFormValid);
-}, [isFormValid]);
 
 const validateForm1 = () => {
   const newErrors = {};
@@ -205,43 +181,26 @@ const validateForm1 = () => {
 
   if (!applicant.firstName) {
     newErrors.firstName = "First name is required";
-} else {
-    if (!validateInput('firstName', applicant.firstName)) {
-        newErrors.firstName = errors.firstName;
-    }
+} else if (!validateInput('firstName', applicant.firstName)) {
+    newErrors.firstName = errors.firstName;
 }
 
 if (!applicant.lastName) {
     newErrors.lastName = "Last name is required";
-} else {
-    if (!validateInput('lastName', applicant.lastName)) {
-        newErrors.lastName = errors.lastName;
-    }
+} else if (!validateInput('lastName', applicant.lastName)) {
+    newErrors.lastName = errors.lastName;
 }
 
 if (!applicant.mobilenumber) {
     newErrors.mobilenumber = "Mobile number is required";
-} else {
-    if (!validateInput('mobilenumber', applicant.mobilenumber)) {
-        newErrors.mobilenumber = errors.mobilenumber;
-    }
+} else if (!validateInput('mobilenumber', applicant.mobilenumber)) {
+    newErrors.mobilenumber = errors.mobilenumber;
 }
 
   setErrors(newErrors);
   return validFirstName && validLastName && validMobileNumber && 
          applicant.firstName && applicant.lastName && applicant.mobilenumber;
-};
-
-
-  const makeApiCall1 = async () => {
-    if (!validateForm1()) {
-      console.log(" returned in validation");
-      return false;
-    }
-   
-  };
-
- 
+}; 
   
   const makeApiCall2 = async () => {
    
@@ -261,22 +220,8 @@ if (!applicant.mobilenumber) {
     }
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      console.log(" returned during api call");
-     
-      // const putProfileResponse = await axiosInstance.post(
-      //   `${apiUrl}/applicantprofile/createprofile/${user.id}`,
-      //   applicantProfileDTO,
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${jwtToken}`,
-      //     },
-      //   }
-      // );
-      // console.log(" returned after api call");
- 
-     // Transform the payload
- 
-     const putProfileResponse = await axios.post(
+      console.log(" returned during api call"); 
+      await axios.post(
       `${apiUrl}/applicantprofile/createprofile/${user.id}`,
       applicantProfileDTO,
       {
@@ -301,7 +246,6 @@ async function updateZohoCRM() {
         First_Name: basicDetails.firstName,
         Email: basicDetails.email,
         Phone: basicDetails.alternatePhoneNumber,
-        // Lead_Status: "completed profile",
         Status_TS: "Completed Profile",
         Industry: "Software",
         Technical_Skills: applicantProfileDTO.skillsRequired
@@ -361,29 +305,7 @@ await updateZohoCRM();
 };
  
 delete transformedApplicantProfileDTO.preferredJobLocations;
-delete transformedApplicantProfileDTO.skillsRequired;
- 
-// const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzMjA0MzI1MjZjNTUzYzUxMzQi_pc';
-// const webhookPayload = {
-//   userId: user.id,
-//   profileData: transformedApplicantProfileDTO,
-// };
- 
-// const webhookResponse = await fetch(webhookUrl, {
-//   method: 'POST',
-//   headers: {
-//       'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify(webhookPayload),
-// });
- 
-//     if (!webhookResponse.ok) {
-//       throw new Error('Failed to send data to the webhook');
-//     }
- 
-//     console.log('Webhook response:', await webhookResponse.json());
- 
-   
+delete transformedApplicantProfileDTO.skillsRequired   
     } catch (error) {
       console.error('Error submitting form data:', error);
     }
@@ -470,60 +392,6 @@ delete transformedApplicantProfileDTO.skillsRequired;
     }
   };
 
-  const handleResumeUpload = async () => {
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const formData = new FormData();
-      formData.append('resume', resumeFile);
-      const response = await axios.post(
-        `${apiUrl}/applicant-pdf/${user.id}/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-      console.log(response.data);
-    
-      addSnackbar({ message: response.data, type: 'success' });
-      window.location.reload();
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-     
-     addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
-    }
-  };
-
-  const handleResumeBuilder = async () => {
-    const apiUrl1 = 'https://resume.bitlabs.in:5173/api/auth/login';
-    if (requestData) {
-      const requestOptions = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      };
-      fetch(apiUrl1, requestOptions)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then(data => {
-          const loginUrl = `https://resume.bitlabs.in:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
-          setLoginUrl(loginUrl);
-          
-          setIsModalOpen(true);
-        })
-        .catch(error => {
-          console.error('There was a problem with the fetch operation:', error);
-        });
-    }
-  };
-
   const validateFields = () => {
     const newErrors = {};
     
@@ -599,7 +467,8 @@ delete transformedApplicantProfileDTO.skillsRequired;
       const jwtToken = localStorage.getItem('jwtToken');
       const formData = new FormData();
       formData.append('resume', resumeFile);
-      const response = await axios.post(
+      setIsResponseSubmitted(true);
+      await axios.post(
         `${apiUrl}/applicant-pdf/${user.id}/upload`,
 
         formData,
@@ -609,7 +478,6 @@ delete transformedApplicantProfileDTO.skillsRequired;
           },
         }
       );
-      console.log(response.data);
       
       addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
 
@@ -620,45 +488,27 @@ delete transformedApplicantProfileDTO.skillsRequired;
       
     } catch (error) {
       console.error('Error uploading resume:', error);
-      
-      addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
-    }
+      setIsResponseSubmitted(false);
+      setResumeUploaded(false);
+      if (error.code === 'ERR_NETWORK') {
+        addSnackbar({ message: 'Please check your network and try again.', type: 'error' });
+      }
+      else{
+        addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
+      }    }
     resetForm();
    
    
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (currentStage === 1) {
-      if (!applicant.name) newErrors.name = 'Name is required';
-      if (!applicant.email) newErrors.email = 'Email is required';
-      if (!applicant.mobilenumber) newErrors.mobilenumber = 'Mobile number is required';
-      if (!experience) newErrors.experience = 'Experience is required';
-    } else if (currentStage === 2) {
-      if (!qualification) newErrors.qualification = 'Qualification is required';
-      if (!specialization) newErrors.specialization = 'Specialization is required';
-      if (!preferredJobLocations.length) newErrors.preferredJobLocations = 'At least one job location is required';
-      if (!skillsRequired.length) newErrors.skillsRequired = 'At least one skill is required';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const resetForm = () => {
+ const resetForm = () => {
     setApplicant({ name: '', email: '', mobilenumber: '' });
     setExperience('');
-    setSkills([]);
-    setCity('');
-    setState('');
     setQualification('');
     setSpecialization('');
-    setSelectedCities([]);
-    setSelectedSkills([]);
     setPreferredJobLocations([]);
     setSkillsRequired([]);
     setResumeFile(null);
-    setRequestData(null);
     setLoginUrl('');
     setSelectedFile(null);
   };
@@ -686,6 +536,22 @@ delete transformedApplicantProfileDTO.skillsRequired;
                   'Interior Designing','Fashion Designing','Hotel Management and Catering Technology','Pharmacy','Medical Laboratory Technology',
                  'Radiology and Imaging Technology'],  
   };
+
+   const handleLocationSelect = (option) => {
+    const updated = [...preferredJobLocations, option];
+    handlePreferredJobLocationsChange(updated);
+    setIsLocationMenuOpen(false);
+  };
+
+  const handleExperienceSelect = (option) => {
+    setExperience(option.label);
+    setIsExperienceMenuOpen(false);
+    setTimeout(() => {
+      const inputEl = document.querySelector('#experience input');
+      if (inputEl) inputEl.blur();
+    }, 0);
+  };
+
 
   const renderStageFields = () => {
     switch (currentStage) {
@@ -839,16 +705,8 @@ delete transformedApplicantProfileDTO.skillsRequired;
                   >
                     {results.map((option, index) => (
                       <li
-                        key={index}
-                        onClick={() => {
-                          setExperience(option.label);
-                          setIsExperienceMenuOpen(false);
-                          // Optional blur
-                          setTimeout(() => {
-                            const inputEl = document.querySelector('#experience input');
-                            if (inputEl) inputEl.blur();
-                          }, 0);
-                        }}
+                        key={option.label}
+                        onPointerDown={handleExperienceSelect.bind(null, option)}
                         style={{
                           padding: '3px 7px',
                           fontSize: '16px',
@@ -936,12 +794,8 @@ delete transformedApplicantProfileDTO.skillsRequired;
                     ) : (
                       results.map((option, index) => (
                         <li
-                          key={index}
-                          onClick={() => {
-                            const updated = [...preferredJobLocations, option];
-                            handlePreferredJobLocationsChange(updated);
-                            setIsLocationMenuOpen(false);
-                          }}
+                          key={option}
+                          onPointerDown={handleLocationSelect.bind(null, option)}
                           style={{
                             padding: '1px 10px',
                             fontSize: '16px',
@@ -990,7 +844,6 @@ delete transformedApplicantProfileDTO.skillsRequired;
         style={{
           display: 'flex',
           alignItems: 'center',
-          width: '318.25px',
           height: '47px',
           borderRadius: '8px',
           border: dragActive ? '2px dashed #000' : '1px solid #E5E5E5',
@@ -1007,10 +860,10 @@ delete transformedApplicantProfileDTO.skillsRequired;
           backgroundColor: '#F5F5F5',
         }}
       > 
-      <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
-<path d="M13.75 2H6.75C6.21957 2 5.71086 2.21071 5.33579 2.58579C4.96071 2.96086 4.75 3.46957 4.75 4V20C4.75 20.5304 4.96071 21.0391 5.33579 21.4142C5.71086 21.7893 6.21957 22 6.75 22H18.75C19.2804 22 19.7891 21.7893 20.1642 21.4142C20.5393 21.0391 20.75 20.5304 20.75 20V9L13.75 2Z" stroke="#9E9E9E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M13.75 2V9H20.75" stroke="#9E9E9E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+      <path d="M13.75 2H6.75C6.21957 2 5.71086 2.21071 5.33579 2.58579C4.96071 2.96086 4.75 3.46957 4.75 4V20C4.75 20.5304 4.96071 21.0391 5.33579 21.4142C5.71086 21.7893 6.21957 22 6.75 22H18.75C19.2804 22 19.7891 21.7893 20.1642 21.4142C20.5393 21.0391 20.75 20.5304 20.75 20V9L13.75 2Z" stroke="#9E9E9E"  strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M13.75 2V9H20.75" stroke="#9E9E9E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
         <input
           id="resume-text-input"
           type="text"
@@ -1020,10 +873,8 @@ delete transformedApplicantProfileDTO.skillsRequired;
           readOnly
           style={{
             width: '100%',
-            height: '100%',
             border: 'none',
             background: 'transparent',
-            height: '40px', // adjust as needed
  
       paddingLeft: '20px',
       paddingRight: '100px', // make room for button
@@ -1077,10 +928,6 @@ delete transformedApplicantProfileDTO.skillsRequired;
               <ModalWrapper1 isOpen={isModalOpen} onClose={closeModal} title="Build Your Resume">
         <ResumeBuilder />
       </ModalWrapper1>
-      {error && <div className="error-message">{error}</div>}
-              
-
-              
               <ModalComponent
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
@@ -1092,50 +939,9 @@ delete transformedApplicantProfileDTO.skillsRequired;
     }
   };
   
-  
-  
-
-  const Stepper = ({ currentStage }) => {
-    return (
-      <div className="stepper">
-        {steps.map((step, i) => (
-          <div key={i} className="step-item">
-            {i !== 0 && (
-              <div
-                className={`step-line ${
-                  currentStage > i  ? 'completed' : ''
-                }`}
-              ></div>
-            )}
-            <div
-              className={`step-circle ${
-                currentStage === i + 1 ? 'active' : ''
-              } ${currentStage > i + 1 ? 'completed' : ''}`}
-            >
-              {currentStage > i + 1 ? '✔' : i + 1}
-            </div>
-            <p className="step-label">{step}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
-  if (loading) {
-    return (
-      <div className="spinner-container">
-        <ClipLoader color="#0d6efd" loading={loading} size={50} />
-      </div>
-    );
-  }
-
-
   return (
-    <div class="component">
-       
-      <img className="top-left-svg" src={Logo} alt="Image" usemap="#image-map" />
-
-    
+    <div className="component">
+      <img className="top-left-svg" src={Logo} alt="Company Logo" />
     <div className="card-container">
     <div className="card1">
       <div className="header">
@@ -1143,7 +949,7 @@ delete transformedApplicantProfileDTO.skillsRequired;
         <p>Fill the form fields to go to the next step</p>
       </div>
       <div className="stepper-container">
-        <Stepper currentStage={currentStage} />
+        <Stepper currentStage={currentStage} steps={steps} />
       </div>
       <div className="form-container">
         <form onSubmit={handleSubmit} className="applicant-details-form">
@@ -1157,15 +963,11 @@ delete transformedApplicantProfileDTO.skillsRequired;
             {currentStage < 3 && (
               <button type="button" onClick={handleNext} className="form-button" >Next</button>
             )}
-            {currentStage === 3 && (
+            {currentStage == 3 && (
   <button
     type="submit"
     className="form-button"
-    disabled={!resumeUploaded}
-    style={{
-      opacity: resumeUploaded ? 1 : 0.6,
-      cursor: resumeUploaded ? 'pointer' : 'not-allowed',
-    }}
+    disabled={!resumeUploaded || isResponseSubmitted}
   >
     Submit
   </button>
@@ -1175,10 +977,10 @@ delete transformedApplicantProfileDTO.skillsRequired;
       </div>
     </div>
     </div>
-    {snackbars.map((snackbar, index) => (
+    {snackbars.map((snackbar) => (
         <Snackbar
-          key={index}
-          index={index}
+          key={snackbar.id}
+          index={snackbar.id}
           message={snackbar.message}
           type={snackbar.type}
           onClose={handleCloseSnackbar}
