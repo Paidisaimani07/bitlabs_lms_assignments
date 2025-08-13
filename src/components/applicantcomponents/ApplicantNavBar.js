@@ -194,8 +194,8 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     fetchAlertCount(); 
-  }, []);
-
+  }, [location.key]);
+  
   const fetchAlertCount = async () => {
     try {
       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
@@ -209,10 +209,6 @@ function ApplicantNavBar() {
     }
   };
 
-  const handleBellClick = () => {
-    
-    setAlertCount(0);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -295,7 +291,7 @@ function ApplicantNavBar() {
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
                      
-                      <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
+                      <span className="fa fa-bell notify-bell">
                         {alertCount > 0 && (
                           <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
                             {alertCount}
