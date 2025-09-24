@@ -28,12 +28,12 @@
   display: flex;
   gap: 10px;
   background-color: #f9f9f9;
-  padding: 8px 12px;
+  padding: 8px 22px;
   border-radius: 8px;
 }
 
 .oneminute-search-input {
-  padding: 8px 12px;
+  padding: 18px 12px;
   font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
