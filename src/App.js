@@ -112,6 +112,8 @@ function App() {
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-organization" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-edit-organization" element={<RecruiterHomePage />} />
+                <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
+
               
                 </>
               ) : (

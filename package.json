@@ -49,6 +49,7 @@
     "react-international-phone": "^4.2.5",
     "react-modal": "^3.16.1",
     "react-pdf": "^7.7.3",
+    "react-player": "^2.16.1",
     "react-progressbar-semicircle": "^1.2.1",
     "react-quill": "^2.0.0",
     "react-responsive": "^9.0.2",
@@ -63,17 +64,17 @@
     "wow.js": "^1.2.2"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "start:staging": "env-cmd -f .env.staging react-scripts start",
-  "start:production": "env-cmd -f .env.production react-scripts start",
-  "build:staging": "env-cmd -f .env.staging react-scripts build",
-  "build:production": "env-cmd -f .env.production react-scripts build",
-  "test:staging": "env-cmd -f .env.staging react-scripts test",
-  "test:production": "env-cmd -f .env.production react-scripts test"
-},
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start:staging": "env-cmd -f .env.staging react-scripts start",
+    "start:production": "env-cmd -f .env.production react-scripts start",
+    "build:staging": "env-cmd -f .env.staging react-scripts build",
+    "build:production": "env-cmd -f .env.production react-scripts build",
+    "test:staging": "env-cmd -f .env.staging react-scripts test",
+    "test:production": "env-cmd -f .env.production react-scripts test"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
