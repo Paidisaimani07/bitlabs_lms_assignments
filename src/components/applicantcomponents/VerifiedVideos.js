@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ReactPlayer from "react-player";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import "./VerifiedVideos.css";
+
+const preloadAll = true;
 
 const VerifiedVideos = () => {
   const { user } = useUserContext();
@@ -11,15 +13,19 @@ const VerifiedVideos = () => {
 
   const [videoList, setVideoList] = useState([]);
   const [filteredVideos, setFilteredVideos] = useState([]);
-  const [tags, setTags] = useState(["All"]); // ✅ will update from API
+  const [tags, setTags] = useState(["All"]);
   const [playingIndex, setPlayingIndex] = useState(null);
   const [watchedVideos, setWatchedVideos] = useState({});
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
-
   const [isWide, setIsWide] = useState(window.innerWidth >= 1300);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [playerReady, setPlayerReady] = useState(false);
+  const [playerBuffering, setPlayerBuffering] = useState(false);
+  const [durations, setDurations] = useState({}); // store videoId → duration
+
+  const playerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsWide(window.innerWidth >= 1300);
@@ -27,8 +33,9 @@ const VerifiedVideos = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ✅ Fetch videos
+  // fetch videos
   useEffect(() => {
+    let mounted = true;
     const fetchVideos = async () => {
       try {
         setLoading(true);
@@ -37,26 +44,40 @@ const VerifiedVideos = () => {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
 
-        if (res.data.length > 0) {
-          setVideoList(res.data);
-          setFilteredVideos(res.data);
+        if (!mounted) return;
+        const data = res.data || [];
 
-          // ✅ Extract unique tags from API response
-          const uniqueTags = [
-            "All",
-            ...new Set(
-              res.data
-                .map((v) => v.tags?.trim().toLowerCase()) // normalize
-                .filter(Boolean)
-            ),
-          ];
+        const normalized = data.map((v, idx) => ({
+          videoId: v.videoId ?? idx,
+          title: v.title ?? `Video ${idx + 1}`,
+          s3url: v.s3url,
+          thumbnail_url: v.thumbnail_url,
+          tags: v.tags ?? "",
+        }));
 
-          // ✅ Capitalize (beginner → Beginner)
-          const formattedTags = uniqueTags.map(
-            (t) => t.charAt(0).toUpperCase() + t.slice(1)
-          );
+        setVideoList(normalized);
+        setFilteredVideos(normalized);
 
-          setTags(formattedTags);
+        const uniqueTags = [
+          "All",
+          ...new Set(normalized.map((v) => v.tags?.trim().toLowerCase()).filter(Boolean)),
+        ];
+        const formattedTags = uniqueTags.map((t) =>
+          t === "All" ? "All" : t.charAt(0).toUpperCase() + t.slice(1)
+        );
+        setTags(formattedTags);
+
+        if (preloadAll) {
+          normalized.forEach((v) => {
+            if (v.s3url) {
+              const hv = document.createElement("video");
+              hv.src = v.s3url;
+              hv.preload = "auto";
+              hv.muted = true;
+              hv.style.display = "none";
+              document.body.appendChild(hv);
+            }
+          });
         }
       } catch (err) {
         console.error("Error fetching videos:", err);
@@ -66,28 +87,27 @@ const VerifiedVideos = () => {
     };
 
     fetchVideos();
+    return () => {
+      mounted = false;
+    };
   }, [userId]);
 
-  // ✅ Apply search & filter
+  // search & filter
   useEffect(() => {
-    let filtered = videoList;
-
+    let filtered = [...videoList];
     if (search.trim()) {
       filtered = filtered.filter((video) =>
         video.title?.toLowerCase().includes(search.toLowerCase())
       );
     }
-
     if (filter !== "All") {
       filtered = filtered.filter(
-        (video) => video.tags?.trim().toLowerCase() === filter.toLowerCase()
+        (video) => (video.tags ?? "").trim().toLowerCase() === filter.toLowerCase()
       );
     }
-
     setFilteredVideos(filtered);
   }, [search, filter, videoList]);
 
-  // ✅ Track watched
   const handleEnded = async (videoId) => {
     if (watchedVideos[videoId]) return;
     try {
@@ -108,16 +128,50 @@ const VerifiedVideos = () => {
     }
   };
 
+  const handleOpenPlayer = (index) => {
+    setPlayingIndex(index);
+    setPlayerReady(false);
+    setPlayerBuffering(true);
+    setModalOpen(true);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setPlayingIndex(null);
+    setPlayerReady(false);
+    setPlayerBuffering(false);
+    document.body.style.overflow = "";
+  };
+
+  const onPlayerReady = () => {
+    setPlayerReady(true);
+    setPlayerBuffering(false);
+  };
+
+  const onBuffer = () => setPlayerBuffering(true);
+  const onBufferEnd = () => setPlayerBuffering(false);
+
+  // format duration mm:ss
+  const formatTime = (seconds) => {
+    if (!seconds || isNaN(seconds)) return "00:00";
+    const m = Math.floor(seconds / 60)
+      .toString()
+      .padStart(2, "0");
+    const s = Math.floor(seconds % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${s}`;
+  };
+
   return (
     <div className="oneminute-container">
-      {/* ✅ Header */}
       <div className="oneminute-header">
         <h2
           className="oneminute-heading"
           style={{ marginLeft: isWide ? "330px" : "0px" }}
         >
-          Trending Technologies{" "}
-          <span className="oneminute-orange">Videos</span>
+          Trending Technologies <span className="oneminute-orange">Videos</span>
         </h2>
 
         <div className="oneminute-search-filter">
@@ -142,7 +196,6 @@ const VerifiedVideos = () => {
         </div>
       </div>
 
-      {/* ✅ Loader */}
       {loading ? (
         <div className="oneminute-loader-wrapper">
           <div className="oneminute-loader"></div>
@@ -154,48 +207,118 @@ const VerifiedVideos = () => {
           style={{ marginLeft: isWide ? "25%" : "20px" }}
         >
           {filteredVideos.length > 0 ? (
-            filteredVideos.map((video, index) => (
-              <div key={video.videoId || index} className="oneminute-card">
-                <div className="oneminute-player-wrapper">
-                  <ReactPlayer
-                    url={video.s3url}
-                    playing={playingIndex === index}
-                    controls
-                    muted
-                    width="100%"
-                    height="200px"
-                    light={video.thumbnail_url}
-                    playIcon={<div className="oneminute-play-btn">▶</div>}
-                    onClickPreview={() => setPlayingIndex(index)}
-                    onEnded={() => handleEnded(video.videoId)}
-                    config={{
-                      file: {
-                        attributes: {
-                          controlsList: "nodownload",
-                          disablePictureInPicture: true,
-                          preload: "auto",
-                        },
-                      },
-                    }}
-                  />
-                </div>
+            filteredVideos.map((video, index) => {
+              const isPlayingCard = playingIndex === index && modalOpen;
+              return (
+                <div
+                  key={video.videoId || index}
+                  className={`oneminute-card ${isPlayingCard ? "playing-card" : ""}`}
+                >
+                  <div className="oneminute-player-wrapper">
+                    <div className="thumb-wrapper">
+                      <img
+                        src={video.thumbnail_url || "/images/default-thumb.png"}
+                        alt={video.title}
+                        className="oneminute-thumb"
+                        draggable={false}
+                      />
 
-                {/* ✅ Meta */}
-                <div className="oneminute-video-meta">
-                  <img
-                    src="/images/favicon.png"
-                    alt="channel"
-                    className="oneminute-avatar"
-                  />
-                  <p className="oneminute-title">
-                    {video.title || `Video ${index + 1}`}
-                  </p>
+                      {/* real-time duration overlay */}
+                      {/* <div
+                        className={`oneminute-duration ${
+                          isPlayingCard ? "duration-active" : ""
+                        }`}
+                      >
+                        {durations[video.videoId]
+                          ? formatTime(durations[video.videoId])
+                          : "00:00"}
+                      </div> */}
+
+                      {watchedVideos[video.videoId] && (
+                        <div className="oneminute-watched-badge">Watched</div>
+                      )}
+
+                      <div
+                        className="oneminute-card-play"
+                        onClick={() => handleOpenPlayer(index)}
+                        role="button"
+                        aria-label={`Play ${video.title}`}
+                      >
+                        <div className="oneminute-play-icon">▶</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="oneminute-video-meta">
+                    <img
+                      src="/images/favicon.png"
+                      alt="channel"
+                      className="oneminute-avatar"
+                    />
+                    <div className="meta-texts">
+                      <p className="oneminute-title">
+                        {video.title || `Video ${index + 1}`}
+                      </p>
+                      {/* removed tags display */}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p>No videos found.</p>
           )}
+        </div>
+      )}
+
+      {modalOpen && playingIndex !== null && (
+        <div className="modal-overlay" onMouseDown={closeModal}>
+          <div
+            className="oneminute-modal-content"
+            onMouseDown={(e) => e.stopPropagation()}
+          >
+            {playerBuffering && (
+              <div className="modal-spinner">
+                <div className="spinner"></div>
+                <div className="buffer-text">Buffering...</div>
+              </div>
+            )}
+
+            <ReactPlayer
+              ref={playerRef}
+              url={filteredVideos[playingIndex].s3url}
+              playing={true}
+              controls={true}
+              width="100%"
+              height="100%"
+              onReady={onPlayerReady}
+              onBuffer={onBuffer}
+              onBufferEnd={onBufferEnd}
+              onEnded={() => {
+                handleEnded(filteredVideos[playingIndex].videoId);
+                closeModal();
+              }}
+              onDuration={(d) =>
+                setDurations((prev) => ({
+                  ...prev,
+                  [filteredVideos[playingIndex].videoId]: d,
+                }))
+              }
+              config={{
+                file: {
+                  attributes: {
+                    controlsList: "nodownload",
+                    disablePictureInPicture: true,
+                    preload: "auto",
+                    playsInline: true,
+                  },
+                },
+              }}
+            />
+            <button className="oneminute-modal-close" onClick={closeModal} aria-label="Close" style={{borderRadius: '20px'}}>
+              ✕
+            </button>
+          </div>
         </div>
       )}
     </div>
