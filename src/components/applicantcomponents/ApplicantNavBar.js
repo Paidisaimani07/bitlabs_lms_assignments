@@ -15,13 +15,15 @@ import logos from '../../images/profileIcon.svg';
 import ApplicantTakeTest from './ApplicantTakeTest';
 
 function ApplicantNavBar() {
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
+  const location = useLocation();
+  const hideSidebarRoutes = ["/applicant-hackathon", "/applicant-hackathon-details"];
+  const [isOpen, setIsOpen] = useState(
+     window.innerWidth >= 1302 &&  !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
   );
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   
-  const location = useLocation();
   const [url, setUrl] = useState('');
   const [loginUrl, setLoginUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -32,6 +34,7 @@ function ApplicantNavBar() {
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
   const frompath = location.state?.from;
+  const { pathname } = useLocation();
 
   const [showTestPopup, setShowTestPopup] = useState(false);
   const [testName, setTestName] = useState('');
@@ -40,7 +43,28 @@ function ApplicantNavBar() {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
 
-  
+  useEffect(() => {
+  const updateSidebarClasses = () => {
+    const shouldHide = hideSidebarRoutes.some(route =>
+      location.pathname === route || location.pathname.startsWith(route + "/")
+    );
+
+    if (window.innerWidth >= 1301 && !shouldHide) {
+     
+      document.body.classList.add("hide-hamburger");
+    } else {
+      document.body.classList.add("close-sidebar");
+      document.body.classList.remove("hide-hamburger");
+    }
+  };
+
+  window.addEventListener("resize", updateSidebarClasses);
+
+  updateSidebarClasses();
+
+  return () => window.removeEventListener("resize", updateSidebarClasses);
+}, [pathname]);
+
   const handleOutsideClick = (event) => {
     const accountElement = document.querySelector(".account"); 
 
@@ -118,8 +142,10 @@ function ApplicantNavBar() {
     setIsOpen(!isOpen);
     if (hamburgerClass === 'fa fa-bars') {
       setHamburgerClass('fa fa-arrow-left');
+      document.body.classList.remove("close-sidebar");
     } else {
       setHamburgerClass('fa fa-bars');
+      document.body.classList.add("close-sidebar");
     }
   };
 
@@ -130,50 +156,60 @@ function ApplicantNavBar() {
     setHamburgerClass('fa fa-bars');
   };
 
-  useEffect(() => {
+ useEffect(() => {
     const handleResize = () => {
-      setHamburgerClass('fa fa-bars');
-      setIsOpen(window.innerWidth >= 1302);
+        const shouldHide = hideSidebarRoutes.some(route =>
+            pathname.startsWith(route)
+        );
+        if (shouldHide) {
+            setIsOpen(false);
+        } else {
+            setIsOpen(window.innerWidth >= 1302);
+        }
+        setHamburgerClass('fa fa-bars');
     };
-    window.addEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); 
+
     $("#left-menu-btn").on("click", function (e) {
-      e.preventDefault();
-      if ($("body").hasClass("sidebar-enable") == true) {
-        $("body").removeClass("sidebar-enable");
-        $.cookie("isButtonActive", "0");
-      } else {
-        $("body").addClass("sidebar-enable");
-        $.cookie("isButtonActive", "1");
-      }
-      1400 <= $(window).width()
-        ? $("body").toggleClass("show-job")
-        : $("body").removeClass("show-job");
-      var width = $(window).width();
-      if (width < 1400) {
-        $.cookie('isButtonActive', null);
-      }
+        e.preventDefault();
+        if ($("body").hasClass("sidebar-enable")) {
+            $("body").removeClass("sidebar-enable");
+            $.cookie("isButtonActive", "0");
+        } else {
+            $("body").addClass("sidebar-enable");
+            $.cookie("isButtonActive", "1");
+        }
+        if ($(window).width() >= 1400) {
+            $("body").toggleClass("show-job");
+        } else {
+            $("body").removeClass("show-job");
+            $.cookie('isButtonActive', null);
+        }
     });
     if ($.cookie("isButtonActive") == 1) {
-      $("body").addClass("sidebar-enable show-job");
+        $("body").addClass("sidebar-enable show-job");
     }
     fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-      },
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+        },
     })
-      .then(response => response.blob())
-      .then(blob => {
+    .then(response => response.blob())
+    .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
-      })
-      .catch(error => {
-        console.error('Error fetching image URL:', error);
-        setImageSrc(null);
-      });
+    })
+    .catch(() => {
+        setImageSrc('../images/user/avatar/image-01.jpg');
+    });
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+        window.removeEventListener("resize", handleResize);
+        $("#left-menu-btn").off("click");
     };
-  }, [user.id]);
+}, [pathname, user.id]);
 
  
   const handleLogout =  () => {
@@ -269,7 +305,7 @@ function ApplicantNavBar() {
             <div className="col-md-12">
               <div className="sticky-area-wrap">
                 <div className="header-ct-left">
-                  {window.innerWidth < 1400 && (
+                  {window.innerWidth < 2000 && (
                     <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
                    
                   )}
@@ -466,7 +502,17 @@ function ApplicantNavBar() {
 </span>
 </Link>
           </li>
-        
+        <li>
+                <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
+                  <span className="dash-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path d="M17 4V2H7v2H2v5c0 2.8 2.2 5 5 5h.2A6.98 6.98 0 0 0 11 16.9V19H8v3h8v-3h-3v-2.1c1.8-.5 3.2-1.8 3.8-3.5h.2c2.8 0 5-2.2 5-5V4h-5ZM7 12c-1.7 0-3-1.3-3-3V6h3v6Zm13-3c0 1.7-1.3 3-3 3V6h3v3Z"/>
+</svg>
+
+                  </span>
+                  <span className="dash-titles">Innovation Arena</span>
+                </Link>
+              </li>
 
             </ul>
           
