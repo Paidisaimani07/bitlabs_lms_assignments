@@ -642,7 +642,7 @@ const ApplicantDashboard = () => {
                         <div className="resumecard-content">
                           <div className="resumecard-text">
                             <div className="resumecard-heading">
-                              <h2 className="heading1">Trending Interview Preparation Videos
+                              <h2 className="heading1">TechBuzz Shorts
                                 <span
                                   style={{
                                     color: '#F00', // Red text color

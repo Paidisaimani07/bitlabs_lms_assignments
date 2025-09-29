@@ -171,7 +171,7 @@ const VerifiedVideos = () => {
           className="oneminute-heading"
           style={{ marginLeft: isWide ? "330px" : "0px" }}
         >
-          Trending Technologies <span className="oneminute-orange">Videos</span>
+   TechBuzz  <span className="oneminute-orange">Shorts</span>
         </h2>
 
         <div className="oneminute-search-filter">
