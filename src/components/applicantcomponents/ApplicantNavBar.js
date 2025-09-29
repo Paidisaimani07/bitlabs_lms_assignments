@@ -194,8 +194,8 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     fetchAlertCount(); 
-  }, []);
-
+  }, [location.key]);
+  
   const fetchAlertCount = async () => {
     try {
       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
@@ -209,10 +209,6 @@ function ApplicantNavBar() {
     }
   };
 
-  const handleBellClick = () => {
-    
-    setAlertCount(0);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -295,7 +291,7 @@ function ApplicantNavBar() {
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
                      
-                      <span className="fa fa-bell notify-bell" onClick={handleBellClick}>
+                      <span className="fa fa-bell notify-bell">
                         {alertCount > 0 && (
                           <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
                             {alertCount}
@@ -471,7 +467,18 @@ function ApplicantNavBar() {
 </Link>
           </li>
         
+ <li>
+                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                  <span className="dash-icon blog-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                    </svg>
+                  </span>
 
+                  <span className="dash-titles">TechVibes</span>
+                </Link>
+              </li>
             </ul>
           
           </div>

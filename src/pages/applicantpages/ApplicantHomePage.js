@@ -22,6 +22,9 @@ import ApplicantBasicDetails from '../../components/applicantcomponents/Applican
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
 import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTakeTest';
 import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
+import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
+import BlogSingle from '../../components/applicantcomponents/BlogSingle';
+
 
 
 function ApplicantHomePage() {
@@ -114,9 +117,19 @@ function ApplicantHomePage() {
         case '/applicant-verified-badges':
           setActiveRoute('badges');
         break;
-      default:
-        setActiveRoute('');
+        case '/applicant-blog-list':
+          setActiveRoute('blogs');
         break;
+         default:
+      // 👇 check if route starts with /blogs/ (for blog single page)
+      if (pathname.startsWith('/blogs/')) {
+        setActiveRoute('blogsingle');
+      } else {
+        setActiveRoute('');
+      }
+      break;
+  
+  
     }
   };
   React.useEffect(() => {
@@ -143,6 +156,9 @@ function ApplicantHomePage() {
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
      {activeRoute === 'taketest' && <ApplicantTakeTest />}
      {activeRoute === 'badges' && <VerifiedBadges />}
+      {activeRoute === 'blogs' && <ApplicantBlogsList />}
+      {activeRoute === 'blogsingle' && <BlogSingle />}
+
       </div> 
   )
 }
