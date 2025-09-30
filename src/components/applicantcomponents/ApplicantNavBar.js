@@ -467,7 +467,18 @@ function ApplicantNavBar() {
 </Link>
           </li>
         
+ <li>
+                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                  <span className="dash-icon blog-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                    </svg>
+                  </span>
 
+                  <span className="dash-titles">TechVibes</span>
+                </Link>
+              </li>
             </ul>
           
           </div>
