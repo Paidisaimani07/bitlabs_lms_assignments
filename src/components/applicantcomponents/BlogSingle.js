@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import "./BlogSingle.css";
+import BackButton from "../common/BackButton";
 
 export default function BlogSingle() {
   const { id } = useParams();
@@ -35,7 +36,10 @@ export default function BlogSingle() {
     <div className="blog-single-container">
       {/* Blog Header */}
       <div className="blog-header">
+        <div className="back-btn-wrapper-topsingle">
+          <BackButton />
         <h1 className="blog-title-single">{blog.title}</h1>
+</div>
         <p className="blog-meta">
           By <span className="author">{blog.author}</span> •{" "}
           {formatDate(blog.createdAt)}

@@ -41,7 +41,7 @@
 .blog-img-modern {
   width: 100%;
   height: 120px;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 /* Content */

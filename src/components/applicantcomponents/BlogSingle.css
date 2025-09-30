@@ -12,19 +12,27 @@
 .blog-header {
   margin-bottom: 2rem;
   text-align: center;
+  
+}
+.back-btn-wrapper-topsingle{
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .blog-title-single {
-  font-size: 2rem!important;
+  font-size: 1.7rem!important;
   font-weight: 600 !important;
   color: #111827;
+  margin-left: 50px;
   font-family: Plus Jakarta Sans, sans-serif !important;
 }
 
 .blog-meta {
   font-size: 0.9rem;
+  font-weight: 600;
   color: #6b7280;
-  margin-top: 0.3rem;
+  margin-top: 0.2rem;
 }
 
 .blog-meta .author {
@@ -46,7 +54,7 @@
   max-width: 320px;
   height: auto;
   border-radius: 12px;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 /* Ensure text wraps around */
@@ -90,7 +98,7 @@
 .back-btn {
   padding: 0.6rem 1.2rem;
   background: #f97316;
-  color: #fff;
+  color: #ffffff !important;
   border-radius: 8px;
   font-weight: 600;
   text-decoration: none;
