@@ -6,7 +6,7 @@ import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBa
 import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
 import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
 import ApplicantViewProfile from '../../components/applicantcomponents/ApplicantViewProfile';
-import { useLocation,useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 import ApplicantFindJobs from '../../components/applicantcomponents/ApplicantFindJobs';
 import ApplicantViewJob from '../../components/applicantcomponents/ApplicantViewJob';
@@ -22,9 +22,10 @@ import ApplicantBasicDetails from '../../components/applicantcomponents/Applican
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
 import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTakeTest';
 import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
+import Hackathon from '../../components/applicantcomponents/hackathon';
+import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
 import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
 import BlogSingle from '../../components/applicantcomponents/BlogSingle';
-
 
 
 function ApplicantHomePage() {
@@ -33,6 +34,7 @@ function ApplicantHomePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const { id } = useParams();
   const userId = user.id;
   useEffect(() => {
     
@@ -117,6 +119,12 @@ function ApplicantHomePage() {
         case '/applicant-verified-badges':
           setActiveRoute('badges');
         break;
+         case '/applicant-hackathon':
+        setActiveRoute('hackathon')
+        break;
+      case `/applicant-hackathon-details/${id}`:
+        setActiveRoute('hackDetails');
+        break;
         case '/applicant-blog-list':
           setActiveRoute('blogs');
         break;
@@ -156,9 +164,10 @@ function ApplicantHomePage() {
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
      {activeRoute === 'taketest' && <ApplicantTakeTest />}
      {activeRoute === 'badges' && <VerifiedBadges />}
+      {activeRoute === 'hackathon' && <Hackathon />}
+      {activeRoute === 'hackDetails' && <HackathonDetails />}
       {activeRoute === 'blogs' && <ApplicantBlogsList />}
       {activeRoute === 'blogsingle' && <BlogSingle />}
-
       </div> 
   )
 }
