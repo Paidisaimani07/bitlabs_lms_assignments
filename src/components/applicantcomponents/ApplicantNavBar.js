@@ -514,8 +514,30 @@ useEffect(() => {
 </span>
 </Link>
           </li>
-        
+        <li>
+                <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
+                  <span className="dash-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path d="M17 4V2H7v2H2v5c0 2.8 2.2 5 5 5h.2A6.98 6.98 0 0 0 11 16.9V19H8v3h8v-3h-3v-2.1c1.8-.5 3.2-1.8 3.8-3.5h.2c2.8 0 5-2.2 5-5V4h-5ZM7 12c-1.7 0-3-1.3-3-3V6h3v6Zm13-3c0 1.7-1.3 3-3 3V6h3v3Z"/>
+</svg>
 
+                  </span>
+                  <span className="dash-titles">Innovation Arena</span>
+                </Link>
+              </li>
+        
+ <li>
+                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                  <span className="dash-icon blog-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                    </svg>
+                  </span>
+
+                  <span className="dash-titles">TechVibes</span>
+                </Link>
+              </li>
             </ul>
           
           </div>
