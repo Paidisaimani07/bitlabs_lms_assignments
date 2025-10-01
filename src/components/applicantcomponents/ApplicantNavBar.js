@@ -13,6 +13,7 @@ import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
 import ApplicantTakeTest from './ApplicantTakeTest';
+import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
 
 function ApplicantNavBar() {
   const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
@@ -338,6 +339,10 @@ function ApplicantNavBar() {
                           <span className="icon-change-passwords" /> Change Password
                         </a>
                       </div>
+                       <div className="sub-account-item">
+
+                                      <NotificationToggleWeb className="icon-change-passwords"/>
+                                               </div>
                       <div className="sub-account-item">
                         
                          <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>

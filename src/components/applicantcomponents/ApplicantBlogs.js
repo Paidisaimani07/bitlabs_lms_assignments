@@ -123,8 +123,9 @@ export default function ApplicantBlogsList() {
       <div className="blogs-containerss">
         <div className="blogs-grid">
           {filteredBlogs.map((blog) => (
-            <div key={blog.id} className="blog-card-modern">
-              <img
+             <div key={blog.id} className="blog-card-modern"
+              onClick={() => handleLearnMore(blog.id)}>
+          <img
                 src={blog.imageUrl}
                 alt={blog.title}
                 className="blog-img-modern"
