@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./hackathon.css";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import axios from "axios";
@@ -8,21 +8,30 @@ import { useNavigate } from "react-router-dom";
 const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
     const [registrations, setRegistrations] = useState([]);
-    const [winners, setWinners] = useState({}); // NEW: winner info map
+    const [winners, setWinners] = useState({});
     const [searchField, setSearchField] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [statusFilter, setStatusFilter] = useState("MY");
     const [loading, setLoading] = useState(false);
+    const dropdownRef = useRef(null);
 
     const { user } = useUserContext();
     const userId = user.id;
     const navigate = useNavigate();
 
+    const emptyMessages = {
+        MY: "You haven't registered for any hackathons.",
+        RECOMMENDED: "No hackathons match your skill set.",
+        ACTIVE: "No hackathons are active for now. Come again later.",
+        UPCOMING: "No hackathons to show.",
+        COMPLETED: "No completed hackathons."
+    };
+
+
     const getLabel = (field) => {
         switch (field) {
-            case "title": return "Title";
-            case "eligibility": return "Eligibility";
+            case "title": return "Hackathon Title";
             case "allowedTechnologies": return "Technologies";
             case "startAt": return "Start Date";
             case "endAt": return "End Date";
@@ -37,7 +46,7 @@ const Hackathon = () => {
             case "UPCOMING": return `${apiUrl}/api/hackathons/upcoming`;
             case "COMPLETED": return `${apiUrl}/api/hackathons/completed`;
             case "MY":
-            default: return `${apiUrl}/api/hackathons/applicant/${userId}`;
+            default: return `${apiUrl}/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
         }
     };
 
@@ -46,58 +55,57 @@ const Hackathon = () => {
             setLoading(true);
             const jwtToken = localStorage.getItem("jwtToken");
 
-            const response = await axios.get(getApiUrlByTab(tabKey), {
+            const hackathonsRes = await axios.get(getApiUrlByTab(tabKey), {
                 headers: { Authorization: `Bearer ${jwtToken}` },
             });
 
-            const normalized = response.data
-                .map((h) => {
-                    const toDate = (arr) => {
-                        if (!arr) return null;
-                        const [year, month = 1, day = 1, hour = 0, minute = 0, second = 0, nano = 0] = arr;
-                        return new Date(year, month - 1, day, hour, minute, second, Math.floor(nano / 1_000_000));
-                    };
-                    return {
-                        ...h,
-                        startAt: h.startAt ? toDate(h.startAt) : null,
-                        endAt: h.endAt ? toDate(h.endAt) : null,
-                        createdAt: h.createdAt ? toDate(h.createdAt) : null,
-                    };
-                })
-                .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-
-            setHackathons(normalized);
+            const normalized = hackathonsRes.data.map(h => ({
+                ...h,
+                createdAt: h.createdAt ? new Date(h.createdAt).getTime() : 0,
+            }));
+            setHackathons(normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
 
             if (tabKey === "COMPLETED" || tabKey === "MY") {
                 const winnerIds = [...new Set(normalized.map(h => h.winner).filter(Boolean))];
                 if (winnerIds.length > 0) {
-                    const winnersResponse = await axios.post(
+                    axios.post(
                         `${apiUrl}/applicant-image/hackathon/winners`,
                         winnerIds,
                         { headers: { Authorization: `Bearer ${jwtToken}` } }
-                    );
-                    const winnersMap = {};
-                    winnersResponse.data.forEach(w => {
-                        winnersMap[w.applicantId] = w;
-                    });
-                    setWinners(winnersMap);
+                    )
+                        .then(winnersRes => {
+                            const winnersMap = {};
+                            winnersRes.data.forEach(w => {
+                                winnersMap[w.applicantId] = w;
+                            });
+                            setWinners(winnersMap);
+                        })
+                        .catch(err => {
+                            console.error("Error fetching winners:", err);
+                            setWinners({});
+                        });
+                } else {
+                    setWinners({});
                 }
             } else {
                 setWinners({});
             }
+
         } catch (error) {
             console.error("Error fetching hackathons:", error);
             setHackathons([]);
+            setWinners({});
         } finally {
             setLoading(false);
         }
     };
 
+
     const fetchRegistrations = async () => {
         try {
             const jwtToken = localStorage.getItem("jwtToken");
             const response = await axios.get(
-                `${apiUrl}/hackathons/applicant/${userId}/getAllRegistrations`,
+                `${apiUrl}/hackathons/${userId}/getAllRegistrationStatus`,
                 { headers: { Authorization: `Bearer ${jwtToken}` } }
             );
             setRegistrations(response.data || []);
@@ -106,6 +114,20 @@ const Hackathon = () => {
             setRegistrations([]);
         }
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
 
     useEffect(() => {
         fetchHackathons(statusFilter);
@@ -154,14 +176,13 @@ const Hackathon = () => {
                     </div>
 
                     <div className="filter-section">
-                        <div className="filter-box custom-dropdown" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                        <div className="filter-box custom-dropdown" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
                             {getLabel(searchField)} <span className="arrow">▼</span>
                             {dropdownOpen && (
                                 <ul className="dropdown-list">
                                     {[
                                         { value: "all", label: "All" },
-                                        { value: "title", label: "Title" },
-                                        { value: "eligibility", label: "Eligibility" },
+                                        { value: "title", label: "Hackathon Title" },
                                         { value: "allowedTechnologies", label: "Technologies" },
                                         { value: "startAt", label: "Start Date" },
                                         { value: "endAt", label: "End Date" },
@@ -187,6 +208,10 @@ const Hackathon = () => {
 
                 {loading ? (
                     <div className="loading"></div>
+                ) : filteredHackathons.length === 0 ? (
+                    <div className="no-results-message" style={{ padding: "20px", fontSize: "18px", textAlign: "center" }}>
+                        {emptyMessages[statusFilter] || "No hackathons found."}
+                    </div>
                 ) : (
                     <div className="newCards-grid">
                         {filteredHackathons.map(hackathon => {

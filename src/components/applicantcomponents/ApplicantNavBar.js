@@ -156,47 +156,59 @@ function ApplicantNavBar() {
     setHamburgerClass('fa fa-bars');
   };
 
- useEffect(() => {
-    const handleResize = () => {
-        const shouldHide = hideSidebarRoutes.some(route =>
-            pathname.startsWith(route)
-        );
-        if (shouldHide) {
-            setIsOpen(false);
-        } else {
-            setIsOpen(window.innerWidth >= 1302);
-        }
-        setHamburgerClass('fa fa-bars');
-    };
+useEffect(() => {
+  const handleResize = () => {
+    const shouldHide = hideSidebarRoutes.some(route =>
+      pathname.startsWith(route)
+    );
 
-    window.addEventListener("resize", handleResize);
-    handleResize(); 
+    if (shouldHide) {
+      setIsOpen(false);
+      document.body.classList.add("close-sidebar");
+    } else {
+      const open = window.innerWidth >= 1302;
+      setIsOpen(open);
 
-    $("#left-menu-btn").on("click", function (e) {
-        e.preventDefault();
-        if ($("body").hasClass("sidebar-enable")) {
-            $("body").removeClass("sidebar-enable");
-            $.cookie("isButtonActive", "0");
-        } else {
-            $("body").addClass("sidebar-enable");
-            $.cookie("isButtonActive", "1");
-        }
-        if ($(window).width() >= 1400) {
-            $("body").toggleClass("show-job");
-        } else {
-            $("body").removeClass("show-job");
-            $.cookie('isButtonActive', null);
-        }
-    });
-    if ($.cookie("isButtonActive") == 1) {
-        $("body").addClass("sidebar-enable show-job");
+      if (open) {
+        document.body.classList.remove("close-sidebar");
+      } else {
+        document.body.classList.add("close-sidebar");
+      }
     }
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-        headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-    })
-    .then(response => response.blob())
+
+    setHamburgerClass("fa fa-bars");
+  };
+
+  window.addEventListener("resize", handleResize);
+  handleResize();
+
+  $("#left-menu-btn").on("click", function (e) {
+    e.preventDefault();
+    if ($("body").hasClass("sidebar-enable")) {
+      $("body").removeClass("sidebar-enable");
+      $.cookie("isButtonActive", "0");
+    } else {
+      $("body").addClass("sidebar-enable");
+      $.cookie("isButtonActive", "1");
+    }
+    if ($(window).width() >= 1400) {
+      $("body").toggleClass("show-job");
+    } else {
+      $("body").removeClass("show-job");
+      $.cookie("isButtonActive", null);
+    }
+  });
+
+  if ($.cookie("isButtonActive") == 1) {
+    $("body").addClass("sidebar-enable show-job");
+  }
+
+  fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+    },
+  })
+   .then(response => response.blob())
     .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);

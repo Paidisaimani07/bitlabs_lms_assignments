@@ -25,20 +25,32 @@ const HackathonDetails = () => {
     });
     const [submitting, setSubmitting] = useState(false);
     const addSnackbar = (snackbar) => {
-        setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+        const id = Date.now();
+        setSnackbars((prevSnackbars) => [
+            ...prevSnackbars,
+            { ...snackbar, id }
+        ]);
+
+        setTimeout(() => {
+            setSnackbars((prevSnackbars) =>
+                prevSnackbars.filter((s) => s.id !== id)
+            );
+        }, 3000);
     };
 
-    const handleCloseSnackbar = (index) => {
-        setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
-
+    const handleCloseSnackbar = (id) => {
+        setSnackbars((prevSnackbars) =>
+            prevSnackbars.filter((snackbar) => snackbar.id !== id)
+        );
     };
+
 
     useEffect(() => {
         const fetchHackathon = async () => {
             try {
                 const jwtToken = localStorage.getItem("jwtToken");
                 const response = await axios.get(
-                    `${apiUrl}/api/hackathons/${id}/${userId}`,
+                    `${apiUrl}/api/hackathons/getHackathonDetails/${id}/${userId}`,
                     { headers: { Authorization: `Bearer ${jwtToken}` } }
                 );
                 setHackathon(response.data);
@@ -56,7 +68,7 @@ const HackathonDetails = () => {
             try {
                 const jwtToken = localStorage.getItem("jwtToken");
                 const res = await axios.get(
-                    `${apiUrl}/hackathons/${id}/getRegistration/${userId}`,
+                    `${apiUrl}/hackathons/${id}/getRegistrationStatus/${userId}`,
                     { headers: { Authorization: `Bearer ${jwtToken}` } }
                 );
                 setRegistration(res.data);
@@ -72,7 +84,7 @@ const HackathonDetails = () => {
         try {
             const jwtToken = localStorage.getItem("jwtToken");
             await axios.post(
-                `${apiUrl}/hackathons/${id}/register/${userId}`,
+                `${apiUrl}/hackathons/${id}/registerForHackathon/${userId}`,
                 {},
                 { headers: { Authorization: `Bearer ${jwtToken}` } }
             );
@@ -398,7 +410,7 @@ const HackathonDetails = () => {
                 {snackbars.map((snackbar) => (
                     <Snackbar
                         key={snackbar.id}
-                        index={snackbar.id}
+                        id={snackbar.id}
                         message={snackbar.message}
                         type={snackbar.type}
                         onClose={handleCloseSnackbar}
