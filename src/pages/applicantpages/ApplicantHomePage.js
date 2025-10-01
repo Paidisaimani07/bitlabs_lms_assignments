@@ -24,6 +24,8 @@ import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTak
 import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
 import Hackathon from '../../components/applicantcomponents/hackathon';
 import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
+import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
+import BlogSingle from '../../components/applicantcomponents/BlogSingle';
 
 
 function ApplicantHomePage() {
@@ -123,9 +125,19 @@ function ApplicantHomePage() {
       case `/applicant-hackathon-details/${id}`:
         setActiveRoute('hackDetails');
         break;
-      default:
-        setActiveRoute('');
+        case '/applicant-blog-list':
+          setActiveRoute('blogs');
         break;
+         default:
+      // 👇 check if route starts with /blogs/ (for blog single page)
+      if (pathname.startsWith('/blogs/')) {
+        setActiveRoute('blogsingle');
+      } else {
+        setActiveRoute('');
+      }
+      break;
+  
+  
     }
   };
   React.useEffect(() => {
@@ -154,6 +166,8 @@ function ApplicantHomePage() {
      {activeRoute === 'badges' && <VerifiedBadges />}
       {activeRoute === 'hackathon' && <Hackathon />}
       {activeRoute === 'hackDetails' && <HackathonDetails />}
+      {activeRoute === 'blogs' && <ApplicantBlogsList />}
+      {activeRoute === 'blogsingle' && <BlogSingle />}
       </div> 
   )
 }
