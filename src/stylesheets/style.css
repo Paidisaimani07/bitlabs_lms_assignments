@@ -3586,8 +3586,13 @@ flex-shrink: 0;
 
 @media (min-width: 1301px) {
   #header .sticky-area-wrap .header-ct-left #hamburger {
-      display: none !important;
+      display: block !important;
   }
+
+  body.hide-hamburger #header .sticky-area-wrap .header-ct-left #hamburger {
+    display: none !important;
+}
+
 }
 
 @media (max-width: 1200px) {
@@ -3636,7 +3641,7 @@ flex-shrink: 0;
   }
 }
 
-@media (min-width: 551px) and (max-width: 1290px) {
+@media (min-width: 551px) and (max-width: 1300px) {
   .left-menu {
     width: 100% !important;
     margin: 0 !important;

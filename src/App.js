@@ -91,6 +91,8 @@ function App() {
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-take-test" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                <Route path="/applicant-hackathon" element={<ApplicantHomePage />} />
+                <Route path="/applicant-hackathon-details/:id" element={<ApplicantHomePage/>}/>
                 <Route path="/applicant-blog-list" element={<ApplicantHomePage />} />
                 {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
