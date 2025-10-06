@@ -26,7 +26,7 @@ import Hackathon from '../../components/applicantcomponents/hackathon';
 import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
 import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
 import BlogSingle from '../../components/applicantcomponents/BlogSingle';
-
+import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -128,6 +128,9 @@ function ApplicantHomePage() {
         case '/applicant-blog-list':
           setActiveRoute('blogs');
         break;
+        case '/applicant-mentorconnect':
+          setActiveRoute('mentor');
+        break;
          default:
       // 👇 check if route starts with /blogs/ (for blog single page)
       if (pathname.startsWith('/blogs/')) {
@@ -168,6 +171,7 @@ function ApplicantHomePage() {
       {activeRoute === 'hackDetails' && <HackathonDetails />}
       {activeRoute === 'blogs' && <ApplicantBlogsList />}
       {activeRoute === 'blogsingle' && <BlogSingle />}
+       {activeRoute === 'mentor' && <ApplicantMentorConnect />}
       </div> 
   )
 }
