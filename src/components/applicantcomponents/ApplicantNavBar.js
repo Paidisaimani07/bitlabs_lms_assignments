@@ -560,6 +560,51 @@ useEffect(() => {
   New
 </span>
 </Link>
+
+
+<Link 
+  onClick={hideMenu} 
+  to="/applicant-verified-videos" 
+  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
+  style={{ 
+    display: 'inline-flex', 
+    alignItems: 'center', 
+    textDecoration: 'none', 
+    marginTop: '13px' 
+  }}
+>
+  <span 
+    className="dash-icon" 
+    style={{
+      display: 'inline-block', 
+      transition: 'fill 0.3s ease',
+      marginRight: '12px',
+    }}
+  >
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none"
+      style={{ 
+        fill: location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888" 
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
+      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888"} 
+    >
+      {/* 🎥 Video Shorts Icon */}
+      <path d="M10 16.5L16 12L10 7.5V16.5ZM21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3ZM21 19H3V5H21V19Z"/>
+    </svg>
+  </span>
+
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>
+    Tech Buzz Shorts
+  </span>
+
+ 
+</Link>
+
           </li>
         <li>
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>

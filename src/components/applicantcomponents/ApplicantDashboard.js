@@ -635,6 +635,59 @@ const ApplicantDashboard = () => {
                     </div>
                   </div>
                 </div>
+                   {!showIcon && (
+                  <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
+                    <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFF9E3', fontFamily: 'Plus Jakarta Sans', fontWeight: '500' }}>
+                      <div className={!isWideScreen ? 'resumecard' : ''}>
+                        <div className="resumecard-content">
+                          <div className="resumecard-text">
+                            <div className="resumecard-heading">
+                              <h2 className="heading1">TechBuzz Shorts
+                                <span
+                                  style={{
+                                    color: '#F00', // Red text color
+                                    border: '1px solid var(--Color-2, #F00)', // Red border
+                                    borderRadius: '13px', // Rounded corners
+                                    padding: '3px 8px', // Spacing around text
+                                    marginLeft: '15px', // Space between "Verified badges" and "New"
+                                    fontSize: '10px', // Adjust font size as needed
+                                    // fontFamily:'Inter',
+                                    fontStyle: 'normal',
+                                    fontWeight: '500',
+                                    lineHeight: 'normal',
+                                  }}
+                                >
+                                  New
+                                </span>
+                              </h2>
+                              <div className="" style={{ fontSize: '16.8px', color: '#6F6F6F', fontWeight: '500', fontFamily: 'Plus Jakarta Sans', fontStyle: 'normal' }}>
+                                        Achieve your dream job faster by gaining knowledge through one-minute videos on aptitude and technical skills.                              </div>
+                            </div>
+                            <div className="resumecard-button">
+                              <Link
+                                to="/applicant-verified-videos"
+                                className="button-link1"
+                                style={linkStyle}
+                                onMouseEnter={() => setIsHovered(true)}
+                                onMouseLeave={() => setIsHovered(false)}
+                              >
+                                <span className="button button-custom" style={spanStyle}>watch videos</span>
+                              </Link>
+                            </div>
+                          </div>
+ 
+                          <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
+                            <img
+                              src={Taketest}
+                              alt="Taketest"
+                              style={{ width: '160px', height: 'auto', objectFit: 'contain', marginTop: '10px' }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
