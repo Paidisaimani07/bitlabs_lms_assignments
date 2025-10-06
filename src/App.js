@@ -24,12 +24,21 @@ import JobWidget from './components/jobWidget';
 import ChatBotWidget from './ChatBotWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 
-
+import { generateToken, messaging } from './notifications/firebase';
+import { onMessage } from 'firebase/messaging';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+
+   useEffect(() => {
+    generateToken();
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      // ...
+    });
+  }, []);
   
   const handleLogin = () => {
     setIsLoggedIn(true);
