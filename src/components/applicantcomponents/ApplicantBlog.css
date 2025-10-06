@@ -31,6 +31,9 @@
   flex-direction: column;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   height: 250px; /* smaller card */
+    cursor: pointer;
+
+
 }
 .blog-card-modern:hover {
   transform: translateY(-5px);
