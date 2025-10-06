@@ -6,7 +6,7 @@ import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBa
 import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
 import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
 import ApplicantViewProfile from '../../components/applicantcomponents/ApplicantViewProfile';
-import { useLocation,useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useState,useEffect } from 'react';
 import ApplicantFindJobs from '../../components/applicantcomponents/ApplicantFindJobs';
 import ApplicantViewJob from '../../components/applicantcomponents/ApplicantViewJob';
@@ -25,6 +25,11 @@ import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges'
 import VerifiedVideos from '../../components/applicantcomponents/VerifiedVideos';
 
 
+import Hackathon from '../../components/applicantcomponents/hackathon';
+import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
+import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
+import BlogSingle from '../../components/applicantcomponents/BlogSingle';
+import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -32,6 +37,7 @@ function ApplicantHomePage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useUserContext();
+  const { id } = useParams();
   const userId = user.id;
   useEffect(() => {
     
@@ -116,12 +122,31 @@ function ApplicantHomePage() {
         case '/applicant-verified-badges':
           setActiveRoute('badges');
         break;
-          case '/applicant-verified-videos':
-          setActiveRoute('videos');
-          break;
-      default:
-        setActiveRoute('');
+         case '/applicant-hackathon':
+        setActiveRoute('hackathon')
         break;
+      case `/applicant-hackathon-details/${id}`:
+        setActiveRoute('hackDetails');
+        break;
+        case '/applicant-blog-list':
+          setActiveRoute('blogs');
+        break;
+        case '/applicant-verified-videos':
+          setActiveRoute('videos');
+        break;
+        case '/applicant-mentorconnect':
+          setActiveRoute('mentor');
+        break;
+         default:
+      // 👇 check if route starts with /blogs/ (for blog single page)
+      if (pathname.startsWith('/blogs/')) {
+        setActiveRoute('blogsingle');
+      } else {
+        setActiveRoute('');
+      }
+      break;
+  
+  
     }
   };
   React.useEffect(() => {
@@ -150,6 +175,11 @@ function ApplicantHomePage() {
      {activeRoute === 'badges' && <VerifiedBadges />}
       {activeRoute === 'videos' && <VerifiedVideos />}
 
+      {activeRoute === 'hackathon' && <Hackathon />}
+      {activeRoute === 'hackDetails' && <HackathonDetails />}
+      {activeRoute === 'blogs' && <ApplicantBlogsList />}
+      {activeRoute === 'blogsingle' && <BlogSingle />}
+       {activeRoute === 'mentor' && <ApplicantMentorConnect />}
       </div> 
   )
 }

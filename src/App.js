@@ -22,12 +22,23 @@ import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 import JobWidget from './components/jobWidget';
 import ChatBotWidget from './ChatBotWidget';
+import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 
+import { generateToken, messaging } from './notifications/firebase';
+import { onMessage } from 'firebase/messaging';
 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
+
+   useEffect(() => {
+    generateToken();
+    onMessage(messaging, (payload) => {
+      console.log('Message received. ', payload);
+      // ...
+    });
+  }, []);
   
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -89,6 +100,10 @@ function App() {
                 <Route path="/applicant-job-alerts" element={<ApplicantHomePage />} />
                 <Route path="/applicant-take-test" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume" element={<ApplicantHomePage />} />
+                <Route path="/applicant-hackathon" element={<ApplicantHomePage />} />
+                <Route path="/applicant-hackathon-details/:id" element={<ApplicantHomePage/>}/>
+                <Route path="/applicant-blog-list" element={<ApplicantHomePage />} />
+                <Route path="/applicant-mentorconnect" element={<ApplicantHomePage />} />
                 {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
@@ -112,6 +127,8 @@ function App() {
                 <Route path="/recruiter-repost-job/:id" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-view-organization" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-edit-organization" element={<RecruiterHomePage />} />
+                <Route path="/admin-confirm-blog" element={<FinalizeBlog />} />
+                <Route path="/blogs/:id" element={<ApplicantHomePage />} />
                 <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
 
               
@@ -124,7 +141,7 @@ function App() {
           </Router>
         )}
       </UserProvider>
-      <ChatBotWidget />
+      {/* <ChatBotWidget /> */}
     </div>
   );
 }

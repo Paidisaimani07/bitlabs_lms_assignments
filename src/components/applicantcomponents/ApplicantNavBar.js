@@ -13,15 +13,18 @@ import axios from "axios";
 import { Switch } from 'antd';
 import logos from '../../images/profileIcon.svg';
 import ApplicantTakeTest from './ApplicantTakeTest';
+import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
 
 function ApplicantNavBar() {
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 1302
+  const location = useLocation();
+  const hideSidebarRoutes = ["/applicant-hackathon", "/applicant-hackathon-details"];
+  const [isOpen, setIsOpen] = useState(
+     window.innerWidth >= 1302 &&  !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
   );
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
   
-  const location = useLocation();
   const [url, setUrl] = useState('');
   const [loginUrl, setLoginUrl] = useState('');
   const [loading, setLoading] = useState(true);
@@ -32,6 +35,7 @@ function ApplicantNavBar() {
   const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
   const frompath = location.state?.from;
+  const { pathname } = useLocation();
 
   const [showTestPopup, setShowTestPopup] = useState(false);
   const [testName, setTestName] = useState('');
@@ -40,7 +44,28 @@ function ApplicantNavBar() {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
 
-  
+  useEffect(() => {
+  const updateSidebarClasses = () => {
+    const shouldHide = hideSidebarRoutes.some(route =>
+      location.pathname === route || location.pathname.startsWith(route + "/")
+    );
+
+    if (window.innerWidth >= 1301 && !shouldHide) {
+     
+      document.body.classList.add("hide-hamburger");
+    } else {
+      document.body.classList.add("close-sidebar");
+      document.body.classList.remove("hide-hamburger");
+    }
+  };
+
+  window.addEventListener("resize", updateSidebarClasses);
+
+  updateSidebarClasses();
+
+  return () => window.removeEventListener("resize", updateSidebarClasses);
+}, [pathname]);
+
   const handleOutsideClick = (event) => {
     const accountElement = document.querySelector(".account"); 
 
@@ -118,8 +143,10 @@ function ApplicantNavBar() {
     setIsOpen(!isOpen);
     if (hamburgerClass === 'fa fa-bars') {
       setHamburgerClass('fa fa-arrow-left');
+      document.body.classList.remove("close-sidebar");
     } else {
       setHamburgerClass('fa fa-bars');
+      document.body.classList.add("close-sidebar");
     }
   };
 
@@ -130,50 +157,72 @@ function ApplicantNavBar() {
     setHamburgerClass('fa fa-bars');
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setHamburgerClass('fa fa-bars');
-      setIsOpen(window.innerWidth >= 1302);
-    };
-    window.addEventListener('resize', handleResize);
-    $("#left-menu-btn").on("click", function (e) {
-      e.preventDefault();
-      if ($("body").hasClass("sidebar-enable") == true) {
-        $("body").removeClass("sidebar-enable");
-        $.cookie("isButtonActive", "0");
+useEffect(() => {
+  const handleResize = () => {
+    const shouldHide = hideSidebarRoutes.some(route =>
+      pathname.startsWith(route)
+    );
+
+    if (shouldHide) {
+      setIsOpen(false);
+      document.body.classList.add("close-sidebar");
+    } else {
+      const open = window.innerWidth >= 1302;
+      setIsOpen(open);
+
+      if (open) {
+        document.body.classList.remove("close-sidebar");
       } else {
-        $("body").addClass("sidebar-enable");
-        $.cookie("isButtonActive", "1");
+        document.body.classList.add("close-sidebar");
       }
-      1400 <= $(window).width()
-        ? $("body").toggleClass("show-job")
-        : $("body").removeClass("show-job");
-      var width = $(window).width();
-      if (width < 1400) {
-        $.cookie('isButtonActive', null);
-      }
-    });
-    if ($.cookie("isButtonActive") == 1) {
-      $("body").addClass("sidebar-enable show-job");
     }
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-      },
-    })
-      .then(response => response.blob())
-      .then(blob => {
+
+    setHamburgerClass("fa fa-bars");
+  };
+
+  window.addEventListener("resize", handleResize);
+  handleResize();
+
+  $("#left-menu-btn").on("click", function (e) {
+    e.preventDefault();
+    if ($("body").hasClass("sidebar-enable")) {
+      $("body").removeClass("sidebar-enable");
+      $.cookie("isButtonActive", "0");
+    } else {
+      $("body").addClass("sidebar-enable");
+      $.cookie("isButtonActive", "1");
+    }
+    if ($(window).width() >= 1400) {
+      $("body").toggleClass("show-job");
+    } else {
+      $("body").removeClass("show-job");
+      $.cookie("isButtonActive", null);
+    }
+  });
+
+  if ($.cookie("isButtonActive") == 1) {
+    $("body").addClass("sidebar-enable show-job");
+  }
+
+  fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+    },
+  })
+   .then(response => response.blob())
+    .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
-      })
-      .catch(error => {
-        console.error('Error fetching image URL:', error);
-        setImageSrc(null);
-      });
+    })
+    .catch(() => {
+        setImageSrc('../images/user/avatar/image-01.jpg');
+    });
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+        window.removeEventListener("resize", handleResize);
+        $("#left-menu-btn").off("click");
     };
-  }, [user.id]);
+}, [pathname, user.id]);
 
  
   const handleLogout =  () => {
@@ -269,7 +318,7 @@ function ApplicantNavBar() {
             <div className="col-md-12">
               <div className="sticky-area-wrap">
                 <div className="header-ct-left">
-                  {window.innerWidth < 1400 && (
+                  {window.innerWidth < 2000 && (
                     <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
                    
                   )}
@@ -338,6 +387,10 @@ function ApplicantNavBar() {
                           <span className="icon-change-passwords" /> Change Password
                         </a>
                       </div>
+                       <div className="sub-account-item">
+
+                                      <NotificationToggleWeb className="icon-change-passwords"/>
+                                               </div>
                       <div className="sub-account-item">
                         
                          <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
@@ -447,14 +500,56 @@ function ApplicantNavBar() {
       <path d="M21.6008 11.2002L20.2008 9.6002C19.9008 9.3002 19.7008 8.7002 19.7008 8.3002V6.70019C19.7008 5.60019 18.8008 4.8002 17.8008 4.8002H16.1008C15.7008 4.8002 15.1008 4.6002 14.8008 4.3002L13.2008 2.9002C12.5008 2.3002 11.4008 2.3002 10.7008 2.9002L9.20078 4.3002C8.90078 4.6002 8.30078 4.8002 7.90078 4.8002H6.20078C5.10078 4.8002 4.30078 5.70019 4.30078 6.70019V8.4002C4.30078 8.8002 4.10078 9.40019 3.80078 9.70019L2.50078 11.3002C1.90078 12.0002 1.90078 13.1002 2.50078 13.8002L3.80078 15.4002C4.10078 15.7002 4.30078 16.3002 4.30078 16.7002V18.4002C4.30078 19.5002 5.20078 20.3002 6.20078 20.3002H7.90078C8.30078 20.3002 8.90078 20.5002 9.20078 20.8002L10.8008 22.2002C11.5008 22.8002 12.6008 22.8002 13.3008 22.2002L14.9008 20.8002C15.2008 20.5002 15.8008 20.3002 16.2008 20.3002H17.9008C19.0008 20.3002 19.8008 19.4002 19.8008 18.4002V16.7002C19.8008 16.3002 20.0008 15.7002 20.3008 15.4002L21.7008 13.8002C22.2008 13.1002 22.2008 11.9002 21.6008 11.2002ZM16.2008 10.6002L11.4008 15.4002C11.3008 15.5002 11.1008 15.6002 10.9008 15.6002C10.7008 15.6002 10.5008 15.5002 10.4008 15.4002L8.00078 13.0002C7.70078 12.7002 7.70078 12.2002 8.00078 11.9002C8.30078 11.6002 8.80078 11.6002 9.10078 11.9002L11.0008 13.8002L15.1008 9.5002C15.4008 9.20019 15.9008 9.20019 16.2008 9.5002C16.5008 9.8002 16.5008 10.3002 16.2008 10.6002Z"/>
     </svg>
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Job-Ready Badges</span>
+  
+</Link>
+<Link 
+  onClick={hideMenu} 
+  to="/applicant-mentorconnect" 
+  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
+  style={{ 
+    display: 'inline-flex', 
+    alignItems: 'center', 
+    textDecoration: 'none', 
+    marginTop: '13px' 
+  }}
+>
+  <span 
+    className="dash-icon" 
+    style={{
+      display: 'inline-block', 
+      transition: 'fill 0.3s ease',
+      marginRight: '12px',
+    }}
+  >
+   <svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  width="24" 
+  height="24" 
+  viewBox="0 0 24 24" 
+  fill={location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888"} 
+  onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} 
+  onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888")}
+>
+  {/* Speech bubble */}
+  <path d="M20 3H4C2.9 3 2 3.9 2 5v10c0 1.1.9 2 2 2h3.5L12 20l4.5-3H20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+  
+  {/* User head */}
+  <circle cx="9" cy="9" r="2.2"/>
+  
+  {/* User shoulders */}
+  <path d="M6.5 15c0-1.7 2.5-2.9 5.5-2.9s5.5 1.2 5.5 2.9V16H6.5v-1z"/>
+</svg>
+
+  </span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Live Connect</span>
   <span 
   style={{ 
     color: '#F00', // Red text color
     border: '1px solid var(--Color-2, #F00)', // Red border
     borderRadius: '13px', // Rounded corners
     padding: '3px 8px', // Spacing around text
-    marginLeft: '25px', // Space between "Verified badges" and "New"
+    marginLeft: '15px', // Space between "Verified badges" and "New"
     fontSize: '10px', // Adjust font size as needed
     // fontFamily:'Inter',
     fontStyle:'normal',
@@ -511,8 +606,30 @@ function ApplicantNavBar() {
 </Link>
 
           </li>
-        
+        <li>
+                <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
+                  <span className="dash-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+  <path d="M17 4V2H7v2H2v5c0 2.8 2.2 5 5 5h.2A6.98 6.98 0 0 0 11 16.9V19H8v3h8v-3h-3v-2.1c1.8-.5 3.2-1.8 3.8-3.5h.2c2.8 0 5-2.2 5-5V4h-5ZM7 12c-1.7 0-3-1.3-3-3V6h3v6Zm13-3c0 1.7-1.3 3-3 3V6h3v3Z"/>
+</svg>
 
+                  </span>
+                  <span className="dash-titles">Innovation Arena</span>
+                </Link>
+              </li>
+        
+ <li>
+                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                  <span className="dash-icon blog-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 20h9" />
+                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+                    </svg>
+                  </span>
+
+                  <span className="dash-titles">TechVibes</span>
+                </Link>
+              </li>
             </ul>
           
           </div>
