@@ -500,14 +500,56 @@ useEffect(() => {
       <path d="M21.6008 11.2002L20.2008 9.6002C19.9008 9.3002 19.7008 8.7002 19.7008 8.3002V6.70019C19.7008 5.60019 18.8008 4.8002 17.8008 4.8002H16.1008C15.7008 4.8002 15.1008 4.6002 14.8008 4.3002L13.2008 2.9002C12.5008 2.3002 11.4008 2.3002 10.7008 2.9002L9.20078 4.3002C8.90078 4.6002 8.30078 4.8002 7.90078 4.8002H6.20078C5.10078 4.8002 4.30078 5.70019 4.30078 6.70019V8.4002C4.30078 8.8002 4.10078 9.40019 3.80078 9.70019L2.50078 11.3002C1.90078 12.0002 1.90078 13.1002 2.50078 13.8002L3.80078 15.4002C4.10078 15.7002 4.30078 16.3002 4.30078 16.7002V18.4002C4.30078 19.5002 5.20078 20.3002 6.20078 20.3002H7.90078C8.30078 20.3002 8.90078 20.5002 9.20078 20.8002L10.8008 22.2002C11.5008 22.8002 12.6008 22.8002 13.3008 22.2002L14.9008 20.8002C15.2008 20.5002 15.8008 20.3002 16.2008 20.3002H17.9008C19.0008 20.3002 19.8008 19.4002 19.8008 18.4002V16.7002C19.8008 16.3002 20.0008 15.7002 20.3008 15.4002L21.7008 13.8002C22.2008 13.1002 22.2008 11.9002 21.6008 11.2002ZM16.2008 10.6002L11.4008 15.4002C11.3008 15.5002 11.1008 15.6002 10.9008 15.6002C10.7008 15.6002 10.5008 15.5002 10.4008 15.4002L8.00078 13.0002C7.70078 12.7002 7.70078 12.2002 8.00078 11.9002C8.30078 11.6002 8.80078 11.6002 9.10078 11.9002L11.0008 13.8002L15.1008 9.5002C15.4008 9.20019 15.9008 9.20019 16.2008 9.5002C16.5008 9.8002 16.5008 10.3002 16.2008 10.6002Z"/>
     </svg>
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Verified badges</span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Job-Ready Badges</span>
+  
+</Link>
+<Link 
+  onClick={hideMenu} 
+  to="/applicant-mentorconnect" 
+  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
+  style={{ 
+    display: 'inline-flex', 
+    alignItems: 'center', 
+    textDecoration: 'none', 
+    marginTop: '13px' 
+  }}
+>
+  <span 
+    className="dash-icon" 
+    style={{
+      display: 'inline-block', 
+      transition: 'fill 0.3s ease',
+      marginRight: '12px',
+    }}
+  >
+   <svg 
+  xmlns="http://www.w3.org/2000/svg" 
+  width="24" 
+  height="24" 
+  viewBox="0 0 24 24" 
+  fill={location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888"} 
+  onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} 
+  onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888")}
+>
+  {/* Speech bubble */}
+  <path d="M20 3H4C2.9 3 2 3.9 2 5v10c0 1.1.9 2 2 2h3.5L12 20l4.5-3H20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
+  
+  {/* User head */}
+  <circle cx="9" cy="9" r="2.2"/>
+  
+  {/* User shoulders */}
+  <path d="M6.5 15c0-1.7 2.5-2.9 5.5-2.9s5.5 1.2 5.5 2.9V16H6.5v-1z"/>
+</svg>
+
+  </span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Live Connect</span>
   <span 
   style={{ 
     color: '#F00', // Red text color
     border: '1px solid var(--Color-2, #F00)', // Red border
     borderRadius: '13px', // Rounded corners
     padding: '3px 8px', // Spacing around text
-    marginLeft: '25px', // Space between "Verified badges" and "New"
+    marginLeft: '15px', // Space between "Verified badges" and "New"
     fontSize: '10px', // Adjust font size as needed
     // fontFamily:'Inter',
     fontStyle:'normal',

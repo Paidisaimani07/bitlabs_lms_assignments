@@ -692,7 +692,7 @@ const VerifiedBadges = () => {
               <div className="row">
                 <div className="col-lg-12 col-md-12 ">
                   <div className="title-dashboard">
-                    <div className="title-dash flex2">Verified Badges</div>
+                    <div className="title-dash flex2">Job-Ready Badges</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}>Pre-Screened badge</h3>
                     {!hideSteps &&(
                     <p>
