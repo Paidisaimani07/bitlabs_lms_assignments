@@ -22,6 +22,9 @@ import ApplicantBasicDetails from '../../components/applicantcomponents/Applican
 import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
 import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTakeTest';
 import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
+import VerifiedVideos from '../../components/applicantcomponents/VerifiedVideos';
+
+
 import Hackathon from '../../components/applicantcomponents/hackathon';
 import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
 import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
@@ -128,6 +131,9 @@ function ApplicantHomePage() {
         case '/applicant-blog-list':
           setActiveRoute('blogs');
         break;
+        case '/applicant-verified-videos':
+          setActiveRoute('videos');
+        break;
         case '/applicant-mentorconnect':
           setActiveRoute('mentor');
         break;
@@ -167,6 +173,8 @@ function ApplicantHomePage() {
      {activeRoute === 'abdf' && <ApplicantBasicDetails />}
      {activeRoute === 'taketest' && <ApplicantTakeTest />}
      {activeRoute === 'badges' && <VerifiedBadges />}
+      {activeRoute === 'videos' && <VerifiedVideos />}
+
       {activeRoute === 'hackathon' && <Hackathon />}
       {activeRoute === 'hackDetails' && <HackathonDetails />}
       {activeRoute === 'blogs' && <ApplicantBlogsList />}
