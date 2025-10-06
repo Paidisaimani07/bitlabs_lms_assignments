@@ -13,6 +13,8 @@ import Backgroundimagemobile from "../../images/user/avatar/backgroundimage-mobi
 import Snackbar from "../common/Snackbar";
 import CryptoJS from "crypto-js";
 import ZohoCRMService  from "../zohoCrmComponent/zohoCrm";
+import { saveFcmTokenWeb } from "../../notifications/notificationWeb";
+
 
 function LoginBody({ handleLogin }) {
   const [candidateEmail, setCandidateEmail] = useState("");
@@ -95,6 +97,11 @@ function LoginBody({ handleLogin }) {
           console.log("This is response: ", userData);
           console.log("This is token: ", userData.data.jwt);
           localStorage.setItem("jwtToken", userData.data.jwt);
+          try {
+              await saveFcmTokenWeb(userData.id, userData.data.jwt);
+  } catch (error) {
+    console.error("⚠️ Failed to save FCM token for web:", error);
+  }
 
           // Log the user's activity
           const activityLogEndpoint = `${apiUrl}/api/activity/log`;
