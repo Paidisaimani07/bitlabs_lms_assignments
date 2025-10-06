@@ -129,6 +129,7 @@ function App() {
                 <Route path="/recruiter-edit-organization" element={<RecruiterHomePage />} />
                 <Route path="/admin-confirm-blog" element={<FinalizeBlog />} />
                 <Route path="/blogs/:id" element={<ApplicantHomePage />} />
+                <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
 
               
                 </>
