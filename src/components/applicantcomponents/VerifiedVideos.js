@@ -10,7 +10,7 @@ const preloadAll = true;
 const VerifiedVideos = () => {
   const { user } = useUserContext();
   const userId = user.id;
-
+  const inputRef = useRef(null);
   const [videoList, setVideoList] = useState([]);
   const [filteredVideos, setFilteredVideos] = useState([]);
   const [tags, setTags] = useState(["All"]);
@@ -174,25 +174,25 @@ const VerifiedVideos = () => {
    TechBuzz  <span className="oneminute-orange">Shorts</span>
         </h2>
 
-        <div className="oneminute-search-filter">
+        <div className="oneminute-search-wrapper">
+          <i className="fa fa-search search-icon"></i>
           <input
+          ref={inputRef}
             type="text"
-            placeholder="Search videos by Title"
+            placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="oneminute-search-input"
           />
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="oneminute-filter-select"
-          >
-            {tags.map((tag, i) => (
-              <option key={i} value={tag}>
-                {tag}
-              </option>
-            ))}
-          </select>
+          {search && (
+            <i
+              className="fa fa-times clear-icon"
+              onClick={() => {
+                setSearch("");
+                inputRef.current?.focus();
+              }}
+            ></i>
+          )}
         </div>
       </div>
 
@@ -215,7 +215,7 @@ const VerifiedVideos = () => {
                   className={`oneminute-card ${isPlayingCard ? "playing-card" : ""}`}
                 >
                   <div className="oneminute-player-wrapper">
-                    <div className="thumb-wrapper">
+                    <div onClick={() => handleOpenPlayer(index)} className="thumb-wrapper">
                       <img
                         src={video.thumbnail_url || "/images/default-thumb.png"}
                         alt={video.title}
@@ -223,29 +223,10 @@ const VerifiedVideos = () => {
                         draggable={false}
                       />
 
-                      {/* real-time duration overlay */}
-                      {/* <div
-                        className={`oneminute-duration ${
-                          isPlayingCard ? "duration-active" : ""
-                        }`}
-                      >
-                        {durations[video.videoId]
-                          ? formatTime(durations[video.videoId])
-                          : "00:00"}
-                      </div> */}
-
                       {watchedVideos[video.videoId] && (
                         <div className="oneminute-watched-badge">Watched</div>
                       )}
 
-                      <div
-                        className="oneminute-card-play"
-                        onClick={() => handleOpenPlayer(index)}
-                        role="button"
-                        aria-label={`Play ${video.title}`}
-                      >
-                        <div className="oneminute-play-icon">▶</div>
-                      </div>
                     </div>
                   </div>
 
