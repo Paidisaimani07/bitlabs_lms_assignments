@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import "./hackathon.css";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import axios from "axios";
@@ -9,12 +9,9 @@ const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
     const [registrations, setRegistrations] = useState([]);
     const [winners, setWinners] = useState({});
-    const [searchField, setSearchField] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
-    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [statusFilter, setStatusFilter] = useState("MY");
     const [loading, setLoading] = useState(false);
-    const dropdownRef = useRef(null);
 
     const { user } = useUserContext();
     const userId = user.id;
@@ -26,17 +23,6 @@ const Hackathon = () => {
         ACTIVE: "No hackathons are active for now. Come again later.",
         UPCOMING: "No hackathons to show.",
         COMPLETED: "No completed hackathons."
-    };
-
-
-    const getLabel = (field) => {
-        switch (field) {
-            case "title": return "Hackathon Title";
-            case "allowedTechnologies": return "Technologies";
-            case "startAt": return "Start Date";
-            case "endAt": return "End Date";
-            default: return "All";
-        }
     };
 
     const getApiUrlByTab = (tabKey) => {
@@ -116,31 +102,14 @@ const Hackathon = () => {
     };
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-
-    useEffect(() => {
         fetchHackathons(statusFilter);
         fetchRegistrations();
     }, [statusFilter]);
 
     const filteredHackathons = hackathons.filter(h => {
-        if (searchField === "all") {
-            return Object.values(h).some(val =>
-                val?.toString().toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-        return h[searchField]?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+        const titleMatch = h.title?.toLowerCase().includes(searchQuery.toLowerCase());
+        const techMatch = h.allowedTechnologies?.toLowerCase().includes(searchQuery.toLowerCase());
+        return titleMatch || techMatch;
     });
 
     const handleViewClick = (hackathonId) => navigate(`/applicant-hackathon-details/${hackathonId}`);
@@ -175,34 +144,23 @@ const Hackathon = () => {
                         ))}
                     </div>
 
-                    <div className="filter-section">
-                        <div className="filter-box custom-dropdown" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            {getLabel(searchField)} <span className="arrow">▼</span>
-                            {dropdownOpen && (
-                                <ul className="dropdown-list">
-                                    {[
-                                        { value: "all", label: "All" },
-                                        { value: "title", label: "Hackathon Title" },
-                                        { value: "allowedTechnologies", label: "Technologies" },
-                                        { value: "startAt", label: "Start Date" },
-                                        { value: "endAt", label: "End Date" },
-                                    ].map(option => (
-                                        <li key={option.value} onClick={() => { setSearchField(option.value); setDropdownOpen(false); }}>
-                                            {option.label}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-
-                        <div className="search-box">
-                            <input
-                                type="text"
-                                placeholder={`Search by ${getLabel(searchField)}`}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
+                    <div className="hackathon-search-box">
+                        <i className="fa fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="hackathon-search-input"
+                        />
+                        {searchQuery && (
+                            <i
+                                className="fa fa-times clear-icon"
+                                onClick={() => {
+                                    setSearchQuery("");
+                                }}
+                            ></i>
+                        )}
                     </div>
                 </div>
 
