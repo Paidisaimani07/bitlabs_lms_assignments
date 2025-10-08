@@ -51,7 +51,7 @@ function ApplicantNavBar() {
     );
 
     if (window.innerWidth >= 1301 && !shouldHide) {
-     
+      document.body.classList.add("grid-handler");
       document.body.classList.add("hide-hamburger");
     } else {
       document.body.classList.add("close-sidebar");
@@ -144,9 +144,11 @@ function ApplicantNavBar() {
     if (hamburgerClass === 'fa fa-bars') {
       setHamburgerClass('fa fa-arrow-left');
       document.body.classList.remove("close-sidebar");
+      document.body.classList.add("grid-handler");
     } else {
       setHamburgerClass('fa fa-bars');
       document.body.classList.add("close-sidebar");
+      document.body.classList.remove("grid-handler");
     }
   };
 
@@ -166,14 +168,17 @@ useEffect(() => {
     if (shouldHide) {
       setIsOpen(false);
       document.body.classList.add("close-sidebar");
+       document.body.classList.remove("grid-handler");
     } else {
       const open = window.innerWidth >= 1302;
       setIsOpen(open);
 
       if (open) {
         document.body.classList.remove("close-sidebar");
+        document.body.classList.add("grid-handler");
       } else {
         document.body.classList.add("close-sidebar");
+        document.body.classList.remove("grid-handler");
       }
     }
 
