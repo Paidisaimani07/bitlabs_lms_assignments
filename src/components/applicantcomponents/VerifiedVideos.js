@@ -108,6 +108,18 @@ const VerifiedVideos = () => {
     setFilteredVideos(filtered);
   }, [search, filter, videoList]);
 
+  const handleProgress = (progress, videoId, index) => {
+    if (progress.played >= 0.7 && !watchedVideos[videoId]) {
+      handleEnded(videoId);
+      setFilteredVideos((prev) => {
+        const updated = [...prev];
+        const watchedVideo = updated.splice(index, 1)[0];
+        updated.push(watchedVideo);
+        return updated;
+      });
+    }
+  };
+
   const handleEnded = async (videoId) => {
     if (watchedVideos[videoId]) return;
     try {
@@ -152,18 +164,6 @@ const VerifiedVideos = () => {
   const onBuffer = () => setPlayerBuffering(true);
   const onBufferEnd = () => setPlayerBuffering(false);
 
-  // format duration mm:ss
-  const formatTime = (seconds) => {
-    if (!seconds || isNaN(seconds)) return "00:00";
-    const m = Math.floor(seconds / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = Math.floor(seconds % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${m}:${s}`;
-  };
-
   return (
     <div className="oneminute-container">
       <div className="oneminute-header">
@@ -171,13 +171,13 @@ const VerifiedVideos = () => {
           className="oneminute-heading"
           style={{ marginLeft: isWide ? "330px" : "0px" }}
         >
-   TechBuzz  <span className="oneminute-orange">Shorts</span>
+          TechBuzz  <span className="oneminute-orange">Shorts</span>
         </h2>
 
         <div className="oneminute-search-wrapper">
           <i className="fa fa-search search-icon"></i>
           <input
-          ref={inputRef}
+            ref={inputRef}
             type="text"
             placeholder="Search"
             value={search}
@@ -222,11 +222,6 @@ const VerifiedVideos = () => {
                         className="oneminute-thumb"
                         draggable={false}
                       />
-
-                      {watchedVideos[video.videoId] && (
-                        <div className="oneminute-watched-badge">Watched</div>
-                      )}
-
                     </div>
                   </div>
 
@@ -240,7 +235,6 @@ const VerifiedVideos = () => {
                       <p className="oneminute-title">
                         {video.title || `Video ${index + 1}`}
                       </p>
-                      {/* removed tags display */}
                     </div>
                   </div>
                 </div>
@@ -275,10 +269,10 @@ const VerifiedVideos = () => {
               onReady={onPlayerReady}
               onBuffer={onBuffer}
               onBufferEnd={onBufferEnd}
-              onEnded={() => {
-                handleEnded(filteredVideos[playingIndex].videoId);
-                closeModal();
-              }}
+              onEnded={closeModal}
+              onProgress={(progress) =>
+                handleProgress(progress, filteredVideos[playingIndex].videoId, playingIndex)
+              }
               onDuration={(d) =>
                 setDurations((prev) => ({
                   ...prev,
@@ -296,7 +290,7 @@ const VerifiedVideos = () => {
                 },
               }}
             />
-            <button className="oneminute-modal-close" onClick={closeModal} aria-label="Close" style={{borderRadius: '20px'}}>
+            <button className="oneminute-modal-close" onClick={closeModal} aria-label="Close" style={{ borderRadius: '20px' }}>
               ✕
             </button>
           </div>
