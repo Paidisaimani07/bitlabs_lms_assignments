@@ -635,6 +635,25 @@ useEffect(() => {
                   <span className="dash-titles">TechVibes</span>
                 </Link>
               </li>
+              <li>
+                <Link onClick={hideMenu} to="/applicant-interview-prep" className={location.pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}>
+                  <span className="dash-icon" style={{ display: 'inline-block', transition: 'fill 0.3s ease', marginRight: '12px' }}>
+                   <svg width="24" height="24" viewBox="0 0 400 400" fill={location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888"} xmlns="http://www.w3.org/2000/svg" onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888")}>
+  <circle cx="200" cy="200" r="150" />
+  <circle cx="200" cy="173" r="40" stroke="white" stroke-width="9" fill="none"/>
+  <rect x="130" y="220" width="140" height="100" rx="60" stroke="white" stroke-width="9" fill="none"/>
+  <rect x="230" y="110" width="95" height="65" rx="20" stroke="white" stroke-width="8" fill="none"/>
+  <g>
+    <polygon points="265,142 275,150 265,158" fill="white"/>
+    <rect x="282" y="143" width="3" height="13" fill="white"/>
+  </g>
+</svg>
+
+                  </span>
+
+                  <span className="dash-titles">Ask Newton</span>
+                </Link>
+              </li>
             </ul>
           
           </div>
