@@ -7,7 +7,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import Snackbar from "../../components/common/Snackbar";
 
-// Organized styles object for better maintainability
 const styles = {
   container: {
     width: "100%",
@@ -16,7 +15,7 @@ const styles = {
     backgroundColor: "#eff2f6",
     boxSizing: "border-box",
     overflow: "hidden",
-    display: "flex", // layout with sidebar
+    display: "flex", 
   },
 
   iconLeft: {
@@ -40,7 +39,6 @@ const styles = {
     transition: "width 0.2s ease, padding 0.2s ease",
   },
 
-  // Mobile overlay version of sidebar
   sidebarMobile: {
     position: "fixed",
     top: 0,
@@ -113,7 +111,6 @@ const styles = {
     fontWeight: 700,
   },
 
-  // Backdrop for mobile sidebar
   backdrop: {
     position: "fixed",
     top: 0,
@@ -159,7 +156,7 @@ const styles = {
     color: "#1f2937",
     cursor: "pointer",
     borderBottom: "none",
-    border: "none",
+    border: "1px solid #e2e8f0",
     outline: "none",
     boxShadow: "none",
     borderRadius: 8,
@@ -171,6 +168,7 @@ const styles = {
     textAlign: "left",
     background: "transparent",
     width: "100%",
+    marginBottom: "5px",
   },
 
   savedChatRow: {
@@ -227,7 +225,7 @@ const styles = {
   },
 
   chatListItemHover: {
-    backgroundColor: "#f3f4f6", // light gray
+    backgroundColor: "#f3f4f6", 
     boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04)",
     borderRadius: 12,
   },
@@ -671,7 +669,6 @@ function InterviewPrepPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false);
   const [openOptionsId, setOpenOptionsId] = useState(null);
-  // Saved chats state
   const [savedChats, setSavedChats] = useState([]); // [{id, title, messages, createdAt}]
   const [currentChatId, setCurrentChatId] = useState(null);
   // Applicant context
@@ -695,6 +692,28 @@ function InterviewPrepPage() {
   const [titleModal, setTitleModal] = useState({ open: false, mode: null, chatId: null, value: '' });
   // Submission lock for title modal actions to avoid duplicate API calls
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
+
+const formatResponse = (rawResponse) => {
+  try {
+    const jsonResponse = typeof rawResponse === 'string' ? JSON.parse(rawResponse) : rawResponse;
+
+    let responseText = jsonResponse.response || '';
+
+    const nestedResponseMatch = responseText.match(/^\s*{\s*"response"\s*:\s*"([\s\S]*)"\s*}\s*$/);
+    if (nestedResponseMatch && nestedResponseMatch[1]) {
+      responseText = nestedResponseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
+    }
+
+    console.log(responseText);
+    return responseText;
+
+  } catch (e) {
+    console.error('Error parsing response:', e);
+    return rawResponse;
+  }
+};
+
+
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -889,16 +908,33 @@ function InterviewPrepPage() {
     focusInput();
   };
 
+ const skillsRequired = (applicantProfile) => {
+  if (
+    applicantProfile &&
+    applicantProfile.applicant &&
+    Array.isArray(applicantProfile.applicant.skillsRequired)
+  ) {
+    return applicantProfile.applicant.skillsRequired
+      .map(skill => skill.skillName) 
+      .filter(Boolean); 
+  }
+  return [];
+};
+
+const skillsArray = skillsRequired(applicantProfile);
+console.log(skillsArray); 
+
   const resendQueuedMessage = async () => {
     if (!queuedMessage) return;
     setIsLoading(true);
     try {
       const jwtToken = localStorage.getItem('jwtToken');
+      const skillsArray = skillsRequired(applicantProfile);
       const postBody = {
         applicantProfile: applicantProfile || {},
         request: queuedMessage,
         basicDetails: applicantProfile?.basicDetails,
-        skillsRequired: applicantProfile?.skillsRequired,
+        skillsRequired: skillsArray,
         experienceDetails: applicantProfile?.experienceDetails,
         experience: applicantProfile?.experience,
         qualification: applicantProfile?.qualification,
@@ -909,9 +945,7 @@ function InterviewPrepPage() {
       const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      const reply = typeof data === 'string'
-        ? data
-        : data?.reply || data?.response || data?.answer || JSON.stringify(data);
+      const reply = formatResponse(data);
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
 
       // If this is an existing chat, push update to backend
@@ -990,9 +1024,7 @@ function InterviewPrepPage() {
       const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      const reply = typeof data === 'string'
-        ? data
-        : data?.reply || data?.response || data?.answer || JSON.stringify(data);
+      const reply = formatResponse(data);
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
 
       // If this is an existing chat, update it in backend with new message
@@ -1337,19 +1369,19 @@ function InterviewPrepPage() {
                 <path d="M15 18L9 12L15 6" stroke="#334155" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </span>
-            <span style={{ display: 'inline-flex', alignItems: 'center', height: 16, lineHeight: '16px' }}>Hide</span>
+            <span  style={{textTransform: 'none', display: 'inline-flex', alignItems: 'center', height: 16, lineHeight: '16px' }}>Hide</span>
           </button>
         </div>
         <div style={styles.sidebarButtons}>
           <button
-            style={styles.sidebarButton}
+            style={{...styles.sidebarButton, textTransform: 'none'}}
             onClick={startNewChat}
             title="Start a new chat"
           >
              New chat
           </button>
           <button
-            style={styles.sidebarButton}
+           style={{...styles.sidebarButton, textTransform: 'none'}}
             onClick={saveCurrentChat}
             title="Save this chat"
             disabled={messages.length === 0}
@@ -1358,7 +1390,7 @@ function InterviewPrepPage() {
           </button>
         </div>
 
-        <div style={styles.chatsSectionTitle}>Chats</div>
+        <div style={{...styles.chatsSectionTitle, textTransform: 'none'}}>Chats</div>
         <div style={styles.chatsList}>
           {savedChats.length === 0 ? (
             <div style={{ padding: "10px", color: "#64748b", fontSize: "13px" }}>
@@ -1379,6 +1411,7 @@ function InterviewPrepPage() {
                   onClick={() => loadChat(c.id)}
                   style={{
                     ...styles.chatListItem,
+                    textTransform: 'none',
                     ...(currentChatId === c.id ? styles.chatListItemActive : {}),
                   }}
                   onMouseEnter={(e) => { Object.assign(e.currentTarget.style, styles.chatListItemHover); }}
@@ -1423,7 +1456,7 @@ function InterviewPrepPage() {
       <div style={styles.mainContent}>
         {!sidebarOpen && (
           <button
-            style={styles.openSidebarButton}
+            style={{...styles.openSidebarButton, textTransform: 'none'}}
             onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#EA580C'; }}
             onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#F97316'; }}
             onClick={() => setSidebarOpen(true)}
@@ -1444,7 +1477,7 @@ function InterviewPrepPage() {
         <div style={{...styles.contentWrapper, ...(isMobile ? styles.mobileContentWrapper : {})}}>
           <div style={{...styles.header, ...(isMobile ? { textAlign: 'center' } : {})}}>
             <h1 style={{...styles.headerText}}>
-              ASK NEWTON
+              Ask Newton
             </h1>
           </div>
         {isCoolingDown && (
@@ -1656,6 +1689,7 @@ function InterviewPrepPage() {
           disabled={!input.trim() || isLoading || isCoolingDown}
           style={{
             ...styles.sendButton,
+            textTransform: 'none',
             ...(isMobile ? styles.mobileSendButton : {}),
             ...(!input.trim() || isLoading || isCoolingDown ? styles.sendButtonDisabled : {}),
           }}
