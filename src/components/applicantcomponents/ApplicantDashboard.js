@@ -319,7 +319,7 @@ const ApplicantDashboard = () => {
                   </div>
  
                   <div className="userName-title">
-  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '15px', flexWrap: 'wrap' }}>
+  <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
     <span>Hi {userData && userData.firstName !== null && userData.firstName !== "" ? userData.firstName : ''}</span>
     {showIcon && (
       <span style={{ marginLeft: '4px' }}>
@@ -328,27 +328,6 @@ const ApplicantDashboard = () => {
         </svg>
       </span>
     )}
-    <Link 
-      to="/applicant-interview-prep" 
-      style={{ 
-        display: 'inline-flex', 
-        alignItems: 'center', 
-        gap: '8px',
-        padding: '8px 16px',
-        backgroundColor: '#F97316',
-        color: 'white',
-        textDecoration: 'none',
-        borderRadius: '6px',
-        fontSize: '14px',
-        fontWeight: '600',
-        transition: 'all 0.3s ease',
-        border: 'none',
-        cursor: 'pointer',
-        borderRadius: '20px'
-      }}
-    >
-      Start Your Interview Prep with Newton
-    </Link>
   </div>
 </div>
  
