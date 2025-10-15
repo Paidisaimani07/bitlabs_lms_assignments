@@ -51,7 +51,7 @@ function ApplicantNavBar() {
     );
 
     if (window.innerWidth >= 1301 && !shouldHide) {
-     
+      document.body.classList.add("grid-handler");
       document.body.classList.add("hide-hamburger");
     } else {
       document.body.classList.add("close-sidebar");
@@ -144,9 +144,11 @@ function ApplicantNavBar() {
     if (hamburgerClass === 'fa fa-bars') {
       setHamburgerClass('fa fa-arrow-left');
       document.body.classList.remove("close-sidebar");
+      document.body.classList.add("grid-handler");
     } else {
       setHamburgerClass('fa fa-bars');
       document.body.classList.add("close-sidebar");
+      document.body.classList.remove("grid-handler");
     }
   };
 
@@ -166,14 +168,17 @@ useEffect(() => {
     if (shouldHide) {
       setIsOpen(false);
       document.body.classList.add("close-sidebar");
+       document.body.classList.remove("grid-handler");
     } else {
       const open = window.innerWidth >= 1302;
       setIsOpen(open);
 
       if (open) {
         document.body.classList.remove("close-sidebar");
+        document.body.classList.add("grid-handler");
       } else {
         document.body.classList.add("close-sidebar");
+        document.body.classList.remove("grid-handler");
       }
     }
 
@@ -542,24 +547,53 @@ useEffect(() => {
 </svg>
 
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Live Connect</span>
-  <span 
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>MentorSphere</span>
+</Link>
+
+
+<Link 
+  onClick={hideMenu} 
+  to="/applicant-verified-videos" 
+  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
   style={{ 
-    color: '#F00', // Red text color
-    border: '1px solid var(--Color-2, #F00)', // Red border
-    borderRadius: '13px', // Rounded corners
-    padding: '3px 8px', // Spacing around text
-    marginLeft: '15px', // Space between "Verified badges" and "New"
-    fontSize: '10px', // Adjust font size as needed
-    // fontFamily:'Inter',
-    fontStyle:'normal',
-    fontWeight:'500',
-    lineHeight:'normal',
+    display: 'inline-flex', 
+    alignItems: 'center', 
+    textDecoration: 'none', 
+    marginTop: '13px' 
   }}
 >
-  New
-</span>
+  <span 
+    className="dash-icon" 
+    style={{
+      display: 'inline-block', 
+      transition: 'fill 0.3s ease',
+      marginRight: '12px',
+    }}
+  >
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none"
+      style={{ 
+        fill: location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888" 
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
+      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888"} 
+    >
+      {/* 🎥 Video Shorts Icon */}
+      <path d="M10 16.5L16 12L10 7.5V16.5ZM21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3ZM21 19H3V5H21V19Z"/>
+    </svg>
+  </span>
+
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>
+    Tech Buzz Shorts
+  </span>
+
+ 
 </Link>
+
           </li>
         <li>
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
@@ -583,6 +617,25 @@ useEffect(() => {
                   </span>
 
                   <span className="dash-titles">TechVibes</span>
+                </Link>
+              </li>
+              <li>
+                <Link onClick={hideMenu} to="/applicant-interview-prep" className={location.pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}>
+                  <span className="dash-icon" style={{ display: 'inline-block', transition: 'fill 0.3s ease', marginRight: '12px' }}>
+                   <svg width="24" height="24" viewBox="0 0 400 400" fill={location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888"} xmlns="http://www.w3.org/2000/svg" onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888")}>
+  <circle cx="200" cy="200" r="150" />
+  <circle cx="200" cy="173" r="40" stroke="white" stroke-width="9" fill="none"/>
+  <rect x="130" y="220" width="140" height="100" rx="60" stroke="white" stroke-width="9" fill="none"/>
+  <rect x="230" y="110" width="95" height="65" rx="20" stroke="white" stroke-width="8" fill="none"/>
+  <g>
+    <polygon points="265,142 275,150 265,158" fill="white"/>
+    <rect x="282" y="143" width="3" height="13" fill="white"/>
+  </g>
+</svg>
+
+                  </span>
+
+                  <span className="dash-titles">Ask Newton</span>
                 </Link>
               </li>
             </ul>
