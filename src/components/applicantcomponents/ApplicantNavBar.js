@@ -547,7 +547,7 @@ useEffect(() => {
 </svg>
 
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Live Connect</span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>MentorSphere</span>
   <span 
   style={{ 
     color: '#F00', // Red text color
