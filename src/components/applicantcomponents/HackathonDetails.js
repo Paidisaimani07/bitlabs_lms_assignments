@@ -63,20 +63,21 @@ const HackathonDetails = () => {
         fetchHackathon();
     }, [id, userId]);
 
+    const fetchRegistration = async () => {
+        try {
+            const jwtToken = localStorage.getItem("jwtToken");
+            const res = await axios.get(
+                `${apiUrl}/hackathons/${id}/getRegistrationStatus/${userId}`,
+                { headers: { Authorization: `Bearer ${jwtToken}` } }
+            );
+            setRegistration(res.data);
+        } catch (error) {
+            console.error("Error while getting registration:", error);
+            setRegistration(null);
+        }
+    };
+
     useEffect(() => {
-        const fetchRegistration = async () => {
-            try {
-                const jwtToken = localStorage.getItem("jwtToken");
-                const res = await axios.get(
-                    `${apiUrl}/hackathons/${id}/getRegistrationStatus/${userId}`,
-                    { headers: { Authorization: `Bearer ${jwtToken}` } }
-                );
-                setRegistration(res.data);
-            } catch (error) {
-                console.error("Error while getting registration:", error);
-                setRegistration(null);
-            }
-        };
         fetchRegistration();
     }, [id, userId]);
 
@@ -89,7 +90,7 @@ const HackathonDetails = () => {
                 { headers: { Authorization: `Bearer ${jwtToken}` } }
             );
             addSnackbar({ message: 'registration successful', type: 'success' });
-            setRegistration({ registaratinStatus: true, submitStatus: false });
+            await fetchRegistration();
         } catch (err) {
             console.error(err);
             addSnackbar({ message: 'error while registring for the hackathon', type: 'error' });
@@ -117,6 +118,12 @@ const HackathonDetails = () => {
 
         try {
             setSubmitting(true);
+            const githubRegex = /^https?:\/\/(www\.)?github\.com\/.+/i;
+            if (!githubRegex.test(formData.githubLink)) {
+                addSnackbar({ message: 'please enter a valid GitHub URL (e.g., https://github.com/user/repo)', type: 'error' });
+                setSubmitting(false);
+                return;
+            }
             const jwtToken = localStorage.getItem("jwtToken");
             await axios.post(`${apiUrl}/api/hackathons/${id}/submit`, payload, {
                 headers: { Authorization: `Bearer ${jwtToken}` },
@@ -243,7 +250,7 @@ const HackathonDetails = () => {
 
                                 <div className="col-md-6">
                                     <section>
-                                        <h3>Technologies to Use</h3>
+                                        <h3>Suggested Tech Stack</h3>
                                         <div className="hackathon-tag-list">
                                             {hackathon.allowedTechnologies.split(",").map((tech, index) => (
                                                 <span key={index} className="hackathon-tech-tag">{tech.trim()}</span>
@@ -377,12 +384,13 @@ const HackathonDetails = () => {
                                     onChange={handleFormChange}
                                     required
                                     placeholder="Enter a valid GitHub repository URL"
-                                    pattern="https?://.+"
+                                    pattern="https?://(www\\.)?github\\.com/.+"
+                                    title="Enter a valid GitHub URL (e.g., https://github.com/user/repo)"
                                 />
                             </div>
 
                             <div className="form-group">
-                                <label>Demo Link</label>
+                                <label>Project Demo URL (Optional)</label>
                                 <input
                                     type="url"
                                     name="demoLink"

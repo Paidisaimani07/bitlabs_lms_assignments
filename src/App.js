@@ -23,6 +23,7 @@ import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBas
 import JobWidget from './components/jobWidget';
 import ChatBotWidget from './ChatBotWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
+import InterviewPrepPage from './pages/applicantpages/InterviewPrepPage';
 
 import { generateToken, messaging } from './notifications/firebase';
 import { onMessage } from 'firebase/messaging';
@@ -129,6 +130,8 @@ function App() {
                 <Route path="/recruiter-edit-organization" element={<RecruiterHomePage />} />
                 <Route path="/admin-confirm-blog" element={<FinalizeBlog />} />
                 <Route path="/blogs/:id" element={<ApplicantHomePage />} />
+                <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
+                <Route path="/applicant-interview-prep" element={<InterviewPrepPage />} />
 
               
                 </>

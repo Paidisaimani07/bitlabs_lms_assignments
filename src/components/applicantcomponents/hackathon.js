@@ -9,34 +9,21 @@ const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
     const [registrations, setRegistrations] = useState([]);
     const [winners, setWinners] = useState({});
-    const [searchField, setSearchField] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [statusFilter, setStatusFilter] = useState("MY");
+    const [statusFilter, setStatusFilter] = useState(() => localStorage.getItem("applicantHackathonTab") || "MY");
     const [loading, setLoading] = useState(false);
-    const dropdownRef = useRef(null);
+    const searchInputRef = useRef(null);
 
     const { user } = useUserContext();
     const userId = user.id;
     const navigate = useNavigate();
 
     const emptyMessages = {
-        MY: "You haven't registered for any hackathons.",
-        RECOMMENDED: "No hackathons match your skill set.",
-        ACTIVE: "No hackathons are active for now. Come again later.",
-        UPCOMING: "No hackathons to show.",
-        COMPLETED: "No completed hackathons."
-    };
-
-
-    const getLabel = (field) => {
-        switch (field) {
-            case "title": return "Hackathon Title";
-            case "allowedTechnologies": return "Technologies";
-            case "startAt": return "Start Date";
-            case "endAt": return "End Date";
-            default: return "All";
-        }
+        MY: "Looks like you’re not in any hackathons — tap the button and discover exciting ones now!",
+        RECOMMENDED: "No perfect match found? No worries — dive into other hackathons and keep the momentum going",
+        ACTIVE: "Looks like there are no active hackathons at the moment — discover what’s coming next!",
+        UPCOMING: "Looks like nothing’s coming up soon — see which hackathons are active now!",
+        COMPLETED: "No hackathons have been completed yet — explore some active ones while you wait!"
     };
 
     const getApiUrlByTab = (tabKey) => {
@@ -48,6 +35,43 @@ const Hackathon = () => {
             case "MY":
             default: return `${apiUrl}/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
         }
+    };
+
+    const getEmptyImageByTab = (tabKey) => {
+        switch (tabKey) {
+            case "MY":
+                return `/images/hackathon/empty-my.png`;
+            case "RECOMMENDED":
+                return `/images/hackathon/empty-recommended.png`;
+            case "ACTIVE":
+                return `/images/hackathon/empty-active.png`;
+            case "UPCOMING":
+                return `/images/hackathon/empty-upcoming.png`;
+            case "COMPLETED":
+                return `/images/hackathon/empty-completed.png`;
+            default:
+                return '';
+        }
+    };
+
+    const getCtaTargetTab = (tabKey) => {
+        if (tabKey === "ACTIVE") return "UPCOMING";
+        if (tabKey === "UPCOMING") return "ACTIVE";
+        return "ACTIVE";
+    };
+
+    const getEmptyImageSize = (tabKey) => {
+        if (tabKey === "MY" || tabKey === "ACTIVE" || tabKey === "UPCOMING") return 300;
+        return 220;
+    };
+
+    const toDateObject = (value) => {
+        if (!value) return new Date(0);
+        if (Array.isArray(value)) {
+            const [year, month = 1, day = 1, hour = 0, minute = 0, second = 0, nano = 0] = value;
+            return new Date(year, month - 1, day, hour, minute, second, Math.floor(nano / 1_000_000));
+        }
+        return new Date(value);
     };
 
     const fetchHackathons = async (tabKey) => {
@@ -63,7 +87,16 @@ const Hackathon = () => {
                 ...h,
                 createdAt: h.createdAt ? new Date(h.createdAt).getTime() : 0,
             }));
-            setHackathons(normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
+            if (tabKey === "MY") {
+                const actives = normalized.filter(h => h.status === "ACTIVE")
+                    .sort((a, b) => toDateObject(a.endAt) - toDateObject(b.endAt));
+                const upcoming = normalized.filter(h => h.status === "UPCOMING")
+                    .sort((a, b) => toDateObject(a.startAt) - toDateObject(b.startAt));
+                const completed = normalized.filter(h => h.status === "COMPLETED");
+                setHackathons([...actives, ...upcoming, ...completed]);
+            } else {
+                setHackathons(normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
+            }
 
             if (tabKey === "COMPLETED" || tabKey === "MY") {
                 const winnerIds = [...new Set(normalized.map(h => h.winner).filter(Boolean))];
@@ -116,31 +149,21 @@ const Hackathon = () => {
     };
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-
-    useEffect(() => {
+        setSearchQuery("");
         fetchHackathons(statusFilter);
         fetchRegistrations();
     }, [statusFilter]);
 
+    useEffect(() => {
+        try {
+            localStorage.setItem("applicantHackathonTab", statusFilter);
+        } catch (_) {}
+    }, [statusFilter]);
+
     const filteredHackathons = hackathons.filter(h => {
-        if (searchField === "all") {
-            return Object.values(h).some(val =>
-                val?.toString().toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-        return h[searchField]?.toString().toLowerCase().includes(searchQuery.toLowerCase());
+        const titleMatch = h.title?.toLowerCase().includes(searchQuery.toLowerCase());
+        const techMatch = h.allowedTechnologies?.toLowerCase().includes(searchQuery.toLowerCase());
+        return titleMatch || techMatch;
     });
 
     const handleViewClick = (hackathonId) => navigate(`/applicant-hackathon-details/${hackathonId}`);
@@ -175,42 +198,62 @@ const Hackathon = () => {
                         ))}
                     </div>
 
-                    <div className="filter-section">
-                        <div className="filter-box custom-dropdown" ref={dropdownRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            {getLabel(searchField)} <span className="arrow">▼</span>
-                            {dropdownOpen && (
-                                <ul className="dropdown-list">
-                                    {[
-                                        { value: "all", label: "All" },
-                                        { value: "title", label: "Hackathon Title" },
-                                        { value: "allowedTechnologies", label: "Technologies" },
-                                        { value: "startAt", label: "Start Date" },
-                                        { value: "endAt", label: "End Date" },
-                                    ].map(option => (
-                                        <li key={option.value} onClick={() => { setSearchField(option.value); setDropdownOpen(false); }}>
-                                            {option.label}
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </div>
-
-                        <div className="search-box">
-                            <input
-                                type="text"
-                                placeholder={`Search by ${getLabel(searchField)}`}
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
+                    <div className="hackathon-search-box">
+                        <i className="fa fa-search search-icon"></i>
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            ref={searchInputRef}
+                            className="hackathon-search-input"
+                        />
+                        {searchQuery && (
+                            <i
+                                className="fa fa-times clear-icon"
+                                onMouseDown={(e) => e.preventDefault()}
+                                onClick={() => {
+                                    setSearchQuery("");
+                                    if (searchInputRef.current) {
+                                        searchInputRef.current.focus();
+                                    }
+                                }}
+                            ></i>
+                        )}
                     </div>
                 </div>
 
                 {loading ? (
                     <div className="loading"></div>
                 ) : filteredHackathons.length === 0 ? (
-                    <div className="no-results-message" style={{ padding: "20px", fontSize: "18px", textAlign: "center" }}>
-                        {emptyMessages[statusFilter] || "No hackathons found."}
+                    <div
+                        className="no-results-message"
+                        style={{
+                            padding: "32px",
+                            fontSize: "18px",
+                            textAlign: "center",
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "12px"
+                        }}
+                    >
+                        <img
+                            src={getEmptyImageByTab(statusFilter)}
+                            alt={emptyMessages[statusFilter] || "No hackathons"}
+                            style={{ width: `${getEmptyImageSize(statusFilter)}px`, height: "auto", opacity: 0.95 }}
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        />
+                        <div>{emptyMessages[statusFilter]}</div>
+                                <button
+                                    className="cta-button"
+                                    style={{ marginTop: "8px" }}
+                                    onClick={() => setStatusFilter(getCtaTargetTab(statusFilter))}
+                                >
+                                    Explore
+                                </button>
                     </div>
                 ) : (
                     <div className="newCards-grid">
