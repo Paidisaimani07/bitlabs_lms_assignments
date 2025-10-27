@@ -24,6 +24,7 @@ import JobWidget from './components/jobWidget';
 import ChatBotWidget from './ChatBotWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 import InterviewPrepPage from './pages/applicantpages/InterviewPrepPage';
+import FeedbackForm from './pages/feedbackpage/MentorConnectFeedbackForm';
 
 import { generateToken, messaging } from './notifications/firebase';
 import { onMessage } from 'firebase/messaging';
@@ -84,6 +85,7 @@ function App() {
               <Route path="/cookiepolicy" element={<CookiePolicy />} />
               <Route path="/termsofservices" element={<TermsOfServices />} />
   <Route path="/widget" element={<JobWidget />} />
+  <Route path="/feedback" element={<FeedbackForm />} />
               {isLoggedIn ? (
                 <>
                 <Route path="/applicanthome" element={<ApplicantHomePage />} />
