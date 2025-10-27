@@ -9,7 +9,7 @@
     background: #fefefe;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     border-radius: 12px;
-    padding: 32px;
+    padding: 12px 32px;
     margin-top: 7%;
 }
 
@@ -189,14 +189,22 @@
 }
 
 @media screen and (max-width: 768px) {
-    .hackathon-top-section {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
      .hackathon-banner-wrapper {
         height: 260px !important;
+    }
+    .hackathon-details-wrapper{
+        margin-top: 12%;
+    }
+}
+
+@media screen and (max-width: 640px) {
+   .hackathon-details-wrapper{
+        margin-top: 15%;
+    }
+}
+@media screen and (max-width: 480px) {
+   .hackathon-details-wrapper{
+        margin-top: 20%;
     }
 }
 
