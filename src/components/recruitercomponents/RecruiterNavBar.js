@@ -334,6 +334,12 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
             </Link>
           </li>
           <li>
+            <li>
+            <Link to="/recruiter-hackathons" className={location.pathname === "/recruiter-hackathons" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
+              <span className="icon-submit dash-icon"></span>
+              <span className="dash-titles">Hackathons</span>
+            </Link>
+          </li>
           <Link
       to="/recruiter-postjob"
       className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}

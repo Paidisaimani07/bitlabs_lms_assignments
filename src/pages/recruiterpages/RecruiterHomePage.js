@@ -22,6 +22,9 @@ import RecruiterRepostJob from '../../components/recruitercomponents/RecruiterRe
 import RecruiterPostJob2 from '../../components/recruitercomponents/RecruiterPostJob2';
 import RecruiterViewOrganization from '../../components/recruitercomponents/RecruiterViewOrganization';
 import RecruiterEditOrganization from '../../components/recruitercomponents/RecruiterEditOrganization';
+import RecruiterHackathonDashboard from '../../components/recruitercomponents/RecruiterHackathonDashboard';
+import RecruiterCreateHackathon from '../../components/recruitercomponents/RecruiterHackathonCreate';
+import RecruiterHackathonViewRegistrations from '../../components/recruitercomponents/RecruiterHackathonViewRegistrations';
 
 function RecruiterHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -91,6 +94,15 @@ function RecruiterHomePage() {
                       case '/recruiter-edit-organization':
                         setActiveRoute('editorganization');
                         break;
+                     case '/recruiter-hackathons':
+                        setActiveRoute('hackathons');
+                        break;
+                case `/hackathon-view-details/${id}`:
+                  setActiveRoute('hackathon-view-details');
+                  break;
+                    case '/recruiter-hackathons-create':
+                        setActiveRoute('create-hackathon');
+                        break;
 
       default:
         setActiveRoute('');
@@ -123,6 +135,9 @@ function RecruiterHomePage() {
     {activeRoute.startsWith('viewapplicant-')  && id && <Recruiterviewapplicant id={id} />}
     {activeRoute.startsWith('appliedapplicantsbasedonjob-')  && id && <AppliedApplicantsBasedOnJobs id={id} />}
     {activeRoute.startsWith('view-resume-')  && id && <ViewApplicantResume id={id} />}
+    {activeRoute === 'hackathons' && <RecruiterHackathonDashboard />}
+    {activeRoute === 'create-hackathon' && <RecruiterCreateHackathon />}
+  {activeRoute === 'hackathon-view-details' && id && <RecruiterHackathonViewRegistrations hackathonId={id} />}
     </div>
   )
 }
