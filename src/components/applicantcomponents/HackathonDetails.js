@@ -384,7 +384,7 @@ const HackathonDetails = () => {
                                     onChange={handleFormChange}
                                     required
                                     placeholder="Enter a valid GitHub repository URL"
-                                    pattern="https?://(www\\.)?github\\.com/.+"
+                                    pattern="https?://(www\.)?github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/?"
                                     title="Enter a valid GitHub URL (e.g., https://github.com/user/repo)"
                                 />
                             </div>

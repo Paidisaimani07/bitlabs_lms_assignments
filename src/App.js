@@ -132,6 +132,9 @@ function App() {
                 <Route path="/blogs/:id" element={<ApplicantHomePage />} />
                 <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
                 <Route path="/applicant-interview-prep" element={<InterviewPrepPage />} />
+                <Route path="/recruiter-hackathons" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-hackathons-create" element={<RecruiterHomePage />} />
+                <Route path="/hackathon-view-details/:id" element={<RecruiterHomePage />} />
 
               
                 </>
