@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./hackathonDetails.css";
 import { useUserContext } from "../common/UserProvider";
 import { apiUrl } from "../../services/ApplicantAPIService";
-import BackButton from "../common/BackButton";
 import Snackbar from '../common/Snackbar';
 
 const HackathonDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { user } = useUserContext();
     const userId = user.id;
     const [hackathon, setHackathon] = useState(null);
@@ -206,20 +206,73 @@ const HackathonDetails = () => {
 
 
     return (<div className="dashboard__content">
-        <div className="row mr-0 ml-10" style={{ marginRight: '2%' }}>
-            <div className="hackathon-page-wrapper" style={{ display: "flex", gap: "30px", width: "96%", margin: "3% auto 0 auto" }}>
+        <div className="row mr-0 ml-10">
+            <div className="hackathon-page-wrapper">
 
                 <div
                     className="hackathon-details-wrapper"
                     style={{ flex: showForm ? 2 : 1, transition: "flex 0.3s" }}
                 >
                     <div className="hackathon-top-section">
-                        <BackButton className="hackathon-back-button" />
                         <h1 className="hackathon-title">{hackathon.title}</h1>
+                    </div>
+
+                    <div className="breadcrumb-navigation">
+                        <span className="breadcrumb-link" onClick={() => navigate('/applicanthome')}>Dashboard</span>
+                        <span className="breadcrumb-separator"> / </span>
+                        <span className="breadcrumb-link" onClick={() => navigate('/applicant-hackathon')}>Innovation Arena</span>
                     </div>
 
                     <div className="hackathon-body">
                         <div className="hackathon-left-column">
+                            <div className="hackathon-banner-wrapper">
+                                <img
+                                    src={hackathon.bannerUrl}
+                                    alt={hackathon.title}
+                                    className="hackathon-banner"
+                                    onError={(e) => (e.target.src = "https://via.placeholder.com/900x300?text=No+Image")}
+                                />
+                            </div>
+                            <section className="hackathon-info-box">
+                                <h3 className="info-box-title">Basic details</h3>
+                                <div className="info-item">
+                                    <h4>Organized By</h4>
+                                    <p>{hackathon.company}</p>
+                                </div>
+                                <div className="info-item">
+                                    <h4>Created Date</h4>
+                                    <p>{formatToDateString(hackathon.createdAt)}</p>
+                                </div>
+                                <div className="info-item">
+                                    <h4>Start Date</h4>
+                                    <p>{formatToDateString(hackathon.startAt)}</p>
+                                </div>
+                                <div className="info-item">
+                                    <h4>End Date</h4>
+                                    <p>{formatToDateString(hackathon.endAt)}</p>
+                                </div>
+                            </section>
+
+                            <section className="eligibility-section">
+                                <h3>Eligibility Criteria</h3>
+                                <div className="hackathon-tag-list">
+                                    {hackathon.eligibility.split(",").map((item, index) => (
+                                        <span key={index} className="hackathon-tag">{item.trim()}</span>
+                                    ))}
+                                </div>
+                            </section>
+
+                            <section className="tech-stack-section">
+                                <h3>Suggested Tech Stack</h3>
+                                <div className="hackathon-tag-list">
+                                    {hackathon.allowedTechnologies.split(",").map((tech, index) => (
+                                        <span key={index} className="hackathon-tech-tag">{tech.trim()}</span>
+                                    ))}
+                                </div>
+                            </section>
+                        </div>
+
+                        <div className="hackathon-right-column">
                             <section>
                                 <h3>Description</h3>
                                 <p>{hackathon.description}</p>
@@ -236,64 +289,9 @@ const HackathonDetails = () => {
                                 </section>
                             )}
 
-                            <div className="row side-by-side-section">
-                                <div className="col-md-6">
-                                    <section>
-                                        <h3>Eligibility Criteria</h3>
-                                        <div className="hackathon-tag-list">
-                                            {hackathon.eligibility.split(",").map((item, index) => (
-                                                <span key={index} className="hackathon-tag">{item.trim()}</span>
-                                            ))}
-                                        </div>
-                                    </section>
-                                </div>
-
-                                <div className="col-md-6">
-                                    <section>
-                                        <h3>Suggested Tech Stack</h3>
-                                        <div className="hackathon-tag-list">
-                                            {hackathon.allowedTechnologies.split(",").map((tech, index) => (
-                                                <span key={index} className="hackathon-tech-tag">{tech.trim()}</span>
-                                            ))}
-                                        </div>
-                                    </section>
-                                </div>
+                            <div className="action-buttons-row">
+                                {renderActionButton()}
                             </div>
-                        </div>
-
-                        <div className="hackathon-right-column">
-                            <div className="hackathon-banner-wrapper">
-                                <img
-                                    src={hackathon.bannerUrl}
-                                    alt={hackathon.title}
-                                    className="hackathon-banner"
-                                    onError={(e) => (e.target.src = "https://via.placeholder.com/900x300?text=No+Image")}
-                                />
-                                <span className={`hackathon-status-badge ${hackathon.status.toLowerCase()}`}>
-                                    {hackathon.status}
-                                </span>
-                            </div>
-                            <section className="hackathon-info-box">
-                                <div>
-                                    <h3>Organized By</h3>
-                                    <p>{hackathon.company}</p>
-                                </div>
-                                <div>
-                                    <h3>Created Date</h3>
-                                    <p>{formatToDateString(hackathon.createdAt)}</p>
-                                </div>
-                                <div>
-                                    <h3>Start Date</h3>
-                                    <p>{formatToDateString(hackathon.startAt)}</p>
-                                </div>
-                                <div>
-                                    <h3>End Date</h3>
-                                    <p>{formatToDateString(hackathon.endAt)}</p>
-                                </div>
-
-                            </section>
-
-                            <div className="newCard-footer">{renderActionButton()}</div>
                         </div>
                     </div>
                 </div>
