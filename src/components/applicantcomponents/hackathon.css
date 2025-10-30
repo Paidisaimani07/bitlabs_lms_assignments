@@ -6,12 +6,22 @@
     position: relative;
     display: flex;
     align-items: center;
-    border-radius: 25px;
+    border-radius: 5px;
     padding: 6px 14px;
     width: 35%;
     height: 36px;
-    border: 1px solid #ff7a18;
+    border: 1px solid #CBCBCB;
     background-color: #fff;
+}
+
+.hackathon-search-box .search-icon1 {
+    font-size: 14px;
+    color: #CBCBCB;
+}
+
+.hackathon-search-box input::placeholder {
+    color: #CBCBCB;
+    font-size: 14px;
 }
 
 .hackathon-search-box .hackathon-search-input {
@@ -29,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 9%;
+    margin-top: 100px;
     margin-bottom: 10px;
     width: 100%;
 }
@@ -125,12 +135,15 @@
     }
 }
 
+@media (max-width: 1300px) {
+    .main-header-row {
+    margin-top: 110px;
+    }
+}
+
 @media (max-width: 1200px) {
     .newCards-grid {
         grid-template-columns: repeat(3, 1fr);
-    }
-     .main-header-row {
-    margin-top: 10.5%;
     }
 }
 
@@ -143,10 +156,6 @@
         flex-direction: column;
         align-items: stretch;
         gap: 16px;
-    }
-
-     .main-header-row {
-    margin-top: 13%;
     }
 
     .filter-section {
@@ -166,7 +175,6 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
-        margin-top: 14%;
     }
 
     .hackathon-search-box {
@@ -177,12 +185,6 @@
         margin-top: 0;    }
 }
 
-@media (max-width: 600px) {
-    .main-header-row {
-        margin-top: 20%;
-    }
-}
-
 @media (max-width:500px){
     .newCards-grid {
         grid-template-columns: 1fr;
@@ -190,10 +192,6 @@
 }
 
 @media (max-width: 420px) {
-
-    .main-header-row {
-        margin-top: 24%;
-    }
 
     .header-container {
         margin-top: 0;
@@ -206,7 +204,7 @@
 
 .newCard {
     background: white;
-    border-radius: 12px;
+    border-radius: 5px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     position: relative;
