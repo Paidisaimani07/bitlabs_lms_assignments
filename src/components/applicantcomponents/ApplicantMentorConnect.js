@@ -3,9 +3,13 @@ import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 
-// ✅ local fallback images (replace paths as needed)
-import DummyMentor from "../../images/mentor-dummy.png"; // your provided dummy avatar
-import DummyBanner from "../../images/bannercard_mentor.jpg"; // generic banner image
+// ✅ Local fallback images
+import DummyMentor from "../../images/mentor-dummy.png";
+import DummyBanner from "../../images/bannercard_mentor.jpg";
+
+// 🎯 New specific mentor banners
+import BannerNagul from "../../images/nagul_connect.png";
+import BannerKarun from "../../images/karun_connect.png";
 
 const ApplicantMentorConnect = () => {
   const [loading, setLoading] = useState(true);
@@ -141,14 +145,18 @@ const ApplicantMentorConnect = () => {
     window.open(meetLink, "_blank", "noopener,noreferrer");
   };
 
-  // fallback resolvers
+  // ✅ Custom Banner Logic
+  const getBannerUrl = (m) => {
+    const id = m.meetingId ?? m.meeting_id ?? "";
+    if (id === "e6b09b06-5df4-4bb7-adea-938a9e9cc81d") return BannerNagul;
+    if (id === "f47ac10b-58cc-4372-a567-0e02b2c3d479") return BannerKarun;
+    return DummyBanner;
+  };
+
   const getAvatarUrl = (m) =>
     m.mentorImage || m.mentorAvatar || m.photoUrl || m.avatar || DummyMentor;
 
-  const getBannerUrl = (m) =>
-    m.bannerImage || m.bannerUrl || m.imageUrl || m.coverImage || DummyBanner;
-
-  // ---- Styles (same base styles) ----
+  // ---- Styles ----
   const card = {
     background: "#fff",
     borderRadius: 16,
@@ -159,9 +167,7 @@ const ApplicantMentorConnect = () => {
     flexDirection: "column",
     transition: "transform 150ms ease, box-shadow 150ms ease",
   };
-
   const bannerWrap = { position: "relative", width: "100%", height: 140, overflow: "hidden" };
-
   const pillBase = {
     position: "absolute",
     top: 12,
@@ -173,15 +179,10 @@ const ApplicantMentorConnect = () => {
     borderRadius: 999,
     boxShadow: "0 6px 12px rgba(0,0,0,0.12)",
   };
-
-  const pillOngoing = { ...pillBase, background: "#22c55e" }; // green
-  const pillUpcoming = { ...pillBase, background: "#F97316" }; // orange
-
+  const pillOngoing = { ...pillBase, background: "#22c55e" };
+  const pillUpcoming = { ...pillBase, background: "#F97316" };
   const body = { padding: 14, display: "flex", flexDirection: "column", gap: 8 };
-
   const title = { fontSize: 18, fontWeight: 800, color: "#111827" };
-
-  // Description: 1 line with vertical scrollbar if needed
   const subtitle = {
     fontSize: 14,
     color: "#475569",
@@ -190,11 +191,8 @@ const ApplicantMentorConnect = () => {
     overflowY: "auto",
     overflowX: "hidden",
   };
-
   const durationText = { fontSize: 12, color: "#64748B" };
-
   const mentorRow = { display: "flex", alignItems: "center", gap: 10, marginTop: 2 };
-
   const avatar = {
     width: 32,
     height: 32,
@@ -204,11 +202,9 @@ const ApplicantMentorConnect = () => {
     background: "#fff",
     flexShrink: 0,
   };
-
   const mentorMeta = { display: "flex", flexDirection: "column", lineHeight: 1.1 };
   const mentorName = { fontSize: 13, fontWeight: 700, color: "#0F172A" };
   const mentorRole = { fontSize: 12, color: "#94A3B8" };
-
   const primaryCta = {
     marginTop: 6,
     background: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
@@ -223,14 +219,7 @@ const ApplicantMentorConnect = () => {
     boxShadow: "0 8px 18px rgba(249,115,22,0.25)",
   };
   const primaryCtaDisabled = { ...primaryCta, opacity: 0.8, cursor: "not-allowed" };
-
-  const bottomBar = {
-    marginTop: 8,
-    display: "flex",
-    gap: 10,
-    alignItems: "center",
-  };
-
+  const bottomBar = { marginTop: 8, display: "flex", gap: 10, alignItems: "center" };
   const ghostBtn = {
     flex: 1,
     display: "inline-flex",
@@ -245,7 +234,7 @@ const ApplicantMentorConnect = () => {
     fontWeight: 700,
     fontSize: 13,
     cursor: "pointer",
-    whiteSpace: "nowrap", // keep single line
+    whiteSpace: "nowrap",
   };
 
   return (
@@ -256,7 +245,6 @@ const ApplicantMentorConnect = () => {
         @media (max-width: 992px) { .mentor-card { flex:1 1 calc(50% - 16px); max-width:calc(50% - 16px); } }
         @media (max-width: 600px) { .mentor-card { flex:1 1 100%; max-width:100%; } }
         .mentor-card:hover { transform: translateY(-2px); box-shadow: 0 18px 36px rgba(17,24,39,0.10); }
-        /* thin scrollbar look for the description area */
         .desc-thin::-webkit-scrollbar { width: 8px; }
         .desc-thin::-webkit-scrollbar-thumb { background-color: rgba(0,0,0,0.18); border-radius: 6px; }
         .desc-thin { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.18) transparent; }
@@ -279,8 +267,6 @@ const ApplicantMentorConnect = () => {
           <div className="themes-container">
             <div className="content-tab">
               <div className="inner">
-                <div className="group-col-2" />
-
                 <div style={{ marginTop: 6 }}>
                   {loading ? (
                     <div style={{ padding: 18 }}>Loading sessions…</div>
@@ -293,7 +279,14 @@ const ApplicantMentorConnect = () => {
                   ) : (
                     <div className="mentor-grid">
                       {meetings
-                        .filter((m) => getStatus(m) !== "past") // hide past
+                         // show only upcoming sessions
+    .filter((m) => getStatus(m) === "upcoming")
+    // sort by nearest upcoming date/time first
+    .sort((a, b) => {
+      const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+      return ta - tb; // earliest first
+    })
                         .map((m) => {
                           const meetingId = m.meetingId ?? m.meeting_id ?? m.id;
                           const mentor = m.mentorName ?? m.mentor_name ?? "Mentor";
@@ -305,14 +298,12 @@ const ApplicantMentorConnect = () => {
                           const bannerUrl = getBannerUrl(m);
                           const gcalUrl = buildGoogleCalendarUrl(m);
                           const role = m.mentorRole || m.role || "Career Coach";
-
                           const status = getStatus(m);
                           const startsOnText = formatStartsOn(m.date, m.startTime);
 
                           return (
                             <div className="mentor-card" key={meetingId}>
                               <div style={card}>
-                                {/* Banner with status pill */}
                                 <div style={bannerWrap}>
                                   <img
                                     src={bannerUrl}
@@ -328,18 +319,13 @@ const ApplicantMentorConnect = () => {
                                   </div>
                                 </div>
 
-                                {/* Body */}
                                 <div style={body}>
                                   <div style={title}>{titleTxt}</div>
-
-                                  {/* 1-line scrollable description */}
                                   <div className="desc-thin" style={subtitle}>
                                     {subtitleTxt}
                                   </div>
-
                                   <div style={durationText}>Duration: {duration}</div>
 
-                                  {/* Mentor strip */}
                                   <div style={mentorRow}>
                                     <img
                                       src={avatarUrl}
@@ -356,44 +342,34 @@ const ApplicantMentorConnect = () => {
                                     </div>
                                   </div>
 
-                                  {/* Primary CTA – changes with status */}
                                   {status === "ongoing" ? (
                                     <button
                                       style={primaryCta}
                                       onClick={() => handleJoin(meetLink)}
                                       disabled={!meetLink}
-                                      title={!meetLink ? "No join link provided" : "Join Now"}
                                     >
                                       Join Now
                                     </button>
                                   ) : (
-                                    <button
-                                      style={primaryCtaDisabled}
-                                      disabled
-                                      title={`Starts on ${startsOnText}`}
-                                    >
+                                    <button style={primaryCtaDisabled} disabled>
                                       Starts on {startsOnText}
                                     </button>
                                   )}
 
-                                  {/* Bottom action bar */}
                                   <div style={bottomBar}>
                                     <button
                                       style={ghostBtn}
                                       onClick={() => window.open(gcalUrl, "_blank", "noopener,noreferrer")}
-                                      title="Add to Google Calendar"
                                     >
-                                      {/* calendar icon */}
-                                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                                        <path d="M7 2a1 1 0 0 0-1 1v1H5a3 3 0 0 0-3 3v2h20V7a3 3 0 0 0-3-3h-1V3a1 1 0 1 0-2 0v1H8V3a1 1 0 0 0-1-1z"/>
-                                        <path d="M22 10H2v9a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-9zM7 14h4v4H7v-4z"/>
+                                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M7 2a1 1 0 0 0-1 1v1H5a3 3 0 0 0-3 3v2h20V7a3 3 0 0 0-3-3h-1V3a1 1 0 1 0-2 0v1H8V3a1 1 0 0 0-1-1z" />
+                                        <path d="M22 10H2v9a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3v-9zM7 14h4v4H7v-4z" />
                                       </svg>
-                                      Add to calendar
+                                      Add to Calendar
                                     </button>
 
                                     <button
                                       style={ghostBtn}
-                                      title="Copy join link"
                                       onClick={() =>
                                         navigator.clipboard
                                           .writeText(meetLink || "")
@@ -401,14 +377,12 @@ const ApplicantMentorConnect = () => {
                                           .catch(() => alert("Unable to copy. Please copy manually."))
                                       }
                                     >
-                                      {/* copy icon */}
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="18"
                                         height="18"
                                         viewBox="0 0 24 24"
                                         fill="currentColor"
-                                        aria-hidden="true"
                                       >
                                         <path d="M16 1H6a2 2 0 0 0-2 2v11h2V3h10V1z" />
                                         <path d="M19 5H10a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H10V7h9v14z" />
@@ -424,7 +398,6 @@ const ApplicantMentorConnect = () => {
                     </div>
                   )}
                 </div>
-
               </div>
             </div>
           </div>
