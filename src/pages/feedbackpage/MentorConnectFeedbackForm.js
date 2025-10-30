@@ -1,226 +1,198 @@
-import React, { useState } from "react";
+// src/components/feedback/MentorConnectFeedbackForm.jsx
+import React, { useEffect, useState, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
-import Snackbar from "../../components/common/Snackbar";
 import "./MentorConnectFeedbackForm.css";
 
 const MentorConnectFeedbackForm = () => {
-  const [formData, setFormData] = useState({
-    collegeName: "",
-    mentorName: "",
-    sessionTitle: "",
-    ratingOverall: 0,
-    ratingDelivery: 0,
-    ratingContent: 0,
-    ratingClarity: 0,
-    comments: "",
-  });
+  const { formId } = useParams();
 
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", type: "" });
+  const [form, setForm] = useState(null);         // { id, fields: [...] }
+  const [answers, setAnswers] = useState({});     // { [label]: value }
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [commentError, setCommentError] = useState("");
+  const [loadErr, setLoadErr] = useState("");
 
-  const handleStarClick = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+  // Load form safely (default fields to [])
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/mentorfeedback/form/${formId}`);
+        if (!mounted) return;
+        const data = res?.data || {};
+        const fields = Array.isArray(data.fields) ? data.fields : [];
+        setForm({ id: data.id, fields });
+      } catch (e) {
+        console.error("Error loading form:", e);
+        setLoadErr("Unable to load the form.");
+      }
+    })();
+    return () => { mounted = false; };
+  }, [formId]);
+
+  const handleChange = (label, value) => {
+    setAnswers((prev) => ({ ...prev, [label]: value }));
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Accept JSON array options OR comma-separated
+  const parseOptions = (options) => {
+    if (!options) return [];
+    if (Array.isArray(options)) return options;
+    try {
+      const parsed = JSON.parse(options);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (_) {}
+    return String(options)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  };
 
-    if (name === "comments") {
-      if (value.length < 10) {
-        setCommentError("Comments must be at least 10 characters long.");
+  // Client-side required validation
+  const missingRequired = useMemo(() => {
+    if (!form?.fields?.length) return false;
+    for (const f of form.fields) {
+      if (!f.required) continue;
+      const v = answers[f.label];
+      if (f.fieldType === "rating") {
+        if (!v || Number(v) < 1) return true;
+      } else if (f.fieldType === "checkbox") {
+        if (v !== true) return true;
       } else {
-        setCommentError("");
+        if (v === undefined || v === null || String(v).trim().length === 0) return true;
       }
     }
-  };
-
-  const validateRatings = () => {
-    const { ratingOverall, ratingDelivery, ratingContent, ratingClarity } = formData;
-    return ratingOverall && ratingDelivery && ratingContent && ratingClarity;
-  };
+    return false;
+  }, [answers, form]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateRatings()) {
-      setSnackbar({
-        open: true,
-        message: "Please provide all four ratings before submitting.",
-        type: "error",
-      });
+    if (missingRequired) {
+      alert("Please fill all required questions.");
       return;
     }
-
-    if (formData.comments.length < 10) {
-      setCommentError("Comments must be at least 10 characters long.");
-      setSnackbar({
-        open: true,
-        message: "Please provide at least 10 characters in the comments field.",
-        type: "error",
-      });
-      return;
-    }
-
     try {
-      await axios.post(`${apiUrl}/mentorfeedback/feedback`, formData);
+      setSubmitting(true);
+
+      // Backend accepts empty meta; we always send strings
+      const payload = {
+
+        answers,
+      };
+
+      await axios.post(`${apiUrl}/mentorfeedback/form/${formId}/submit`, payload, {
+        headers: { "Content-Type": "application/json" },
+      });
+
       setSubmitted(true);
-      setSnackbar({
-        open: true,
-        message: "Thank you! Your feedback has been submitted successfully.",
-        type: "success",
-      });
-    } catch (error) {
-      setSnackbar({
-        open: true,
-        message: "Error submitting feedback. Please try again later.",
-        type: "error",
-      });
+    } catch (err) {
+      console.error("Submit error:", err?.response || err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.statusText ||
+        "Error submitting feedback";
+      alert(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "", type: "" });
-  };
-
+  if (loadErr) return <p className="loading-text">{loadErr}</p>;
+  if (!form) return <p className="loading-text">Loading form...</p>;
   if (submitted) {
     return (
-      <div className="feedback-success">
-        <div className="success-card">
-          <h2 className="success-title">Thank You for Your Feedback!</h2>
-          <p className="success-message">
-            Your response has been recorded successfully. Your feedback helps us
-            improve our mentorship sessions and make them even better!
-          </p>
-          <button
-            className="success-btn"
-            onClick={() => {
-              setSubmitted(false);
-              setSnackbar({ open: false, message: "", type: "" });
-              setFormData({
-                collegeName: "",
-                mentorName: "",
-                sessionTitle: "",
-                ratingOverall: 0,
-                ratingDelivery: 0,
-                ratingContent: 0,
-                ratingClarity: 0,
-                comments: "",
-              });
-            }}
-          >
-            Submit Another Response
-          </button>
+      <div className="thanks-wrap">
+        <div className="thank-you">
+          <div>Thank you for your feedback!</div>
+          <p>Your response has been recorded.</p>
         </div>
       </div>
     );
   }
 
-  const renderStars = (field, value) => (
-    <div className="star-rating">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <span
-          key={star}
-          className={`star ${value >= star ? "filled" : ""}`}
-          onClick={() => handleStarClick(field, star)}
-        >
-          ★
-        </span>
-      ))}
-    </div>
-  );
-
   return (
     <div className="feedback-container">
-      <div className="feedback-card">
-        <h2 className="feedback-title">Mentor Connect Feedback Form</h2>
-        <p className="feedback-subtitle">
-          We value your input! Please share your honest thoughts below.
-        </p>
+      <h2 className="feedback-title">Mentor Feedback Form</h2>
 
-        <form onSubmit={handleSubmit} className="feedback-form">
-          <label>
-            College Name <span className="required-star">*</span>
-          </label>
-          <input
-            type="text"
-            name="collegeName"
-            value={formData.collegeName}
-            onChange={handleChange}
-            required
-          />
+      <form onSubmit={handleSubmit} className="feedback-form">
+        {form.fields.length === 0 && (
+          <div className="empty-state">This form has no questions.</div>
+        )}
 
-          <label>
-            Mentor Name <span className="required-star">*</span>
-          </label>
-          <input
-            type="text"
-            name="mentorName"
-            value={formData.mentorName}
-            onChange={handleChange}
-            required
-          />
+        {form.fields.map((f, i) => (
+          <div key={`${f.label}-${i}`} className="form-field">
+            <label>
+              {f.label} {f.required && <span className="required">*</span>}
+            </label>
 
-          <label>
-            Session Title <span className="required-star">*</span>
-          </label>
-          <input
-            type="text"
-            name="sessionTitle"
-            value={formData.sessionTitle}
-            onChange={handleChange}
-            required
-          />
+            {f.fieldType === "text" && (
+              <input
+                type="text"
+                onChange={(e) => handleChange(f.label, e.target.value)}
+              />
+            )}
 
-          <div className="rating-section">
-            <div className="rating-field">
-              <label>Overall Rating <span className="required-star">*</span></label>
-              {renderStars("ratingOverall", formData.ratingOverall)}
-            </div>
+            {f.fieldType === "textarea" && (
+              <textarea
+                rows="4"
+                onChange={(e) => handleChange(f.label, e.target.value)}
+              />
+            )}
 
-            <div className="rating-field">
-              <label>Delivery Rating <span className="required-star">*</span></label>
-              {renderStars("ratingDelivery", formData.ratingDelivery)}
-            </div>
+            {f.fieldType === "number" && (
+              <input
+                type="number"
+                onChange={(e) => handleChange(f.label, e.target.value)}
+              />
+            )}
 
-            <div className="rating-field">
-              <label>Content Rating <span className="required-star">*</span></label>
-              {renderStars("ratingContent", formData.ratingContent)}
-            </div>
+            {f.fieldType === "dropdown" && (
+              <select onChange={(e) => handleChange(f.label, e.target.value)} defaultValue="">
+                <option value="" disabled>
+                  Select
+                </option>
+                {parseOptions(f.options).map((opt, idx) => (
+                  <option key={`${f.label}-opt-${idx}`} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </select>
+            )}
 
-            <div className="rating-field">
-              <label>Clarity Rating <span className="required-star">*</span></label>
-              {renderStars("ratingClarity", formData.ratingClarity)}
-            </div>
+            {f.fieldType === "rating" && (
+              <div className="rating">
+                {[1, 2, 3, 4, 5].map((r) => (
+                  <span
+                    key={r}
+                    className={Number(answers[f.label]) >= r ? "star filled" : "star"}
+                    onClick={() => handleChange(f.label, r)}
+                    role="button"
+                    aria-label={`${r} star`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {f.fieldType === "checkbox" && (
+              <label className="checkbox-row">
+                <input
+                  type="checkbox"
+                  onChange={(e) => handleChange(f.label, e.target.checked)}
+                />
+                <span>Check</span>
+              </label>
+            )}
           </div>
+        ))}
 
-          <label>
-            Comments <span className="required-star">*</span>
-          </label>
-          <textarea
-            name="comments"
-            rows="4"
-            value={formData.comments}
-            onChange={handleChange}
-            required
-          ></textarea>
-          {commentError && <p className="error-text">{commentError}</p>}
-
-          <button type="submit" className="submit-btn">
-            Submit Feedback
-          </button>
-        </form>
-      </div>
-
-      {snackbar.open && (
-        <Snackbar
-          message={snackbar.message}
-          type={snackbar.type}
-          onClose={handleCloseSnackbar}
-        />
-      )}
+        <button type="submit" disabled={submitting || form.fields.length === 0 || missingRequired}>
+          {submitting ? "Submitting..." : "Submit Feedback"}
+        </button>
+      </form>
     </div>
   );
 };

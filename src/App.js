@@ -24,11 +24,13 @@ import JobWidget from './components/jobWidget';
 import ChatBotWidget from './ChatBotWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 import InterviewPrepPage from './pages/applicantpages/InterviewPrepPage';
-import FeedbackForm from './pages/feedbackpage/MentorConnectFeedbackForm';
+import MentorConnectFeedbackForm from './pages/feedbackpage/MentorConnectFeedbackForm';
 
 import { generateToken, messaging } from './notifications/firebase';
 import { onMessage } from 'firebase/messaging';
-
+import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
+import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
+import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -85,7 +87,12 @@ function App() {
               <Route path="/cookiepolicy" element={<CookiePolicy />} />
               <Route path="/termsofservices" element={<TermsOfServices />} />
   <Route path="/widget" element={<JobWidget />} />
-  <Route path="/feedback" element={<FeedbackForm />} />
+<Route path="/feedback-dashboard" element={<FeedbackDashboard />} />
+<Route path="/feedback-builder/new" element={<FeedbackFormBuilder />} />
+<Route path="/feedback-builder/edit/:formId" element={<FeedbackFormBuilder />} />
+<Route path="/feedback/:formId" element={<MentorConnectFeedbackForm />} />
+<Route path="/feedback-responses/:formId" element={<FeedbackResponses />} />
+
               {isLoggedIn ? (
                 <>
                 <Route path="/applicanthome" element={<ApplicantHomePage />} />
