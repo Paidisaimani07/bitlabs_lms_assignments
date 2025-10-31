@@ -157,7 +157,7 @@ const Hackathon = () => {
     useEffect(() => {
         try {
             localStorage.setItem("applicantHackathonTab", statusFilter);
-        } catch (_) {}
+        } catch (_) { }
     }, [statusFilter]);
 
     const filteredHackathons = hackathons.filter(h => {
@@ -178,28 +178,11 @@ const Hackathon = () => {
 
     return (
         <div className="dashboard__content">
-            <div className="row mr-0 ml-10" style={{ marginRight: "2%" }}>
-                <div className="header-container">
-                    <div className="status-tabs">
-                        {[
-                            { key: "MY", label: "My Arena" },
-                            { key: "RECOMMENDED", label: "Picks For You" },
-                            { key: "ACTIVE", label: "In Action" },
-                            { key: "UPCOMING", label: "On the Horizon" },
-                            { key: "COMPLETED", label: "Past Battles" },
-                        ].map(tab => (
-                            <button
-                                key={tab.key}
-                                className={`tab ${statusFilter === tab.key ? "active" : ""}`}
-                                onClick={() => setStatusFilter(tab.key)}
-                            >
-                                {tab.label}
-                            </button>
-                        ))}
-                    </div>
-
+            <div className="row mr-0 ml-10" style={{ marginLeft: "1%" }}>
+                <div className="main-header-row">
+                    <h1 className="main-heading">Innovation Arena</h1>
                     <div className="hackathon-search-box">
-                        <i className="fa fa-search search-icon"></i>
+                        <i className="fa fa-search search-icon1"></i>
                         <input
                             type="text"
                             placeholder="Search"
@@ -220,6 +203,26 @@ const Hackathon = () => {
                                 }}
                             ></i>
                         )}
+                    </div>
+                </div>
+
+                <div className="header-container">
+                    <div className="status-tabs">
+                        {[
+                            { key: "MY", label: "My Arenas" },
+                            { key: "RECOMMENDED", label: "Picks For You" },
+                            { key: "ACTIVE", label: "In Action" },
+                            { key: "UPCOMING", label: "On The Horizon" },
+                            { key: "COMPLETED", label: "Past Battles" },
+                        ].map(tab => (
+                            <button
+                                key={tab.key}
+                                className={`tab ${statusFilter === tab.key ? "active" : ""}`}
+                                onClick={() => setStatusFilter(tab.key)}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
                     </div>
                 </div>
 
@@ -247,13 +250,13 @@ const Hackathon = () => {
                             onError={(e) => { e.currentTarget.style.display = "none"; }}
                         />
                         <div>{emptyMessages[statusFilter]}</div>
-                                <button
-                                    className="cta-button"
-                                    style={{ marginTop: "8px" }}
-                                    onClick={() => setStatusFilter(getCtaTargetTab(statusFilter))}
-                                >
-                                    Explore
-                                </button>
+                        <button
+                            className="cta-button"
+                            style={{ marginTop: "8px" }}
+                            onClick={() => setStatusFilter(getCtaTargetTab(statusFilter))}
+                        >
+                            Explore
+                        </button>
                     </div>
                 ) : (
                     <div className="newCards-grid">
@@ -265,46 +268,82 @@ const Hackathon = () => {
                             let remainingText = "";
                             if (hackathon.status === "ACTIVE") {
                                 const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-                                remainingText = diffDays > 0 ? `Ends in ${diffDays} days` : "Ends today";
+                                remainingText = diffDays > 0 ? `Expires in ${diffDays} days` : "Expires today";
                             } else if (hackathon.status === "UPCOMING") {
                                 const diffDays = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
                                 remainingText = diffDays > 0 ? `Starts in ${diffDays} days` : "Starting soon";
                             } else if (hackathon.status === "COMPLETED") {
-                                remainingText = "Completed";
+                                remainingText = "Expired";
                             }
 
                             const regStatus = getRegistrationStatus(hackathon.id);
                             const winnerInfo = winners[hackathon.winner];
 
                             return (
-                                <div className="newCard" key={hackathon.id} style={{ position: "relative" }}>
-                                    <span className={`status-badge ${hackathon.status.toLowerCase()}`}>{hackathon.status}</span>
+                                <div className="newCard" key={hackathon.id}>
 
-                                    <img
-                                        src={hackathon.bannerUrl}
-                                        alt={hackathon.title}
-                                        onError={(e) => (e.target.src = "https://via.placeholder.com/300x200?text=No+Image")}
-                                    />
 
                                     <div className="newCard-body">
-                                        <h5>{hackathon.company}</h5>
-                                        <h3>{hackathon.title}</h3>
-                                        <p className="tech">{hackathon.allowedTechnologies}</p>
+                                        <div
+                                            className="newCard-header"
+                                            style={hackathon.bannerUrl ? {
+                                                backgroundImage: `url(${hackathon.bannerUrl})`,
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                                borderRadius: '3px',
+                                                marginBottom: '10px'
+                                            } : {}}
+                                        >
+                                        </div>
+                                        <div className="status-timing-row">
+                                            <span className={`status-badge ${hackathon.status.toLowerCase()}`}>
+                                                {hackathon.status === 'ACTIVE' ? 'Active' :
+                                                    hackathon.status === 'UPCOMING' ? 'Upcoming' :
+                                                        hackathon.status === 'COMPLETED' ? 'Expired' : hackathon.status}
+                                            </span>
+                                            <span className="timing-text">{remainingText}</span>
+                                        </div>
 
-                                        {regStatus && (
-                                            <p className="registration-status">
-                                                <span className="tick-circle">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="white" viewBox="0 0 16 16">
-                                                        <path d="M13.485 1.929a.75.75 0 0 1 1.06 1.06l-8.25 8.25a.75.75 0 0 1-1.06 0l-4.25-4.25a.75.75 0 1 1 1.06-1.06l3.72 3.72 7.72-7.72z" />
-                                                    </svg>
-                                                </span>
-                                                {regStatus}
-                                            </p>
-                                        )}
+                                        <h3 className="hackathon-title">{hackathon.title}</h3>
+                                        <h5 className="company-name">{hackathon.company || 'Company'}</h5>
+
+                                        <div className="tech-tags">
+                                            {hackathon.allowedTechnologies && hackathon.allowedTechnologies.split(',').map((tech, index) => (
+                                                <span key={index} className="tech-tag">{tech.trim()}</span>
+                                            ))}
+                                        </div>
+
+                                        <div className="card-footer-row">
+                                            {regStatus && (
+                                                <div className="registration-status">
+                                                    <span className="tick-circle">
+                                                        {regStatus === "Registered" ? (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14.474" height="14.373" viewBox="0 0 14.474 17.373">
+                                                                <path d="M49.942,99.447l-.245-.13a2.539,2.539,0,0,0-3.5,1.136l-.119.248-.277.037a2.539,2.539,0,0,0-2.161,2.973l.05.275-.2.193a2.539,2.539,0,0,0,0,3.674l.2.193-.05.274a2.539,2.539,0,0,0,2.161,2.973l.277.036.119.249a2.539,2.539,0,0,0,3.5,1.136l.24-.13.245.13a2.539,2.539,0,0,0,3.5-1.136l.118-.247.276-.038a2.539,2.539,0,0,0,2.163-2.973l-.05-.274.2-.193a2.539,2.539,0,0,0,0-3.674l-.2-.194.05-.274a2.539,2.539,0,0,0-2.161-2.972L53.8,100.7l-.119-.248a2.539,2.539,0,0,0-3.5-1.136Zm5.521,6.569a5.523,5.523,0,1,1-5.523-5.523A5.529,5.529,0,0,1,55.462,106.016Z" transform="translate(-42.702 -95.649)" fill="#ef8c2f" />
+                                                                <path d="M206.938,260.8l.832.811-.2,1.145,1.028-.541,1.028.541-.2-1.145.832-.811-1.15-.167-.514-1.042-.514,1.042Z" transform="translate(-201.365 -250.783)" fill="#ef8c2f" />
+                                                                <path d="M123.214,177.224a4.5,4.5,0,1,0,4.5-4.5A4.51,4.51,0,0,0,123.214,177.224Zm5.7-1.446,1.785.259.242.745-1.292,1.259.3,1.778-.634.461-1.6-.839-1.6.839-.634-.461.3-1.778-1.292-1.259.242-.745,1.785-.259.8-1.618h.784Z" transform="translate(-120.482 -166.858)" fill="#ef8c2f" />
+                                                                <path d="M266.407,2.342a3.584,3.584,0,0,1,2.372.936L270.418,0h-5.182Z" transform="translate(-257.684 0)" fill="#ef8c2f" />
+                                                                <path d="M96.927,2.518a3.52,3.52,0,0,1,2.55.135,3.585,3.585,0,0,1,.423-.158L98.653,0H93.98l1.639,3.279A3.544,3.544,0,0,1,96.927,2.518Z" transform="translate(-92.24)" fill="#ef8c2f" />
+                                                            </svg>
+                                                        ) : (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" id="check_1008958" width="11.833" height="11.833" viewBox="0 0 11.833 11.833">
+                                                                <g id="Group_188" data-name="Group 188">
+                                                                    <path id="Path_388" data-name="Path 388" d="M5.917,0a5.917,5.917,0,1,0,5.917,5.917A5.94,5.94,0,0,0,5.917,0ZM5.2,8.608,2.61,6.017l.98-.98L5.246,6.692,8.57,3.67,9.5,4.7Z" fill="#ef8c2f" />
+                                                                </g>
+                                                            </svg>
+                                                        )}
+                                                    </span>
+                                                    {regStatus}
+                                                </div>
+                                            )}
+                                            <button className="view-button" onClick={() => handleViewClick(hackathon.id)}>
+                                                View
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {(statusFilter === "COMPLETED" || statusFilter === "MY") && winnerInfo?.firstName && winnerInfo?.lastName && (
-                                        <div className="winner-card" data-name={`${winnerInfo.firstName} ${winnerInfo.lastName}`}>
+                                        <div className="winner-card">
                                             <div className="winner-card-content">
                                                 <img
                                                     src={winnerInfo.imageUrl || "../images/user/avatar/image-01.jpg"}
@@ -325,14 +364,6 @@ const Hackathon = () => {
                                             </div>
                                         </div>
                                     )}
-
-
-                                    <div className="newCard-footer">
-                                        <p className="remaining">{remainingText}</p>
-                                        <button className="view-button" onClick={() => handleViewClick(hackathon.id)}>
-                                            View
-                                        </button>
-                                    </div>
                                 </div>
                             );
                         })}
