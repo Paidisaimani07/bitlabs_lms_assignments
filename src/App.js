@@ -99,6 +99,7 @@ function App() {
                 <Route path="/applicant-update-profile" element={<ApplicantHomePage />} />
                 <Route path="/applicant-view-profile" element={<ApplicantHomePage />} />
                 <Route path="/applicant-find-jobs" element={<ApplicantHomePage />} />
+                <Route path="/applicant-my-jobs" element={<ApplicantHomePage />} />
                 <Route path="/applicant-overview" element={<ApplicantHomePage />} />
                 <Route path="/applicant-view-job" element={<ApplicantHomePage />} />
                 <Route path="/applicant-edit-profile" element={<ApplicantHomePage />} />

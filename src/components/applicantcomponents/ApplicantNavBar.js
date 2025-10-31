@@ -428,7 +428,7 @@ useEffect(() => {
 </Link>
               </li>
              
-              <li>
+              {/* <li>
                 <Link onClick={hideMenu} to="/applicant-find-jobs" className={location.pathname === "/applicant-find-jobs" || frompath === "/applicant-find-jobs" ? "tf-effect active" : ""}>
                   <span className="dash-icon" >
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -437,8 +437,8 @@ useEffect(() => {
                   </span>
                   <span className="dash-titles" >Recommended Jobs</span>
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || frompath === "/applicant-interview-status" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -448,8 +448,8 @@ useEffect(() => {
                   </span>                  
                   <span className="dash-titles">Applied Jobs</span>
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" || frompath==="/applicant-saved-jobs" ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -458,7 +458,7 @@ useEffect(() => {
                   </span>
                   <span className="dash-titles">Saved Jobs</span>
                 </Link>
-              </li>
+              </li> */}
              
               <li>
             <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
@@ -636,6 +636,16 @@ useEffect(() => {
                   </span>
 
                   <span className="dash-titles">Ask Newton</span>
+                </Link>
+              </li>
+               <li>
+                <Link onClick={hideMenu} to="/applicant-my-jobs" className={location.pathname === "/applicant-my-jobs" || frompath === "/applicant-my-jobs" ? "tf-effect active" : ""}>
+                  <span className="dash-icon" >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
+                  </svg>
+                  </span>
+                  <span className="dash-titles" >My Jobs</span>
                 </Link>
               </li>
             </ul>
