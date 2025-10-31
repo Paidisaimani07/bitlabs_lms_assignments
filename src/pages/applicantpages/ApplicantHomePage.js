@@ -23,13 +23,12 @@ import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
 import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTakeTest';
 import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
 import VerifiedVideos from '../../components/applicantcomponents/VerifiedVideos';
-
-
 import Hackathon from '../../components/applicantcomponents/hackathon';
 import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
 import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
 import BlogSingle from '../../components/applicantcomponents/BlogSingle';
 import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
+import MyJobs from '../../components/applicantcomponents/MyJobs';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -137,6 +136,9 @@ function ApplicantHomePage() {
         case '/applicant-mentorconnect':
           setActiveRoute('mentor');
         break;
+        case '/applicant-my-jobs':
+        setActiveRoute('myjobs');
+        break;
          default:
       // 👇 check if route starts with /blogs/ (for blog single page)
       if (pathname.startsWith('/blogs/')) {
@@ -157,6 +159,7 @@ function ApplicantHomePage() {
     <div  class="dashboard show"> 
      <ApplicantNavBar />
      {activeRoute === 'findjobs' && (<ApplicantFindJobs setSelectedJobId={setSelectedJobId} /> )}
+     {activeRoute === 'myjobs' && (<MyJobs setSelectedJobId={setSelectedJobId} /> )}
      {activeRoute === 'dashboard' && <ApplicantDashboard />}
      {activeRoute === 'profile' && <ApplicantUpdateProfile />}
      {activeRoute === 'viewprofile' && <ApplicantViewProfile />}
