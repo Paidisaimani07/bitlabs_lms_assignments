@@ -17,7 +17,7 @@ import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
 
 function ApplicantNavBar() {
   const location = useLocation();
-  const hideSidebarRoutes = ["/applicant-hackathon", "/applicant-hackathon-details"];
+  const hideSidebarRoutes = [];
   const [isOpen, setIsOpen] = useState(
      window.innerWidth >= 1302 &&  !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
   );
