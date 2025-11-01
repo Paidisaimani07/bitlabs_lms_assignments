@@ -1,150 +1,185 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
-import { Link, useParams, useNavigate } from "react-router-dom";
 import "./ApplicantBlog.css";
-import { IoArrowForwardCircleSharp } from "react-icons/io5";
 
-export default function ApplicantBlogsList() {
+export default function ApplicantBlogs() {
   const [blogs, setBlogs] = useState([]);
-  const [filteredBlogs, setFilteredBlogs] = useState([]);
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState(null);
+  const lastFocused = useRef(null);
 
   useEffect(() => {
-    async function fetchBlogs() {
+    (async () => {
       try {
         const jwtToken = localStorage.getItem("jwtToken");
         const res = await axios.get(`${apiUrl}/blogs/active`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
+          headers: { Authorization: `Bearer ${jwtToken}` },
         });
-        setBlogs(res.data);
-        setFilteredBlogs(res.data);
-      } catch (err) {
-        console.error("Error fetching blogs:", err);
+        setBlogs(res.data || []);
+      } catch (e) {
+        console.error("Error fetching blogs:", e);
       }
-    }
-    fetchBlogs();
+    })();
   }, []);
+
+  const filteredBlogs = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return blogs;
+    return blogs.filter(
+      (b) =>
+        b.title?.toLowerCase().includes(q) ||
+        b.author?.toLowerCase().includes(q)
+    );
+  }, [blogs, query]);
 
   const formatDate = (arr) => {
     if (!arr || arr.length < 6) return "";
-    const [year, month, day, hour, min, sec] = arr;
-    return new Date(year, month - 1, day, hour, min, sec).toLocaleDateString();
+    const [y, m, d, h, mi, s] = arr;
+    return new Date(y, m - 1, d, h, mi, s).toLocaleDateString();
   };
 
-  const handleLearnMore = (blogId) => {
-    navigate(`/blogs/${blogId}`);
-    
+  // Modal controls
+  const openModal = (blog) => {
+    lastFocused.current = document.activeElement;
+    setSelected(blog);
+    document.body.style.overflow = "hidden";
   };
+  const closeModal = () => {
+    setSelected(null);
+    document.body.style.overflow = "";
+    lastFocused.current?.focus?.();
+  };
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && selected && closeModal();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [selected]);
 
-  // If single blog view
-  if (id) {
-    const blog = blogs.find((b) => String(b.id) === id);
-    if (!blog) return <p className="text-center mt-20">Loading...</p>;
-
-    return (
-      <div className="blog-full-view container mx-auto px-6 py-8">
-        <div className="card shadow-sm blog-card full-blog flex flex-col md:flex-row gap-6 p-6">
-          {/* Left Side */}
-          <div className="flex-1 pr-6">
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="blog-full-title">{blog.title}</h2>
-              <p className="text-gray-500 text-sm">
-                {blog.author} • {formatDate(blog.createdAt)}
-              </p>
-            </div>
-
-            {/* Description as bullet points */}
-            <div className="space-y-2 mb-6">
-              {blog.description
-                ?.split(".")
-                .filter((s) => s.trim() !== "")
-                .map((sentence, idx) => (
-                  <p
-                    key={idx}
-                    className="pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-orange-500 text-base leading-relaxed"
-                  >
-                    {sentence.trim()}.
-                  </p>
-                ))}
-            </div>
-
-            {/* Content */}
-            <div className="space-y-3">
-              {blog.content
-                ?.split("\n")
-                .filter((line) => line.trim() !== "")
-                .map((line, idx) => (
-                  <p
-                    key={idx}
-                    className={`${
-                      line.startsWith("##")
-                        ? "font-semibold text-lg mt-4"
-                        : line.startsWith("-")
-                        ? "pl-5 relative before:content-['•'] before:absolute before:left-0 before:text-orange-500"
-                        : "text-base leading-relaxed"
-                    }`}
-                  >
-                    {line.replace(/^##\s*/, "").replace(/^-/, "").trim()}
-                  </p>
-                ))}
-            </div>
-
-            {/* Back */}
-            <div
-              className="resumecard-button mt-6"
-              onClick={() => navigate("/blogs")}
-            >
-              <Link className="button-link1">
-                <span className="button button-custom">Back</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Side - Image */}
-          <div className="w-full md:w-1/3 flex justify-center">
-            <img
-              src={blog.imageUrl}
-              alt={blog.title}
-              className="rounded-lg object-contain w-full h-auto max-h-[45vh]"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Blogs Grid
   return (
     <div className="dashboard__content">
-      <div className="blogs-containerss">
-        <div className="blogs-grid">
-          {filteredBlogs.map((blog) => (
-             <div key={blog.id} className="blog-card-modern"
-              onClick={() => handleLearnMore(blog.id)}>
-          <img
-                src={blog.imageUrl}
-                alt={blog.title}
-                className="blog-img-modern"
-              />
-              <div className="blog-content">
-                <h4 className="blog-title">{blog.title}</h4>
-                <button
-                  className="learn-more-btn"
-                  onClick={() => handleLearnMore(blog.id)}
-                >
-                  <span className="btn-text">Learn More</span>
-                  <span className="btn-arrow"><IoArrowForwardCircleSharp />
-
-</span>
-                </button>
+      <div className="tv-root">
+        {/* Title + Search */}
+        <section className="page-title-dashboard" style={{ marginBottom: 12 }}>
+          <div className="themes-container">
+            <div className="row">
+              <div className="col-lg-12 col-md-12">
+                <div className="page-title-wrap">
+                  <div className="title-dashboard tv-titlebar">
+                    <div className="title-dash">TechVibes</div>
+                    <div className="tv-search">
+                      <input
+                        className="search-input"
+                        placeholder="Search TechVibes"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Card Grid */}
+        <div className="tv-grid">
+          {filteredBlogs.map((b) => (
+            <article
+              key={b.id}
+              className="tv-card"
+              onClick={() => openModal(b)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openModal(b)}
+            >
+              <div className="tv-media">
+                <img src={b.imageUrl} alt={b.title} loading="lazy" />
+              </div>
+
+              <div className="tv-content">
+                <h4 className="tv-card-title">{b.title}</h4>
+                <div className="tv-footer">
+                  <div className="tv-meta">
+                    <span className="tv-by">By {b.author || "bitLabs"}</span>
+                    <span className="tv-dot">•</span>
+                    <span className="tv-date">{formatDate(b.createdAt)}</span>
+                  </div>
+
+                  {/* Orange SVG Icon Button (opens popup) */}
+                  <button
+                    className="tv-open"
+                    title="Preview"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openModal(b);
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                          <path d="M18,10.82a1,1,0,0,0-1,1V19a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V8A1,1,0,0,1,5,7h7.18a1,1,0,1,0,0-2H5A3,3,0,0,0,2,8V19a3,3,0,0,0,3,3H16a3,3,0,0,0,3-3V11.82A1,1,0,0,0,18,10.82Zm3.92-8.2A1.015,1.015,0,0,0,21,2H15a1,1,0,0,0,0,2h3.59L8.29,14.29a1,1,0,1,0,1.42,1.42L20,5.41V9a1,1,0,0,0,2,0V3a1,1,0,0,0-.08-.38Z" transform="translate(-2 -2)" fill="#e87316"/>
+                        </svg>
+                      `,
+                    }}
+                  />
+                </div>
+              </div>
+            </article>
           ))}
         </div>
+
+        {/* Popup Modal */}
+        {selected && (
+          <div className="tv-modal-overlay" onClick={closeModal} aria-modal="true" role="dialog">
+            <div className="tv-modal" onClick={(e) => e.stopPropagation()}>
+             <button className="tv-modal-close" onClick={closeModal} aria-label="Close"
+  dangerouslySetInnerHTML={{
+    __html: `
+     <svg width="800px" height="800px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="12" cy="12" r="9" fill="#2A4157" fill-opacity="0.24"/>
+<path d="M16 8L8 16" stroke="#222222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8 8L16 16" stroke="#222222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+    `,
+  }}
+></button>
+
+
+              <div className="tv-modal-header">
+    <div className="tv-modal-thumb">
+      <img src={selected.imageUrl} alt={selected.title} />
+    </div>
+    <div className="tv-modal-headtext">
+      <h3 className="tv-modal-title">{selected.title}</h3>
+       <div className="tv-meta">
+                    <span className="tv-by">By {selected.author || "bitLabs"}</span>
+                    <span className="tv-dot">•</span>
+                    <span className="tv-date">{formatDate(selected.createdAt)}</span>
+                  </div>
+    </div>
+  </div>
+
+   <div className="tv-modal-body">
+    {selected.description && <p className="tv-modal-desc">{selected.description}</p>}
+    {selected.content && (
+      <div className="tv-modal-content">
+        {selected.content.split("\n").filter(Boolean).map((line, i) => (
+          <p key={i} className={
+            line.startsWith("##") ? "tv-h2" :
+            line.startsWith("-")  ? "tv-bullet" : "tv-p"
+          }>
+            {line.replace(/^##\s*/, "").replace(/^-/, "").trim()}
+          </p>
+        ))}
+      </div>
+    )}
+  </div>
+
+</div>
+  </div>
+
+        )}
       </div>
     </div>
   );
