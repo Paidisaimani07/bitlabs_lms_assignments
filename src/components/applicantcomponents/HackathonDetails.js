@@ -160,7 +160,7 @@ const HackathonDetails = () => {
     };
 
     const validateGitHubUrl = (url) => {
-        const githubRepoRegex = /^https?:\/\/(www\.)?github\.com\/[^\s/]+\/[^\s/]+\/?$/i;
+        const githubRepoRegex = /^https?:\/\/(www\.)?github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+(\/(tree|blob)\/[A-Za-z0-9_.\-_/]+)?\/?$/i;
         return githubRepoRegex.test(url);
     };
 
@@ -229,7 +229,7 @@ const HackathonDetails = () => {
             if (status === "UPCOMING" || status === "ACTIVE") {
                 return (
                     <button className="hackathon-action-button" onClick={handleRegisterClick}>
-                        Register
+                        Register Now
                     </button>
                 );
             }
@@ -256,7 +256,7 @@ const HackathonDetails = () => {
             if (!registration.submitStatus) {
                 return (
                     <button className="hackathon-action-button" onClick={handleSubmitClick}>
-                        Submit Your Response
+                        Submit Your Work
                     </button>
                 );
             } else {
@@ -331,10 +331,6 @@ const HackathonDetails = () => {
                                     <div className="info-item">
                                         <h4>End Date</h4>
                                         <p>{formatToDateString(hackathon.endAt)}</p>
-                                    </div>
-                                    <div className="info-item">
-                                        <h4>Status</h4>
-                                        <p>{hackathon.status}</p>
                                     </div>
                                 </section>
                                 <section className="hackathon-info-box">
@@ -422,7 +418,7 @@ const HackathonDetails = () => {
                                             }}
                                             required
                                             placeholder="https://github.com/username/repository"
-                                            pattern="https?://(www\.)?github\.com/[^\s/]+/[^\s/]+/?"
+                                            pattern="https?://(www\.)?github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(/tree/[A-Za-z0-9_.\-_/]+)?/?"
                                             title="Please enter a valid GitHub repository URL (e.g., https://github.com/username/repository)"
                                         />
                                     </div>
