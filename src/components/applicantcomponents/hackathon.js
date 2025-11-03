@@ -273,7 +273,8 @@ const Hackathon = () => {
                                 const diffDays = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
                                 remainingText = diffDays > 0 ? `Starts in ${diffDays} days` : "Starting soon";
                             } else if (hackathon.status === "COMPLETED") {
-                                remainingText = "Expired";
+                                const diffDays = Math.ceil((today - endDate) / (1000 * 60 * 60 * 24));
+                                remainingText = diffDays > 0 ? `Expired ${diffDays} days ago` : "Expired";
                             }
 
                             const regStatus = getRegistrationStatus(hackathon.id);
