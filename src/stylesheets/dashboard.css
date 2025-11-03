@@ -1,3 +1,25 @@
+.border-style {
+  border: 2px solid #FD6F00;
+  margin: 22px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.blur-border-style {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  opacity: 0.55;
+  filter: blur(35px);
+  z-index: -1;
+  margin: -20px;
+}
+
 .dashboard .themes-container {
     position: relative;
     margin-left: auto;
@@ -151,7 +173,7 @@
 }
 
 .dashboard {
-    background: #EFF2F6;
+    /* background: #EFF2F6; */
     position: relative;
 }
 
@@ -1181,8 +1203,12 @@ body.close-sidebar .dashboard.show .dashboard__content {
     left:-2000px;
 }
 .left-menu.open {
-    left: 0;
+    left: 30px;
     opacity: 1;
+    /* margin-left: 40px; */
+    margin-top: 35px;
+     box-shadow: 0px 0px 12px #0000001A !important;
+    border-radius: 6px !important;
   }
 
 .left-menu::-webkit-scrollbar {
@@ -1292,9 +1318,21 @@ body.close-sidebar .dashboard.show .dashboard__content {
 #sidebar-menu ul li a.active,
 #sidebar-menu ul li a:hover {
     color: #121212 !important;
-    background-color: #F2F4F7;
-    border-radius: 8px;
+    background: transparent linear-gradient(101deg, #F3673B 0%, #F5C546 100%) 0% 0% no-repeat padding-box;
+    border-radius: 3px;
+    transition: background 0.3s ease, color 0.3s ease;
+    opacity: 0.8;
 }
+ /* #sidebar-menu ul li a {
+    display: block;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#sidebar-menu ul li a:hover {
+    color: #121212 !important;
+    background: linear-gradient(101deg, #F3673B 0%, #F5C546 100%);
+    border-radius: 8px;
+} */
 
 .show-job #sidebar-menu ul li a.active,
 .show-job #sidebar-menu ul li a:hover {
