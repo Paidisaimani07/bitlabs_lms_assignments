@@ -23,7 +23,7 @@ const VerifiedVideos = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   const [playerBuffering, setPlayerBuffering] = useState(false);
-  const [durations, setDurations] = useState({}); // store videoId → duration
+  const [durations, setDurations] = useState({});
 
   const playerRef = useRef(null);
 
@@ -33,7 +33,6 @@ const VerifiedVideos = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // fetch videos
   useEffect(() => {
     let mounted = true;
     const fetchVideos = async () => {
@@ -92,7 +91,6 @@ const VerifiedVideos = () => {
     };
   }, [userId]);
 
-  // search & filter
   useEffect(() => {
     let filtered = [...videoList];
     if (search.trim()) {
@@ -171,29 +169,33 @@ const VerifiedVideos = () => {
           className="oneminute-heading"
           style={{ marginLeft: isWide ? "330px" : "0px" }}
         >
-          TechBuzz  <span className="oneminute-orange">Shorts</span>
+          TechBuzz Shorts
         </h2>
 
-        <div className="oneminute-search-wrapper">
-          <i className="fa fa-search search-icon"></i>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="oneminute-search-input"
-          />
-          {search && (
-            <i
-              className="fa fa-times clear-icon"
-              onClick={() => {
-                setSearch("");
-                inputRef.current?.focus();
-              }}
-            ></i>
-          )}
-        </div>
+ <div>
+  <input
+    ref={inputRef}
+    type="text"
+    placeholder="Search"
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="search-input"
+  />
+  {search && (
+    <i
+      className="fa fa-times clear-icon"
+      onClick={() => {
+        setSearch("");
+        inputRef.current?.focus();
+      }}
+      aria-label="Clear search"
+    />
+  )}
+</div>
+
+
+
+
       </div>
 
       {loading ? (
@@ -214,27 +216,54 @@ const VerifiedVideos = () => {
                   key={video.videoId || index}
                   className={`oneminute-card ${isPlayingCard ? "playing-card" : ""}`}
                 >
-                  <div className="oneminute-player-wrapper">
-                    <div onClick={() => handleOpenPlayer(index)} className="thumb-wrapper">
-                      <img
-                        src={video.thumbnail_url || "/images/default-thumb.png"}
-                        alt={video.title}
-                        className="oneminute-thumb"
-                        draggable={false}
-                      />
-                    </div>
-                  </div>
+                 <div className="oneminute-player-wrapper">
+  <button
+    type="button"
+    className="thumb-button"
+    onClick={() => handleOpenPlayer(index)}
+    aria-label={`Play ${video.title || `Video ${index + 1}`}`}
+  >
+    <img
+      src={video.thumbnail_url || "/images/default-thumb.png"}
+      alt={video.title}
+      className="oneminute-thumb"
+      draggable={false}
+    />
+  </button>
+</div>
+
 
                   <div className="oneminute-video-meta">
-                    <img
-                      src="/images/favicon.png"
-                      alt="channel"
-                      className="oneminute-avatar"
-                    />
+                   {/* Replace the existing <img src="/images/favicon.png" ... /> with this SVG */}
+<svg
+  width="36.155"
+  height="31.211"
+  viewBox="0 0 36.155 31.211"
+  className="oneminute-avatar"
+  aria-hidden="true"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="linear-gradient" y1="0.093" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stopColor="#f8af50" />
+      <stop offset="1" stopColor="#e76d10" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(0 -35)">
+    <g transform="translate(0 35)">
+      <g transform="translate(0 0)">
+        <path
+          d="M30.031,35H6.131A6.134,6.134,0,0,0,0,41.131V60.08a6.13,6.13,0,0,0,6.131,6.131H30.024a6.13,6.13,0,0,0,6.131-6.131V41.131A6.124,6.124,0,0,0,30.031,35ZM16.3,37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953v1.66a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953Zm-6.583,0a.957.957,0,0,1,.946-.953h1.66a.953.953,0,0,1,.953.946V39.52a.954.954,0,0,1-.953.953h-1.66a.948.948,0,0,1-.946-.953ZM6.7,63.358a.954.954,0,0,1-.953.953H4.082a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66A.954.954,0,0,1,6.7,61.7Zm0-23.837a.948.948,0,0,1-.953.946H4.082a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,23.837a.953.953,0,0,1-.946.953H10.665a.954.954,0,0,1-.953-.953V61.7a.948.948,0,0,1,.953-.946h1.66a.953.953,0,0,1,.953.946ZM11.654,54.91v-8.6a3.059,3.059,0,0,1,4.584-2.649l7.451,4.3a3.056,3.056,0,0,1,0,5.29l-7.451,4.3a3.053,3.053,0,0,1-4.584-2.642Zm8.207,8.447a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,0a.957.957,0,0,1-.946.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953H25.5a.948.948,0,0,1,.946.953Zm0-23.837a.957.957,0,0,1-.946.953h-1.66a.957.957,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953H25.5a.954.954,0,0,1,.953.953Zm6.583,23.837a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm0-23.837a.954.954,0,0,1-.953.953h-1.66a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Z"
+          transform="translate(0 -35)"
+          fill="url(#linear-gradient)"
+        />
+      </g>
+    </g>
+  </g>
+</svg>
+
                     <div className="meta-texts">
-                      <p className="oneminute-title">
-                        {video.title || `Video ${index + 1}`}
-                      </p>
+                      <p className="oneminute-title">{video.title}</p>
                     </div>
                   </div>
                 </div>
@@ -290,7 +319,12 @@ const VerifiedVideos = () => {
                 },
               }}
             />
-            <button className="oneminute-modal-close" onClick={closeModal} aria-label="Close" style={{ borderRadius: '20px' }}>
+            <button
+              className="oneminute-modal-close"
+              onClick={closeModal}
+              aria-label="Close"
+              style={{ borderRadius: "20px" }}
+            >
               ✕
             </button>
           </div>
