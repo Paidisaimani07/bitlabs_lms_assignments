@@ -84,6 +84,13 @@
   text-align: left;
 }
 
+.arena .arena-topSection p{
+  font-size: 11px;
+  line-height: 1.3;
+  margin-bottom: 2px;
+  font-weight: 500;
+}
+
 .arena-topSection button {
   color: #ffffff;
   font-weight: 600;
@@ -263,14 +270,14 @@
     grid-area: arena;
     width: 100% !important;
     margin: 0;
-    height: auto;
+    height: 350px;
   }
 
   .profile-card-row1 .mentor-sphere {
     grid-area: mentor;
     width: 100% !important;
     margin: 0;
-    height: auto;
+    height: 350px;
   }
 }
 
@@ -290,7 +297,7 @@
   }
 
   .profile-card-row1 .arena {
-    height: 300px;
+    height: 340px;
   }
 
   .profile-card-row1 .mentor-sphere,
