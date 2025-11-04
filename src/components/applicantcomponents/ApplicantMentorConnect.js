@@ -357,6 +357,9 @@ const ApplicantMentorConnect = () => {
   };
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content" style={{ paddingTop: 4, paddingBottom: 8 }}>
       <style>{styles.grid}</style>
 
@@ -413,6 +416,7 @@ const ApplicantMentorConnect = () => {
           </div>
         </section>
       </div>
+    </div>
     </div>
   );
 };

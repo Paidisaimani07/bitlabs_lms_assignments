@@ -57,6 +57,9 @@ export default function ApplicantBlogs() {
   }, [selected]);
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content">
       <div className="tv-root">
         {/* Title + Search */}
@@ -181,6 +184,7 @@ export default function ApplicantBlogs() {
 
         )}
       </div>
+    </div>
     </div>
   );
 }

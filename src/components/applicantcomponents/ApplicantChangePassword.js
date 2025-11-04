@@ -171,6 +171,9 @@ const response = await axios.post(
   return (
     <div>
       <>
+       <div className="border-style">
+
+        <div className="blur-border-style"></div>
         <div class="dashboard__content">
         <section className="page-title-dashboard">
       <div className="themes-container">
@@ -273,6 +276,7 @@ const response = await axios.post(
             </div>
           </section>
           <br></br>
+        </div>
         </div>
       </>
       {snackbar.open && (

@@ -681,9 +681,15 @@ const VerifiedBadges = () => {
 
   }
   return (
-    loading ?         <div className="spinner-container">
+    
+    loading ?     <div className="border-style">
+
+        <div className="blur-border-style"></div>     <div className="spinner-container">
           <ClipLoader color="#F97316" loading={loading} size={30}/>
-        </div>: (
+        </div></div>: (
+           <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
         <div className="col-lg-12 col-md-12">
@@ -979,6 +985,7 @@ const VerifiedBadges = () => {
 
       
 
+    </div>
     </div>)
   );
 };

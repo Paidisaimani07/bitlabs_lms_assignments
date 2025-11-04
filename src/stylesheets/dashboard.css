@@ -1164,6 +1164,7 @@ body.close-sidebar .dashboard.show .dashboard__content {
 .dashboard.show .dashboard__content {
     margin-left: 320px;
     transition: all 0.2s ease-out;
+    margin-top: -23px;
 }
 
 .dashboard.show-job .dashboard__content {
