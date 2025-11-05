@@ -5,7 +5,7 @@ import axios from 'axios';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
-import logos from '../../images/profileIcon.svg';
+import logos from '../../images/profileIcon.png';
 import ModalLogout from '../common/ModalLogout';
 
 

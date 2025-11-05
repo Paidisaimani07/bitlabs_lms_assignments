@@ -11,7 +11,7 @@ import clearJWTToken from '../common/clearJWTToken';
 import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
-import logos from '../../images/profileIcon.svg';
+import logos from '../../images/profileIcon.png';
 import ApplicantTakeTest from './ApplicantTakeTest';
 import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
 import shape8 from "../../images/dashboard/mobilebanners/power.jpg";

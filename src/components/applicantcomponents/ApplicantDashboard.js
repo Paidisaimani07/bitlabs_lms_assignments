@@ -33,6 +33,27 @@ const ApplicantDashboard = () => {
   const [hiredCount, setHiredCount] = useState(null);
   const [profileData, setProfileData] = useState({});
   const [mentorConnectData, setMentorConnectData] = useState();
+  const [blogs, setBlogs] = useState([]);
+  const [blogsLoading, setBlogsLoading] = useState(true);
+  const [blogsError, setBlogsError] = useState(null);
+  const [imageSrc, setImageSrc] = useState('');
+
+  useEffect(() => {
+    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
+      },
+    })
+
+      .then(response => response.blob())
+      .then(blob => {
+        const imageUrl = URL.createObjectURL(blob);
+        setImageSrc(imageUrl);
+      })
+      .catch(() => {
+        setImageSrc('../images/user/avatar/image-01.jpg');
+      });
+  }, [user.id]);
 
   useEffect(() => {
     const fetchHiredCount = async () => {
@@ -201,6 +222,25 @@ const ApplicantDashboard = () => {
     fetchTestData();
   }, [user.id]);
 
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setBlogsLoading(true);
+        const jwt = localStorage.getItem('jwtToken');
+        const { data } = await axios.get(`${apiUrl}/blogs/active?size=3`, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        });
+        setBlogs(data);
+      } catch (err) {
+        console.error(err);
+        setBlogsError('Unable to load blogs');
+      } finally {
+        setBlogsLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
 
   const handleRedirectTechBuzz = () => {
     navigate("/applicant-verified-videos");
@@ -231,7 +271,7 @@ const ApplicantDashboard = () => {
 
       <div className="blur-border-style"></div>
       {loading ? null : (
-        <div className="dashboard__content" style={{ marginRight: "10px" }}>
+        <div className="dashboard__content">
           <div className="row mr-0 ml-10">
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
@@ -310,7 +350,7 @@ const ApplicantDashboard = () => {
                   <div className="arena">
                     <div className="arena-topSection">
                       <h4 >
-                       Compete. Learn. Win.
+                        Compete. Learn. Win.
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
@@ -352,9 +392,9 @@ const ApplicantDashboard = () => {
                       ?.sort((a, b) => {
                         const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2], a.startTime[0], a.startTime[1]);
                         const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2], b.startTime[0], b.startTime[1]);
-                        return dateA - dateB; 
+                        return dateA - dateB;
                       })
-                      ?.slice(0, 4) 
+                      ?.slice(0, 4)
                       ?.map((item, idx) => {
                         const dateObj = new Date(item.date[0], item.date[1] - 1, item.date[2]);
                         const formattedDate = dateObj.toLocaleDateString("en-GB", {
@@ -446,7 +486,12 @@ const ApplicantDashboard = () => {
                     </div>
                     <div className="profile-side-section">
                       <div>
-                        <img src="./images/dashboard/profile-pic.png" alt="profile" width="65px" />
+                         <img className="profile-image" src={imageSrc} alt="profile"   style={{
+                            borderRadius: "85%",
+                            width: "65px",
+                            height: "65px",
+                            border: "2px solid #EA7B20"
+                          }} />
                         <span className="badges">
                           <img src="./images/dashboard/badge-bronze.png" alt="badge-bronze" width="15px" height="23px" />
                           <img src="./images/dashboard/badge-silver.png" alt="badge-silver" width="15px" height="23px" />
@@ -612,33 +657,78 @@ const ApplicantDashboard = () => {
                   <div className="tech-vibes">
                     <div className="tech-vibes-header">
                       <h3>TechVibes</h3>
-                      <button onClick={handleRedirectTechVibes}>Explore</button>
+                      <button className="explore-btn" onClick={handleRedirectTechVibes}>
+                        Explore
+                      </button>
                     </div>
 
+
                     <div className="tech-vibes-list">
-                      <div className="tech-vibes-item">
-                        <img src={character4} alt="news1" />
-                        <div className="vibe-content">
-                          <h4 className="news-title">OpenAI buys Sky, an…</h4>
-                          <p className="news-date">27/10/2025</p>
-                        </div>
-                      </div>
+                      {blogsLoading ? (
+                        // Skeleton
+                        [...Array(3)].map((_, i) => (
+                          <div key={i} className="tech-vibes-item">
+                            <div className="skeleton-img"></div>
+                            <div className="vibe-content">
+                              <div className="skeleton-title"></div>
+                              <div className="skeleton-date"></div>
+                            </div>
+                          </div>
+                        ))
+                      ) : blogsError ? (
+                        <p className="error-msg">{blogsError}</p>
+                      ) : blogs.length === 0 ? (
+                        <p className="no-blogs">No blogs available</p>
+                      ) : (
+                        blogs.map((blog) => {
+                          // Convert createdAt array to formatted date
+                          const formatCreatedAt = (arr) => {
+                            if (!arr || !Array.isArray(arr) || arr.length < 3) return 'N/A';
+                            const [year, month, day] = arr;
+                            const date = new Date(year, month - 1, day); // month is 0-indexed
+                            return date.toLocaleDateString('en-GB'); // DD/MM/YYYY
+                          };
+                          const handleBlogClick = () => {
+                            navigate(`/applicant-blog-list?blog=${blog.id}`);
+                          };
 
-                      <div className="tech-vibes-item">
-                        <img src={character5} alt="news2" />
-                        <div className="vibe-content">
-                          <h4 className="news-title">Google is turning on…</h4>
-                          <p className="news-date">27/10/2025</p>
-                        </div>
-                      </div>
 
-                      <div className="tech-vibes-item">
-                        <img src={character6} alt="news3" />
-                        <div className="vibe-content">
-                          <h4 className="news-title">Best Windows Lapto…</h4>
-                          <p className="news-date">24/10/2025</p>
-                        </div>
-                      </div>
+                          return (
+                            <div
+                              key={blog.id}
+                              className="tech-vibes-item"
+                              onClick={handleBlogClick}
+                              style={{ cursor: 'pointer' }}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleBlogClick();
+                                }
+                              }}
+                            >
+                              <img
+                                src={blog.imageUrl || 'https://via.placeholder.com/82x60?text=No+Img'}
+                                alt={blog.title}
+                                className="blog-thumbnail"
+                                onError={(e) => (e.target.src = 'https://via.placeholder.com/82x60?text=No+Img')}
+                              />
+
+
+                              {/* Title + createdAt */}
+                              <div className="vibe-content">
+                                <h4 className="news-title">
+                                  {blog.title && blog.title.length > 18
+                                    ? `${blog.title.substring(0, 18)}…`
+                                    : blog.title || 'Untitled'}
+                                </h4>
+                                <p className="news-date">{formatCreatedAt(blog.createdAt)}</p>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
                   </div>
                 </div>
