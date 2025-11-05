@@ -1,5 +1,43 @@
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body > * {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .App {
   text-align: center;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.boxed {
+  width: 100%;
+  margin: 0 auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+img, embed, iframe, object, video {
+  max-width: 100%;
+  height: auto;
 }
 .App-logo {
   height: 40vmin;
