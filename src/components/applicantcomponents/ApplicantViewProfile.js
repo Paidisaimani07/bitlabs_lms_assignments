@@ -258,6 +258,9 @@ const ApplicantViewProfile = () => {
   };
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content">
       <section className="page-title-dashboard">
    
@@ -534,6 +537,7 @@ const ApplicantViewProfile = () => {
           linkText={snackbar.linkText}
         />
       ))}
+    </div>
     </div>
     
   );

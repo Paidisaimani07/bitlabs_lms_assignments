@@ -285,7 +285,11 @@ const HackathonDetails = () => {
 
 
 
-    return (<div className="dashboard__content">
+    return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
+    <div className="dashboard__content">
         <div className="row mr-0 ml-10">
             <div className="hackathon-page-wrapper">
 
@@ -618,6 +622,7 @@ const HackathonDetails = () => {
                 )}
             </div>
         </div>
+    </div>
     </div>
     );
 };
