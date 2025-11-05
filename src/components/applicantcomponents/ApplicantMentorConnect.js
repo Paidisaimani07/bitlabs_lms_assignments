@@ -5,7 +5,7 @@ import { useUserContext } from "../common/UserProvider";
 
 // Fallback images
 import DummyMentor from "../../images/mentor-dummy.png";
-import DummyBanner from "../../images/bannercard_mentor.jpg";
+import DummyBanner from "../../images/bannercard_mentor1.jpg";
 
 const ApplicantMentorConnect = () => {
   const [loading, setLoading] = useState(true);
@@ -26,14 +26,13 @@ const ApplicantMentorConnect = () => {
           signal: controller.signal,
         });
 
-        // Support both shapes: plain array OR { items: [...] }
+        // Accept either array or paged envelope { items: [...] }
         const payload = resp.data;
         const list = Array.isArray(payload)
           ? payload
           : Array.isArray(payload?.items)
           ? payload.items
           : [];
-
         setMeetings(list);
         setError(null);
       } catch (err) {
@@ -50,8 +49,8 @@ const ApplicantMentorConnect = () => {
   }, []);
 
   // ---------- helpers ----------
-  // Accepts LocalDate as [yyyy,mm,dd] or "yyyy-mm-dd"
-  // Accepts LocalTime as [hh,mm,ss?] or "hh:mm[:ss]"
+  // Accept LocalDate as [yyyy,mm,dd] or "yyyy-mm-dd"
+  // Accept LocalTime as [hh,mm,ss?] or "hh:mm[:ss]"
   const buildStartDate = (dateVal, timeVal) => {
     try {
       let y, m, d, hh = 0, mm = 0, ss = 0;
@@ -82,7 +81,13 @@ const ApplicantMentorConnect = () => {
       }
 
       if (y == null || m == null || d == null) return null;
-      const dt = new Date(y, (m ?? 1) - 1, d, hh, mm, ss, 0);
+
+      // Build in *local* time to avoid UTC shifts
+      const dt = new Date();
+      dt.setFullYear(y);
+      dt.setMonth((m ?? 1) - 1);
+      dt.setDate(d);
+      dt.setHours(hh, mm, ss, 0);
       return isNaN(dt.getTime()) ? null : dt;
     } catch {
       return null;
@@ -98,23 +103,30 @@ const ApplicantMentorConnect = () => {
     return r ? `${h} hr ${r} mins` : `${h} hr${h > 1 ? "s" : ""}`;
   };
 
-  const computeStatus = (m) => {
-    if (m.status && typeof m.status === "string") return m.status; // use backend if present
-    const start = buildStartDate(m.date, m.startTime);
-    if (!start) return "Expired";
-    const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
-    const end = new Date(start.getTime() + mins * 60000);
-    const now = new Date();
-    if (now < start) return "Upcoming";
-    if (now >= start && now < end) return "Active";
-    return "Expired";
-  };
+  // replace existing computeStatus with this version
+const computeStatus = (m) => {
+  // Always compute using local time to avoid server TZ drift
+  const start = buildStartDate(m.date, m.startTime);
+  if (!start) return "Expired";
 
-  const toGoogleUTC = (d) => {
+  const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
+  const end = new Date(start.getTime() + mins * 60000);
+
+  const now = new Date();
+
+  // treat exact start time as Active (>= start && < end)
+  if (now >= start && now < end) return "Active";
+  if (now < start) return "Upcoming";
+  return "Expired";
+};
+
+
+  // Google Calendar: use local time (no Z) to avoid timezone mismatch
+  const toGoogleLocal = (d) => {
     const p = (x) => String(x).padStart(2, "0");
-    return `${d.getUTCFullYear()}${p(d.getUTCMonth() + 1)}${p(d.getUTCDate())}T${p(
-      d.getUTCHours()
-    )}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}T${p(
+      d.getHours()
+    )}${p(d.getMinutes())}${p(d.getSeconds())}`;
   };
 
   const buildGoogleCalendarUrl = (m) => {
@@ -135,7 +147,7 @@ const ApplicantMentorConnect = () => {
     }
     const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
     const end = new Date(start.getTime() + mins * 60000);
-    const dates = `${toGoogleUTC(start)}/${toGoogleUTC(end)}`;
+    const dates = `${toGoogleLocal(start)}/${toGoogleLocal(end)}`;
 
     return (
       "https://www.google.com/calendar/render?action=TEMPLATE" +
@@ -156,13 +168,16 @@ const ApplicantMentorConnect = () => {
     }
   };
 
-  // ---------- search/filter ----------
+  // ---------- search + hide Expired ----------
   const normalized = (s) => (s || "").toString().toLowerCase().trim();
   const filteredMeetings = useMemo(() => {
     const q = normalized(query);
-    if (!q) return meetings;
 
-    return meetings.filter((m) => {
+    const base = meetings.filter((m) => computeStatus(m) !== "Expired"); // hide expired
+
+    if (!q) return base;
+
+    return base.filter((m) => {
       const hay = [
         m.title,
         m.description,
@@ -196,24 +211,33 @@ const ApplicantMentorConnect = () => {
     const duration = formatDuration(m.durationMinutes ?? m.duration ?? 60);
     const gcalUrl = buildGoogleCalendarUrl(m);
 
-    // Button rules
+    // Enable rules
     const startEnabled = status === "Active";
-    const addCalEnabled = status === "Active" || status === "Upcoming";
+    const addCalEnabled = status === "Upcoming";
+
 
     const statusColor =
       status === "Active" ? "#22c55e" : status === "Upcoming" ? "#F59E0B" : "#9CA3AF";
 
+    // Date-time label under Duration
+    const dtLabel = (() => {
+      const dt = buildStartDate(m.date, m.startTime);
+      return dt
+        ? dt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+        : "Date not available";
+    })();
+
     return (
       <div
-  className="mentor-card"
-  style={{
-    background: "#fff",
-    borderRadius: 8,
-    border: "1px solid #EEF2F7",
-    boxShadow: "0 12px 24px rgba(17,24,39,0.06)",
-    padding: 12,                  // ⬅️ add padding on all sides
-  }}
->
+        className="mentor-card"
+        style={{
+          background: "#fff",
+          borderRadius: 8,
+          border: "1px solid #EEF2F7",
+          boxShadow: "0 12px 24px rgba(17,24,39,0.06)",
+          padding: 12, // card padding
+        }}
+      >
         {/* Banner */}
         <div style={{ width: "100%", height: 160, borderRadius: 6, overflow: "hidden" }}>
           <img
@@ -232,29 +256,36 @@ const ApplicantMentorConnect = () => {
           {/* Header row: Status (left) — Copy link (right) */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span
-              style={{
-                background: statusColor,
-                color: "#fff",
-                fontSize: 12,
-                fontWeight: 800,
-                padding: "6px 10px",
-                borderRadius: 999,
-                boxShadow: "0 6px 12px rgba(0,0,0,0.12)",
-              }}
-            >
-              {status}
-            </span>
+  style={{
+    background:
+      status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
+    color: status === "Active" ? "#fff" : "#F97316", // orange text for Upcoming
+    border:
+      status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
+    fontSize: 12,
+    fontWeight: 800,
+    padding: "4px 10px",
+    borderRadius: 3,
+    boxShadow: status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
+    display: "inline-block",
+    textTransform: "capitalize",
+  }}
+>
+  {status}
+</span>
+
 
             <button
               onClick={() => copyLink(m.meetLink)}
               style={{
                 background: "transparent",
-                color: "#ef6c00",
+                color: "#EF8C2F",
                 border: "none",
                 fontSize: 13,
                 fontWeight: 700,
                 cursor: "pointer",
                 textDecoration: "underline",
+                
               }}
             >
               Copy link
@@ -268,6 +299,9 @@ const ApplicantMentorConnect = () => {
           ) : null}
           <div style={{ fontSize: 12, color: "#ef6c00", fontWeight: 700 }}>
             Duration: {duration}
+          </div>
+          <div style={{ fontSize: 13, color: "#000", fontWeight: 600 }}>
+            Date:{dtLabel}
           </div>
 
           {/* Mentor row */}
@@ -300,56 +334,56 @@ const ApplicantMentorConnect = () => {
 
           {/* CTA row */}
           <div style={{ marginTop: 8, display: "flex", gap: 10 }}>
+            {/* Start now — keep color; just block click & change cursor when not enabled */}
             <button
-              onClick={() =>
-                startEnabled && m.meetLink
-                  ? window.open(m.meetLink, "_blank", "noopener,noreferrer")
-                  : null
-              }
-              disabled={!startEnabled || !m.meetLink}
+              onClick={() => {
+                if (!startEnabled || !m.meetLink) return;
+                window.open(m.meetLink, "_blank", "noopener,noreferrer");
+              }}
+              aria-disabled={!startEnabled || !m.meetLink}
               style={{
                 flex: 1,
-                background: startEnabled
-                  ? "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)"
-                  : "#F3F4F6",
-                color: startEnabled ? "#fff" : "#9CA3AF",
+                background: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
+                color: "#fff",
                 border: 0,
                 padding: "12px 16px",
-                borderRadius: 10,
+                borderRadius: 5,
                 fontWeight: 800,
                 fontSize: 14,
-                cursor: startEnabled ? "pointer" : "not-allowed",
-                boxShadow: startEnabled ? "0 8px 18px rgba(249,115,22,0.25)" : "none",
+                cursor: startEnabled && m.meetLink ? "pointer" : "not-allowed",
+                boxShadow: "0 8px 18px rgba(249,115,22,0.25)",
               }}
             >
               Start now
             </button>
 
-            <button
-              onClick={() =>
-                (status === "Active" || status === "Upcoming")
-                  ? window.open(gcalUrl, "_blank", "noopener,noreferrer")
-                  : null
-              }
-              disabled={!(status === "Active" || status === "Upcoming")}
-              style={{
-                flex: 1,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                background: (status === "Active" || status === "Upcoming") ? "#F8FAFC" : "#F3F4F6",
-                color: (status === "Active" || status === "Upcoming") ? "#0F172A" : "#9CA3AF",
-                border: "1px solid #E2E8F0",
-                borderRadius: 10,
-                padding: "12px 16px",
-                fontWeight: 800,
-                fontSize: 14,
-                cursor: (status === "Active" || status === "Upcoming") ? "pointer" : "not-allowed",
-              }}
-            >
-              Add Calendar
-            </button>
+            {/* Add Calendar — keep colors, block click when not enabled */}
+           <button
+  onClick={() => {
+    if (!addCalEnabled) return;            // block click when not upcoming
+    window.open(gcalUrl, "_blank", "noopener,noreferrer");
+  }}
+  aria-disabled={!addCalEnabled}
+  style={{
+    /* keep the same colors */
+    flex: 1,
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    background: "#fff",
+    color: "#F97316",
+    border: "1px solid #F97316",
+    borderRadius: 5,
+    padding: "12px 16px",
+    fontWeight: 800,
+    fontSize: 14,
+    cursor: addCalEnabled ? "pointer" : "not-allowed",  // only cursor changes
+  }}
+>
+  Add Calendar
+</button>
+
           </div>
         </div>
       </div>
@@ -400,8 +434,16 @@ const ApplicantMentorConnect = () => {
                 ) : (
                   <div className="mentor-grid">
                     {filteredMeetings
-                      .slice() // defensive copy before sort
+                      .slice()
                       .sort((a, b) => {
+                        // Order: Active (1) → Upcoming (2)
+                        const order = { Active: 1, Upcoming: 2, Expired: 3 };
+                        const sa = computeStatus(a);
+                        const sb = computeStatus(b);
+                        const diff = (order[sa] || 99) - (order[sb] || 99);
+                        if (diff !== 0) return diff;
+
+                        // within same status, earlier start first
                         const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
                         const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
                         return ta - tb;
