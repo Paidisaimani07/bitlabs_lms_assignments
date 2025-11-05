@@ -163,6 +163,9 @@ const VerifiedVideos = () => {
   const onBufferEnd = () => setPlayerBuffering(false);
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="oneminute-container">
       <div className="oneminute-header">
         <h2
@@ -330,6 +333,7 @@ const VerifiedVideos = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

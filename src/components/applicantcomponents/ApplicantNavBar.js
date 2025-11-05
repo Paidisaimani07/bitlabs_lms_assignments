@@ -11,9 +11,19 @@ import clearJWTToken from '../common/clearJWTToken';
 import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
 import { Switch } from 'antd';
-import logos from '../../images/profileIcon.svg';
+import logos from '../../images/profileIcon.png';
 import ApplicantTakeTest from './ApplicantTakeTest';
 import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
+import shape8 from "../../images/dashboard/mobilebanners/power.jpg";
+import shape7 from "../../images/dashboard/mobilebanners/write.jpg";
+import shape6 from "../../images/dashboard/mobilebanners/solar-energy.jpg";
+import shape5 from "../../images/dashboard/mobilebanners/coding.jpg";
+import shape3 from "../../images/dashboard/mobilebanners/score.jpg";
+import shape4 from "../../images/dashboard/mobilebanners/mentoring.jpg";
+import shape from "../../images/dashboard/mobilebanners/shape.jpg";
+import shape2 from "../../images/dashboard/mobilebanners/curriculum-vitae.jpg";
+const backgroundImage = '/images/backgrounds/power.jpg';
+
 
 function ApplicantNavBar() {
   const location = useLocation();
@@ -419,12 +429,15 @@ useEffect(() => {
              
               <li>
               <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
-  <span className="dash-icon" style={{ marginRight: "15px" }} >
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 18 20" fill="none">
-      <path d="M10.725 7.20456C10.463 7.20456 10.2433 7.1081 10.066 6.91518C9.88867 6.72226 9.8 6.48328 9.8 6.19825V1.87386C9.8 1.58883 9.88867 1.34986 10.066 1.15694C10.2433 0.964014 10.463 0.867554 10.725 0.867554H16.625C16.887 0.867554 17.1067 0.964014 17.284 1.15694C17.4613 1.34986 17.55 1.58883 17.55 1.87386V6.19825C17.55 6.48328 17.4613 6.72226 17.284 6.91518C17.1067 7.1081 16.887 7.20456 16.625 7.20456H10.725ZM0.925 11.393C0.662833 11.393 0.443167 11.2965 0.266 11.1036C0.0886667 10.9108 0 10.6719 0 10.3867V1.87386C0 1.58883 0.0886667 1.34986 0.266 1.15694C0.443167 0.964014 0.662833 0.867554 0.925 0.867554H6.825C7.08717 0.867554 7.30683 0.964014 7.484 1.15694C7.66133 1.34986 7.75 1.58883 7.75 1.87386V10.3867C7.75 10.6719 7.66133 10.9108 7.484 11.1036C7.30683 11.2965 7.08717 11.393 6.825 11.393H0.925ZM10.725 19.9602C10.463 19.9602 10.2433 19.8637 10.066 19.6708C9.88867 19.478 9.8 19.2391 9.8 18.9539V10.4411C9.8 10.1558 9.88867 9.91687 10.066 9.72413C10.2433 9.53121 10.463 9.43475 10.725 9.43475H16.625C16.887 9.43475 17.1067 9.53121 17.284 9.72413C17.4613 9.91687 17.55 10.1558 17.55 10.4411V18.9539C17.55 19.2391 17.4613 19.478 17.284 19.6708C17.1067 19.8637 16.887 19.9602 16.625 19.9602H10.725ZM0.925 19.9602C0.662833 19.9602 0.443167 19.8637 0.266 19.6708C0.0886667 19.478 0 19.2391 0 18.9539V14.6295C0 14.3443 0.0886667 14.1053 0.266 13.9125C0.443167 13.7196 0.662833 13.6232 0.925 13.6232H6.825C7.08717 13.6232 7.30683 13.7196 7.484 13.9125C7.66133 14.1053 7.75 14.3443 7.75 14.6295V18.9539C7.75 19.2391 7.66133 19.478 7.484 19.6708C7.30683 19.8637 7.08717 19.9602 6.825 19.9602H0.925Z"/>
-    </svg>
+  <span className="dash-icon" style={{ marginRight: "15px", display: 'flex', alignItems: 'center' }}>
+    <img 
+  src={shape} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
   </span>
-  <span className="dash-titles">DashBoard</span>
+  <span className="dash-titles">Dashboard</span>
 </Link>
               </li>
              
@@ -435,11 +448,11 @@ useEffect(() => {
                     <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
                   </svg>
                   </span>
-                  <span className="dash-titles" >Recommended Jobs</span>
+                  <span className="dash-titles" >Myjobs</span>
                 </Link>
               </li> */}
-              {/* <li>
-                <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || frompath === "/applicant-interview-status" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
+              <li>
+                {/* <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || frompath === "/applicant-interview-status" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M18.0002 13.2C15.3002 13.2 13.2002 15.4 13.2002 18C13.2002 20.6 15.4002 22.8 18.0002 22.8C20.6002 22.8 22.8002 20.6 22.8002 18C22.8002 15.4 20.6002 13.2 18.0002 13.2ZM21.0002 16.9L17.6002 20.3C17.5002 20.4 17.3002 20.5 17.1002 20.5C16.9002 20.5 16.7002 20.5 16.6002 20.3L15.0002 18.6C14.9002 18.5 14.8002 18.3 14.8002 18.2C14.8002 18 14.8002 17.9 15.0002 17.7C15.1002 17.6 15.3002 17.5 15.4002 17.5C15.5002 17.5 15.7002 17.5 15.8002 17.7L17.1002 19L20.1002 16C20.2002 15.9 20.4002 15.8 20.5002 15.8C20.7002 15.8 20.8002 15.8 20.9002 16C21.0002 16.2 21.1002 16.3 21.1002 16.4C21.1002 16.5 21.1002 16.7 20.9002 16.8L21.0002 16.9Z"/>
@@ -447,28 +460,31 @@ useEffect(() => {
                     </svg>
                   </span>                  
                   <span className="dash-titles">Applied Jobs</span>
-                </Link>
-              </li> */}
-              {/* <li>
-                <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" || frompath==="/applicant-saved-jobs" ? "tf-effect active" : ""}>
+                </Link> */}
+              </li>
+              <li>
+                {/* <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" || frompath==="/applicant-saved-jobs" ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                       <path d="M10.3512 19.2188L6.40219 20.91C5.83169 21.1544 5.29078 21.1086 4.77945 20.7728C4.26828 20.4371 4.0127 19.9634 4.0127 19.3515V7.29254C4.0127 6.82004 4.1787 6.41787 4.5107 6.08604C4.84253 5.75404 5.24478 5.58804 5.71745 5.58804H14.9849C15.4574 5.58804 15.8597 5.75404 16.1917 6.08604C16.5237 6.41787 16.6897 6.82004 16.6897 7.29254V19.3515C16.6897 19.9634 16.434 20.4371 15.9227 20.7728C15.4115 21.1086 14.8707 21.1544 14.3002 20.91L10.3512 19.2188ZM19.2882 19.0755C19.0969 19.0755 18.9324 19.0079 18.7949 18.8725C18.6574 18.7374 18.5887 18.5726 18.5887 18.3783V3.99679C18.5887 3.91979 18.5566 3.84921 18.4924 3.78504C18.4283 3.72104 18.3578 3.68904 18.2809 3.68904H7.6137C7.41953 3.68904 7.25395 3.62137 7.11695 3.48604C6.98011 3.35087 6.9117 3.18612 6.9117 2.99179C6.9117 2.79762 6.98011 2.63212 7.11695 2.49529C7.25395 2.35846 7.41953 2.29004 7.6137 2.29004H18.2814C18.7551 2.29004 19.1579 2.45596 19.4897 2.78779C19.8217 3.11979 19.9877 3.52246 19.9877 3.99579V18.3783C19.9877 18.5726 19.9189 18.7374 19.7812 18.8725C19.6437 19.0079 19.4794 19.0755 19.2882 19.0755Z"/>
                     </svg>
                   </span>
                   <span className="dash-titles">Saved Jobs</span>
-                </Link>
-              </li> */}
+                </Link> */}
+              </li>
              
               <li>
             <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
              
               <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M16.8509 15.5145C16.1272 15.5145 15.512 15.2611 15.0051 14.7543C14.4985 14.2476 14.2451 13.6324 14.2451 12.9088C14.2451 12.1883 14.4985 11.5746 15.0051 11.0678C15.512 10.5611 16.1272 10.3078 16.8509 10.3078C17.5714 10.3078 18.185 10.5611 18.6916 11.0678C19.1985 11.5746 19.4519 12.1883 19.4519 12.9088C19.4519 13.6324 19.1985 14.2476 18.6916 14.7543C18.185 15.2611 17.5714 15.5145 16.8509 15.5145ZM8.96139 19.4605V20.298H5.39289C4.91806 20.298 4.51414 20.1311 4.18114 19.7973C3.84814 19.4634 3.68164 19.0614 3.68164 18.5913V5.38851C3.68164 4.91834 3.84856 4.51635 4.18239 4.18251C4.51622 3.84868 4.91822 3.68176 5.38839 3.68176H18.6114C19.0816 3.68176 19.4836 3.84868 19.8174 4.18251C20.1512 4.51635 20.3181 4.91834 20.3181 5.38851V9.62126C19.8866 9.11993 19.3794 8.73176 18.7964 8.45676C18.2134 8.18176 17.5809 8.03751 16.8989 8.02401C16.8541 8.02401 16.8124 8.0256 16.7739 8.02876C16.7354 8.0321 16.6937 8.03693 16.6489 8.04326V8.01451C16.6086 7.84751 16.5286 7.71443 16.4091 7.61526C16.2898 7.51593 16.1332 7.46626 15.9394 7.46626H8.05289C7.85889 7.46626 7.69339 7.53485 7.55639 7.67201C7.41939 7.80901 7.35089 7.97293 7.35089 8.16376C7.35089 8.35776 7.41939 8.52318 7.55639 8.66001C7.69339 8.79685 7.85889 8.86526 8.05289 8.86526H14.2519C13.7909 9.14026 13.3886 9.4831 13.0451 9.89376C12.7015 10.3043 12.4354 10.7698 12.2469 11.2905H8.05289C7.85889 11.2905 7.69339 11.359 7.55639 11.496C7.41939 11.6332 7.35089 11.7971 7.35089 11.9878C7.35089 12.1818 7.41939 12.3472 7.55639 12.484C7.69339 12.621 7.85889 12.6895 8.05289 12.6895H12.0219C12.0002 13.0882 12.0278 13.4797 12.1046 13.864C12.1816 14.2483 12.3002 14.6171 12.4604 14.9703C12.4027 14.9959 12.3466 15.0199 12.2921 15.0423C12.2376 15.0648 12.1847 15.0888 12.1334 15.1145H8.05289C7.85889 15.1145 7.69339 15.183 7.55639 15.32C7.41939 15.4572 7.35089 15.6211 7.35089 15.8118C7.35089 16.0058 7.41939 16.1713 7.55639 16.3083C7.69339 16.4451 7.85889 16.5135 8.05289 16.5135H10.2969C9.87189 16.8782 9.54306 17.3204 9.31039 17.8403C9.07772 18.3603 8.96139 18.9003 8.96139 19.4605ZM12.1009 21.9663C11.8634 21.9663 11.6614 21.883 11.4949 21.7165C11.3284 21.55 11.2451 21.348 11.2451 21.1105V19.4605C11.2451 19.1793 11.3128 18.9146 11.4481 18.6663C11.5836 18.4179 11.7714 18.2205 12.0114 18.074C12.5012 17.785 12.924 17.5799 13.2796 17.4588C13.6355 17.3376 14.0948 17.2278 14.6576 17.1293C14.8351 17.1008 15.0076 17.1041 15.1749 17.1393C15.3422 17.1746 15.4836 17.2589 15.5989 17.3923L16.8509 18.951L18.0779 17.4048C18.1901 17.2644 18.3318 17.1763 18.5031 17.1405C18.6746 17.1045 18.85 17.1008 19.0291 17.1293C19.5936 17.2278 20.0524 17.3373 20.4054 17.4578C20.7584 17.5783 21.1841 17.7837 21.6826 18.074C21.923 18.2202 22.1096 18.4134 22.2426 18.6538C22.3756 18.8943 22.4454 19.1533 22.4519 19.4308V21.1105C22.4519 21.348 22.3686 21.55 22.2021 21.7165C22.0356 21.883 21.8352 21.9663 21.6009 21.9663H12.1009Z"/>
-                    </svg>
+                      <img 
+  src={shape2} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
                   </span>
-              <span className="dash-titles">My Resume</span>
+              <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
             </Link>
             {/*Verified badges */}
             <Link 
@@ -490,22 +506,14 @@ useEffect(() => {
       marginRight: '12px',
     }}
   >
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="25" 
-      viewBox="0 0 24 25" 
-      fill="none"
-      style={{ 
-        fill: location.pathname === "/applicant-verified-badges" ? "#F46F16" : "#888888" 
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
-      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/verified-badges" ? "#F46F16" : "#888888"} 
-    >
-      <path d="M21.6008 11.2002L20.2008 9.6002C19.9008 9.3002 19.7008 8.7002 19.7008 8.3002V6.70019C19.7008 5.60019 18.8008 4.8002 17.8008 4.8002H16.1008C15.7008 4.8002 15.1008 4.6002 14.8008 4.3002L13.2008 2.9002C12.5008 2.3002 11.4008 2.3002 10.7008 2.9002L9.20078 4.3002C8.90078 4.6002 8.30078 4.8002 7.90078 4.8002H6.20078C5.10078 4.8002 4.30078 5.70019 4.30078 6.70019V8.4002C4.30078 8.8002 4.10078 9.40019 3.80078 9.70019L2.50078 11.3002C1.90078 12.0002 1.90078 13.1002 2.50078 13.8002L3.80078 15.4002C4.10078 15.7002 4.30078 16.3002 4.30078 16.7002V18.4002C4.30078 19.5002 5.20078 20.3002 6.20078 20.3002H7.90078C8.30078 20.3002 8.90078 20.5002 9.20078 20.8002L10.8008 22.2002C11.5008 22.8002 12.6008 22.8002 13.3008 22.2002L14.9008 20.8002C15.2008 20.5002 15.8008 20.3002 16.2008 20.3002H17.9008C19.0008 20.3002 19.8008 19.4002 19.8008 18.4002V16.7002C19.8008 16.3002 20.0008 15.7002 20.3008 15.4002L21.7008 13.8002C22.2008 13.1002 22.2008 11.9002 21.6008 11.2002ZM16.2008 10.6002L11.4008 15.4002C11.3008 15.5002 11.1008 15.6002 10.9008 15.6002C10.7008 15.6002 10.5008 15.5002 10.4008 15.4002L8.00078 13.0002C7.70078 12.7002 7.70078 12.2002 8.00078 11.9002C8.30078 11.6002 8.80078 11.6002 9.10078 11.9002L11.0008 13.8002L15.1008 9.5002C15.4008 9.20019 15.9008 9.20019 16.2008 9.5002C16.5008 9.8002 16.5008 10.3002 16.2008 10.6002Z"/>
-    </svg>
+   <img 
+  src={shape3} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Job-Ready Badges</span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px',textTransform: "none"}}>Skill validation</span>
   
 </Link>
 <Link 
@@ -527,27 +535,15 @@ useEffect(() => {
       marginRight: '12px',
     }}
   >
-   <svg 
-  xmlns="http://www.w3.org/2000/svg" 
+    <img 
+  src={shape4} 
+  alt="Dashboard Icon" 
   width="24" 
   height="24" 
-  viewBox="0 0 24 24" 
-  fill={location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888"} 
-  onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} 
-  onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888")}
->
-  {/* Speech bubble */}
-  <path d="M20 3H4C2.9 3 2 3.9 2 5v10c0 1.1.9 2 2 2h3.5L12 20l4.5-3H20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-  
-  {/* User head */}
-  <circle cx="9" cy="9" r="2.2"/>
-  
-  {/* User shoulders */}
-  <path d="M6.5 15c0-1.7 2.5-2.9 5.5-2.9s5.5 1.2 5.5 2.9V16H6.5v-1z"/>
-</svg>
+/>
 
   </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>MentorSphere</span>
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px',textTransform: "none" }}>Mentor sphere</span>
 </Link>
 
 
@@ -570,25 +566,16 @@ useEffect(() => {
       marginRight: '12px',
     }}
   >
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none"
-      style={{ 
-        fill: location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888" 
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
-      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888"} 
-    >
-      {/* 🎥 Video Shorts Icon */}
-      <path d="M10 16.5L16 12L10 7.5V16.5ZM21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3ZM21 19H3V5H21V19Z"/>
-    </svg>
+     <img 
+  src={shape5} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
   </span>
 
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>
-    Tech Buzz Shorts
+  <span className="dash-titles" style={{ color: '#333', fontSize: '16px',textTransform: "none" }}>
+    Tech buzz shorts
   </span>
 
  
@@ -598,28 +585,32 @@ useEffect(() => {
         <li>
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path d="M17 4V2H7v2H2v5c0 2.8 2.2 5 5 5h.2A6.98 6.98 0 0 0 11 16.9V19H8v3h8v-3h-3v-2.1c1.8-.5 3.2-1.8 3.8-3.5h.2c2.8 0 5-2.2 5-5V4h-5ZM7 12c-1.7 0-3-1.3-3-3V6h3v6Zm13-3c0 1.7-1.3 3-3 3V6h3v3Z"/>
-</svg>
-
+                       <img 
+  src={shape6} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
                   </span>
-                  <span className="dash-titles">Innovation Arena</span>
+                  <span className="dash-titles" style={{ textTransform: "none" }}>Innovation arena</span>
                 </Link>
               </li>
         
  <li>
                 <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
                   <span className="dash-icon blog-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 20h9" />
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                    </svg>
+                                         <img 
+  src={shape7} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
                   </span>
 
-                  <span className="dash-titles">TechVibes</span>
+                  <span className="dash-titles" style={{ textTransform: "none" }}>Tech vibes</span>
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link onClick={hideMenu} to="/applicant-interview-prep" className={location.pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}>
                   <span className="dash-icon" style={{ display: 'inline-block', transition: 'fill 0.3s ease', marginRight: '12px' }}>
                    <svg width="24" height="24" viewBox="0 0 400 400" fill={location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888"} xmlns="http://www.w3.org/2000/svg" onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888")}>
@@ -635,23 +626,54 @@ useEffect(() => {
 
                   </span>
 
-                  <span className="dash-titles">Ask Newton</span>
+                  <span className="dash-titles">Ask newton</span>
                 </Link>
-              </li>
-               <li>
-                <Link onClick={hideMenu} to="/applicant-my-jobs" className={location.pathname === "/applicant-my-jobs" || frompath === "/applicant-my-jobs" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
-                  </svg>
-                  </span>
-                  <span className="dash-titles" >My Jobs</span>
-                </Link>
-              </li>
+              </li> */}
             </ul>
-          
+            
+            {/* Logout Button */}
+            <div style={{ marginTop: 'auto' }}>
+              <div 
+                onClick={() => setShowModal(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  // padding: '10px 15px',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  transition: 'all 0.3s ease',
+                  margin: '0 10px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.querySelector('img').style.filter = 'none';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.querySelector('img').style.filter = 'none';
+                }}
+              >
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  marginRight: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                 <img 
+  src={shape8} 
+  alt="Dashboard Icon" 
+  width="24" 
+  height="24" 
+/>
+                  
+                </div>
+                <span className="dash-titles" style={{ color: '#1A1A17' }}>Logout</span>
+              </div>
+            </div>
+            
           </div>
-       
         </div>
       )}
                                <ModalLogout

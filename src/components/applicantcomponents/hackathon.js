@@ -177,6 +177,9 @@ const Hackathon = () => {
     };
 
     return (
+         <div className="border-style">
+
+        <div className="blur-border-style"></div>
         <div className="dashboard__content">
             <div className="row mr-0 ml-10" style={{ marginLeft: "1%" }}>
                 <div className="main-header-row">
@@ -371,6 +374,7 @@ const Hackathon = () => {
                     </div>
                 )}
             </div>
+        </div>
         </div>
     );
 };

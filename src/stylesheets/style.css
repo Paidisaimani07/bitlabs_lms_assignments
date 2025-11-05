@@ -541,7 +541,8 @@ input[type="color"],
 }
 
 .tf-container.ct2 {
-  width: 1830px;
+  width: 1600px;
+  margin-top: 20px;
  
 }
 
@@ -549,9 +550,9 @@ input[type="color"],
 
 #header {
   width: 100%;
-  background-color: #fff;
+  /* background-color: #fff; */
   text-align: center;
-  border-bottom: 1px solid #e5e5e5;
+  /* border-bottom: 1px solid #e5e5e5; */
   height: 90px;
   position: fixed;
   top: 0;
@@ -594,7 +595,7 @@ input[type="color"],
   width: auto !important;
   height:57px !important;
   display: block;
-  margin-left:45px;
+  /* margin-left:45px; */
 }
 
 .sticky-area-wrap .header-ct-left .logo .para1 {

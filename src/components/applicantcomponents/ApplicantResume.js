@@ -56,6 +56,9 @@ const ApplicantResume = () => {
   };
  
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content">
     <section className="page-title-dashboard">
       <div className="themes-container">
@@ -83,6 +86,7 @@ const ApplicantResume = () => {
     </div>
     </div>
     </section>
+    </div>
     </div>
     </div>
   );
