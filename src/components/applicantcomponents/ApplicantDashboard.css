@@ -385,10 +385,10 @@
   background: #ffffff 0% 0% no-repeat padding-box;
   box-shadow: 0px 0px 20px #f7aa4b80;
   border-radius: 6px;
-  padding: 15px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -397,14 +397,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  flex-wrap: nowrap;
+  gap: 10px;
 }
+
 
 .Tech-buzz .tech-buzz-header h3 {
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
   font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .Tech-buzz .tech-buzz-header button {
@@ -416,29 +422,36 @@
   text-decoration: underline;
   font-size: 14px;
   transition: opacity 0.2s ease;
+  white-space: nowrap;
+  padding: 0;
+  min-width: fit-content;
 }
+
 
 .Tech-buzz .tech-buzz-header button:hover {
   opacity: 0.7;
 }
 
 .Tech-buzz .tech-buzz-images {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  flex-grow: 1;
-  overflow: hidden;
-  gap: 5px;
-  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 10px;
+  height: 85%;
 }
 
 .Tech-buzz .tech-buzz-images img {
-  width: 33.33%;
-  height: auto;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  object-fit: fill;
   border-radius: 6px !important;
   display: block;
+  transition: transform 0.2s ease;
 }
+
 
 .profile-card-row2 .tech-vibes {
   width: 25%;
@@ -486,7 +499,7 @@
 .tech-vibes-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   overflow: hidden;
   flex-grow: 1;
 }
@@ -558,6 +571,16 @@
     height: auto;
   }
 
+  .Tech-buzz .tech-buzz-header h3 {
+    font-size: 18px;
+  }
+
+
+  .Tech-buzz .tech-buzz-header button {
+    font-size: 13px;
+  }
+
+
   .profile-card-row2 .app-card {
     grid-area: app;
     width: 100% !important;
@@ -573,17 +596,33 @@
     width: 80%;
   }
 
-  .profile-card-row2 .Tech-buzz {
+   .profile-card-row2 .Tech-buzz {
     grid-area: buzz;
     width: 100% !important;
-    height: 300px;
+    height: 350px;
     margin: 0;
+    padding: 15px;
   }
+
+  .Tech-buzz .tech-buzz-images {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 130px);
+    gap: 12px;
+    margin: 10px 0;
+  }
+
+
+  .Tech-buzz .tech-buzz-images img {
+    height: 100%;
+    width: 100%;
+    object-fit: fill;
+  }
+
 
   .profile-card-row2 .tech-vibes {
     grid-area: vibes;
     width: 100% !important;
-    height: 300px;
+    height: 350px;
     margin: 0;
   }
 }
@@ -599,6 +638,23 @@
 
   .profile-card-row2>div {
     width: 100% !important;
+  }
+
+   .profile-card-row2 .Tech-buzz {
+    min-height: 450px;
+    padding: 15px;
+  }
+
+.Tech-buzz .tech-buzz-images {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(160px, 1fr));
+    gap: 10px;
+    height: 90%;
+  }
+
+
+  .Tech-buzz .tech-buzz-images img {
+    min-height: 100px;
   }
 
   .profile-card-row2 .app-card {
@@ -713,6 +769,24 @@
 }
 
 @media screen and (max-width:576px) {
+
+   .profile-card-row2 .Tech-buzz {
+    min-height: 280px;
+    padding: 20px;
+  }
+
+
+  .Tech-buzz .tech-buzz-images {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 110px);
+    gap: 8px;
+    margin: 5px 0;
+  }
+
+
+  .Tech-buzz .tech-buzz-images img {
+    height: 110px;
+  }
 
   .robo-container .robo-card {
     margin-top: 60px !important;

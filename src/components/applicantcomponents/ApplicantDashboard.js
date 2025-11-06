@@ -37,6 +37,8 @@ const ApplicantDashboard = () => {
   const [blogsLoading, setBlogsLoading] = useState(true);
   const [blogsError, setBlogsError] = useState(null);
   const [imageSrc, setImageSrc] = useState('');
+  const [techBuzzVideos, setTechBuzzVideos] = useState([]);
+  const [techBuzzLoading, setTechBuzzLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
@@ -240,6 +242,35 @@ const ApplicantDashboard = () => {
     };
     fetchBlogs();
   }, []);
+ useEffect(() => {
+    const fetchTechBuzz = async () => {
+      try {
+        setTechBuzzLoading(true);
+        const jwtToken = localStorage.getItem('jwtToken');
+        const res = await axios.get(`${apiUrl}/videos/recommended/${user.id}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
+
+
+        const videos = (res.data || []).slice(0, 4).map(v => ({
+          videoId: v.videoId,
+          title: v.title,
+          s3url: v.s3url,
+          thumbnail_url: v.thumbnail_url,
+        }));
+
+
+        setTechBuzzVideos(videos);
+      } catch (err) {
+        console.error("Failed to load Tech Buzz videos", err);
+      } finally {
+        setTechBuzzLoading(false);
+      }
+    };
+
+
+    fetchTechBuzz();
+  }, [user.id]);
 
 
   const handleRedirectTechBuzz = () => {
@@ -642,15 +673,39 @@ const ApplicantDashboard = () => {
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
                       <h3>Tech buzz shots</h3>
-                      <button onClick={handleRedirectTechBuzz}>View more</button>
+                      <button onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
-
                     <div className="tech-buzz-images">
-                      <img src={character1} alt="Tech buzz 1" />
-                      <img src={character2} alt="Tech buzz 2" />
-                      <img src={character3} alt="Tech buzz 3" />
+                      {techBuzzLoading ? (
+                        // 4 skeleton images
+                        [...Array(4)].map((_, i) => (
+                          <div key={i} className="skeleton-thumb"></div>
+                        ))
+                      ) : techBuzzVideos.length > 0 ? (
+                        techBuzzVideos.map((video) => (
+                          <img
+                            key={video.videoId}
+                            src={video.thumbnail_url || "https://via.placeholder.com/120x80?text=No+Img"}
+                            alt={video.title}
+                            onClick={() => navigate(`/applicant-verified-videos?video=${video.videoId}`)}
+                            onError={(e) => (e.target.src = "https://via.placeholder.com/120x80?text=No+Img")}
+                            style={{ cursor: "pointer" }}
+                          />
+                        ))
+                      ) : (
+                        // Fallback: 4 placeholder images
+                        [...Array(4)].map((_, i) => (
+                          <img
+                            key={i}
+                            src="https://via.placeholder.com/120x80?text=No+Video"
+                            alt="No video"
+                            style={{ opacity: 0.5 }}
+                          />
+                        ))
+                      )}
                     </div>
                   </div>
+
 
 
                   {/* Tech Vibes */}
