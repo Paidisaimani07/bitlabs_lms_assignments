@@ -115,6 +115,7 @@ function App() {
                 <Route path="/applicant-hackathon-details/:id" element={<ApplicantHomePage/>}/>
                 <Route path="/applicant-blog-list" element={<ApplicantHomePage />} />
                 <Route path="/applicant-mentorconnect" element={<ApplicantHomePage />} />
+                <Route path="/applicant-interview-prep" element={<ApplicantHomePage />} />
                 {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
