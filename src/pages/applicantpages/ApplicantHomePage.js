@@ -29,6 +29,7 @@ import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBl
 import BlogSingle from '../../components/applicantcomponents/BlogSingle';
 import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
 import MyJobs from '../../components/applicantcomponents/MyJobs';
+import InterviewPrepPage from './InterviewPrepPage';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -139,6 +140,9 @@ function ApplicantHomePage() {
         case '/applicant-my-jobs':
         setActiveRoute('myjobs');
         break;
+        case '/applicant-interview-prep':
+        setActiveRoute('ai-prep');
+        break;
          default:
       // 👇 check if route starts with /blogs/ (for blog single page)
       if (pathname.startsWith('/blogs/')) {
@@ -182,6 +186,7 @@ function ApplicantHomePage() {
       {activeRoute === 'hackDetails' && <HackathonDetails />}
       {activeRoute === 'blogs' && <ApplicantBlogsList />}
       {activeRoute === 'blogsingle' && <BlogSingle />}
+      {activeRoute === 'ai-prep' && <InterviewPrepPage />}
        {activeRoute === 'mentor' && <ApplicantMentorConnect />}
       </div> 
   )

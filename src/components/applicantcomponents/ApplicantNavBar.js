@@ -27,7 +27,7 @@ const backgroundImage = '/images/backgrounds/power.jpg';
 
 function ApplicantNavBar() {
   const location = useLocation();
-  const hideSidebarRoutes = [];
+  const hideSidebarRoutes = ["/applicant-interview-prep"];
   const [isOpen, setIsOpen] = useState(
      window.innerWidth >= 1302 &&  !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
   );
