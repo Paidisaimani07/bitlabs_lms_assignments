@@ -1105,7 +1105,6 @@
 
   .sticky-area-wrap .header-ct-left .categories,
   .header-style2 .nav-wrap,
-  .sticky-area-wrap .header-ct-center,
   .sticky-area-wrap .header-ct-right .button {
     display: none;
   }
@@ -2234,10 +2233,6 @@
   #header .sticky-area-wrap .header-ct-left .logo {
     margin-right: 0;
     padding-left: 13px;
-  }
-
-  #header .sticky-area-wrap .header-ct-right .account {
-    
   }
 
   @media only screen and (min-width: 50px) and (max-width: 300px) {

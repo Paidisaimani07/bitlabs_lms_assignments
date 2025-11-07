@@ -36,7 +36,7 @@ const ApplicantDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [blogsLoading, setBlogsLoading] = useState(true);
   const [blogsError, setBlogsError] = useState(null);
-  const [imageSrc, setImageSrc] = useState('');
+  const [imageSrc, setImageSrc] = useState('../images/user/avatar/image-01.jpg');
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
 
@@ -133,7 +133,8 @@ const ApplicantDashboard = () => {
           identifier: response.data.applicant.email,
           password: response.data.applicant.password,
           localResume: response.data.applicant.localResume,
-          firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : ""
+          firstName: response.data.basicDetails != null && response.data.basicDetails.firstName != null ? response.data.basicDetails.firstName : "",
+          lastName: response.data.basicDetails != null && response.data.basicDetails.lastName != null ? response.data.basicDetails.lastName : ""
         };
 
         localStorage.setItem('userData', JSON.stringify(newData));
@@ -355,7 +356,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any questions regrading interview assistant? <span style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Any questions regrading interview assistant? <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
