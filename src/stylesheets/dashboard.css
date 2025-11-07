@@ -702,14 +702,6 @@ thead tr th:nth-child(1) {
     padding-left: 10px;
 }
 
-thead tr th:nth-child(2) {
-    
-}
-
-tbody tr td:last-child {
-   
-}
-
 tbody tr td {
     padding: 10px 10px 10px;
     border-bottom: 0px solid #e5e5e5;
@@ -1143,7 +1135,12 @@ tbody tr td:nth-child(2) {
 
 body.close-sidebar .dashboard.show .dashboard__content {
   margin-left: 0; 
-  margin-top: -2%;
+}
+
+@media screen and (max-width:768px) {
+    .dashboard__content{
+        margin-top: 15px !important;
+    }
 }
 
 
@@ -4672,10 +4669,6 @@ input[type="radio"]:checked:after {
         margin-bottom: 30px;
     }
 
-    .flat-dashboard-user .wrap-profile .box-profile {
-       
-    }
-
     .flat-dashboard-user .wrap-profile .images {
         margin-bottom: 12px;
     }
@@ -5122,12 +5115,6 @@ input[type="radio"]:checked:after {
     .date-info {
       margin-left: 650px; 
       font-size: 14px;
-    }
-  }
-
-  @media screen and (max-width: 1367px) {
-    .date-info {
-      
     }
   }
 
