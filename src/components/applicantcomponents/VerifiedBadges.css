@@ -278,7 +278,7 @@ margin-top: 20px;
 .test-action {
 padding: 20px;
 width: 100%;
-display: flex;
+/* display: flex; */
 justify-content: space-between;
 align-items: center;
 font-size: 16px;
