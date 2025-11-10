@@ -1,7 +1,3 @@
-.grid-handler .hackathon-search-box {
-    width: 320px !important;
-}
-
 .hackathon-search-box {
     position: relative;
     display: flex;
@@ -121,7 +117,7 @@
     }
 }
 
-@media (max-width: 2000px) {
+@media (min-width:1401px) and (max-width: 2000px) {
     .grid-handler .newCards-grid {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -131,7 +127,7 @@
     }
 }
 
-@media (max-width: 1400px) {
+@media (min-width:1302px) and (max-width: 1400px) {
     .grid-handler .newCards-grid {
         grid-template-columns: repeat(3, 1fr);
     }
@@ -144,6 +140,9 @@
 @media (max-width: 1300px) {
     .main-header-row {
     margin-top: 110px;
+    }
+     .newCards-grid {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 

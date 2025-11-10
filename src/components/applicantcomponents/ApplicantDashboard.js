@@ -386,7 +386,7 @@ const ApplicantDashboard = () => {
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
-                        Start Test
+                        Enter the Arena!
                       </button>
                     </div>
 
@@ -414,9 +414,9 @@ const ApplicantDashboard = () => {
                     </div>
 
                     <div className="mentor-heading">
-                      <h4 >Mentor</h4>
-                      <h4 >Technology</h4>
-                      <h4 >Held on</h4>
+                      <h4 >Guiding Star</h4>
+                      <h4 >Realm of Insight</h4>
+                      <h4 >Insight Hour</h4>
                     </div>
 
                     {mentorConnectData?.items
@@ -518,7 +518,7 @@ const ApplicantDashboard = () => {
                     </div>
                     <div className="profile-side-section">
                       <div>
-                         <img className="profile-image" src={imageSrc} alt="profile"   style={{
+                        <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')}  style={{
                             borderRadius: "85%",
                             width: "65px",
                             height: "65px",

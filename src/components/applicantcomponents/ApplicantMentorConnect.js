@@ -194,7 +194,7 @@ const computeStatus = (m) => {
   // ---------- styles ----------
   const styles = {
     grid: `
-      .mentor-grid { display:flex; flex-wrap:wrap; gap:18px; margin-top:12px; }
+      .mentor-grid { display:flex; flex-wrap:wrap; gap:18px; }
       .mentor-card { flex:1 1 calc(33.333% - 18px); max-width:calc(33.333% - 18px); }
       @media (max-width: 992px) { .mentor-card { flex:1 1 calc(50% - 18px); max-width:calc(50% - 18px); } }
       @media (max-width: 640px) { .mentor-card { flex:1 1 100%; max-width:100%; } }
@@ -397,29 +397,35 @@ const computeStatus = (m) => {
     <div className="dashboard__content" style={{ paddingTop: 4, paddingBottom: 8 }}>
       <style>{styles.grid}</style>
 
-      <section className="page-title-dashboard" style={{ marginBottom: 12 }}>
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12">
-              {/* Title + Search aligned like screenshot */}
-              <div className="page-title-wrap">
-                <div className="title-dashboard">
-                  <div className="title-dash">MentorSphere</div>
-                </div>
-                <input
-                  className="search-input"
-                  placeholder="Search"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+
+  <div className="row" style={{marginTop:"10px"}}>
+    <div className="col-lg-12 col-md-12">
+      <div className="main-header-row">
+        <h1 className="main-heading">MentorSphere</h1>
+
+        <div className="hackathon-search-box">
+          <i className="fa fa-search search-icon1"></i>
+          <input
+            type="text"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="hackathon-search-input"
+          />
+          {query && (
+            <i
+              className="fa fa-times clear-icon"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => setQuery("")}
+            ></i>
+          )}
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
 
       <div className="col-lg-12 col-md-12">
-        <section className="flat-dashboard-setting flat-dashboard-setting2">
+        <section className="flat-dashboard-setting2">
           <div className="themes-container">
             <div className="content-tab">
               <div className="inner">
