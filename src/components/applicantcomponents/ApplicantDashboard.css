@@ -158,6 +158,12 @@
   margin-top: 12px;
 }
 
+.hover-scale:hover {
+  transform: scale(1.05); 
+  transition: transform 0.3s ease-in-out; 
+}
+
+
 .profile-card-row1 .portfolio {
   width: 22%;
   margin-left: 15px;

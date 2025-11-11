@@ -223,7 +223,7 @@ const computeStatus = (m) => {
     const dtLabel = (() => {
       const dt = buildStartDate(m.date, m.startTime);
       return dt
-        ? dt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+        ? dt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short", hour12: true })
         : "Date not available";
     })();
 
@@ -239,7 +239,7 @@ const computeStatus = (m) => {
         }}
       >
         {/* Banner */}
-        <div style={{ width: "100%", height: 160, borderRadius: 6, overflow: "hidden" }}>
+        <div style={{ width: "100%", height: 160, borderRadius: 5, overflow: "hidden" }}>
           <img
             src={banner}
             alt={m.title || "Mentor session"}

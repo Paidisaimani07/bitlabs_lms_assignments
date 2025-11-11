@@ -364,20 +364,20 @@
 /* Close button */
 .modal-overlay .oneminute-modal-close {
   position: absolute;
-  top: 10px;
+  top: 4px;
   right: 10px;
-  background: #fff;
-  color: #E66A0E;
-  border: 1px solid #E66A0E;
-  font-size: 1.2rem;
+  background: transparent;
+  border: none !important;
   cursor: pointer;
-  padding: 6px 12px;
-  transition: background 0.3s;
-  z-index: 20;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
 }
 
-.modal-overlay .oneminute-modal-close:hover {
-  background: #E66A0E;
-  color: #fff;
-  border: none;
+.oneminute-modal-close svg {
+  width: 25px;
+  height: 25px;
 }

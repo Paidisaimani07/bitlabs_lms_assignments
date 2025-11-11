@@ -356,7 +356,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any questions regrading interview assistant? <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Have questions - <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
@@ -443,12 +443,13 @@ const ApplicantDashboard = () => {
                         const defaultImg = defaultImages[idx % defaultImages.length];
 
                         return (
-                          <div
+                          <div  className="hover-scale" onClick={handleRedirectMentor}
                             key={item.meetingId}
                             style={{
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "space-between",
+                              cursor:"pointer",
                               padding: "14px 0",
                               borderBottom: idx !== 3 ? "1px solid #f0f0f0" : "none",
                             }}
@@ -546,7 +547,7 @@ const ApplicantDashboard = () => {
            a2 2 0 0 1 2.11-.45c.97.37 2 .62 3.06.74
            A2 2 0 0 1 22 16.92z" />
                           </svg>
-                          <p>{profileData?.applicant?.mobilenumber}</p>
+                          <p>{profileData?.basicDetails?.alternatePhoneNumber}</p>
                         </span>
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -752,7 +753,7 @@ const ApplicantDashboard = () => {
                           return (
                             <div
                               key={blog.id}
-                              className="tech-vibes-item"
+                              className="tech-vibes-item hover-scale"
                               onClick={handleBlogClick}
                               style={{ cursor: 'pointer' }}
                               role="button"

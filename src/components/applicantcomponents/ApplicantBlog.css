@@ -1,14 +1,16 @@
 /* Grid */
 .tv-grid {
   display: grid;
-  gap: 18px;
+  gap: 10px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+
 @media (max-width: 1100px) {
   .tv-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
 @media (max-width: 680px) {
   .tv-grid {
     grid-template-columns: 1fr;
@@ -20,7 +22,7 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  border-radius: 16px;
+  border-radius: 5px;
   background: #fff;
   border: 1px solid #f0f1f4;
   box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06);
@@ -28,29 +30,34 @@
   overflow: hidden;
   padding: 12px;
 }
+
 .tv-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
   border-color: #ececf0;
 }
+
 .tv-media {
   aspect-ratio: 16 / 9;
   background: #f8fafc;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: 5px;
 }
+
 .tv-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
   display: block;
 }
+
 .tv-content {
   display: flex;
   flex-direction: column;
   gap: 10px;
   padding: 12px 14px 14px;
 }
+
 .tv-card-title {
   font-size: 16px;
   line-height: 1.35;
@@ -61,12 +68,14 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .tv-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
+
 .tv-meta {
   font-size: 12px;
   color: #6b7280;
@@ -74,14 +83,17 @@
   align-items: center;
   gap: 6px;
 }
+
 .tv-by {
   color: #ef6b2e;
   font-weight: 700;
 }
+
 .tv-dot {
   opacity: 0.6;
   color: #ef6b2e;
 }
+
 .tv-date {
   color: #6b7280;
 }
@@ -95,16 +107,19 @@
   justify-content: center;
   padding: 4px;
   transition: transform 0.15s ease;
-  border:none !important;
+  border: none !important;
 }
+
 .tv-open svg {
   width: 20px;
   height: 20px;
   display: block;
 }
+
 .tv-open:hover {
   transform: scale(1.05);
 }
+
 .tv-open:active {
   transform: scale(0.95);
 }
@@ -117,6 +132,7 @@
   gap: 16px;
   flex-wrap: wrap;
 }
+
 .tv-titlebar .tv-search .search-input {
   width: min(260px, 48vw);
   padding: 12px 14px;
@@ -135,15 +151,16 @@
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 9999 !important; /* above navbar */
+  z-index: 9999 !important;
+  /* above navbar */
 }
 
 
 
-.tv-modal-close {
+.tv-modal-overlay .tv-modal-close {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 4px;
+  right: 10px;
   background: transparent;
   border: none !important;
   cursor: pointer;
@@ -154,67 +171,95 @@
   justify-content: center;
   transition: background 0.2s ease;
 }
+
 .tv-modal-close svg {
   width: 20px;
   height: 20px;
-  stroke: #6b7280;
-  stroke-width: 2;
 }
 
 /* Modal container: fixed size, rounded, no scroll here */
-.tv-modal{
-  width: min(850px, 92vw);
+.tv-modal {
+  width: min(850px, 90vw);
   max-height: 86vh;
   background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 24px 56px rgba(0,0,0,.25);
+  border-radius: 6px;
+  box-shadow: 0 24px 56px rgba(0, 0, 0, .25);
   position: relative;
   padding: 24px 28px 28px;
-  overflow: hidden;          /* keep rounded corners */
+  overflow: hidden;
+  /* keep rounded corners */
   display: flex;
-  flex-direction: column;    /* header (fixed) + body (flex) */
+  flex-direction: column;
+  /* header (fixed) + body (flex) */
 }
 
 /* Header stays fixed at top of modal */
-.tv-modal-header{
-  display:flex; align-items:flex-start; gap:18px;
-  padding: 0 0 12px;         /* top padding comes from modal */
+.tv-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 0 0 12px;
   /* border-bottom: 1px solid #f0f1f4; */
 }
 
+@media screen and (max-width:600px) {
+  .tv-modal-header {
+    flex-direction: column;
+  }
+
+  .tv-modal-thumb {
+    flex: 0 0 0 !important;
+  }
+  .tv-modal-thumb img {
+    height: 230px !important;
+  }
+}
+
 /* Only body scrolls */
-.tv-modal-body{
-  flex: 1;                   /* take remaining height */
-  overflow-y: auto;          /* scroll here */
+.tv-modal-body {
+  flex: 1;
+  /* take remaining height */
+  overflow-y: auto;
+  /* scroll here */
   -webkit-overflow-scrolling: touch;
-  padding: 14px 4px 0 0;     /* right gutter for scrollbar */
-  margin-right: 16px;        /* visual gap from scrollbar */
+  padding: 14px 4px 0 0;
+  /* right gutter for scrollbar */
+  margin-right: 16px;
+  /* visual gap from scrollbar */
 }
 
 /* Optional: keep right-side radius clean when scrolling */
-.tv-modal-body::-webkit-scrollbar { width: 8px; }
+.tv-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
 .tv-modal-body::-webkit-scrollbar-thumb {
-  background: #e5e7eb; border-radius: 999px;
+  background: #e5e7eb;
+  border-radius: 999px;
 }
 
 
 .tv-modal-thumb {
   flex: 0 0 260px;
 }
+
 .tv-modal-thumb img {
-  width: 100%;
+  width: 100vw;
   height: auto;
   border-radius: 2px;
-  object-fit: cover;
+  object-fit: fill;
 }
+
 .tv-modal-headtext {
   flex: 1;
 }
+
 .tv-modal-title {
   font-size: 22px;
   font-weight: 800;
   margin: 0 0 6px;
 }
+
 .tv-modal-sub {
   color: #ef6b2e !important;
   font-size: 13px;
@@ -226,20 +271,24 @@
   line-height: 1.6;
   margin-bottom: 14px;
 }
+
 .tv-modal-content p {
   margin: 8px 0;
   line-height: 1.6;
   color: #374151;
 }
+
 .tv-h2 {
   font-weight: 700;
   font-size: 18px;
   margin-top: 10px;
 }
+
 .tv-bullet {
   position: relative;
   padding-left: 18px;
 }
+
 .tv-bullet::before {
   content: "•";
   position: absolute;
