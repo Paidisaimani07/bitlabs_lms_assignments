@@ -945,7 +945,6 @@ const steps = [
 
                   </div> 
                 </div>
-                                    {/*  */}
               </div> 
             </div>
           </section>
