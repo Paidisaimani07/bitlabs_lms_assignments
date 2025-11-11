@@ -44,7 +44,7 @@ import { ClipLoader } from 'react-spinners';
 
 
 
-const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
+export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
   const [timeLeft, setTimeLeft] = useState({});
   const [isRetakeAvailable, setIsRetakeAvailable] = useState(false);
   const navigate = useNavigate();
