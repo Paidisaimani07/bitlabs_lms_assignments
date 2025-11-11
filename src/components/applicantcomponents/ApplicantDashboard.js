@@ -356,7 +356,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any questions regrading interview assistant? <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Have questions - <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
@@ -386,7 +386,7 @@ const ApplicantDashboard = () => {
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
-                        Start Test
+                        Enter the Arena!
                       </button>
                     </div>
 
@@ -414,9 +414,9 @@ const ApplicantDashboard = () => {
                     </div>
 
                     <div className="mentor-heading">
-                      <h4 >Mentor</h4>
-                      <h4 >Technology</h4>
-                      <h4 >Held on</h4>
+                      <h4 >Guiding Star</h4>
+                      <h4 >Realm of Insight</h4>
+                      <h4 >Insight Hour</h4>
                     </div>
 
                     {mentorConnectData?.items
@@ -443,12 +443,13 @@ const ApplicantDashboard = () => {
                         const defaultImg = defaultImages[idx % defaultImages.length];
 
                         return (
-                          <div
+                          <div  className="hover-scale" onClick={handleRedirectMentor}
                             key={item.meetingId}
                             style={{
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "space-between",
+                              cursor:"pointer",
                               padding: "14px 0",
                               borderBottom: idx !== 3 ? "1px solid #f0f0f0" : "none",
                             }}
@@ -518,7 +519,7 @@ const ApplicantDashboard = () => {
                     </div>
                     <div className="profile-side-section">
                       <div>
-                         <img className="profile-image" src={imageSrc} alt="profile"   style={{
+                        <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')}  style={{
                             borderRadius: "85%",
                             width: "65px",
                             height: "65px",
@@ -546,7 +547,7 @@ const ApplicantDashboard = () => {
            a2 2 0 0 1 2.11-.45c.97.37 2 .62 3.06.74
            A2 2 0 0 1 22 16.92z" />
                           </svg>
-                          <p>{profileData?.applicant?.mobilenumber}</p>
+                          <p>{profileData?.basicDetails?.alternatePhoneNumber}</p>
                         </span>
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -752,7 +753,7 @@ const ApplicantDashboard = () => {
                           return (
                             <div
                               key={blog.id}
-                              className="tech-vibes-item"
+                              className="tech-vibes-item hover-scale"
                               onClick={handleBlogClick}
                               style={{ cursor: 'pointer' }}
                               role="button"

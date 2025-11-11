@@ -3644,7 +3644,6 @@ flex-shrink: 0;
     height: 86% !important;
     margin: 0 !important;
     border-radius: 0 !important;
-    z-index: 10000 !important;
   }
 }
 
