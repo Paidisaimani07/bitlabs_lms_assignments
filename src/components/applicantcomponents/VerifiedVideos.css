@@ -6,12 +6,15 @@
   --tv-radius: 5px;
   --tv-orange: #ff7a18;
   --tv-text: #101828;
-  --card-pad: 12px;            /* single source of truth for padding */
+  --card-pad: 12px;
+  /* single source of truth for padding */
 }
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
 /* ===== Page chrome ===== */
 .oneminute-container {
@@ -22,7 +25,7 @@
 }
 
 .oneminute-header {
-  margin-top: 70px;
+  margin-top: 100px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -37,7 +40,9 @@
   color: var(--tv-text);
 }
 
-.oneminute-orange { color: var(--tv-orange); }
+.oneminute-orange {
+  color: var(--tv-orange);
+}
 
 /* ===== New unified search (use .search-box/.search-input in JSX) ===== */
 .search-box {
@@ -68,7 +73,8 @@
   background: transparent;
   font-size: 14px;
   color: var(--tv-text);
-  padding: 8px 30px 8px 34px; /* space for icon */
+  padding: 8px 30px 8px 34px;
+  /* space for icon */
 }
 
 .search-box .clear-icon {
@@ -80,11 +86,13 @@
 }
 
 .search-box:focus-within {
-  box-shadow: 0 0 0 3px rgba(255,122,24,.15);
+  box-shadow: 0 0 0 3px rgba(255, 122, 24, .15);
 }
 
 /* remove old wrapper if still present in DOM */
-.oneminute-search-wrapper { display: none !important; }
+.oneminute-search-wrapper {
+  display: none !important;
+}
 
 /* ===== Grid ===== */
 .oneminute-grid {
@@ -99,9 +107,11 @@
   border: 1px solid var(--tv-border);
   border-radius: var(--tv-radius);
   box-shadow: var(--tv-shadow);
-  overflow: hidden;                         /* keep radii clean */
+  overflow: hidden;
+  /* keep radii clean */
   transition: transform .2s ease, box-shadow .2s ease;
-  padding: var(--card-pad);                 /* equal L/R padding */
+  padding: var(--card-pad);
+  /* equal L/R padding */
 }
 
 .oneminute-card:hover {
@@ -109,7 +119,9 @@
   box-shadow: var(--tv-shadow-hover);
 }
 
-.oneminute-card.playing-card { border: 1.5px solid var(--tv-orange); }
+.oneminute-card.playing-card {
+  border: 1.5px solid var(--tv-orange);
+}
 
 /* Thumb area aligns to card padding (no extra side padding here) */
 .oneminute-player-wrapper {
@@ -121,7 +133,8 @@
 
 /* If using a button for accessibility */
 .thumb-button {
-  all: unset; /* Removes all default button styles */
+  all: unset;
+  /* Removes all default button styles */
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -137,7 +150,8 @@
 
 /* Disable focus ring visually but keep accessibility outline for keyboard users */
 .thumb-button:focus-visible {
-  outline: 2px solid #ff7a18; /* optional: visible only for keyboard tab focus */
+  outline: 2px solid #ff7a18;
+  /* optional: visible only for keyboard tab focus */
   outline-offset: 2px;
 }
 
@@ -152,7 +166,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
   border: none !important;
   outline: none !important;
 }
@@ -170,7 +184,9 @@
 }
 
 
-.oneminute-card:hover .oneminute-thumb { transform: scale(1.03); }
+.oneminute-card:hover .oneminute-thumb {
+  transform: scale(1.03);
+}
 
 /* ===== Meta row ===== */
 /* IMPORTANT: no left/right padding here so it lines up with the image */
@@ -178,7 +194,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 0 0;           /* top only; sides are from card padding */
+  padding: 10px 0 0;
+  /* top only; sides are from card padding */
 }
 
 .oneminute-avatar {
@@ -206,7 +223,7 @@
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(10,10,10,0.65);
+  background: rgba(10, 10, 10, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -249,17 +266,118 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 6px solid rgba(255,255,255,0.2);
+  border: 6px solid rgba(255, 255, 255, 0.2);
   border-top-color: var(--tv-orange);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-.buffer-text { margin-top: 8px; font-size: 13px; }
+.buffer-text {
+  margin-top: 8px;
+  font-size: 13px;
+}
 
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
-  .search-box { width: 100%; }
+  .search-box {
+    width: 100%;
+  }
+}
+
+
+
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Replay button - centered on video */
+.video-container .video-replay-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  color: #E66A0E;
+  border: 1px solid #E66A0E;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+.video-container .video-replay-btn:hover {
+  background: #E66A0E;
+  color: #fff;
+  border: none;
+  transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* Next & Previous buttons around the video */
+.video-container .video-prev-btn,
+.video-container .video-next-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  color: #E66A0E;
+  border: 1px solid #E66A0E;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.video-container .video-prev-btn {
+  left: 10px;
+}
+
+.video-container .video-next-btn {
+  right: 10px;
+}
+
+.video-container .video-prev-btn:hover,
+.video-container .video-next-btn:hover {
+  background: #E66A0E;
+  color: #fff;
+  border: none;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.video-container .video-prev-btn:disabled,
+.video-container .video-next-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Close button */
+.modal-overlay .oneminute-modal-close {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  background: transparent;
+  border: none !important;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.oneminute-modal-close svg {
+  width: 25px;
+  height: 25px;
 }

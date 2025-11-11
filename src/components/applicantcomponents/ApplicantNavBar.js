@@ -308,7 +308,7 @@ function ApplicantNavBar() {
 
                           <div className="robo-card-text">
                             <p className="robo-card-para">
-                              Any questions regrading interview assistant? <span onClick={handleRedirect} style={{ fontSize: "18px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                              Have questions - <span onClick={handleRedirect} style={{ fontSize: "18px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                             </p>
 
                             <button
@@ -415,7 +415,7 @@ function ApplicantNavBar() {
 
                         <marquee className="robo-card-text">
                           <p className="robo-card-para">
-                            Any questions regrading interview assistant? <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Have questions - <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
