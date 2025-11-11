@@ -1,0 +1,416 @@
+/* Card width tightened + centered */
+.portfolio-card {
+  display: grid !important;
+  grid-template-columns: auto 1px 1fr auto !important; /* left | divider | middle | right */
+  gap: 16px !important;
+  align-items: center !important;
+  background: #fff !important;
+  border: 1px solid #F4E7D6 !important;
+  border-radius: 12px !important;
+  padding: 16px 20px !important;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.06) !important;
+  /* width: 100% !important; */
+  /* max-width: 1080px !important;       ↓ narrower card */
+  margin: 0 auto 16px auto !important;/* centered */
+}
+
+/* Left cluster */
+.portfolio-left {
+  grid-column: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+.portfolio-avatar-wrap {
+  position: relative !important;
+  width: 72px !important;
+  height: 72px !important;
+  flex: 0 0 72px !important;
+  overflow: visible !important;
+}
+.portfolio-avatar {
+  width: 72px !important;
+  height: 72px !important;
+  border-radius: 999px !important;
+  object-fit: cover !important;
+  border: 2px solid #FFE2C4 !important;
+}
+
+/* Camera/edit button — fixed positioning & visibility */
+.portfolio-camera-btn {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  transform: translate(25%, 25%) !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  border: 2px solid #fff !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18) !important;
+  cursor: pointer !important;
+  display: flex !important;              /* Centering fix */
+  align-items: center !important;        /* vertically center */
+  justify-content: center !important;    /* horizontally center */
+  z-index: 2 !important;
+  padding: 0 !important;
+}
+
+.portfolio-camera-btn svg {
+  color: #000 !important; /* black pen icon */
+  font-size: 14px !important;
+}
+
+
+.portfolio-meta {
+  display: grid !important;
+  gap: 4px !important;
+}
+.portfolio-name-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+.portfolio-name {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #1B1B1B !important;
+  margin: 0 !important;
+}
+.portfolio-role {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #F97316 !important;
+  margin: 0 !important;
+}
+.portfolio-updated {
+  font-size: 12px !important;
+  color: #737373 !important;
+}
+
+.portfolio-edit-btn {
+  position: relative !important;
+  top: 0 !important; /* Avoid fixed pixel offset unless you want absolute positioning */
+  left: 0 !important;
+  width: 77px !important;
+  height: 32px !important;
+  background: linear-gradient(292deg, #fbbb5c 0%, #e66a0e 100%) !important;
+  border-radius: 6px !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  opacity: 1 !important;
+  transition: all 0.2s ease !important;
+}
+
+.portfolio-edit-btn:hover {
+  filter: brightness(1.05) !important;
+  transform: translateY(-1px) !important;
+}
+
+
+
+
+/* Divider column */
+.portfolio-divider {
+  grid-column: 2 !important;
+  height: 100% !important;
+  width: 1px !important;
+  background: #EDEDED !important;
+  align-self: stretch !important;
+  margin: 0 !important;
+}
+
+/* Middle info stack */
+.portfolio-middle {
+  grid-column: 3 !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+.portfolio-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  color: #2B2B2B !important;
+  font-size: 14px !important;
+}
+.portfolio-icon {
+  width: 18px !important;
+  height: 18px !important;
+  object-fit: contain !important;
+  flex: 0 0 18px !important;
+}
+
+/* Right score */
+.portfolio-right {
+  grid-column: 4 !important;
+  text-align: right !important;
+  min-width: 84px !important;
+  align-self: center !important;
+}
+.portfolio-score-label {
+  font-size: 12px !important;
+  color: #737373 !important;
+  margin: 0 0 2px !important;
+}
+.portfolio-score {
+  font-size: 44px !important;
+  font-weight: 800 !important;
+  color: #D26B15 !important;
+  line-height: 1 !important;
+}
+
+/* Medals */
+.portfolio-medals {
+  display: flex !important;
+  gap: 4px !important;
+  margin-left: -2px !important;
+}
+.portfolio-medal {
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .portfolio-card {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    max-width: 100% !important;
+  }
+  .portfolio-left,
+  .portfolio-middle,
+  .portfolio-right,
+  .portfolio-divider {
+    grid-column: 1 !important;
+  }
+  .portfolio-divider {
+    display: none !important;
+  }
+  .portfolio-right {
+    text-align: left !important;
+  }
+}
+
+/* --- shared card shell --- */
+.card-base {
+  background: #fff !important;
+  border: 1px solid #F0EFEA !important;
+  border-radius: 12px !important;
+  padding: 16px 18px !important;
+  margin: 12px 0 !important;
+}
+.soft-shadow { box-shadow: 0 6px 12px rgba(0,0,0,.06) !important; }
+
+.card-title-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+.card-title { font-size: 16px !important; font-weight: 800 !important; color: #1b1b1b !important; margin: 0 !important; }
+.req { color: #F97316 !important; }
+.edit-chip {
+  border: 0 !important; border-radius: 8px !important; padding: 6px 10px !important; cursor: pointer !important;
+  background: #FFE6D2 !important; color: #D26B15 !important; font-weight: 700 !important;
+}
+.card-subtitle { color: #7a7a7a !important; font-size: 13px !important; margin: 0 0 12px !important; }
+.summary-text { color: #3b3b3b !important; line-height: 1.5 !important; font-size: 14px !important; }
+
+/* --- personal details grid --- */
+.pd-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+.pd-input {
+  background: #F7F7F7 !important;
+  border: 1px solid #E5E5E5 !important;
+  border-radius: 8px !important;
+  padding: 12px 14px !important;
+  font-size: 14px !important;
+  color: #2B2B2B !important;
+}
+.pd-input::placeholder { color: #9E9E9E !important; }
+.pd-input.raw { background: transparent !important; border: none !important; padding: 0 !important; width: 100% !important; }
+.pd-input.with-icon, .pd-input.with-add {
+  background: #F7F7F7 !important; border: 1px solid #E5E5E5 !important; border-radius: 8px !important;
+  display: flex !important; align-items: center !important; padding: 0 12px !important;
+}
+.pd-icon { margin-left: auto !important; opacity: .6 !important; }
+.pd-add {
+  margin-left: auto !important;
+  width: 28px !important; height: 28px !important; border-radius: 999px !important; border: none !important; cursor: not-allowed !important;
+  background: #F0F0F0 !important; color: #777 !important; font-weight: 700 !important;
+}
+.pd-select-wrap { position: relative !important; }
+.pd-select {
+  appearance: none !important; width: 100% !important;
+  background: #F7F7F7 !important; border: 1px solid #E5E5E5 !important; border-radius: 8px !important;
+  padding: 12px 28px 12px 14px !important; color: #2B2B2B !important; font-size: 14px !important;
+}
+.pd-caret { position: absolute !important; right: 10px !important; top: 50% !important; transform: translateY(-50%) !important; color: #9E9E9E !important; }
+.span-2 { grid-column: span 2 / span 2 !important; }
+
+@media (max-width: 992px) {
+  .pd-grid { grid-template-columns: 1fr !important; }
+  .span-2 { grid-column: auto !important; }
+}
+
+/* --- dashed resume drop area --- */
+.resume-drop {
+  margin-top: 14px !important;
+  border: 2px dashed #F4A66A !important;
+  background: #FFF7F0 !important;
+  border-radius: 12px !important;
+  padding: 22px 18px !important;
+  cursor: pointer !important;
+}
+.resume-drop-inner { text-align: center !important; }
+.resume-pill {
+  display: inline-flex !important; align-items: center !important; gap: 8px !important;
+  background: #F97316 !important; color: #fff !important; border-radius: 8px !important; padding: 8px 12px !important;
+  font-weight: 700 !important;
+}
+.resume-note { margin-top: 8px !important; color: #8c8c8c !important; font-size: 12px !important; }
+
+/* minor: primary button used in summary modal */
+.btn-primary {
+  background: #1967d2 !important; color: #fff !important; border: none !important; padding: 8px 14px !important;
+  border-radius: 8px !important; cursor: pointer !important; font-weight: 700 !important;
+}
+
+.skill-chip {
+  background: #FFF0E5 !important;
+  color: #D26B15 !important;
+  border-radius: 20px !important;
+  padding: 6px 12px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  cursor: default !important;
+}
+.skill-chip span {
+  margin-left: 6px !important;
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+}
+
+/* keep card content clipped to the rounded corners */
+.card-base { 
+  position: relative;
+  overflow: hidden;           /* <-- important */
+  box-sizing: border-box;
+}
+
+/* skills card gets a touch more bottom space */
+.card-base.card-skills { 
+  padding-bottom: 24px;        /* ensures chips never sit on the edge */
+}
+
+/* inner pad guarantees chips “live” inside the card */
+.skills-pad {
+  padding: 2px 4px 6px;        /* left/right align with input */
+}
+
+/* chips layout */
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* chip look */
+.skill-chip {
+  display: inline-flex;
+  align-items: center;
+  background: #FFF0E5;
+  border-radius: 20px;
+  padding: 6px 12px;
+  color: #D26B15;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.skill-chip .chip-x {
+  margin-left: 6px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+
+/* Compact grid container inside the portfolio card */
+.skill-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+/* Make sure individual badge cards don’t break the card shell */
+.skill-badge-card {
+  width: 100%;
+  max-width: 200px;
+  margin: 0;                 /* override any external margins */
+  border-radius: 10px;       /* softer */
+  overflow: hidden;          /* clip to rounded edges */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* Status pill spacing for compact layout */
+.skill-badge-card .status {
+  padding: 6px 8px 0 8px;
+}
+
+/* Narrow screens: 2 per row */
+@media (max-width: 992px) {
+  .skill-badges-grid { grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+}
+
+/* Very narrow screens: 1 per row */
+@media (max-width: 520px) {
+  .skill-badges-grid { grid-template-columns: 1fr; }
+}
+
+
+/* the wrapper for inputs with an icon (don't use .pd-input here) */
+.pd-with-icon {
+  background: #F7F7F7 !important;
+  border: 1px solid #E5E5E5 !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+}
+
+/* the inner input should stretch and look like other inputs */
+.pd-input.raw {
+  background: transparent !important;
+  border: none !important;
+  padding: 12px 0 !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* make the calendar icon centered & consistent */
+.pd-icon {
+  margin-left: 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  line-height: 1 !important;
+  font-size: 16px !important;
+}
