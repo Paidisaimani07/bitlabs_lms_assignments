@@ -34,6 +34,11 @@ import djangoPNG from '../../images/Icons1/Icons/Django.svg';
 import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Verified from '../../images/user/avatar/Verified.png';
+
+import aptitudeIcon from '../../images/user/avatar/problem-solve.png';
+import technicalIcon from '../../images/user/avatar/coding.png';
+import verificationIcon from '../../images/user/avatar/verified2.png';
+
 import { ClipLoader } from 'react-spinners';
 
 
@@ -187,8 +192,8 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
           </div>
         )}
         {!status && (
-          <div className="test-action take" onClick={() => handleTakeTest(skillName)}>
-            Take Test <i className="fa fa-external-link" aria-hidden="true"></i>
+          <div className="test-action take" style={{textAlign:'center'}}onClick={() => handleTakeTest(skillName)}>
+            Take Test
           </div>
         )}
       </div>
@@ -517,11 +522,11 @@ const VerifiedBadges = () => {
   
   };
 
-  const steps = [
-    { id: 1, label: "General Aptitude Test" },
-    { id: 2, label: "Technical Test" },
-    { id: 3, label: "Verification done" },
-  ];
+const steps = [
+  { id: 1, label: "General Aptitude Test", icon: aptitudeIcon},
+  { id: 2, label: "Technical Test", icon: technicalIcon },
+  { id: 3, label: "Verification done", icon: verificationIcon },
+];
 
  
 
@@ -681,260 +686,267 @@ const VerifiedBadges = () => {
 
   }
   return (
-    loading ?         <div className="spinner-container">
+        loading ?         
+    <div className="border-style">
+
+      <div className="blur-border-style"></div>
+      <div className="spinner-container">
           <ClipLoader color="#F97316" loading={loading} size={30}/>
-        </div>: (
+        </div></div>: (
+          <div className="border-style">
+
+      <div className="blur-border-style"></div>
     <div className="dashboard__content">
       <div className="row mr-0 ml-10">
         <div className="col-lg-12 col-md-12">
           <section className="page-title-dashboard">
             <div className="themes-container">
-              <div className="row">
-                <div className="col-lg-12 col-md-12 ">
-                  <div className="title-dashboard">
-                    <div className="title-dash flex2">Job-Ready Badges</div>
-                    <h3 style={{ marginTop: '50px', marginBottom: '10px' }}>Pre-Screened badge</h3>
-                    {!hideSteps &&(
-                    <p>
-                      Achieve your dream job faster by demonstrating your aptitude and technical skills
-                    </p>
-                  )}
+              <div className="row ">
+                <div className="col-lg-12 col-md-12 " >
+                  <div className="title-dashboard" style={{backgroundColor:''}}>
+                    <div className="title-dash flex2" >Skill Validation</div>
+                    <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
+                <div style={{ marginTop: "10px", width: "100%"}}>
+  {!hideSteps && (
+    <div style={{ width: "100%",margin: "0 auto",backgroundColor:'#fff',borderRadius:'12px',padding:'20px',marginLeft:'-20px'}}>
 
-                    <div style={{  marginTop:"10px",width: isSmallScreen ? "100%" : "50%" }}>
-                    {!hideSteps &&(
-                    <div>
-                    <div style={{display:'flex',alignItems:'center',justifyContent:'center',width:'100%'}}>
-                      {steps.map((step, index) => (
-                        <React.Fragment key={step.id}>
-                          <div
-                            style={stepStyle(step.id)}
-                            // onClick={() => handleClick(step.id)}
-                          >
-                            <div style={circleStyle(step.id)}>
-                              {step.id < currentStep ? "✓" : step.id === 3 ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" style={svgStyle1} viewBox="0 0 13 13" fill="none">
-                                  <g clipPath="url(#clip0_2734_956)">
-                                    <path d="M2.06641 7.7002C2.06641 7.7002 2.56641 7.2002 4.06641 7.2002C5.56641 7.2002 6.56641 8.2002 8.06641 8.2002C9.56641 8.2002 10.0664 7.7002 10.0664 7.7002V1.7002C10.0664 1.7002 9.56641 2.2002 8.06641 2.2002C6.56641 2.2002 5.56641 1.2002 4.06641 1.2002C2.56641 1.2002 2.06641 1.7002 2.06641 1.7002V7.7002Z" stroke="#6D6969" strokeLinecap="round" strokeLinejoin="round"/>
-                                    <path d="M2.06641 11.2002V7.7002" stroke="#6D6969" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </g>
-                                  <defs>
-                                    <clipPath id="clip0_2734_956">
-                                      <rect width="12" height="12" fill="white" transform="translate(0.0664062 0.200195)"/>
-                                    </clipPath>
-                                  </defs>
-                                </svg>
-                              ) : step.id}
-                            </div>
-                          </div>
-                          {index < steps.length - 1 && (
-                            <div style={lineStyle(step.id)} />
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                    </div>
-                    )}
-                     {!hideSteps &&(
-                    <div style={stepContainerStyle}>
-                      {steps.map((step) => (
-                       <p 
-                       key={step.id} 
-                       style={{
-                         fontSize: "14px",
-                         textAlign:"center",
-                         lineHeight:"1.2",
-                         width:'30%'
-                       }}>
-                       {step.label}
-                     </p>
-                      ))}
-                    </div>
-                     )}
+      {/* Progress Steps */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          position: "relative",
+        }}
+      >
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: "830px",
+          position: "relative"
+        }}>
+          {/* Background Line */}
+          <div style={{
+            position: "absolute",
+            top: "50%",
+            left: "7%",
+            right: "7%",
+            height: "2px",
+            backgroundColor: "#e0e0e0",
+            zIndex: 1
+          }}></div>
+
+          {/* Progress Line */}
+          <div style={{
+            position: "absolute",
+            top: "50%",
+            left: "6%",
+            width: currentStep === 2 ? "42%" : currentStep === 3 ? "80%" : "0%",
+            height: "2px",
+            backgroundColor: "#121212",
+            zIndex: 2,
+            transition: "width 0.3s ease"
+          }}></div>
+
+          {steps.map((step) => (
+            <div
+              key={step.id}
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                backgroundColor: step.id <= currentStep ? "#121212" : "#e0e0e0",
+                color: step.id <= currentStep ? "#fff" : "#6D6969",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                fontSize: "16px",
+                fontWeight: "600",
+                position: "relative",
+                zIndex: 3,
+                margin: "0 10px"
+              }}
+            >
+              {step.id < currentStep ? "✓" : step.id}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Step Cards */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+          marginTop: "10px"
+        }}
+      >
+        {steps.map((step) => (
+          <div
+            key={step.id}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: `${100 / steps.length}%`,
+            }}
+          >
+            {/* Card */}
+            <div
+              style={{
+                width: "56%",
+                maxWidth: "200px",
+                backgroundColor: "#fff",
+                borderRadius: "12px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "20px 0 0 0",
+                boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+                border: "1px solid #eaeaea",
+                height: "133px"
+              }}
+            >
+              <img
+                src={step.icon}
+                alt={step.label}
+                style={{ width: step.id === 3 ? "28%" : "34%", objectFit: "contain" }}
+              />
+
+              
+              {/* Button for all steps */}
+              <div style={{ width: "100%" }}>
+                {step.id !== 3 ? (
+                  // Button for Steps 1 & 2
+                  <div
+                    onClick={
+                      (isDisabled && currentStep === step.id) || currentStep > step.id
+                        ? null
+                        : () => handleTakeTest(step.label)
+                    }
+                    style={{
+                      width: "100%",
+                      backgroundColor:
+                        currentStep > step.id
+                          ? "#28A745" // ✅ Completed
+                          : isDisabled && currentStep === step.id
+                          ? "#9b9b9b" // ⏳ Cooldown
+                          : currentStep === step.id
+                          ? "#121212" // Active
+                          : "#BFBFBF", // Locked
+                      borderBottomLeftRadius: "11px",
+                      borderBottomRightRadius: "11px",
+                      padding: "18px 0",
+                      cursor:
+                        currentStep > step.id || (isDisabled && currentStep === step.id)
+                          ? "not-allowed"
+                          : currentStep === step.id
+                          ? "pointer"
+                          : "not-allowed",
+                      transition: "0.3s",
+                      textAlign: "center",
+                      height: "50px",
+                      marginTop: "8px"
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: "#fff",
+                        margin: 0,
+                        fontSize: "14px",
+                        fontWeight: "600"
+                      }}
+                    >
+                      {currentStep > step.id
+                        ? "Completed"
+                        : isDisabled && currentStep === step.id
+                        ? "Retake Test"
+                        : currentStep === step.id
+                        ? "Start Test"
+                        : "Coming Soon"}
+                    </p>
                   </div>
+                ) : (
+                  // Special button for Step 3
+                  <div
+                    style={{
+                      width: "100%",
+                      backgroundColor: currentStep >= 3 ? "#28A745" : "#BFBFBF",
+                      borderBottomLeftRadius: "11px",
+                      borderBottomRightRadius: "11px",
+                      padding: "18px 0",
+                      cursor: currentStep >= 3 ? "pointer" : "not-allowed",
+                      transition: "0.3s",
+                      textAlign: "center",
+                      height: "35px",
+                      marginTop: "8px"
+                    }}
+                    onClick={() => {
+                      if (currentStep >= 3) {
+                        // Handle Qualified action here
+                        console.log("Qualified button clicked");
+                        // You can add any specific action for the Qualified button
+                      }
+                    }}
+                  >
+                    <p
+                      style={{
+                        color: "#fff",
+                        margin: 0,
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        marginTop: "-15px"
+                      }}
+                    >
+                      {currentStep >= 3 ? "Qualified" : "Locked"}
+                    </p>
+                  </div>
+                )}
+
+                {/* Timer BELOW button only for step in cooldown */}
+                {step.id !== 3 && isDisabled && currentStep === step.id && timer && (
+                  <div style={{ marginTop: "27px", textAlign: "center" }}>
+                    <div style={{ fontWeight: "700", color: "#F3780D", marginTop: "3px",fontSize: "17px" }}>
+                      {timer.days > 0 && `${timer.days}d `}
+                      {timer.hours > 0 && `${timer.hours}h `}
+                      {timer.minutes > 0 && `${timer.minutes}m `}
+                      {timer.seconds > 0 && timer.hours === 0 && timer.days === 0
+                        && `${timer.seconds}sec`}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <p
+              style={{
+                fontSize: "18px",
+                lineHeight: "1.4",
+                marginTop: "19px",
+                fontWeight: "600",
+                textAlign: "center",
+                color:'#121212'
+              }}
+            >
+              {step.label}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
                      {/* */}
 
 
                   </div> 
                 </div>
-                <div className="verified-badges-container1"style={{
-       marginTop:'10px'
-      }} >
-          <div className="pre-screened-badge">
-            {/* Conditional Rendering of Banners */}
-            {currentStep === 1 && (
-              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox">
-                <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFF',width:'495px' }}>
-                <div className={!isWideScreen ? 'resumecard' : ''}>
-                    <div className="resumecard-content">
-                      <div className="resumecard-text">
-                        <div className="resumecard-heading">
-                          <h2 className="heading1">General Aptitude Test</h2>
-                          <div className="" style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'12px',marginBottom:'12px'}}>
-                            A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
-                          </div>
-                        </div>
-                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-      <button
-        style={buttonStyle()}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={!isDisabled ? () => handleTakeTest('General Aptitude Test') : null} // Conditionally add onClick
-      >
-        <span style={spanStyle}>
-      {isDisabled ? 'Retake test' : 'Take Test'} {/* Conditionally change button text */}
-    </span>
-      </button>
-      
-      {currentStep === 1 && timer && (
-        <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
-          <p style={{ margin: 0, fontSize: 'clamp(11.5px, 2vw, 18px)', color: '#6D6D6D', marginBottom: '-5px',lineHeight:'15px' }}>Retake test after</p>
-          <div style={{ color: '#F3780D',marginTop:'10px' }}>
-  {timer.days > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.days}</span>
-  )}
-  {timer.days > 0 && 'd '}
-  
-  {timer.hours > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.hours}</span>
-  )}
-  {timer.hours > 0 && 'h '}
-  
-  {timer.minutes > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.minutes}</span>
-  )}
-  {timer.minutes > 0 && 'm'}
-  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.seconds}</span>
-  )}
-  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && 'sec'}
-</div>
-        </div>
-      )}
-    </div>
-
-                      </div>
-                      <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
-                        <img
-                          src={Taketest}
-                          alt="Taketest"
-                          style={{ width: '190px', height: '180px', objectFit: 'contain', marginTop: '5px',marginRight: '10px' }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {currentStep === 2 && (
-              <div className="col-12 col-xxl-9 col-xl-12 col-lg-12 col-md-12 col-sm-12 display-flex certificatebox" style={{marginLeft: isSmallScreen1 ? '6px' : '0px',}}>
-                <div className="card" style={{ cursor: 'pointer', backgroundColor: '#FFFF' }}>
-                <div className={!isWideScreen ? 'resumecard' : ''}>
-                    <div className="resumecard-content">
-                      <div className="resumecard-text">
-                        <div className="resumecard-heading">
-                          <h2 className="heading1">Technical Test</h2>
-                          <div className=""style={{ fontFamily:'sans-serif',fontSize: '16px',color:'#6F6F6F',lineHeight:'24px',marginTop:'12px',marginBottom:'12px'}}>
-                          A Comprehensive Assessment to Measure Your Analytical and Reasoning Skills
-                          </div>
-                        </div>
-                        <div className="resumecard-button" style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                        <button
-    style={buttonStyle()}
-    onMouseEnter={() => setIsHovered(true)}
-    onMouseLeave={() => setIsHovered(false)}
-    onClick={!isDisabled ? () => handleTakeTest('Technical Test') : null} // Conditionally add onClick
-  >
-    <span style={spanStyle}>
-      {isDisabled ? 'Retake test' : 'Take Test'} {/* Conditionally change button text */}
-    </span>
-  </button>
-      {currentStep === 2 && timer && (
-        <div className="test-timer" style={{ marginLeft: '25px', fontSize: '14px', marginTop: '13px' }}>
-          <p style={{ margin: 0, fontSize: 'clamp(11.5px, 2vw, 18px)'
-, color: '#6D6D6D', marginBottom: '-5px',fontWeight:'400'}}>Retake test after</p>
-          <div style={{ color: '#F3780D' }}>
-  {timer.days > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
-    }}>{timer.days}</span>
-  )}
-  {timer.days > 0 && 'd '}
-  
-  {timer.hours > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
-    }}>{timer.hours}</span>
-  )}
-  {timer.hours > 0 && 'h '}
-  
-  {timer.minutes > 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)'
-    }}>{timer.minutes}</span>
-  )}
-  {timer.minutes > 0 && 'm'}
-  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && (
-    <span style={{ fontWeight: '700', fontSize: 'clamp(15px, 2vw, 20px)' }}>{timer.seconds}</span>
-  )}
-  {timer.seconds > 0 && timer.hours === 0 && timer.days === 0 && 'sec'}
-  
-</div>
-        </div>
-      )}
-    </div>
-                      </div>
-                      <div className="resumecard-icon" style={{ marginLeft: 'auto' }}>
-                        <img
-                          src={Taketest}
-                          alt="Taketest"
-                          style={{ width: '190px', height: '180px', objectFit: 'contain', marginTop: '5px',marginRight: '10px' }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-{currentStep === 3 && (
-            <div style={styles.cardContainer}>
-            <div style={styles.textContainer}>
-              <div style={styles.message}>Congratulations, You are now Verified</div>
-              <div style={styles.nameContainer}>
-              <span style={styles.name}>
-  {userData && userData.firstName ? (
-    <>
-      {userData.firstName.slice(0, -1)}
-      <span style={styles.lastLetterWrapper}>
-        <span style={styles.lastLetter}>
-          {userData.firstName.slice(-1)}
-        </span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="30"
-          height="30"
-          viewBox="0 0 38 38"
-          fill="none"
-          style={styles.icon}
-        >
-          <path
-            d="M36.9317 16.6247L34.3469 13.6707C33.7931 13.1169 33.4238 12.0091 33.4238 11.2706V8.31668C33.4238 6.28583 31.7622 4.80885 29.916 4.80885H26.7774C26.0389 4.80885 24.9312 4.4396 24.3773 3.88574L21.4233 1.30102C20.131 0.193281 18.1001 0.193281 16.8078 1.30102L14.0384 3.88574C13.4846 4.4396 12.3768 4.80885 11.6383 4.80885H8.49974C6.46889 4.80885 4.9919 6.47046 4.9919 8.31668V11.4553C4.9919 12.1938 4.62266 13.3015 4.06879 13.8554L1.66869 16.8093C0.560956 18.1017 0.560956 20.1325 1.66869 21.4249L4.06879 24.3789C4.62266 24.9327 4.9919 26.0405 4.9919 26.779V29.9176C4.9919 31.9484 6.65351 33.4254 8.49974 33.4254H11.6383C12.3768 33.4254 13.4846 33.7946 14.0384 34.3485L16.9924 36.9332C18.2847 38.041 20.3156 38.041 21.608 36.9332L24.5619 34.3485C25.1158 33.7946 26.2235 33.4254 26.962 33.4254H30.1006C32.1315 33.4254 33.6084 31.7638 33.6084 29.9176V26.779C33.6084 26.0405 33.9777 24.9327 34.5316 24.3789L37.1163 21.4249C38.0394 20.1325 38.0394 17.9171 36.9317 16.6247ZM26.962 15.517L18.1001 24.3789C17.9155 24.5635 17.5463 24.7481 17.177 24.7481C16.8078 24.7481 16.4385 24.5635 16.2539 24.3789L11.8229 19.9479C11.2691 19.3941 11.2691 18.4709 11.8229 17.9171C12.3768 17.3632 13.2999 17.3632 13.8538 17.9171L17.3616 21.4249L24.9312 13.4861C25.485 12.9323 26.4082 12.9323 26.962 13.4861C27.5159 14.04 27.5159 14.9631 26.962 15.517Z"
-            fill="#F46F16"
-          />
-        </svg>
-      </span>
-    </>
-  ) : ''}
-</span>
-              </div>
-            </div>
-            <img
-              src={Verified}
-              alt="Verified"
-              style={styles.image}
-            />
-          </div>
-            )}
-          </div>
-        </div>
-              </div>
+                                    {/*  */}
+              </div> 
             </div>
           </section>
         </div>
@@ -944,7 +956,7 @@ const VerifiedBadges = () => {
       <div className="row mr-0 ml-10">
   <h3 className='skillBadgeHeading'>Skills Badges</h3>
   
-  <div className="col-lg-10 col-md-12">
+  <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff',borderRadius:'12px',marginLeft:'20px',padding:'20px',width:'95%'}}>
     <div className="skill-badge-container">
       {skillBadges.skillsRequired.map((skill) => (
        
@@ -973,12 +985,8 @@ const VerifiedBadges = () => {
       ))}
     </div>
   </div>
-</div>
-
-
-
-      
-
+</div>   
+</div> 
     </div>)
   );
 };

@@ -1,98 +1,105 @@
-import React from 'react';
-import { Link, useLocation,useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import $ from 'jquery';
 import 'jquery.cookie';
 import 'metismenu';
 import { useState, useEffect, useReducer } from "react";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import ResumeBuilder from './ResumeBuilder';
-import clearJWTToken from '../common/clearJWTToken';
 import ModalLogout from '../common/ModalLogout';
 import axios from "axios";
-import { Switch } from 'antd';
-import logos from '../../images/profileIcon.svg';
-import ApplicantTakeTest from './ApplicantTakeTest';
+import logos from '../../images/profileIcon.png';
 import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
+import shape8 from "../../images/dashboard/mobilebanners/power.jpg";
+import shape7 from "../../images/dashboard/mobilebanners/write.jpg";
+import shape6 from "../../images/dashboard/mobilebanners/solar-energy.jpg";
+import shape5 from "../../images/dashboard/mobilebanners/coding.jpg";
+import shape3 from "../../images/dashboard/mobilebanners/score.jpg";
+import shape4 from "../../images/dashboard/mobilebanners/mentoring.jpg";
+import shape from "../../images/dashboard/mobilebanners/shape.jpg";
+import shape2 from "../../images/dashboard/mobilebanners/curriculum-vitae.jpg";
+import botImage from '../../images/dashboard/mobilebanners/Bot.png';
+import './ApplicantNavBar.css'
+import notificationIcon from '../../images/notificationIcon.svg'
+
 
 function ApplicantNavBar() {
   const location = useLocation();
-  const hideSidebarRoutes = [];
+  const hideSidebarRoutes = ["/applicant-interview-prep"];
+  const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"]
   const [isOpen, setIsOpen] = useState(
-     window.innerWidth >= 1302 &&  !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
+    window.innerWidth >= 1302 && !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
   );
   const { user } = useUserContext();
   const [imageSrc, setImageSrc] = useState('');
   const [alertCount, setAlertCount] = useState(0);
-  
-  const [url, setUrl] = useState('');
-  const [loginUrl, setLoginUrl] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
-  const [profileData, setProfileData] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const id = user.id;
-  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const navigate = useNavigate();
+  const [userData, setUserData] = useState(null);
+
+  const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
   const frompath = location.state?.from;
   const { pathname } = useLocation();
 
-  const [showTestPopup, setShowTestPopup] = useState(false);
-  const [testName, setTestName] = useState('');
+  const handleRedirect = () => {
+    navigate("/applicant-interview-prep");
+  };
+
+  const shouldHide = hiddenRoutes.some(route =>
+    location.pathname.startsWith(route)
+  );
+
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
   };
 
   useEffect(() => {
-  const updateSidebarClasses = () => {
-    const shouldHide = hideSidebarRoutes.some(route =>
-      location.pathname === route || location.pathname.startsWith(route + "/")
-    );
+    const updateSidebarClasses = () => {
+      const shouldHide = hideSidebarRoutes.some(route =>
+        location.pathname === route || location.pathname.startsWith(route + "/")
+      );
 
-    if (window.innerWidth >= 1301 && !shouldHide) {
-      document.body.classList.add("grid-handler");
-      document.body.classList.add("hide-hamburger");
-    } else {
-      document.body.classList.add("close-sidebar");
-      document.body.classList.remove("hide-hamburger");
-    }
-  };
+      if (window.innerWidth >= 1301 && !shouldHide) {
+        document.body.classList.add("grid-handler");
+        document.body.classList.add("hide-hamburger");
+      } else {
+        document.body.classList.add("close-sidebar");
+        document.body.classList.remove("hide-hamburger");
+      }
+    };
 
-  window.addEventListener("resize", updateSidebarClasses);
+    window.addEventListener("resize", updateSidebarClasses);
 
-  updateSidebarClasses();
+    updateSidebarClasses();
 
-  return () => window.removeEventListener("resize", updateSidebarClasses);
-}, [pathname]);
+    return () => window.removeEventListener("resize", updateSidebarClasses);
+  }, [pathname]);
 
   const handleOutsideClick = (event) => {
-    const accountElement = document.querySelector(".account"); 
+    const accountElement = document.querySelector(".account");
 
     if (accountElement && !accountElement.contains(event.target)) {
-    
+
       setIsSubAccountVisible(false);
     }
   };
 
-  
   document.addEventListener("click", handleOutsideClick);
-
-
 
   const [requestData, setRequestData] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        
+
         const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
 
-        
         const newData = {
           identifier: response.data.email,
           password: response.data.password
         };
+        console.log(response.data)
 
         setRequestData(newData);
       } catch (error) {
@@ -100,42 +107,7 @@ function ApplicantNavBar() {
       }
     };
     fetchData();
-  }, []); 
-
-
-  const handleClick = () => {
-    
-    const apiUrl = 'http://localhost:5173/api/auth/login';
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      
-      },
-      body: JSON.stringify(requestData)
-    };
-
-  
-    fetch(apiUrl, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        
-        const loginUrl = `http://localhost:5173/auth/login?identifier=${encodeURIComponent(requestData.identifier)}&password=${encodeURIComponent(requestData.password)}`;
-        window.open(loginUrl, '_blank');
-       
-        setLoginUrl(loginUrl);
-      })
-      .catch(error => {
-
-        console.error('There was a problem with the fetch operation:', error);
-      });
-  };
+  }, []);
 
 
   const handleToggleMenu = e => {
@@ -154,102 +126,99 @@ function ApplicantNavBar() {
 
 
   const hideMenu = e => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setIsOpen(window.innerWidth >= 1302);
     setHamburgerClass('fa fa-bars');
   };
 
-useEffect(() => {
-  const handleResize = () => {
-    const shouldHide = hideSidebarRoutes.some(route =>
-      pathname.startsWith(route)
-    );
+  useEffect(() => {
+    const handleResize = () => {
+      const shouldHide = hideSidebarRoutes.some(route =>
+        pathname.startsWith(route)
+      );
 
-    if (shouldHide) {
-      setIsOpen(false);
-      document.body.classList.add("close-sidebar");
-       document.body.classList.remove("grid-handler");
-    } else {
-      const open = window.innerWidth >= 1302;
-      setIsOpen(open);
-
-      if (open) {
-        document.body.classList.remove("close-sidebar");
-        document.body.classList.add("grid-handler");
-      } else {
+      if (shouldHide) {
+        setIsOpen(false);
         document.body.classList.add("close-sidebar");
         document.body.classList.remove("grid-handler");
+      } else {
+        const open = window.innerWidth >= 1302;
+        setIsOpen(open);
+
+        if (open) {
+          document.body.classList.remove("close-sidebar");
+          document.body.classList.add("grid-handler");
+        } else {
+          document.body.classList.add("close-sidebar");
+          document.body.classList.remove("grid-handler");
+        }
       }
-    }
 
-    setHamburgerClass("fa fa-bars");
-  };
+      setHamburgerClass("fa fa-bars");
+    };
 
-  window.addEventListener("resize", handleResize);
-  handleResize();
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-  $("#left-menu-btn").on("click", function (e) {
-    e.preventDefault();
-    if ($("body").hasClass("sidebar-enable")) {
-      $("body").removeClass("sidebar-enable");
-      $.cookie("isButtonActive", "0");
-    } else {
-      $("body").addClass("sidebar-enable");
-      $.cookie("isButtonActive", "1");
-    }
-    if ($(window).width() >= 1400) {
-      $("body").toggleClass("show-job");
-    } else {
-      $("body").removeClass("show-job");
-      $.cookie("isButtonActive", null);
-    }
-  });
-
-  if ($.cookie("isButtonActive") == 1) {
-    $("body").addClass("sidebar-enable show-job");
-  }
-
-  fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-    },
-  })
-   .then(response => response.blob())
-    .then(blob => {
-        const imageUrl = URL.createObjectURL(blob);
-        setImageSrc(imageUrl);
-    })
-    .catch(() => {
-        setImageSrc('../images/user/avatar/image-01.jpg');
+    $("#left-menu-btn").on("click", function (e) {
+      e.preventDefault();
+      if ($("body").hasClass("sidebar-enable")) {
+        $("body").removeClass("sidebar-enable");
+        $.cookie("isButtonActive", "0");
+      } else {
+        $("body").addClass("sidebar-enable");
+        $.cookie("isButtonActive", "1");
+      }
+      if ($(window).width() >= 1400) {
+        $("body").toggleClass("show-job");
+      } else {
+        $("body").removeClass("show-job");
+        $.cookie("isButtonActive", null);
+      }
     });
 
-    return () => {
-        window.removeEventListener("resize", handleResize);
-        $("#left-menu-btn").off("click");
-    };
-}, [pathname, user.id]);
+    if ($.cookie("isButtonActive") == 1) {
+      $("body").addClass("sidebar-enable show-job");
+    }
 
- 
-  const handleLogout =  () => {
-    console.log('Logout button clicked'); 
+    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+      },
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const imageUrl = URL.createObjectURL(blob);
+        setImageSrc(imageUrl);
+      })
+      .catch(() => {
+        setImageSrc('../images/user/avatar/image-01.jpg');
+      });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      $("#left-menu-btn").off("click");
+    };
+  }, [pathname, user.id]);
+
+
+  const handleLogout = () => {
+    console.log('Logout button clicked');
     try {
-       
-       localStorage.removeItem('jwtToken');
-       localStorage.removeItem('user');
-       localStorage.removeItem('userType');
+
+      localStorage.removeItem('jwtToken');
+      localStorage.removeItem('user');
+      localStorage.removeItem('userType');
       window.location.href = "https://www.bitlabs.in/jobs";
     } catch (error) {
       console.error('Logout failed', error);
     }
   };
-  
- 
-
 
   useEffect(() => {
-    fetchAlertCount(); 
+    fetchAlertCount();
   }, [location.key]);
-  
+
   const fetchAlertCount = async () => {
     try {
       const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
@@ -261,40 +230,19 @@ useEffect(() => {
     } catch (error) {
       console.error('Error fetching alert count:', error);
     }
-  };
-
+  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        });
-        setProfileData(profileResponse.data);
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
+    const checkUserData = setInterval(() => {
+      const storedData = localStorage.getItem("userData");
+      if (storedData) {
+        setUserData(JSON.parse(storedData));
+        clearInterval(checkUserData);
       }
-    };
-
-    fetchData();
-  }, []);
-
-  const nameStyle = {
-    marginRight: '5px',
-    whiteSpace: 'nowrap',
-  };
-
-  const linkStyle = {
-    textDecoration: 'none',
-    color: 'inherit', 
-    transition: 'color 0.3s', 
-  };
-
-  const handleResumeClick = () => {
-    navigate('/applicant-resume-builder');
-  };
+    }, 200);
+    console.log(userData)
+    return () => clearInterval(checkUserData);
+  }, [user.id]);
 
 
   return (
@@ -325,27 +273,61 @@ useEffect(() => {
                 <div className="header-ct-left">
                   {window.innerWidth < 2000 && (
                     <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
-                   
+
                   )}
                   <span style={{ width: '20px', height: '2px' }}></span>
                   <div id="logo" className="logo">
                     <a href="/applicanthome">
                       <img
                         className="site-logo"
-                       
+
                         src={logos}
                         alt="Image"
                       />
                     </a>
-                    
+
                   </div>
+
                 </div>
-                <div className="header-ct-center"></div>
+                <div className="header-ct-center">
+                  {!shouldHide && (
+                    <div className="display-flex robo-container" >
+                      <div className="robo-card">
+                        <div className="container1">
+
+                          <div className="robo-img-nav">
+                            <span>
+                              <img
+                                src={botImage}
+                                alt="Bot icon"
+                                width="150px"
+                                height="250px"
+                              />
+                            </span>
+                          </div>
+
+                          <div className="robo-card-text">
+                            <p className="robo-card-para">
+                              Any questions regrading interview assistant? <span onClick={handleRedirect} style={{ fontSize: "18px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            </p>
+
+                            <button
+                              onClick={handleRedirect}
+                            >
+                            </button>
+
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>)}
+                </div>
                 <div className="header-ct-right">
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-                     
-                      <span className="fa fa-bell notify-bell">
+
+                      <span className="notify-bell">
+                        <img src={notificationIcon} />
                         {alertCount > 0 && (
                           <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
                             {alertCount}
@@ -353,17 +335,24 @@ useEffect(() => {
                           </span>
                         )}
                       </span>
-                   
-                      
+
+
                     </Link>
                   </div>
-                 
 
-                    <div id="specificDiv" className="header-customize-item account">
-                     
-                      {/* <h4 className="username-text" >{(profileData && profileData.basicDetails && profileData.basicDetails.firstName !== null) ? profileData.basicDetails.firstName : ''}</h4> */}
+
+                  <div id="specificDiv" className="header-customize-item account">
+
                     <div className="profile-icon"><img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onClick={toggleSubAccount} onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} /></div>
-
+                    {userData && (
+                      <div className="user-info">
+                        <p>Hi,</p>
+                        <h6 className="user-name">
+                          {userData.firstName} {userData.lastName}
+                        </h6>
+                        <p className="user-email">{userData.identifier}</p>
+                      </div>
+                    )}
                     <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -381,7 +370,7 @@ useEffect(() => {
 
                     <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
 
-                     
+
                       <div className="sub-account-item">
                         <a href="/applicant-view-profile">
                           <span className="icon-profile" />View Profile
@@ -392,42 +381,78 @@ useEffect(() => {
                           <span className="icon-change-passwords" /> Change Password
                         </a>
                       </div>
-                       <div className="sub-account-item">
-
-                                      <NotificationToggleWeb className="icon-change-passwords"/>
-                                               </div>
                       <div className="sub-account-item">
-                        
-                         <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
-                         
-                        
+
+                        <NotificationToggleWeb className="icon-change-passwords" />
+                      </div>
+                      <div className="sub-account-item">
+
+                        <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
+
+
                       </div>
                     </div>
                   </div>
                 </div>
-              
+
+              </div>
+              <div className='sticky-down' onClick={handleRedirect}>
+                {!shouldHide && (
+                  <div className="display-flex robo-container" >
+                    <div className="robo-card">
+                      <div className="container1">
+
+                        <div className="robo-img-nav">
+                          <span>
+                            <img
+                              src={botImage}
+                              alt="Bot icon"
+                              width="100px"
+                              height="250px"
+                            />
+                          </span>
+                        </div>
+
+                        <marquee className="robo-card-text">
+                          <p className="robo-card-para">
+                            Any questions regrading interview assistant? <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                          </p>
+
+                          <button
+                            onClick={handleRedirect}
+                          >
+                            Get Started
+                          </button>
+
+                        </marquee>
+
+                      </div>
+                    </div>
+                  </div>)}
               </div>
             </div>
           </div>
         </div>
-       
+
       </header>
       {(
         <div className={`left-menu ${isOpen ? 'open' : ''}`}>
           <div id="sidebar-menu">
             <ul className="downmenu list-unstyled" id="side-menu">
-             
+
               <li>
-              <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
-  <span className="dash-icon" style={{ marginRight: "15px" }} >
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 18 20" fill="none">
-      <path d="M10.725 7.20456C10.463 7.20456 10.2433 7.1081 10.066 6.91518C9.88867 6.72226 9.8 6.48328 9.8 6.19825V1.87386C9.8 1.58883 9.88867 1.34986 10.066 1.15694C10.2433 0.964014 10.463 0.867554 10.725 0.867554H16.625C16.887 0.867554 17.1067 0.964014 17.284 1.15694C17.4613 1.34986 17.55 1.58883 17.55 1.87386V6.19825C17.55 6.48328 17.4613 6.72226 17.284 6.91518C17.1067 7.1081 16.887 7.20456 16.625 7.20456H10.725ZM0.925 11.393C0.662833 11.393 0.443167 11.2965 0.266 11.1036C0.0886667 10.9108 0 10.6719 0 10.3867V1.87386C0 1.58883 0.0886667 1.34986 0.266 1.15694C0.443167 0.964014 0.662833 0.867554 0.925 0.867554H6.825C7.08717 0.867554 7.30683 0.964014 7.484 1.15694C7.66133 1.34986 7.75 1.58883 7.75 1.87386V10.3867C7.75 10.6719 7.66133 10.9108 7.484 11.1036C7.30683 11.2965 7.08717 11.393 6.825 11.393H0.925ZM10.725 19.9602C10.463 19.9602 10.2433 19.8637 10.066 19.6708C9.88867 19.478 9.8 19.2391 9.8 18.9539V10.4411C9.8 10.1558 9.88867 9.91687 10.066 9.72413C10.2433 9.53121 10.463 9.43475 10.725 9.43475H16.625C16.887 9.43475 17.1067 9.53121 17.284 9.72413C17.4613 9.91687 17.55 10.1558 17.55 10.4411V18.9539C17.55 19.2391 17.4613 19.478 17.284 19.6708C17.1067 19.8637 16.887 19.9602 16.625 19.9602H10.725ZM0.925 19.9602C0.662833 19.9602 0.443167 19.8637 0.266 19.6708C0.0886667 19.478 0 19.2391 0 18.9539V14.6295C0 14.3443 0.0886667 14.1053 0.266 13.9125C0.443167 13.7196 0.662833 13.6232 0.925 13.6232H6.825C7.08717 13.6232 7.30683 13.7196 7.484 13.9125C7.66133 14.1053 7.75 14.3443 7.75 14.6295V18.9539C7.75 19.2391 7.66133 19.478 7.484 19.6708C7.30683 19.8637 7.08717 19.9602 6.825 19.9602H0.925Z"/>
-    </svg>
-  </span>
-  <span className="dash-titles">DashBoard</span>
-</Link>
+                <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
+                  <span className="dash-icon" style={{ marginRight: "15px", display: 'flex', alignItems: 'center' }}>
+                    <img
+                      src={shape}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
+                  </span>
+                  <span className="dash-titles">Dashboard</span>
+                </Link>
               </li>
-             
               <li>
                 <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" || frompath === "/applicant-view-profile" ? "tf-effect active" : ""}>
                   <span className="dash-icon" >
@@ -438,228 +463,196 @@ useEffect(() => {
                   <span className="dash-titles" >Build Portfolio</span>
                 </Link>
               </li>
-              {/* <li>
-                <Link onClick={hideMenu} to="/applicant-applied-jobs" className={location.pathname === "/applicant-applied-jobs" || frompath === "/applicant-interview-status" || location.pathname.includes("/applicant-interview-status") ? "tf-effect active" : ""}>
-                  <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18.0002 13.2C15.3002 13.2 13.2002 15.4 13.2002 18C13.2002 20.6 15.4002 22.8 18.0002 22.8C20.6002 22.8 22.8002 20.6 22.8002 18C22.8002 15.4 20.6002 13.2 18.0002 13.2ZM21.0002 16.9L17.6002 20.3C17.5002 20.4 17.3002 20.5 17.1002 20.5C16.9002 20.5 16.7002 20.5 16.6002 20.3L15.0002 18.6C14.9002 18.5 14.8002 18.3 14.8002 18.2C14.8002 18 14.8002 17.9 15.0002 17.7C15.1002 17.6 15.3002 17.5 15.4002 17.5C15.5002 17.5 15.7002 17.5 15.8002 17.7L17.1002 19L20.1002 16C20.2002 15.9 20.4002 15.8 20.5002 15.8C20.7002 15.8 20.8002 15.8 20.9002 16C21.0002 16.2 21.1002 16.3 21.1002 16.4C21.1002 16.5 21.1002 16.7 20.9002 16.8L21.0002 16.9Z"/>
-                    <path d="M10.0002 5.99995H14.0002V4.09995H10.0002V5.99995ZM4.1002 20.7C3.6002 20.7 3.1002 20.5 2.8002 20.1C2.5002 19.7 2.2002 19.2999 2.2002 18.7999V7.89995C2.2002 7.39995 2.4002 6.89995 2.8002 6.59995C3.2002 6.19995 3.6002 5.99995 4.1002 5.99995H8.1002V4.09995C8.1002 3.59995 8.3002 3.09995 8.7002 2.79995C9.1002 2.39995 9.5002 2.19995 10.0002 2.19995H14.0002C14.5002 2.19995 15.0002 2.39995 15.3002 2.79995C15.7002 3.19995 15.9002 3.59995 15.9002 4.09995V5.99995H19.9002C20.4002 5.99995 20.9002 6.19995 21.2002 6.59995C21.6002 6.99995 21.8002 7.39995 21.8002 7.89995V11.2C21.8002 11.5 21.7002 11.7 21.4002 11.8C21.1002 11.9 20.9002 12 20.6002 11.8C20.2002 11.6 19.8002 11.5 19.3002 11.4C18.9002 11.4 18.4002 11.3 18.0002 11.3C16.1002 11.3 14.6002 12 13.3002 13.3C12.0002 14.6 11.3002 16.2 11.3002 18C11.3002 19.8 11.3002 18.5 11.3002 18.7999C11.3002 19.0999 11.3002 19.4 11.5002 19.6C11.5002 19.9 11.5002 20.1 11.4002 20.4C11.2002 20.6 11.0002 20.7 10.8002 20.7H4.2002H4.1002Z"/>
-                    </svg>
-                  </span>                  
-                  <span className="dash-titles">Applied Jobs</span>
-                </Link>
-              </li> */}
-              {/* <li>
-                <Link onClick={hideMenu} to="/applicant-saved-jobs" className={location.pathname === "/applicant-saved-jobs" || frompath==="/applicant-saved-jobs" ? "tf-effect active" : ""}>
-                  <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M10.3512 19.2188L6.40219 20.91C5.83169 21.1544 5.29078 21.1086 4.77945 20.7728C4.26828 20.4371 4.0127 19.9634 4.0127 19.3515V7.29254C4.0127 6.82004 4.1787 6.41787 4.5107 6.08604C4.84253 5.75404 5.24478 5.58804 5.71745 5.58804H14.9849C15.4574 5.58804 15.8597 5.75404 16.1917 6.08604C16.5237 6.41787 16.6897 6.82004 16.6897 7.29254V19.3515C16.6897 19.9634 16.434 20.4371 15.9227 20.7728C15.4115 21.1086 14.8707 21.1544 14.3002 20.91L10.3512 19.2188ZM19.2882 19.0755C19.0969 19.0755 18.9324 19.0079 18.7949 18.8725C18.6574 18.7374 18.5887 18.5726 18.5887 18.3783V3.99679C18.5887 3.91979 18.5566 3.84921 18.4924 3.78504C18.4283 3.72104 18.3578 3.68904 18.2809 3.68904H7.6137C7.41953 3.68904 7.25395 3.62137 7.11695 3.48604C6.98011 3.35087 6.9117 3.18612 6.9117 2.99179C6.9117 2.79762 6.98011 2.63212 7.11695 2.49529C7.25395 2.35846 7.41953 2.29004 7.6137 2.29004H18.2814C18.7551 2.29004 19.1579 2.45596 19.4897 2.78779C19.8217 3.11979 19.9877 3.52246 19.9877 3.99579V18.3783C19.9877 18.5726 19.9189 18.7374 19.7812 18.8725C19.6437 19.0079 19.4794 19.0755 19.2882 19.0755Z"/>
-                    </svg>
-                  </span>
-                  <span className="dash-titles">Saved Jobs</span>
-                </Link>
-              </li> */}
-             
               <li>
-            <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
-             
-              <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path d="M16.8509 15.5145C16.1272 15.5145 15.512 15.2611 15.0051 14.7543C14.4985 14.2476 14.2451 13.6324 14.2451 12.9088C14.2451 12.1883 14.4985 11.5746 15.0051 11.0678C15.512 10.5611 16.1272 10.3078 16.8509 10.3078C17.5714 10.3078 18.185 10.5611 18.6916 11.0678C19.1985 11.5746 19.4519 12.1883 19.4519 12.9088C19.4519 13.6324 19.1985 14.2476 18.6916 14.7543C18.185 15.2611 17.5714 15.5145 16.8509 15.5145ZM8.96139 19.4605V20.298H5.39289C4.91806 20.298 4.51414 20.1311 4.18114 19.7973C3.84814 19.4634 3.68164 19.0614 3.68164 18.5913V5.38851C3.68164 4.91834 3.84856 4.51635 4.18239 4.18251C4.51622 3.84868 4.91822 3.68176 5.38839 3.68176H18.6114C19.0816 3.68176 19.4836 3.84868 19.8174 4.18251C20.1512 4.51635 20.3181 4.91834 20.3181 5.38851V9.62126C19.8866 9.11993 19.3794 8.73176 18.7964 8.45676C18.2134 8.18176 17.5809 8.03751 16.8989 8.02401C16.8541 8.02401 16.8124 8.0256 16.7739 8.02876C16.7354 8.0321 16.6937 8.03693 16.6489 8.04326V8.01451C16.6086 7.84751 16.5286 7.71443 16.4091 7.61526C16.2898 7.51593 16.1332 7.46626 15.9394 7.46626H8.05289C7.85889 7.46626 7.69339 7.53485 7.55639 7.67201C7.41939 7.80901 7.35089 7.97293 7.35089 8.16376C7.35089 8.35776 7.41939 8.52318 7.55639 8.66001C7.69339 8.79685 7.85889 8.86526 8.05289 8.86526H14.2519C13.7909 9.14026 13.3886 9.4831 13.0451 9.89376C12.7015 10.3043 12.4354 10.7698 12.2469 11.2905H8.05289C7.85889 11.2905 7.69339 11.359 7.55639 11.496C7.41939 11.6332 7.35089 11.7971 7.35089 11.9878C7.35089 12.1818 7.41939 12.3472 7.55639 12.484C7.69339 12.621 7.85889 12.6895 8.05289 12.6895H12.0219C12.0002 13.0882 12.0278 13.4797 12.1046 13.864C12.1816 14.2483 12.3002 14.6171 12.4604 14.9703C12.4027 14.9959 12.3466 15.0199 12.2921 15.0423C12.2376 15.0648 12.1847 15.0888 12.1334 15.1145H8.05289C7.85889 15.1145 7.69339 15.183 7.55639 15.32C7.41939 15.4572 7.35089 15.6211 7.35089 15.8118C7.35089 16.0058 7.41939 16.1713 7.55639 16.3083C7.69339 16.4451 7.85889 16.5135 8.05289 16.5135H10.2969C9.87189 16.8782 9.54306 17.3204 9.31039 17.8403C9.07772 18.3603 8.96139 18.9003 8.96139 19.4605ZM12.1009 21.9663C11.8634 21.9663 11.6614 21.883 11.4949 21.7165C11.3284 21.55 11.2451 21.348 11.2451 21.1105V19.4605C11.2451 19.1793 11.3128 18.9146 11.4481 18.6663C11.5836 18.4179 11.7714 18.2205 12.0114 18.074C12.5012 17.785 12.924 17.5799 13.2796 17.4588C13.6355 17.3376 14.0948 17.2278 14.6576 17.1293C14.8351 17.1008 15.0076 17.1041 15.1749 17.1393C15.3422 17.1746 15.4836 17.2589 15.5989 17.3923L16.8509 18.951L18.0779 17.4048C18.1901 17.2644 18.3318 17.1763 18.5031 17.1405C18.6746 17.1045 18.85 17.1008 19.0291 17.1293C19.5936 17.2278 20.0524 17.3373 20.4054 17.4578C20.7584 17.5783 21.1841 17.7837 21.6826 18.074C21.923 18.2202 22.1096 18.4134 22.2426 18.6538C22.3756 18.8943 22.4454 19.1533 22.4519 19.4308V21.1105C22.4519 21.348 22.3686 21.55 22.2021 21.7165C22.0356 21.883 21.8352 21.9663 21.6009 21.9663H12.1009Z"/>
-                    </svg>
+                <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
+
+                  <span className="dash-icon">
+                    <img
+                      src={shape2}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
                   </span>
-              <span className="dash-titles">My Resume</span>
-            </Link>
-            {/*Verified badges */}
-            <Link 
-  onClick={hideMenu} 
-  to="/applicant-verified-badges" 
-  className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
-  style={{ 
-    display: 'inline-flex', 
-    alignItems: 'center', 
-    textDecoration: 'none', 
-    marginTop: '13px' 
-  }}
->
-  <span 
-    className="dash-icon" 
-    style={{
-      display: 'inline-block', 
-      transition: 'fill 0.3s ease',
-      marginRight: '12px',
-    }}
-  >
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="25" 
-      viewBox="0 0 24 25" 
-      fill="none"
-      style={{ 
-        fill: location.pathname === "/applicant-verified-badges" ? "#F46F16" : "#888888" 
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
-      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/verified-badges" ? "#F46F16" : "#888888"} 
-    >
-      <path d="M21.6008 11.2002L20.2008 9.6002C19.9008 9.3002 19.7008 8.7002 19.7008 8.3002V6.70019C19.7008 5.60019 18.8008 4.8002 17.8008 4.8002H16.1008C15.7008 4.8002 15.1008 4.6002 14.8008 4.3002L13.2008 2.9002C12.5008 2.3002 11.4008 2.3002 10.7008 2.9002L9.20078 4.3002C8.90078 4.6002 8.30078 4.8002 7.90078 4.8002H6.20078C5.10078 4.8002 4.30078 5.70019 4.30078 6.70019V8.4002C4.30078 8.8002 4.10078 9.40019 3.80078 9.70019L2.50078 11.3002C1.90078 12.0002 1.90078 13.1002 2.50078 13.8002L3.80078 15.4002C4.10078 15.7002 4.30078 16.3002 4.30078 16.7002V18.4002C4.30078 19.5002 5.20078 20.3002 6.20078 20.3002H7.90078C8.30078 20.3002 8.90078 20.5002 9.20078 20.8002L10.8008 22.2002C11.5008 22.8002 12.6008 22.8002 13.3008 22.2002L14.9008 20.8002C15.2008 20.5002 15.8008 20.3002 16.2008 20.3002H17.9008C19.0008 20.3002 19.8008 19.4002 19.8008 18.4002V16.7002C19.8008 16.3002 20.0008 15.7002 20.3008 15.4002L21.7008 13.8002C22.2008 13.1002 22.2008 11.9002 21.6008 11.2002ZM16.2008 10.6002L11.4008 15.4002C11.3008 15.5002 11.1008 15.6002 10.9008 15.6002C10.7008 15.6002 10.5008 15.5002 10.4008 15.4002L8.00078 13.0002C7.70078 12.7002 7.70078 12.2002 8.00078 11.9002C8.30078 11.6002 8.80078 11.6002 9.10078 11.9002L11.0008 13.8002L15.1008 9.5002C15.4008 9.20019 15.9008 9.20019 16.2008 9.5002C16.5008 9.8002 16.5008 10.3002 16.2008 10.6002Z"/>
-    </svg>
-  </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>Job-Ready Badges</span>
-  
-</Link>
-<Link 
-  onClick={hideMenu} 
-  to="/applicant-mentorconnect" 
-  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
-  style={{ 
-    display: 'inline-flex', 
-    alignItems: 'center', 
-    textDecoration: 'none', 
-    marginTop: '13px' 
-  }}
->
-  <span 
-    className="dash-icon" 
-    style={{
-      display: 'inline-block', 
-      transition: 'fill 0.3s ease',
-      marginRight: '12px',
-    }}
-  >
-   <svg 
-  xmlns="http://www.w3.org/2000/svg" 
-  width="24" 
-  height="24" 
-  viewBox="0 0 24 24" 
-  fill={location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888"} 
-  onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} 
-  onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-mentorconnect" ? "#F46F16" : "#888888")}
->
-  {/* Speech bubble */}
-  <path d="M20 3H4C2.9 3 2 3.9 2 5v10c0 1.1.9 2 2 2h3.5L12 20l4.5-3H20c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/>
-  
-  {/* User head */}
-  <circle cx="9" cy="9" r="2.2"/>
-  
-  {/* User shoulders */}
-  <path d="M6.5 15c0-1.7 2.5-2.9 5.5-2.9s5.5 1.2 5.5 2.9V16H6.5v-1z"/>
-</svg>
+                  <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
+                </Link>
+                {/*Verified badges */}
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-verified-badges"
+                  className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    marginTop: '13px'
+                  }}
+                >
+                  <span
+                    className="dash-icon"
+                    style={{
+                      display: 'inline-block',
+                      transition: 'fill 0.3s ease',
+                      marginRight: '12px',
+                    }}
+                  >
+                    <img
+                      src={shape3}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
+                  </span>
+                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Skill validation</span>
 
-  </span>
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>MentorSphere</span>
-</Link>
+                </Link>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-mentorconnect"
+                  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    marginTop: '13px'
+                  }}
+                >
+                  <span
+                    className="dash-icon"
+                    style={{
+                      display: 'inline-block',
+                      transition: 'fill 0.3s ease',
+                      marginRight: '12px',
+                    }}
+                  >
+                    <img
+                      src={shape4}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
+
+                  </span>
+                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Mentor sphere</span>
+                </Link>
 
 
-<Link 
-  onClick={hideMenu} 
-  to="/applicant-verified-videos" 
-  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
-  style={{ 
-    display: 'inline-flex', 
-    alignItems: 'center', 
-    textDecoration: 'none', 
-    marginTop: '13px' 
-  }}
->
-  <span 
-    className="dash-icon" 
-    style={{
-      display: 'inline-block', 
-      transition: 'fill 0.3s ease',
-      marginRight: '12px',
-    }}
-  >
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none"
-      style={{ 
-        fill: location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888" 
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.fill = "#F46F16"} 
-      onMouseLeave={(e) => e.currentTarget.style.fill = location.pathname === "/applicant-verified-videos" ? "#F46F16" : "#888888"} 
-    >
-      {/* 🎥 Video Shorts Icon */}
-      <path d="M10 16.5L16 12L10 7.5V16.5ZM21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3ZM21 19H3V5H21V19Z"/>
-    </svg>
-  </span>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-verified-videos"
+                  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    textDecoration: 'none',
+                    marginTop: '13px'
+                  }}
+                >
+                  <span
+                    className="dash-icon"
+                    style={{
+                      display: 'inline-block',
+                      transition: 'fill 0.3s ease',
+                      marginRight: '12px',
+                    }}
+                  >
+                    <img
+                      src={shape5}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
+                  </span>
 
-  <span className="dash-titles" style={{ color: '#333', fontSize: '16px' }}>
-    Tech Buzz Shorts
-  </span>
+                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>
+                    Tech buzz shorts
+                  </span>
 
- 
-</Link>
 
-          </li>
-        <li>
+                </Link>
+
+              </li>
+              <li>
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-  <path d="M17 4V2H7v2H2v5c0 2.8 2.2 5 5 5h.2A6.98 6.98 0 0 0 11 16.9V19H8v3h8v-3h-3v-2.1c1.8-.5 3.2-1.8 3.8-3.5h.2c2.8 0 5-2.2 5-5V4h-5ZM7 12c-1.7 0-3-1.3-3-3V6h3v6Zm13-3c0 1.7-1.3 3-3 3V6h3v3Z"/>
-</svg>
-
+                    <img
+                      src={shape6}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
                   </span>
-                  <span className="dash-titles">Innovation Arena</span>
+                  <span className="dash-titles" style={{ textTransform: "none" }}>Innovation arena</span>
                 </Link>
               </li>
-        
- <li>
+
+              <li>
                 <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
                   <span className="dash-icon blog-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="20" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 20h9" />
-                      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                    </svg>
+                    <img
+                      src={shape7}
+                      alt="Dashboard Icon"
+                      width="24"
+                      height="24"
+                    />
                   </span>
 
-                  <span className="dash-titles">TechVibes</span>
+                  <span className="dash-titles" style={{ textTransform: "none" }}>Tech vibes</span>
                 </Link>
               </li>
-              <li>
-                <Link onClick={hideMenu} to="/applicant-interview-prep" className={location.pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" style={{ display: 'inline-block', transition: 'fill 0.3s ease', marginRight: '12px' }}>
-                   <svg width="24" height="24" viewBox="0 0 400 400" fill={location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888"} xmlns="http://www.w3.org/2000/svg" onMouseEnter={(e) => (e.currentTarget.style.fill = "#F46F16")} onMouseLeave={(e) => (e.currentTarget.style.fill = location.pathname === "/applicant-interview-prep" ? "#F46F16" : "#888888")}>
-  <circle cx="200" cy="200" r="150" />
-  <circle cx="200" cy="173" r="40" stroke="white" stroke-width="9" fill="none"/>
-  <rect x="130" y="220" width="140" height="100" rx="60" stroke="white" stroke-width="9" fill="none"/>
-  <rect x="230" y="110" width="95" height="65" rx="20" stroke="white" stroke-width="8" fill="none"/>
-  <g>
-    <polygon points="265,142 275,150 265,158" fill="white"/>
-    <rect x="282" y="143" width="3" height="13" fill="white"/>
-  </g>
-</svg>
 
-                  </span>
-
-                  <span className="dash-titles">Ask Newton</span>
-                </Link>
-              </li>
-               <li>
-                <Link onClick={hideMenu} to="/applicant-my-jobs" className={location.pathname === "/applicant-my-jobs" || frompath === "/applicant-my-jobs" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
-                  </svg>
-                  </span>
-                  <span className="dash-titles" >My Jobs</span>
-                </Link>
-              </li>
             </ul>
-          
+
+            {/* Logout Button */}
+            <div style={{ marginTop: 'auto' }}>
+              <div
+                onClick={() => setShowModal(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  transition: 'all 0.3s ease',
+                  margin: '0 10px'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.querySelector('img').style.filter = 'none';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.querySelector('img').style.filter = 'none';
+                }}
+              >
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  marginRight: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <img
+                    src={shape8}
+                    alt="Dashboard Icon"
+                    width="24"
+                    height="24"
+                  />
+
+                </div>
+                <span className="dash-titles" style={{ color: '#1A1A17' }}>Logout</span>
+              </div>
+            </div>
+
           </div>
-       
         </div>
       )}
-                               <ModalLogout
-                                       isOpen={showModal}
-                                       onClose={() => setShowModal(false)}
-                                       onConfirm={handleLogout}
-                                    />
-      
+      <ModalLogout
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onConfirm={handleLogout}
+      />
+
     </div>
   )
 }

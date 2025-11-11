@@ -1,3 +1,48 @@
+.border-style {
+  border: 2px solid #FD6F00;
+  margin: 22px 22px 0 22px;
+  border-radius: 10px;
+  position: relative;
+  height: 95vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+}
+.border-style > div {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  -webkit-overflow-scrolling: touch; 
+}
+
+.border-style > div::-webkit-scrollbar {
+  width: 5px;
+}
+
+.border-style > div::-webkit-scrollbar-track {
+  background: #F8F8F8 0% 0% no-repeat padding-box;
+  border-radius: 10px;
+}
+
+.border-style > div::-webkit-scrollbar-thumb {
+ background: #E0E0E0 0% 0% no-repeat padding-box;
+  border-radius: 10px;
+}
+
+.blur-border-style {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: white;
+  opacity: 0.55;
+  filter: blur(35px);
+  z-index: -1;
+  margin: -20px;
+}
+
 .dashboard .themes-container {
     position: relative;
     margin-left: auto;
@@ -151,7 +196,7 @@
 }
 
 .dashboard {
-    background: #EFF2F6;
+    /* background: #EFF2F6; */
     position: relative;
 }
 
@@ -657,14 +702,6 @@ thead tr th:nth-child(1) {
     padding-left: 10px;
 }
 
-thead tr th:nth-child(2) {
-    
-}
-
-tbody tr td:last-child {
-   
-}
-
 tbody tr td {
     padding: 10px 10px 10px;
     border-bottom: 0px solid #e5e5e5;
@@ -1098,7 +1135,12 @@ tbody tr td:nth-child(2) {
 
 body.close-sidebar .dashboard.show .dashboard__content {
   margin-left: 0; 
-  margin-top: -2%;
+}
+
+@media screen and (max-width:768px) {
+    .dashboard__content{
+        margin-top: 15px !important;
+    }
 }
 
 
@@ -1140,8 +1182,9 @@ body.close-sidebar .dashboard.show .dashboard__content {
 }
 
 .dashboard.show .dashboard__content {
-    margin-left: 320px;
+    margin-left: 270px;
     transition: all 0.2s ease-out;
+    margin-top: -23px;
 }
 
 .dashboard.show-job .dashboard__content {
@@ -1165,7 +1208,7 @@ body.close-sidebar .dashboard.show .dashboard__content {
     transition: left 0.6s ease-in-out;
   opacity: 1;
   transition: left 0.6s ease-in-out;
-    width: 280px;
+    width: 240px;
     z-index: 50;
     background: #fff;
     bottom: 0;
@@ -1181,8 +1224,12 @@ body.close-sidebar .dashboard.show .dashboard__content {
     left:-2000px;
 }
 .left-menu.open {
-    left: 0;
+    left: 30px;
     opacity: 1;
+    /* margin-left: 40px; */
+    margin-top: 35px;
+     box-shadow: 0px 0px 12px #0000001A !important;
+    border-radius: 6px !important;
   }
 
 .left-menu::-webkit-scrollbar {
@@ -1227,7 +1274,7 @@ body.close-sidebar .dashboard.show .dashboard__content {
     vertical-align: baseline;
     position: relative;
     color: #121212;
-    padding: 13.5px 10px;
+    padding: 11px 10px;
     background-color: #fff;
     width: 100%;
     font-weight: 600;
@@ -1292,9 +1339,21 @@ body.close-sidebar .dashboard.show .dashboard__content {
 #sidebar-menu ul li a.active,
 #sidebar-menu ul li a:hover {
     color: #121212 !important;
-    background-color: #F2F4F7;
-    border-radius: 8px;
+    background: transparent linear-gradient(101deg, #F3673B 0%, #F5C546 100%) 0% 0% no-repeat padding-box;
+    border-radius: 3px;
+    transition: background 0.3s ease, color 0.3s ease;
+    opacity: 0.8;
 }
+ /* #sidebar-menu ul li a {
+    display: block;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#sidebar-menu ul li a:hover {
+    color: #121212 !important;
+    background: linear-gradient(101deg, #F3673B 0%, #F5C546 100%);
+    border-radius: 8px;
+} */
 
 .show-job #sidebar-menu ul li a.active,
 .show-job #sidebar-menu ul li a:hover {
@@ -4116,7 +4175,7 @@ input[type="radio"]:checked:after {
 
 @media only screen and (max-width: 1700px) {
     .dashboard.show .dashboard__content {
-        margin-left: 320px;
+        margin-left: 270px;
     }
 }
 
@@ -4610,10 +4669,6 @@ input[type="radio"]:checked:after {
         margin-bottom: 30px;
     }
 
-    .flat-dashboard-user .wrap-profile .box-profile {
-       
-    }
-
     .flat-dashboard-user .wrap-profile .images {
         margin-bottom: 12px;
     }
@@ -4801,7 +4856,7 @@ input[type="radio"]:checked:after {
         display: block !important;
         background: #fff;
         position: fixed;
-        height: 80%;
+        height: 78%;
         display: none;
     }
 
@@ -5060,12 +5115,6 @@ input[type="radio"]:checked:after {
     .date-info {
       margin-left: 650px; 
       font-size: 14px;
-    }
-  }
-
-  @media screen and (max-width: 1367px) {
-    .date-info {
-      
     }
   }
 

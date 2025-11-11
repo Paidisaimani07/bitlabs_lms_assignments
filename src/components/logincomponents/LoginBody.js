@@ -7,7 +7,7 @@ import { apiUrl } from "../../services/ApplicantAPIService";
 import { useGoogleLogin } from "@react-oauth/google";
 import OTPVerification from "../applicantcomponents/OTPVerification";
 import Background from "../../images/user/avatar/Backgroundimage.png";
-import logo from "../../images/user/avatar/bitlabslogo.svg";
+import logo from '../../images/icons/newLogo.png';
 
 import Backgroundimagemobile from "../../images/user/avatar/backgroundimage-mobile.png";
 import Snackbar from "../common/Snackbar";

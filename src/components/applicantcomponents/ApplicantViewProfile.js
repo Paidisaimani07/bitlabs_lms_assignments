@@ -713,6 +713,9 @@ const ApplicantViewProfile = () => {
   const applicantId = user?.id;
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="dashboard__content">
       {/* Title */}
       <div className="row mr-0 ml-10">
@@ -751,6 +754,8 @@ const ApplicantViewProfile = () => {
         <div>Unable to identify applicant.</div>
       )}
     </div>
+    </div>
+    
   );
 };
 

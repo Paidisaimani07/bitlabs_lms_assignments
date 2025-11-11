@@ -3,6 +3,7 @@ import ReactPlayer from "react-player";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
+import { useLocation } from "react-router-dom";
 import "./VerifiedVideos.css";
 
 const preloadAll = true;
@@ -24,7 +25,10 @@ const VerifiedVideos = () => {
   const [playerReady, setPlayerReady] = useState(false);
   const [playerBuffering, setPlayerBuffering] = useState(false);
   const [durations, setDurations] = useState({});
-
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const startVideoId = urlParams.get('video');
+  const [autoPlayVideoId, setAutoPlayVideoId] = useState(startVideoId ? parseInt(startVideoId, 10) : null);
   const playerRef = useRef(null);
 
   useEffect(() => {
@@ -106,6 +110,17 @@ const VerifiedVideos = () => {
     setFilteredVideos(filtered);
   }, [search, filter, videoList]);
 
+   useEffect(() => {
+  if (autoPlayVideoId && filteredVideos.length > 0 && !modalOpen) {
+    const index = filteredVideos.findIndex(v => v.videoId === autoPlayVideoId);
+    if (index !== -1) {
+      handleOpenPlayer(index);
+      setAutoPlayVideoId(null); // Prevent replay
+    }
+  }
+}, [filteredVideos, autoPlayVideoId, modalOpen]);
+
+
   const handleProgress = (progress, videoId, index) => {
     if (progress.played >= 0.7 && !watchedVideos[videoId]) {
       handleEnded(videoId);
@@ -163,6 +178,9 @@ const VerifiedVideos = () => {
   const onBufferEnd = () => setPlayerBuffering(false);
 
   return (
+     <div className="border-style">
+
+        <div className="blur-border-style"></div>
     <div className="oneminute-container">
       <div className="oneminute-header">
         <h2
@@ -330,6 +348,7 @@ const VerifiedVideos = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
