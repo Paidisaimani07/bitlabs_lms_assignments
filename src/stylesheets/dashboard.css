@@ -205,7 +205,7 @@
     top: 0px;
     left: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 1;
     opacity: 1;
 }
 
@@ -1244,6 +1244,10 @@ body.close-sidebar .dashboard.show .dashboard__content {
 
 #sidebar-menu {
     padding: 21px 17px 17px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 95%;
 }
 
 #sidebar-menu .ff-active>.has-arrow:after {
