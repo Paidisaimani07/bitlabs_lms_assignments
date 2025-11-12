@@ -4,11 +4,17 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background: #f9f9f9 !important;
+    background: rgba(0, 0, 0, 0.6); /* dark overlay */
+    backdrop-filter: blur(1px); /* Blur background */
+    -webkit-backdrop-filter: blur(1px); /* Safari support */
     z-index: 11000 !important;
-    overflow-y: auto; /* Enables vertical scrolling */
-    overflow-x: hidden; /* Prevents horizontal scrolling */
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 50px;
+    
 }
+
+
 
 .test-header {
     display: flex !important;
@@ -20,7 +26,7 @@
 }
 
 .instructions-page {
-    width: 90% !important;
+    width: 50% !important;
     margin: 20px auto !important;
     padding: 30px !important;
     background: #fff !important;
@@ -45,6 +51,7 @@
     min-height: 75%; /* Adjust this value as needed for height */
     justify-content: space-between;
     padding-bottom: 20px;
+     border: 2px solid #FF9D01 !important;
 }
 
 .instructions-page h2, .test-page h3 {
@@ -131,7 +138,7 @@
 }
 
 .test-page .header {
-    display: flex !important;
+    /* display: flex !important; */
     justify-content: space-between !important;
     align-items: left !important;
 }
@@ -188,7 +195,7 @@
     border-radius: 16px !important;
     border: 2px solid #ECECEC !important;
     background: #F0F0F0 !important;
-    padding: 10px !important;
+    /* padding: 10px !important; */
     width: 110px !important;
     height: 70px !important;
     flex-shrink: 0 !important;
@@ -205,9 +212,21 @@
     font-weight: bold !important; 
 }
 
-
-
 .exit-popup {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 12000 !important;
+    /* backdrop-filter: blur(4px) !important; */
+}
+
+/* .exit-popup {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -216,8 +235,8 @@
     background-color: white !important;
     border: 1px solid #ddd !important;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1) !important;
-    z-index: 12000 !important; /* Ensure it appears above other content */
-}
+    z-index: 12000 !important; 
+} */
 
 .exit-popup button {
     margin: 5px !important;
@@ -303,7 +322,7 @@ margin-top: 10px;
   
   .footer1 {
     display: flex;
-    justify-content: flex-end; /* Align buttons to the right */
+    justify-content: flex-start; /* Align buttons to the right */
     gap: 10px; /* Space between buttons */
     padding-right: 20px; /* Adjust padding as needed */
   }
@@ -475,4 +494,206 @@ margin-top: 10px;
   .go-back-button:hover {
     background-color: #0056b3;
   }
-  
+  /* --------------------- */
+
+ /* ========== Layout Container ========== */
+.test-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* ========== Left Section (Question Area) ========== */
+.test-left {
+  flex: 2;
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  border: 2px solid #f8f8f8; /* ✅ subtle separation border */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* ========== Right Section (Timer + Questions) ========== */
+.test-right {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: fit-content;
+  border: 2px solid #f8f8f8; /* ✅ matches design */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+/* ========== Timer Section ========== */
+.timer-box {
+  text-align: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.timer-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #000;
+  text-align: left;
+}
+
+.timer-digits {
+  display: flex;
+  justify-content: center;
+  gap: 71px;
+  align-items: flex-end;
+  margin-bottom: 10px;
+}
+
+.time-num {
+  font-size: 32px;
+  font-weight: 700;
+  color: #f46f16;
+  line-height: 1;
+}
+
+.timer-digits p {
+  font-size: 12px;
+  font-weight: 500;
+  color: #000;
+  margin-top: 4px;
+}
+
+.divider-line {
+  width: 100%;
+  height: 1px;
+  background: #e0e0e0;
+  margin: 15px 0;
+}
+
+/* ========== Question Tracker ========== */
+.questions-box {
+  width: 100%;
+}
+
+.questions-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: #000;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.question-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.question-indicator {
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #e0e0e0;
+  transition: all 0.2s ease-in-out;
+}
+
+.question-indicator.answered {
+  background-color: #1aae55;
+  color: #fff;
+}
+
+.question-indicator.not-answered {
+  background-color: #fbbb5c;
+  color: #fff;
+}
+
+.question-indicator.current {
+  background-color: #000;
+  color: #fff;
+}
+
+.question-indicator:not(.answered):not(.not-answered):not(.current) {
+  background-color: #fff;
+  color: #000;
+}
+
+.question-legend {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #333;
+}
+
+.legend-box {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 2px;
+}
+
+.legend-box.not-attempted {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
+.legend-box.answered {
+  background-color: #1aae55;
+}
+
+.legend-box.not-answered {
+  background-color: #fbbb5c;
+}
+
+.legend-box.current {
+  background-color: #000;
+}
+
+/* ========== Full-width Progress Bar ========== */
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #fbbb5c 0%, #e66a0e 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 765px) {
+  .test-content {
+    flex-direction: column;
+  }
+
+  .test-right {
+    display: none; /* ✅ hides timer + question grid on small screens */
+  }
+
+  .test-left {
+    width: 100%;
+  }
+}
+
+
