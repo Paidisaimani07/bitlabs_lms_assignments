@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation,Link } from 'react-router-dom';
 import './css/ApplicantTakeTest.css';
-import Logo from '../../images/artboard.svg';
+import Alibaba from '../../images/ZumZum.png';
 import TestExitPopup from './TestExitPopup';
 import TestTimeUp from './TestTimeUp';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -87,23 +87,23 @@ const fetchQuestion = async() => {
   
   // Make the entire document full screen 
 
-  // const enterFullScreen = () => {
-  //   const elem = document.documentElement; 
-  //   if (elem.requestFullscreen) {
-  //     elem.requestFullscreen();
-  //   } else if (elem.mozRequestFullScreen) {
+  const enterFullScreen = () => {
+    const elem = document.documentElement; 
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
       
-  //     elem.mozRequestFullScreen();
-  //   } else if (elem.webkitRequestFullscreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
       
-  //     elem.webkitRequestFullscreen();
-  //   } else if (elem.msRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
       
-  //     elem.msRequestFullscreen();
-  //   }
-  //   setIsFullScreen(true);
-  //   setShowGoBackButton(false); 
-  // };
+      elem.msRequestFullscreen();
+    }
+    setIsFullScreen(true);
+    setShowGoBackButton(false); 
+  };
 
   const exitFullScreen = () => {
     if (document.exitFullscreen) {
@@ -137,18 +137,18 @@ const fetchQuestion = async() => {
       }
     };
 
-    //document.addEventListener('fullscreenchange', onFullScreenChange);
+    document.addEventListener('fullscreenchange', onFullScreenChange);
 
-    // return () => {
-    //   document.removeEventListener('fullscreenchange', onFullScreenChange);
-    // };
+    return () => {
+      document.removeEventListener('fullscreenchange', onFullScreenChange);
+    };
   }, []);
 
-  // const handleGoBackToTest = () => {
-  //   enterFullScreen();
-  //   setViolationDetected(false);
-  //   setShowGoBackButton(false); 
-  // };
+  const handleGoBackToTest = () => {
+    enterFullScreen();
+    setViolationDetected(false);
+    setShowGoBackButton(false); 
+  };
 
   useEffect(() => {
     // Handle online/offline events
@@ -203,32 +203,32 @@ const fetchQuestion = async() => {
       }
     };
  
-    // const handleKeyDown = (e) => {
-    //   if (
-    //     testStarted &&
-    //     !isTestCompleted &&
-    //     !violationDetected &&
-    //     (
-    //       e.key === 'Meta' ||
-    //       e.key === 'Alt' ||
-    //       (e.ctrlKey && e.key === 'Tab') ||
-    //       (e.altKey && e.key === 'Tab')
-    //     )
-    //   ) {
-    //     handleViolation('Prohibited key press');
-    //   }
-    // };
+    const handleKeyDown = (e) => {
+      if (
+        testStarted &&
+        !isTestCompleted &&
+        !violationDetected &&
+        (
+          e.key === 'Meta' ||
+          e.key === 'Alt' ||
+          (e.ctrlKey && e.key === 'Tab') ||
+          (e.altKey && e.key === 'Tab')
+        )
+      ) {
+        handleViolation('Prohibited key press');
+      }
+    };
  
-    //document.addEventListener('fullscreenchange', handleFullScreenChange);
-    //document.addEventListener('visibilitychange', handleVisibilityChange);
-    //window.addEventListener('blur', handleWindowBlur);
-    //window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('keydown', handleKeyDown);
  
     return () => {
-      //document.removeEventListener('fullscreenchange', handleFullScreenChange);
-      //document.removeEventListener('visibilitychange', handleVisibilityChange);
-      //window.removeEventListener('blur', handleWindowBlur);
-      //window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, [testStarted, isTestCompleted, violationDetected]);
 
@@ -261,7 +261,7 @@ const fetchQuestion = async() => {
   const startTest = () => {
     setCurrentPage('test');
     setTestStarted(true);
-    //enterFullScreen();
+    enterFullScreen();
   };
 
   const handleNextQuestion = () => {
@@ -853,34 +853,85 @@ const fetchQuestion = async() => {
         </div>
       )}
 
-    {currentPage === 'test' && (
+      {/* ====== Test Header (Logo + Title) ====== */}
+
+{currentPage === 'test' && (
   <div className={`test-page ${showGoBackButton ? 'blur-background' : ''}`}>
+    <img 
+  src={Alibaba} 
+  alt="bitLabs Logo" 
+  className="Alibaba" 
+  style={{
+    width: "160px",
+    height: "60px",
+    objectFit: "contain"
+  }} 
+/>
+     <h2
+  className="exam-title"
+  style={{
+    left: "140px",
+    width: "258px",
+    height: "45px",
+    textAlign: "left",
+    fontFamily: "Poppins",
+    fontWeight: 600,
+    fontSize: "25px",
+    lineHeight: "48px",
+    letterSpacing: "0px",
+    color: "#EF8C2F",
+    opacity: 1,
+  }}
+>
+  {testName}
+</h2>
     <div className="test-content">
+      
       {/* ================= Left Section ================= */}
       <div className="test-left">
         <div className="header">
+          
           <div>
-            <h3 className="text-name1">{testName}</h3>
-            <h4 className="test-sub">
-              Question {currentQuestionIndex + 1} / {questions.numberOfQuestions}
+            <h4
+              className="test-sub"
+              style={{
+                fontSize: "20px",
+                fontWeight: "700",
+                marginBottom: "10px",
+              }}
+            >
+              Question {currentQuestionIndex + 1}/{questions.numberOfQuestions}
             </h4>
+
+            {/* Progress Bar */}
+            <div className="progress-bar-container">
+              <div
+                className="progress-bar-fill"
+                style={{
+                  width: `${
+                    ((currentQuestionIndex + 1) / questions.numberOfQuestions) * 100
+                  }%`,
+                }}
+              ></div>
+            </div>
           </div>
         </div>
 
-        <div className="separator"></div>
-
         {/* Question Section */}
-        <div className="question no-select">
+        <div className="question no-select" style={{ marginTop: "25px" }}>
           <ul>
             <li>
-              <p className="question1 no-select">
+              <p
+                className="question1 no-select"
+                style={{ fontSize: "16px", fontWeight: "500" }}
+              >
                 {currentQuestionIndex + 1}.&nbsp;
                 <span
                   dangerouslySetInnerHTML={{
                     __html: shuffledQuestions[currentQuestionIndex]?.question
-                      .replace(/\n/g, '<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;')
-                      .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-                      .replace(/```/g, ''),
+                      .replace(/\n/g, "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
+                      .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+                      .replace(/```/g, ""),
                   }}
                 />
               </p>
@@ -898,7 +949,7 @@ const fetchQuestion = async() => {
                   <span
                     className="no-select"
                     dangerouslySetInnerHTML={{
-                      __html: option.replace(/\n/g, '<br/>').replace(/```/g, ''),
+                      __html: option.replace(/\n/g, "<br/>").replace(/```/g, ""),
                     }}
                   />
                 </label>
@@ -923,7 +974,11 @@ const fetchQuestion = async() => {
               Next
             </button>
           ) : (
-            <button onClick={handleSubmitTest} disabled={isSubmitting} className="navigation-btn">
+            <button
+              onClick={handleSubmitTest}
+              disabled={isSubmitting}
+              className="navigation-btn"
+            >
               Submit exam
             </button>
           )}
@@ -931,81 +986,76 @@ const fetchQuestion = async() => {
       </div>
 
       {/* ================= Right Section ================= */}
-      {/* ================= Right Section ================= */}
-<div className="test-right">
-  {/* Timer Section */}
-  <div className="timer-box">
-    <h4 className="timer-title">Time durations</h4>
-
-    <div className="timer-digits">
-      <div>
-        <span className="time-num">
-          {String(Math.floor(remainingTime / 3600)).padStart(2, '0')}
-        </span>
-        <p>Hrs</p>
-      </div>
-      <div>
-        <span className="time-num">
-          {String(Math.floor((remainingTime % 3600) / 60)).padStart(2, '0')}
-        </span>
-        <p>Mins</p>
-      </div>
-      <div>
-        <span className="time-num">
-          {String(remainingTime % 60).padStart(2, '0')}
-        </span>
-        <p>Secs</p>
-      </div>
-    </div>
-
-    <div className="divider-line"></div>
-  </div>
-
-  {/* Question Tracker Section */}
-  <div className="questions-box">
-    <h4 className="questions-title">Questions</h4>
-    <div className="question-grid">
-      {questions.questions.map((_, index) => {
-        const isCurrent = index === currentQuestionIndex;
-        const isAnswered = !!selectedOptions[index];
-        const isNotAnswered = !selectedOptions[index] && index < currentQuestionIndex;
-
-        return (
-          <div
-            key={index}
-            onClick={() => setCurrentQuestionIndex(index)}
-            className={`question-indicator
-              ${isCurrent ? 'current' : ''}
-              ${isAnswered ? 'answered' : ''}
-              ${isNotAnswered ? 'not-answered' : ''}
-            `}
-          >
-            {String(index + 1).padStart(2, '0')}
+      <div className="test-right">
+        {/* Timer Section */}
+        <div className="timer-box">
+          <h4 className="timer-title">Time durations</h4>
+          <div className="timer-digits">
+            <div>
+              <span className="time-num">
+                {String(Math.floor(remainingTime / 3600)).padStart(2, "0")}
+              </span>
+              <p>Hrs</p>
+            </div>
+            <div>
+              <span className="time-num">
+                {String(Math.floor((remainingTime % 3600) / 60)).padStart(2, "0")}
+              </span>
+              <p>Mins</p>
+            </div>
+            <div>
+              <span className="time-num">
+                {String(remainingTime % 60).padStart(2, "0")}
+              </span>
+              <p>Secs</p>
+            </div>
           </div>
-        );
-      })}
-    </div>
+          <div className="divider-line"></div>
+        </div>
 
-    <div className="question-legend">
-      <div>
-        <span className="legend-box not-attempted"></span>Not attempted
-      </div>
-      <div>
-        <span className="legend-box answered"></span>Answered
-      </div>
-      <div>
-        <span className="legend-box not-answered"></span>Not answered
-      </div>
-      <div>
-        <span className="legend-box current"></span>Current
-      </div>
-    </div>
-  </div>
-</div>
+        {/* Question Tracker Section */}
+        <div className="questions-box">
+          <h4 className="questions-title">Questions</h4>
+          <div className="question-grid">
+            {questions.questions.map((_, index) => {
+              const isCurrent = index === currentQuestionIndex;
+              const isAnswered = !!selectedOptions[index];
+              const isNotAnswered = !selectedOptions[index] && index < currentQuestionIndex;
 
+              return (
+                <div
+                  key={index}
+                  onClick={() => setCurrentQuestionIndex(index)}
+                  className={`question-indicator
+                    ${isCurrent ? "current" : ""}
+                    ${isAnswered ? "answered" : ""}
+                    ${isNotAnswered ? "not-answered" : ""}
+                  `}
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="question-legend">
+            <div>
+              <span className="legend-box not-attempted"></span>Not attempted
+            </div>
+            <div>
+              <span className="legend-box answered"></span>Answered
+            </div>
+            <div>
+              <span className="legend-box current"></span>Current
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 )}
+
+
 
 
      {currentPage === 'passAcknowledgment' && (
@@ -1029,12 +1079,12 @@ const fetchQuestion = async() => {
         </strong>
       </p>
       <br />
-      {/* <button className="exit-popup-btn exit-popup-confirm-btn"
+      <button className="exit-popup-btn exit-popup-confirm-btn"
         onClick={!isSubmitting ? handleGoBackToTest : undefined}
         disabled={isSubmitting}
       >
         {isSubmitting ? 'Submitting' : 'Go Back to Test'}
-      </button> */}
+      </button>
     </div>
 )}
 

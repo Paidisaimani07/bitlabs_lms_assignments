@@ -51,6 +51,7 @@
     min-height: 75%; /* Adjust this value as needed for height */
     justify-content: space-between;
     padding-bottom: 20px;
+     border: 2px solid #FF9D01 !important;
 }
 
 .instructions-page h2, .test-page h3 {
@@ -137,7 +138,7 @@
 }
 
 .test-page .header {
-    display: flex !important;
+    /* display: flex !important; */
     justify-content: space-between !important;
     align-items: left !important;
 }
@@ -495,19 +496,25 @@ margin-top: 10px;
   }
   /* --------------------- */
 
-  .test-content {
+ /* ========== Layout Container ========== */
+.test-content {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  align-items: flex-start;
 }
 
+/* ========== Left Section (Question Area) ========== */
 .test-left {
   flex: 2;
   background: #fff;
   border-radius: 10px;
   padding: 25px;
+  border: 2px solid #f8f8f8; /* ✅ subtle separation border */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
+/* ========== Right Section (Timer + Questions) ========== */
 .test-right {
   flex: 1;
   background: #fff;
@@ -517,113 +524,30 @@ margin-top: 10px;
   flex-direction: column;
   align-items: center;
   height: fit-content;
+  border: 2px solid #f8f8f8; /* ✅ matches design */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
 }
 
+/* ========== Timer Section ========== */
 .timer-box {
   text-align: center;
   margin-bottom: 20px;
-}
-
-.timer-display {
-  font-size: 24px;
-  font-weight: 600;
-  color: #f46f16;
-  display: flex;
-  justify-content: center;
-  gap: 5px;
-}
-
-.questions-box {
   width: 100%;
-}
-
-.question-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.question-indicator {
-  width: 35px;
-  height: 35px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid #ccc;
-}
-
-.question-indicator.answered {
-  background-color: #14a44d;
-  color: #fff;
-}
-
-.question-indicator.not-answered {
-  background-color: #fff;
-  color: #000;
-}
-
-.question-indicator.current {
-  background-color: #ff8c00;
-  color: #fff;
-}
-
-.question-legend {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  font-size: 12px;
-}
-
-.legend-box {
-  width: 15px;
-  height: 15px;
-  display: inline-block;
-  margin-right: 5px;
-  border-radius: 2px;
-}
-
-.legend-box.answered {
-  background-color: #14a44d;
-}
-
-.legend-box.not-answered {
-  background-color: #fff;
-  border: 1px solid #ccc;
-}
-
-.legend-box.current {
-  background-color: #ff8c00;
-}
-
-
-.test-right {
-  background: #fff;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-  width: 280px;
-}
-
-.timer-box {
-  text-align: center;
-  margin-bottom: 20px;
 }
 
 .timer-title {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   color: #000;
+  text-align: left;
 }
 
 .timer-digits {
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 71px;
   align-items: flex-end;
   margin-bottom: 10px;
 }
@@ -632,7 +556,6 @@ margin-top: 10px;
   font-size: 32px;
   font-weight: 700;
   color: #f46f16;
-  display: block;
   line-height: 1;
 }
 
@@ -650,6 +573,7 @@ margin-top: 10px;
   margin: 15px 0;
 }
 
+/* ========== Question Tracker ========== */
 .questions-box {
   width: 100%;
 }
@@ -658,7 +582,8 @@ margin-top: 10px;
   font-weight: 700;
   font-size: 18px;
   color: #000;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
+  text-align: left;
 }
 
 .question-grid {
@@ -678,26 +603,23 @@ margin-top: 10px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
   border: 1px solid #e0e0e0;
+  transition: all 0.2s ease-in-out;
 }
 
 .question-indicator.answered {
   background-color: #1aae55;
   color: #fff;
-  border: none;
 }
 
 .question-indicator.not-answered {
   background-color: #fbbb5c;
   color: #fff;
-  border: none;
 }
 
 .question-indicator.current {
   background-color: #000;
   color: #fff;
-  border: none;
 }
 
 .question-indicator:not(.answered):not(.not-answered):not(.current) {
@@ -738,3 +660,40 @@ margin-top: 10px;
 .legend-box.current {
   background-color: #000;
 }
+
+/* ========== Full-width Progress Bar ========== */
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background-color: #f2f2f2;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #fbbb5c 0%, #e66a0e 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 765px) {
+  .test-content {
+    flex-direction: column;
+  }
+
+  .test-right {
+    display: none; /* ✅ hides timer + question grid on small screens */
+  }
+
+  .test-left {
+    width: 100%;
+  }
+}
+
+
