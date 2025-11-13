@@ -408,7 +408,7 @@ function ApplicantNavBar() {
 
                         <marquee className="robo-card-text">
                           <p className="robo-card-para">
-                            Have questions - <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Got a doubt? - <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
