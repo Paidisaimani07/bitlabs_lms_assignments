@@ -346,6 +346,7 @@ const VerifiedVideos = () => {
                     handleProgress(progress, filteredVideos[playingIndex].videoId)
                   }
                   onEnded={() => setShowReplay(true)}
+                  onSeek={() => setShowReplay(false)}
                   config={{
                     file: {
                       attributes: {

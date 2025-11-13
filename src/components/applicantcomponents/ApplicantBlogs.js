@@ -11,20 +11,46 @@ export default function ApplicantBlogs() {
   const lastFocused = useRef(null);
   const location = useLocation();
   const hasAutoOpened = useRef(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const pageSize = 15;
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    let ignore = false;
     (async () => {
       try {
+        setLoading(true);
         const jwtToken = localStorage.getItem("jwtToken");
-        const res = await axios.get(`${apiUrl}/blogs/active`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
-        setBlogs(res.data || []);
+        const res = await axios.get(
+          `${apiUrl}/blogs/active?page=${page}&size=${pageSize}`,
+          {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          }
+        );
+
+        const newBlogs = res.data.content || res.data || [];
+
+        if (!ignore) {
+          if (page === 0) {
+            setBlogs(newBlogs);
+          } else {
+            setBlogs((prev) => [...prev, ...newBlogs]);
+          }
+          setHasMore(!res.data.last && newBlogs.length >= pageSize);
+        }
       } catch (e) {
         console.error("Error fetching blogs:", e);
+        setError(
+          "Failed to load blogs. Please check your connection or try again later."
+        );
+        setHasMore(false);
+      } finally {
+        setLoading(false);
       }
     })();
-  }, []);
+  }, [page]);
 
   const filteredBlogs = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -110,7 +136,12 @@ export default function ApplicantBlogs() {
           </div>
         </div>
 
-
+        {/* error in Ui */}
+        {error && (
+          <div className="error-message">
+            <p>{error}</p>
+          </div>
+        )}
         {/* Card Grid */}
         <div className="tv-grid">
           {filteredBlogs.map((b) => (
@@ -156,6 +187,18 @@ export default function ApplicantBlogs() {
             </article>
           ))}
         </div>
+
+        {hasMore && (
+          <div className="load-more-container">
+            <button
+              className="load-more-btn"
+              onClick={() => setPage((prev) => prev + 1)}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Load More"}
+            </button>
+          </div>
+        )}
 
         {/* Popup Modal */}
         {selected && (

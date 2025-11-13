@@ -31,8 +31,8 @@ const ApplicantMentorConnect = () => {
         const list = Array.isArray(payload)
           ? payload
           : Array.isArray(payload?.items)
-          ? payload.items
-          : [];
+            ? payload.items
+            : [];
         setMeetings(list);
         setError(null);
       } catch (err) {
@@ -104,21 +104,21 @@ const ApplicantMentorConnect = () => {
   };
 
   // replace existing computeStatus with this version
-const computeStatus = (m) => {
-  // Always compute using local time to avoid server TZ drift
-  const start = buildStartDate(m.date, m.startTime);
-  if (!start) return "Expired";
+  const computeStatus = (m) => {
+    // Always compute using local time to avoid server TZ drift
+    const start = buildStartDate(m.date, m.startTime);
+    if (!start) return "Expired";
 
-  const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
-  const end = new Date(start.getTime() + mins * 60000);
+    const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
+    const end = new Date(start.getTime() + mins * 60000);
 
-  const now = new Date();
+    const now = new Date();
 
-  // treat exact start time as Active (>= start && < end)
-  if (now >= start && now < end) return "Active";
-  if (now < start) return "Upcoming";
-  return "Expired";
-};
+    // treat exact start time as Active (>= start && < end)
+    if (now >= start && now < end) return "Active";
+    if (now < start) return "Upcoming";
+    return "Expired";
+  };
 
 
   // Google Calendar: use local time (no Z) to avoid timezone mismatch
@@ -206,8 +206,8 @@ const computeStatus = (m) => {
 
   const Card = ({ m }) => {
     const status = computeStatus(m);
-    const banner = m.bannerImageUrl || m.banner || DummyBanner;
-    const avatar = m.mentorProfileUrl || m.mentorImage || m.photoUrl || DummyMentor;
+    const banner = m.bannerImageUrl || DummyBanner;
+    const avatar = m.mentorProfileUrl || DummyMentor;
     const duration = formatDuration(m.durationMinutes ?? m.duration ?? 60);
     const gcalUrl = buildGoogleCalendarUrl(m);
 
@@ -256,23 +256,23 @@ const computeStatus = (m) => {
           {/* Header row: Status (left) — Copy link (right) */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span
-  style={{
-    background:
-      status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
-    color: status === "Active" ? "#fff" : "#F97316", // orange text for Upcoming
-    border:
-      status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
-    fontSize: 12,
-    fontWeight: 800,
-    padding: "4px 10px",
-    borderRadius: 3,
-    boxShadow: status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
-    display: "inline-block",
-    textTransform: "capitalize",
-  }}
->
-  {status}
-</span>
+              style={{
+                background:
+                  status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
+                color: status === "Active" ? "#fff" : "#F97316", // orange text for Upcoming
+                border:
+                  status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
+                fontSize: 12,
+                fontWeight: 800,
+                padding: "4px 10px",
+                borderRadius: 3,
+                boxShadow: status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
+                display: "inline-block",
+                textTransform: "capitalize",
+              }}
+            >
+              {status}
+            </span>
 
 
             <button
@@ -285,7 +285,7 @@ const computeStatus = (m) => {
                 fontWeight: 700,
                 cursor: "pointer",
                 textDecoration: "underline",
-                
+
               }}
             >
               Copy link
@@ -358,31 +358,31 @@ const computeStatus = (m) => {
             </button>
 
             {/* Add Calendar — keep colors, block click when not enabled */}
-           <button
-  onClick={() => {
-    if (!addCalEnabled) return;            // block click when not upcoming
-    window.open(gcalUrl, "_blank", "noopener,noreferrer");
-  }}
-  aria-disabled={!addCalEnabled}
-  style={{
-    /* keep the same colors */
-    flex: 1,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-    background: "#fff",
-    color: "#F97316",
-    border: "1px solid #F97316",
-    borderRadius: 5,
-    padding: "12px 16px",
-    fontWeight: 800,
-    fontSize: 14,
-    cursor: addCalEnabled ? "pointer" : "not-allowed",  // only cursor changes
-  }}
->
-  Add Calendar
-</button>
+            <button
+              onClick={() => {
+                if (!addCalEnabled) return;            // block click when not upcoming
+                window.open(gcalUrl, "_blank", "noopener,noreferrer");
+              }}
+              aria-disabled={!addCalEnabled}
+              style={{
+                /* keep the same colors */
+                flex: 1,
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
+                background: "#fff",
+                color: "#F97316",
+                border: "1px solid #F97316",
+                borderRadius: 5,
+                padding: "12px 16px",
+                fontWeight: 800,
+                fontSize: 14,
+                cursor: addCalEnabled ? "pointer" : "not-allowed",  // only cursor changes
+              }}
+            >
+              Add Calendar
+            </button>
 
           </div>
         </div>
@@ -391,80 +391,80 @@ const computeStatus = (m) => {
   };
 
   return (
-     <div className="border-style">
+    <div className="border-style">
 
-        <div className="blur-border-style"></div>
-    <div className="dashboard__content" style={{ paddingTop: 4, paddingBottom: 8 }}>
-      <style>{styles.grid}</style>
+      <div className="blur-border-style"></div>
+      <div className="dashboard__content" style={{ paddingTop: 4, paddingBottom: 8 }}>
+        <style>{styles.grid}</style>
 
 
-  <div className="row" style={{marginTop:"10px"}}>
-    <div className="col-lg-12 col-md-12">
-      <div className="main-header-row">
-        <h1 className="main-heading">MentorSphere</h1>
+        <div className="row" style={{ marginTop: "10px" }}>
+          <div className="col-lg-12 col-md-12">
+            <div className="main-header-row">
+              <h1 className="main-heading">MentorSphere</h1>
 
-        <div className="hackathon-search-box">
-          <i className="fa fa-search search-icon1"></i>
-          <input
-            type="text"
-            placeholder="Search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="hackathon-search-input"
-          />
-          {query && (
-            <i
-              className="fa fa-times clear-icon"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => setQuery("")}
-            ></i>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-
-      <div className="col-lg-12 col-md-12">
-        <section className="flat-dashboard-setting2">
-          <div className="themes-container">
-            <div className="content-tab">
-              <div className="inner">
-                {loading ? (
-                  <div style={{ padding: 18 }}>Loading sessions…</div>
-                ) : error ? (
-                  <div style={{ color: "#b91c1c" }}>{error}</div>
-                ) : filteredMeetings.length === 0 ? (
-                  <div style={{ padding: 24, textAlign: "center", color: "#6b7280" }}>
-                    No mentor sessions match your search.
-                  </div>
-                ) : (
-                  <div className="mentor-grid">
-                    {filteredMeetings
-                      .slice()
-                      .sort((a, b) => {
-                        // Order: Active (1) → Upcoming (2)
-                        const order = { Active: 1, Upcoming: 2, Expired: 3 };
-                        const sa = computeStatus(a);
-                        const sb = computeStatus(b);
-                        const diff = (order[sa] || 99) - (order[sb] || 99);
-                        if (diff !== 0) return diff;
-
-                        // within same status, earlier start first
-                        const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
-                        const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
-                        return ta - tb;
-                      })
-                      .map((m) => (
-                        <Card key={m.meetingId ?? m.meeting_id ?? m.id} m={m} />
-                      ))}
-                  </div>
+              <div className="hackathon-search-box">
+                <i className="fa fa-search search-icon1"></i>
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="hackathon-search-input"
+                />
+                {query && (
+                  <i
+                    className="fa fa-times clear-icon"
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => setQuery("")}
+                  ></i>
                 )}
               </div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <div className="col-lg-12 col-md-12">
+          <section className="flat-dashboard-setting2">
+            <div className="themes-container">
+              <div className="content-tab">
+                <div className="inner">
+                  {loading ? (
+                    <div style={{ padding: 18 }}>Loading sessions…</div>
+                  ) : error ? (
+                    <div style={{ color: "#b91c1c" }}>{error}</div>
+                  ) : filteredMeetings.length === 0 ? (
+                    <div style={{ padding: 24, textAlign: "center", color: "#6b7280" }}>
+                      No mentor sessions match your search.
+                    </div>
+                  ) : (
+                    <div className="mentor-grid">
+                      {filteredMeetings
+                        .slice()
+                        .sort((a, b) => {
+                          // Order: Active (1) → Upcoming (2)
+                          const order = { Active: 1, Upcoming: 2, Expired: 3 };
+                          const sa = computeStatus(a);
+                          const sb = computeStatus(b);
+                          const diff = (order[sa] || 99) - (order[sb] || 99);
+                          if (diff !== 0) return diff;
+
+                          // within same status, earlier start first
+                          const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+                          const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+                          return ta - tb;
+                        })
+                        .map((m) => (
+                          <Card key={m.meetingId ?? m.meeting_id ?? m.id} m={m} />
+                        ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
