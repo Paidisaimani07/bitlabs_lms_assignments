@@ -4,16 +4,9 @@ import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import character3 from '../../images/dashboard/mobilebanners/Vamshi.png';
 import Nagulmeera from '../../images/dashboard/mobilebanners/mentor1.png';
 import Karunakar from '../../images/dashboard/mobilebanners/karun.png';
 import suhel from '../../images/dashboard/mobilebanners/suhel.png';
-import character4 from '../../images/dashboard/mobilebanners/ArtCard_SKY.png';
-import character5 from '../../images/dashboard/mobilebanners/STK438_carbon_capture.png';
-import character6 from '../../images/dashboard/mobilebanners/Windows 10 Is Dead. Upgrade to One of These Great Windows 11 Laptops.png';
-import character2 from '../../images/dashboard/mobilebanners/Nagul.png';
-import character1 from '../../images/dashboard/mobilebanners/lalitha.png';
 import SmartPhone from "../../images/dashboard/mobilebanners/smartphone.png"
 import appStoreIcon from "../../images/dashboard/mobilebanners/appstoreicon.png";
 import playStore from "../../images/dashboard/mobilebanners/playstore.png";
@@ -25,9 +18,9 @@ import './ApplicantDashboard.css';
 const ApplicantDashboard = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
-  const [contRecJobs, setCountRecJobs] = useState(0);
-  const [contAppliedJob, setAppliedJobs] = useState(0);
-  const [contSavedJobs, setSavedJobs] = useState(0);
+  // const [contRecJobs, setCountRecJobs] = useState(0);
+  // const [contAppliedJob, setAppliedJobs] = useState(0);
+  // const [contSavedJobs, setSavedJobs] = useState(0);
   const navigate = useNavigate();
   const userId = user.id
   const [hiredCount, setHiredCount] = useState(null);
@@ -160,48 +153,48 @@ const ApplicantDashboard = () => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
-      .then((response) => {
-        setCountRecJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
-      .then((response) => {
-        setAppliedJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
-      .then((response) => {
-        setSavedJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
+  //     .then((response) => {
+  //       setCountRecJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
+  //     .then((response) => {
+  //       setAppliedJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
+  //     .then((response) => {
+  //       setSavedJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
 
   useEffect(() => {
     const fetchTestData = async () => {
