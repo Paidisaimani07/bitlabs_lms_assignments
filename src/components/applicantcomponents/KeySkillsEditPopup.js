@@ -1,5 +1,5 @@
 // src/components/applicant/KeySkillsEditPopup.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,40 +10,94 @@ const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
 
 const normalize = (s = "") => s.trim().replace(/\s+/g, " ");
 
+// Predefined skills list (source of truth)
+const SUGGESTED_SKILLS = [
+  "Java",
+  "C",
+  "C++",
+  "C Sharp",
+  "Python",
+  "HTML",
+  "CSS",
+  "JavaScript",
+  "TypeScript",
+  "Angular",
+  "React",
+  "Vue",
+  "JSP",
+  "Servlets",
+  "Spring",
+  "Spring Boot",
+  "Hibernate",
+  ".Net",
+  "Django",
+  "Flask",
+  "SQL",
+  "MySQL",
+  "SQL-Server",
+  "Mongo DB",
+  "Selenium",
+  "Regression Testing",
+  "Manual Testing",
+];
+
 const KeySkillsEditPopup = ({
   applicantId,
   isOpen,
   onClose,
-  onSaved, // callback to refresh parent list
+  onSaved,
   initialSkills = [],
 }) => {
   const [skills, setSkills] = useState([]);
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [highlightIndex, setHighlightIndex] = useState(-1);
+  const inputRef = useRef(null);
+  const suggestionsRef = useRef(null);
 
-  // initialize on open
+  // Initialize when modal opens
   useEffect(() => {
     if (isOpen) {
       setSkills([...new Set((initialSkills || []).map(normalize))]);
       setDraft("");
       setError("");
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+      setHighlightIndex(-1);
+      // focus input for convenience
+      setTimeout(() => inputRef.current?.focus(), 80);
     }
   }, [isOpen, initialSkills]);
 
-  const addDraft = () => {
-    const v = normalize(draft);
-    if (!v) return;
-    if (v.length < 2) return setError("Skill must be at least 2 characters.");
-    if (v.length > 80) return setError("Skill cannot exceed 80 characters.");
-    if (skills.some((s) => s.toLowerCase() === v.toLowerCase()))
-      return setError("Skill already added.");
+  // Helpers
+  const normalizeLower = (s) => normalize(s).toLowerCase();
 
-    setSkills((prev) => [...prev, v]);
-    setDraft("");
-    setError("");
+  const isValidSuggestion = (value) => {
+    if (!value) return false;
+    const v = normalizeLower(value);
+    return SUGGESTED_SKILLS.some((s) => s.toLowerCase() === v);
   };
 
+  // Add skill only if it's a valid suggestion and not duplicate
+  const addSkillFromValue = (value) => {
+    const vNorm = normalize(value);
+    if (!vNorm) return setError("Please choose a skill from the list.");
+    if (!isValidSuggestion(vNorm)) return setError("Please select a skill from suggestions.");
+    if (skills.some((s) => s.toLowerCase() === vNorm.toLowerCase()))
+      return setError("Skill already added.");
+    setSkills((prev) => [...prev, vNorm]);
+    setDraft("");
+    setError("");
+    setShowSuggestions(false);
+    setHighlightIndex(-1);
+    // focus back to input
+    setTimeout(() => inputRef.current?.focus(), 50);
+  };
+
+  // Remove a skill
   const removeSkill = (name) => {
     setSkills((prev) => prev.filter((s) => s.toLowerCase() !== name.toLowerCase()));
   };
@@ -61,7 +115,12 @@ const KeySkillsEditPopup = ({
       await axios.put(
         SKILLS_API(applicantId),
         { skills },
-        { headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" } }
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
       onSaved?.();
       onClose?.();
@@ -75,6 +134,77 @@ const KeySkillsEditPopup = ({
     } finally {
       setSaving(false);
     }
+  };
+
+  // Typeahead behavior: filter suggestions on input
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setDraft(value);
+    setError("");
+    if (value.trim().length > 0) {
+      const filtered = SUGGESTED_SKILLS.filter(
+        (s) =>
+          s.toLowerCase().includes(value.toLowerCase()) &&
+          !skills.some((sk) => sk.toLowerCase() === s.toLowerCase())
+      );
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(true);
+      setHighlightIndex(filtered.length ? 0 : -1);
+    } else {
+      setFilteredSuggestions([]);
+      setShowSuggestions(false);
+      setHighlightIndex(-1);
+    }
+  };
+
+  // Click outside to close suggestions
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target) &&
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+        setHighlightIndex(-1);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Keyboard navigation for suggestions
+  const handleKeyDown = (e) => {
+    if (!showSuggestions || filteredSuggestions.length === 0) {
+      if (e.key === "Enter") {
+        // only allow Enter to add when it is an exact suggestion
+        e.preventDefault();
+        if (isValidSuggestion(draft)) addSkillFromValue(draft);
+        else setError("Please select a skill from suggestions before adding.");
+      }
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightIndex((i) => Math.min(filteredSuggestions.length - 1, i + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightIndex((i) => Math.max(0, i - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const picked = filteredSuggestions[highlightIndex];
+      if (picked) addSkillFromValue(picked);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+      setHighlightIndex(-1);
+    }
+  };
+
+  // Click suggestion
+  const handleSuggestionClick = (s) => {
+    addSkillFromValue(s);
   };
 
   return (
@@ -94,38 +224,83 @@ const KeySkillsEditPopup = ({
         />
       </div>
 
-      <div style={{ paddingTop: 24 }}>
+      <div className="modal-body" style={{ paddingTop: 8 }}>
         <h3 style={{ marginBottom: 12, fontWeight: 800 }}>Edit Key Skills</h3>
         <p className="card-subtitle" style={{ marginBottom: 12 }}>
-          Add skills that best define your expertise, e.g., Java, React, SQL. (Minimum 1)
+          Choose skills from the list. (Minimum 1)
         </p>
 
-        <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
-          <input
-            className="pd-input"
-            type="text"
-            placeholder="Add a skill"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                addDraft();
+        {/* Typeahead container */}
+        <div
+          className="typeahead-wrapper"
+          style={{ marginBottom: 10, position: "relative" }}
+        >
+          <div className="typeahead-row" style={{ display: "flex", gap: 8 }}>
+            <input
+              ref={inputRef}
+              className="pd-input"
+              type="text"
+              placeholder="Type to search and select a skill"
+              value={draft}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              aria-autocomplete="list"
+              aria-expanded={showSuggestions}
+              aria-haspopup="listbox"
+              aria-activedescendant={
+                showSuggestions && highlightIndex >= 0
+                  ? `skill-suggestion-${highlightIndex}`
+                  : undefined
               }
-            }}
-            style={{ flex: 1 }}
-          />
-          <button type="button" className="btn-primary" onClick={addDraft} style={{ whiteSpace: "nowrap" }}>
-            Add
-          </button>
+              style={{ flex: 1 }}
+            />
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => {
+                // clicking Add must only accept exact suggested skills
+                if (isValidSuggestion(draft)) addSkillFromValue(draft);
+                else setError("Please choose a skill from the suggestion list.");
+              }}
+              style={{ whiteSpace: "nowrap" }}
+            >
+              Add
+            </button>
+          </div>
+
+          {/* Suggestions dropdown (positioned inside modal but overlay z-index keeps it above) */}
+          {showSuggestions && filteredSuggestions.length > 0 && (
+            <ul
+              className="typeahead-suggestions"
+              role="listbox"
+              ref={suggestionsRef}
+              style={{ marginTop: 6 }}
+            >
+              {filteredSuggestions.map((s, idx) => (
+                <li
+                  id={`skill-suggestion-${idx}`}
+                  key={s}
+                  role="option"
+                  aria-selected={idx === highlightIndex}
+                  onMouseDown={(e) => e.preventDefault()} // prevent input blur
+                  onClick={() => handleSuggestionClick(s)}
+                  style={{
+                    padding: "10px 12px",
+                    background: idx === highlightIndex ? "#fff7ed" : undefined,
+                    cursor: "pointer",
+                  }}
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
-        {error ? (
-          <div className="error-message" style={{ marginBottom: 8 }}>{error}</div>
-        ) : null}
+        {error ? <div className="error-message" style={{ marginBottom: 8 }}>{error}</div> : null}
 
-        {/* Chips */}
-        <div className="skills-pad">
+        {/* Skill chips */}
+        <div className="skills-pad" style={{ marginBottom: 12 }}>
           <div className="skills-list">
             {skills.map((s) => (
               <div key={s} className="skill-chip">
@@ -135,14 +310,18 @@ const KeySkillsEditPopup = ({
                 </span>
               </div>
             ))}
-            {!skills.length && (
-              <div style={{ color: "#777" }}>No skills yet — add your first one above.</div>
-            )}
+
+            {!skills.length && <div style={{ color: "#777" }}>No skills yet — add from the list above.</div>}
           </div>
         </div>
 
-        <div style={{ marginTop: 16, textAlign: "right" }}>
-          <button className="btn-primary" disabled={!canSave || saving} onClick={save} aria-busy={saving}>
+        <div style={{ marginTop: 8, textAlign: "right" }}>
+          <button
+            className="btn-primary"
+            disabled={!canSave || saving}
+            onClick={save}
+            aria-busy={saving}
+          >
             {saving ? "Saving..." : "Save"}
           </button>
         </div>
