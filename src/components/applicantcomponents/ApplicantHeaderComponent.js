@@ -9,7 +9,7 @@ import { apiUrl } from "../../services/ApplicantAPIService";
 
 const CARD_API = `${apiUrl}/applicant-card`;
 const PHOTO_GET_API = `${apiUrl}/applicant-image/getphoto`;
-const PHOTO_UPLOAD_API = `${apiUrl}/applicant-image/uploadphoto`; // ← change if your endpoint is different
+const PHOTO_UPLOAD_API = `${apiUrl}/applicant-image/uploadphoto`;
 
 const DEFAULT_CARD = {
   applicantId: null,
@@ -68,26 +68,25 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
 
 
   const fetchPhoto = async () => {
-    try {
-      if (!applicantId) return;
-      const jwtToken = localStorage.getItem("jwtToken");
-      const res = await axios.get(`${PHOTO_GET_API}/${applicantId}`, {
+  try {
+    if (!applicantId) return;
+    const jwtToken = localStorage.getItem("jwtToken");
+    const res = await axios.get(
+      `${apiUrl}/applicant-image/getphoto/${applicantId}?t=${Date.now()}`,
+      {
         responseType: "arraybuffer",
         headers: { Authorization: `Bearer ${jwtToken}` },
-      });
-
-      // build base64 data URL
-      const base64 = btoa(
-        new Uint8Array(res.data).reduce((s, b) => s + String.fromCharCode(b), "")
-      );
-      const mime = res.headers["content-type"] || "image/jpeg";
-      setImageSrc(`data:${mime};base64,${base64}`);
-    } catch (e) {
-      // If no image yet, keep default placeholder
-      console.info("No custom applicant photo yet or failed to fetch. Using placeholder.");
-      setImageSrc("../images/user/avatar/profile-pic.png");
-    }
-  };
+      }
+    );
+    const base64 = btoa(
+      new Uint8Array(res.data).reduce((s, b) => s + String.fromCharCode(b), "")
+    );
+    const mime = res.headers["content-type"] || "image/jpeg";
+    setImageSrc(`data:${mime};base64,${base64}`);
+  } catch {
+    setImageSrc("../images/user/avatar/profile-pic.png");
+  }
+};
 
   useEffect(() => {
     fetchCard();
@@ -113,53 +112,51 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
 
   const openFilePicker = () => fileInputRef.current?.click();
 
-  const onFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const onFileChange = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    // Basic client validation
-    const validTypes = ["image/png", "image/jpeg", "image/jpg"];
-    if (!validTypes.includes(file.type)) {
-      alert("Please choose a PNG or JPG image.");
-      e.target.value = "";
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Please choose an image ≤ 5 MB.");
-      e.target.value = "";
-      return;
-    }
+  // basic checks
+  const valid = ["image/png", "image/jpeg", "image/jpg"];
+  if (!valid.includes(file.type)) {
+    alert("Please choose a PNG or JPG image.");
+    e.target.value = "";
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("Please choose an image ≤ 5 MB.");
+    e.target.value = "";
+    return;
+  }
 
-    // Preview instantly
-    const previewUrl = URL.createObjectURL(file);
-    setImageSrc(previewUrl);
+  // instant preview
+  setImageSrc(URL.createObjectURL(file));
 
-    // Upload
-    try {
-      setUploading(true);
-      const jwtToken = localStorage.getItem("jwtToken");
-      const form = new FormData();
-      form.append("file", file);
+  try {
+    setUploading(true);
+    const jwtToken = localStorage.getItem("jwtToken");
+    const form = new FormData();
+    form.append("image", file); // <-- field name expected by backend
 
-      await axios.post(`${PHOTO_UPLOAD_API}/${applicantId}`, form, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    await axios.post(`${PHOTO_UPLOAD_API}`, form, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+        "Content-Type": "multipart/form-data",
+      },
+      params: { applicantid: applicantId }, // <-- id in query string
+    });
 
-      // Re-fetch final image (to ensure we now show the one served by backend / CDN)
-      await fetchPhoto();
-    } catch (err) {
-      console.error("Photo upload failed:", err);
-      alert("Failed to upload photo. Please try again.");
-      // rollback preview to previous
-      await fetchPhoto();
-    } finally {
-      setUploading(false);
-      e.target.value = "";
-    }
-  };
+    // load the saved version from server/CDN (avoid cached one)
+    await fetchPhoto();
+  } catch (err) {
+    console.error("Photo upload failed:", err?.response || err);
+    alert("Failed to upload photo. Please try again.");
+    await fetchPhoto(); // rollback to server copy/placeholder
+  } finally {
+    setUploading(false);
+    e.target.value = ""; // allow same file re-select
+  }
+};
 
 // Format and show "last updated"
 const updatedOnText = useMemo(() => {
@@ -194,13 +191,14 @@ const updatedOnText = useMemo(() => {
             >
               <FontAwesomeIcon icon={faPen} />
             </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/png, image/jpeg"
-              style={{ display: "none" }}
-              onChange={onFileChange}
-            />
+           <input
+  ref={fileInputRef}
+  type="file"
+  accept="image/*"                     // broader, still safe
+  style={{ display: "none" }}
+  onChange={onFileChange}
+/>
+
           </div>
 
           <div className="portfolio-meta">
