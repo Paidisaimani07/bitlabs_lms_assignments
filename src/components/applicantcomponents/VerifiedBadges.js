@@ -173,13 +173,17 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
             ) : (
               <>
               
-              <div>
-              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retake Test in</span>
-              <br />&nbsp;&nbsp;&nbsp;&nbsp;
-                {timeLeft.days > 0 && `${timeLeft.days}d `}
-                {timeLeft.hours > 0 && `${timeLeft.hours}h `}
-                {timeLeft.minutes !== undefined && `${timeLeft.minutes}m`}
-              </div>
+              <div style={{ marginTop: '-20px', textAlign: 'center', lineHeight: '1.4' }}>
+  <p style={{ margin: 0 }}>
+    Retake Test after
+  </p>
+  <p style={{ margin: 0, fontWeight: '600', color: '#F46F16' }}>
+    {timeLeft.days > 0 && `${timeLeft.days}d `}
+    {timeLeft.hours > 0 && `${timeLeft.hours}h `}
+    {timeLeft.minutes !== undefined && `${timeLeft.minutes}m`}
+  </p>
+</div>
+
             </>
             
 
@@ -303,12 +307,18 @@ const VerifiedBadges = () => {
     fetchSkillBadges();
     }, 500);
   }, [userId]);
-  
+const [aptitudeScore, setAptitudeScore] = useState(0);
+const [technicalScore, setTechnicalScore] = useState(0);
+
   useEffect(() => {
     if (testData) {
       const aptitudeTest = testData.find(test => test.testName.toLowerCase().includes('aptitude'));
       const technicalTest = testData.find(test => test.testName.toLowerCase().includes('technical'));
-  
+      
+      // ✅ Store their scores separately for easy access later
+      setAptitudeScore(aptitudeTest ? aptitudeTest.testScore : 0);
+      setTechnicalScore(technicalTest ? technicalTest.testScore : 0);
+
       if (aptitudeTest) {
         // Prioritize checking if both tests are passed
         if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest && technicalTest.testStatus.toLowerCase() === 'p') {
@@ -707,39 +717,52 @@ const steps = [
                     <div className="title-dash flex2" >Skill Validation</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
                 <div style={{ marginTop: "10px", width: "100%"}}>
-  {!hideSteps && (
-    <div style={{ width: "100%",margin: "0 auto",backgroundColor:'#fff',borderRadius:'12px',padding:'20px',marginLeft:'-20px'}}>
-
-      {/* Progress Steps */}
+ {!hideSteps && (
+  <div
+    style={{
+      width: "100%",
+      margin: "0 auto",
+      backgroundColor: "#fff",
+      borderRadius: "12px",
+      padding: "20px",
+      marginLeft: "-20px",
+    }}
+  >
+    {/* Progress Steps */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        position: "relative",
+      }}
+    >
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          position: "relative",
-        }}
-      >
-        <div style={{
           display: "flex",
           justifyContent: "space-between",
           width: "100%",
           maxWidth: "830px",
-          position: "relative"
-        }}>
-          {/* Background Line */}
-          <div style={{
+          position: "relative",
+        }}
+      >
+        {/* Background Line */}
+        <div
+          style={{
             position: "absolute",
             top: "50%",
             left: "7%",
             right: "7%",
             height: "2px",
             backgroundColor: "#e0e0e0",
-            zIndex: 1
-          }}></div>
+            zIndex: 1,
+          }}
+        ></div>
 
-          {/* Progress Line */}
-          <div style={{
+        {/* Progress Line */}
+        <div
+          style={{
             position: "absolute",
             top: "50%",
             left: "6%",
@@ -747,205 +770,247 @@ const steps = [
             height: "2px",
             backgroundColor: "#121212",
             zIndex: 2,
-            transition: "width 0.3s ease"
-          }}></div>
+            transition: "width 0.3s ease",
+          }}
+        ></div>
 
-          {steps.map((step) => (
-            <div
-              key={step.id}
-              style={{
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                backgroundColor: step.id <= currentStep ? "#121212" : "#e0e0e0",
-                color: step.id <= currentStep ? "#fff" : "#6D6969",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                fontSize: "16px",
-                fontWeight: "600",
-                position: "relative",
-                zIndex: 3,
-                margin: "0 10px"
-              }}
-            >
-              {step.id < currentStep ? "✓" : step.id}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Step Cards */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-          marginTop: "10px"
-        }}
-      >
         {steps.map((step) => (
           <div
             key={step.id}
             style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              backgroundColor:
+                step.id <= currentStep ? "#121212" : "#e0e0e0",
+              color: step.id <= currentStep ? "#fff" : "#6D6969",
               display: "flex",
-              flexDirection: "column",
+              justifyContent: "center",
               alignItems: "center",
-              width: `${100 / steps.length}%`,
+              fontSize: "16px",
+              fontWeight: "600",
+              position: "relative",
+              zIndex: 3,
+              margin: "0 10px",
             }}
           >
-            {/* Card */}
-            <div
-              style={{
-                width: "56%",
-                maxWidth: "200px",
-                backgroundColor: "#fff",
-                borderRadius: "12px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "20px 0 0 0",
-                boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
-                border: "1px solid #eaeaea",
-                height: "133px"
-              }}
-            >
-              <img
-                src={step.icon}
-                alt={step.label}
-                style={{ width: step.id === 3 ? "28%" : "34%", objectFit: "contain" }}
-              />
-
-              
-              {/* Button for all steps */}
-              <div style={{ width: "100%" }}>
-                {step.id !== 3 ? (
-                  // Button for Steps 1 & 2
-                  <div
-                    onClick={
-                      (isDisabled && currentStep === step.id) || currentStep > step.id
-                        ? null
-                        : () => handleTakeTest(step.label)
-                    }
-                    style={{
-                      width: "100%",
-                      backgroundColor:
-                        currentStep > step.id
-                          ? "#28A745" // ✅ Completed
-                          : isDisabled && currentStep === step.id
-                          ? "#9b9b9b" // ⏳ Cooldown
-                          : currentStep === step.id
-                          ? "#121212" // Active
-                          : "#BFBFBF", // Locked
-                      borderBottomLeftRadius: "11px",
-                      borderBottomRightRadius: "11px",
-                      padding: "18px 0",
-                      cursor:
-                        currentStep > step.id || (isDisabled && currentStep === step.id)
-                          ? "not-allowed"
-                          : currentStep === step.id
-                          ? "pointer"
-                          : "not-allowed",
-                      transition: "0.3s",
-                      textAlign: "center",
-                      height: "50px",
-                      marginTop: "8px"
-                    }}
-                  >
-                    <p
-                      style={{
-                        color: "#fff",
-                        margin: 0,
-                        fontSize: "14px",
-                        fontWeight: "600"
-                      }}
-                    >
-                      {currentStep > step.id
-                        ? "Completed"
-                        : isDisabled && currentStep === step.id
-                        ? "Retake Test"
-                        : currentStep === step.id
-                        ? "Start Test"
-                        : "Coming Soon"}
-                    </p>
-                  </div>
-                ) : (
-                  // Special button for Step 3
-                  <div
-                    style={{
-                      width: "100%",
-                      backgroundColor: currentStep >= 3 ? "#28A745" : "#BFBFBF",
-                      borderBottomLeftRadius: "11px",
-                      borderBottomRightRadius: "11px",
-                      padding: "18px 0",
-                      cursor: currentStep >= 3 ? "pointer" : "not-allowed",
-                      transition: "0.3s",
-                      textAlign: "center",
-                      height: "35px",
-                      marginTop: "8px"
-                    }}
-                    onClick={() => {
-                      if (currentStep >= 3) {
-                        // Handle Qualified action here
-                        console.log("Qualified button clicked");
-                        // You can add any specific action for the Qualified button
-                      }
-                    }}
-                  >
-                    <p
-                      style={{
-                        color: "#fff",
-                        margin: 0,
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        marginTop: "-15px"
-                      }}
-                    >
-                      {currentStep >= 3 ? "Qualified" : "Locked"}
-                    </p>
-                  </div>
-                )}
-
-                {/* Timer BELOW button only for step in cooldown */}
-                {step.id !== 3 && isDisabled && currentStep === step.id && timer && (
-                  <div style={{ marginTop: "27px", textAlign: "center" }}>
-                    <div style={{ fontWeight: "700", color: "#F3780D", marginTop: "3px",fontSize: "17px" }}>
-                      {timer.days > 0 && `${timer.days}d `}
-                      {timer.hours > 0 && `${timer.hours}h `}
-                      {timer.minutes > 0 && `${timer.minutes}m `}
-                      {timer.seconds > 0 && timer.hours === 0 && timer.days === 0
-                        && `${timer.seconds}sec`}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <p
-              style={{
-                fontSize: "18px",
-                lineHeight: "1.4",
-                marginTop: "19px",
-                fontWeight: "600",
-                textAlign: "center",
-                color:'#121212'
-              }}
-            >
-              {step.label}
-            </p>
+            {step.id < currentStep ? "✓" : step.id}
           </div>
         ))}
       </div>
     </div>
-  )}
+
+    {/* Step Cards */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        marginTop: "10px",
+      }}
+    >
+      {steps.map((step) => (
+        <div
+          key={step.id}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: `${100 / steps.length}%`,
+          }}
+        >
+          {/* Card */}
+          <div
+            style={{
+              width: "56%",
+              maxWidth: "200px",
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "20px 0 0 0",
+              boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+              border: "1px solid #eaeaea",
+              height: "160px",
+              position: "relative",
+            }}
+          >
+            <img
+              src={step.icon}
+              alt={step.label}
+              style={{
+                width: step.id === 3 ? "28%" : "34%",
+                objectFit: "contain",
+              }}
+            />
+
+            {/* ✅ Button or Score Area */}
+            <div style={{ width: "100%" }}>
+              {step.id !== 3 ? (
+                <>
+                  {currentStep > step.id ? (
+                    // ✅ Show Score Instead of "Completed"
+                    <div
+                      style={{
+                        width: "100%",
+                         background:
+                          "linear-gradient(90deg, #FCAA45 0%, #E66A0E 100%)",
+                        borderBottomLeftRadius: "11px",
+                        borderBottomRightRadius: "11px",
+                        padding: "18px 0",
+                        textAlign: "center",
+                        height: "50px",
+                        marginTop: "8px",
+                        color: "#fff",
+                        fontWeight: "600",
+                        fontSize: "16px",
+                        boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                      }}
+                    >
+                      Score:{" "}
+                      {step.id === 1
+                        ? `${aptitudeScore.toFixed(0)}%`
+                        : step.id === 2
+                        ? `${technicalScore.toFixed(0)}%`
+                        : "0%"}
+                    </div>
+                  ) : (
+                    // Normal buttons for active/locked/retake
+                    <div
+                      onClick={
+                        (isDisabled && currentStep === step.id) ||
+                        currentStep > step.id
+                          ? null
+                          : () => handleTakeTest(step.label)
+                      }
+                      style={{
+                        width: "100%",
+                        backgroundColor:
+                          isDisabled && currentStep === step.id
+                            ? "#9b9b9b" // ⏳ Cooldown
+                            : currentStep === step.id
+                            ? "#121212" // Active
+                            : "#BFBFBF", // Locked
+                        borderBottomLeftRadius: "11px",
+                        borderBottomRightRadius: "11px",
+                        padding: "18px 0",
+                        cursor:
+                          currentStep > step.id ||
+                          (isDisabled && currentStep === step.id)
+                            ? "not-allowed"
+                            : currentStep === step.id
+                            ? "pointer"
+                            : "not-allowed",
+                        transition: "0.3s",
+                        textAlign: "center",
+                        height: "50px",
+                        marginTop: "30px",
+                      }}
+                    >
+                      <p
+                        style={{
+                          color: "#fff",
+                          margin: 0,
+                          fontSize: "14px",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {isDisabled && currentStep === step.id
+                          ? "Retake Test"
+                          : currentStep === step.id
+                          ? "Start Test"
+                          : "Coming Soon"}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                // ✅ Special button for Step 3
+                <div
+                  style={{
+                    width: "100%",
+                    backgroundColor:
+                      currentStep >= 3 ? "#28A745" : "#BFBFBF",
+                    borderBottomLeftRadius: "11px",
+                    borderBottomRightRadius: "11px",
+                    padding: "18px 0",
+                    cursor: currentStep >= 3 ? "pointer" : "not-allowed",
+                    transition: "0.3s",
+                    textAlign: "center",
+                    height: "35px",
+                    marginTop: "8px",
+                  }}
+                  onClick={() => {
+                    if (currentStep >= 3) {
+                      console.log("Qualified button clicked");
+                    }
+                  }}
+                >
+                  <p
+                    style={{
+                      color: "#fff",
+                      margin: 0,
+                      fontSize: "14px",
+                      fontWeight: "600",
+                      marginTop: "-15px",
+                    }}
+                  >
+                    {currentStep >= 3 ? "Qualified" : "Locked"}
+                  </p>
+                </div>
+              )}
+
+              {/* Timer BELOW button only for step in cooldown */}
+              {step.id !== 3 && isDisabled && currentStep === step.id && timer && (
+                <div style={{ marginTop: "27px", textAlign: "center" }}>
+                  <div
+                    style={{
+                      fontWeight: "700",
+                      color: "#F3780D",
+                      marginTop: "40px",
+                      fontSize: "17px",
+                    }}
+                  >
+                    {timer.days > 0 && `${timer.days}d `}
+                    {timer.hours > 0 && `${timer.hours}h `}
+                    {timer.minutes > 0 && `${timer.minutes}m `}
+                    {timer.seconds > 0 &&
+                      timer.hours === 0 &&
+                      timer.days === 0 &&
+                      `${timer.seconds}sec`}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <p
+            style={{
+              fontSize: "18px",
+              lineHeight: "1.4",
+              marginTop: "19px",
+              fontWeight: "600",
+              textAlign: "center",
+              color: "#121212",
+            }}
+          >
+            {step.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+
 </div>
                      {/* */}
 
 
                   </div> 
                 </div>
-                                    {/*  */}
               </div> 
             </div>
           </section>
