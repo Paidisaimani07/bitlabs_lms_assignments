@@ -414,3 +414,189 @@
   line-height: 1 !important;
   font-size: 16px !important;
 }
+
+/* Modal overlay — dim background */
+.modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(0,0,0,0.55) !important;
+  z-index: 10000 !important;
+  padding: 20px !important;
+}
+
+/* Modal shell: allow visible overflow so dropdown can escape */
+/* sensible default for all modals (restore padding) */
+.modal-content2 {
+  position: relative !important;
+  width: 820px !important;
+  max-width: calc(100% - 40px) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35) !important;
+
+  /* restore normal modal padding & scrolling */
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  max-height: 78vh !important;
+  overflow: auto !important;
+}
+
+
+/* special class for modals that need dropdown to escape (KeySkills) */
+.modal-content2.keyskills {
+  /* remove padding only for the shell; inner content will use .modal-body */
+  padding: 0 !important;
+  overflow: visible !important; /* allow dropdown to be positioned outside */
+}
+
+/* the modal inner content wrapper used by KeySkills */
+.modal-body {
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 24px !important;    /* same padding restored for inner content */
+  max-height: 78vh !important;
+  overflow: auto !important;   /* scroll inside the body */
+}
+
+
+/* responsive */
+@media (max-width: 720px) {
+  .modal-content2 { width: 96% !important; }
+  .modal-body { padding: 16px !important; max-height: 90vh !important; }
+}
+
+/* Typeahead container */
+.typeahead-wrapper {
+  position: relative !important;  /* suggestion box positioned relative to this */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+/* input + add button row */
+.typeahead-row {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+/* input fills space */
+.typeahead-row .pd-input { flex: 1 !important; }
+
+/* Suggestion dropdown */
+.typeahead-suggestions {
+  position: absolute !important;
+  top: calc(100% + 8px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  background: #fff !important;
+  border: 1px solid #e6e6e6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+  max-height: 220px !important;
+  overflow-y: auto !important;
+  z-index: 11000 !important; /* above modal body */
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 6px 0 !important;
+}
+
+/* suggestion row */
+.typeahead-suggestions li {
+  padding: 10px 12px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+}
+.typeahead-suggestions li:hover { background: #faf7f2 !important; }
+
+/* small polish */
+.error-message { color: #d32f2f !important; margin-top: 6px !important; }
+.skills-pad { padding: 2px 4px 6px !important; }
+.skills-list { display:flex !important; gap:10px !important; flex-wrap:wrap !important; }
+.skill-chip {
+  display:inline-flex !important;
+  align-items:center !important;
+  background:#FFF0E5 !important;
+  color:#D26B15 !important;
+  border-radius:20px !important;
+  padding:6px 12px !important;
+  font-weight:600 !important;
+  font-size:14px !important;
+}
+.skill-chip .chip-x { margin-left:8px !important; font-weight:800 !important; cursor:pointer !important; }
+
+
+/* === Modal button color override (brand orange) === */
+/* Targets buttons inside modals that use modal-content2 */
+.modal-content2 .btn-primary,
+.modal-content2 button.btn-primary,
+.modal-content2 .btn,
+.modal-content2 button[type="button"],
+.modal-content2 button[type="submit"] {
+  background: linear-gradient(90deg, #F98F11 0%, #E66A0E 100%) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important; /* subtle border */
+  color: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(249,143,17,0.12) !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease !important;
+}
+
+/* Hover / focus / active states */
+.modal-content2 .btn-primary:hover,
+.modal-content2 button.btn-primary:hover,
+.modal-content2 .btn:hover,
+.modal-content2 button[type="button"]:hover,
+.modal-content2 button[type="submit"]:hover {
+  transform: translateY(-2px) !important;
+  filter: brightness(0.97) !important;
+}
+
+.modal-content2 .btn-primary:active,
+.modal-content2 button.btn-primary:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 4px 14px rgba(230,106,14,0.12) !important;
+}
+
+.modal-content2 .btn-primary:focus,
+.modal-content2 button.btn-primary:focus {
+  outline: 3px solid rgba(249,143,17,0.18) !important;
+  outline-offset: 2px !important;
+}
+
+/* Disabled state */
+.modal-content2 .btn-primary[disabled],
+.modal-content2 button.btn-primary[disabled],
+.modal-content2 .btn[disabled] {
+  background: #F5C9A0 !important;
+  color: rgba(255,255,255,0.7) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* If some modals use .btn-outline or .secondary style, convert them too */
+.modal-content2 .btn-outline,
+.modal-content2 .btn-secondary {
+  background: transparent !important;
+  border: 1px solid #F98F11 !important;
+  color: #F98F11 !important;
+  box-shadow: none !important;
+}
+
+/* Make anchor links that look like buttons consistent inside modals */
+.modal-content2 a.btn,
+.modal-content2 a.button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  background: linear-gradient(90deg, #F98F11 0%, #E66A0E 100%) !important;
+  color: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+}
