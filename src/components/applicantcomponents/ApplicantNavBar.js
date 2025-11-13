@@ -369,13 +369,6 @@ function ApplicantNavBar() {
                     </div>
 
                     <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
-
-
-                      <div className="sub-account-item">
-                        <a href="/applicant-view-profile">
-                          <span className="icon-profile" />View Profile
-                        </a>
-                      </div>
                       <div className="sub-account-item">
                         <a href="/applicant-change-password">
                           <span className="icon-change-passwords" /> Change Password
@@ -440,7 +433,7 @@ function ApplicantNavBar() {
           <div id="sidebar-menu">
             <ul className="downmenu list-unstyled" id="side-menu">
 
-              <li>
+              <li id="tour-dashboard">
                 <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
                   <span className="dash-icon" style={{ marginRight: "15px", display: 'flex', alignItems: 'center' }}>
                     <img
@@ -453,18 +446,8 @@ function ApplicantNavBar() {
                   <span className="dash-titles">Dashboard</span>
                 </Link>
               </li>
-              <li>
-                <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" || frompath === "/applicant-view-profile" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M4.125 20.75C3.60933 20.75 3.16792 20.5664 2.80075 20.1992C2.43358 19.8321 2.25 19.3907 2.25 18.875V7.875C2.25 7.35933 2.43358 6.91792 2.80075 6.55075C3.16792 6.18358 3.60933 6 4.125 6H8.15V4.124C8.15 3.608 8.33358 3.16667 8.70075 2.8C9.06792 2.43333 9.50933 2.25 10.025 2.25H13.975C14.4907 2.25 14.9321 2.43358 15.2992 2.80075C15.6664 3.16792 15.85 3.60933 15.85 4.125V6H19.875C20.3907 6 20.8321 6.18358 21.1992 6.55075C21.5664 6.91792 21.75 7.35933 21.75 7.875V18.875C21.75 19.3907 21.5664 19.8321 21.1992 20.1992C20.8321 20.5664 20.3907 20.75 19.875 20.75H4.125ZM10.025 6H13.975V4.125H10.025V6Z"/>
-                  </svg>
-                  </span>
-                  <span className="dash-titles" >Build Portfolio</span>
-                </Link>
-              </li>
-              <li>
-                <Link onClick={hideMenu} to="/applicant-resume" className={location.pathname === "/applicant-resume" ? "tf-effect active" : ""}>
+              <li id="tour-portfolio">
+                <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" ? "tf-effect active" : ""}>
 
                   <span className="dash-icon">
                     <img
@@ -476,8 +459,10 @@ function ApplicantNavBar() {
                   </span>
                   <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
                 </Link>
-                {/*Verified badges */}
+               </li>
+               <li>
                 <Link
+                  id="tour-skill-validation"
                   onClick={hideMenu}
                   to="/applicant-verified-badges"
                   className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
@@ -485,7 +470,6 @@ function ApplicantNavBar() {
                     display: 'inline-flex',
                     alignItems: 'center',
                     textDecoration: 'none',
-                    marginTop: '13px'
                   }}
                 >
                   <span
@@ -504,9 +488,9 @@ function ApplicantNavBar() {
                     />
                   </span>
                   <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Skill validation</span>
-
                 </Link>
                 <Link
+                id="tour-mentor-sphere"
                   onClick={hideMenu}
                   to="/applicant-mentorconnect"
                   className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
@@ -538,6 +522,7 @@ function ApplicantNavBar() {
 
 
                 <Link
+                  id="tour-techbuzz"
                   onClick={hideMenu}
                   to="/applicant-verified-videos"
                   className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
@@ -572,7 +557,7 @@ function ApplicantNavBar() {
                 </Link>
 
               </li>
-              <li>
+              <li id="tour-innovation-arena">
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <img
@@ -586,7 +571,7 @@ function ApplicantNavBar() {
                 </Link>
               </li>
 
-              <li>
+              <li id="tour-techvibes">
                 <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
                   <span className="dash-icon blog-icon">
                     <img

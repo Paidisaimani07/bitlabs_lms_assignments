@@ -75,6 +75,7 @@ const KeySkillsCard = ({ applicantId }) => {
         onClose={() => setOpen(false)}
         onSaved={fetchSkills}
         initialSkills={skills}
+        className="modal-content2 keyskills"
       />
     </div>
   );

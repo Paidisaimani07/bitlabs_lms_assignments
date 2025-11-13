@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -20,7 +20,27 @@ import playStore from "../../images/dashboard/mobilebanners/playstore.png";
 import botImage from '../../images/dashboard/mobilebanners/Bot.png';
 import characterImg from '../../images/dashboard/mobilebanners/Group.png';
 import './ApplicantDashboard.css';
+import GuidedTour from "./GuidedTour";
 
+
+const safeGet = (key) => {
+  if (!key) return null;
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.warn("localStorage get failed", e);
+    return null;
+  }
+};
+
+const safeSet = (key, value) => {
+  if (!key) return;
+  try {
+    localStorage.setItem(key, value);
+  } catch (e) {
+    console.warn("localStorage set failed", e);
+  }
+};
 
 const ApplicantDashboard = () => {
   const { user } = useUserContext();
@@ -39,6 +59,87 @@ const ApplicantDashboard = () => {
   const [imageSrc, setImageSrc] = useState('../images/user/avatar/image-01.jpg');
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
+  const [showTour, setShowTour] = useState(false);
+  const didInitRef = useRef(false);
+
+  // Build unique key for this user's tour flag
+  const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
+
+useEffect(() => {
+    if (didInitRef.current) return; // Prevent re-run
+    if (!user?.id) return;
+
+    didInitRef.current = true;
+
+    // Optional: show tour only on desktop
+    if (window.innerWidth <= 720) return;
+
+    const checkTourStatus = async () => {
+      try {
+        const jwt = localStorage.getItem("jwtToken");
+
+        // 1️⃣ Check local cache first
+        const localSeen = safeGet(TOUR_KEY);
+        if (localSeen === "true") {
+          console.debug("[TOUR] Already seen locally.");
+          return;
+        }
+
+        // 2️⃣ Check backend
+        const res = await axios.get(`${apiUrl}/applicant/${user.id}/tour-seen`, {
+          headers: { Authorization: `Bearer ${jwt}` },
+        });
+
+        const seen = res?.data?.seen === true;
+        console.debug("[TOUR] Server response:", seen);
+
+        if (!seen) {
+          // Delay slightly to ensure the dashboard is rendered
+          setTimeout(() => setShowTour(true), 400);
+        } else {
+          // Save locally for faster next time
+          safeSet(TOUR_KEY, "true");
+        }
+      } catch (error) {
+        console.warn("[TOUR] Failed to fetch server flag:", error);
+        // Fallback to local check
+        const localSeen = safeGet(TOUR_KEY);
+        if (localSeen !== "true") {
+          setTimeout(() => setShowTour(true), 400);
+        }
+      }
+    };
+
+    checkTourStatus();
+  }, [user?.id, TOUR_KEY]);
+
+  // ---------------- HANDLE CLOSE / COMPLETE ----------------
+  const handleTourClose = async () => {
+    if (!user?.id || !TOUR_KEY) {
+      setShowTour(false);
+      return;
+    }
+
+    try {
+      const jwt = localStorage.getItem("jwtToken");
+
+      // Call backend to mark as seen
+      await axios.post(`${apiUrl}/applicant/${user.id}/tour-seen`, null, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+
+      // Save in local cache too
+      safeSet(TOUR_KEY, "true");
+
+      console.debug("[TOUR] Tour marked as seen.");
+    } catch (error) {
+      console.warn("[TOUR] Failed to mark tour as seen on server:", error);
+      // Still store locally to prevent repeat popup
+      safeSet(TOUR_KEY, "true");
+    }
+
+    setShowTour(false);
+  };
 
   useEffect(() => {
     fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
@@ -297,6 +398,57 @@ const ApplicantDashboard = () => {
     navigate("/applicant-interview-prep");
   };
 
+const tourSteps = [
+  {
+    id: "dashboard",
+    selector: "#tour-dashboard",
+    placement: "bottom",
+    text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
+  },
+  {
+    id: "portfolio",
+    selector: "#tour-portfolio",
+    placement: "right",
+    text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
+  },
+  {
+    id: "skills",
+    selector: "#tour-skill-validation",
+    placement: "right",
+    text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
+  },
+  {
+    id: "mentor",
+    selector: "#tour-mentor-sphere",
+    placement: "right",
+    text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
+  },
+  {
+    id: "techbuzz",
+    selector: "#tour-techbuzz",
+    placement: "top",
+    text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
+  },
+  {
+    id: "arena",
+    selector: "#tour-innovation-arena",
+    placement: "left",
+    text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
+  },
+  {
+    id: "techvibes",
+    selector: "#tour-techvibes",
+    placement: "left",
+    text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
+  },
+  {
+    id: "asknewton",
+    selector: "#tour-ask-newton",
+    placement: "top",
+    text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
+  }
+];
+
 
   return (
     <div className="border-style">
@@ -356,7 +508,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Have questions - <span  onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Have questions - <span  onClick={handleRedirect3} id="tour-ask-newton" style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
@@ -796,6 +948,15 @@ const ApplicantDashboard = () => {
         </div>
       )
       }
+   {showTour && (
+  <GuidedTour
+    userId={user.id}
+    open={showTour}
+    onClose={handleTourClose}
+    steps={tourSteps}
+  />
+)}
+
     </div>
   );
 };
