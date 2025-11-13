@@ -506,7 +506,7 @@ const tourSteps = [
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Have questions - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
