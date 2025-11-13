@@ -41,7 +41,7 @@
   }
 }
 
-@media screen and (max-width:500px) {
+@media screen and (max-width:540px) {
   #specificDiv .user-info {
     display: none;
   }
@@ -72,9 +72,15 @@
   content: "Get Started";
 }
 
+@media screen and (max-width: 1600px) {
+  .header-ct-center .robo-container {
+    margin-left: 50px;
+  }
+}
+
 @media screen and (max-width:1302px) {
   .header-ct-center .robo-container {
-    margin-top: -85px;
+    margin-top: -35px;
   }
 }
 
@@ -101,7 +107,7 @@
 }
 
 
-@media screen and (max-width:875px) {
+@media screen and (max-width:900px) {
   .header-ct-center {
     display: none !important;
   }
@@ -119,7 +125,7 @@
 
 
   .sticky-down .robo-container .robo-card {
-    margin-top: -30px !important;
+    margin-top: -20px !important;
     display: flex;
     flex-direction: row;
     height: 40px;

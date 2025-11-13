@@ -1187,6 +1187,18 @@ body.close-sidebar .dashboard.show .dashboard__content {
     margin-top: -23px;
 }
 
+@media screen and (max-width:900px) {
+    .dashboard.show .dashboard__content {
+        margin-top: 5px;
+    }
+}
+
+@media screen and (max-width:768px) {
+    .dashboard.show .dashboard__content {
+        margin-top: -5px !important;
+    }
+}
+
 .dashboard.show-job .dashboard__content {
     margin-left: 70px;
     transition: all 0.2s ease-out;
@@ -4258,10 +4270,6 @@ input[type="radio"]:checked:after {
 @media only screen and (max-width: 1000px) {
     .left-menu {
         top: 73px;
-    }
-
-    .page-title-dashboard {
-        padding: 100px 0 30px;
     }
 
     .page-title-dashboard.style {

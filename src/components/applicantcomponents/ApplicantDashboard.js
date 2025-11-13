@@ -4,16 +4,9 @@ import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
-import character3 from '../../images/dashboard/mobilebanners/Vamshi.png';
 import Nagulmeera from '../../images/dashboard/mobilebanners/mentor1.png';
 import Karunakar from '../../images/dashboard/mobilebanners/karun.png';
 import suhel from '../../images/dashboard/mobilebanners/suhel.png';
-import character4 from '../../images/dashboard/mobilebanners/ArtCard_SKY.png';
-import character5 from '../../images/dashboard/mobilebanners/STK438_carbon_capture.png';
-import character6 from '../../images/dashboard/mobilebanners/Windows 10 Is Dead. Upgrade to One of These Great Windows 11 Laptops.png';
-import character2 from '../../images/dashboard/mobilebanners/Nagul.png';
-import character1 from '../../images/dashboard/mobilebanners/lalitha.png';
 import SmartPhone from "../../images/dashboard/mobilebanners/smartphone.png"
 import appStoreIcon from "../../images/dashboard/mobilebanners/appstoreicon.png";
 import playStore from "../../images/dashboard/mobilebanners/playstore.png";
@@ -45,9 +38,9 @@ const safeSet = (key, value) => {
 const ApplicantDashboard = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
-  const [contRecJobs, setCountRecJobs] = useState(0);
-  const [contAppliedJob, setAppliedJobs] = useState(0);
-  const [contSavedJobs, setSavedJobs] = useState(0);
+  // const [contRecJobs, setCountRecJobs] = useState(0);
+  // const [contAppliedJob, setAppliedJobs] = useState(0);
+  // const [contSavedJobs, setSavedJobs] = useState(0);
   const navigate = useNavigate();
   const userId = user.id
   const [hiredCount, setHiredCount] = useState(null);
@@ -59,6 +52,8 @@ const ApplicantDashboard = () => {
   const [imageSrc, setImageSrc] = useState('../images/user/avatar/image-01.jpg');
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
+  const [mentorLoading, setMentorLoading] = useState(true);
+  const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
 
@@ -259,48 +254,48 @@ useEffect(() => {
     };
     fetchData();
   }, []);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
-      .then((response) => {
-        setCountRecJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
-      .then((response) => {
-        setAppliedJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
-  useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-    axios
-      .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
-      .then((response) => {
-        setSavedJobs(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching team members:', error);
-      });
-  }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
+  //     .then((response) => {
+  //       setCountRecJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
+  //     .then((response) => {
+  //       setAppliedJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
+  // useEffect(() => {
+  //   const jwtToken = localStorage.getItem('jwtToken');
+  //   if (jwtToken) {
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+  //   }
+  //   axios
+  //     .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
+  //     .then((response) => {
+  //       setSavedJobs(response.data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching team members:', error);
+  //     });
+  // }, [user.id]);
 
   useEffect(() => {
     const fetchTestData = async () => {
@@ -320,6 +315,9 @@ useEffect(() => {
 
       } catch (error) {
         console.error('Error fetching test data:', error);
+      }
+      finally {
+        setMentorLoading(false);
       }
     };
 
@@ -344,7 +342,7 @@ useEffect(() => {
     };
     fetchBlogs();
   }, []);
- useEffect(() => {
+  useEffect(() => {
     const fetchTechBuzz = async () => {
       try {
         setTechBuzzLoading(true);
@@ -353,8 +351,8 @@ useEffect(() => {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
 
-
-        const videos = (res.data || []).slice(0, 4).map(v => ({
+        console.log(maxVideos)
+        const videos = (res.data || []).slice(0, maxVideos).map(v => ({
           videoId: v.videoId,
           title: v.title,
           s3url: v.s3url,
@@ -469,7 +467,7 @@ const tourSteps = [
                       height: '50px',
                       width: '100%',
                       overflow: 'hidden',
-
+                      marginTop: '-30px'
                     }}
                   >
                     <div
@@ -508,7 +506,7 @@ const tourSteps = [
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Have questions - <span  onClick={handleRedirect3} id="tour-ask-newton" style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
                           </p>
 
                           <button
@@ -570,89 +568,101 @@ const tourSteps = [
                       <h4 >Realm of Insight</h4>
                       <h4 >Insight Hour</h4>
                     </div>
+                    {mentorLoading ? (
+                      <div className="mentor-skeleton-list">
+                        {[...Array(4)].map((_, idx) => (
+                          <div key={idx} className="mentor-skeleton-item">
+                            <div className="skeleton-avatar"></div>
+                            <div className="skeleton-text short"></div>
+                            <div className="skeleton-text long"></div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="mentor-card-content">
+                        {mentorConnectData?.items
+                          ?.filter((item) => item.status === "Upcoming")
+                          ?.sort((a, b) => {
+                            const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2], a.startTime[0], a.startTime[1]);
+                            const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2], b.startTime[0], b.startTime[1]);
+                            return dateA - dateB;
+                          })
+                          ?.slice(0, 4)
+                          ?.map((item, idx) => {
+                            const dateObj = new Date(item.date[0], item.date[1] - 1, item.date[2]);
+                            const formattedDate = dateObj.toLocaleDateString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                            });
+                            const hours = item.startTime[0];
+                            const minutes = item.startTime[1].toString().padStart(2, "0");
+                            const period = hours >= 12 ? "pm" : "am";
+                            const formattedTime = `${(hours % 12) || 12}:${minutes}${period}`;
 
-                    {mentorConnectData?.items
-                      ?.filter((item) => item.status === "Upcoming")
-                      ?.sort((a, b) => {
-                        const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2], a.startTime[0], a.startTime[1]);
-                        const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2], b.startTime[0], b.startTime[1]);
-                        return dateA - dateB;
-                      })
-                      ?.slice(0, 4)
-                      ?.map((item, idx) => {
-                        const dateObj = new Date(item.date[0], item.date[1] - 1, item.date[2]);
-                        const formattedDate = dateObj.toLocaleDateString("en-GB", {
-                          day: "2-digit",
-                          month: "short",
-                        });
-                        const hours = item.startTime[0];
-                        const minutes = item.startTime[1].toString().padStart(2, "0");
-                        const period = hours >= 12 ? "pm" : "am";
-                        const formattedTime = `${(hours % 12) || 12}:${minutes}${period}`;
+                            // Optional: default static images in order
+                            const defaultImages = [Nagulmeera, Karunakar, Karunakar, suhel];
+                            const defaultImg = defaultImages[idx % defaultImages.length];
 
-                        // Optional: default static images in order
-                        const defaultImages = [Nagulmeera, Karunakar, Karunakar, suhel];
-                        const defaultImg = defaultImages[idx % defaultImages.length];
-
-                        return (
-                          <div  className="hover-scale" onClick={handleRedirectMentor}
-                            key={item.meetingId}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              cursor:"pointer",
-                              padding: "14px 0",
-                              borderBottom: idx !== 3 ? "1px solid #f0f0f0" : "none",
-                            }}
-                          >
-                            <div style={{ flex: 1, display: "flex", alignItems: "center" }}>
-                              <img
-                                src={defaultImg}
-                                alt={item.mentorName}
+                            return (
+                              <div className="hover-scale" onClick={handleRedirectMentor}
+                                key={item.meetingId}
                                 style={{
-                                  width: "32px",
-                                  height: "32px",
-                                  borderRadius: "50%",
-                                  marginRight: "12px",
-                                }}
-                              />
-                              <span
-                                style={{
-                                  fontSize: "12px",
-                                  fontWeight: "500",
-                                  color: "#1A1A1A",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  cursor: "pointer",
+                                  padding: "14px 0",
+                                  borderBottom: idx !== 3 ? "1px solid #f0f0f0" : "none",
                                 }}
                               >
-                                {item.mentorName}
-                              </span>
-                            </div>
+                                <div className="mentor-img-text" style={{ flex: 1, display: "flex", alignItems: "center" }}>
+                                  <img
+                                    src={defaultImg}
+                                    alt={item.mentorName}
+                                    style={{
+                                      width: "32px",
+                                      height: "32px",
+                                      borderRadius: "50%",
+                                      marginRight: "12px",
+                                    }}
+                                  />
+                                  <span
+                                    style={{
+                                      fontSize: "12px",
+                                      fontWeight: "500",
+                                      color: "#1A1A1A",
+                                    }}
+                                  >
+                                    {item.mentorName}
+                                  </span>
+                                </div>
 
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                flex: 1,
-                                textAlign: "center",
-                                color: "#444",
-                              }}
-                            >
-                              {item.title}
-                            </span>
+                                <span
+                                  style={{
+                                    fontSize: "12px",
+                                    flex: 1,
+                                    textAlign: "center",
+                                    color: "#444",
+                                  }}
+                                >
+                                  {item.title}
+                                </span>
 
-                            <span
-                              style={{
-                                fontSize: "12px",
-                                flex: 1,
-                                textAlign: "right",
-                                color: "#444",
-                              }}
-                            >
-                              {formattedDate}, {formattedTime}
-                            </span>
-                          </div>
-                        );
-                      })}
-
+                                <span
+                                  style={{
+                                    fontSize: "12px",
+                                    flex: 1,
+                                    textAlign: "right",
+                                    color: "#444",
+                                  }}
+                                >
+                                  {formattedDate}, {formattedTime}
+                                </span>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    )}
                   </div>
 
                   {/*  My Portfolio */}
@@ -671,12 +681,12 @@ const tourSteps = [
                     </div>
                     <div className="profile-side-section">
                       <div>
-                        <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')}  style={{
-                            borderRadius: "85%",
-                            width: "65px",
-                            height: "65px",
-                            border: "2px solid #EA7B20"
-                          }} />
+                        <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} style={{
+                          borderRadius: "85%",
+                          width: "65px",
+                          height: "65px",
+                          border: "2px solid #EA7B20"
+                        }} />
                         <span className="badges">
                           <img src="./images/dashboard/badge-bronze.png" alt="badge-bronze" width="15px" height="23px" />
                           <img src="./images/dashboard/badge-silver.png" alt="badge-silver" width="15px" height="23px" />
@@ -832,23 +842,29 @@ const tourSteps = [
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
                         // 4 skeleton images
-                        [...Array(4)].map((_, i) => (
+                        [...Array(maxVideos)].map((_, i) => (
                           <div key={i} className="skeleton-thumb"></div>
                         ))
                       ) : techBuzzVideos.length > 0 ? (
                         techBuzzVideos.map((video) => (
-                          <img
-                            key={video.videoId}
-                            src={video.thumbnail_url || "https://via.placeholder.com/120x80?text=No+Img"}
-                            alt={video.title}
-                            onClick={() => navigate(`/applicant-verified-videos?video=${video.videoId}`)}
-                            onError={(e) => (e.target.src = "https://via.placeholder.com/120x80?text=No+Img")}
-                            style={{ cursor: "pointer" }}
-                          />
+                          <div className="video-thumb-container hover-scale" onClick={() => navigate(`/applicant-verified-videos?video=${video.videoId}`)}>
+                            <img
+                              key={video.videoId}
+                              src={video.thumbnail_url || "https://via.placeholder.com/120x80?text=No+Img"}
+                              alt={video.title}
+
+                              onError={(e) => (e.target.src = "https://via.placeholder.com/120x80?text=No+Img")}
+                              style={{ cursor: "pointer" }}
+                            />
+                            <div className="video-overlay">
+                              <div className="play-icon">▶</div>
+                              <div className="video-title">{video.title}</div>
+                            </div>
+                          </div>
                         ))
                       ) : (
                         // Fallback: 4 placeholder images
-                        [...Array(4)].map((_, i) => (
+                        [...Array(maxVideos)].map((_, i) => (
                           <img
                             key={i}
                             src="https://via.placeholder.com/120x80?text=No+Video"
@@ -874,7 +890,7 @@ const tourSteps = [
 
                     <div className="tech-vibes-list">
                       {blogsLoading ? (
-                        // Skeleton
+
                         [...Array(3)].map((_, i) => (
                           <div key={i} className="tech-vibes-item">
                             <div className="skeleton-img"></div>
@@ -890,12 +906,11 @@ const tourSteps = [
                         <p className="no-blogs">No blogs available</p>
                       ) : (
                         blogs.map((blog) => {
-                          // Convert createdAt array to formatted date
                           const formatCreatedAt = (arr) => {
                             if (!arr || !Array.isArray(arr) || arr.length < 3) return 'N/A';
                             const [year, month, day] = arr;
-                            const date = new Date(year, month - 1, day); // month is 0-indexed
-                            return date.toLocaleDateString('en-GB'); // DD/MM/YYYY
+                            const date = new Date(year, month - 1, day);
+                            return date.toLocaleDateString('en-GB');
                           };
                           const handleBlogClick = () => {
                             navigate(`/applicant-blog-list?blog=${blog.id}`);
@@ -907,7 +922,7 @@ const tourSteps = [
                               key={blog.id}
                               className="tech-vibes-item hover-scale"
                               onClick={handleBlogClick}
-                              style={{ cursor: 'pointer' }}
+                              style={{ cursor: 'pointer', padding: '3px 0 0 5px' }}
                               role="button"
                               tabIndex={0}
                               onKeyDown={(e) => {
