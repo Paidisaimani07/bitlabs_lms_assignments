@@ -14,6 +14,7 @@ import Snackbar from "../common/Snackbar";
 import CryptoJS from "crypto-js";
 import ZohoCRMService  from "../zohoCrmComponent/zohoCrm";
 import { saveFcmTokenWeb } from "../../notifications/notificationWeb";
+import { generateToken } from "../../notifications/firebase";
 
 
 function LoginBody({ handleLogin }) {
@@ -97,8 +98,10 @@ function LoginBody({ handleLogin }) {
           console.log("This is response: ", userData);
           console.log("This is token: ", userData.data.jwt);
           localStorage.setItem("jwtToken", userData.data.jwt);
+          const generatedToken = await generateToken()
           try {
-              await saveFcmTokenWeb(userData.id, userData.data.jwt);
+            console.log("generated token", generatedToken)
+              await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
   } catch (error) {
     console.error("⚠️ Failed to save FCM token for web:", error);
   }
