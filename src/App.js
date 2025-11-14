@@ -21,12 +21,12 @@ import CookiePolicy from './components/common/CookiePolicy';
 import TermsOfServices from './components/common/TermsOfServices';
 import ApplicantBasicDetails from './components/applicantcomponents/ApplicantBasicDetails';
 import JobWidget from './components/jobWidget';
-import ChatBotWidget from './ChatBotWidget';
+// import ChatBotWidget from './ChatBotWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 import InterviewPrepPage from './pages/applicantpages/InterviewPrepPage';
 import MentorConnectFeedbackForm from './pages/feedbackpage/MentorConnectFeedbackForm';
 
-import { generateToken, messaging } from './notifications/firebase';
+import {messaging } from './notifications/firebase';
 import { onMessage } from 'firebase/messaging';
 import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
 import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
@@ -37,7 +37,6 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
    useEffect(() => {
-    generateToken();
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
       // ...
