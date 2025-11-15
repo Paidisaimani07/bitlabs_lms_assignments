@@ -1,3 +1,4 @@
+// InterviewPrepPage.js
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
@@ -36,7 +37,6 @@ function InterviewPrepPage() {
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
 
-
   const formatResponse = (rawResponse) => {
     try {
       const jsonResponse = typeof rawResponse === 'string' ? JSON.parse(rawResponse) : rawResponse;
@@ -56,8 +56,6 @@ function InterviewPrepPage() {
       return rawResponse;
     }
   };
-
-
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -105,7 +103,7 @@ function InterviewPrepPage() {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
         setApplicantProfile(resp?.data || null);
-       
+
       } catch (e) {
         console.error('Failed to fetch applicant skills', e);
         setApplicantProfile(null);
@@ -191,7 +189,6 @@ function InterviewPrepPage() {
     }
   };
 
-
   const formatSeconds = (s) => {
     const sec = Math.max(0, Math.floor(s));
     const m = Math.floor(sec / 60);
@@ -249,12 +246,14 @@ function InterviewPrepPage() {
     setIsLoading(true);
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const skillsArray = skillsRequired(applicantProfile);
+      const skillsArrayLocal = skillsRequired(applicantProfile); // ensure correct array
       const postBody = {
+        applicantId: user?.id ?? null,          // <-- IMPORTANT: provide applicantId
+        chatId: currentChatId ?? null,         // <-- provide chatId (may be null for new chat)
         applicantProfile: applicantProfile || {},
         request: queuedMessage,
         basicDetails: applicantProfile?.basicDetails,
-        skillsRequired: skillsArray,
+        skillsRequired: skillsArrayLocal,
         experienceDetails: applicantProfile?.experienceDetails,
         experience: applicantProfile?.experience,
         qualification: applicantProfile?.qualification,
@@ -262,9 +261,16 @@ function InterviewPrepPage() {
         preferredJobLocations: applicantProfile?.preferredJobLocations,
         roles: applicantProfile?.roles,
       };
+
       const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
+
+      // If backend returns chatId, persist it locally
+      if (data?.chatId) {
+        setCurrentChatId(data.chatId);
+      }
+
       const reply = formatResponse(data);
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
 
@@ -281,13 +287,10 @@ function InterviewPrepPage() {
             role: m.sender === 'user' ? 'user' : 'assistant',
             content: m.text,
           }));
-          const payload = {
-            title,
-            savedChat: JSON.stringify({
-              messages: apiMessages,
-              newMessage: { role: 'user', content: queuedMessage },
-            }),
-          };
+         const payload = {
+    title,
+    savedChat: JSON.stringify(apiMessages), // MUST be an array only
+};
           await axios.put(`${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`, payload, {
             headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined,
           });
@@ -295,6 +298,7 @@ function InterviewPrepPage() {
           console.error('Failed to update existing chat (resend):', e);
         }
       }
+
       setQueuedMessage("");
       setIsCoolingDown(false);
       setCooldownRemaining(0);
@@ -326,11 +330,14 @@ function InterviewPrepPage() {
 
     try {
       const jwtToken = localStorage.getItem('jwtToken');
+      const skillsArrayLocal = skillsRequired(applicantProfile);
       const postBody = {
+        applicantId: user?.id ?? null,      // <-- IMPORTANT: include applicantId so backend can set FK
+        chatId: currentChatId ?? null,     // <-- include chatId if present
         applicantProfile: applicantProfile || {},
         request: userMessage,
         basicDetails: applicantProfile?.basicDetails,
-        skillsRequired: applicantProfile?.skillsRequired,
+        skillsRequired: skillsArrayLocal,
         experienceDetails: applicantProfile?.experienceDetails,
         experience: applicantProfile?.experience,
         qualification: applicantProfile?.qualification,
@@ -338,9 +345,16 @@ function InterviewPrepPage() {
         preferredJobLocations: applicantProfile?.preferredJobLocations,
         roles: applicantProfile?.roles,
       };
+
       const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
+
+      // If backend returns chatId for new chat, store it
+      if (data?.chatId) {
+        setCurrentChatId(data.chatId);
+      }
+
       const reply = formatResponse(data);
       setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
 
@@ -358,13 +372,10 @@ function InterviewPrepPage() {
             role: m.sender === 'user' ? 'user' : 'assistant',
             content: m.text,
           }));
-          const payload = {
-            title,
-            savedChat: JSON.stringify({
-              messages: apiMessages,
-              newMessage: { role: 'user', content: userMessage },
-            }),
-          };
+         const payload = {
+  title,
+  savedChat: JSON.stringify(apiMessages),  // must be array
+};
           await axios.put(`${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`, payload, {
             headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined,
           });
@@ -372,6 +383,7 @@ function InterviewPrepPage() {
           console.error('Failed to update existing chat:', e);
         }
       }
+
       setInput("");
     } catch (error) {
       console.error("Chat error:", error);
@@ -522,7 +534,7 @@ function InterviewPrepPage() {
 
       try {
         const payload = {
-          applicantId: user?.id,
+          applicantId: user?.id, // important
           title,
           savedChat: JSON.stringify({ messages: apiMessages }),
         };
@@ -603,7 +615,6 @@ function InterviewPrepPage() {
     }
   };
 
-
   const handleClearChat = () => {
     setMessages([]);
     setShowDropdown(false);
@@ -624,7 +635,7 @@ function InterviewPrepPage() {
       element.style.fontFamily = 'Arial, sans-serif';
       element.style.maxWidth = '800px';
       element.style.margin = '0 auto';
-      
+
       const title = document.createElement('h1');
       title.textContent = chatToExport.title || 'Chat Export';
       title.style.textAlign = 'center';
@@ -640,14 +651,14 @@ function InterviewPrepPage() {
       element.appendChild(date);
 
       const messages = JSON.parse(chatToExport.messages || '[]');
-      
+
       messages.forEach(msg => {
         const messageDiv = document.createElement('div');
         messageDiv.style.marginBottom = '15px';
         messageDiv.style.padding = '10px 15px';
         messageDiv.style.borderRadius = '8px';
         messageDiv.style.maxWidth = '80%';
-        
+
         if (msg.sender === 'user') {
           messageDiv.style.marginLeft = 'auto';
           messageDiv.style.backgroundColor = '#fdf3e9';
@@ -660,14 +671,14 @@ function InterviewPrepPage() {
         const content = document.createElement('div');
         content.innerHTML = msg.content.replace(/\n/g, '<br>');
         messageDiv.appendChild(content);
-        
+
         const time = document.createElement('div');
         time.textContent = new Date(msg.timestamp).toLocaleString();
         time.style.fontSize = '0.8em';
         time.style.color = '#666';
         time.style.marginTop = '5px';
         time.style.textAlign = 'right';
-        
+
         messageDiv.appendChild(time);
         element.appendChild(messageDiv);
       });
@@ -693,14 +704,14 @@ function InterviewPrepPage() {
       const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    
+
       pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
-      
+
       const fileName = `chat_${chatToExport.title || 'export'}_${new Date().toISOString().split('T')[0]}.pdf`
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '_')
         .replace(/(^_|_$)/g, '');
-      
+
       pdf.save(fileName);
     } catch (error) {
       console.error('Error exporting chat:', error);
@@ -709,7 +720,6 @@ function InterviewPrepPage() {
 
   return (
     <div className="border-style">
-
       <div className="blur-border-style"></div>
       <div className="dashboard__content ai-chat-prep" >
         <div className="ai-perp">
@@ -1024,7 +1034,7 @@ function InterviewPrepPage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   );
 }
