@@ -309,133 +309,152 @@ const VerifiedBadges = () => {
   }, [userId]);
 const [aptitudeScore, setAptitudeScore] = useState(0);
 const [technicalScore, setTechnicalScore] = useState(0);
+const [passedBothTests, setPassedBothTests] = useState(false);
 
-  useEffect(() => {
-    if (testData) {
-      const aptitudeTest = testData.find(test => test.testName.toLowerCase().includes('aptitude'));
-      const technicalTest = testData.find(test => test.testName.toLowerCase().includes('technical'));
-      
-      // ✅ Store their scores separately for easy access later
-      setAptitudeScore(aptitudeTest ? aptitudeTest.testScore : 0);
-      setTechnicalScore(technicalTest ? technicalTest.testScore : 0);
+ useEffect(() => {
+  if (!testData) return;
 
-      if (aptitudeTest) {
-        // Prioritize checking if both tests are passed
-        if (aptitudeTest.testStatus.toLowerCase() === 'p' && technicalTest && technicalTest.testStatus.toLowerCase() === 'p') {
-          setCurrentStep(3); // Candidate passed both tests
-          setHideSteps(true); // Hide steps if candidate passed both
-          setTimer(null); // Clear any existing timer
-          setIsDisabled(false); // Ensure button is enabled if both tests are passed
-  
-        } else if (aptitudeTest.testStatus.toLowerCase() === 'f') {
-          setCurrentStep(1); // Candidate failed the aptitude test
-          setHideSteps(false); // Ensure steps are not hidden
-    
-          // Timer logic for failed aptitude test
-          const testDateTime = new Date(
-            aptitudeTest.testDateTime[0], // Year
-            aptitudeTest.testDateTime[1] - 1, // Month (0-based index)
-            aptitudeTest.testDateTime[2], // Day
-            aptitudeTest.testDateTime[3], // Hours
-            aptitudeTest.testDateTime[4], // Minutes
-            aptitudeTest.testDateTime[5] // Seconds
-          );
-          const retakeDate = new Date(testDateTime);
-          retakeDate.setDate(retakeDate.getDate() + 7); // Set retake date to 7 days later
-          retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
-          retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
-    
-          const calculateTimeLeft = () => {
-            const now = new Date();
-            const difference = retakeDate - now;
-    
-            if (difference > 0) {
-              const timeLeft = {
-                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-                seconds: Math.floor((difference % (1000 * 60)) / 1000),
-              };
-              setTimer(timeLeft);
-              setIsTimerComplete(false); // Timer is still counting down
-            } else {
-              setTimer(null); // Timer has ended
-              setIsTimerComplete(true); // Timer completed
-              setIsDisabled(false); // Enable the button when timer ends
-            }
-          };
-    
-          // Initial call and set interval for countdown
-          calculateTimeLeft();
-          const timerInterval = setInterval(calculateTimeLeft, 1000);
-    
-          // Cleanup interval on component unmount
-          return () => clearInterval(timerInterval);
-    
-        } else if (aptitudeTest.testStatus.toLowerCase() === 'p') {
-          // New condition: Passed aptitude test but no technical test taken yet
-          if (!technicalTest || !technicalTest.testStatus) {
-            setCurrentStep(2); // Move to technical test step if it's not taken yet
-            setHideSteps(false); // Ensure steps are not hidden
-            setTimer(null); // No timer is needed as the technical test hasn't been taken
-            setIsDisabled(false); // Enable the button for the technical test
-          } else if (technicalTest.testStatus.toLowerCase() === 'f') {
-            // Candidate failed the technical test
-            setCurrentStep(2); // Candidate passed aptitude but failed technical test
-            setHideSteps(false); // Ensure steps are not hidden
-    
-            // Timer logic for failed technical test
-            const testDateTime = new Date(
-              technicalTest.testDateTime[0], // Year
-              technicalTest.testDateTime[1] - 1, // Month (0-based index)
-              technicalTest.testDateTime[2], // Day
-              technicalTest.testDateTime[3], // Hours
-              technicalTest.testDateTime[4], // Minutes
-              technicalTest.testDateTime[5] // Seconds
-            );
-            const retakeDate = new Date(testDateTime);
-            retakeDate.setDate(retakeDate.getDate() + 7); // Set the retake date to 7 days later
-            retakeDate.setHours(retakeDate.getHours() + 5); // Add 5 hours
-            retakeDate.setMinutes(retakeDate.getMinutes() + 30); // Add 30 minutes
-    
-            const calculateTimeLeft = () => {
-              const now = new Date();
-              const difference = retakeDate - now;
-    
-              if (difference > 0) {
-                const timeLeft = {
-                  days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-                  hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-                  minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-                  seconds: Math.floor((difference % (1000 * 60)) / 1000),
-                };
-                setTimer(timeLeft);
-                setIsTimerComplete(false); // Timer is still counting down
-              } else {
-                setTimer(null); // Timer has ended
-                setIsTimerComplete(true); // Timer completed
-                setIsDisabled(false); // Enable the button when timer ends
-              }
-            };
-    
-            // Initial call and set interval for countdown
-            calculateTimeLeft();
-            const timerInterval = setInterval(calculateTimeLeft, 1000);
-    
-            // Cleanup interval on component unmount
-            return () => clearInterval(timerInterval);
-    
-          } else {
-            // Default to step 1 if no other condition is met
-            setCurrentStep(1);
-            setHideSteps(false);
-            setTimer(null);
-            setIsDisabled(false);
-          }
-        }
+  const aptitudeTest = testData.find(test =>
+    test.testName.toLowerCase().includes("aptitude")
+  );
+
+  const technicalTest = testData.find(test =>
+    test.testName.toLowerCase().includes("technical")
+  );
+
+  // Store scores
+  setAptitudeScore(aptitudeTest ? aptitudeTest.testScore : 0);
+  setTechnicalScore(technicalTest ? technicalTest.testScore : 0);
+
+  // ---------------------------------------------------
+  // ✅ NEW CONDITION: If both tests passed (P) OR score ≥ 60
+  // ---------------------------------------------------
+  // NEW CONDITION — both tests passed or score >= 60
+const bothPassed =
+  aptitudeTest &&
+  technicalTest &&
+  (aptitudeTest.testStatus.toLowerCase() === "p" ||
+    aptitudeTest.testScore >= 60) &&
+  (technicalTest.testStatus.toLowerCase() === "p" ||
+    technicalTest.testScore >= 60);
+
+// UPDATE STATE
+setPassedBothTests(bothPassed);
+
+if (bothPassed) {
+  setCurrentStep(3);
+  setHideSteps(true);
+  setTimer(null);
+  setIsDisabled(false);
+  return;
+}
+  // ---------------------------------------------------
+
+  // --------- APTITUDE FAILED ----------
+  if (aptitudeTest && aptitudeTest.testStatus.toLowerCase() === "f") {
+    setCurrentStep(1);
+    setHideSteps(false);
+
+    const testDateTime = new Date(
+      aptitudeTest.testDateTime[0],
+      aptitudeTest.testDateTime[1] - 1,
+      aptitudeTest.testDateTime[2],
+      aptitudeTest.testDateTime[3],
+      aptitudeTest.testDateTime[4],
+      aptitudeTest.testDateTime[5]
+    );
+
+    const retakeDate = new Date(testDateTime);
+    retakeDate.setDate(retakeDate.getDate() + 7);
+    retakeDate.setHours(retakeDate.getHours() + 5);
+    retakeDate.setMinutes(retakeDate.getMinutes() + 30);
+
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const diff = retakeDate - now;
+
+      if (diff > 0) {
+        setTimer({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / (1000 * 60)) % 60),
+          seconds: Math.floor((diff / 1000) % 60),
+        });
+        setIsTimerComplete(false);
+      } else {
+        setTimer(null);
+        setIsTimerComplete(true);
+        setIsDisabled(false);
       }
+    };
+
+    calculateTimeLeft();
+    const timerInterval = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timerInterval);
+  }
+
+  // --------- APTITUDE PASSED ----------
+  if (aptitudeTest && aptitudeTest.testStatus.toLowerCase() === "p") {
+    // FIRST TIME → technical not taken yet
+    if (!technicalTest || !technicalTest.testStatus) {
+      setCurrentStep(2);
+      setHideSteps(false);
+      setTimer(null);
+      setIsDisabled(false);
+      return;
     }
-  }, [testData]);
+
+    // ---------- TECHNICAL FAILED ----------
+    if (technicalTest.testStatus.toLowerCase() === "f") {
+      setCurrentStep(2);
+      setHideSteps(false);
+
+      const testDateTime = new Date(
+        technicalTest.testDateTime[0],
+        technicalTest.testDateTime[1] - 1,
+        technicalTest.testDateTime[2],
+        technicalTest.testDateTime[3],
+        technicalTest.testDateTime[4],
+        technicalTest.testDateTime[5]
+      );
+
+      const retakeDate = new Date(testDateTime);
+      retakeDate.setDate(retakeDate.getDate() + 7);
+      retakeDate.setHours(retakeDate.getHours() + 5);
+      retakeDate.setMinutes(retakeDate.getMinutes() + 30);
+
+      const calculateTimeLeft = () => {
+        const now = new Date();
+        const diff = retakeDate - now;
+
+        if (diff > 0) {
+          setTimer({
+            days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+            hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+            minutes: Math.floor((diff / (1000 * 60)) % 60),
+            seconds: Math.floor((diff / 1000) % 60),
+          });
+          setIsTimerComplete(false);
+        } else {
+          setTimer(null);
+          setIsTimerComplete(true);
+          setIsDisabled(false);
+        }
+      };
+
+      calculateTimeLeft();
+      const timerInterval = setInterval(calculateTimeLeft, 1000);
+      return () => clearInterval(timerInterval);
+    }
+  }
+
+  // DEFAULT
+  setCurrentStep(1);
+  setHideSteps(false);
+  setTimer(null);
+  setIsDisabled(false);
+}, [testData]);
+
   
   useEffect(() => {
     const handleResize = () => {
@@ -716,296 +735,384 @@ const steps = [
                   <div className="title-dashboard" style={{backgroundColor:''}}>
                     <div className="title-dash flex2" >Skill Validation</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
-                <div style={{ marginTop: "10px", width: "100%"}}>
- {!hideSteps && (
-  <div
-    style={{
-      width: "100%",
-      margin: "0 auto",
-      backgroundColor: "#fff",
-      borderRadius: "12px",
-      padding: "20px",
-      marginLeft: "-20px",
-    }}
-  >
-    {/* Progress Steps */}
+  <div style={{ marginTop: "10px", width: "100%" }}>
+  
+  {/* 👇 CONDITION: if both tests passed, show ONLY congratulations card */}
+  {passedBothTests ? (
     <div
       style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: "#FFF9ED",
+        padding: "25px",
+        borderRadius: "12px",
+        textAlign: "center",
+        marginTop: "20px",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
         width: "100%",
-        position: "relative",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-          maxWidth: "830px",
-          position: "relative",
-        }}
-      >
-        {/* Background Line */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "7%",
-            right: "7%",
-            height: "2px",
-            backgroundColor: "#e0e0e0",
-            zIndex: 1,
-          }}
-        ></div>
+      <img
+        src={verificationIcon}
+        alt="Verified"
+        style={{ width: "80px", marginBottom: "15px" }}
+      />
 
-        {/* Progress Line */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "6%",
-            width: currentStep === 2 ? "42%" : currentStep === 3 ? "80%" : "0%",
-            height: "2px",
-            backgroundColor: "#121212",
-            zIndex: 2,
-            transition: "width 0.3s ease",
-          }}
-        ></div>
+      <h2
+  style={{
+    color: "#F46F16",
+    fontWeight: "700",
+    marginBottom: "5px",
+    fontSize: "clamp(18px, 5vw, 32px)", // ⭐ RESPONSIVE FONT SIZE
+    lineHeight: "1.2"
+  }}
+>
+  🎉 Congratulations!
+</h2>
 
-        {steps.map((step) => (
-          <div
-            key={step.id}
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              backgroundColor:
-                step.id <= currentStep ? "#121212" : "#e0e0e0",
-              color: step.id <= currentStep ? "#fff" : "#6D6969",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "16px",
-              fontWeight: "600",
-              position: "relative",
-              zIndex: 3,
-              margin: "0 10px",
-            }}
-          >
-            {step.id < currentStep ? "✓" : step.id}
-          </div>
-        ))}
-      </div>
+      <p style={{ color: "#333", fontSize: "18px", margin: 0 }}>
+        Your verification is successfully completed.
+      </p>
     </div>
-
-    {/* Step Cards */}
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        width: "100%",
-        marginTop: "10px",
-      }}
-    >
-      {steps.map((step) => (
+  ) : (
+    <>
+      {/* 👇 SHOW STEPPER ONLY WHEN NOT PASSED */}
+      {!hideSteps && (
         <div
-          key={step.id}
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            width: `${100 / steps.length}%`,
+            width: "100%",
+            margin: "0 auto",
+            backgroundColor: "#fff",
+            borderRadius: "12px",
+            padding: "20px",
+            marginLeft: "-20px",
           }}
         >
-          {/* Card */}
+          {/* -------- PROGRESS STEPPER -------- */}
           <div
             style={{
-              width: "56%",
-              maxWidth: "200px",
-              backgroundColor: "#fff",
-              borderRadius: "12px",
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "space-between",
-              padding: "20px 0 0 0",
-              boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
-              border: "1px solid #eaeaea",
-              height: "160px",
+              justifyContent: "center",
+              width: "100%",
               position: "relative",
+              padding: "0 5vw",
             }}
           >
-            <img
-              src={step.icon}
-              alt={step.label}
+            <div
               style={{
-                width: step.id === 3 ? "28%" : "34%",
-                objectFit: "contain",
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+                maxWidth: "900px",
+                position: "relative",
+                alignItems: "center",
               }}
-            />
+            >
+              {/* LEFT SOLID LINE */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "5%",
+                  width: "calc((100% - 10%) / 2)",
+                  height: "3px",
+                  backgroundColor:
+                    currentStep >= 2 ? "#E66A0E" : "#e0e0e0",
+                  zIndex: 1,
+                  transition: "0.3s ease",
+                }}
+              />
 
-            {/* ✅ Button or Score Area */}
-            <div style={{ width: "100%" }}>
-              {step.id !== 3 ? (
-                <>
-                  {currentStep > step.id ? (
-                    // ✅ Show Score Instead of "Completed"
-                    <div
-                      style={{
-                        width: "100%",
-                         background:
-                          "linear-gradient(90deg, #FCAA45 0%, #E66A0E 100%)",
-                        borderBottomLeftRadius: "11px",
-                        borderBottomRightRadius: "11px",
-                        padding: "18px 0",
-                        textAlign: "center",
-                        height: "50px",
-                        marginTop: "8px",
-                        color: "#fff",
-                        fontWeight: "600",
-                        fontSize: "16px",
-                        boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      Score:{" "}
-                      {step.id === 1
-                        ? `${aptitudeScore.toFixed(0)}%`
-                        : step.id === 2
-                        ? `${technicalScore.toFixed(0)}%`
-                        : "0%"}
-                    </div>
-                  ) : (
-                    // Normal buttons for active/locked/retake
-                    <div
-                      onClick={
-                        (isDisabled && currentStep === step.id) ||
-                        currentStep > step.id
-                          ? null
-                          : () => handleTakeTest(step.label)
-                      }
-                      style={{
-                        width: "100%",
-                        backgroundColor:
-                          isDisabled && currentStep === step.id
-                            ? "#9b9b9b" // ⏳ Cooldown
-                            : currentStep === step.id
-                            ? "#121212" // Active
-                            : "#BFBFBF", // Locked
-                        borderBottomLeftRadius: "11px",
-                        borderBottomRightRadius: "11px",
-                        padding: "18px 0",
-                        cursor:
-                          currentStep > step.id ||
-                          (isDisabled && currentStep === step.id)
-                            ? "not-allowed"
-                            : currentStep === step.id
-                            ? "pointer"
-                            : "not-allowed",
-                        transition: "0.3s",
-                        textAlign: "center",
-                        height: "50px",
-                        marginTop: "30px",
-                      }}
-                    >
-                      <p
+              {/* RIGHT DASHED LINE */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: "5%",
+                  width: "calc((100% - 10%) / 2)",
+                  height: "0px",
+                  borderTop:
+                    currentStep === 3
+                      ? "3px solid #E66A0E"
+                      : "3px dashed #bdbdbd",
+                  zIndex: 1,
+                  transition: "0.3s ease",
+                }}
+              />
+
+              {/* CIRCLES */}
+              {steps.map((step, index) => {
+                const isLast = index === steps.length - 1;
+
+                const activeColor = "#E66A0E";
+                const inactiveColor = "#bdbdbd";
+
+                return (
+                  <div
+                    key={step.id}
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "50%",
+                      backgroundColor:
+                        step.id <= currentStep ? activeColor : "#fff",
+                      border: `3px solid ${
+                        step.id <= currentStep ? activeColor : inactiveColor
+                      }`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: "700",
+                      fontSize: "16px",
+                      color:
+                        step.id <= currentStep ? "#fff" : inactiveColor,
+                      zIndex: 3,
+                    }}
+                  >
+                    {/* FLAG ICON FOR LAST STEP */}
+                    {isLast ? (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill={
+                          step.id <= currentStep ? "#fff" : "#bdbdbd"
+                        }
                         style={{
-                          color: "#fff",
-                          margin: 0,
-                          fontSize: "14px",
-                          fontWeight: "600",
+                          display: "block",
                         }}
                       >
-                        {isDisabled && currentStep === step.id
-                          ? "Retake Test"
-                          : currentStep === step.id
-                          ? "Start Test"
-                          : "Coming Soon"}
-                      </p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                // ✅ Special button for Step 3
-                <div
-                  style={{
-                    width: "100%",
-                    backgroundColor:
-                      currentStep >= 3 ? "#28A745" : "#BFBFBF",
-                    borderBottomLeftRadius: "11px",
-                    borderBottomRightRadius: "11px",
-                    padding: "18px 0",
-                    cursor: currentStep >= 3 ? "pointer" : "not-allowed",
-                    transition: "0.3s",
-                    textAlign: "center",
-                    height: "35px",
-                    marginTop: "8px",
-                  }}
-                  onClick={() => {
-                    if (currentStep >= 3) {
-                      console.log("Qualified button clicked");
-                    }
-                  }}
-                >
-                  <p
-                    style={{
-                      color: "#fff",
-                      margin: 0,
-                      fontSize: "14px",
-                      fontWeight: "600",
-                      marginTop: "-15px",
-                    }}
-                  >
-                    {currentStep >= 3 ? "Qualified" : "Locked"}
-                  </p>
-                </div>
-              )}
-
-              {/* Timer BELOW button only for step in cooldown */}
-              {step.id !== 3 && isDisabled && currentStep === step.id && timer && (
-                <div style={{ marginTop: "27px", textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      color: "#F3780D",
-                      marginTop: "40px",
-                      fontSize: "17px",
-                    }}
-                  >
-                    {timer.days > 0 && `${timer.days}d `}
-                    {timer.hours > 0 && `${timer.hours}h `}
-                    {timer.minutes > 0 && `${timer.minutes}m `}
-                    {timer.seconds > 0 &&
-                      timer.hours === 0 &&
-                      timer.days === 0 &&
-                      `${timer.seconds}sec`}
+                        <path
+                          d="M5 2.5V17.5"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                        <path
+                          d="M5 3L14 3.5L11.5 7L14 10.5L5 11"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    ) : step.id < currentStep ? (
+                      "✓"
+                    ) : (
+                      step.id
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })}
             </div>
           </div>
 
-          <p
+          {/* -------- STEP CARDS -------- */}
+          <div
             style={{
-              fontSize: "18px",
-              lineHeight: "1.4",
-              marginTop: "19px",
-              fontWeight: "600",
-              textAlign: "center",
-              color: "#121212",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              width: "100%",
+              marginTop: "10px",
+              overflowX: "auto",
+              whiteSpace: "nowrap",
+              paddingBottom: "10px",
+              gap: "25px",
             }}
           >
-            {step.label}
-          </p>
+            {steps.map((step) => (
+              <div
+                key={step.id}
+                style={{
+                  display: "inline-flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "clamp(180px, 22vw, 260px)",
+                  flexShrink: 0,
+                }}
+              >
+                <div
+                  style={{
+                    width: "85%",
+                    backgroundColor: "#fff",
+                    borderRadius: "12px",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    height: "clamp(150px, 22vw, 200px)",
+                    padding: "20px 0 0 0",
+                    boxShadow: "0px 4px 12px rgba(0,0,0,0.08)",
+                    border: "1px solid #eaeaea",
+                  }}
+                >
+                  <img
+                    src={step.icon}
+                    alt={step.label}
+                    style={{
+                      width: step.id === 3 ? "32%" : "40%",
+                      objectFit: "contain",
+                    }}
+                  />
+
+                  <div style={{ width: "100%", marginTop: "auto" }}>
+                    {step.id !== 3 ? (
+                      currentStep > step.id ? (
+                        <div
+                          style={{
+                            width: "100%",
+                            background:
+                              "linear-gradient(90deg, #FCAA45 0%, #E66A0E 100%)",
+                            borderBottomLeftRadius: "11px",
+                            borderBottomRightRadius: "11px",
+                            padding: "18px 0",
+                            textAlign: "center",
+                            height: "50px",
+                            marginTop: "auto",
+                            color: "#fff",
+                            fontWeight: "600",
+                            fontSize: "16px",
+                          }}
+                        >
+                          Score:{" "}
+                          {step.id === 1
+                            ? `${aptitudeScore.toFixed(0)}%`
+                            : `${technicalScore.toFixed(0)}%`}
+                        </div>
+                      ) : (
+                        <div
+                          onClick={
+                            (isDisabled &&
+                              currentStep === step.id) ||
+                            currentStep > step.id
+                              ? null
+                              : () => handleTakeTest(step.label)
+                          }
+                          style={{
+                            width: "100%",
+                            backgroundColor:
+                              isDisabled &&
+                              currentStep === step.id
+                                ? "#9b9b9b"
+                                : currentStep === step.id
+                                ? "#121212"
+                                : "#BFBFBF",
+                            borderBottomLeftRadius: "11px",
+                            borderBottomRightRadius: "11px",
+                            padding: "18px 0",
+                            textAlign: "center",
+                            height: "50px",
+                            cursor:
+                              currentStep > step.id ||
+                              (isDisabled &&
+                                currentStep === step.id)
+                                ? "not-allowed"
+                                : "pointer",
+                            marginTop: "auto",
+                          }}
+                        >
+                          <p
+                            style={{
+                              color: "#fff",
+                              margin: 0,
+                              fontSize: "14px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            {isDisabled &&
+                            currentStep === step.id
+                              ? "Retake Test"
+                              : currentStep === step.id
+                              ? "Start Test"
+                              : "Coming Soon"}
+                          </p>
+                        </div>
+                      )
+                    ) : (
+                      <div
+                        style={{
+                          width: "100%",
+                          backgroundColor:
+                            currentStep >= 3 ? "#28A745" : "#BFBFBF",
+                          borderBottomLeftRadius: "11px",
+                          borderBottomRightRadius: "11px",
+                          padding: "18px 0",
+                          textAlign: "center",
+                          height: "50px",
+                          marginTop: "auto",
+                          cursor:
+                            currentStep >= 3
+                              ? "pointer"
+                              : "not-allowed",
+                        }}
+                      >
+                        <p
+                          style={{
+                            color: "#fff",
+                            margin: 0,
+                            fontSize: "14px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {currentStep >= 3
+                            ? "Qualified"
+                            : "Locked"}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* TIMER */}
+                {step.id !== 3 &&
+                  isDisabled &&
+                  currentStep === step.id &&
+                  timer && (
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontWeight: "700",
+                          color: "#F3780D",
+                          fontSize: "17px",
+                        }}
+                      >
+                        {timer.days > 0 && `${timer.days}d `}
+                        {timer.hours > 0 && `${timer.hours}h `}
+                        {timer.minutes > 0 && `${timer.minutes}m `}
+                        {timer.seconds > 0 &&
+                          timer.hours === 0 &&
+                          timer.days === 0 &&
+                          `${timer.seconds}sec`}
+                      </div>
+                    </div>
+                  )}
+
+                {/* TITLE */}
+                <p
+                  style={{
+                    fontSize: "17px",
+                    lineHeight: "1.4",
+                    marginTop: "10px",
+                    fontWeight: "600",
+                    textAlign: "center",
+                    color: "#121212",
+                  }}
+                >
+                  {step.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-)}
-
-
+      )}
+    </>
+  )}
 </div>
+
                      {/* */}
 
 
