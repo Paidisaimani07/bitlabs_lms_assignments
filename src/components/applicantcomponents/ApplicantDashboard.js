@@ -61,9 +61,15 @@ const ApplicantDashboard = () => {
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
+  const [dashboardScore, setDashboardScore] = useState(null);
+
 
   // Build unique key for this user's tour flag
   const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
+
+  const applicantId=user.id;
+  const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
+
 
 useEffect(() => {
     if (didInitRef.current) return; // Prevent re-run
@@ -112,6 +118,62 @@ useEffect(() => {
 
     checkTourStatus();
   }, [user?.id, TOUR_KEY]);
+
+  useEffect(() => {
+  const idToUse = applicantId ?? profileData?.applicant?.id;
+  if (idToUse) fetchDashboardScore(idToUse);
+  // optionally re-fetch when applicantId or profileData changes
+}, [applicantId, profileData?.applicant?.id]);
+
+const fetchDashboardScore = async (id) => {
+  if (!id) return setDashboardScore(0);
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+    const { data: scoreRes } = await axios.get(
+      `${SCORE_API}/${id}/getTotalScore`,
+      { headers: { Authorization: `Bearer ${jwtToken}` } }
+    );
+
+    console.debug("Dashboard raw score response:", scoreRes);
+
+    let parsedScore = 0;
+
+    if (scoreRes && typeof scoreRes === "object") {
+      parsedScore = scoreRes.totalScore ?? scoreRes.score ?? 0;
+    } else if (typeof scoreRes === "number") {
+      parsedScore = scoreRes;
+    } else if (typeof scoreRes === "string") {
+      // Prefer patterns like "is <num>" or "score: <num>", else take LAST integer
+      const patterns = [
+        /is\s+(-?\d+)\b/i,
+        /score\s*[:\-]\s*(-?\d+)\b/i,
+        /total\s+score\s+is\s+(-?\d+)\b/i,
+        /total\s+score\s*[:\-]\s*(-?\d+)\b/i
+      ];
+
+      for (const p of patterns) {
+        const m = scoreRes.match(p);
+        if (m) {
+          parsedScore = parseInt(m[1], 10);
+          break;
+        }
+      }
+
+      if (!parsedScore) {
+        const all = scoreRes.match(/-?\d+/g);
+        if (all && all.length) parsedScore = parseInt(all[all.length - 1], 10);
+      }
+
+      parsedScore = Number.isFinite(parsedScore) ? parsedScore : 0;
+    }
+
+    setDashboardScore(parsedScore);
+  } catch (err) {
+    console.warn("Failed to fetch dashboard score:", err?.response || err);
+    setDashboardScore(0);
+  }
+};
+
 
   // ---------------- HANDLE CLOSE / COMPLETE ----------------
   const handleTourClose = async () => {
@@ -387,7 +449,7 @@ useEffect(() => {
   };
 
   const handleRedirectResume = () => {
-    navigate("/applicant-resume");
+    navigate("/applicant-view-profile");
   };
 
   const handleRedirectHackathon = () => {
@@ -712,9 +774,10 @@ const tourSteps = [
                         </span>
                       </div>
                       <div className="portfolio-score-details">
-                        <h3>score</h3>
-                        <p>325</p>
-                      </div>
+                       <h3>score</h3>
+                        <p>{dashboardScore ?? 0}</p>
+                       </div>
+
                     </div>
                     <h3 style={{ color: 'black', fontWeight: 'bold', margin: 0 }}>
                       {(profileData?.basicDetails && profileData?.basicDetails?.firstName) || ''}{' '}
