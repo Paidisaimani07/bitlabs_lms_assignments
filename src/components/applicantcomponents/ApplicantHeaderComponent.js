@@ -5,11 +5,17 @@ import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faPen } from "@fortawesome/free-solid-svg-icons";
 import BasicDetailsEditPopup from "./BasicDetailsEditPopup";
+import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
+
+Modal.setAppElement("#root");
 
 const CARD_API = `${apiUrl}/applicant-card`;
 const PHOTO_GET_API = `${apiUrl}/applicant-image/getphoto`;
-const PHOTO_UPLOAD_API = `${apiUrl}/applicant-image/uploadphoto`;
+// new: score API base
+const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
+
+// NOTE: Upload endpoint used by uploader component: `${apiUrl}/applicant-image/${id}/upload`
 
 const DEFAULT_CARD = {
   applicantId: null,
@@ -25,41 +31,305 @@ const DEFAULT_CARD = {
   score: 0,
 };
 
+/**
+ * UploadImageComponent
+ * - Integrated uploader UI (adapted from the code you provided)
+ * - Accepts `id` (applicant id) and `onSuccess` callback which will be called after successful upload
+ */
+const UploadImageComponent = ({ id, onSuccess, onClose }) => {
+  const [photoFile, setPhotoFile] = useState(null);
+  const [error, setError] = useState("");
+  const [snackbars, setSnackbars] = useState([]);
+  const [fileName, setFileName] = useState("");
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const fileExtension = file.name.split(".").pop().toLowerCase();
+
+    if (["jpeg", "jpg", "png"].includes(fileExtension)) {
+      if (file.size < 5 * 1024 * 1024) {
+        setPhotoFile(file);
+        setFileName(file.name);
+        setError("");
+      } else {
+        setError("File size must be less than 5 MB.");
+        setPhotoFile(null);
+        setFileName("");
+      }
+    } else {
+      setError("Only JPEG and PNG files are allowed.");
+      setPhotoFile(null);
+      setFileName("");
+    }
+  };
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prev) => [...prev, snackbar]);
+  };
+
+  const uploadPhoto = async () => {
+    if (!photoFile) return;
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+      const formData = new FormData();
+      // backend expects field name 'photo' in this uploader implementation
+      formData.append("photo", photoFile);
+
+      const response = await axios.post(`${apiUrl}/applicant-image/${id}/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      console.log("Photo uploaded successfully:", response.data);
+      addSnackbar({ message: "Photo uploaded successfully", type: "success" });
+
+      // call parent success handler (so it can re-fetch photo) and close modal
+      if (typeof onSuccess === "function") {
+        try {
+          await onSuccess();
+        } catch (e) {
+          // ignore parent errors but log
+          console.warn("onSuccess handler failed", e);
+        }
+      }
+
+      // small delay to let user see snackbar if desired, then close uploader
+      if (typeof onClose === "function") onClose();
+    } catch (err) {
+      console.error("Error uploading photo:", err?.response || err);
+      setError("Failed to upload photo. Please try again.");
+      addSnackbar({ message: "Failed to upload photo", type: "error" });
+    }
+  };
+
+  return (
+    <div id="upload-profile" style={{ padding: "20px", maxWidth: "560px", margin: "0 auto" }}>
+      <div style={{ marginBottom: "10px", fontSize: "16px", fontWeight: 600 }}>
+        Upload your profile picture: <span style={{ fontWeight: 400 }}>JPG or PNG (≤ 5 MB)</span>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          backgroundColor: "#F3F4F6",
+          borderRadius: "8px",
+          padding: "2px 12px",
+          marginBottom: "18px",
+          border: "1px solid #D1D5DB",
+          position: "relative",
+        }}
+      >
+        <input
+          type="file"
+          id={`profile-upload-${id}`}
+          accept="image/jpeg, image/png"
+          onChange={handleFileSelect}
+          style={{ display: "none" }}
+        />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#9CA3AF"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)" }}
+        >
+          <path d="M12 20h9" />
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+        </svg>
+
+        <input
+          type="text"
+          value={fileName}
+          readOnly
+          placeholder="No file chosen"
+          style={{
+            flex: 1,
+            padding: "1px 1px 1px 36px",
+            border: "none",
+            borderRadius: "6px",
+            backgroundColor: "transparent",
+            color: fileName ? "#3B82F6" : "#9CA3AF",
+            fontSize: "13px",
+            fontWeight: 500,
+            outline: "none",
+            minWidth: "280px",
+          }}
+        />
+
+        <label
+          htmlFor={`profile-upload-${id}`}
+          style={{
+            backgroundColor: "#6B7280",
+            color: "#fff",
+            padding: "6px 12px",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "12px",
+            fontWeight: 500,
+            whiteSpace: "nowrap",
+          }}
+        >
+          Choose File
+        </label>
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ color: "#6B7280", fontSize: "13px" }}>{error || "\u00A0"}</div>
+        <div>
+          <button
+            type="button"
+            onClick={uploadPhoto}
+            disabled={!photoFile}
+            style={{
+              backgroundColor: photoFile ? "#FB923C" : "#E5E7EB",
+              color: photoFile ? "#fff" : "#9CA3AF",
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: photoFile ? "pointer" : "not-allowed",
+              fontSize: "13px",
+              fontWeight: 500,
+              textTransform: "none",
+            }}
+          >
+            Upload Photo
+          </button>
+        </div>
+      </div>
+
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={() => {
+            const newList = [...snackbars];
+            newList.splice(index, 1);
+            setSnackbars(newList);
+          }}
+          link={snackbar.link}
+          linkText={snackbar.linkText}
+        />
+      ))}
+    </div>
+  );
+};
+
 const ApplicantHeaderComponent = ({ applicantId }) => {
   const [card, setCard] = useState(DEFAULT_CARD);
   const [editOpen, setEditOpen] = useState(false);
+  const [imageModalOpen, setImageModalOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState("../images/user/avatar/profile-pic.png");
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef(null);
 
- const fetchCard = async () => {
+const fetchCard = async () => {
   try {
     if (!applicantId) return;
     const jwtToken = localStorage.getItem("jwtToken");
 
-    // 1) existing card endpoint
+    // 1) Fetch applicant card
     const { data: cardData } = await axios.get(`${CARD_API}/${applicantId}`, {
       headers: { Authorization: `Bearer ${jwtToken}` },
     });
 
-    // 2) fetch score from profile-view
-    let scoreFromProfile = 0;
+    // 2) Fetch SCORE
+    let scoreFromScoresApi = 0;
+
     try {
-      const { data: pv } = await axios.get(
-        `${apiUrl}/applicantprofile/${applicantId}/profile-view`,
+      const { data: scoreRes } = await axios.get(
+        `${SCORE_API}/${applicantId}/getTotalScore`,
         { headers: { Authorization: `Bearer ${jwtToken}` } }
       );
-      scoreFromProfile =
-        pv?.applicant?.overallScore ??
-        pv?.score ??
-        0;
+
+      console.debug("RAW SCORE RESPONSE:", scoreRes);
+
+      // ---------------------------
+      // CASE A: JSON OBJECT
+      // ---------------------------
+      if (scoreRes && typeof scoreRes === "object") {
+        scoreFromScoresApi =
+          scoreRes.totalScore ??
+          scoreRes.score ??
+          0;
+      }
+
+      // ---------------------------
+      // CASE B: NUMBER
+      // ---------------------------
+      else if (typeof scoreRes === "number") {
+        scoreFromScoresApi = scoreRes;
+      }
+
+      // ---------------------------
+      // CASE C: STRING (YOUR CASE)
+      // Example: "Total score for applicant ID 16553 is 4"
+      // ---------------------------
+      else if (typeof scoreRes === "string") {
+        let parsed = 0;
+
+        // Priority patterns → catch the real score
+        const patterns = [
+          /is\s+(-?\d+)\b/i,
+          /score\s*[:\-]\s*(-?\d+)\b/i,
+          /total\s+score\s+is\s+(-?\d+)\b/i,
+          /total\s+score\s*[:\-]\s*(-?\d+)\b/i
+        ];
+
+        for (const regex of patterns) {
+          const match = scoreRes.match(regex);
+          if (match) {
+            parsed = parseInt(match[1], 10);
+            break;
+          }
+        }
+
+        // Fallback → last number in the string (prevents picking ID)
+        if (!parsed) {
+          const allNumbers = scoreRes.match(/-?\d+/g);
+          if (allNumbers?.length) {
+            parsed = parseInt(allNumbers[allNumbers.length - 1], 10);
+          }
+        }
+
+        scoreFromScoresApi = Number.isFinite(parsed) ? parsed : 0;
+      }
     } catch (e) {
-      // profile-view might be absent or not include score; keep default 0
-      console.warn("Score fetch failed; using default 0.", e?.response || e);
+      console.warn("Scores API failed; falling back to profile-view", e?.response || e);
+
+      // FALLBACK SCORE
+      try {
+        const { data: pv } = await axios.get(
+          `${apiUrl}/applicantprofile/${applicantId}/profile-view`,
+          { headers: { Authorization: `Bearer ${jwtToken}` } }
+        );
+
+        scoreFromScoresApi =
+          pv?.applicant?.overallScore ??
+          pv?.score ??
+          scoreFromScoresApi ??
+          0;
+
+      } catch (innerErr) {
+        console.warn("Profile-view failed; using 0", innerErr?.response || innerErr);
+      }
     }
 
-    // Merge with defaults + score
-    setCard({ ...DEFAULT_CARD, ...(cardData || {}), score: scoreFromProfile });
+    // FINAL SET
+    setCard({
+      ...DEFAULT_CARD,
+      ...(cardData || {}),
+      score: scoreFromScoresApi
+    });
   } catch (e) {
     console.error("Failed to load applicant card:", e?.response || e);
     setCard({ ...DEFAULT_CARD });
@@ -67,26 +337,26 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
 };
 
 
+
   const fetchPhoto = async () => {
-  try {
-    if (!applicantId) return;
-    const jwtToken = localStorage.getItem("jwtToken");
-    const res = await axios.get(
-      `${apiUrl}/applicant-image/getphoto/${applicantId}?t=${Date.now()}`,
-      {
+    try {
+      if (!applicantId) return;
+      const jwtToken = localStorage.getItem("jwtToken");
+      // appended timestamp to bust caches
+      const res = await axios.get(`${apiUrl}/applicant-image/getphoto/${applicantId}?t=${Date.now()}`, {
         responseType: "arraybuffer",
         headers: { Authorization: `Bearer ${jwtToken}` },
-      }
-    );
-    const base64 = btoa(
-      new Uint8Array(res.data).reduce((s, b) => s + String.fromCharCode(b), "")
-    );
-    const mime = res.headers["content-type"] || "image/jpeg";
-    setImageSrc(`data:${mime};base64,${base64}`);
-  } catch {
-    setImageSrc("../images/user/avatar/profile-pic.png");
-  }
-};
+      });
+      const base64 = btoa(
+        new Uint8Array(res.data).reduce((s, b) => s + String.fromCharCode(b), "")
+      );
+      const mime = res.headers["content-type"] || "image/jpeg";
+      setImageSrc(`data:${mime};base64,${base64}`);
+    } catch (err) {
+      // fallback to default avatar
+      setImageSrc("../images/user/avatar/profile-pic.png");
+    }
+  };
 
   useEffect(() => {
     fetchCard();
@@ -110,64 +380,17 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
     [card]
   );
 
-  const openFilePicker = () => fileInputRef.current?.click();
-
-const onFileChange = async (e) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
-
-  // basic checks
-  const valid = ["image/png", "image/jpeg", "image/jpg"];
-  if (!valid.includes(file.type)) {
-    alert("Please choose a PNG or JPG image.");
-    e.target.value = "";
-    return;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    alert("Please choose an image ≤ 5 MB.");
-    e.target.value = "";
-    return;
-  }
-
-  // instant preview
-  setImageSrc(URL.createObjectURL(file));
-
-  try {
-    setUploading(true);
-    const jwtToken = localStorage.getItem("jwtToken");
-    const form = new FormData();
-    form.append("image", file); // <-- field name expected by backend
-
-    await axios.post(`${PHOTO_UPLOAD_API}`, form, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        "Content-Type": "multipart/form-data",
-      },
-      params: { applicantid: applicantId }, // <-- id in query string
+  // Format and show "last updated"
+  const updatedOnText = useMemo(() => {
+    if (!card?.lastUpdated) return "Not updated yet";
+    // if backend gave epoch seconds
+    const date = new Date(card.lastUpdated * 1000);
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
     });
-
-    // load the saved version from server/CDN (avoid cached one)
-    await fetchPhoto();
-  } catch (err) {
-    console.error("Photo upload failed:", err?.response || err);
-    alert("Failed to upload photo. Please try again.");
-    await fetchPhoto(); // rollback to server copy/placeholder
-  } finally {
-    setUploading(false);
-    e.target.value = ""; // allow same file re-select
-  }
-};
-
-// Format and show "last updated"
-const updatedOnText = useMemo(() => {
-  if (!card?.lastUpdated) return "Not updated yet";
-  const date = new Date(card.lastUpdated * 1000); // if backend gives epoch seconds
-  return date.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}, [card?.lastUpdated]);
+  }, [card?.lastUpdated]);
 
   return (
     <>
@@ -181,35 +404,29 @@ const updatedOnText = useMemo(() => {
               alt={`${fullName} profile`}
               onError={(e) => (e.currentTarget.src = "../images/user/avatar/profile-pic.png")}
             />
-            {/* Pen / edit button overlay */}
+
+            {/* Pen / edit button overlay (opens image modal) */}
             <button
               type="button"
               className="portfolio-camera-btn"
-              onClick={openFilePicker}
+              onClick={() => setImageModalOpen(true)}
               title={uploading ? "Uploading..." : "Edit photo"}
               disabled={uploading}
             >
               <FontAwesomeIcon icon={faPen} />
             </button>
-           <input
-  ref={fileInputRef}
-  type="file"
-  accept="image/*"                     // broader, still safe
-  style={{ display: "none" }}
-  onChange={onFileChange}
-/>
-
           </div>
 
           <div className="portfolio-meta">
             <div className="portfolio-name-row">
               <h3 className="portfolio-name">{fullName}</h3>
-             <button
-  type="button"
-  className="portfolio-edit-btn"
-  onClick={() => setEditOpen(true)}>
-  Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
-</button>
+              <button
+                type="button"
+                className="portfolio-edit-btn"
+                onClick={() => setEditOpen(true)}
+              >
+                Edit <FontAwesomeIcon icon={faPen} style={{ marginLeft: 6 }} />
+              </button>
             </div>
             <p className="portfolio-role">{roleTitle}</p>
             <p className="portfolio-updated">Portfolio last updated – {updatedOnText}</p>
@@ -244,26 +461,14 @@ const updatedOnText = useMemo(() => {
 
           <div className="portfolio-row">
             <svg className="portfolio-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"
-                stroke="#9E9E9E"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d="M7 2v3M17 2v3M3 9h18M5 5h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="#9E9E9E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <span>{passOutText}</span>
           </div>
 
           <div className="portfolio-row">
             <svg className="portfolio-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path
-                d="M12 22s7-5.686 7-12a7 7 0 0 0-14 0c0 6.314 7 12 7 12Z"
-                stroke="#9E9E9E"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+              <path d="M12 22s7-5.686 7-12a7 7 0 0 0-14 0c0 6.314 7 12 7 12Z" stroke="#9E9E9E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               <circle cx="12" cy="10" r="3" stroke="#9E9E9E" strokeWidth="1.5" />
             </svg>
             <span>{locationText}</span>
@@ -274,18 +479,16 @@ const updatedOnText = useMemo(() => {
         <div className="portfolio-right">
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
-
         </div>
       </div>
 
-      {/* Edit modal */}
+      {/* Edit modal (basic details) */}
       <Modal
         isOpen={editOpen}
         onRequestClose={() => setEditOpen(false)}
         contentLabel="Edit Details"
         className="modal-content2"
         overlayClassName="modal-overlay"
-        ariaHideApp={false}
       >
         <div style={{ position: "absolute", top: 10, right: 20 }}>
           <FontAwesomeIcon
@@ -310,6 +513,33 @@ const updatedOnText = useMemo(() => {
             await fetchCard();
             setEditOpen(false);
           }}
+        />
+      </Modal>
+
+      {/* Image upload modal */}
+      <Modal
+        isOpen={imageModalOpen}
+        onRequestClose={() => setImageModalOpen(false)}
+        contentLabel="Upload Photo"
+        className="modal-content2"
+        overlayClassName="modal-overlay"
+      >
+        <div style={{ position: "absolute", top: 10, right: 20 }}>
+          <FontAwesomeIcon
+            icon={faTimes}
+            onClick={() => setImageModalOpen(false)}
+            style={{ cursor: "pointer", color: "#333" }}
+          />
+        </div>
+
+        <UploadImageComponent
+          id={applicantId}
+          onSuccess={async () => {
+            // re-fetch photo and card to reflect new image (and any server-side changes)
+            await fetchPhoto();
+            await fetchCard();
+          }}
+          onClose={() => setImageModalOpen(false)}
         />
       </Modal>
     </>
