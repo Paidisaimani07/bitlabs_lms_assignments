@@ -444,22 +444,34 @@
 }
 
 
-/* special class for modals that need dropdown to escape (KeySkills) */
+/* you already have this */
 .modal-content2.keyskills {
-  /* remove padding only for the shell; inner content will use .modal-body */
   padding: 0 !important;
   overflow: visible !important; /* allow dropdown to be positioned outside */
 }
-
-/* the modal inner content wrapper used by KeySkills */
 .modal-body {
   background: #fff !important;
   border-radius: 12px !important;
-  padding: 24px !important;    /* same padding restored for inner content */
+  padding: 24px !important;
   max-height: 78vh !important;
   overflow: auto !important;   /* scroll inside the body */
 }
 
+/* Allow suggestions to escape the inner scrolling box when using keyskills modal */
+.modal-content2.keyskills .modal-body {
+  overflow: visible !important;
+}
+
+/* keep suggestions above everything */
+.modal-content2.keyskills .typeahead-suggestions,
+.modal-content2.keyskills .typeahead-suggestions li {
+  z-index: 20000 !important;
+}
+
+
+.typeahead-suggestions {
+  z-index: 20000 !important; /* higher than modal overlay (10000) and modal body (11000) */
+}
 
 /* responsive */
 @media (max-width: 720px) {
