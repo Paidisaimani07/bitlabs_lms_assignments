@@ -769,7 +769,7 @@ const steps = [
 </h2>
 
       <p style={{ color: "#333", fontSize: "18px", margin: 0 }}>
-        Your verification is successfully completed.
+        You are now officially qualified in the Basic Skill Validation Test.
       </p>
     </div>
   ) : (

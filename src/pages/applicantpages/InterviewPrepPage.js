@@ -39,23 +39,19 @@ function InterviewPrepPage() {
 
   const formatResponse = (rawResponse) => {
     try {
-      const jsonResponse = typeof rawResponse === 'string' ? JSON.parse(rawResponse) : rawResponse;
-
-      let responseText = jsonResponse.response || '';
-
-      const nestedResponseMatch = responseText.match(/^\s*{\s*"response"\s*:\s*"([\s\S]*)"\s*}\s*$/);
-      if (nestedResponseMatch && nestedResponseMatch[1]) {
-        responseText = nestedResponseMatch[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
+      if (typeof rawResponse === "object") {
+        return rawResponse.response ?? "";
       }
 
-      console.log(responseText);
-      return responseText;
+      const parsed = JSON.parse(rawResponse);
+      return parsed.response ?? rawResponse;
 
-    } catch (e) {
-      console.error('Error parsing response:', e);
-      return rawResponse;
+    } catch (err) {
+      console.error("formatResponse error:", err);
+      return rawResponse; 
     }
   };
+
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -244,76 +240,62 @@ function InterviewPrepPage() {
   const resendQueuedMessage = async () => {
     if (!queuedMessage) return;
     setIsLoading(true);
+
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const skillsArrayLocal = skillsRequired(applicantProfile); // ensure correct array
+      const jwtToken = localStorage.getItem("jwtToken");
+
       const postBody = {
-        applicantId: user?.id ?? null,          // <-- IMPORTANT: provide applicantId
-        chatId: currentChatId ?? null,         // <-- provide chatId (may be null for new chat)
-        applicantProfile: applicantProfile || {},
+        applicantId: user?.id ?? null,
+        chatId: currentChatId ?? null,
         request: queuedMessage,
-        basicDetails: applicantProfile?.basicDetails,
-        skillsRequired: skillsArrayLocal,
-        experienceDetails: applicantProfile?.experienceDetails,
-        experience: applicantProfile?.experience,
-        qualification: applicantProfile?.qualification,
-        specialization: applicantProfile?.specialization,
-        preferredJobLocations: applicantProfile?.preferredJobLocations,
-        roles: applicantProfile?.roles,
       };
 
-      const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await axios.post(
+        `${apiUrl}/aiPrepModel/postQuery`,
+        postBody,
+        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      );
 
-      // If backend returns chatId, persist it locally
-      if (data?.chatId) {
-        setCurrentChatId(data.chatId);
-      }
+      if (data?.chatId) setCurrentChatId(data.chatId);
 
       const reply = formatResponse(data);
-      setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
+      setMessages(prev => [...prev, { sender: "bot", text: reply }]);
 
       if (currentChatId) {
-        try {
-          const jwtToken2 = localStorage.getItem('jwtToken');
-          const existing = savedChats.find(c => c.id === currentChatId);
-          const title = existing?.title || "Untitled";
-          const updatedMessagesForSave = [
-            ...messages,
-            { sender: "bot", text: reply },
-          ];
-          const apiMessages = updatedMessagesForSave.map(m => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            content: m.text,
-          }));
-         const payload = {
-    title,
-    savedChat: JSON.stringify(apiMessages), // MUST be an array only
-};
-          await axios.put(`${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`, payload, {
-            headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined,
-          });
-        } catch (e) {
-          console.error('Failed to update existing chat (resend):', e);
-        }
+        const jwtToken2 = localStorage.getItem("jwtToken");
+
+        const chatArray = [
+          ...messages.map(m => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            message: m.text,
+            time: new Date().toISOString(),
+          })),
+          { role: "assistant", message: reply, time: new Date().toISOString() }
+        ];
+
+        const payload = {
+          savedChat: JSON.stringify(chatArray)
+        };
+
+        await axios.put(
+          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+          payload,
+          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
+        );
       }
 
       setQueuedMessage("");
-      setIsCoolingDown(false);
       setCooldownRemaining(0);
+      setIsCoolingDown(false);
       clearCooldownTimers();
       setInput("");
-      focusInput();
-    } catch (error) {
-      console.error("Chat error (resend):", error);
-      setMessages((prev) => [
+
+    } catch (err) {
+      console.error("Chat resend error:", err);
+      setMessages(prev => [
         ...prev,
-        { sender: "bot", text: "⚠️ Sorry, I'm having trouble connecting. Please try again." },
+        { sender: "bot", text: "⚠️ Connection error. Try again." }
       ]);
-      setIsCoolingDown(false);
-      setCooldownRemaining(0);
-      clearCooldownTimers();
     } finally {
       setIsLoading(false);
       focusInput();
@@ -325,77 +307,66 @@ function InterviewPrepPage() {
 
     const userMessage = input.trim();
     setIsLoading(true);
-    setMessages((prev) => [...prev, { sender: "user", text: userMessage }]);
+    setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
     focusInput();
 
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const skillsArrayLocal = skillsRequired(applicantProfile);
+      const jwtToken = localStorage.getItem("jwtToken");
+
       const postBody = {
-        applicantId: user?.id ?? null,      // <-- IMPORTANT: include applicantId so backend can set FK
-        chatId: currentChatId ?? null,     // <-- include chatId if present
-        applicantProfile: applicantProfile || {},
-        request: userMessage,
-        basicDetails: applicantProfile?.basicDetails,
-        skillsRequired: skillsArrayLocal,
-        experienceDetails: applicantProfile?.experienceDetails,
-        experience: applicantProfile?.experience,
-        qualification: applicantProfile?.qualification,
-        specialization: applicantProfile?.specialization,
-        preferredJobLocations: applicantProfile?.preferredJobLocations,
-        roles: applicantProfile?.roles,
+        applicantId: user?.id ?? null,
+        chatId: currentChatId ?? null,
+        request: userMessage
       };
 
-      const { data } = await axios.post(`${apiUrl}/aiPrepModel/postQuery`, postBody, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await axios.post(
+        `${apiUrl}/aiPrepModel/postQuery`,
+        postBody,
+        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      );
 
-      // If backend returns chatId for new chat, store it
-      if (data?.chatId) {
-        setCurrentChatId(data.chatId);
-      }
+      if (data?.chatId) setCurrentChatId(data.chatId);
 
       const reply = formatResponse(data);
-      setMessages((prev) => [...prev, { sender: "bot", text: reply }]);
+      setMessages(prev => [...prev, { sender: "bot", text: reply }]);
 
       if (currentChatId) {
-        try {
-          const jwtToken2 = localStorage.getItem('jwtToken');
-          const existing = savedChats.find(c => c.id === currentChatId);
-          const title = existing?.title || "Untitled";
-          const updatedMessagesForSave = [
-            ...messages,
-            { sender: 'user', text: userMessage },
-            { sender: 'bot', text: reply },
-          ];
-          const apiMessages = updatedMessagesForSave.map(m => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            content: m.text,
-          }));
-         const payload = {
-  title,
-  savedChat: JSON.stringify(apiMessages),  // must be array
-};
-          await axios.put(`${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`, payload, {
-            headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined,
-          });
-        } catch (e) {
-          console.error('Failed to update existing chat:', e);
-        }
+        const jwtToken2 = localStorage.getItem("jwtToken");
+
+        const chatArray = [
+          ...messages.map(m => ({
+            role: m.sender === "user" ? "user" : "assistant",
+            message: m.text,
+            time: new Date().toISOString(),
+          })),
+          { role: "user", message: userMessage, time: new Date().toISOString() },
+          { role: "assistant", message: reply, time: new Date().toISOString() }
+        ];
+
+        const payload = {
+          savedChat: JSON.stringify(chatArray)
+        };
+
+        await axios.put(
+          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+          payload,
+          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
+        );
       }
 
       setInput("");
-    } catch (error) {
-      console.error("Chat error:", error);
-      setMessages((prev) => [
+
+    } catch (err) {
+      console.error("Chat error:", err);
+      setMessages(prev => [
         ...prev,
-        {
-          sender: "bot",
-          text: "⚠️ Sorry, I'm having trouble connecting to the server. Please try again in a moment."
-        },
+        { sender: "bot", text: "⚠️ Connection error. Try again." }
       ]);
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+      textInputRef.current?.focus();
+    }, 0);
     }
   };
 
@@ -407,15 +378,6 @@ function InterviewPrepPage() {
     setCurrentChatId(null);
     setShowDropdown(false);
     focusInput();
-  };
-
-  const saveCurrentChat = async () => {
-    if (messages.length === 0) {
-      addSnackbar({ message: 'Nothing to save. Send a message first.', type: 'error' });
-      return;
-    }
-    const defaultTitle = messages[0]?.text?.slice(0, 40) || 'New conversation';
-    setTitleModal({ open: true, mode: 'save', chatId: currentChatId ?? null, value: defaultTitle });
   };
 
   const loadChat = async (id) => {
@@ -431,16 +393,24 @@ function InterviewPrepPage() {
       if (data?.savedChat) {
         try {
           const parsed = JSON.parse(data.savedChat);
-          messagesArr = Array.isArray(parsed?.messages) ? parsed.messages : [];
-        } catch (_) {
+          if (Array.isArray(parsed)) {
+            messagesArr = parsed;
+          } else if (Array.isArray(parsed?.messages)) {
+            messagesArr = parsed.messages;
+          } else {
+            messagesArr = [];
+          }
+        } catch (err) {
+          console.error('Failed to parse savedChat:', err);
           messagesArr = [];
         }
       } else if (Array.isArray(data?.messages)) {
         messagesArr = data.messages;
       }
       const mapped = messagesArr.map((m) => ({
-        sender: m.role === 'user' ? 'user' : 'bot',
-        text: m.content ?? m.text ?? '',
+        sender: (m.role === 'user' || m.sender === 'user') ? 'user' : 'bot',
+        text: m.message ?? m.content ?? m.text ?? '',
+        timestamp: m.time ?? m.timestamp ?? m.createdAt ?? undefined,
       }));
       setMessages(mapped);
     } catch (e) {
@@ -484,85 +454,6 @@ function InterviewPrepPage() {
 
   const closeTitleModal = () => setTitleModal({ open: false, mode: null, chatId: null, value: '' });
 
-  const confirmTitleChange = async () => {
-    const { mode, chatId, value } = titleModal;
-    if (!value?.trim()) {
-      addSnackbar({ message: 'Please enter a title.', type: 'error' });
-      return;
-    }
-    if (isTitleSubmitting) return;
-    setIsTitleSubmitting(true);
-    if (mode === 'rename') {
-      try {
-        await renameChat(chatId, value.trim());
-        closeTitleModal();
-      } finally {
-        setIsTitleSubmitting(false);
-      }
-      return;
-    }
-    if (mode === 'save') {
-      const title = value.trim();
-      const apiMessages = messages.map(m => ({
-        role: m.sender === 'user' ? 'user' : 'assistant',
-        content: m.text,
-      }));
-      const jwtToken = localStorage.getItem('jwtToken');
-
-      if (currentChatId) {
-        try {
-          const payload = {
-            title,
-            savedChat: JSON.stringify({ messages: apiMessages }),
-          };
-          await axios.put(`${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`, payload, {
-            headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-          });
-          const updatedList = savedChats.map(c => c.id === currentChatId ? { ...c, title } : c);
-          setSavedChats(updatedList);
-          persistSavedChats(updatedList);
-          addSnackbar({ message: 'Chat saved successfully', type: 'success' });
-        } catch (e) {
-          console.error('Failed to update existing chat on backend:', e);
-          addSnackbar({ message: 'Failed to save chat. Please try again.', type: 'error' });
-        } finally {
-          setIsTitleSubmitting(false);
-        }
-        closeTitleModal();
-        return;
-      }
-
-      try {
-        const payload = {
-          applicantId: user?.id, // important
-          title,
-          savedChat: JSON.stringify({ messages: apiMessages }),
-        };
-        const { data } = await axios.post(`${apiUrl}/aiPrepChat/saveChat`, payload, {
-          headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-        });
-        const newId = data?.id ?? data?.chatId ?? data?.chatID ?? data?.chat_id ?? Date.now();
-        const newChat = { id: newId, title, createdAt: Date.now() };
-        const updated = [newChat, ...savedChats];
-        setSavedChats(updated);
-        setCurrentChatId(newId);
-        persistSavedChats(updated);
-        addSnackbar({ message: 'Chat saved successfully', type: 'success' });
-      } catch (e) {
-        console.error('Failed to create new chat on backend:', e);
-        const fallbackId = Date.now();
-        const newChat = { id: fallbackId, title, createdAt: Date.now() };
-        const updated = [newChat, ...savedChats];
-        setSavedChats(updated);
-        setCurrentChatId(fallbackId);
-        persistSavedChats(updated);
-        addSnackbar({ message: 'Saved locally. Server error occurred.', type: 'error' });
-      } finally {
-        setIsTitleSubmitting(false);
-        closeTitleModal();
-      }
-    }
-  };
 
   const deleteChat = async (id) => {
     const chat = savedChats.find((c) => c.id === id);
@@ -609,11 +500,15 @@ function InterviewPrepPage() {
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    const msg = input.trim();
+    if (!msg) return;
+    setInput("");          
+    sendMessage(msg);      
+  }
+};
+
 
   const handleClearChat = () => {
     setMessages([]);
@@ -921,16 +816,9 @@ function InterviewPrepPage() {
                     aria-label="Chat input"
                     ref={textInputRef}
                   />
-                  <span style={{ cursor: "pointer" }} onClick={saveCurrentChat}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="13.271" height="17.749" viewBox="0 0 13.271 17.749">
-                      <g id="g5397" transform="translate(-47.773 0.861)">
-                        <path id="path5370" d="M49.684-.861a2.059,2.059,0,0,0-1.911,2.17V15.62a1.13,1.13,0,0,0,1.8,1.02l4.284-3.649a.835.835,0,0,1,1.109,0l4.284,3.649a1.13,1.13,0,0,0,1.8-1.02V1.309a2.059,2.059,0,0,0-1.911-2.17Zm9.5,8.666a.332.332,0,0,1,.22.151.416.416,0,0,1-.071.533l-3.15,2.636a.31.31,0,0,1-.469-.081.416.416,0,0,1,.071-.533l3.15-2.636A.306.306,0,0,1,59.184,7.8Z" transform="translate(0 0)" fill="#d3d3d3" fill-rule="evenodd" />
-                      </g>
-                    </svg>
-                  </span>
                   <span
                     className="interview-prep-send-button"
-                    onClick={sendMessage}
+                    onClick={() => (sendMessage(), setInput(""))}
                     disabled={!input.trim() || isLoading || isCoolingDown}
                     aria-label="Send message"
                   >
@@ -989,52 +877,9 @@ function InterviewPrepPage() {
                 </div>
               </div>
             </div>
-
-            {/* Title Modal (Save/Rename) using existing modal1 styles) */}
-            <div
-              className={`interview-prep-modal ${titleModal.open ? 'interview-prep-modal-show' : ''}`}
-              style={{ display: titleModal.open ? 'flex' : 'none', zIndex: 3000 }}
-              tabIndex="-1"
-              role="dialog"
-              onClick={(e) => { if (e.target === e.currentTarget) closeTitleModal(); }}
-            >
-              <div className="interview-prep-modal-dialog" role="document">
-                <div className="interview-prep-modal-content">
-                  <div className="interview-prep-modal-body">
-                    <label className="interview-prep-modal-label">Save As</label>
-                    <input
-                      type="text"
-                      className="interview-prep-modal-input"
-                      value={titleModal.value}
-                      onChange={(e) => setTitleModal((prev) => ({ ...prev, value: e.target.value }))}
-                      placeholder="Enter a title"
-                    />
-                  </div>
-                  <div className="interview-prep-modal-footer">
-                    <button
-                      type="button"
-                      className="ai-clear-chat"
-                      onClick={closeTitleModal}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className={"ai-new-chat"}
-                      onClick={confirmTitleChange}
-                      disabled={isTitleSubmitting}
-                    >
-                      {isTitleSubmitting ?
-                        (titleModal.mode === 'rename' ? 'Renaming...' : 'Saving...') :
-                        (titleModal.mode === 'rename' ? 'Rename' : 'Save')}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </div> 
+      </div>
     </div>
   );
 }
