@@ -142,7 +142,7 @@
 .interview-prep-chats-list {
     flex: 1;
     overflow-y: auto;
-    max-height: none;
+    min-height: 250px;
     padding-right: 4px;
     padding-right: 4px;
 }
@@ -203,7 +203,7 @@
 .interview-prep-options-menu {
     position: absolute;
     top: 100%;
-    right: -5px;
+    right: -4px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
@@ -358,7 +358,6 @@
 
 .interview-prep-send-button {
     color: white;
-    border-left: 1px solid #BEBEBE;
     padding: 0 10px 0 8px;
     cursor: pointer !important;
     font-weight: 600;
