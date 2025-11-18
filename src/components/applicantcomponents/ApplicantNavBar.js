@@ -1,14 +1,15 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import $ from 'jquery';
-import 'jquery.cookie';
-import 'metismenu';
-import { useState, useEffect, useReducer } from "react";
-import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import ModalLogout from '../common/ModalLogout';
+// src/components/applicant/ApplicantNavBar.jsx
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import $ from "jquery";
+import "jquery.cookie";
+import "metismenu";
+import { useState, useEffect,useRef } from "react";
+import { useUserContext } from "../common/UserProvider";
+import { apiUrl } from "../../services/ApplicantAPIService";
+import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
-import logos from '../../images/profileIcon.png';
-import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
+import logos from "../../images/profileIcon.png";
+import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
 import shape8 from "../../images/dashboard/mobilebanners/power.jpg";
 import shape7 from "../../images/dashboard/mobilebanners/write.jpg";
 import shape6 from "../../images/dashboard/mobilebanners/solar-energy.jpg";
@@ -17,47 +18,86 @@ import shape3 from "../../images/dashboard/mobilebanners/score.jpg";
 import shape4 from "../../images/dashboard/mobilebanners/mentoring.jpg";
 import shape from "../../images/dashboard/mobilebanners/shape.jpg";
 import shape2 from "../../images/dashboard/mobilebanners/curriculum-vitae.jpg";
-import botImage from '../../images/dashboard/mobilebanners/Bot.png';
-import './ApplicantNavBar.css'
-import notificationIcon from '../../images/notificationIcon.svg'
+import botImage from "../../images/dashboard/mobilebanners/Bot.png";
+import botImage1 from "../../images/dashboard/mobilebanners/Bot1.png";
+import "./ApplicantNavBar.css";
+import notificationIcon from "../../images/notificationIcon.svg";
 
 
 function ApplicantNavBar() {
   const location = useLocation();
-  const hideSidebarRoutes = ["/applicant-interview-prep"];
-  const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"]
-  const [isOpen, setIsOpen] = useState(
-    window.innerWidth >= 1302 && !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
-  );
-  const { user } = useUserContext();
-  const [imageSrc, setImageSrc] = useState('');
-  const [alertCount, setAlertCount] = useState(0);
+  const pathname = location.pathname;
   const navigate = useNavigate();
+  const specificDivRef = useRef(null);
+
+  const hideSidebarRoutes = ["/applicant-interview-prep"];
+  const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"];
+
+  const [isOpen, setIsOpen] = useState(
+    window.innerWidth >= 1302 &&
+      !hideSidebarRoutes.some((route) => location.pathname.startsWith(route))
+  );
+
+  const { user } = useUserContext(); // may be null initially
+  const [imageSrc, setImageSrc] = useState("");
+  const [alertCount, setAlertCount] = useState(0);
   const [userData, setUserData] = useState(null);
+  const [requestData, setRequestData] = useState(null);
 
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
+  const [hamburgerClass, setHamburgerClass] = useState("fa fa-bars");
   const frompath = location.state?.from;
-  const { pathname } = useLocation();
 
-  const handleRedirect = () => {
-    navigate("/applicant-interview-prep");
-  };
-
-  const shouldHide = hiddenRoutes.some(route =>
-    location.pathname.startsWith(route)
+  const shouldHideHeader = hiddenRoutes.some((route) =>
+    pathname.startsWith(route)
   );
 
-
-  const toggleSubAccount = () => {
-    setIsSubAccountVisible(!isSubAccountVisible);
+  // Toggle left menu (hamburger)
+  const handleToggleMenu = (e) => {
+    e?.stopPropagation();
+    setIsOpen((s) => !s);
+    if (hamburgerClass === "fa fa-bars") {
+      setHamburgerClass("fa fa-arrow-left");
+      document.body.classList.remove("close-sidebar");
+      document.body.classList.add("grid-handler");
+    } else {
+      setHamburgerClass("fa fa-bars");
+      document.body.classList.add("close-sidebar");
+      document.body.classList.remove("grid-handler");
+    }
   };
 
+  const hideMenu = (e) => {
+    e?.stopPropagation();
+    setIsOpen(window.innerWidth >= 1302);
+    setHamburgerClass("fa fa-bars");
+  };
+
+   useEffect(() => {
+    const onDocClick = (e) => {
+      // if dropdown is open and click is outside the profile wrapper, close it
+      if (isSubAccountVisible) {
+        const el = specificDivRef.current;
+        if (el && !el.contains(e.target)) {
+          setIsSubAccountVisible(false);
+        }
+      }
+    };
+
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
+  }, [isSubAccountVisible]);
+
+  // -------------------------
+  // Window resize + jQuery left menu button initialization
+  // This effect doesn't use user.id, so it can run immediately.
+  // -------------------------
   useEffect(() => {
     const updateSidebarClasses = () => {
-      const shouldHide = hideSidebarRoutes.some(route =>
-        location.pathname === route || location.pathname.startsWith(route + "/")
+      const shouldHide = hideSidebarRoutes.some(
+        (route) =>
+          pathname === route || pathname.startsWith(route + "/")
       );
 
       if (window.innerWidth >= 1301 && !shouldHide) {
@@ -69,71 +109,8 @@ function ApplicantNavBar() {
       }
     };
 
-    window.addEventListener("resize", updateSidebarClasses);
-
-    updateSidebarClasses();
-
-    return () => window.removeEventListener("resize", updateSidebarClasses);
-  }, [pathname]);
-
-  const handleOutsideClick = (event) => {
-    const accountElement = document.querySelector(".account");
-
-    if (accountElement && !accountElement.contains(event.target)) {
-
-      setIsSubAccountVisible(false);
-    }
-  };
-
-  document.addEventListener("click", handleOutsideClick);
-
-  const [requestData, setRequestData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-
-        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
-
-        const newData = {
-          identifier: response.data.email,
-          password: response.data.password
-        };
-        console.log(response.data)
-
-        setRequestData(newData);
-      } catch (error) {
-        console.error('Error updating profile status:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-
-  const handleToggleMenu = e => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-    if (hamburgerClass === 'fa fa-bars') {
-      setHamburgerClass('fa fa-arrow-left');
-      document.body.classList.remove("close-sidebar");
-      document.body.classList.add("grid-handler");
-    } else {
-      setHamburgerClass('fa fa-bars');
-      document.body.classList.add("close-sidebar");
-      document.body.classList.remove("grid-handler");
-    }
-  };
-
-
-  const hideMenu = e => {
-    e.stopPropagation();
-    setIsOpen(window.innerWidth >= 1302);
-    setHamburgerClass('fa fa-bars');
-  };
-
-  useEffect(() => {
     const handleResize = () => {
-      const shouldHide = hideSidebarRoutes.some(route =>
+      const shouldHide = hideSidebarRoutes.some((route) =>
         pathname.startsWith(route)
       );
 
@@ -144,7 +121,6 @@ function ApplicantNavBar() {
       } else {
         const open = window.innerWidth >= 1302;
         setIsOpen(open);
-
         if (open) {
           document.body.classList.remove("close-sidebar");
           document.body.classList.add("grid-handler");
@@ -157,10 +133,13 @@ function ApplicantNavBar() {
       setHamburgerClass("fa fa-bars");
     };
 
-    window.addEventListener("resize", handleResize);
+    // init
+    updateSidebarClasses();
     handleResize();
+    window.addEventListener("resize", handleResize);
 
-    $("#left-menu-btn").on("click", function (e) {
+    // jQuery left-menu-btn behaviour
+    const leftBtnHandler = function (e) {
       e.preventDefault();
       if ($("body").hasClass("sidebar-enable")) {
         $("body").removeClass("sidebar-enable");
@@ -175,470 +154,521 @@ function ApplicantNavBar() {
         $("body").removeClass("show-job");
         $.cookie("isButtonActive", null);
       }
-    });
+    };
 
-    if ($.cookie("isButtonActive") == 1) {
+    $("#left-menu-btn").on("click", leftBtnHandler);
+    if ($.cookie("isButtonActive") === "1") {
       $("body").addClass("sidebar-enable show-job");
     }
 
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      $("#left-menu-btn").off("click", leftBtnHandler);
+    };
+    // we intentionally depend on pathname so the layout updates when route changes
+  }, [pathname]);
+
+  // -------------------------
+  // Fetch user-related data (only once user is available)
+  // All calls guarded by `if (!user || !user.id) return`
+  // -------------------------
+  useEffect(() => {
+    if (!user || !user.id) return;
+
+    // fetch profile image
+    let isMounted = true;
     fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
       },
     })
-      .then(response => response.blob())
-      .then(blob => {
+      .then((response) => {
+        if (!response.ok) throw new Error("Image fetch failed");
+        return response.blob();
+      })
+      .then((blob) => {
+        if (!isMounted) return;
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
       })
       .catch(() => {
-        setImageSrc('../images/user/avatar/image-01.jpg');
+        if (!isMounted) return;
+        setImageSrc("../images/user/avatar/image-01.jpg");
       });
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      $("#left-menu-btn").off("click");
-    };
-  }, [pathname, user.id]);
+    // fetch requestData (applicant details)
+    (async () => {
+      try {
+        const resp = await axios.get(
+          `${apiUrl}/applicant/getApplicantById/${user.id}`,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem("jwtToken")}` },
+          }
+        );
+        // keep whole response data (don't overwrite user context)
+        if (isMounted) setRequestData(resp.data || null);
+      } catch (err) {
+        console.error("Error fetching applicant details:", err);
+      }
+    })();
 
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  // fetch unread alert count when user and location.key change
+  useEffect(() => {
+    if (!user || !user.id) return;
+
+    const fetchAlertCount = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        );
+        setAlertCount(response.data);
+      } catch (error) {
+        console.error("Error fetching alert count:", error);
+      }
+    };
+
+    fetchAlertCount();
+  }, [location.key, user]);
+
+  // pick up userData from localStorage (poll only until available)
+  useEffect(() => {
+    let intervalId = null;
+    // only poll if userData not yet set (rare)
+    if (!userData) {
+      intervalId = setInterval(() => {
+        const storedData = localStorage.getItem("userData");
+        if (storedData) {
+          try {
+            setUserData(JSON.parse(storedData));
+            clearInterval(intervalId);
+          } catch (e) {
+            // invalid JSON — ignore
+            clearInterval(intervalId);
+          }
+        }
+      }, 200);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [userData]);
 
   const handleLogout = () => {
-    console.log('Logout button clicked');
     try {
-
-      localStorage.removeItem('jwtToken');
-      localStorage.removeItem('user');
-      localStorage.removeItem('userType');
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userType");
       window.location.href = "https://www.bitlabs.in/jobs";
     } catch (error) {
-      console.error('Logout failed', error);
+      console.error("Logout failed", error);
     }
   };
 
-  useEffect(() => {
-    fetchAlertCount();
-  }, [location.key]);
+  // -------------------------
+  // Derived display values (safe)
+  // -------------------------
+  const displayName = (() => {
+    const d = requestData || userData || {};
+    if (d.firstName || d.lastName) return `${d.firstName || ""} ${d.lastName || ""}`.trim();
+    if (user?.username) return user.username;
+    // try other fields if available
+    if (d.identifier) return d.identifier;
+    return "Applicant";
+  })();
 
-  const fetchAlertCount = async () => {
-    try {
-      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
-      setAlertCount(response.data);
-    } catch (error) {
-      console.error('Error fetching alert count:', error);
-    }
-  }
+  const displayLocation = (() => {
+    const d = requestData || userData || {};
+    if (d.location) return d.location;
+    if (d.city || d.state) return [d.city, d.state].filter(Boolean).join(", ");
+    return "Location not set";
+  })();
 
-  useEffect(() => {
-    const checkUserData = setInterval(() => {
-      const storedData = localStorage.getItem("userData");
-      if (storedData) {
-        setUserData(JSON.parse(storedData));
-        clearInterval(checkUserData);
-      }
-    }, 200);
-    console.log(userData)
-    return () => clearInterval(checkUserData);
-  }, [user.id]);
-
+  // stop propagation for the left-sub-account click (so clicking items inside won't close)
+  const onLeftAccountClick = (e) => {
+    e.stopPropagation();
+  };
 
   return (
     <div>
-      <div className="menu-mobile-popup">
-        <div className="modal-menu__backdrop" />
-        <div className="widget-filter">
-          <div className="mobile-header">
-            <div id="logo" className="logo">
-              <a href="/applicanthome">
-                <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
-              </a>
-            </div>
-            <a className="title-button-group">
-              <i className="icon-close" />
-            </a>
-          </div>
-          <div className="header-customize-item button">
-            <a href="/applicant-update-profile">Upload Resume</a>
-          </div>
-        </div>
-      </div>
-      <header id="header" className="header header-default ">
+      {/* Top header: kept minimal, removed notify bell & specificDiv area per your request */}
+      <header id="header" className="header header-default">
         <div className="tf-container ct2">
           <div className="row">
             <div className="col-md-12">
               <div className="sticky-area-wrap">
                 <div className="header-ct-left">
                   {window.innerWidth < 2000 && (
-                    <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
-
+                    <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu} />
                   )}
-                  <span style={{ width: '20px', height: '2px' }}></span>
+                  <span style={{ width: "20px", height: "2px" }} />
                   <div id="logo" className="logo">
                     <a href="/applicanthome">
-                      <img
-                        className="site-logo"
-
-                        src={logos}
-                        alt="Image"
-                      />
+                      <img className="site-logo" src={logos} alt="Image" />
                     </a>
-
                   </div>
-
                 </div>
+
+                {/* center robo (unchanged) */}
+{/*                 
                 <div className="header-ct-center">
-                  {!shouldHide && (
-                    <div className="display-flex robo-container" >
+                  {!shouldHideHeader && (
+                    <div className="display-flex robo-container">
                       <div className="robo-card">
                         <div className="container1">
-
                           <div className="robo-img-nav">
                             <span>
-                              <img
-                                src={botImage}
-                                alt="Bot icon"
-                                width="150px"
-                                height="250px"
-                              />
+                              <img src={botImage} alt="Bot icon" width="150px" height="250px" />
                             </span>
                           </div>
 
                           <div className="robo-card-text">
                             <p className="robo-card-para">
-                              Got a doubt? - <span onClick={handleRedirect} style={{ fontSize: "18px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                              Got a doubt? -{" "}
+                              <span
+                                onClick={() => navigate("/applicant-interview-prep")}
+                                style={{ fontSize: "18px", fontWeight: 1200, color: "#7E3601" }}
+                              >
+                                Ask Newton!
+                              </span>
                             </p>
 
-                            <button
-                              onClick={handleRedirect}
-                            >
-                            </button>
-
+                            <button onClick={() => navigate("/applicant-interview-prep")} />
                           </div>
-
                         </div>
                       </div>
-                    </div>)}
-                </div>
-                <div className="header-ct-right">
-                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
-                    <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-
-                      <span className="notify-bell">
-                        <img src={notificationIcon} />
-                        {alertCount > 0 && (
-                          <span class="notify-count position-absolute top-0 start-100 translate-middle badge rounded-pill">
-                            {alertCount}
-                            <span class="visually-hidden">unread messages</span>
-                          </span>
-                        )}
-                      </span>
-
-
-                    </Link>
-                  </div>
-
-
-                  <div id="specificDiv" className="header-customize-item account">
-
-                    <div className="profile-icon"><img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onClick={toggleSubAccount} onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} /></div>
-                    {userData && (
-                      <div className="user-info">
-                        <p>Hi,</p>
-                        <h6 className="user-name">
-                          {userData.firstName} {userData.lastName}
-                        </h6>
-                        <p className="user-email">{userData.identifier}</p>
-                      </div>
-                    )}
-                    <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                      >
-                        <path
-                          d="M11.9998 14.6038C11.8844 14.6038 11.7769 14.5833 11.6773 14.5423C11.5776 14.5013 11.4851 14.4365 11.3998 14.348L6.96602 9.91451C6.82769 9.77918 6.75894 9.61601 6.75977 9.42501C6.76077 9.23401 6.83211 9.07026 6.97377 8.93376C7.11544 8.79709 7.27894 8.72876 7.46427 8.72876C7.64944 8.72876 7.81027 8.79709 7.94677 8.93376L11.9998 12.9865L16.0528 8.93376C16.1828 8.80359 16.342 8.73693 16.5305 8.73376C16.719 8.73043 16.8841 8.79709 17.0258 8.93376C17.1674 9.07026 17.2404 9.23243 17.2445 9.42026C17.2487 9.60809 17.1799 9.77284 17.0383 9.91451L12.6045 14.348C12.516 14.4365 12.4219 14.5013 12.3223 14.5423C12.2226 14.5833 12.1151 14.6038 11.9998 14.6038Z"
-                          fill="#5F6368"
-                        />
-                      </svg>
                     </div>
+                  )}
+                </div> */}
 
-                    <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
-                      <div className="sub-account-item">
-                        <a href="/applicant-change-password">
-                          <span className="icon-change-passwords" /> Change Password
-                        </a>
-                      </div>
-                      <div className="sub-account-item">
-
-                        <NotificationToggleWeb className="icon-change-passwords" />
-                      </div>
-                      <div className="sub-account-item">
-
-                        <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
-
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+                {/* header right intentionally left minimal (per your request) */}
+                <div className="header-ct-right" aria-hidden="true" />
               </div>
-              <div className='sticky-down' onClick={handleRedirect}>
-                {!shouldHide && (
-                  <div className="display-flex robo-container" >
+
+              {/* mobile sticky-down */}
+              <div className="sticky-down" onClick={() => navigate("/applicant-interview-prep")}>
+                {!shouldHideHeader && (
+                  <div className="display-flex robo-container">
                     <div className="robo-card">
                       <div className="container1">
-
                         <div className="robo-img-nav">
                           <span>
-                            <img
-                              src={botImage}
-                              alt="Bot icon"
-                              width="100px"
-                              height="250px"
-                            />
+                            <img src={botImage} alt="Bot icon" width="100px" height="250px" />
                           </span>
                         </div>
 
                         <marquee className="robo-card-text">
                           <p className="robo-card-para">
-                            Got a doubt? - <span onClick={handleRedirect} style={{ fontSize: "14px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Got a doubt? -{" "}
+                            <span style={{ fontSize: "14px", fontWeight: 1200, color: "#7E3601" }}>
+                              Ask Newton!
+                            </span>
                           </p>
 
-                          <button
-                            onClick={handleRedirect}
-                          >
-                            Get Started
-                          </button>
-
+                          <button onClick={() => navigate("/applicant-interview-prep")}>Get Started</button>
                         </marquee>
-
                       </div>
                     </div>
-                  </div>)}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
-
       </header>
-      {(
-        <div className={`left-menu ${isOpen ? 'open' : ''}`}>
-          <div id="sidebar-menu">
-            <ul className="downmenu list-unstyled" id="side-menu">
 
-              <li id="tour-dashboard">
-                <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" style={{ marginRight: "15px", display: 'flex', alignItems: 'center' }}>
-                    <img
-                      src={shape}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                  <span className="dash-titles">Dashboard</span>
-                </Link>
-              </li>
-              <li id="tour-portfolio">
-                <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" ? "tf-effect active" : ""}>
-
-                  <span className="dash-icon">
-                    <img
-                      src={shape2}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
-                </Link>
-               </li>
-               <li>
-                <Link
-                  id="tour-skill-validation"
-                  onClick={hideMenu}
-                  to="/applicant-verified-badges"
-                  className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span
-                    className="dash-icon"
-                    style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
-                    }}
-                  >
-                    <img
-                      src={shape3}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Skill validation</span>
-                </Link>
-                <Link
-                id="tour-mentor-sphere"
-                  onClick={hideMenu}
-                  to="/applicant-mentorconnect"
-                  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
-                    marginTop: '13px'
-                  }}
-                >
-                  <span
-                    className="dash-icon"
-                    style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
-                    }}
-                  >
-                    <img
-                      src={shape4}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-
-                  </span>
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Mentor sphere</span>
-                </Link>
-
-
-                <Link
-                  id="tour-techbuzz"
-                  onClick={hideMenu}
-                  to="/applicant-verified-videos"
-                  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
-                    marginTop: '13px'
-                  }}
-                >
-                  <span
-                    className="dash-icon"
-                    style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
-                    }}
-                  >
-                    <img
-                      src={shape5}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>
-                    Tech buzz shorts
-                  </span>
-
-
-                </Link>
-
-              </li>
-              <li id="tour-innovation-arena">
-                <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
-                  <span className="dash-icon">
-                    <img
-                      src={shape6}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Innovation arena</span>
-                </Link>
-              </li>
-
-              <li id="tour-techvibes">
-                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
-                  <span className="dash-icon blog-icon">
-                    <img
-                      src={shape7}
-                      alt="Dashboard Icon"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Tech vibes</span>
-                </Link>
-              </li>
-
-            </ul>
-
-            {/* Logout Button */}
-            <div style={{ marginTop: 'auto' }}>
-              <div
-                onClick={() => setShowModal(true)}
+      {/* LEFT MENU */}
+      <div className={`left-menu ${isOpen ? "open" : ""}`}>
+        <div id="sidebar-menu">
+          {/* Profile area inside left nav (photo, name, location, caret to show sub-menu) */}
+           <div
+            id="specificDivm"
+            ref={specificDivRef}                    // <<< attach ref here
+            style={{ padding: 0 }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px" }}>
+              <img
+                src={imageSrc || "../images/user/avatar/image-01.jpg"}
+                alt="Avatar"
+                width={52}
+                height={52}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  transition: 'all 0.3s ease',
-                  margin: '0 10px'
+                  borderRadius: "50%",
+                  border: "2px solid #FFE2C4",
+                  objectFit: "cover",
+                  cursor: "pointer",
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.querySelector('img').style.filter = 'none';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.querySelector('img').style.filter = 'none';
-                }}
-              >
-                <div style={{
-                  width: '24px',
-                  height: '24px',
-                  marginRight: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <img
-                    src={shape8}
-                    alt="Dashboard Icon"
-                    width="24"
-                    height="24"
-                  />
+                onClick={() => navigate("/applicant-view-profile")}
+                onError={() => setImageSrc("../images/user/avatar/image-01.jpg")}
+              />
 
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="left-name" style={{ fontWeight: 700, fontSize: 14, display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ lineHeight: 1 }}>
+                    <div style={{ fontSize: 12, color: "#777" }}>Hi,</div>
+                    <div style={{ fontWeight: 800 }}>{displayName}  <button
+                    className="profile-caret-btn"
+                    aria-expanded={isSubAccountVisible}
+                    onClick={(e) => {
+                      e.stopPropagation();               // avoid immediate outside-click effect
+                      setIsSubAccountVisible((s) => !s);
+                    }}
+                    title="Account options"
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      padding: 6,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24">
+                      <path d="M7 10l5 5 5-5z" fill="#6b6b6b" />
+                    </svg>
+                  </button></div>
+                  </div>
+
+                  {/* caret button aligned to right of the name block */}
+                
                 </div>
-                <span className="dash-titles" style={{ color: '#1A1A17' }}>Logout</span>
+                {/* optionally show location below name (commented currently) */}
+                {/* <div className="left-location" style={{ color: "#777", fontSize: 13 }}>{displayLocation}</div> */}
               </div>
             </div>
 
-          </div>
-        </div>
-      )}
-      <ModalLogout
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={handleLogout}
-      />
+            {/* sub menu that drops down from profile */}
+            <div
+              className={`left-sub-account ${isSubAccountVisible ? "show" : ""}`}
+              onClick={(e) => e.stopPropagation()}   // keep clicks inside from bubbling to document
+              style={{
+                display: isSubAccountVisible ? "block" : "none",
+                padding: "8px 12px",
+                background: "#fff",
+                borderRadius: 8,
+                boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                margin: "0 12px 12px",
+                zIndex: 1200,
+                minWidth: 200
+              }}
+            >
+              {/* Change password item - use an inline svg icon + label so everything aligns */}
+              <div
+                className="item"
+                onClick={() => {
+                  setIsSubAccountVisible(false);
+                  window.location.href = "/applicant-change-password";
+                }}
+                style={{ padding: "8px 6px", cursor: "pointer" }}
+              >
+                <span className="item-icon" aria-hidden="true" style={{ display: "inline-flex", alignItems: "center" }}>
+                  {/* small lock svg */}
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 10v-2a6 6 0 1 1 12 0v2" stroke="#6b6b6b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="4" y="10" width="16" height="10" rx="2" stroke="#6b6b6b" strokeWidth="2.2"/>
+                  </svg>
+                </span>
+                <span className="item-label">Change Password</span>
+              </div>
 
+              {/* Notifications mute/unmute item - NotificationToggleWeb now returns an inline friendly layout */}
+              <div className="item" style={{ padding: "8px 6px", cursor: "pointer" }}>
+                <NotificationToggleWeb compactLabel={true} />
+              </div>
+            </div>
+          </div>
+          {/* Navigation items */}
+          <ul className="downmenu list-unstyled" id="side-menu" style={{ paddingTop: 8 }}>
+            <li id="tour-dashboard">
+              <Link
+                onClick={hideMenu}
+                to="/applicanthome"
+                className={pathname === "/applicanthome" ? "tf-effect active" : ""}
+              >
+                <span className="dash-icon" style={{ marginRight: 15, display: "flex", alignItems: "center" }}>
+                  <img src={shape} alt="Dashboard Icon" width="24" height="24" />
+                </span>
+                <span className="dash-titles">Dashboard</span>
+              </Link>
+            </li>
+
+            <li id="tour-portfolio">
+              <Link
+                onClick={hideMenu}
+                to="/applicant-view-profile"
+                className={pathname === "/applicant-view-profile" ? "tf-effect active" : ""}
+              >
+                <span className="dash-icon">
+                  <img src={shape2} alt="Dashboard Icon" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                  Build portfolio
+                </span>
+              </Link>
+            </li>
+           <li id="tour-ask-newton">
+            <div
+               
+              >
+              <Link
+                onClick={hideMenu}
+                to="/applicant-interview-prep"
+                className={pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}
+              >
+                <span className="dash-icon">
+                 <img src={botImage1} alt="Ask Newton" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                  Ask Newton
+                </span>
+              </Link>
+
+              </div>
+             
+            </li>
+            <li>
+              <Link
+                id="tour-skill-validation"
+                onClick={hideMenu}
+                to="/applicant-verified-badges"
+                className={pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
+                style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
+              >
+                <span className="dash-icon" style={{ marginRight: 12 }}>
+                  <img src={shape3} alt="Skill" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ color: "#333", fontSize: 16, textTransform: "none" }}>
+                  Skill validation
+                </span>
+              </Link>
+
+              <Link
+                id="tour-mentor-sphere"
+                onClick={hideMenu}
+                to="/applicant-mentorconnect"
+                className={pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
+                style={{ display: "inline-flex", alignItems: "center", marginTop: 13 }}
+              >
+                <span className="dash-icon" style={{ marginRight: 12 }}>
+                  <img src={shape4} alt="Mentor" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ color: "#333", fontSize: 16 }}>
+                  Mentor sphere
+                </span>
+              </Link>
+
+              <Link
+                id="tour-techbuzz"
+                onClick={hideMenu}
+                to="/applicant-verified-videos"
+                className={pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
+                style={{ display: "inline-flex", alignItems: "center", marginTop: 13 }}
+              >
+                <span className="dash-icon" style={{ marginRight: 12 }}>
+                  <img src={shape5} alt="Videos" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ color: "#333", fontSize: 16 }}>
+                  Tech buzz shorts
+                </span>
+              </Link>
+            </li>
+
+            <li id="tour-innovation-arena">
+              <Link
+                onClick={hideMenu}
+                to="/applicant-hackathon"
+                className={
+                  pathname === "/applicant-hackathon" ||
+                  frompath === "/applicant-hackathon" ||
+                  pathname.includes("/applicant-hackathon")
+                    ? "tf-effect active"
+                    : ""
+                }
+              >
+                <span className="dash-icon">
+                  <img src={shape6} alt="Hackathon" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                  Innovation arena
+                </span>
+              </Link>
+            </li>
+
+            <li id="tour-techvibes">
+              <Link onClick={hideMenu} to="/applicant-blog-list" className={pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                <span className="dash-icon blog-icon">
+                  <img src={shape7} alt="Blog" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                  Tech vibes
+                </span>
+              </Link>
+            </li>
+            <li id="tour-techvibes">
+              <Link onClick={hideMenu} to="/applicant-job-alerts" className={pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
+                <span className="dash-icon blog-icon">
+                   <img src={notificationIcon} alt="Notifications" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                 Notifications &nbsp;
+                </span>
+                 {alertCount > 0 && (
+                <div
+                  style={{
+                    background: "#E66A0E",
+                    color: "#fff",
+                    borderRadius: 20,
+                    padding: "2px 8px",
+                    fontWeight: 700,
+                    fontSize: 12,
+                  }}
+                >
+                  {alertCount}
+                </div>
+              )}
+              </Link>
+            </li>
+            <li>
+              <div style={{ marginTop: "auto", padding: "12px" }}>
+            <div
+              onClick={() => setShowModal(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+                borderRadius: "8px",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+                <span className="dash-icon blog-icon">
+                   <img src={shape8} alt="Logout icon" width="24" height="24" />
+                </span>
+                <span className="dash-titles" style={{ textTransform: "none" }}>
+                 Logout
+                </span>
+              </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <ModalLogout isOpen={showModal} onClose={() => setShowModal(false)} onConfirm={handleLogout} />
     </div>
-  )
+  );
 }
+
 export default ApplicantNavBar;
