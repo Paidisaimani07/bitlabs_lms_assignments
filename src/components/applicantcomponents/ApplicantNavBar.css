@@ -15,8 +15,115 @@
   width: 25px !important;
   flex-shrink: 0;
 }
+/* ---------- LEFT NAV PROFILE + DROPDOWN FIXES ---------- */
 
-#specificDiv .user-info {
+/* Target the left nav's top profile block */
+#specificDivm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;         /* consistent padding */
+  background: transparent;    /* remove any visible line background */
+  border: none;               /* remove inline borders you added earlier */
+  position: relative;         /* container for absolute dropdown */
+}
+
+/* Avatar styling — keep rounded */
+#specificDivm img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #FFE2C4;
+  flex-shrink: 0;
+}
+
+/* Keep name on one line, truncate with ellipsis if too long */
+#specificDivm .left-name {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1B1B1B;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* location line styling */
+#specificDivm .left-location {
+  font-size: 12px;
+  color: #7a7a7a;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* small caret button */
+#specificDivm .profile-caret-btn {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dropdown that appears under the profile block (left nav) */
+.left-sub-account {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 12px;               /* align under the caret */
+  min-width: 180px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.16);
+  border: 1px solid rgba(0,0,0,0.06);
+  z-index: 20000;            /* high so it overlays modal content */
+  display: none;
+  overflow: hidden;
+  font-weight: bold;
+}
+
+/* show the dropdown */
+.left-sub-account.show { display: block; }
+
+/* dropdown items */
+.left-sub-account .item {
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.left-sub-account .item:hover {
+  background: #faf7f2;
+}
+
+/* remove separators around notification area (you asked) */
+.left-menu .notifications-block {
+  border-top: none !important;
+  border-bottom: none !important;
+  padding: 10px 12px;
+}
+
+/* keep sidebar's logout area visually separate but not using lines */
+.left-menu .logout-block {
+  padding: 12px;
+}
+
+/* small responsive tweaks */
+@media (max-width: 768px) {
+  #specificDivm .left-name,
+  #specificDivm .left-location {
+    white-space: normal;
+  }
+}
+
+
+/* #specificDiv .user-info {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -45,7 +152,7 @@
   #specificDiv .user-info {
     display: none;
   }
-}
+} */
 
 .container1 {
   display: flex !important;
