@@ -38,19 +38,35 @@ function InterviewPrepPage() {
   const [selectedChatId, setSelectedChatId] = useState(null);
 
   const formatResponse = (rawResponse) => {
-    try {
-      if (typeof rawResponse === "object") {
-        return rawResponse.response ?? "";
-      }
+  try {
+    let text = "";
 
+    // 1️⃣ If backend already sent object
+    if (typeof rawResponse === "object" && rawResponse !== null) {
+      text = rawResponse.response || "";
+    } else {
+      // 2️⃣ If backend sent string
       const parsed = JSON.parse(rawResponse);
-      return parsed.response ?? rawResponse;
-
-    } catch (err) {
-      console.error("formatResponse error:", err);
-      return rawResponse; 
+      text = parsed.response || parsed;
     }
-  };
+
+    // 3️⃣ Clean Unwanted Formatting
+    text = text
+      .replace(/\\"/g, '"')               // remove escaped quotes
+      .replace(/"\s*\+\s*"/g, "")         // remove string concatenation like "abc" + "def"
+      .replace(/\\n/g, "\n")              // convert literal \n to newline
+      .replace(/^\s*{\s*"response"\s*:\s*"([\s\S]*?)"\s*}\s*$/g, "$1")   // remove response wrapper
+      .replace(/\s*"?\s*}\s*"?\s*$/g, "")  // 🛠 remove ANY trailing  }  "} "  " }" 
+      .trim();                            // clean leftover whitespace
+
+    return text;
+
+  } catch (err) {
+    console.error("formatResponse error:", err);
+    return rawResponse;
+  }
+};
+
 
 
   useEffect(() => {
