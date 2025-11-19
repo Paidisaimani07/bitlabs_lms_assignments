@@ -167,7 +167,7 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
           >
             {isRetakeAvailable ? (
                 <>
-                Retake Test
+                Retake test
                 <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
               </>
             ) : (
@@ -175,7 +175,7 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
               
               <div style={{ marginTop: '-20px', textAlign: 'center', lineHeight: '1.4' }}>
   <p style={{ margin: 0 }}>
-    Retake Test after
+    Retake test after
   </p>
   <p style={{ margin: 0, fontWeight: '600', color: '#F46F16' }}>
     {timeLeft.days > 0 && `${timeLeft.days}d `}
@@ -197,7 +197,7 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
         )}
         {!status && (
           <div className="test-action take" style={{textAlign:'center'}}onClick={() => handleTakeTest(skillName)}>
-            Take Test
+            Take test
           </div>
         )}
       </div>
@@ -552,8 +552,8 @@ if (bothPassed) {
   };
 
 const steps = [
-  { id: 1, label: "General Aptitude Test", icon: aptitudeIcon},
-  { id: 2, label: "Technical Test", icon: technicalIcon },
+  { id: 1, label: "General aptitude test", icon: aptitudeIcon},
+  { id: 2, label: "Technical test", icon: technicalIcon },
   { id: 3, label: "Verification done", icon: verificationIcon },
 ];
 
@@ -1020,9 +1020,9 @@ const steps = [
                           >
                             {isDisabled &&
                             currentStep === step.id
-                              ? "Retake Test"
+                              ? "Retake test"
                               : currentStep === step.id
-                              ? "Start Test"
+                              ? "Start test"
                               : "Coming Soon"}
                           </p>
                         </div>

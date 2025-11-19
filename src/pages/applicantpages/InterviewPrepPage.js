@@ -37,20 +37,41 @@ function InterviewPrepPage() {
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
 
-  const formatResponse = (rawResponse) => {
-    try {
-      if (typeof rawResponse === "object") {
-        return rawResponse.response ?? "";
-      }
+const formatResponse = (rawResponse) => {
+  try {
+    let obj;
 
-      const parsed = JSON.parse(rawResponse);
-      return parsed.response ?? rawResponse;
-
-    } catch (err) {
-      console.error("formatResponse error:", err);
-      return rawResponse; 
+    // If already an object → use directly
+    if (typeof rawResponse === "object" && rawResponse !== null) {
+      obj = rawResponse;
+    } else {
+      // Parse string JSON
+      obj = JSON.parse(rawResponse);
     }
-  };
+
+    // 🔥 PICK FIRST STRING VALUE IN THE OBJECT
+    const firstKey = Object.keys(obj)[0];
+    let text = obj[firstKey] ?? "";
+
+    // 🧹 CLEANUP
+    text = String(text)
+      .replace(/^\s*`+|`+\s*$/g, "")     // remove backticks
+      .replace(/\\"/g, '"')              // escaped quotes
+      .replace(/\\n/g, "\n")             // convert \n to real newline
+      .replace(/\{\s*"[^"]+"\s*:\s*"([\s\S]*?)"\s*\}$/g, "$1") // remove {...}
+      .trim();
+
+    return text;
+
+  } catch (err) {
+    console.error("formatResponse error:", err);
+    return rawResponse;
+  }
+};
+
+
+
+
 
 
   useEffect(() => {
@@ -640,7 +661,7 @@ function InterviewPrepPage() {
                   className="interview-prep-chats-toggle"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                  <h3 className="interview-prep-chats-header">Saved Chats</h3>
+                  <h3 className="interview-prep-chats-header">Saved chats</h3>
                   <span className="dropdown-icon">{sidebarOpen ? "▲" : "▼"}</span>
                 </div>
 
@@ -742,7 +763,7 @@ function InterviewPrepPage() {
                 <div className="interview-prep-messages">
                   {messages.length === 0 ? (
                     <div className="interview-prep-welcome-message">
-                      Hi! I'm your interview assistant. Ask me anything to get started!
+                     Hello! What can I help you with today?
                     </div>
                   ) : (
                     messages.map((msg, idx) => (
