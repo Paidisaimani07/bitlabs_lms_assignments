@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect,useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -57,36 +57,50 @@ const ApplicantDashboard = () => {
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
   const [dashboardScore, setDashboardScore] = useState(null);
+  const bronzeScore = 150;
+  const silverScore = 300;
+  const goldScore = 500;
+
+  const badgeLevels = [
+    { name: "bronze", score: bronzeScore },
+    { name: "silver", score: silverScore },
+    { name: "gold", score: goldScore },
+  ];
+
+  const earnedBadges = badgeLevels.filter(level => dashboardScore >= level.score);
+  const nextBadge = badgeLevels.find(level => dashboardScore < level.score);
+
+  let progressPercentage = 100;
+
+  if (nextBadge) {
+    progressPercentage =
+      ((dashboardScore) / (nextBadge.score)) * 100;
+    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
+  }
 
 
   // Build unique key for this user's tour flag
   const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
 
-  const applicantId=user.id;
+  const applicantId = user.id;
   const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
 
 
-useEffect(() => {
-    if (didInitRef.current) return; // Prevent re-run
+  useEffect(() => {
+    if (didInitRef.current) return;
     if (!user?.id) return;
 
     didInitRef.current = true;
-
-    // Optional: show tour only on desktop
     if (window.innerWidth <= 720) return;
 
     const checkTourStatus = async () => {
       try {
         const jwt = localStorage.getItem("jwtToken");
-
-        // 1️⃣ Check local cache first
         const localSeen = safeGet(TOUR_KEY);
         if (localSeen === "true") {
           console.debug("[TOUR] Already seen locally.");
           return;
         }
-
-        // 2️⃣ Check backend
         const res = await axios.get(`${apiUrl}/applicant/${user.id}/tour-seen`, {
           headers: { Authorization: `Bearer ${jwt}` },
         });
@@ -95,15 +109,12 @@ useEffect(() => {
         console.debug("[TOUR] Server response:", seen);
 
         if (!seen) {
-          // Delay slightly to ensure the dashboard is rendered
           setTimeout(() => setShowTour(true), 400);
         } else {
-          // Save locally for faster next time
           safeSet(TOUR_KEY, "true");
         }
       } catch (error) {
         console.warn("[TOUR] Failed to fetch server flag:", error);
-        // Fallback to local check
         const localSeen = safeGet(TOUR_KEY);
         if (localSeen !== "true") {
           setTimeout(() => setShowTour(true), 400);
@@ -115,62 +126,59 @@ useEffect(() => {
   }, [user?.id, TOUR_KEY]);
 
   useEffect(() => {
-  const idToUse = applicantId ?? profileData?.applicant?.id;
-  if (idToUse) fetchDashboardScore(idToUse);
-  // optionally re-fetch when applicantId or profileData changes
-}, [applicantId, profileData?.applicant?.id]);
+    const idToUse = applicantId ?? profileData?.applicant?.id;
+    if (idToUse) fetchDashboardScore(idToUse);
+  }, [applicantId, profileData?.applicant?.id]);
 
-const fetchDashboardScore = async (id) => {
-  if (!id) return setDashboardScore(0);
-  try {
-    const jwtToken = localStorage.getItem("jwtToken");
-    const { data: scoreRes } = await axios.get(
-      `${SCORE_API}/${id}/getTotalScore`,
-      { headers: { Authorization: `Bearer ${jwtToken}` } }
-    );
+  const fetchDashboardScore = async (id) => {
+    if (!id) return setDashboardScore(0);
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+      const { data: scoreRes } = await axios.get(
+        `${SCORE_API}/${id}/getTotalScore`,
+        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      );
 
-    console.debug("Dashboard raw score response:", scoreRes);
+      console.debug("Dashboard raw score response:", scoreRes);
 
-    let parsedScore = 0;
+      let parsedScore = 0;
 
-    if (scoreRes && typeof scoreRes === "object") {
-      parsedScore = scoreRes.totalScore ?? scoreRes.score ?? 0;
-    } else if (typeof scoreRes === "number") {
-      parsedScore = scoreRes;
-    } else if (typeof scoreRes === "string") {
-      // Prefer patterns like "is <num>" or "score: <num>", else take LAST integer
-      const patterns = [
-        /is\s+(-?\d+)\b/i,
-        /score\s*[:\-]\s*(-?\d+)\b/i,
-        /total\s+score\s+is\s+(-?\d+)\b/i,
-        /total\s+score\s*[:\-]\s*(-?\d+)\b/i
-      ];
+      if (scoreRes && typeof scoreRes === "object") {
+        parsedScore = scoreRes.totalScore ?? scoreRes.score ?? 0;
+      } else if (typeof scoreRes === "number") {
+        parsedScore = scoreRes;
+      } else if (typeof scoreRes === "string") {
+        const patterns = [
+          /is\s+(-?\d+)\b/i,
+          /score\s*[:\-]\s*(-?\d+)\b/i,
+          /total\s+score\s+is\s+(-?\d+)\b/i,
+          /total\s+score\s*[:\-]\s*(-?\d+)\b/i
+        ];
 
-      for (const p of patterns) {
-        const m = scoreRes.match(p);
-        if (m) {
-          parsedScore = parseInt(m[1], 10);
-          break;
+        for (const p of patterns) {
+          const m = scoreRes.match(p);
+          if (m) {
+            parsedScore = parseInt(m[1], 10);
+            break;
+          }
         }
+
+        if (!parsedScore) {
+          const all = scoreRes.match(/-?\d+/g);
+          if (all && all.length) parsedScore = parseInt(all[all.length - 1], 10);
+        }
+
+        parsedScore = Number.isFinite(parsedScore) ? parsedScore : 0;
       }
 
-      if (!parsedScore) {
-        const all = scoreRes.match(/-?\d+/g);
-        if (all && all.length) parsedScore = parseInt(all[all.length - 1], 10);
-      }
-
-      parsedScore = Number.isFinite(parsedScore) ? parsedScore : 0;
+      setDashboardScore(parsedScore);
+    } catch (err) {
+      console.warn("Failed to fetch dashboard score:", err?.response || err);
+      setDashboardScore(0);
     }
-
-    setDashboardScore(parsedScore);
-  } catch (err) {
-    console.warn("Failed to fetch dashboard score:", err?.response || err);
-    setDashboardScore(0);
-  }
-};
+  };
 
 
-  // ---------------- HANDLE CLOSE / COMPLETE ----------------
   const handleTourClose = async () => {
     if (!user?.id || !TOUR_KEY) {
       setShowTour(false);
@@ -180,18 +188,15 @@ const fetchDashboardScore = async (id) => {
     try {
       const jwt = localStorage.getItem("jwtToken");
 
-      // Call backend to mark as seen
       await axios.post(`${apiUrl}/applicant/${user.id}/tour-seen`, null, {
         headers: { Authorization: `Bearer ${jwt}` },
       });
 
-      // Save in local cache too
       safeSet(TOUR_KEY, "true");
 
       console.debug("[TOUR] Tour marked as seen.");
     } catch (error) {
       console.warn("[TOUR] Failed to mark tour as seen on server:", error);
-      // Still store locally to prevent repeat popup
       safeSet(TOUR_KEY, "true");
     }
 
@@ -458,56 +463,56 @@ const fetchDashboardScore = async (id) => {
     navigate("/applicant-interview-prep");
   };
 
-const tourSteps = [
-  {
-    id: "dashboard",
-    selector: "#tour-dashboard",
-    placement: "bottom",
-    text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
-  },
-  {
-    id: "portfolio",
-    selector: "#tour-portfolio",
-    placement: "right",
-    text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
-  },
-  {
-    id: "skills",
-    selector: "#tour-skill-validation",
-    placement: "right",
-    text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
-  },
-  {
-    id: "mentor",
-    selector: "#tour-mentor-sphere",
-    placement: "right",
-    text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
-  },
-  {
-    id: "techbuzz",
-    selector: "#tour-techbuzz",
-    placement: "top",
-    text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
-  },
-  {
-    id: "arena",
-    selector: "#tour-innovation-arena",
-    placement: "left",
-    text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
-  },
-  {
-    id: "techvibes",
-    selector: "#tour-techvibes",
-    placement: "left",
-    text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
-  },
-  {
-    id: "asknewton",
-    selector: "#tour-ask-newton",
-    placement: "top",
-    text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
-  }
-];
+  const tourSteps = [
+    {
+      id: "dashboard",
+      selector: "#tour-dashboard",
+      placement: "bottom",
+      text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
+    },
+    {
+      id: "portfolio",
+      selector: "#tour-portfolio",
+      placement: "right",
+      text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
+    },
+    {
+      id: "skills",
+      selector: "#tour-skill-validation",
+      placement: "right",
+      text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
+    },
+    {
+      id: "mentor",
+      selector: "#tour-mentor-sphere",
+      placement: "right",
+      text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
+    },
+    {
+      id: "techbuzz",
+      selector: "#tour-techbuzz",
+      placement: "top",
+      text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
+    },
+    {
+      id: "arena",
+      selector: "#tour-innovation-arena",
+      placement: "left",
+      text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
+    },
+    {
+      id: "techvibes",
+      selector: "#tour-techvibes",
+      placement: "left",
+      text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
+    },
+    {
+      id: "asknewton",
+      selector: "#tour-ask-newton",
+      placement: "top",
+      text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
+    }
+  ];
 
 
   return (
@@ -660,8 +665,6 @@ const tourSteps = [
                             const minutes = item.startTime[1].toString().padStart(2, "0");
                             const period = hours >= 12 ? "pm" : "am";
                             const formattedTime = `${(hours % 12) || 12}:${minutes}${period}`;
-
-                            // Optional: default static images in order
                             const defaultImages = [Nagulmeera, Karunakar, Karunakar, suhel];
                             const defaultImg = defaultImages[idx % defaultImages.length];
 
@@ -750,9 +753,14 @@ const tourSteps = [
                           border: "2px solid #EA7B20"
                         }} />
                         <span className="badges">
-                          <img src="./images/dashboard/badge-bronze.png" alt="badge-bronze" width="15px" height="23px" />
-                          <img src="./images/dashboard/badge-silver.png" alt="badge-silver" width="15px" height="23px" />
-                          <img src="./images/dashboard/badge-gold.png" alt="badge-gold" width="15px" height="23px" />
+                          {earnedBadges.map(badge => (
+                            <img
+                              key={badge.name}
+                              src={`./images/dashboard/badge-${badge.name}.png`}
+                              width="15"
+                              height="23"
+                            />
+                          ))}
                         </span>
                       </div>
                       <div className="profile-extra-details">
@@ -784,9 +792,9 @@ const tourSteps = [
                         </span>
                       </div>
                       <div className="portfolio-score-details">
-                       <h3>score</h3>
+                        <h3>score</h3>
                         <p>{dashboardScore ?? 0}</p>
-                       </div>
+                      </div>
 
                     </div>
                     <h3 style={{ color: 'black', fontWeight: 'bold', margin: 0 }}>
@@ -842,7 +850,29 @@ const tourSteps = [
                         ));
                       })()}
                     </div>
-
+                    
+                    <div style={{ display: "flex" }}>
+                      <div className="progress-container">
+                        <div
+                          className="progress-bar"
+                          style={{ width: `${progressPercentage}%` }}
+                        >
+                        </div>
+                      </div>
+                      {nextBadge && (
+                        <div className="next-badge">
+                          <img
+                            src={`./images/dashboard/badge-${nextBadge.name}.png`}
+                            width="20"
+                            height="30"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="progress-text">
+                      {Math.round(progressPercentage)}%
+                    </div>
+                    {!nextBadge && <p style={{fontSize:"10px", textAlign:"center", fontWeight:"600"}}>Congrats you unlocked all badges!</p>}
                   </div>
                 </div>
                 <div className="profile-card-row2">
@@ -904,7 +934,6 @@ const tourSteps = [
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
-                        // 4 skeleton images
                         [...Array(maxVideos)].map((_, i) => (
                           <div key={i} className="skeleton-thumb"></div>
                         ))
@@ -926,7 +955,6 @@ const tourSteps = [
                           </div>
                         ))
                       ) : (
-                        // Fallback: 4 placeholder images
                         [...Array(maxVideos)].map((_, i) => (
                           <img
                             key={i}
@@ -1026,14 +1054,14 @@ const tourSteps = [
         </div>
       )
       }
-   {showTour && (
-  <GuidedTour
-    userId={user.id}
-    open={showTour}
-    onClose={handleTourClose}
-    steps={tourSteps}
-  />
-)}
+      {showTour && (
+        <GuidedTour
+          userId={user.id}
+          open={showTour}
+          onClose={handleTourClose}
+          steps={tourSteps}
+        />
+      )}
 
     </div>
   );
