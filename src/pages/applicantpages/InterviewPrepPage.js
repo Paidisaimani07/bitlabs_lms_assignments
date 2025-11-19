@@ -39,39 +39,37 @@ function InterviewPrepPage() {
 
 const formatResponse = (rawResponse) => {
   try {
-    let text = "";
+    let obj;
 
-    // 1️⃣ Extract response from object
+    // If already an object → use directly
     if (typeof rawResponse === "object" && rawResponse !== null) {
-      text = rawResponse.response ?? "";
-    } 
-    else {
-      // 2️⃣ Parse if string
-      const parsed = JSON.parse(rawResponse);
-      text = parsed.response ?? parsed;
+      obj = rawResponse;
+    } else {
+      // Parse string JSON
+      obj = JSON.parse(rawResponse);
     }
 
-    // 3️⃣ Cleanup rules
-    text = text
-      .replace(/^\s*`+|`+\s*$/g, "")          // remove starting/ending backticks
-      .replace(/\\"/g, '"')                   // remove escaped quotes
-      .replace(/"\s*\+\s*"/g, "")             // remove concatenated strings
-      .replace(/\\n/g, "\n")                  // convert \n to newline
-      .replace(/^\s*{\s*"response"\s*:\s*"/, "") // remove leading { "response": "
-      .replace(/"}\s*$/, "")                  // remove last "}
-      .replace(/"}\s*}\s*$/, "")              // remove last "} }
-      .replace(/"}\s*`?\s*$/, "")             // remove "} ` 
-      .replace(/"\s*}\s*$/, "")               // remove " }
-      .replace(/\s*}\s*$/, "")                // remove last }
+    // 🔥 PICK FIRST STRING VALUE IN THE OBJECT
+    const firstKey = Object.keys(obj)[0];
+    let text = obj[firstKey] ?? "";
+
+    // 🧹 CLEANUP
+    text = String(text)
+      .replace(/^\s*`+|`+\s*$/g, "")     // remove backticks
+      .replace(/\\"/g, '"')              // escaped quotes
+      .replace(/\\n/g, "\n")             // convert \n to real newline
+      .replace(/\{\s*"[^"]+"\s*:\s*"([\s\S]*?)"\s*\}$/g, "$1") // remove {...}
       .trim();
 
     return text;
 
   } catch (err) {
     console.error("formatResponse error:", err);
-    return rawResponse; // fallback
+    return rawResponse;
   }
 };
+
+
 
 
 
