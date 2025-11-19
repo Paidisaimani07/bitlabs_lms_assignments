@@ -37,35 +37,42 @@ function InterviewPrepPage() {
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
 
-  const formatResponse = (rawResponse) => {
+const formatResponse = (rawResponse) => {
   try {
     let text = "";
 
-    // 1️⃣ If backend already sent object
+    // 1️⃣ Extract response from object
     if (typeof rawResponse === "object" && rawResponse !== null) {
-      text = rawResponse.response || "";
-    } else {
-      // 2️⃣ If backend sent string
+      text = rawResponse.response ?? "";
+    } 
+    else {
+      // 2️⃣ Parse if string
       const parsed = JSON.parse(rawResponse);
-      text = parsed.response || parsed;
+      text = parsed.response ?? parsed;
     }
 
-    // 3️⃣ Clean Unwanted Formatting
+    // 3️⃣ Cleanup rules
     text = text
-      .replace(/\\"/g, '"')               // remove escaped quotes
-      .replace(/"\s*\+\s*"/g, "")         // remove string concatenation like "abc" + "def"
-      .replace(/\\n/g, "\n")              // convert literal \n to newline
-      .replace(/^\s*{\s*"response"\s*:\s*"([\s\S]*?)"\s*}\s*$/g, "$1")   // remove response wrapper
-      .replace(/\s*"?\s*}\s*"?\s*$/g, "")  // 🛠 remove ANY trailing  }  "} "  " }" 
-      .trim();                            // clean leftover whitespace
+      .replace(/^\s*`+|`+\s*$/g, "")          // remove starting/ending backticks
+      .replace(/\\"/g, '"')                   // remove escaped quotes
+      .replace(/"\s*\+\s*"/g, "")             // remove concatenated strings
+      .replace(/\\n/g, "\n")                  // convert \n to newline
+      .replace(/^\s*{\s*"response"\s*:\s*"/, "") // remove leading { "response": "
+      .replace(/"}\s*$/, "")                  // remove last "}
+      .replace(/"}\s*}\s*$/, "")              // remove last "} }
+      .replace(/"}\s*`?\s*$/, "")             // remove "} ` 
+      .replace(/"\s*}\s*$/, "")               // remove " }
+      .replace(/\s*}\s*$/, "")                // remove last }
+      .trim();
 
     return text;
 
   } catch (err) {
     console.error("formatResponse error:", err);
-    return rawResponse;
+    return rawResponse; // fallback
   }
 };
+
 
 
 
@@ -656,7 +663,7 @@ function InterviewPrepPage() {
                   className="interview-prep-chats-toggle"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
-                  <h3 className="interview-prep-chats-header">Saved Chats</h3>
+                  <h3 className="interview-prep-chats-header">Saved chats</h3>
                   <span className="dropdown-icon">{sidebarOpen ? "▲" : "▼"}</span>
                 </div>
 
@@ -758,7 +765,7 @@ function InterviewPrepPage() {
                 <div className="interview-prep-messages">
                   {messages.length === 0 ? (
                     <div className="interview-prep-welcome-message">
-                      Hi! I'm your interview assistant. Ask me anything to get started!
+                     Hello! What can I help you with today?
                     </div>
                   ) : (
                     messages.map((msg, idx) => (

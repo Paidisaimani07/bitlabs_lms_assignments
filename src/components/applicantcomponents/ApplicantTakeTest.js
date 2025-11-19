@@ -629,7 +629,7 @@ const fetchQuestion = async() => {
     </svg>
   </button>
 </div> */}
-<div style={{
+{/* <div style={{
   width: "100%",
   display: "flex",
   justifyContent: "flex-end",
@@ -665,7 +665,7 @@ const fetchQuestion = async() => {
       />
     </svg>
   </button>
-</div>
+</div> */}
 
 
           <div className="instructions-header">
@@ -856,77 +856,126 @@ const fetchQuestion = async() => {
       {/* ====== Test Header (Logo + Title) ====== */}
 
 {currentPage === 'test' && (
-  <div className={`test-page ${showGoBackButton ? 'blur-background' : ''}`}>
-    <img 
-  src={Alibaba} 
-  alt="bitLabs Logo" 
-  className="Alibaba" 
-  style={{
-    width: "160px",
-    height: "60px",
-    objectFit: "contain"
-  }} 
-/>
-     <h2
-  className="exam-title"
-  style={{
-    left: "140px",
-    width: "258px",
-    height: "45px",
-    textAlign: "left",
-    fontFamily: "Poppins",
-    fontWeight: 600,
-    fontSize: "25px",
-    lineHeight: "48px",
-    letterSpacing: "0px",
-    color: "#EF8C2F",
-    opacity: 1,
-  }}
+<div className={`test-page ${showGoBackButton ? 'blur-background' : ''}`}>
+ 
+    {/* ================= Close Button (Top-Right) ================= */}
+<div
+      style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "flex-end",
+        marginBottom: "15px",
+        paddingRight: "10px",
+        marginTop: "10px",
+        position: "sticky",
+        top: 0,
+        zIndex: 999,
+      }}
 >
-  {testName}
+<button
+        onClick={handleExit}
+        style={{
+          width: "28px",
+          height: "28px",
+          borderRadius: "50%",
+          background: "linear-gradient(0deg, #E3E3E3 0%, #FFFFFF 100%)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          cursor: "pointer",
+          border: "none",
+          boxShadow: "0px 0px 4px rgba(0,0,0,0.1)",
+          padding: 0,
+        }}
+>
+<svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+>
+<path
+            d="M18 6L6 18M6 6L18 18"
+            stroke="#000"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+</svg>
+</button>
+</div>
+    {/* ============================================================ */}
+ 
+ 
+    <img
+      src={Alibaba}
+      alt="bitLabs Logo"
+      className="Alibaba"
+      style={{
+        width: "160px",
+        height: "60px",
+        objectFit: "contain",
+      }}
+    />
+ 
+    <h2
+      className="exam-title"
+      style={{
+        left: "140px",
+        width: "258px",
+        height: "45px",
+        textAlign: "left",
+        fontFamily: "Poppins",
+        fontWeight: 600,
+        fontSize: "25px",
+        lineHeight: "48px",
+        letterSpacing: "0px",
+        color: "#EF8C2F",
+        opacity: 1,
+      }}
+>
+      {testName}
 </h2>
+ 
     <div className="test-content">
-      
+ 
       {/* ================= Left Section ================= */}
-      <div className="test-left">
-        <div className="header">
-          
-          <div>
-            <h4
+<div className="test-left">
+<div className="header">
+<div>
+<h4
               className="test-sub"
               style={{
                 fontSize: "20px",
                 fontWeight: "700",
                 marginBottom: "10px",
               }}
-            >
+>
               Question {currentQuestionIndex + 1}/{questions.numberOfQuestions}
-            </h4>
-
+</h4>
+ 
             {/* Progress Bar */}
-            <div className="progress-bar-container">
-              <div
+<div className="progress-bar-container">
+<div
                 className="progress-bar-fill"
                 style={{
-                  width: `${
-                    ((currentQuestionIndex + 1) / questions.numberOfQuestions) * 100
-                  }%`,
+                  width: `${((currentQuestionIndex + 1) / questions.numberOfQuestions) * 100}%`,
                 }}
-              ></div>
-            </div>
-          </div>
-        </div>
-
+></div>
+</div>
+</div>
+</div>
+ 
         {/* Question Section */}
-        <div className="question no-select" style={{ marginTop: "25px" }}>
-          <ul>
-            <li>
-              <p
+<div className="question no-select" style={{ marginTop: "25px" }}>
+<ul>
+<li>
+<p
                 className="question1 no-select"
                 style={{ fontSize: "16px", fontWeight: "500" }}
-              >
+>
                 {currentQuestionIndex + 1}.&nbsp;
-                <span
+<span
                   dangerouslySetInnerHTML={{
                     __html: shuffledQuestions[currentQuestionIndex]?.question
                       .replace(/\n/g, "<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
@@ -934,125 +983,131 @@ const fetchQuestion = async() => {
                       .replace(/```/g, ""),
                   }}
                 />
-              </p>
-            </li>
+</p>
+</li>
+ 
             {shuffledQuestions[currentQuestionIndex]?.options.map((option, index) => (
-              <li key={index}>
-                <label className="question-label no-select">
-                  <input
+<li key={index}>
+<label className="question-label no-select">
+<input
                     type="radio"
                     value={option}
                     checked={selectedOptions[currentQuestionIndex] === option}
                     onChange={handleOptionChange}
                     className="question-radio"
                   />
-                  <span
+<span
                     className="no-select"
                     dangerouslySetInnerHTML={{
                       __html: option.replace(/\n/g, "<br/>").replace(/```/g, ""),
                     }}
                   />
-                </label>
-              </li>
+</label>
+</li>
             ))}
-            {validationMessage && <p className="validation">{validationMessage}</p>}
-          </ul>
-        </div>
-
+ 
+            {validationMessage && (
+<p className="validation">{validationMessage}</p>
+            )}
+</ul>
+</div>
+ 
         {/* Navigation Buttons */}
-        <div className="footer1">
-          <button
+<div className="footer1">
+<button
             disabled={currentQuestionIndex === 0}
             onClick={handleBackQuestion}
             className="second-btn"
-          >
+>
             Previous
-          </button>
-
+</button>
+ 
           {currentQuestionIndex < questions.questions.length - 1 ? (
-            <button onClick={handleNextQuestion} className="navigation-btn">
+<button onClick={handleNextQuestion} className="navigation-btn">
               Next
-            </button>
+</button>
           ) : (
-            <button
+<button
               onClick={handleSubmitTest}
               disabled={isSubmitting}
               className="navigation-btn"
-            >
+>
               Submit exam
-            </button>
+</button>
           )}
-        </div>
-      </div>
-
+</div>
+</div>
+ 
       {/* ================= Right Section ================= */}
-      <div className="test-right">
+<div className="test-right">
+ 
         {/* Timer Section */}
-        <div className="timer-box">
-          <h4 className="timer-title">Time durations</h4>
-          <div className="timer-digits">
-            <div>
-              <span className="time-num">
+<div className="timer-box">
+<h4 className="timer-title">Time durations</h4>
+<div className="timer-digits">
+<div>
+<span className="time-num">
                 {String(Math.floor(remainingTime / 3600)).padStart(2, "0")}
-              </span>
-              <p>Hrs</p>
-            </div>
-            <div>
-              <span className="time-num">
+</span>
+<p>Hrs</p>
+</div>
+<div>
+<span className="time-num">
                 {String(Math.floor((remainingTime % 3600) / 60)).padStart(2, "0")}
-              </span>
-              <p>Mins</p>
-            </div>
-            <div>
-              <span className="time-num">
+</span>
+<p>Mins</p>
+</div>
+<div>
+<span className="time-num">
                 {String(remainingTime % 60).padStart(2, "0")}
-              </span>
-              <p>Secs</p>
-            </div>
-          </div>
-          <div className="divider-line"></div>
-        </div>
-
+</span>
+<p>Secs</p>
+</div>
+</div>
+<div className="divider-line"></div>
+</div>
+ 
         {/* Question Tracker Section */}
-        <div className="questions-box">
-          <h4 className="questions-title">Questions</h4>
+<div className="questions-box">
+<h4 className="questions-title">Questions</h4>
+ 
           <div className="question-grid">
             {questions.questions.map((_, index) => {
               const isCurrent = index === currentQuestionIndex;
               const isAnswered = !!selectedOptions[index];
               const isNotAnswered = !selectedOptions[index] && index < currentQuestionIndex;
-
+ 
               return (
-                <div
+<div
                   key={index}
                   onClick={() => setCurrentQuestionIndex(index)}
-                  className={`question-indicator
+                  className={`question-indicator 
                     ${isCurrent ? "current" : ""}
                     ${isAnswered ? "answered" : ""}
                     ${isNotAnswered ? "not-answered" : ""}
                   `}
-                >
+>
                   {String(index + 1).padStart(2, "0")}
-                </div>
+</div>
               );
             })}
-          </div>
-
+</div>
+ 
           <div className="question-legend">
-            <div>
-              <span className="legend-box not-attempted"></span>Not attempted
-            </div>
-            <div>
-              <span className="legend-box answered"></span>Answered
-            </div>
-            <div>
-              <span className="legend-box current"></span>Current
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div>
+<span className="legend-box not-attempted"></span>Not attempted
+</div>
+<div>
+<span className="legend-box answered"></span>Answered
+</div>
+<div>
+<span className="legend-box current"></span>Current
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 )}
 
 
