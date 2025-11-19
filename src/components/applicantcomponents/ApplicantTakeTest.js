@@ -786,7 +786,7 @@ const fetchQuestion = async() => {
 
           </div>
           <br />
-          <div className="instructions" style={{ paddingLeft: '2%',backgroundColor:'#F8F8F8',padding:'10px'}}>
+          <div className="instructions" style={{ paddingLeft: '2%',backgroundColor:'#F8F8F8',padding:'10px',maxHeight: '270px', overflowY: 'auto', scrollbarWidth: 'thin'}}>
             <span className="instructions-title">Instructions</span>
             <ul className="instructions-list">
               <li>You need to score at least 70% to pass the exam.</li>
