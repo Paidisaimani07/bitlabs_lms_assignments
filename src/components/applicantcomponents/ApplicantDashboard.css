@@ -1,5 +1,4 @@
 .robo-card {
-  cursor: pointer;
   background: transparent linear-gradient(275deg, #FBBB5C 0%, #E66A0E 100%);
   border-radius: 5px !important;
 }
@@ -34,7 +33,7 @@
 }
 
 .robo-card-text .robo-card-para {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
   margin-left: 120px;
@@ -50,6 +49,7 @@
   font-weight: 600;
   white-space: nowrap;
   margin-left: 15px;
+  text-transform: none;
 }
 
 .profile-card-row1 {
@@ -81,7 +81,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
   text-align: left;
 }
 
@@ -105,6 +105,7 @@
   border-radius: 3px;
   align-self: flex-end;
   margin-top: 8px;
+  text-transform: none;
 }
 
 .arena .arena-image {
@@ -159,7 +160,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .mentor-topSection span {
@@ -480,7 +481,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -489,20 +490,15 @@
 .Tech-buzz .tech-buzz-header button {
   background: transparent;
   border: none;
-  color: #ff6b00;
+  color: #EF8C2F;
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 15px;
   transition: opacity 0.2s ease;
   white-space: nowrap;
   padding: 0;
   min-width: fit-content;
-}
-
-
-.Tech-buzz .tech-buzz-header button:hover {
-  opacity: 0.7;
 }
 
 .Tech-buzz .tech-buzz-images {
@@ -560,7 +556,7 @@
 .tech-vibes-header h3 {
   margin: 0;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
   color: #1a1a17;
   word-wrap: break-word;
 }
