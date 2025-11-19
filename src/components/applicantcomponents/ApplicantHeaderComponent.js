@@ -231,110 +231,134 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState("../images/user/avatar/profile-pic.png");
   const [uploading, setUploading] = useState(false);
+  const [dashboardScore, setDashboardScore] = useState(null);
 
-const fetchCard = async () => {
-  try {
-    if (!applicantId) return;
-    const jwtToken = localStorage.getItem("jwtToken");
+  const bronzeScore = 150;
+  const silverScore = 300;
+  const goldScore = 500;
 
-    // 1) Fetch applicant card
-    const { data: cardData } = await axios.get(`${CARD_API}/${applicantId}`, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+  const badgeLevels = [
+    { name: "bronze", score: bronzeScore },
+    { name: "silver", score: silverScore },
+    { name: "gold", score: goldScore },
+  ];
 
-    // 2) Fetch SCORE
-    let scoreFromScoresApi = 0;
+  const earnedBadges = badgeLevels.filter(level => dashboardScore >= level.score);
+  const nextBadge = badgeLevels.find(level => dashboardScore < level.score);
 
+  let progressPercentage = 100;
+
+  if (nextBadge) {
+    progressPercentage =
+      ((dashboardScore) / (nextBadge.score)) * 100;
+    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
+  }
+
+
+  const fetchCard = async () => {
     try {
-      const { data: scoreRes } = await axios.get(
-        `${SCORE_API}/${applicantId}/getTotalScore`,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
-      );
+      if (!applicantId) return;
+      const jwtToken = localStorage.getItem("jwtToken");
 
-      console.debug("RAW SCORE RESPONSE:", scoreRes);
+      // 1) Fetch applicant card
+      const { data: cardData } = await axios.get(`${CARD_API}/${applicantId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
 
-      // ---------------------------
-      // CASE A: JSON OBJECT
-      // ---------------------------
-      if (scoreRes && typeof scoreRes === "object") {
-        scoreFromScoresApi =
-          scoreRes.totalScore ??
-          scoreRes.score ??
-          0;
-      }
+      // 2) Fetch SCORE
+      let scoreFromScoresApi = 0;
 
-      // ---------------------------
-      // CASE B: NUMBER
-      // ---------------------------
-      else if (typeof scoreRes === "number") {
-        scoreFromScoresApi = scoreRes;
-      }
-
-      // ---------------------------
-      // CASE C: STRING (YOUR CASE)
-      // Example: "Total score for applicant ID 16553 is 4"
-      // ---------------------------
-      else if (typeof scoreRes === "string") {
-        let parsed = 0;
-
-        // Priority patterns → catch the real score
-        const patterns = [
-          /is\s+(-?\d+)\b/i,
-          /score\s*[:\-]\s*(-?\d+)\b/i,
-          /total\s+score\s+is\s+(-?\d+)\b/i,
-          /total\s+score\s*[:\-]\s*(-?\d+)\b/i
-        ];
-
-        for (const regex of patterns) {
-          const match = scoreRes.match(regex);
-          if (match) {
-            parsed = parseInt(match[1], 10);
-            break;
-          }
-        }
-
-        // Fallback → last number in the string (prevents picking ID)
-        if (!parsed) {
-          const allNumbers = scoreRes.match(/-?\d+/g);
-          if (allNumbers?.length) {
-            parsed = parseInt(allNumbers[allNumbers.length - 1], 10);
-          }
-        }
-
-        scoreFromScoresApi = Number.isFinite(parsed) ? parsed : 0;
-      }
-    } catch (e) {
-      console.warn("Scores API failed; falling back to profile-view", e?.response || e);
-
-      // FALLBACK SCORE
       try {
-        const { data: pv } = await axios.get(
-          `${apiUrl}/applicantprofile/${applicantId}/profile-view`,
+        const { data: scoreRes } = await axios.get(
+          `${SCORE_API}/${applicantId}/getTotalScore`,
           { headers: { Authorization: `Bearer ${jwtToken}` } }
         );
 
-        scoreFromScoresApi =
-          pv?.applicant?.overallScore ??
-          pv?.score ??
-          scoreFromScoresApi ??
-          0;
+        console.debug("RAW SCORE RESPONSE:", scoreRes);
 
-      } catch (innerErr) {
-        console.warn("Profile-view failed; using 0", innerErr?.response || innerErr);
+        // ---------------------------
+        // CASE A: JSON OBJECT
+        // ---------------------------
+        if (scoreRes && typeof scoreRes === "object") {
+          scoreFromScoresApi =
+            scoreRes.totalScore ??
+            scoreRes.score ??
+            0;
+        }
+
+        // ---------------------------
+        // CASE B: NUMBER
+        // ---------------------------
+        else if (typeof scoreRes === "number") {
+          scoreFromScoresApi = scoreRes;
+        }
+
+        // ---------------------------
+        // CASE C: STRING (YOUR CASE)
+        // Example: "Total score for applicant ID 16553 is 4"
+        // ---------------------------
+        else if (typeof scoreRes === "string") {
+          let parsed = 0;
+
+          // Priority patterns → catch the real score
+          const patterns = [
+            /is\s+(-?\d+)\b/i,
+            /score\s*[:\-]\s*(-?\d+)\b/i,
+            /total\s+score\s+is\s+(-?\d+)\b/i,
+            /total\s+score\s*[:\-]\s*(-?\d+)\b/i
+          ];
+
+          for (const regex of patterns) {
+            const match = scoreRes.match(regex);
+            if (match) {
+              parsed = parseInt(match[1], 10);
+              break;
+            }
+          }
+
+          // Fallback → last number in the string (prevents picking ID)
+          if (!parsed) {
+            const allNumbers = scoreRes.match(/-?\d+/g);
+            if (allNumbers?.length) {
+              parsed = parseInt(allNumbers[allNumbers.length - 1], 10);
+            }
+          }
+
+          scoreFromScoresApi = Number.isFinite(parsed) ? parsed : 0;
+          setDashboardScore(scoreFromScoresApi);
+        }
+      } catch (e) {
+        console.warn("Scores API failed; falling back to profile-view", e?.response || e);
+
+        // FALLBACK SCORE
+        try {
+          const { data: pv } = await axios.get(
+            `${apiUrl}/applicantprofile/${applicantId}/profile-view`,
+            { headers: { Authorization: `Bearer ${jwtToken}` } }
+          );
+
+          scoreFromScoresApi =
+            pv?.applicant?.overallScore ??
+            pv?.score ??
+            scoreFromScoresApi ??
+            0;
+
+        } catch (innerErr) {
+          console.warn("Profile-view failed; using 0", innerErr?.response || innerErr);
+        }
       }
-    }
 
-    // FINAL SET
-    setCard({
-      ...DEFAULT_CARD,
-      ...(cardData || {}),
-      score: scoreFromScoresApi
-    });
-  } catch (e) {
-    console.error("Failed to load applicant card:", e?.response || e);
-    setCard({ ...DEFAULT_CARD });
-  }
-};
+      // FINAL SET
+      setCard({
+        ...DEFAULT_CARD,
+        ...(cardData || {}),
+        score: scoreFromScoresApi
+      });
+    } catch (e) {
+      console.error("Failed to load applicant card:", e?.response || e);
+      setCard({ ...DEFAULT_CARD });
+    }
+  };
 
 
 
@@ -419,7 +443,16 @@ const fetchCard = async () => {
 
           <div className="portfolio-meta">
             <div className="portfolio-name-row">
-              <h3 className="portfolio-name">{fullName}</h3>
+              <span className="badges">
+                {earnedBadges.map(badge => (
+                  <img
+                    key={badge.name}
+                    src={`./images/dashboard/badge-${badge.name}.png`}
+                    width="15"
+                    height="23"
+                  />
+                ))}
+              </span>
               <button
                 type="button"
                 className="portfolio-edit-btn"
@@ -428,6 +461,7 @@ const fetchCard = async () => {
                 Edit <FontAwesomeIcon icon={faPen} style={{ marginLeft: 6 }} />
               </button>
             </div>
+            <h3 className="portfolio-name">{fullName}</h3>
             <p className="portfolio-role">{roleTitle}</p>
             <p className="portfolio-updated">Portfolio last updated – {updatedOnText}</p>
           </div>
@@ -479,8 +513,28 @@ const fetchCard = async () => {
         <div className="portfolio-right">
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
+       
+        <div style={{ display: "flex" }}>
+          <div className="progress-container">
+            <div
+              className="progress-bar"
+              style={{ width: `${progressPercentage}%` }}
+            >
+              
+            </div>
+          </div>
+          {nextBadge && (
+            <div className="next-badge">
+              <img
+                src={`./images/dashboard/badge-${nextBadge.name}.png`}
+                width="20"
+                height="30"
+              />
+            </div>
+          )}
         </div>
-      </div>
+        <span className="progress-text">{Math.round(progressPercentage)}%</span>
+      </div> </div>
 
       {/* Edit modal (basic details) */}
       <Modal
