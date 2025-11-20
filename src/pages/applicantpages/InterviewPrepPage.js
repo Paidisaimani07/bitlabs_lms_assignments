@@ -36,38 +36,53 @@ function InterviewPrepPage() {
   const [titleModal, setTitleModal] = useState({ open: false, mode: null, chatId: null, value: '' });
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const isExistingChat = savedChats.some(c => c.id === currentChatId);
+
+
 
 const formatResponse = (rawResponse) => {
   try {
-    let obj;
+    let text = "";
 
-    // If already an object → use directly
+    // If object → read its FIRST string-like field
     if (typeof rawResponse === "object" && rawResponse !== null) {
-      obj = rawResponse;
+      const key = Object.keys(rawResponse)[0];
+      text = rawResponse[key] ?? rawResponse;
     } else {
-      // Parse string JSON
-      obj = JSON.parse(rawResponse);
+      // Try parsing if it's a JSON string
+      const parsed = JSON.parse(rawResponse);
+      const key = Object.keys(parsed)[0];
+      text = parsed[key] ?? parsed;
     }
 
-    // 🔥 PICK FIRST STRING VALUE IN THE OBJECT
-    const firstKey = Object.keys(obj)[0];
-    let text = obj[firstKey] ?? "";
+    text = String(text).trim();
 
-    // 🧹 CLEANUP
-    text = String(text)
-      .replace(/^\s*`+|`+\s*$/g, "")     // remove backticks
-      .replace(/\\"/g, '"')              // escaped quotes
-      .replace(/\\n/g, "\n")             // convert \n to real newline
-      .replace(/\{\s*"[^"]+"\s*:\s*"([\s\S]*?)"\s*\}$/g, "$1") // remove {...}
-      .trim();
+    // 🔥 1. Remove backticks
+    text = text.replace(/^\s*`+|`+\s*$/g, "");
 
-    return text;
+    // 🔥 2. Remove escaped quotes
+    text = text.replace(/\\"/g, '"');
+
+    // 🔥 3. Convert \n to real newlines
+    text = text.replace(/\\n/g, "\n");
+
+    // 🔥 4. Remove wrappers like { "response": "..." }
+    text = text.replace(/^\s*\{\s*"response"\s*:\s*"([\s\S]*?)"\s*\}\s*$/i, "$1");
+
+    // 🔥 5. Remove cases like => {"response": {...}}
+    text = text.replace(/^\s*\{\s*"response"\s*:\s*\{([\s\S]*?)\}\s*\}\s*$/i, "$1");
+
+    // 🔥 6. Remove leftover leading/trailing braces or quotes
+    text = text.replace(/^[{\s"]+|[}\s"]+$/g, "");
+
+    return text.trim();
 
   } catch (err) {
     console.error("formatResponse error:", err);
     return rawResponse;
   }
 };
+
 
 
 
@@ -323,125 +338,173 @@ const formatResponse = (rawResponse) => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading || isCoolingDown) return;
+const sendMessage = async () => {
+  if (!input.trim() || isLoading || isCoolingDown) return;
 
-    const userMessage = input.trim();
-    setIsLoading(true);
-    setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
-    focusInput();
+  const userMessage = input.trim();
+  setIsLoading(true);
+  setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
+  focusInput();
 
-    try {
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const postBody = {
+      applicantId: user?.id ?? null,
+      chatId: currentChatId ?? null,
+      request: userMessage
+    };
+
+    const { data } = await axios.post(
+      `${apiUrl}/aiPrepModel/postQuery`,
+      postBody,
+      { headers: { Authorization: `Bearer ${jwtToken}` } }
+    );
+
+    // backend gives a chatId → update
+    if (data?.chatId) setCurrentChatId(data.chatId);
+
+    const reply = formatResponse(data);
+    setMessages(prev => [...prev, { sender: "bot", text: reply }]);
+
+    setInput("");
+
+  } catch (err) {
+    console.error("Chat error:", err);
+    setMessages(prev => [
+      ...prev,
+      { sender: "bot", text: "⚠️ Connection error. Try again." }
+    ]);
+  } finally {
+    setIsLoading(false);
+    setTimeout(() => textInputRef.current?.focus(), 0);
+  }
+};
+
+
+
+ const startNewChat = async () => {
+  try {
+    const isExistingChat =
+      currentChatId && savedChats.some(c => c.id === currentChatId);
+
+    // Save ONLY if this chat is NEW (not yet saved)
+    if (messages.length > 0 && currentChatId && !isExistingChat) {
+
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const postBody = {
-        applicantId: user?.id ?? null,
-        chatId: currentChatId ?? null,
-        request: userMessage
+      // Title from first user message
+      const firstUserMsg =
+        messages.find(m => m.sender === "user")?.text || "Untitled Chat";
+
+      const trimmedTitle =
+        firstUserMsg.length > 35
+          ? firstUserMsg.substring(0, 35) + "..."
+          : firstUserMsg;
+
+      // Format messages for backend
+      const chatArray = messages.map(m => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        message: m.text,
+        time: new Date().toISOString(),
+      }));
+
+      const payload = {
+        title: trimmedTitle,
+        savedChat: JSON.stringify(chatArray),
       };
 
-      const { data } = await axios.post(
-        `${apiUrl}/aiPrepModel/postQuery`,
-        postBody,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      // SAVE
+      await axios.put(
+        `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+        payload,
+        { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
       );
 
-      if (data?.chatId) setCurrentChatId(data.chatId);
+      // Add to local list
+      const newChat = {
+        id: currentChatId,
+        title: trimmedTitle,
+        createdAt: Date.now()
+      };
 
-      const reply = formatResponse(data);
-      setMessages(prev => [...prev, { sender: "bot", text: reply }]);
+      setSavedChats(prev => [...prev, newChat]);
+      persistSavedChats([...savedChats, newChat]);
 
-      if (currentChatId) {
-        const jwtToken2 = localStorage.getItem("jwtToken");
-
-        const chatArray = [
-          ...messages.map(m => ({
-            role: m.sender === "user" ? "user" : "assistant",
-            message: m.text,
-            time: new Date().toISOString(),
-          })),
-          { role: "user", message: userMessage, time: new Date().toISOString() },
-          { role: "assistant", message: reply, time: new Date().toISOString() }
-        ];
-
-        const payload = {
-          savedChat: JSON.stringify(chatArray)
-        };
-
-        await axios.put(
-          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
-          payload,
-          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
-        );
-      }
-
-      setInput("");
-
-    } catch (err) {
-      console.error("Chat error:", err);
-      setMessages(prev => [
-        ...prev,
-        { sender: "bot", text: "⚠️ Connection error. Try again." }
-      ]);
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => {
-      textInputRef.current?.focus();
-    }, 0);
+      addSnackbar({
+        message: "Chat saved successfully before starting a new one.",
+        type: "success"
+      });
     }
-  };
 
-  const startNewChat = () => {
-    if (messages.length > 0) {
-      addSnackbar({ message: 'Started a new chat. Previous unsaved messages were cleared.', type: 'success' });
-    }
+    // reset for brand new chat
     setMessages([]);
     setCurrentChatId(null);
     setShowDropdown(false);
     focusInput();
-  };
+
+  } catch (error) {
+    console.error("Failed to save chat before new chat:", error);
+
+    addSnackbar({
+      message: "Unable to save previous chat. Starting new chat anyway.",
+      type: "error"
+    });
+
+    setMessages([]);
+    setCurrentChatId(null);
+    setShowDropdown(false);
+    focusInput();
+  }
+};
+
+
 
   const loadChat = async (id) => {
-    const chat = savedChats.find((c) => c.id === id);
-    setCurrentChatId(id);
-    setIsLoading(true);
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const { data } = await axios.get(`${apiUrl}/aiPrepChat/${id}/getChatDetailsById/${user?.id}`, {
-        headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-      });
-      let messagesArr = [];
-      if (data?.savedChat) {
-        try {
-          const parsed = JSON.parse(data.savedChat);
-          if (Array.isArray(parsed)) {
-            messagesArr = parsed;
-          } else if (Array.isArray(parsed?.messages)) {
-            messagesArr = parsed.messages;
-          } else {
-            messagesArr = [];
-          }
-        } catch (err) {
-          console.error('Failed to parse savedChat:', err);
-          messagesArr = [];
-        }
-      } else if (Array.isArray(data?.messages)) {
-        messagesArr = data.messages;
+  const chat = savedChats.find(c => c.id === id);
+  setCurrentChatId(id); // this tells startNewChat() it is an existing chat
+  setIsLoading(true);
+
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const { data } = await axios.get(
+      `${apiUrl}/aiPrepChat/${id}/getChatDetailsById/${user?.id}`,
+      { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+    );
+
+    let messagesArr = [];
+
+    if (data?.savedChat) {
+      try {
+        const parsed = JSON.parse(data.savedChat);
+        messagesArr = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed?.messages)
+          ? parsed.messages
+          : [];
+      } catch (err) {
+        messagesArr = [];
       }
-      const mapped = messagesArr.map((m) => ({
-        sender: (m.role === 'user' || m.sender === 'user') ? 'user' : 'bot',
-        text: m.message ?? m.content ?? m.text ?? '',
-        timestamp: m.time ?? m.timestamp ?? m.createdAt ?? undefined,
-      }));
-      setMessages(mapped);
-    } catch (e) {
-      console.error('Failed to load saved chat content', e);
-      if (chat?.messages) setMessages(chat.messages);
-    } finally {
-      setIsLoading(false);
-      focusInput();
     }
-  };
+
+    const mapped = messagesArr.map(m => ({
+      sender: m.role === "user" ? "user" : "bot",
+      text: m.message ?? m.content ?? m.text ?? "",
+      timestamp: m.time ?? m.timestamp ?? undefined,
+    }));
+
+    setMessages(mapped);
+
+  } catch (e) {
+    console.error("Failed to load saved chat content", e);
+    if (chat?.messages) setMessages(chat.messages);
+  } finally {
+    setIsLoading(false);
+    focusInput();
+  }
+};
+
 
   const renameChat = async (id, title) => {
     const chat = savedChats.find((c) => c.id === id);
@@ -826,30 +889,52 @@ const formatResponse = (rawResponse) => {
                 </div>
 
                 <div className="interview-prep-input-container">
-                  <input
-                    type="text"
-                    className="interview-prep-chat-input"
-                    value={input}
-                    onChange={(e) => { const v = e.target.value; setInput(v); if (isCoolingDown) setQueuedMessage(v); }}
-                    placeholder="Ask newton!"
-                    onKeyDown={handleKeyPress}
-                    disabled={isLoading || isCoolingDown}
-                    aria-label="Chat input"
-                    ref={textInputRef}
-                  />
-                  <span
-                    className="interview-prep-send-button"
-                    onClick={() => (sendMessage(), setInput(""))}
-                    disabled={!input.trim() || isLoading || isCoolingDown}
-                    aria-label="Send message"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.976" viewBox="0 0 16 14.976">
-                      <g id="Layer_7" data-name="Layer 7" transform="translate(-11.874 -14.302)">
-                        <path id="Path_497" data-name="Path 497" d="M27.633,21.411,12.471,14.342a.42.42,0,0,0-.571.527l2.238,6.5h6.782a.42.42,0,1,1,0,.839H14.139L11.9,28.723a.43.43,0,0,0-.021.136.42.42,0,0,0,.6.38L27.633,22.17a.42.42,0,0,0,0-.759Z" fill="#d3d3d3" />
-                      </g>
-                    </svg>
-                  </span>
-                </div>
+  <input
+    type="text"
+    className="interview-prep-chat-input"
+    value={input}
+    onChange={(e) => {
+      const v = e.target.value;
+      setInput(v);
+      if (isCoolingDown) setQueuedMessage(v);
+    }}
+    placeholder="Ask newton!"
+    onKeyDown={handleKeyPress}
+    disabled={isLoading || isCoolingDown}
+    aria-label="Chat input"
+    ref={textInputRef}
+  />
+
+  <span
+    onClick={() => (sendMessage(), setInput(""))}
+    aria-label="Send message"
+    style={{
+      cursor: input.trim() ? "pointer" : "default",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "8px",
+    }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="14.976"
+      viewBox="0 0 16 14.976"
+    >
+      <g transform="translate(-11.874 -14.302)">
+        <path
+          d="M27.633,21.411,12.471,14.342a.42.42,0,0,0-.571.527l2.238,6.5h6.782a.42.42,0,1,1,0,.839H14.139L11.9,28.723a.43.43,0,0,0-.021.136.42.42,0,0,0,.6.38L27.633,22.17a.42.42,0,0,0,0-.759Z"
+          style={{
+            fill: input.trim() ? "#F97316" : "#d3d3d3", // ACTIVE / INACTIVE COLOR
+            transition: "0.2s ease",
+          }}
+        />
+      </g>
+    </svg>
+  </span>
+</div>
+
               </div>
             </div>
 
