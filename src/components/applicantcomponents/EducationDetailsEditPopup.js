@@ -156,7 +156,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
 
   return (
     <div style={{ paddingTop: 24 }}>
-      <h3 style={{ marginBottom: 12 }}>Edit Education Details</h3>
+      <h3 style={{ marginBottom: 12 }}>Edit education details</h3>
 
       {/* Graduation */}
       <div className="card-base" style={{ margin: 0 }}>
@@ -423,7 +423,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           aria-busy={saving}
           style={{ opacity: !canSave ? 0.6 : 1 }}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Save changes"}
         </button>
       </div>
     </div>

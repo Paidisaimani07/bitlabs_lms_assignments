@@ -122,7 +122,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
 
   return (
     <div className="basic-details-edit-popup" style={{ paddingTop: 24 }}>
-      <div className="popup-heading">Personal Details</div>
+      <div className="popup-heading">Personal details</div>
 
       <div className="pd-grid">
         {/* Name */}
@@ -233,7 +233,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
           disabled={saving}
           aria-busy={saving}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Save changes"}
         </button>
       </div>
 
