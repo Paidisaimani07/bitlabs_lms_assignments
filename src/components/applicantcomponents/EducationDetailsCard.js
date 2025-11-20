@@ -232,7 +232,7 @@ const EducationDetailsCard = ({ applicantId }) => {
       <Modal
         isOpen={editOpen}
         onRequestClose={() => setEditOpen(false)}
-        contentLabel="Edit Education Details"
+        contentLabel="Edit education details"
         className="modal-content2"
         overlayClassName="modal-overlay"
         ariaHideApp={false}

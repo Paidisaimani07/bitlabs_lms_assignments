@@ -557,6 +557,7 @@
   font-weight: 700 !important;
   cursor: pointer !important;
   transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease !important;
+  text-transform: none;
 }
 
 /* Hover / focus / active states */

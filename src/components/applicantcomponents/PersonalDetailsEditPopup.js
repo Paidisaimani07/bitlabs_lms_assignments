@@ -156,7 +156,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
 
   return (
     <div style={{ paddingTop: 24 }}>
-      <h3 style={{ marginBottom: 12 }}>Edit Personal Details</h3>
+      <h3 style={{ marginBottom: 12 }}>Edit personal details</h3>
 
       <div className="pd-grid">
         {/* Full name */}
@@ -310,7 +310,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
           aria-busy={saving}
           style={{ opacity: !canSave ? 0.6 : 1 }}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Save changes"}
         </button>
       </div>
     </div>
