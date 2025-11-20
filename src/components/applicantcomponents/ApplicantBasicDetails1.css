@@ -23,7 +23,7 @@
   justify-content: center;
   align-items: center;
   min-height: 90vh;
-  background-color: #f3f4f6;
+  /* background-color: #f3f4f6; */
   
 }
 .input-form .rbt-input-main {
@@ -296,24 +296,24 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #F97316;
-  background-color: #ffffff;
-  color: #F97316;
+  border: 2px solid #969696;
+  background-color: #e3e3e3;
+  color: #969696;
   font-weight: bold;
   position: relative;
   z-index: 1;
 }
 
 .step-circle.active {
-  background-color: #F97316;
-  color: #ffffff;
-  border-color: #F97316;
+  background-color: #e3e3e3;
+  color: #969696;
+  border-color: #969696;
 }
 
 .step-circle.completed {
-  background-color: #10b981;
+  background-color: #F97316;
   color: #ffffff;
-  border-color: #10b981;
+  border-color: #F97316;
 }
 
 .step-label {
@@ -321,19 +321,22 @@
   color: #6b7280;
 }
 
+
 .step-line {
   position: absolute;
   top: 20px;
   left: -50%;
   width: 100%;
-  height: 2px;
-  background-color: #F97316;
+  height: 0;
+  border-top: 2px dashed #bfbfbf; /* default dashed grey line */
   z-index: 0;
 }
 
+/* When completed → show only solid orange line */
 .step-line.completed {
-  background-color: #10b981;
+  border-top: 2px solid #F97316; /* solid line */
 }
+
 
 .first .input-form {
   border-radius: 8px;
