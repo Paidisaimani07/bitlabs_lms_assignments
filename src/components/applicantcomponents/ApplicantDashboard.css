@@ -21,9 +21,9 @@
 }
 
 .robo-img img {
-  width: 110%;
+  width: 100%;
   height: 180px;
-  margin-left: -50px;
+  margin-left: 10px;
 }
 
 .robo-card .robo-card-text {
@@ -203,11 +203,11 @@
 }
 
 .profile-card-row1 .portfolio::-webkit-scrollbar {
-  width: 6px;
+  width: 3px;
 }
 
 .profile-card-row1 .portfolio::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: #f7aa4b;
   border-radius: 10px;
 }
 
@@ -257,44 +257,6 @@
 .profile-extra-details {
   display: none;
 }
-
-.progress-container {
-  width: 100%;
-  height: 5px;
-  background: #e6e6e6;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 10px;
-  position: relative;
-}
-
-.progress-bar {
-  height: 100%;
-  background: #EA7B20;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; 
-  padding-right: 4px;
-  border-radius: 8px;
-  transition: width 0.4s ease;
-  position: relative;
-}
-
-.progress-bar span {
-  display: flex;
-}
-
-.progress-text{
-  display: flex;
-  justify-content: center;
-}
-
-.next-badge {
-  padding: 2px 0 0 8px;
-  display: flex;
-  justify-content: flex-end;
-}
-
 
 @media (min-width: 1302px) and (max-width: 1345px) {
   .portfolio .profile-side-section p {
