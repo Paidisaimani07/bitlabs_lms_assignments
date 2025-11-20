@@ -601,101 +601,132 @@ const sendMessage = async () => {
   };
 
   const handleExportChat = async (chatId) => {
-    try {
-      const chatToExport = savedChats.find(chat => chat.id === chatId);
-      if (!chatToExport) {
-        return;
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    // ✅ Fetch FULL chat from API (REAL source of truth)
+    const { data } = await axios.get(
+      `${apiUrl}/aiPrepChat/${chatId}/getChatDetailsById/${user?.id}`,
+      { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+    );
+
+    let messagesArr = [];
+
+    if (data?.savedChat) {
+      try {
+        const parsed = JSON.parse(data.savedChat);
+        messagesArr = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed?.messages)
+          ? parsed.messages
+          : [];
+      } catch (err) {
+        messagesArr = [];
+      }
+    }
+
+    // ❗ If still no messages, stop
+    if (!messagesArr.length) {
+      addSnackbar({ message: "No messages found to export.", type: "error" });
+      return;
+    }
+
+    // Build hidden export element
+    const element = document.createElement("div");
+    element.style.position = "absolute";
+    element.style.left = "-9999px";
+    element.style.padding = "20px";
+    element.style.fontFamily = "Arial, sans-serif";
+    element.style.maxWidth = "800px";
+    element.style.margin = "0 auto";
+
+    const title = document.createElement("h1");
+    title.textContent = data.title || "Chat Export";
+    title.style.textAlign = "center";
+    title.style.marginBottom = "20px";
+    title.style.color = "#333";
+    element.appendChild(title);
+
+    const date = document.createElement("p");
+    date.textContent = `Exported on: ${new Date().toLocaleString()}`;
+    date.style.textAlign = "center";
+    date.style.marginBottom = "30px";
+    date.style.color = "#666";
+    element.appendChild(date);
+
+    // Render all messages into element
+    messagesArr.forEach((msg) => {
+      const messageDiv = document.createElement("div");
+      messageDiv.style.marginBottom = "15px";
+      messageDiv.style.padding = "10px 15px";
+      messageDiv.style.borderRadius = "8px";
+      messageDiv.style.maxWidth = "80%";
+
+      if (msg.role === "user") {
+        messageDiv.style.marginLeft = "auto";
+        messageDiv.style.backgroundColor = "#fdf3e9";
+        messageDiv.style.border = "1px solid #f0e0d0";
+      } else {
+        messageDiv.style.backgroundColor = "#f5f5f5";
+        messageDiv.style.border = "1px solid #e0e0e0";
       }
 
-      const element = document.createElement('div');
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
-      element.style.padding = '20px';
-      element.style.fontFamily = 'Arial, sans-serif';
-      element.style.maxWidth = '800px';
-      element.style.margin = '0 auto';
+      const content = document.createElement("div");
+      content.innerHTML = (msg.message || msg.content || msg.text || "")
+        .replace(/\n/g, "<br>")
+        .trim();
 
-      const title = document.createElement('h1');
-      title.textContent = chatToExport.title || 'Chat Export';
-      title.style.textAlign = 'center';
-      title.style.marginBottom = '20px';
-      title.style.color = '#333';
-      element.appendChild(title);
+      messageDiv.appendChild(content);
 
-      const date = document.createElement('p');
-      date.textContent = `Exported on: ${new Date().toLocaleString()}`;
-      date.style.textAlign = 'center';
-      date.style.marginBottom = '30px';
-      date.style.color = '#666';
-      element.appendChild(date);
+      const time = document.createElement("div");
+      time.textContent = new Date(msg.time || msg.timestamp || Date.now()).toLocaleString();
+      time.style.fontSize = "0.8em";
+      time.style.color = "#666";
+      time.style.marginTop = "5px";
+      time.style.textAlign = "right";
 
-      const messages = JSON.parse(chatToExport.messages || '[]');
+      messageDiv.appendChild(time);
+      element.appendChild(messageDiv);
+    });
 
-      messages.forEach(msg => {
-        const messageDiv = document.createElement('div');
-        messageDiv.style.marginBottom = '15px';
-        messageDiv.style.padding = '10px 15px';
-        messageDiv.style.borderRadius = '8px';
-        messageDiv.style.maxWidth = '80%';
+    document.body.appendChild(element);
 
-        if (msg.sender === 'user') {
-          messageDiv.style.marginLeft = 'auto';
-          messageDiv.style.backgroundColor = '#fdf3e9';
-          messageDiv.style.border = '1px solid #f0e0d0';
-        } else {
-          messageDiv.style.backgroundColor = '#f5f5f5';
-          messageDiv.style.border = '1px solid #e0e0e0';
-        }
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      allowTaint: true,
+    });
 
-        const content = document.createElement('div');
-        content.innerHTML = msg.content.replace(/\n/g, '<br>');
-        messageDiv.appendChild(content);
+    document.body.removeChild(element);
 
-        const time = document.createElement('div');
-        time.textContent = new Date(msg.timestamp).toLocaleString();
-        time.style.fontSize = '0.8em';
-        time.style.color = '#666';
-        time.style.marginTop = '5px';
-        time.style.textAlign = 'right';
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
 
-        messageDiv.appendChild(time);
-        element.appendChild(messageDiv);
-      });
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      document.body.appendChild(element);
+    pdf.addImage(imgData, "PNG", 10, 10, pdfWidth, pdfHeight);
 
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        allowTaint: true
-      });
+    const fileName = `chat_${data.title || "export"}_${new Date()
+      .toISOString()
+      .split("T")[0]}.pdf`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/(^_|_$)/g, "");
 
-      document.body.removeChild(element);
+    pdf.save(fileName);
+  } catch (error) {
+    console.error("Error exporting chat:", error);
+    addSnackbar({ message: "Failed to export chat.", type: "error" });
+  }
+};
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
-
-      const fileName = `chat_${chatToExport.title || 'export'}_${new Date().toISOString().split('T')[0]}.pdf`
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '_')
-        .replace(/(^_|_$)/g, '');
-
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('Error exporting chat:', error);
-    }
-  };
 
   return (
     <div className="border-style">
