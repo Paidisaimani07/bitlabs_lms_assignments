@@ -229,7 +229,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
                 </svg>
                 Resume upload
               </span>
-              <div className="resume-note">Supported Formats: pdf</div>
+              <div className="resume-note">Supported formats: pdf</div>
               {resumeAvailable && (
                 <div style={{ marginTop: 8 }}>
                   <button

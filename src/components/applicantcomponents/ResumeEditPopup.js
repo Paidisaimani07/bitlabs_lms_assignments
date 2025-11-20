@@ -182,7 +182,7 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
           onClick={handleResumeUpload}
           className="save-btn-resume"
         >
-          Save Changes
+          Save changes
         </button>
       </div>
       {snackbars.map((snackbar, index) => (

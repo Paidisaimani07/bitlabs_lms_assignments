@@ -573,13 +573,13 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "22px", fontWeight: "1200", color: "#7E3601", cursor:"pointer"}}>Ask Newton!</span>
                           </p>
 
                           <button
                             onClick={handleRedirect3}
                           >
-                            Get Started
+                            Get started
                           </button>
 
                         </div>
@@ -603,7 +603,7 @@ const ApplicantDashboard = () => {
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
-                        Enter the Arena!
+                        Enter arena!
                       </button>
                     </div>
 
@@ -620,7 +620,7 @@ const ApplicantDashboard = () => {
                   <div className="mentor-sphere">
                     <div className="mentor-topSection">
                       <h4 >
-                        MentorSphere
+                        Mentor sphere
                       </h4>
 
                       <span
@@ -631,9 +631,9 @@ const ApplicantDashboard = () => {
                     </div>
 
                     <div className="mentor-heading">
-                      <h4 >Guiding Star</h4>
-                      <h4 >Realm of Insight</h4>
-                      <h4 >Insight Hour</h4>
+                      <h4 >Guiding star</h4>
+                      <h4 >Realm of insight</h4>
+                      <h4 >Insight hour</h4>
                     </div>
                     {mentorLoading ? (
                       <div className="mentor-skeleton-list">
@@ -733,7 +733,7 @@ const ApplicantDashboard = () => {
                   {/*  My Portfolio */}
                   <div className="portfolio">
                     <div className="portfolio-heading">
-                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }}>
+                      <h4 style={{ margin: 0, fontWeight: "600", color: "#1a1a17", fontSize:"18px"}}>
                         My portfolio
                       </h4>
 
@@ -972,7 +972,7 @@ const ApplicantDashboard = () => {
                   {/* Tech Vibes */}
                   <div className="tech-vibes">
                     <div className="tech-vibes-header">
-                      <h3>TechVibes</h3>
+                      <h3>Tech vibes</h3>
                       <button className="explore-btn" onClick={handleRedirectTechVibes}>
                         Explore
                       </button>
