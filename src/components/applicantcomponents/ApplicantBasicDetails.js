@@ -8,7 +8,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './ApplicantBasicDetails.css';
 import './ApplicantBasicDetails1.css';
-import Logo from '../../images/artboard.svg';
+import Logo from '../../images/ZumZum.png';
 import 'react-bootstrap-typeahead/css/Typeahead.css'; 
 import ModalComponent from './ModalComponent';
 import ModalWrapper1 from './ModalWrapper1';
@@ -940,10 +940,11 @@ delete transformedApplicantProfileDTO.skillsRequired
   };
   
   return (
-    <div className="component">
+    <div className="border-style">
+      <div className="blur-border-style"></div>
       <img className="top-left-svg" src={Logo} alt="Company Logo" />
-    <div className="card-container">
-    <div className="card1">
+    <div className="card-container ">
+    <div className="card1" style={{ maxHeight: '550px', overflowY: 'auto',scrollbarWidth: 'thin'}}>
       <div className="header">
         <p className="form-title">Complete Your Profile</p>
         <p>Fill the form fields to go to the next step</p>
