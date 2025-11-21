@@ -36,38 +36,53 @@ function InterviewPrepPage() {
   const [titleModal, setTitleModal] = useState({ open: false, mode: null, chatId: null, value: '' });
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const isExistingChat = savedChats.some(c => c.id === currentChatId);
+
+
 
 const formatResponse = (rawResponse) => {
   try {
-    let obj;
+    let text = "";
 
-    // If already an object → use directly
+    // If object → read its FIRST string-like field
     if (typeof rawResponse === "object" && rawResponse !== null) {
-      obj = rawResponse;
+      const key = Object.keys(rawResponse)[0];
+      text = rawResponse[key] ?? rawResponse;
     } else {
-      // Parse string JSON
-      obj = JSON.parse(rawResponse);
+      // Try parsing if it's a JSON string
+      const parsed = JSON.parse(rawResponse);
+      const key = Object.keys(parsed)[0];
+      text = parsed[key] ?? parsed;
     }
 
-    // 🔥 PICK FIRST STRING VALUE IN THE OBJECT
-    const firstKey = Object.keys(obj)[0];
-    let text = obj[firstKey] ?? "";
+    text = String(text).trim();
 
-    // 🧹 CLEANUP
-    text = String(text)
-      .replace(/^\s*`+|`+\s*$/g, "")     // remove backticks
-      .replace(/\\"/g, '"')              // escaped quotes
-      .replace(/\\n/g, "\n")             // convert \n to real newline
-      .replace(/\{\s*"[^"]+"\s*:\s*"([\s\S]*?)"\s*\}$/g, "$1") // remove {...}
-      .trim();
+    // 🔥 1. Remove backticks
+    text = text.replace(/^\s*`+|`+\s*$/g, "");
 
-    return text;
+    // 🔥 2. Remove escaped quotes
+    text = text.replace(/\\"/g, '"');
+
+    // 🔥 3. Convert \n to real newlines
+    text = text.replace(/\\n/g, "\n");
+
+    // 🔥 4. Remove wrappers like { "response": "..." }
+    text = text.replace(/^\s*\{\s*"response"\s*:\s*"([\s\S]*?)"\s*\}\s*$/i, "$1");
+
+    // 🔥 5. Remove cases like => {"response": {...}}
+    text = text.replace(/^\s*\{\s*"response"\s*:\s*\{([\s\S]*?)\}\s*\}\s*$/i, "$1");
+
+    // 🔥 6. Remove leftover leading/trailing braces or quotes
+    text = text.replace(/^[{\s"]+|[}\s"]+$/g, "");
+
+    return text.trim();
 
   } catch (err) {
     console.error("formatResponse error:", err);
     return rawResponse;
   }
 };
+
 
 
 
@@ -323,125 +338,173 @@ const formatResponse = (rawResponse) => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading || isCoolingDown) return;
+const sendMessage = async () => {
+  if (!input.trim() || isLoading || isCoolingDown) return;
 
-    const userMessage = input.trim();
-    setIsLoading(true);
-    setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
-    focusInput();
+  const userMessage = input.trim();
+  setIsLoading(true);
+  setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
+  focusInput();
 
-    try {
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const postBody = {
+      applicantId: user?.id ?? null,
+      chatId: currentChatId ?? null,
+      request: userMessage
+    };
+
+    const { data } = await axios.post(
+      `${apiUrl}/aiPrepModel/postQuery`,
+      postBody,
+      { headers: { Authorization: `Bearer ${jwtToken}` } }
+    );
+
+    // backend gives a chatId → update
+    if (data?.chatId) setCurrentChatId(data.chatId);
+
+    const reply = formatResponse(data);
+    setMessages(prev => [...prev, { sender: "bot", text: reply }]);
+
+    setInput("");
+
+  } catch (err) {
+    console.error("Chat error:", err);
+    setMessages(prev => [
+      ...prev,
+      { sender: "bot", text: "⚠️ Connection error. Try again." }
+    ]);
+  } finally {
+    setIsLoading(false);
+    setTimeout(() => textInputRef.current?.focus(), 0);
+  }
+};
+
+
+
+ const startNewChat = async () => {
+  try {
+    const isExistingChat =
+      currentChatId && savedChats.some(c => c.id === currentChatId);
+
+    // Save ONLY if this chat is NEW (not yet saved)
+    if (messages.length > 0 && currentChatId && !isExistingChat) {
+
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const postBody = {
-        applicantId: user?.id ?? null,
-        chatId: currentChatId ?? null,
-        request: userMessage
+      // Title from first user message
+      const firstUserMsg =
+        messages.find(m => m.sender === "user")?.text || "Untitled Chat";
+
+      const trimmedTitle =
+        firstUserMsg.length > 35
+          ? firstUserMsg.substring(0, 35) + "..."
+          : firstUserMsg;
+
+      // Format messages for backend
+      const chatArray = messages.map(m => ({
+        role: m.sender === "user" ? "user" : "assistant",
+        message: m.text,
+        time: new Date().toISOString(),
+      }));
+
+      const payload = {
+        title: trimmedTitle,
+        savedChat: JSON.stringify(chatArray),
       };
 
-      const { data } = await axios.post(
-        `${apiUrl}/aiPrepModel/postQuery`,
-        postBody,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      // SAVE
+      await axios.put(
+        `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+        payload,
+        { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
       );
 
-      if (data?.chatId) setCurrentChatId(data.chatId);
+      // Add to local list
+      const newChat = {
+        id: currentChatId,
+        title: trimmedTitle,
+        createdAt: Date.now()
+      };
 
-      const reply = formatResponse(data);
-      setMessages(prev => [...prev, { sender: "bot", text: reply }]);
+      setSavedChats(prev => [...prev, newChat]);
+      persistSavedChats([...savedChats, newChat]);
 
-      if (currentChatId) {
-        const jwtToken2 = localStorage.getItem("jwtToken");
-
-        const chatArray = [
-          ...messages.map(m => ({
-            role: m.sender === "user" ? "user" : "assistant",
-            message: m.text,
-            time: new Date().toISOString(),
-          })),
-          { role: "user", message: userMessage, time: new Date().toISOString() },
-          { role: "assistant", message: reply, time: new Date().toISOString() }
-        ];
-
-        const payload = {
-          savedChat: JSON.stringify(chatArray)
-        };
-
-        await axios.put(
-          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
-          payload,
-          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
-        );
-      }
-
-      setInput("");
-
-    } catch (err) {
-      console.error("Chat error:", err);
-      setMessages(prev => [
-        ...prev,
-        { sender: "bot", text: "⚠️ Connection error. Try again." }
-      ]);
-    } finally {
-      setIsLoading(false);
-      setTimeout(() => {
-      textInputRef.current?.focus();
-    }, 0);
+      addSnackbar({
+        message: "Chat saved successfully before starting a new one.",
+        type: "success"
+      });
     }
-  };
 
-  const startNewChat = () => {
-    if (messages.length > 0) {
-      addSnackbar({ message: 'Started a new chat. Previous unsaved messages were cleared.', type: 'success' });
-    }
+    // reset for brand new chat
     setMessages([]);
     setCurrentChatId(null);
     setShowDropdown(false);
     focusInput();
-  };
+
+  } catch (error) {
+    console.error("Failed to save chat before new chat:", error);
+
+    addSnackbar({
+      message: "Unable to save previous chat. Starting new chat anyway.",
+      type: "error"
+    });
+
+    setMessages([]);
+    setCurrentChatId(null);
+    setShowDropdown(false);
+    focusInput();
+  }
+};
+
+
 
   const loadChat = async (id) => {
-    const chat = savedChats.find((c) => c.id === id);
-    setCurrentChatId(id);
-    setIsLoading(true);
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const { data } = await axios.get(`${apiUrl}/aiPrepChat/${id}/getChatDetailsById/${user?.id}`, {
-        headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-      });
-      let messagesArr = [];
-      if (data?.savedChat) {
-        try {
-          const parsed = JSON.parse(data.savedChat);
-          if (Array.isArray(parsed)) {
-            messagesArr = parsed;
-          } else if (Array.isArray(parsed?.messages)) {
-            messagesArr = parsed.messages;
-          } else {
-            messagesArr = [];
-          }
-        } catch (err) {
-          console.error('Failed to parse savedChat:', err);
-          messagesArr = [];
-        }
-      } else if (Array.isArray(data?.messages)) {
-        messagesArr = data.messages;
+  const chat = savedChats.find(c => c.id === id);
+  setCurrentChatId(id); // this tells startNewChat() it is an existing chat
+  setIsLoading(true);
+
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    const { data } = await axios.get(
+      `${apiUrl}/aiPrepChat/${id}/getChatDetailsById/${user?.id}`,
+      { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+    );
+
+    let messagesArr = [];
+
+    if (data?.savedChat) {
+      try {
+        const parsed = JSON.parse(data.savedChat);
+        messagesArr = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed?.messages)
+          ? parsed.messages
+          : [];
+      } catch (err) {
+        messagesArr = [];
       }
-      const mapped = messagesArr.map((m) => ({
-        sender: (m.role === 'user' || m.sender === 'user') ? 'user' : 'bot',
-        text: m.message ?? m.content ?? m.text ?? '',
-        timestamp: m.time ?? m.timestamp ?? m.createdAt ?? undefined,
-      }));
-      setMessages(mapped);
-    } catch (e) {
-      console.error('Failed to load saved chat content', e);
-      if (chat?.messages) setMessages(chat.messages);
-    } finally {
-      setIsLoading(false);
-      focusInput();
     }
-  };
+
+    const mapped = messagesArr.map(m => ({
+      sender: m.role === "user" ? "user" : "bot",
+      text: m.message ?? m.content ?? m.text ?? "",
+      timestamp: m.time ?? m.timestamp ?? undefined,
+    }));
+
+    setMessages(mapped);
+
+  } catch (e) {
+    console.error("Failed to load saved chat content", e);
+    if (chat?.messages) setMessages(chat.messages);
+  } finally {
+    setIsLoading(false);
+    focusInput();
+  }
+};
+
 
   const renameChat = async (id, title) => {
     const chat = savedChats.find((c) => c.id === id);
@@ -538,101 +601,132 @@ const formatResponse = (rawResponse) => {
   };
 
   const handleExportChat = async (chatId) => {
-    try {
-      const chatToExport = savedChats.find(chat => chat.id === chatId);
-      if (!chatToExport) {
-        return;
+  try {
+    const jwtToken = localStorage.getItem("jwtToken");
+
+    // ✅ Fetch FULL chat from API (REAL source of truth)
+    const { data } = await axios.get(
+      `${apiUrl}/aiPrepChat/${chatId}/getChatDetailsById/${user?.id}`,
+      { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+    );
+
+    let messagesArr = [];
+
+    if (data?.savedChat) {
+      try {
+        const parsed = JSON.parse(data.savedChat);
+        messagesArr = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray(parsed?.messages)
+          ? parsed.messages
+          : [];
+      } catch (err) {
+        messagesArr = [];
+      }
+    }
+
+    // ❗ If still no messages, stop
+    if (!messagesArr.length) {
+      addSnackbar({ message: "No messages found to export.", type: "error" });
+      return;
+    }
+
+    // Build hidden export element
+    const element = document.createElement("div");
+    element.style.position = "absolute";
+    element.style.left = "-9999px";
+    element.style.padding = "20px";
+    element.style.fontFamily = "Arial, sans-serif";
+    element.style.maxWidth = "800px";
+    element.style.margin = "0 auto";
+
+    const title = document.createElement("h1");
+    title.textContent = data.title || "Chat Export";
+    title.style.textAlign = "center";
+    title.style.marginBottom = "20px";
+    title.style.color = "#333";
+    element.appendChild(title);
+
+    const date = document.createElement("p");
+    date.textContent = `Exported on: ${new Date().toLocaleString()}`;
+    date.style.textAlign = "center";
+    date.style.marginBottom = "30px";
+    date.style.color = "#666";
+    element.appendChild(date);
+
+    // Render all messages into element
+    messagesArr.forEach((msg) => {
+      const messageDiv = document.createElement("div");
+      messageDiv.style.marginBottom = "15px";
+      messageDiv.style.padding = "10px 15px";
+      messageDiv.style.borderRadius = "8px";
+      messageDiv.style.maxWidth = "80%";
+
+      if (msg.role === "user") {
+        messageDiv.style.marginLeft = "auto";
+        messageDiv.style.backgroundColor = "#fdf3e9";
+        messageDiv.style.border = "1px solid #f0e0d0";
+      } else {
+        messageDiv.style.backgroundColor = "#f5f5f5";
+        messageDiv.style.border = "1px solid #e0e0e0";
       }
 
-      const element = document.createElement('div');
-      element.style.position = 'absolute';
-      element.style.left = '-9999px';
-      element.style.padding = '20px';
-      element.style.fontFamily = 'Arial, sans-serif';
-      element.style.maxWidth = '800px';
-      element.style.margin = '0 auto';
+      const content = document.createElement("div");
+      content.innerHTML = (msg.message || msg.content || msg.text || "")
+        .replace(/\n/g, "<br>")
+        .trim();
 
-      const title = document.createElement('h1');
-      title.textContent = chatToExport.title || 'Chat Export';
-      title.style.textAlign = 'center';
-      title.style.marginBottom = '20px';
-      title.style.color = '#333';
-      element.appendChild(title);
+      messageDiv.appendChild(content);
 
-      const date = document.createElement('p');
-      date.textContent = `Exported on: ${new Date().toLocaleString()}`;
-      date.style.textAlign = 'center';
-      date.style.marginBottom = '30px';
-      date.style.color = '#666';
-      element.appendChild(date);
+      const time = document.createElement("div");
+      time.textContent = new Date(msg.time || msg.timestamp || Date.now()).toLocaleString();
+      time.style.fontSize = "0.8em";
+      time.style.color = "#666";
+      time.style.marginTop = "5px";
+      time.style.textAlign = "right";
 
-      const messages = JSON.parse(chatToExport.messages || '[]');
+      messageDiv.appendChild(time);
+      element.appendChild(messageDiv);
+    });
 
-      messages.forEach(msg => {
-        const messageDiv = document.createElement('div');
-        messageDiv.style.marginBottom = '15px';
-        messageDiv.style.padding = '10px 15px';
-        messageDiv.style.borderRadius = '8px';
-        messageDiv.style.maxWidth = '80%';
+    document.body.appendChild(element);
 
-        if (msg.sender === 'user') {
-          messageDiv.style.marginLeft = 'auto';
-          messageDiv.style.backgroundColor = '#fdf3e9';
-          messageDiv.style.border = '1px solid #f0e0d0';
-        } else {
-          messageDiv.style.backgroundColor = '#f5f5f5';
-          messageDiv.style.border = '1px solid #e0e0e0';
-        }
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      allowTaint: true,
+    });
 
-        const content = document.createElement('div');
-        content.innerHTML = msg.content.replace(/\n/g, '<br>');
-        messageDiv.appendChild(content);
+    document.body.removeChild(element);
 
-        const time = document.createElement('div');
-        time.textContent = new Date(msg.timestamp).toLocaleString();
-        time.style.fontSize = '0.8em';
-        time.style.color = '#666';
-        time.style.marginTop = '5px';
-        time.style.textAlign = 'right';
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4",
+    });
 
-        messageDiv.appendChild(time);
-        element.appendChild(messageDiv);
-      });
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      document.body.appendChild(element);
+    pdf.addImage(imgData, "PNG", 10, 10, pdfWidth, pdfHeight);
 
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        allowTaint: true
-      });
+    const fileName = `chat_${data.title || "export"}_${new Date()
+      .toISOString()
+      .split("T")[0]}.pdf`
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/(^_|_$)/g, "");
 
-      document.body.removeChild(element);
+    pdf.save(fileName);
+  } catch (error) {
+    console.error("Error exporting chat:", error);
+    addSnackbar({ message: "Failed to export chat.", type: "error" });
+  }
+};
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth, pdfHeight);
-
-      const fileName = `chat_${chatToExport.title || 'export'}_${new Date().toISOString().split('T')[0]}.pdf`
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '_')
-        .replace(/(^_|_$)/g, '');
-
-      pdf.save(fileName);
-    } catch (error) {
-      console.error('Error exporting chat:', error);
-    }
-  };
 
   return (
     <div className="border-style">
@@ -826,30 +920,52 @@ const formatResponse = (rawResponse) => {
                 </div>
 
                 <div className="interview-prep-input-container">
-                  <input
-                    type="text"
-                    className="interview-prep-chat-input"
-                    value={input}
-                    onChange={(e) => { const v = e.target.value; setInput(v); if (isCoolingDown) setQueuedMessage(v); }}
-                    placeholder="Ask newton!"
-                    onKeyDown={handleKeyPress}
-                    disabled={isLoading || isCoolingDown}
-                    aria-label="Chat input"
-                    ref={textInputRef}
-                  />
-                  <span
-                    className="interview-prep-send-button"
-                    onClick={() => (sendMessage(), setInput(""))}
-                    disabled={!input.trim() || isLoading || isCoolingDown}
-                    aria-label="Send message"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="14.976" viewBox="0 0 16 14.976">
-                      <g id="Layer_7" data-name="Layer 7" transform="translate(-11.874 -14.302)">
-                        <path id="Path_497" data-name="Path 497" d="M27.633,21.411,12.471,14.342a.42.42,0,0,0-.571.527l2.238,6.5h6.782a.42.42,0,1,1,0,.839H14.139L11.9,28.723a.43.43,0,0,0-.021.136.42.42,0,0,0,.6.38L27.633,22.17a.42.42,0,0,0,0-.759Z" fill="#d3d3d3" />
-                      </g>
-                    </svg>
-                  </span>
-                </div>
+  <input
+    type="text"
+    className="interview-prep-chat-input"
+    value={input}
+    onChange={(e) => {
+      const v = e.target.value;
+      setInput(v);
+      if (isCoolingDown) setQueuedMessage(v);
+    }}
+    placeholder="Ask newton!"
+    onKeyDown={handleKeyPress}
+    disabled={isLoading || isCoolingDown}
+    aria-label="Chat input"
+    ref={textInputRef}
+  />
+
+  <span
+    onClick={() => (sendMessage(), setInput(""))}
+    aria-label="Send message"
+    style={{
+      cursor: input.trim() ? "pointer" : "default",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "8px",
+    }}
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="14.976"
+      viewBox="0 0 16 14.976"
+    >
+      <g transform="translate(-11.874 -14.302)">
+        <path
+          d="M27.633,21.411,12.471,14.342a.42.42,0,0,0-.571.527l2.238,6.5h6.782a.42.42,0,1,1,0,.839H14.139L11.9,28.723a.43.43,0,0,0-.021.136.42.42,0,0,0,.6.38L27.633,22.17a.42.42,0,0,0,0-.759Z"
+          style={{
+            fill: input.trim() ? "#F97316" : "#d3d3d3", // ACTIVE / INACTIVE COLOR
+            transition: "0.2s ease",
+          }}
+        />
+      </g>
+    </svg>
+  </span>
+</div>
+
               </div>
             </div>
 

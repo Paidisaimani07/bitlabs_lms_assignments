@@ -257,7 +257,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) =
           aria-busy={saving}
           style={{ minWidth: 140, height: 40, opacity: !canSave ? 0.6 : 1 }}
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {saving ? "Saving..." : "Save changes"}
         </button>
       </div>
     </div>

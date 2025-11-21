@@ -26,8 +26,8 @@ const ApplicantViewProfile = () => {
             <div className="themes-container">
               <div className="row">
                 <div className="col-lg-12 col-md-12">
-                  <div className="title-dashboard">
-                    <div className="title-dash flex2">My Portfolio</div>
+                  <div className="title-dashboard" style={{margin:"0 0 -15px -40px"}}>
+                    <div className="title-dash flex2">My portfolio</div>
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@ const ApplicantViewProfile = () => {
            {/* ===================== Skill Badges (NEW CARD) ===================== */}
 <div className="card-base soft-shadow">
  <div className="card-title-row">
-     <h3 className="card-title">Skill Badges</h3>
+     <h3 className="card-title">Skill badges</h3>
    </div>
    <SkillBadgesGrid />
  </div>
