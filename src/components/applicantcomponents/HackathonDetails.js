@@ -304,7 +304,7 @@ const HackathonDetails = () => {
                     <div className="breadcrumb-navigation">
                         <span className="breadcrumb-link" onClick={() => navigate('/applicanthome')}>Dashboard</span>
                         <span className="breadcrumb-separator"> / </span>
-                        <span className="breadcrumb-link" onClick={() => navigate('/applicant-hackathon')}>Innovation Arena</span>
+                        <span className="breadcrumb-link" onClick={() => navigate('/applicant-hackathon')}>Innovation arena</span>
                     </div>
 
                     <div className="hackathon-body">

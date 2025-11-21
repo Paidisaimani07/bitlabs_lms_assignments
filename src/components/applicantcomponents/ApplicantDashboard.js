@@ -930,7 +930,19 @@ const ApplicantDashboard = () => {
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
                       <h3>Tech buzz shots</h3>
-                      <button onClick={handleRedirectTechBuzz}>view more</button>
+                      <span
+  onClick={handleRedirectTechBuzz}
+  style={{
+    textDecoration: "underline",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#EF8C2F",
+    cursor: "pointer"
+  }}
+>
+  View more
+</span>
+
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (

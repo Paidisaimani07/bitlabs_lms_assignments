@@ -183,7 +183,7 @@ const Hackathon = () => {
         <div className="dashboard__content">
             <div className="row mr-0 ml-10" style={{ marginLeft: "1%" }}>
                 <div className="main-header-row">
-                    <h1 className="main-heading">Innovation Arena</h1>
+                    <h1 className="main-heading">Innovation arena</h1>
                     <div className="hackathon-search-box">
                         <i className="fa fa-search search-icon1"></i>
                         <input
@@ -212,16 +212,17 @@ const Hackathon = () => {
                 <div className="header-container">
                     <div className="status-tabs">
                         {[
-                            { key: "MY", label: "My Arenas" },
-                            { key: "RECOMMENDED", label: "Picks For You" },
-                            { key: "ACTIVE", label: "In Action" },
-                            { key: "UPCOMING", label: "On The Horizon" },
-                            { key: "COMPLETED", label: "Past Battles" },
+                            { key: "MY", label: "My arenas" },
+                            { key: "RECOMMENDED", label: "Picks for you" },
+                            { key: "ACTIVE", label: "In action" },
+                            { key: "UPCOMING", label: "On the horizon" },
+                            { key: "COMPLETED", label: "Past battles" },
                         ].map(tab => (
                             <button
                                 key={tab.key}
                                 className={`tab ${statusFilter === tab.key ? "active" : ""}`}
                                 onClick={() => setStatusFilter(tab.key)}
+                                style={{ textTransform: "none" }}
                             >
                                 {tab.label}
                             </button>
