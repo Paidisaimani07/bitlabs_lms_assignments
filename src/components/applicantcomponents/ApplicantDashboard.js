@@ -522,17 +522,19 @@ useEffect(() => {
               <div className="page-title-dashboard">
                 <div className="title-dashboard">  
                 <div className="display-flex robo-container" >
-                    <div className="card robo-card">
+                    <div className="card robo-card" onClick={handleRedirect3}>
                       <div className="container">
 
                         <div className="robo-img ">
                           <span>
+                            <a onClick={handleRedirect3}>
                             <img
                               src={botImage}
                               alt="Bot icon"
                               width="150px"
                               height="250px"
                             />
+                            </a>
                           </span>
                         </div>
 

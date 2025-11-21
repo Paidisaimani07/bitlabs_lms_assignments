@@ -1,10 +1,14 @@
 // src/components/applicant/ProjectDetailsEditPopup.jsx
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import PropTypes from "prop-types";
+import "./ProjectEditModal.css"; // make sure path is correct
 
+// Use your API base
+import { apiUrl } from "../../services/ApplicantAPIService";
 const PROJ_API = `${apiUrl}/applicant-projects`;
 
+/* validators (same as before) */
 const required = (msg) => (v) => (String(v ?? "").trim() ? "" : msg);
 const requiredNum = (msg) => (v) => (v === 0 || v ? "" : msg);
 
@@ -19,17 +23,22 @@ const validators = {
   projectDescription: required("Project description is required"),
 };
 
-const Field = ({ label, requiredMark, children }) => (
-  <label style={{ display: "block", fontWeight: 700, fontSize: 13, marginBottom: 6, color: "#111827" }}>
-    {label} {requiredMark && <span className="req">*</span>}
-    <div>{children}</div>
-  </label>
+/* Small presentational helpers */
+const Field = ({ label, requiredMark, hint, children }) => (
+  <div className="pe-field">
+    <div className="pe-field-label">
+      <div className="pe-field-title">{label}</div>
+      {requiredMark && <div style={{ color: "#F97316", marginLeft: 6 }}>*</div>}
+    </div>
+    {children}
+    {hint && <div className="pe-hint">{hint}</div>}
+  </div>
 );
 
-const Error = ({ msg }) =>
-  msg ? <div className="error-message" style={{ marginTop: 6 }}>{msg}</div> : null;
+const Error = ({ msg }) => (msg ? <div className="pe-error">{msg}</div> : null);
 
-const ChipEditor = ({ value, onChange, placeholder }) => {
+/* ChipEditor: simple, returns comma-separated string to match your API shape */
+const ChipEditor = ({ value = "", onChange, placeholder, inputName, ariaLabel }) => {
   const [draft, setDraft] = useState("");
   const items = useMemo(
     () =>
@@ -40,48 +49,84 @@ const ChipEditor = ({ value, onChange, placeholder }) => {
     [value]
   );
 
+  useEffect(() => {
+    // trim leading spaces if parent updates value
+    if (!draft) return;
+    setDraft((d) => d.trimStart());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   const add = () => {
     const t = draft.trim();
     if (!t) return;
-    const next = Array.from(new Set([...items, t]));
+    if (items.includes(t)) {
+      setDraft("");
+      return;
+    }
+    const next = [...items, t];
     onChange(next.join(", "));
     setDraft("");
   };
+
   const remove = (i) => {
     const next = items.filter((_, idx) => idx !== i);
     onChange(next.join(", "));
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      add();
+    } else if (e.key === "Backspace" && !draft && items.length) {
+      e.preventDefault();
+      remove(items.length - 1);
+    }
+  };
+
   return (
-    <>
-      <div className="pd-input with-add" style={{ marginBottom: 8 }}>
+    <div>
+      <div className="pe-chip-row">
         <input
-          className="pd-input raw"
-          value={draft}
+          name={inputName}
+          className="pe-chip-input"
           placeholder={placeholder}
+          value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              add();
-            }
-          }}
+          onKeyDown={handleKeyDown}
+          aria-label={ariaLabel || placeholder}
         />
-        <button className="pd-add" type="button" onClick={add} aria-label="add">+</button>
+        <button
+          type="button"
+          className="pe-chip-add"
+          onClick={add}
+          aria-label="Add"
+          title="Add"
+        >
+          +
+        </button>
       </div>
-      <div className="skills-list">
+
+      <div className={`pe-chips`}>
         {items.map((t, i) => (
-          <span key={`${t}-${i}`} className="skill-chip">
-            {t}
-            <span className="chip-x" onClick={() => remove(i)} role="button" aria-label={`remove ${t}`}>×</span>
-          </span>
+          <div className="pe-chip" key={`${t}-${i}`}>
+            <span>{t}</span>
+            <button
+              type="button"
+              aria-label={`Remove ${t}`}
+              onClick={() => remove(i)}
+              title={`Remove ${t}`}
+            >
+              ×
+            </button>
+          </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 
-const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) => {
+/* Main component */
+const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess, onError }) => {
   const [form, setForm] = useState({
     projectTitle: initial?.projectTitle || "",
     specialization: initial?.specialization || "",
@@ -95,9 +140,36 @@ const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) =
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    // Keep form synced if `initial` changes while open
+    setForm({
+      projectTitle: initial?.projectTitle || "",
+      specialization: initial?.specialization || "",
+      technologiesUsed: initial?.technologiesUsed || "",
+      teamSize: initial?.teamSize ?? "",
+      roleInProject: initial?.roleInProject || "",
+      skillsUsed: initial?.skillsUsed || "",
+      roleDescription: initial?.roleDescription || "",
+      projectDescription: initial?.projectDescription || "",
+    });
+    setErrors({});
+  }, [initial]);
+
+  useEffect(() => {
+    const esc = (e) => {
+      if (e.key === "Escape") {
+        (onClose || (() => {}))();
+      }
+    };
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
+  }, [onClose]);
+
   const setField = (name, value) => {
     setForm((f) => ({ ...f, [name]: value }));
-    setErrors((e) => ({ ...e, [name]: validators[name](value) }));
+    if (validators[name]) {
+      setErrors((e) => ({ ...e, [name]: validators[name](value) }));
+    }
   };
 
   const validateAll = () => {
@@ -110,12 +182,20 @@ const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) =
     return Object.keys(next).length === 0;
   };
 
-  const canSave = useMemo(
-    () => Object.values(errors).every((m) => !m) && !saving,
-    [errors, saving]
-  );
+  const canSave = useMemo(() => {
+    const noErrors = Object.values(errors).every((m) => !m);
+    const requiredPresent = ["projectTitle", "specialization", "technologiesUsed", "teamSize", "roleInProject", "skillsUsed", "roleDescription", "projectDescription"].every(
+      (k) => {
+        const v = form[k];
+        return validators[k] ? !validators[k](v) : true;
+      }
+    );
+    return noErrors && requiredPresent && !saving;
+  }, [errors, saving, form]);
 
-  const save = async () => {
+  /* Only called from form submit (Save button) */
+  const handleSave = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!validateAll()) return;
     const payload = { ...form, teamSize: Number(form.teamSize) };
     try {
@@ -124,144 +204,182 @@ const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) =
       await axios.put(`${PROJ_API}/${applicantId}`, payload, {
         headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
       });
-      onSuccess?.();
-    } catch (e) {
-      console.error("Project PUT failed:", e?.response || e);
-      onError?.(
-        e?.response?.data?.message || e?.response?.data || e?.message || "Failed to save project details"
-      );
+      onSuccess?.(); // let parent know save succeeded
+    } catch (err) {
+      console.error("Project PUT failed:", err?.response || err);
+      const msg = err?.response?.data?.message || err?.message || "Failed to save project details";
+      onError?.(msg);
     } finally {
       setSaving(false);
     }
   };
 
+  /* Close / Cancel handlers — DO NOT call save */
+  const handleClose = () => {
+    onClose?.();
+  };
+
   return (
-    <div style={{ padding: 24, maxWidth: 940 }}>
-      <h3 style={{ margin: 0, marginBottom: 16, fontSize: 20, fontWeight: 800 }}>
-        Edit Project Details
-      </h3>
+    <div className="pe-overlay" role="dialog" aria-modal="true" onClick={handleClose}>
+      <div className="pe-container" role="document" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="pe-header">
+          <div className="pe-header-left">
+            <h3 className="pe-title">Edit project</h3>
+          </div>
 
-      {/* Two-column grid, balanced spacing */}
-      <div
-        className="pd-grid"
-        style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 14 }}
-      >
-        {/* Row 1 */}
-        <div>
-          <Field label="Project title" requiredMark>
-            <input
-              className="pd-input"
-              placeholder="e.g., Online Job Portal"
-              value={form.projectTitle}
-              onChange={(e) => setField("projectTitle", e.target.value)}
-            />
-          </Field>
-          <Error msg={errors.projectTitle} />
+          {/* Close MUST be type="button" to avoid submitting form */}
+          <button type="button"  onClick={handleClose}>
+            ×
+          </button>
         </div>
 
-        <div>
-          <Field label="Specialisation on the project" requiredMark>
-            <input
-              className="pd-input"
-              placeholder="e.g., Full Stack Web Development"
-              value={form.specialization}
-              onChange={(e) => setField("specialization", e.target.value)}
-            />
-          </Field>
-          <Error msg={errors.specialization} />
-        </div>
+        {/* Body & Form */}
+        <div className="pe-body">
+          {/* use a native <form> so Enter triggers Save, and Save button is type="submit" */}
+          <form className="pe-grid" onSubmit={handleSave} noValidate>
+            {/* Left column */}
+            <div className="pe-col">
+              <Field label="Project title" requiredMark hint="">
+                <input
+                  name="projectTitle"
+                  className={`pe-input ${errors.projectTitle ? "pe-input-error" : ""}`}
+                  placeholder="e.g., Online Job Portal"
+                  value={form.projectTitle}
+                  onChange={(e) => setField("projectTitle", e.target.value)}
+                />
+              </Field>
+              <Error msg={errors.projectTitle} />
 
-        {/* Row 2 */}
-        <div className="span-2">
-          <Field label="Technologies used for project" requiredMark>
-            <ChipEditor
-              value={form.technologiesUsed}
-              onChange={(v) => setField("technologiesUsed", v)}
-              placeholder="Type a technology and press Enter (React, Spring Boot, MySQL...)"
-            />
-          </Field>
-          <Error msg={errors.technologiesUsed} />
-        </div>
+              <Field label="Technologies used for project" requiredMark hint="Press Enter to add">
+                <ChipEditor
+                  value={form.technologiesUsed}
+                  onChange={(v) => setField("technologiesUsed", v)}
+                  placeholder="Type a technology (React, Spring Boot, MySQL...)"
+                  inputName="technologiesUsed"
+                />
+              </Field>
+              <Error msg={errors.technologiesUsed} />
 
-        {/* Row 3 */}
-        <div>
-          <Field label="Project team size" requiredMark>
-            <input
-              className="pd-input"
-              placeholder="e.g., 4"
-              value={form.teamSize}
-              inputMode="numeric"
-              onChange={(e) => setField("teamSize", e.target.value.replace(/\D/g, ""))}
-            />
-          </Field>
-          <Error msg={errors.teamSize} />
-        </div>
+              <Field label="Your role in the project" requiredMark>
+                <input
+                  name="roleInProject"
+                  className={`pe-input ${errors.roleInProject ? "pe-input-error" : ""}`}
+                  placeholder="e.g., Backend Developer"
+                  value={form.roleInProject}
+                  onChange={(e) => setField("roleInProject", e.target.value)}
+                />
+              </Field>
+              <Error msg={errors.roleInProject} />
+            </div>
 
-        <div>
-          <Field label="Your role in the project" requiredMark>
-            <input
-              className="pd-input"
-              placeholder="e.g., Backend Developer"
-              value={form.roleInProject}
-              onChange={(e) => setField("roleInProject", e.target.value)}
-            />
-          </Field>
-          <Error msg={errors.roleInProject} />
-        </div>
+            {/* Right column */}
+            <div className="pe-col">
+              <Field label="Specialisation on the project" requiredMark>
+                <input
+                  name="specialization"
+                  className={`pe-input ${errors.specialization ? "pe-input-error" : ""}`}
+                  placeholder="e.g., Full Stack Web Development"
+                  value={form.specialization}
+                  onChange={(e) => setField("specialization", e.target.value)}
+                />
+              </Field>
+              <Error msg={errors.specialization} />
 
-        {/* Row 4 */}
-        <div className="span-2">
-          <Field label="Skills used" requiredMark>
-            <ChipEditor
-              value={form.skillsUsed}
-              onChange={(v) => setField("skillsUsed", v)}
-              placeholder="Type a skill and press Enter (REST API, JPA, Docker...)"
-            />
-          </Field>
-          <Error msg={errors.skillsUsed} />
-        </div>
+              <Field label="Skills used" requiredMark hint="Add skills like REST API, JPA, Docker">
+                <ChipEditor
+                  value={form.skillsUsed}
+                  onChange={(v) => setField("skillsUsed", v)}
+                  placeholder="Type a skill and press Enter"
+                  inputName="skillsUsed"
+                />
+              </Field>
+              <Error msg={errors.skillsUsed} />
 
-        {/* Row 5 — Full width textareas, equal height */}
-        <div>
-          <Field label="Role description" requiredMark>
-            <textarea
-              className="pd-input"
-              placeholder="What did you specifically contribute? (e.g., designed and implemented REST APIs...)"
-              value={form.roleDescription}
-              onChange={(e) => setField("roleDescription", e.target.value)}
-              style={{ height: 140, resize: "vertical" }}
-            />
-          </Field>
-          <Error msg={errors.roleDescription} />
-        </div>
+              <Field label="Project team size" requiredMark>
+                <input
+                  name="teamSize"
+                  className={`pe-input ${errors.teamSize ? "pe-input-error" : ""}`}
+                  placeholder="e.g., 4"
+                  value={form.teamSize}
+                  inputMode="numeric"
+                  onChange={(e) => setField("teamSize", e.target.value.replace(/\D/g, ""))}
+                />
+              </Field>
+              <Error msg={errors.teamSize} />
+            </div>
 
-        <div>
-          <Field label="Project description" requiredMark>
-            <textarea
-              className="pd-input"
-              placeholder="What is this project about? Who uses it? Impact, tech, results..."
-              value={form.projectDescription}
-              onChange={(e) => setField("projectDescription", e.target.value)}
-              style={{ height: 140, resize: "vertical" }}
-            />
-          </Field>
-          <Error msg={errors.projectDescription} />
-        </div>
-      </div>
+            {/* Full width textareas */}
+            <div className="pe-col pe-col-full">
+              <Field label="Role description" requiredMark>
+                <textarea
+                  name="roleDescription"
+                  className={`pe-input pe-textarea ${errors.roleDescription ? "pe-input-error" : ""}`}
+                  placeholder="What did you specifically contribute? (e.g., designed and implemented REST APIs...)"
+                  value={form.roleDescription}
+                  onChange={(e) => setField("roleDescription", e.target.value)}
+                />
+              </Field>
+              <Error msg={errors.roleDescription} />
+            </div>
 
-      <div style={{ marginTop: 16, textAlign: "right" }}>
-        <button
-          className="btn-primary"
-          onClick={save}
-          disabled={!canSave}
-          aria-busy={saving}
-          style={{ minWidth: 140, height: 40, opacity: !canSave ? 0.6 : 1 }}
-        >
-          {saving ? "Saving..." : "Save changes"}
-        </button>
+            <div className="pe-col pe-col-full">
+              <Field label="Project description" requiredMark>
+                <textarea
+                  name="projectDescription"
+                  className={`pe-input pe-textarea ${errors.projectDescription ? "pe-input-error" : ""}`}
+                  placeholder="What is this project about? Who uses it? Impact, tech, results..."
+                  value={form.projectDescription}
+                  onChange={(e) => setField("projectDescription", e.target.value)}
+                />
+              </Field>
+              <Error msg={errors.projectDescription} />
+
+              {/* Actions row sits inside grid full-width to keep layout consistent */}
+              <div style={{ marginTop: 8 }} />
+            </div>
+
+            {/* Form actions (grid full-width) */}
+            <div className="pe-col pe-col-full" style={{ padding: 0 }}>
+              <div className="pe-actions" role="group" aria-label="Form actions">
+                <button
+                  type="button"
+                  className="pe-btn-secondary"
+                  onClick={handleClose}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit" /* submit triggers handleSave */
+                  className="pe-btn-primary"
+                  disabled={!canSave}
+                >
+                  {saving ? "Saving..." : "Save changes"}
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
+};
+
+ProjectDetailsEditPopup.propTypes = {
+  applicantId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  initial: PropTypes.object,
+  onClose: PropTypes.func, // called when user cancels/closes (NOT saved)
+  onSuccess: PropTypes.func, // called after successful save
+  onError: PropTypes.func, // called on save error
+};
+
+ProjectDetailsEditPopup.defaultProps = {
+  initial: {},
+  onClose: null,
+  onSuccess: null,
+  onError: null,
 };
 
 export default ProjectDetailsEditPopup;

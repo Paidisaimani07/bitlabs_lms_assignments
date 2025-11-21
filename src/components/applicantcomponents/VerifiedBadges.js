@@ -137,14 +137,27 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
     navigate('/applicant-take-test', { state: { testName } });
   };
 
+  // near top of SkillBadgeCard, normalize incoming status once
+// (insert this right after you derive skillImage)
+const normalizedStatus = (status || "").toString().trim().toLowerCase(); // "passed" | "failed" | ""
+const statusClass =
+  normalizedStatus === "passed"
+    ? "status-passed"
+    : normalizedStatus === "failed"
+    ? "status-failed"
+    : "status-empty";
+const statusLabel =
+  normalizedStatus === "passed" ? "Passed" : normalizedStatus === "failed" ? "Failed" : "";
+
+
   return (
-    <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
+    <div className={`skill-badge-card`}>
       {/* Top Section: Status */}
-      <div className="status">
-        <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
-          &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
-        </span>
-      </div>
+      <div className="status" style={{ textAlign: "right", padding: "6px 12px 0 12px" }}>
+    <span className={`status-text ${statusClass}`}>
+      {statusLabel || "\u00A0"}
+    </span>
+  </div>
 
       {/* Second Section: Badge */}
       <div className="badge">

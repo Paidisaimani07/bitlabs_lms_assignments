@@ -192,24 +192,30 @@ const ProjectDetailsCard = ({ applicantId }) => {
           />
         </div>
 
-        <ProjectDetailsEditPopup
-          applicantId={applicantId}
-          initial={proj}
-          onSuccess={async () => {
-            await fetchProjects();
-            setEditOpen(false);
-            addSnackbar({
-              message: "Project details saved successfully!",
-              type: "success",
-            });
-          }}
-          onError={(msg) =>
-            addSnackbar({
-              message: msg || "Failed to save project details",
-              type: "error",
-            })
-          }
-        />
+       <ProjectDetailsEditPopup
+  applicantId={applicantId}
+  initial={proj}
+  onClose={() => {
+    // only close the modal, do NOT call save or show snack here
+    setEditOpen(false);
+  }}
+  onSuccess={async () => {
+    // called only after Save completes successfully
+    await fetchProjects();
+    setEditOpen(false);
+    addSnackbar({
+      message: "Project details saved successfully!",
+      type: "success",
+    });
+  }}
+  onError={(msg) =>
+    addSnackbar({
+      message: msg || "Failed to save project details",
+      type: "error",
+    })
+  }
+/>
+
       </Modal>
 
       {snackbars.map((snackbar, index) => (
