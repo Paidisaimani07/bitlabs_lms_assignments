@@ -181,7 +181,7 @@ const Hackathon = () => {
 
         <div className="blur-border-style"></div>
         <div className="dashboard__content">
-            <div className="row mr-0 ml-10" style={{ marginLeft: "1%" }}>
+            <div className="row mr-0 ml-10 extraSpace" style={{ marginLeft: "1%" }}>
                 <div className="main-header-row">
                     <h1 className="main-heading">Innovation Arena</h1>
                     <div className="hackathon-search-box">
