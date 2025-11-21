@@ -229,7 +229,7 @@ const HackathonDetails = () => {
             if (status === "UPCOMING" || status === "ACTIVE") {
                 return (
                     <button className="hackathon-action-button" onClick={handleRegisterClick}>
-                        Register Now
+                        Register now
                     </button>
                 );
             }
@@ -237,7 +237,7 @@ const HackathonDetails = () => {
             if (status === "COMPLETED") {
                 return (
                     <button className="hackathon-action-button" disabled>
-                        Not Registered
+                        Not registered
                     </button>
                 );
             }
@@ -249,18 +249,18 @@ const HackathonDetails = () => {
         }
 
         if (status === "UPCOMING" && registration.registaratinStatus) {
-            return <button className="hackathon-action-button" disabled>Already Registered</button>;
+            return <button className="hackathon-action-button" disabled>Already registered</button>;
         }
 
         if (status === "ACTIVE") {
             if (!registration.submitStatus) {
                 return (
                     <button className="hackathon-action-button" onClick={handleSubmitClick}>
-                        Submit Your Work
+                        Submit your work
                     </button>
                 );
             } else {
-                return <button className="hackathon-action-button" disabled>Response Submitted</button>;
+                return <button className="hackathon-action-button" disabled>Response submitted</button>;
             }
         }
 
@@ -321,25 +321,21 @@ const HackathonDetails = () => {
                                 <section className="hackathon-info-box">
                                     <h3 className="info-box-title">Basic details</h3>
                                     <div className="info-item">
-                                        <h4>Organized By</h4>
+                                        <h4>Organized by</h4>
                                         <p>{hackathon.company}</p>
                                     </div>
                                     <div className="info-item">
-                                        <h4>Created Date</h4>
-                                        <p>{formatToDateString(hackathon.createdAt)}</p>
-                                    </div>
-                                    <div className="info-item">
-                                        <h4>Start Date</h4>
+                                        <h4>Start date</h4>
                                         <p>{formatToDateString(hackathon.startAt)}</p>
                                     </div>
                                     <div className="info-item">
-                                        <h4>End Date</h4>
+                                        <h4>End date</h4>
                                         <p>{formatToDateString(hackathon.endAt)}</p>
                                     </div>
                                 </section>
                                 <section className="hackathon-info-box">
                                     <section className="eligibility-section">
-                                        <h3>Eligibility Criteria</h3>
+                                        <h3>Eligibility criteria</h3>
                                         <div className="hackathon-tag-list">
                                             {hackathon.eligibility.split(",").map((item, index) => (
                                                 <span key={index} className="hackathon-tag">{item.trim()}</span>
@@ -348,7 +344,7 @@ const HackathonDetails = () => {
                                     </section>
                                     <hr></hr>
                                     <section className="tech-stack-section">
-                                        <h3>Suggested Tech Stack</h3>
+                                        <h3>Suggested tech stack</h3>
                                         <div className="hackathon-tag-list">
                                             {hackathon.allowedTechnologies.split(",").map((tech, index) => (
                                                 <span key={index} className="hackathon-tech-tag">{tech.trim()}</span>
@@ -391,11 +387,11 @@ const HackathonDetails = () => {
                             >
                                 <p>&times;</p>
                             </button>
-                            <h3>Project Submit Form</h3>
+                            <h3>Project submit form</h3>
                             <form onSubmit={handleFormSubmit}>
                                 <div className="form-content">
                                     <div className="form-group">
-                                        <label className="required">Project Title</label>
+                                        <label className="required">Project title</label>
                                         <input
                                             type="text"
                                             name="projectTitle"
@@ -409,7 +405,7 @@ const HackathonDetails = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label className="required">GitHub Link</label>
+                                        <label className="required">GitHub link</label>
                                         <input
                                             type="url"
                                             name="githubLink"
@@ -428,7 +424,7 @@ const HackathonDetails = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label>Project Demo URL (Optional)</label>
+                                        <label>Project demo URL (Optional)</label>
                                         <input
                                             type="url"
                                             name="demoLink"
@@ -440,7 +436,7 @@ const HackathonDetails = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label className="required">Technologies Used</label>
+                                        <label className="required">Technologies used</label>
                                         <div className="tech-input-container" style={{ position: 'relative' }}>
                                             <input
                                                 type="text"
@@ -535,7 +531,7 @@ const HackathonDetails = () => {
                                     </div>
 
                                     <div className="form-group">
-                                        <label className="required">Project Summary</label>
+                                        <label className="required">Project summary</label>
                                         <textarea
                                             name="projectSummary"
                                             value={formData.projectSummary}
@@ -575,11 +571,11 @@ const HackathonDetails = () => {
                             <button className="modal-close-button" onClick={() => setShowConfirmation(false)}>
                                 <p>&times;</p>
                             </button>
-                            <h3>Registration Confirmation</h3>
+                            <h3>Registration confirmation</h3>
                             <p>Would you like to continue with existing registration?</p>
                             <div className="modal-buttons">
                                 <button className="modal-button confirm" onClick={handleConfirmRegister}>
-                                    Register Now
+                                    Register now
                                 </button>
                                 <button className="modal-button cancel" onClick={() => setShowConfirmation(false)}>
                                     Cancel
@@ -616,7 +612,7 @@ const HackathonDetails = () => {
                                     </g>
                                 </g>
                             </svg>
-                            <h3>Thanks for Registration</h3>
+                            <h3>Thanks for registration</h3>
                         </div>
                     </div>
                 )}

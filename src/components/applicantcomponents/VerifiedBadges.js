@@ -1023,7 +1023,7 @@ const steps = [
                               ? "Retake test"
                               : currentStep === step.id
                               ? "Start test"
-                              : "Coming Soon"}
+                              : "Coming soon"}
                           </p>
                         </div>
                       )

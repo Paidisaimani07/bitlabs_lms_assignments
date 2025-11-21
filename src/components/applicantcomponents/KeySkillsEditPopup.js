@@ -264,7 +264,7 @@ updateSuggestionPos(); // <<-- add this
       </div>
 
       <div className="modal-body" style={{ paddingTop: 8 }}>
-        <h3 style={{ marginBottom: 12, fontWeight: 800 }}>Edit Key Skills</h3>
+        <h3 style={{ marginBottom: 12, fontWeight: 800 }}>Edit key skills</h3>
         <p className="card-subtitle" style={{ marginBottom: 12 }}>
           Choose skills from the list. (Minimum 1)
         </p>
