@@ -42,50 +42,65 @@ function InterviewPrepPage() {
 
 const formatResponse = (rawResponse) => {
   try {
+    let obj = rawResponse;
+
+    // STEP 1 — Try to parse clean JSON
+    if (typeof rawResponse === "string") {
+      // Fix broken quotes before parsing:  response\": \"text
+      const fixed = rawResponse.replace(/\\"/g, '"').replace(/\\'/g, "'");
+      try {
+        obj = JSON.parse(fixed);
+      } catch {
+        obj = fixed; // keep raw string
+      }
+    }
+
+    // STEP 2 — Extract actual text (string or nested object)
     let text = "";
 
-    // If object → read its FIRST string-like field
-    if (typeof rawResponse === "object" && rawResponse !== null) {
-      const key = Object.keys(rawResponse)[0];
-      text = rawResponse[key] ?? rawResponse;
+    if (typeof obj === "object" && obj !== null) {
+      const firstKey = Object.keys(obj)[0];
+      text =
+        typeof obj[firstKey] === "object"
+          ? JSON.stringify(obj[firstKey])
+          : obj[firstKey];
     } else {
-      // Try parsing if it's a JSON string
-      const parsed = JSON.parse(rawResponse);
-      const key = Object.keys(parsed)[0];
-      text = parsed[key] ?? parsed;
+      text = obj;
     }
 
     text = String(text).trim();
 
-    // 🔥 1. Remove backticks
-    text = text.replace(/^\s*`+|`+\s*$/g, "");
+    // =============== CLEANUP RULES ==================
 
-    // 🔥 2. Remove escaped quotes
-    text = text.replace(/\\"/g, '"');
+    // ❌ remove repeated "response": from ANY structure
+    text = text.replace(/"response"\s*:\s*/gi, "");
 
-    // 🔥 3. Convert \n to real newlines
+    // ❌ remove leading/trailing braces
+    text = text.replace(/^\s*\{+|\}+$/g, "");
+
+    // ❌ remove broken braces like:  { "text":
+    text = text.replace(/^\s*"text"\s*:\s*/i, "");
+
+    // ❌ cleanup accidental leftover "response": inside string
+    text = text.replace(/^response"\s*:\s*/i, "");
+
+    // ❌ remove extra quotes wrapping the whole thing
+    if (
+      (text.startsWith('"') && text.endsWith('"')) ||
+      (text.startsWith("'") && text.endsWith("'"))
+    ) {
+      text = text.substring(1, text.length - 1);
+    }
+
+    // KEEP CODE BLOCKS SAFE — Just convert newlines
     text = text.replace(/\\n/g, "\n");
 
-    // 🔥 4. Remove wrappers like { "response": "..." }
-    text = text.replace(/^\s*\{\s*"response"\s*:\s*"([\s\S]*?)"\s*\}\s*$/i, "$1");
-
-    // 🔥 5. Remove cases like => {"response": {...}}
-    text = text.replace(/^\s*\{\s*"response"\s*:\s*\{([\s\S]*?)\}\s*\}\s*$/i, "$1");
-
-    // 🔥 6. Remove leftover leading/trailing braces or quotes
-    text = text.replace(/^[{\s"]+|[}\s"]+$/g, "");
-
     return text.trim();
-
   } catch (err) {
     console.error("formatResponse error:", err);
-    return rawResponse;
+    return String(rawResponse).trim();
   }
 };
-
-
-
-
 
 
 
@@ -734,8 +749,8 @@ const sendMessage = async () => {
       <div className="dashboard__content ai-chat-prep" >
         <div className="ai-perp">
           <div className="ai-top-buttons">
-            <button className="ai-new-chat" onClick={startNewChat}>New chat</button>
-            <button className="ai-clear-chat" onClick={handleClearChat}>Clear chat</button>
+            <button className="ai-new-chat" onClick={startNewChat} style={{ textTransform: "none" }} >New chat</button>
+            <button className="ai-clear-chat" onClick={handleClearChat} style={{ textTransform: "none" }} >Clear chat</button>
           </div>
           {/* Sidebar */}
           <div className="interview-prep-dashboard-content">
