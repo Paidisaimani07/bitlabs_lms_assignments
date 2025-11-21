@@ -404,7 +404,7 @@ const ApplicantMentorConnect = () => {
         <div className="row" style={{ marginTop: "10px" }}>
           <div className="col-lg-12 col-md-12">
             <div className="main-header-row">
-              <h1 className="main-heading">MentorSphere</h1>
+              <h1 className="main-heading">Mentor sphere</h1>
 
               <div className="hackathon-search-box">
                 <i className="fa fa-search search-icon1"></i>
