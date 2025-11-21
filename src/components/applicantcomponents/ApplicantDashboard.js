@@ -525,9 +525,9 @@ const ApplicantDashboard = () => {
           <div className="row mr-0 ml-10" style={{ marginTop: '-85px' }}>
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
-                <div className="title-dashboard">  
-                <div className="display-flex robo-container" >
-                    <div className="card robo-card" onClick={handleRedirect3}>
+                <div className="title-dashboard dashboard-top-container">
+                  <div className="display-flex robo-container" >
+                    <div className="card robo-card">
                       <div className="container">
 
                         <div className="robo-img ">
