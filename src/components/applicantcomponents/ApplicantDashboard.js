@@ -559,7 +559,7 @@ const ApplicantDashboard = () => {
                   </div>
                   <div className="badge-progress-wrapper">
                     <div className="progress-text">
-                      <p>Badge Achievement Level</p>
+                      <p>Badge achievement level</p>
                       {Math.round((dashboardScore / goldScore) * 100)}%
                     </div>
 
@@ -631,7 +631,7 @@ const ApplicantDashboard = () => {
                   <div className="mentor-sphere">
                     <div className="mentor-topSection">
                       <h4 id="tour-mentor-sphere">
-                        MentorSphere
+                        Mentor sphere
                       </h4>
                       <span
                         onClick={handleRedirectMentor}

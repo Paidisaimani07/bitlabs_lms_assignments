@@ -762,7 +762,7 @@ const fetchQuestion = async() => {
       }}
     >
       <span style={{ fontSize: "18px", fontWeight: "600", color: "#000" }}>
-        Topics Covered
+        Topics covered
       </span>
 
       <ul style={{ marginTop: "10px", paddingLeft: "18px" }}>

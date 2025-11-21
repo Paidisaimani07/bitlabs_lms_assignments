@@ -55,7 +55,7 @@ const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, o
 
   return (
     <div style={{ paddingTop: 24 }}>
-      <h3 style={{ marginBottom: 12 }}>Edit Resume Summary</h3>
+      <h3 style={{ marginBottom: 12 }}>Edit resume summary</h3>
 
       <textarea
         rows={10}
