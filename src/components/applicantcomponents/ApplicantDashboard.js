@@ -532,12 +532,14 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-img ">
                           <span>
+                            <a onClick={handleRedirect3}>
                             <img
                               src={botImage}
                               alt="Bot icon"
                               width="150px"
                               height="250px"
                             />
+                            </a>
                           </span>
                         </div>
 
