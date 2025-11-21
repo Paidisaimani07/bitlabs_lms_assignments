@@ -290,7 +290,7 @@ const HackathonDetails = () => {
 
         <div className="blur-border-style"></div>
     <div className="dashboard__content">
-        <div className="row mr-0 ml-10">
+        <div className="row mr-0 ml-10 extraSpace">
             <div className="hackathon-page-wrapper">
 
                 <div

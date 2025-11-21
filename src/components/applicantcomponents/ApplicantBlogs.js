@@ -110,7 +110,7 @@ export default function ApplicantBlogs() {
       <div className="blur-border-style"></div>
       <div className="dashboard__content">
         {/* Title + Search */}
-        <div className="row">
+        <div className="row extraSpace">
           <div className="col-lg-12 col-md-12">
             <div className="main-header-row">
               <h1 className="main-heading">Tech vibes</h1>
