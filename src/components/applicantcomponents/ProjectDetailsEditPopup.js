@@ -138,7 +138,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) =
   return (
     <div style={{ padding: 24, maxWidth: 940 }}>
       <h3 style={{ margin: 0, marginBottom: 16, fontSize: 20, fontWeight: 800 }}>
-        Edit Project Details
+        Edit project details
       </h3>
 
       {/* Two-column grid, balanced spacing */}
