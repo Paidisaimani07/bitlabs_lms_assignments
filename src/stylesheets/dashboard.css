@@ -1184,18 +1184,22 @@ body.close-sidebar .dashboard.show .dashboard__content {
 .dashboard.show .dashboard__content {
     margin-left: 270px;
     transition: all 0.2s ease-out;
-    margin-top: -23px;
+    margin-top: 92px;
+}
+
+.extraSpace {
+    margin-top: -120px;
 }
 
 @media screen and (max-width:900px) {
     .dashboard.show .dashboard__content {
-        margin-top: 5px;
+        margin-top: 135px;
     }
 }
 
 @media screen and (max-width:768px) {
     .dashboard.show .dashboard__content {
-        margin-top: -5px !important;
+        margin-top: 140px !important;
     }
 }
 

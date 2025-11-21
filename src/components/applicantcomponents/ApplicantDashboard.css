@@ -1,5 +1,9 @@
+.dashboard-top-container {
+  display: flex;
+  flex-direction: row;
+}
+
 .robo-card {
-  cursor: pointer;
   background: transparent linear-gradient(275deg, #FBBB5C 0%, #E66A0E 100%);
   border-radius: 5px !important;
 }
@@ -21,9 +25,9 @@
 }
 
 .robo-img img {
-  width: 110%;
+  width: 100%;
   height: 180px;
-  margin-left: -50px;
+  margin-left: 10px;
 }
 
 .robo-card .robo-card-text {
@@ -34,7 +38,7 @@
 }
 
 .robo-card-text .robo-card-para {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
   margin-left: 120px;
@@ -50,6 +54,7 @@
   font-weight: 600;
   white-space: nowrap;
   margin-left: 15px;
+  text-transform: none;
 }
 
 .profile-card-row1 {
@@ -81,7 +86,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
   text-align: left;
 }
 
@@ -105,6 +110,7 @@
   border-radius: 3px;
   align-self: flex-end;
   margin-top: 8px;
+  text-transform: none;
 }
 
 .arena .arena-image {
@@ -159,7 +165,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .mentor-topSection span {
@@ -203,11 +209,11 @@
 }
 
 .profile-card-row1 .portfolio::-webkit-scrollbar {
-  width: 6px;
+  width: 3px;
 }
 
 .profile-card-row1 .portfolio::-webkit-scrollbar-thumb {
-  background-color: #ccc;
+  background-color: #f7aa4b;
   border-radius: 10px;
 }
 
@@ -257,44 +263,6 @@
 .profile-extra-details {
   display: none;
 }
-
-.progress-container {
-  width: 100%;
-  height: 5px;
-  background: #e6e6e6;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 10px;
-  position: relative;
-}
-
-.progress-bar {
-  height: 100%;
-  background: #EA7B20;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; 
-  padding-right: 4px;
-  border-radius: 8px;
-  transition: width 0.4s ease;
-  position: relative;
-}
-
-.progress-bar span {
-  display: flex;
-}
-
-.progress-text{
-  display: flex;
-  justify-content: center;
-}
-
-.next-badge {
-  padding: 2px 0 0 8px;
-  display: flex;
-  justify-content: flex-end;
-}
-
 
 @media (min-width: 1302px) and (max-width: 1345px) {
   .portfolio .profile-side-section p {
@@ -480,7 +448,7 @@
   margin: 0;
   font-weight: 600;
   color: #1a1a17;
-  font-size: 20px;
+  font-size: 18px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -489,20 +457,15 @@
 .Tech-buzz .tech-buzz-header button {
   background: transparent;
   border: none;
-  color: #ff6b00;
+  color: #EF8C2F;
   font-weight: 600;
   cursor: pointer;
   text-decoration: underline;
-  font-size: 14px;
+  font-size: 15px;
   transition: opacity 0.2s ease;
   white-space: nowrap;
   padding: 0;
   min-width: fit-content;
-}
-
-
-.Tech-buzz .tech-buzz-header button:hover {
-  opacity: 0.7;
 }
 
 .Tech-buzz .tech-buzz-images {
@@ -560,7 +523,7 @@
 .tech-vibes-header h3 {
   margin: 0;
   font-weight: 600;
-  font-size: 20px;
+  font-size: 18px;
   color: #1a1a17;
   word-wrap: break-word;
 }
@@ -704,6 +667,15 @@
     width: 100% !important;
     height: 350px;
     margin: 0;
+  }
+
+  .dashboard-top-container{
+    flex-direction: column;
+  }
+
+  .badge-progress-wrapper {
+    width: 100% !important;
+    height: 120px;
   }
 }
 
@@ -946,7 +918,7 @@
 
 .video-overlay {
   position: absolute;
-  inset: 0; 
+  inset: 0;
   background: rgba(0, 0, 0, 0.7);
   color: #FBBB5C;
   opacity: 0;
@@ -1023,6 +995,7 @@
   0% {
     background-position: -400px 0;
   }
+
   100% {
     background-position: 400px 0;
   }
@@ -1061,4 +1034,89 @@
 .skeleton-date {
   width: 60px;
   height: 10px;
+}
+
+.badge-progress-wrapper {
+  width: 48%;
+  padding: 0 10px 10px 10px;
+  position: relative;
+  box-shadow: 0px 0px 15px #F7AA4B;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 6px 20px 6px;
+  border-radius: 6px;
+  background-color: white;
+}
+
+/* Bubble Indicator */
+.bubble-indicator {
+  position: absolute;
+  bottom: -7px;
+  background: #003366;
+  padding: 4px 10px;
+  color: #fff;
+  font-size: 11px;
+  border-radius: 5px;
+  font-weight: bold;
+  z-index: 100;
+}
+
+/* White background full bar */
+.badge-bar {
+  width: 100%;
+  height: 40px;
+  background: white;
+  border-radius: 6px;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  border: 2px solid #E66A0E;
+  margin-top: 10px;
+}
+
+/* Segment Base */
+.segment {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  color: #333;
+  border-right: 2px solid #dcdcdc;
+}
+
+/* Progress fill across full bar */
+.progress-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(to right, #FBBB5C, #E66A0E);
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* Text Below */
+.progress-text {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-text p {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a17;
+}
+
+.congrats-text {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 5px;
 }

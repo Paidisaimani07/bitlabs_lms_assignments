@@ -873,8 +873,8 @@ function LoginBody({ handleLogin }) {
             width: "100%",
           }}
         >
-          <h1 className="find-your">Find Your</h1>
-          <h1 className="dream-job">Dream Job</h1>
+          {/* <h1 className="find-your">Find Your</h1>
+          <h1 className="dream-job">Dream Job</h1> */}
         </div>
         <div>
           <img
@@ -1207,7 +1207,7 @@ function LoginBody({ handleLogin }) {
                         left: "5%",
                       }}
                     >
-                      <h1
+                      {/* <h1
                         className="find-your "
                         style={{ marginBottom: "-30px", fontSize: "50px" }}
                       >
@@ -1218,7 +1218,7 @@ function LoginBody({ handleLogin }) {
                         style={{ marginBottom: "5px", fontSize: "50px" }}
                       >
                         DreamJob
-                      </h1>
+                      </h1> */}
                     </div>
                   </div>
 

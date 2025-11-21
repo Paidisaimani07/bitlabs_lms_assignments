@@ -61,6 +61,19 @@ const ApplicantDashboard = () => {
   const silverScore = 300;
   const goldScore = 500;
 
+  const bronzeWidth = (bronzeScore / goldScore) * 100;
+  const silverWidth = ((silverScore - bronzeScore) / goldScore) * 100;
+  const goldWidth = ((goldScore - silverScore) / goldScore) * 100;
+
+  const DEFAULT_CARD = {
+    applicantId: null,
+    name: "",
+    mobileNumber: "",
+    email: "",
+  };
+  const [card, setCard] = useState(DEFAULT_CARD);
+  const CARD_API = `${apiUrl}/applicant-card`;
+
   const badgeLevels = [
     { name: "bronze", score: bronzeScore },
     { name: "silver", score: silverScore },
@@ -84,6 +97,36 @@ const ApplicantDashboard = () => {
 
   const applicantId = user.id;
   const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
+
+  const fetchCard = async () => {
+    try {
+      if (!applicantId) return;
+
+      const jwtToken = localStorage.getItem("jwtToken");
+
+      const { data } = await axios.get(`${CARD_API}/${applicantId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+
+      // Map only fields you want into your CARD object
+      const mappedCard = {
+        applicantId: data.applicantId ?? null,
+        name: data.name ?? "",
+        mobileNumber: data.mobileNumber ?? "",
+        email: data.email ?? "",
+      };
+
+      setCard(mappedCard);
+
+    } catch (err) {
+      console.error("Card API failed:", err.response || err);
+      setCard(DEFAULT_CARD); // fallback
+    }
+  };
+
+  useEffect(() => {
+    fetchCard();
+  }, [applicantId]);
 
 
   useEffect(() => {
@@ -321,49 +364,6 @@ const ApplicantDashboard = () => {
     };
     fetchData();
   }, []);
-  // useEffect(() => {
-  //   const jwtToken = localStorage.getItem('jwtToken');
-  //   if (jwtToken) {
-  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-  //   }
-  //   axios
-  //     .get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${user.id}`)
-  //     .then((response) => {
-  //       setCountRecJobs(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching team members:', error);
-  //     });
-  // }, [user.id]);
-  // useEffect(() => {
-  //   const jwtToken = localStorage.getItem('jwtToken');
-  //   if (jwtToken) {
-  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-  //   }
-  //   axios
-  //     .get(`${apiUrl}/applyjob/countAppliedJobs/${user.id}`)
-  //     .then((response) => {
-  //       setAppliedJobs(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching team members:', error);
-  //     });
-  // }, [user.id]);
-  // useEffect(() => {
-  //   const jwtToken = localStorage.getItem('jwtToken');
-  //   if (jwtToken) {
-  //     axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-  //   }
-  //   axios
-  //     .get(`${apiUrl}/savedjob/countSavedJobs/${user.id}`)
-  //     .then((response) => {
-  //       setSavedJobs(response.data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching team members:', error);
-  //     });
-  // }, [user.id]);
-
   useEffect(() => {
     const fetchTestData = async () => {
       try {
@@ -471,28 +471,10 @@ const ApplicantDashboard = () => {
       text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
     },
     {
-      id: "portfolio",
-      selector: "#tour-portfolio",
-      placement: "right",
-      text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
-    },
-    {
-      id: "skills",
-      selector: "#tour-skill-validation",
-      placement: "right",
-      text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
-    },
-    {
-      id: "mentor",
-      selector: "#tour-mentor-sphere",
-      placement: "right",
-      text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
-    },
-    {
-      id: "techbuzz",
-      selector: "#tour-techbuzz",
+      id: "asknewton",
+      selector: "#tour-ask-newton",
       placement: "top",
-      text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
+      text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
     },
     {
       id: "arena",
@@ -501,18 +483,37 @@ const ApplicantDashboard = () => {
       text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
     },
     {
+      id: "mentor",
+      selector: "#tour-mentor-sphere",
+      placement: "right",
+      text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
+    },
+    {
+      id: "portfolio",
+      selector: "#tour-portfolio",
+      placement: "right",
+      text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
+    },
+    {
+      id: "techbuzz",
+      selector: "#tour-techbuzz",
+      placement: "top",
+      text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
+    },
+    {
       id: "techvibes",
       selector: "#tour-techvibes",
       placement: "left",
       text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
     },
-    {
-      id: "asknewton",
-      selector: "#tour-ask-newton",
-      placement: "top",
-      text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
-    }
+    // {
+    //   id: "skills",
+    //   selector: "#tour-skill-validation",
+    //   placement: "right",
+    //   text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
+    // }, 
   ];
+
 
 
   return (
@@ -521,65 +522,36 @@ const ApplicantDashboard = () => {
       <div className="blur-border-style"></div>
       {loading ? null : (
         <div className="dashboard__content">
-          <div className="row mr-0 ml-10">
+          <div className="row mr-0 ml-10" style={{ marginTop: '-85px' }}>
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
-                <div className="title-dashboard">
-                  <div
-                    className="d-block d-sm-none text-white text-center p-3 overflow-hidden"
-                    style={{
-                      background: 'linear-gradient(90deg, #F97316 0%, #FBBC5F 100%)',
-                      whiteSpace: 'nowrap',
-                      position: 'relative',
-                      height: '50px',
-                      width: '100%',
-                      overflow: 'hidden',
-                      marginTop: '-30px'
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'inline-block',
-                        position: 'absolute',
-                        whiteSpace: 'nowrap',
-                        left: '100%',
-                        animation: 'scrollLeft 10s linear infinite',
-                      }}
-                    >
-                      You are only seeing 50% of the job posts. Download our mobile app to access all the job posts!
-                    </div>
-                    <style>{`
-    @keyframes scrollLeft {
-      0% { left: 100%; }
-      100% { left: -100%; }
-    }
-  `}</style>
-                  </div>
-
+                <div className="title-dashboard dashboard-top-container">
                   <div className="display-flex robo-container" >
                     <div className="card robo-card">
                       <div className="container">
 
                         <div className="robo-img ">
                           <span>
+                            <a onClick={handleRedirect3}>
                             <img
                               src={botImage}
                               alt="Bot icon"
                               width="150px"
                               height="250px"
                             />
+                            </a>
                           </span>
                         </div>
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }}>Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }} id="tour-ask-newton">Ask Newton!</span>
                           </p>
 
                           <button
                             onClick={handleRedirect3}
                           >
-                            Get Started
+                            Get started
                           </button>
 
                         </div>
@@ -587,7 +559,48 @@ const ApplicantDashboard = () => {
                       </div>
                     </div>
                   </div>
+                  <div className="badge-progress-wrapper">
+                    <div className="progress-text">
+                      <p>Badge achievement level</p>
+                      {Math.round((dashboardScore / goldScore) * 100)}%
+                    </div>
 
+                    <div className="badge-bar">
+
+                      <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
+                        <span>Bronze</span>
+                      </div>
+
+                      <div className="segment silver" style={{ width: `${silverWidth}%` }}>
+                        <span>Silver</span>
+                      </div>
+
+                      <div className="segment gold" style={{ width: `${goldWidth}%` }}>
+                        <span>Gold</span>
+                      </div>
+
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                        }}
+                      ></div>
+                    </div>
+
+                    <div
+                      className="bubble-indicator"
+                      style={{
+                        left: `${(dashboardScore / goldScore) * 100}%`,
+                        transform: "translateX(-50%)",
+                      }}
+                    >
+                      {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+                    </div>
+
+                    {!nextBadge && (
+                      <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
+                    )}
+                  </div>
 
                 </div>
               </div>
@@ -598,12 +611,12 @@ const ApplicantDashboard = () => {
                   {/* Arena Online */}
                   <div className="arena">
                     <div className="arena-topSection">
-                      <h4 >
+                      <h4 id="tour-innovation-arena">
                         Compete. Learn. Win.
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
-                        Enter the Arena!
+                        Enter arena!
                       </button>
                     </div>
 
@@ -619,10 +632,9 @@ const ApplicantDashboard = () => {
                   {/* MentorSphere */}
                   <div className="mentor-sphere">
                     <div className="mentor-topSection">
-                      <h4 >
-                        MentorSphere
+                      <h4 id="tour-mentor-sphere">
+                        Mentor sphere
                       </h4>
-
                       <span
                         onClick={handleRedirectMentor}
                       >
@@ -631,9 +643,9 @@ const ApplicantDashboard = () => {
                     </div>
 
                     <div className="mentor-heading">
-                      <h4 >Guiding Star</h4>
-                      <h4 >Realm of Insight</h4>
-                      <h4 >Insight Hour</h4>
+                      <h4 >Guiding star</h4>
+                      <h4 >Realm of insight</h4>
+                      <h4 >Insight hour</h4>
                     </div>
                     {mentorLoading ? (
                       <div className="mentor-skeleton-list">
@@ -733,12 +745,10 @@ const ApplicantDashboard = () => {
                   {/*  My Portfolio */}
                   <div className="portfolio">
                     <div className="portfolio-heading">
-                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }}>
+                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }} id="tour-portfolio">
                         My portfolio
                       </h4>
-
                       <span
-
                         onClick={handleRedirectResume}
                       >
                         Explore
@@ -779,7 +789,7 @@ const ApplicantDashboard = () => {
            a2 2 0 0 1 2.11-.45c.97.37 2 .62 3.06.74
            A2 2 0 0 1 22 16.92z" />
                           </svg>
-                          <p>{profileData?.basicDetails?.alternatePhoneNumber}</p>
+                          <p>{card?.mobileNumber}</p>
                         </span>
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -798,8 +808,7 @@ const ApplicantDashboard = () => {
 
                     </div>
                     <h3 style={{ color: 'black', fontWeight: 'bold', margin: 0 }}>
-                      {(profileData?.basicDetails && profileData?.basicDetails?.firstName) || ''}{' '}
-                      {(profileData?.basicDetails && profileData?.basicDetails?.lastName) || ''}
+                      {card?.name}
                     </h3>
                     <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
                       {(() => {
@@ -850,29 +859,7 @@ const ApplicantDashboard = () => {
                         ));
                       })()}
                     </div>
-                    
-                    <div style={{ display: "flex" }}>
-                      <div className="progress-container">
-                        <div
-                          className="progress-bar"
-                          style={{ width: `${progressPercentage}%` }}
-                        >
-                        </div>
-                      </div>
-                      {nextBadge && (
-                        <div className="next-badge">
-                          <img
-                            src={`./images/dashboard/badge-${nextBadge.name}.png`}
-                            width="20"
-                            height="30"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="progress-text">
-                      {Math.round(progressPercentage)}%
-                    </div>
-                    {!nextBadge && <p style={{fontSize:"10px", textAlign:"center", fontWeight:"600"}}>Congrats you unlocked all badges!</p>}
+
                   </div>
                 </div>
                 <div className="profile-card-row2">
@@ -929,7 +916,7 @@ const ApplicantDashboard = () => {
                   {/* Tech buzz shots */}
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
-                      <h3>Tech buzz shots</h3>
+                      <h3 id="tour-techbuzz">Tech buzz shots</h3>
                       <button onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
                     <div className="tech-buzz-images">
@@ -972,7 +959,7 @@ const ApplicantDashboard = () => {
                   {/* Tech Vibes */}
                   <div className="tech-vibes">
                     <div className="tech-vibes-header">
-                      <h3>TechVibes</h3>
+                      <h3 id="tour-techvibes">Tech vibes</h3>
                       <button className="explore-btn" onClick={handleRedirectTechVibes}>
                         Explore
                       </button>

@@ -477,7 +477,7 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
             height: '48px',
           }}
         >
-          Save Changes
+          Save changes
         </button>
       </div>
       {snackbars.map((snackbar, index) => (

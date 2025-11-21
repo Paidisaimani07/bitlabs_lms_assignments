@@ -137,14 +137,27 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
     navigate('/applicant-take-test', { state: { testName } });
   };
 
+  // near top of SkillBadgeCard, normalize incoming status once
+// (insert this right after you derive skillImage)
+const normalizedStatus = (status || "").toString().trim().toLowerCase(); // "passed" | "failed" | ""
+const statusClass =
+  normalizedStatus === "passed"
+    ? "status-passed"
+    : normalizedStatus === "failed"
+    ? "status-failed"
+    : "status-empty";
+const statusLabel =
+  normalizedStatus === "passed" ? "Passed" : normalizedStatus === "failed" ? "Failed" : "";
+
+
   return (
-    <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
+    <div className={`skill-badge-card`}>
       {/* Top Section: Status */}
-      <div className="status">
-        <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
-          &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
-        </span>
-      </div>
+      <div className="status" style={{ textAlign: "right", padding: "6px 12px 0 12px" }}>
+    <span className={`status-text ${statusClass}`}>
+      {statusLabel || "\u00A0"}
+    </span>
+  </div>
 
       {/* Second Section: Badge */}
       <div className="badge">
@@ -726,14 +739,14 @@ const steps = [
 
       <div className="blur-border-style"></div>
     <div className="dashboard__content">
-      <div className="row mr-0 ml-10">
+      <div className="row mr-0 ml-10 extraSpace">
         <div className="col-lg-12 col-md-12">
           <section className="page-title-dashboard">
             <div className="themes-container">
               <div className="row ">
                 <div className="col-lg-12 col-md-12 " >
                   <div className="title-dashboard" style={{backgroundColor:''}}>
-                    <div className="title-dash flex2" >Skill Validation</div>
+                    <div className="title-dash flex2" >Skill validation</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
   <div style={{ marginTop: "10px", width: "100%" }}>
   
@@ -1023,7 +1036,7 @@ const steps = [
                               ? "Retake test"
                               : currentStep === step.id
                               ? "Start test"
-                              : "Coming Soon"}
+                              : "Coming soon"}
                           </p>
                         </div>
                       )
@@ -1126,7 +1139,7 @@ const steps = [
 
       </div>
       <div className="row mr-0 ml-10">
-  <h3 className='skillBadgeHeading'>Skills Badges</h3>
+  <h3 className='skillBadgeHeading'>Skill badges</h3>
   
   <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff',borderRadius:'12px',marginLeft:'20px',padding:'20px',width:'95%'}}>
     <div className="skill-badge-container">
