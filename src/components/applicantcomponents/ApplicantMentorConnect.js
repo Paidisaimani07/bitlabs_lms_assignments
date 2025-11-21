@@ -401,7 +401,7 @@ const ApplicantMentorConnect = () => {
         <style>{styles.grid}</style>
 
 
-        <div className="row" style={{ marginTop: "10px" }}>
+        <div className="row" style={{ marginTop: "-100px" }}>
           <div className="col-lg-12 col-md-12">
             <div className="main-header-row">
               <h1 className="main-heading">Mentor sphere</h1>

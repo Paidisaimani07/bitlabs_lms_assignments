@@ -20,7 +20,7 @@ const ApplicantViewProfile = () => {
         <div className="blur-border-style"></div>
     <div className="dashboard__content">
       {/* Title */}
-      <div className="row mr-0 ml-10">
+      <div className="row mr-0 ml-10 extraSpace">
         <div className="col-lg-12 col-md-12">
           <section className="page-title-dashboard">
             <div className="themes-container">
