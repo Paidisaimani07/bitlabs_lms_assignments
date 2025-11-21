@@ -175,7 +175,7 @@ const response = await axios.post(
 
         <div className="blur-border-style"></div>
         <div class="dashboard__content">
-        <section className="page-title-dashboard">
+        <section className="page-title-dashboard extraSpace">
       <div className="themes-container">
         <div className="row">
           <div className="col-lg-12 col-md-12">
