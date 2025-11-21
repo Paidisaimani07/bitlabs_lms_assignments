@@ -60,12 +60,17 @@ const ApplicantDashboard = () => {
   const bronzeScore = 150;
   const silverScore = 300;
   const goldScore = 500;
+
+  const bronzeWidth = (bronzeScore / goldScore) * 100;
+  const silverWidth = ((silverScore - bronzeScore) / goldScore) * 100;
+  const goldWidth = ((goldScore - silverScore) / goldScore) * 100;
+
   const DEFAULT_CARD = {
-  applicantId: null,
-  name: "",
-  mobileNumber: "",
-  email: "",
-};
+    applicantId: null,
+    name: "",
+    mobileNumber: "",
+    email: "",
+  };
   const [card, setCard] = useState(DEFAULT_CARD);
   const CARD_API = `${apiUrl}/applicant-card`;
 
@@ -94,34 +99,34 @@ const ApplicantDashboard = () => {
   const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
 
   const fetchCard = async () => {
-  try {
-    if (!applicantId) return;
+    try {
+      if (!applicantId) return;
 
-    const jwtToken = localStorage.getItem("jwtToken");
+      const jwtToken = localStorage.getItem("jwtToken");
 
-    const { data } = await axios.get(`${CARD_API}/${applicantId}`, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+      const { data } = await axios.get(`${CARD_API}/${applicantId}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
 
-    // Map only fields you want into your CARD object
-    const mappedCard = {
-      applicantId: data.applicantId ?? null,
-      name: data.name ?? "",
-      mobileNumber: data.mobileNumber ?? "",
-      email: data.email ?? "",
-    };
+      // Map only fields you want into your CARD object
+      const mappedCard = {
+        applicantId: data.applicantId ?? null,
+        name: data.name ?? "",
+        mobileNumber: data.mobileNumber ?? "",
+        email: data.email ?? "",
+      };
 
-    setCard(mappedCard);
+      setCard(mappedCard);
 
-  } catch (err) {
-    console.error("Card API failed:", err.response || err);
-    setCard(DEFAULT_CARD); // fallback
-  }
-};
+    } catch (err) {
+      console.error("Card API failed:", err.response || err);
+      setCard(DEFAULT_CARD); // fallback
+    }
+  };
 
-useEffect(() => {
-  fetchCard();
-}, [applicantId]);
+  useEffect(() => {
+    fetchCard();
+  }, [applicantId]);
 
 
   useEffect(() => {
@@ -459,55 +464,55 @@ useEffect(() => {
   };
 
   const tourSteps = [
-  {
-    id: "dashboard",
-    selector: "#tour-dashboard",
-    placement: "bottom",
-    text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
-  },
-  {
-    id: "asknewton",
-    selector: "#tour-ask-newton",
-    placement: "top",
-    text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
-  },
     {
-    id: "arena",
-    selector: "#tour-innovation-arena",
-    placement: "left",
-    text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
-  },
+      id: "dashboard",
+      selector: "#tour-dashboard",
+      placement: "bottom",
+      text: "📊 Dashboard — See a quick overview of your profile, including your skills, profile completion, and progress. Get a snapshot of your learning and activities."
+    },
     {
-    id: "mentor",
-    selector: "#tour-mentor-sphere",
-    placement: "right",
-    text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
-  },
-  {
-    id: "portfolio",
-    selector: "#tour-portfolio",
-    placement: "right",
-    text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
-  },
-  {
-    id: "techbuzz",
-    selector: "#tour-techbuzz",
-    placement: "top",
-    text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
-  },
-  {
-    id: "techvibes",
-    selector: "#tour-techvibes",
-    placement: "left",
-    text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
-  },
-  // {
-  //   id: "skills",
-  //   selector: "#tour-skill-validation",
-  //   placement: "right",
-  //   text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
-  // }, 
-];
+      id: "asknewton",
+      selector: "#tour-ask-newton",
+      placement: "top",
+      text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
+    },
+    {
+      id: "arena",
+      selector: "#tour-innovation-arena",
+      placement: "left",
+      text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
+    },
+    {
+      id: "mentor",
+      selector: "#tour-mentor-sphere",
+      placement: "right",
+      text: "👨‍🏫 Mentor Sphere — Connect with experienced mentors in your field. Get guidance, career advice, and personalized support."
+    },
+    {
+      id: "portfolio",
+      selector: "#tour-portfolio",
+      placement: "right",
+      text: "👤 Build Portfolio — Create and manage your professional portfolio. Showcase your skills, experience, and achievements to recruiters."
+    },
+    {
+      id: "techbuzz",
+      selector: "#tour-techbuzz",
+      placement: "top",
+      text: "🎥 Tech Buzz Shorts — Watch verified short video content showcasing technical skills, projects, and industry trends to stay updated."
+    },
+    {
+      id: "techvibes",
+      selector: "#tour-techvibes",
+      placement: "left",
+      text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant."
+    },
+    // {
+    //   id: "skills",
+    //   selector: "#tour-skill-validation",
+    //   placement: "right",
+    //   text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
+    // }, 
+  ];
 
 
 
@@ -517,11 +522,11 @@ useEffect(() => {
       <div className="blur-border-style"></div>
       {loading ? null : (
         <div className="dashboard__content">
-          <div className="row mr-0 ml-10" style={{marginTop:'-85px'}}>
+          <div className="row mr-0 ml-10" style={{ marginTop: '-85px' }}>
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
-                <div className="title-dashboard">  
-                <div className="display-flex robo-container" >
+                <div className="title-dashboard dashboard-top-container">
+                  <div className="display-flex robo-container" >
                     <div className="card robo-card">
                       <div className="container">
 
@@ -552,7 +557,48 @@ useEffect(() => {
                       </div>
                     </div>
                   </div>
+                  <div className="badge-progress-wrapper">
+                    <div className="progress-text">
+                      <p>Badge achievement level</p>
+                      {Math.round((dashboardScore / goldScore) * 100)}%
+                    </div>
 
+                    <div className="badge-bar">
+
+                      <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
+                        <span>Bronze</span>
+                      </div>
+
+                      <div className="segment silver" style={{ width: `${silverWidth}%` }}>
+                        <span>Silver</span>
+                      </div>
+
+                      <div className="segment gold" style={{ width: `${goldWidth}%` }}>
+                        <span>Gold</span>
+                      </div>
+
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                        }}
+                      ></div>
+                    </div>
+
+                    <div
+                      className="bubble-indicator"
+                      style={{
+                        left: `${(dashboardScore / goldScore) * 100}%`,
+                        transform: "translateX(-50%)",
+                      }}
+                    >
+                      {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+                    </div>
+
+                    {!nextBadge && (
+                      <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
+                    )}
+                  </div>
 
                 </div>
               </div>
@@ -584,8 +630,8 @@ useEffect(() => {
                   {/* MentorSphere */}
                   <div className="mentor-sphere">
                     <div className="mentor-topSection">
-                      <h4  id="tour-mentor-sphere">
-                        MentorSphere
+                      <h4 id="tour-mentor-sphere">
+                        Mentor sphere
                       </h4>
                       <span
                         onClick={handleRedirectMentor}
@@ -697,7 +743,7 @@ useEffect(() => {
                   {/*  My Portfolio */}
                   <div className="portfolio">
                     <div className="portfolio-heading">
-                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }}  id="tour-portfolio">
+                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }} id="tour-portfolio">
                         My portfolio
                       </h4>
                       <span
@@ -741,7 +787,7 @@ useEffect(() => {
            a2 2 0 0 1 2.11-.45c.97.37 2 .62 3.06.74
            A2 2 0 0 1 22 16.92z" />
                           </svg>
-                         <p>{card?.mobileNumber}</p>
+                          <p>{card?.mobileNumber}</p>
                         </span>
                         <span>
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -811,29 +857,7 @@ useEffect(() => {
                         ));
                       })()}
                     </div>
-                    
-                    <div style={{ display: "flex" }}>
-                      <div className="progress-container">
-                        <div
-                          className="progress-bar"
-                          style={{ width: `${progressPercentage}%` }}
-                        >
-                        </div>
-                      </div>
-                      {nextBadge && (
-                        <div className="next-badge">
-                          <img
-                            src={`./images/dashboard/badge-${nextBadge.name}.png`}
-                            width="20"
-                            height="30"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <div className="progress-text">
-                      {Math.round(progressPercentage)}%
-                    </div>
-                    {!nextBadge && <p style={{fontSize:"10px", textAlign:"center", fontWeight:"600"}}>Congrats you unlocked all badges!</p>}
+
                   </div>
                 </div>
                 <div className="profile-card-row2">
@@ -890,21 +914,8 @@ useEffect(() => {
                   {/* Tech buzz shots */}
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
-                      <h3>Tech buzz shots</h3>
-                      <span
-  onClick={handleRedirectTechBuzz}
-  style={{
-    textDecoration: "underline",
-    fontSize: "15px",
-    fontWeight: "600",
-    color: "#EF8C2F",
-    cursor: "pointer"
-  }}
->
-  View more
-</span>
-
-
+                      <h3 id="tour-techbuzz">Tech buzz shots</h3>
+                      <button onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
