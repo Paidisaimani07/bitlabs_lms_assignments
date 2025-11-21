@@ -220,7 +220,7 @@ const VerifiedVideos = () => {
       <div className="blur-border-style"></div>
       <div className="dashboard__content">
         <div className="oneminute-header">
-          <h2 className="oneminute-heading">TechBuzz Shorts</h2>
+          <h2 className="oneminute-heading">Tech buzz shorts</h2>
 
           <div className="hackathon-search-box">
             <i className="fa fa-search search-icon1"></i>

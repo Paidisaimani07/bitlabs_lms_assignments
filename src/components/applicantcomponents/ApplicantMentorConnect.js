@@ -285,6 +285,7 @@ const ApplicantMentorConnect = () => {
                 fontWeight: 700,
                 cursor: "pointer",
                 textDecoration: "underline",
+                textTransform: "none",
 
               }}
             >
@@ -352,6 +353,7 @@ const ApplicantMentorConnect = () => {
                 fontSize: 14,
                 cursor: startEnabled && m.meetLink ? "pointer" : "not-allowed",
                 boxShadow: "0 8px 18px rgba(249,115,22,0.25)",
+                textTransform: "none",
               }}
             >
               Start now
@@ -378,10 +380,11 @@ const ApplicantMentorConnect = () => {
                 padding: "12px 16px",
                 fontWeight: 800,
                 fontSize: 14,
-                cursor: addCalEnabled ? "pointer" : "not-allowed",  // only cursor changes
+                cursor: addCalEnabled ? "pointer" : "not-allowed", 
+                textTransform: "none"
               }}
             >
-              Add Calendar
+              Add calendar
             </button>
 
           </div>
@@ -401,7 +404,7 @@ const ApplicantMentorConnect = () => {
         <div className="row" style={{ marginTop: "-100px" }}>
           <div className="col-lg-12 col-md-12">
             <div className="main-header-row">
-              <h1 className="main-heading">MentorSphere</h1>
+              <h1 className="main-heading">Mentor sphere</h1>
 
               <div className="hackathon-search-box">
                 <i className="fa fa-search search-icon1"></i>

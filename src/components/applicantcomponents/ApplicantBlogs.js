@@ -113,13 +113,13 @@ export default function ApplicantBlogs() {
         <div className="row extraSpace">
           <div className="col-lg-12 col-md-12">
             <div className="main-header-row">
-              <h1 className="main-heading">TechVibes</h1>
+              <h1 className="main-heading">Tech vibes</h1>
 
               <div className="hackathon-search-box">
                 <i className="fa fa-search search-icon1"></i>
                 <input
                   type="text"
-                  placeholder="Search TechVibes"
+                  placeholder="Search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="hackathon-search-input"
@@ -194,8 +194,9 @@ export default function ApplicantBlogs() {
               className="load-more-btn"
               onClick={() => setPage((prev) => prev + 1)}
               disabled={loading}
+              style={{textTransform:'none'}}
             >
-              {loading ? "Loading..." : "Load More"}
+              {loading ? "Loading..." : "Load more"}
             </button>
           </div>
         )}

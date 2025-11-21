@@ -733,7 +733,7 @@ const steps = [
               <div className="row ">
                 <div className="col-lg-12 col-md-12 " >
                   <div className="title-dashboard" style={{backgroundColor:''}}>
-                    <div className="title-dash flex2" >Skill Validation</div>
+                    <div className="title-dash flex2" >Skill validation</div>
                     <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
   <div style={{ marginTop: "10px", width: "100%" }}>
   
@@ -1126,7 +1126,7 @@ const steps = [
 
       </div>
       <div className="row mr-0 ml-10">
-  <h3 className='skillBadgeHeading'>Skills Badges</h3>
+  <h3 className='skillBadgeHeading'>Skill badges</h3>
   
   <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff',borderRadius:'12px',marginLeft:'20px',padding:'20px',width:'95%'}}>
     <div className="skill-badge-container">

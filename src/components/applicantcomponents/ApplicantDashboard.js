@@ -890,8 +890,21 @@ useEffect(() => {
                   {/* Tech buzz shots */}
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
-                      <h3  id="tour-techbuzz">Tech buzz shots</h3>
-                      <button onClick={handleRedirectTechBuzz}>view more</button>
+                      <h3>Tech buzz shots</h3>
+                      <span
+  onClick={handleRedirectTechBuzz}
+  style={{
+    textDecoration: "underline",
+    fontSize: "15px",
+    fontWeight: "600",
+    color: "#EF8C2F",
+    cursor: "pointer"
+  }}
+>
+  View more
+</span>
+
+
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
