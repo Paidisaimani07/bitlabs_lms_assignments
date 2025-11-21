@@ -97,7 +97,7 @@ export default function FinalizeBlog() {
 
     return (
         <div className="dashboard__content blogs-page">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center extraSpace">
                 <div className="col-lg-10 col-md-12">
 
                     <div className="themes-container">
