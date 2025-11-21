@@ -423,7 +423,7 @@ function ApplicantNavBar() {
                   <span className="dash-titles">Dashboard</span>
                 </Link>
               </li>
-              <li id="tour-portfolio">
+              <li>
                 <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" ? "tf-effect active" : ""}>
 
                   <span className="dash-icon">
@@ -487,7 +487,6 @@ function ApplicantNavBar() {
                   <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Skill validation</span>
                 </Link>
                 <Link
-                id="tour-mentor-sphere"
                   onClick={hideMenu}
                   to="/applicant-mentorconnect"
                   className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
@@ -519,7 +518,6 @@ function ApplicantNavBar() {
 
 
                 <Link
-                  id="tour-techbuzz"
                   onClick={hideMenu}
                   to="/applicant-verified-videos"
                   className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
@@ -554,7 +552,7 @@ function ApplicantNavBar() {
                 </Link>
 
               </li>
-              <li id="tour-innovation-arena">
+              <li>
                 <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
                   <span className="dash-icon">
                     <img
@@ -568,7 +566,7 @@ function ApplicantNavBar() {
                 </Link>
               </li>
 
-              <li id="tour-techvibes">
+              <li>
                 <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
                   <span className="dash-icon blog-icon">
                     <img

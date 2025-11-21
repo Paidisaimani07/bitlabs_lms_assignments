@@ -544,7 +544,7 @@ useEffect(() => {
                           <button
                             onClick={handleRedirect3}
                           >
-                            Get Started
+                            Get started
                           </button>
 
                         </div>
@@ -563,12 +563,12 @@ useEffect(() => {
                   {/* Arena Online */}
                   <div className="arena">
                     <div className="arena-topSection">
-                      <h4 >
+                      <h4 id="tour-innovation-arena">
                         Compete. Learn. Win.
                       </h4>
                       <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
                       <button onClick={handleRedirectHackathon}>
-                        Enter the Arena!
+                        Enter arena!
                       </button>
                     </div>
 
@@ -587,7 +587,6 @@ useEffect(() => {
                       <h4  id="tour-mentor-sphere">
                         MentorSphere
                       </h4>
-
                       <span
                         onClick={handleRedirectMentor}
                       >
@@ -596,9 +595,9 @@ useEffect(() => {
                     </div>
 
                     <div className="mentor-heading">
-                      <h4 >Guiding Star</h4>
-                      <h4 >Realm of Insight</h4>
-                      <h4 >Insight Hour</h4>
+                      <h4 >Guiding star</h4>
+                      <h4 >Realm of insight</h4>
+                      <h4 >Insight hour</h4>
                     </div>
                     {mentorLoading ? (
                       <div className="mentor-skeleton-list">
@@ -701,9 +700,7 @@ useEffect(() => {
                       <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }}  id="tour-portfolio">
                         My portfolio
                       </h4>
-
                       <span
-
                         onClick={handleRedirectResume}
                       >
                         Explore
