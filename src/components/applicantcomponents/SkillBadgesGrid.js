@@ -29,17 +29,6 @@ const SkillBadgesGrid = () => {
 
   return (
     <div className="skill-badges-grid">
-      {/* Required skills first (may have no status yet) */}
-      {/* {data.skillsRequired.map((s) => (
-        <SkillBadgeCard
-          key={`req-${s.id || s.skillName}`}
-          skillName={s.skillName}
-          status={s.status}
-          testFailedAt={s.testTaken}
-        />
-      ))} */}
-
-      {/* Applicant earned / attempted badges */}
   {data.applicantSkillBadges
   .filter((b) => {
     const status = (b?.status || b?.flag || "").toLowerCase();
