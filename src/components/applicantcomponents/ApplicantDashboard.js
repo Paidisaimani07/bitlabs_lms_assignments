@@ -533,12 +533,12 @@ const ApplicantDashboard = () => {
                         <div className="robo-img ">
                           <span>
                             <a onClick={handleRedirect3}>
-                            <img
-                              src={botImage}
-                              alt="Bot icon"
-                              width="150px"
-                              height="250px"
-                            />
+                              <img
+                                src={botImage}
+                                alt="Bot icon"
+                                width="150px"
+                                height="250px"
+                              />
                             </a>
                           </span>
                         </div>
@@ -564,39 +564,39 @@ const ApplicantDashboard = () => {
                       <p>Badge achievement level</p>
                       {Math.round((dashboardScore / goldScore) * 100)}%
                     </div>
+                    <div style={{ position: "relative" }}>
+                      <div className="badge-bar">
 
-                    <div className="badge-bar">
+                        <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
+                          <span>Bronze</span>
+                        </div>
 
-                      <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
-                        <span>Bronze</span>
-                      </div>
+                        <div className="segment silver" style={{ width: `${silverWidth}%` }}>
+                          <span>Silver</span>
+                        </div>
 
-                      <div className="segment silver" style={{ width: `${silverWidth}%` }}>
-                        <span>Silver</span>
-                      </div>
+                        <div className="segment gold" style={{ width: `${goldWidth}%` }}>
+                          <span>Gold</span>
+                        </div>
 
-                      <div className="segment gold" style={{ width: `${goldWidth}%` }}>
-                        <span>Gold</span>
+                        <div
+                          className="progress-fill"
+                          style={{
+                            width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                          }}
+                        ></div>
                       </div>
 
                       <div
-                        className="progress-fill"
+                        className="bubble-indicator"
                         style={{
-                          width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                          left: `${(dashboardScore / goldScore) * 100}%`,
+                          transform: "translateX(-50%)",
                         }}
-                      ></div>
+                      >
+                        {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+                      </div>
                     </div>
-
-                    <div
-                      className="bubble-indicator"
-                      style={{
-                        left: `${(dashboardScore / goldScore) * 100}%`,
-                        transform: "translateX(-50%)",
-                      }}
-                    >
-                      {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
-                    </div>
-
                     {!nextBadge && (
                       <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
                     )}
