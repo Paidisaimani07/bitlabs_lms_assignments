@@ -42,15 +42,15 @@ function ApplicantNavBar() {
   const frompath = location.state?.from;
   const { pathname } = useLocation();
 
-    const DEFAULT_CARD = {
+  const DEFAULT_CARD = {
     applicantId: null,
     name: "",
     mobileNumber: "",
     email: "",
   };
-    const [card, setCard] = useState(DEFAULT_CARD);
-    const CARD_API = `${apiUrl}/applicant-card`;
-    const applicantId = user.id;
+  const [card, setCard] = useState(DEFAULT_CARD);
+  const CARD_API = `${apiUrl}/applicant-card`;
+  const applicantId = user.id;
 
   const handleRedirect = () => {
     navigate("/applicant-interview-prep");
@@ -68,13 +68,13 @@ function ApplicantNavBar() {
   const fetchCard = async () => {
     try {
       if (!applicantId) return;
-  
+
       const jwtToken = localStorage.getItem("jwtToken");
-  
+
       const { data } = await axios.get(`${CARD_API}/${applicantId}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-  
+
       // Map only fields you want into your CARD object
       const mappedCard = {
         applicantId: data.applicantId ?? null,
@@ -82,19 +82,19 @@ function ApplicantNavBar() {
         mobileNumber: data.mobileNumber ?? "",
         email: data.email ?? "",
       };
-  
+
       setCard(mappedCard);
-  
+
     } catch (err) {
       console.error("Card API failed:", err.response || err);
       setCard(DEFAULT_CARD); // fallback
     }
   };
-  
+
   useEffect(() => {
     fetchCard();
   }, [applicantId]);
-  
+
 
   useEffect(() => {
     const updateSidebarClasses = () => {
@@ -263,14 +263,38 @@ function ApplicantNavBar() {
 
   const fetchAlertCount = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
-      setAlertCount(response.data);
+      const [jobAlertsResponse, notificationsResponse] = await Promise.all([
+        axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+        }),
+        axios.get(`${apiUrl}/notifications/getNotifications/${user.id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+        }),
+      ]);
+
+      const notifications = Array.isArray(notificationsResponse.data) ? notificationsResponse.data : [];
+      const unreadNotificationsCount = notifications.reduce((count, notification) => {
+        const isUnread = notification.applicantId?.includes(user.id);
+        return isUnread ? count + 1 : count;
+      }, 0);
+
+      const jobAlertsCount = Number(jobAlertsResponse.data) || 0;
+      const totalCount = jobAlertsCount + unreadNotificationsCount;
+
+      setAlertCount(totalCount);
+      console.log(totalCount)
     } catch (error) {
-      console.error('Error fetching alert count:', error);
+      console.error('Error fetching alert counts:', error);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
+          { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
+        );
+        setAlertCount(Number(response.data) || 0);
+      } catch (fallbackError) {
+        console.error('Error fetching fallback alert count:', fallbackError);
+        setAlertCount(0);
+      }
     }
   }
 
@@ -331,7 +355,7 @@ function ApplicantNavBar() {
                   </div>
 
                 </div>
-               
+
                 <div className="header-ct-right">
                   <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
                     <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
@@ -358,7 +382,7 @@ function ApplicantNavBar() {
                       <div className="user-info">
                         <p>Hi,</p>
                         <h6 className="user-name">
-                         {card?.name}
+                          {card?.name}
                         </h6>
                         <p className="user-email">{userData.identifier}</p>
                       </div>
@@ -399,7 +423,7 @@ function ApplicantNavBar() {
                 </div>
 
               </div>
-             
+
             </div>
           </div>
         </div>
@@ -436,28 +460,28 @@ function ApplicantNavBar() {
                   </span>
                   <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
                 </Link>
-               </li>
-                <li>
-            <div
-               
-              >
-              <Link
-                onClick={hideMenu}
-                to="/applicant-interview-prep"
-                className={pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}
-              >
-                <span className="dash-icon">
-                 <img src={botImage1} alt="Ask Newton" width="24" height="24" />
-                </span>
-                <span className="dash-titles" style={{ textTransform: "none" }}>
-                  Ask newton
-                </span>
-              </Link>
+              </li>
+              <li>
+                <div
 
-              </div>
-             
-            </li>
-               <li>
+                >
+                  <Link
+                    onClick={hideMenu}
+                    to="/applicant-interview-prep"
+                    className={pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}
+                  >
+                    <span className="dash-icon">
+                      <img src={botImage1} alt="Ask Newton" width="24" height="24" />
+                    </span>
+                    <span className="dash-titles" style={{ textTransform: "none" }}>
+                      Ask newton
+                    </span>
+                  </Link>
+
+                </div>
+
+              </li>
+              <li>
                 <Link
                   id="tour-skill-validation"
                   onClick={hideMenu}
