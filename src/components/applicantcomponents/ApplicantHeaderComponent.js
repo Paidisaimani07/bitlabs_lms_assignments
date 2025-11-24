@@ -518,48 +518,51 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
         </div>      </div>
-      <div className="badge-progress-wrapper" style={{width:"100%", height:"130px", padding:"5px 15px"}}>
+      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px" }}>
         <div className="progress-text">
           <p>Badge achievement level</p>
           {Math.round((dashboardScore / goldScore) * 100)}%
         </div>
+        <div style={{position:"relative"}}>
+          <div className="badge-bar">
 
-        <div className="badge-bar">
+            <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
+              <span>Bronze</span>
+            </div>
 
-          <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
-            <span>Bronze</span>
-          </div>
+            <div className="segment silver" style={{ width: `${silverWidth}%` }}>
+              <span>Silver</span>
+            </div>
 
-          <div className="segment silver" style={{ width: `${silverWidth}%` }}>
-            <span>Silver</span>
-          </div>
+            <div className="segment gold" style={{ width: `${goldWidth}%` }}>
+              <span>Gold</span>
+            </div>
 
-          <div className="segment gold" style={{ width: `${goldWidth}%` }}>
-            <span>Gold</span>
+            <div
+              className="progress-fill"
+              style={{
+                width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+              }}
+            ></div>
           </div>
 
           <div
-            className="progress-fill"
+            className="bubble-indicator"
             style={{
-              width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+              left: `${(dashboardScore / goldScore) * 100}%`,
+              transform: "translateX(-50%)",
+              bottom: "4px",
+              zIndex:"1",
+              minWidth:"60px"
             }}
-          ></div>
-        </div>
+          >
+            {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+          </div>
 
-        <div
-          className="bubble-indicator"
-          style={{
-            left: `${(dashboardScore / goldScore) * 100}%`,
-            transform: "translateX(-50%)",
-            bottom:"4px"
-          }}
-        >
-          {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+          {!nextBadge && (
+            <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
+          )}
         </div>
-
-        {!nextBadge && (
-          <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
-        )}
       </div>
 
       {/* Edit modal (basic details) */}

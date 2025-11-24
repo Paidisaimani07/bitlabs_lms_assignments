@@ -1188,18 +1188,12 @@ body.close-sidebar .dashboard.show .dashboard__content {
 }
 
 .extraSpace {
-    margin-top: -120px;
-}
-
-@media screen and (max-width:900px) {
-    .dashboard.show .dashboard__content {
-        margin-top: 135px;
-    }
+    margin-top: -120px !important;
 }
 
 @media screen and (max-width:768px) {
     .dashboard.show .dashboard__content {
-        margin-top: 140px !important;
+        margin-top: 80px !important;
     }
 }
 
