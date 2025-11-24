@@ -18,6 +18,7 @@
   box-shadow: 0px 0px 15px #F7AA4B;
   border: none;
   margin-top: 15px !important;
+   z-index: -1;
 }
 
 .robo-img {
@@ -1057,6 +1058,7 @@
   margin: 16px 6px 20px 6px;
   border-radius: 6px;
   background-color: white;
+  z-index: -1;
 }
 
 .bubble-indicator {
@@ -1095,6 +1097,7 @@
   position: relative;
   color: #333;
   border-right: 2px solid #dcdcdc;
+  z-index: 1;
 }
 
 .progress-fill {
@@ -1103,7 +1106,6 @@
   background: linear-gradient(to right, #FBBB5C, #E66A0E);
   top: 0;
   left: 0;
-  z-index: 1;
 }
 
 .progress-text {

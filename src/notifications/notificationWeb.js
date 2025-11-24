@@ -5,6 +5,7 @@ export async function saveFcmTokenWeb(applicantId, jwtToken, fcmToken) {
   try {
     const deviceName = navigator.userAgent || "Web Browser";
     console.log(" Generated FCM token (Web):", fcmToken);
+    localStorage.setItem("fcmToken", fcmToken);
 
     if (!fcmToken) {
       console.warn("⚠️ No FCM token retrieved (Web)");
