@@ -1093,7 +1093,6 @@
   font-size: 12px;
   font-weight: bold;
   position: relative;
-  z-index: 2;
   color: #333;
   border-right: 2px solid #dcdcdc;
 }
