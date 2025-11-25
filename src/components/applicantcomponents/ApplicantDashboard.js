@@ -878,8 +878,7 @@ const ApplicantDashboard = () => {
                         className="app-store-icons"
                       >
                         <a
-                          href="#"
-                          onClick={(e) => e.preventDefault()}
+                          href="https://apps.apple.com/in/app/bitlabs/id6742783587"
                           target="_blank"
                           rel="noopener noreferrer"
                         > <img
