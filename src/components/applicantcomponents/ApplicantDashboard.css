@@ -1095,6 +1095,7 @@
   position: relative;
   color: #333;
   border-right: 2px solid #dcdcdc;
+  z-index: 1;
 }
 
 .progress-fill {

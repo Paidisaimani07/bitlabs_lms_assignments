@@ -545,7 +545,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601" }} id="tour-ask-newton">Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor:"pointer" }} id="tour-ask-newton">Ask Newton!</span>
                           </p>
 
                           <button
@@ -867,7 +867,7 @@ const ApplicantDashboard = () => {
                   <div className="app-card">
                     <div className="app-sub-card">
                       <p className="app-card-text">
-                        Why open laptop when jobs can be right in your pocket.
+                        Why open laptop when bitLabs can be right in your pocket.
                       </p>
 
                       <p className="app-card-download-text">
@@ -915,8 +915,8 @@ const ApplicantDashboard = () => {
                   {/* Tech buzz shots */}
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
-                      <h3 id="tour-techbuzz">Tech buzz shots</h3>
-                      <button onClick={handleRedirectTechBuzz}>view more</button>
+                      <h3 id="tour-techbuzz">Tech buzz shorts</h3>
+                      <button style={{textTransform:"none"}} onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
