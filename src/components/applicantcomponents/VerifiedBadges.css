@@ -120,7 +120,7 @@ line-height: 26px;
   margin-left: 15px;
 }
 .skillBadgeHeading{
- 
+  margin-top: 10px;
   margin-bottom: 20px;
   margin-left: 20px;
 }
@@ -291,7 +291,7 @@ height: 53px;
 }
 
 .test-action.take {
-background-color: #374A70; /* Take test background */
+background-color: black; /* Take test background */
 color: white;
 }
 
