@@ -14,6 +14,12 @@
     
 }
 
+@media (max-width: 634px) {
+  .duration-text {
+    font-size: calc(25px - 8px) !important;
+    margin-right: 5px !important;
+  }
+}
 
 
 .test-header {
@@ -33,6 +39,14 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
     border-radius: 16px !important;
 }
+
+/* Media query for screens below 767px */
+@media (max-width: 1035px) {
+    .instructions-page {
+        width: 85% !important;
+    }
+}
+
 
 @media (max-width: 480px) {
     .instructions-page {
@@ -402,7 +416,7 @@ margin-top: 10px;
     width: 100% !important;
    }
 
-  /* Change the background color of the radio button itself */
+
 /* Base styles for the radio button */
 .question-radio{
 
@@ -410,7 +424,7 @@ margin-top: 10px;
     height: 16px;
     background-color: #EAEAEA !important;
     border-radius: 50%; /* Circular shape */
-    border-color: #F68318;
+    /* border-color: #F68318; */
     border: none !important;
     outline: none;
     cursor: pointer;
@@ -426,7 +440,7 @@ margin-top: 10px;
     height: 10px;
     border-radius: 50%;
     background-color: #F68318 !important; /* Fill color */
-    border: 2px solid #F68318;
+    /* border: 2px solid #F68318; */
     border: none !important;
     position: absolute;
     top: 50%;
@@ -440,17 +454,13 @@ margin-top: 10px;
     height: 10px;
     border-radius: 50%;
     background-color: #F68318; /* Fill color */
-    border-color: #F68318;
+    /* border-color: #F68318; */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
 
-  /* Optional: Hover effect */
-  input[type="radio"]:hover {
-    border-color: #F68318; /* Change border color on hover */
-  }
   
   .no-select {
     user-select: none; /* Standard syntax */

@@ -43,6 +43,7 @@ import { ClipLoader } from 'react-spinners';
 
 
 
+const isLargeScreen = typeof window !== "undefined" && window.innerWidth > 1400;
 
 export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testFailedAt }) => {
   const [timeLeft, setTimeLeft] = useState({});
@@ -137,27 +138,14 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
     navigate('/applicant-take-test', { state: { testName } });
   };
 
-  // near top of SkillBadgeCard, normalize incoming status once
-// (insert this right after you derive skillImage)
-const normalizedStatus = (status || "").toString().trim().toLowerCase(); // "passed" | "failed" | ""
-const statusClass =
-  normalizedStatus === "passed"
-    ? "status-passed"
-    : normalizedStatus === "failed"
-    ? "status-failed"
-    : "status-empty";
-const statusLabel =
-  normalizedStatus === "passed" ? "Passed" : normalizedStatus === "failed" ? "Failed" : "";
-
-
   return (
-    <div className={`skill-badge-card`}>
+    <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
       {/* Top Section: Status */}
-      <div className="status" style={{ textAlign: "right", padding: "6px 12px 0 12px" }}>
-    <span className={`status-text ${statusClass}`}>
-      {statusLabel || "\u00A0"}
-    </span>
-  </div>
+      <div className="status">
+        <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
+          &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
+        </span>
+      </div>
 
       {/* Second Section: Badge */}
       <div className="badge">
@@ -170,7 +158,7 @@ const statusLabel =
         {status === 'FAILED' && (
           <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
           style={{
-            backgroundColor: isRetakeAvailable ? '#374A70' : '#e0e0e0', // Red background if retake is available, grey otherwise
+            backgroundColor: isRetakeAvailable ? '' : '#e0e0e0', // Red background if retake is available, grey otherwise
             color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
             cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
             padding: '20px', // Adjust padding as needed
@@ -181,7 +169,7 @@ const statusLabel =
             {isRetakeAvailable ? (
                 <>
                 Retake test
-                <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i>
+                {/* <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i> */}
               </>
             ) : (
               <>
@@ -210,7 +198,7 @@ const statusLabel =
         )}
         {!status && (
           <div className="test-action take" style={{textAlign:'center'}}onClick={() => handleTakeTest(skillName)}>
-            Take test
+            Start test
           </div>
         )}
       </div>
@@ -565,9 +553,9 @@ if (bothPassed) {
   };
 
 const steps = [
-  { id: 1, label: "General aptitude test", icon: aptitudeIcon},
-  { id: 2, label: "Technical test", icon: technicalIcon },
-  { id: 3, label: "Verification done", icon: verificationIcon },
+  { id: 1, label: "General Aptitude Test", icon: aptitudeIcon},
+  { id: 2, label: "Technical Test", icon: technicalIcon },
+  { id: 3, label: "Verification Done", icon: verificationIcon },
 ];
 
  
@@ -739,15 +727,24 @@ const steps = [
 
       <div className="blur-border-style"></div>
     <div className="dashboard__content">
-      <div className="row mr-0 ml-10 extraSpace">
+      <div className="row mr-0 ml-10">
         <div className="col-lg-12 col-md-12">
-          <section className="page-title-dashboard">
+          <section className="">
             <div className="themes-container">
               <div className="row ">
                 <div className="col-lg-12 col-md-12 " >
                   <div className="title-dashboard" style={{backgroundColor:''}}>
-                    <div className="title-dash flex2" >Skill validation</div>
-                    <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3>
+                    <div
+  className="title-dash flex2"
+  style={{
+    font: '20px / 28px "Plus Jakarta Sans", sans-serif',
+    fontWeight: 700
+  }}
+>
+  Skill Validation
+</div>
+
+                    {/* <h3 style={{ marginTop: '50px', marginBottom: '10px' }}></h3> */}
   <div style={{ marginTop: "10px", width: "100%" }}>
   
   {/* 👇 CONDITION: if both tests passed, show ONLY congratulations card */}
@@ -782,7 +779,7 @@ const steps = [
 </h2>
 
       <p style={{ color: "#333", fontSize: "18px", margin: 0 }}>
-        You are now officially qualified in the Basic Skill Validation Test.
+        Your verification is successfully completed.
       </p>
     </div>
   ) : (
@@ -920,19 +917,25 @@ const steps = [
           </div>
 
           {/* -------- STEP CARDS -------- */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-              width: "100%",
-              marginTop: "10px",
-              overflowX: "auto",
-              whiteSpace: "nowrap",
-              paddingBottom: "10px",
-              gap: "25px",
-            }}
-          >
+        <div
+  style={{
+    display: "flex",
+    justifyContent: isLargeScreen ? "space-between" : "space-between", // ⭐ CHANGED FOR LARGE SCREEN
+    alignItems: "flex-start",
+    width: "100%",
+    marginTop: "10px",
+    overflowX: "auto",
+    whiteSpace: "nowrap",
+    paddingBottom: "10px",
+    gap: "25px",
+
+    ...(isLargeScreen && {
+      maxWidth: "1030px",     // ⭐ LIMIT WIDTH ONLY ON LARGE SCREEN
+      marginLeft: "auto",
+      marginRight: "auto",
+    }),
+  }}
+>
             {steps.map((step) => (
               <div
                 key={step.id}
@@ -1139,7 +1142,7 @@ const steps = [
 
       </div>
       <div className="row mr-0 ml-10">
-  <h3 className='skillBadgeHeading'>Skill badges</h3>
+  <h3 className='skillBadgeHeading'>Skills Badges</h3>
   
   <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff',borderRadius:'12px',marginLeft:'20px',padding:'20px',width:'95%'}}>
     <div className="skill-badge-container">

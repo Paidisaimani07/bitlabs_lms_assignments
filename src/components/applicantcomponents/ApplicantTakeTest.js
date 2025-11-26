@@ -699,7 +699,7 @@ const fetchQuestion = async() => {
       overflow: "hidden",
     }}
   >
-      <span style={{ fontSize: "28px", fontWeight: "600", marginTop: "30px" }}>
+      <span className="duration-text" style={{ fontSize: "26px", fontWeight: "600", marginTop: "30px" }}>
       {questions.duration}
     </span>
 
@@ -732,7 +732,7 @@ const fetchQuestion = async() => {
       overflow: "hidden",
     }}
   >
-      <span style={{ fontSize: "28px", fontWeight: "600", marginTop: "30px" }}>
+      <span className="duration-text" style={{ fontSize: "26px", fontWeight: "600", marginTop: "30px" }}>
       {questions.numberOfQuestions}
     </span>
 
