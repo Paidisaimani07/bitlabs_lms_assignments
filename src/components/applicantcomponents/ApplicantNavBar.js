@@ -25,7 +25,7 @@ import notificationIcon from '../../images/notificationIcon.svg'
 
 function ApplicantNavBar() {
   const location = useLocation();
-  const hideSidebarRoutes = ["/applicant-interview-prep"];
+  const hideSidebarRoutes = ["/applicant-dymmy"];
   const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"]
   const [isOpen, setIsOpen] = useState(
     window.innerWidth >= 1302 && !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
