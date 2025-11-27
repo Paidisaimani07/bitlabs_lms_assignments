@@ -37,70 +37,133 @@ function InterviewPrepPage() {
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const isExistingChat = savedChats.some(c => c.id === currentChatId);
+  const [followUps, setFollowUps] = useState([]);
+  const title = generateChatTitle(messages);
+  const [isChatCleared, setIsChatCleared] = useState(false);
 
 
+  function generateChatTitle(messages) {
+  if (!messages || messages.length === 0) return "New Chat";
+
+  const greetings = [
+    "hi", "hello", "hey", "ok", "thanks", "thank you", "hii", "thankyou", "thx"
+  ];
+
+  // Get first 3 messages
+  const firstThree = messages.slice(0, 3).map(m => m.text.trim().toLowerCase());
+
+  // Filter out empty strings
+  const meaningful = firstThree.filter(t => t !== "");
+
+  // 1️⃣ If ALL messages are greetings → title = Greeting
+  if (meaningful.every(t => greetings.includes(t))) {
+    return "Greetings";
+  }
+
+  // Remove ONLY greeting messages from the content
+  const cleaned = meaningful.filter(t => !greetings.includes(t));
+
+  // If everything was greeting except one message, use that message
+  if (cleaned.length === 0) {
+    return "Greetings";
+  }
+
+  let combined = cleaned.join(" ").trim();
+
+  // 2️⃣ Topic detection (smart)
+  const keywords = [
+    "java", "python", "docker", "css", "html", "react", "api",
+    "machine learning", "ml", "ai", "deep learning",
+    "sql", "database", "spring", "resume", "interview"
+  ];
+
+  const foundKeyword = keywords.find(word => combined.includes(word));
+
+  if (foundKeyword) {
+    // Capitalize properly
+    return foundKeyword
+      .split(" ")
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  }
+
+  // 3️⃣ Fallback → short meaningful title
+  if (combined.length > 60) {
+    combined = combined.slice(0, 57) + "...";
+  }
+
+  return combined.charAt(0).toUpperCase() + combined.slice(1);
+}
+
+
+const handleFollowUpClick = (question) => {
+  //setMessages(prev => [...prev, { sender: "user", text: question }]);
+  setFollowUps([]); // Remove old follow-ups immediately
+  sendMessage(question); // Reuse existing send logic
+};
+
+  const extractFollowUps = (rawResponse) => {
+  try {
+    let obj;
+
+    if (typeof rawResponse === "object" && rawResponse !== null) {
+      obj = rawResponse;
+    } else {
+      obj = JSON.parse(rawResponse);
+    }
+
+    // Ensure it returns an array
+    return obj.followup || obj.followUp || obj.followups || [];
+
+  } catch (err) {
+    console.error("extractFollowUps error:", err);
+    return [];
+  }
+};
 
 const formatResponse = (rawResponse) => {
   try {
-    let obj = rawResponse;
-
-    // STEP 1 — Try to parse clean JSON
-    if (typeof rawResponse === "string") {
-      // Fix broken quotes before parsing:  response\": \"text
-      const fixed = rawResponse.replace(/\\"/g, '"').replace(/\\'/g, "'");
-      try {
-        obj = JSON.parse(fixed);
-      } catch {
-        obj = fixed; // keep raw string
-      }
-    }
-
-    // STEP 2 — Extract actual text (string or nested object)
     let text = "";
 
-    if (typeof obj === "object" && obj !== null) {
-      const firstKey = Object.keys(obj)[0];
+    // If response is JSON from backend (wrapped), parse it
+    if (typeof rawResponse === "string") {
+      try {
+        const parsed = JSON.parse(rawResponse);
+        text = parsed.response || parsed.text || rawResponse;
+      } catch {
+        text = rawResponse; // already plain text / markdown
+      }
+    } else if (typeof rawResponse === "object" && rawResponse !== null) {
       text =
-        typeof obj[firstKey] === "object"
-          ? JSON.stringify(obj[firstKey])
-          : obj[firstKey];
+        rawResponse.response ||
+        rawResponse.text ||
+        JSON.stringify(rawResponse);
     } else {
-      text = obj;
+      text = String(rawResponse);
     }
 
-    text = String(text).trim();
+    text = String(text);
 
-    // =============== CLEANUP RULES ==================
+    // ----------- CRITICAL FIX -----------
+    // DO NOT strip braces or quotes — code blocks need them!
+    // Only convert escaped \n to real newlines
+    text = text.replace(/\\n/g, "\n");
 
-    // ❌ remove repeated "response": from ANY structure
-    text = text.replace(/"response"\s*:\s*/gi, "");
-
-    // ❌ remove leading/trailing braces
-    text = text.replace(/^\s*\{+|\}+$/g, "");
-
-    // ❌ remove broken braces like:  { "text":
-    text = text.replace(/^\s*"text"\s*:\s*/i, "");
-
-    // ❌ cleanup accidental leftover "response": inside string
-    text = text.replace(/^response"\s*:\s*/i, "");
-
-    // ❌ remove extra quotes wrapping the whole thing
+    // Clean accidental wrapping quotes
     if (
       (text.startsWith('"') && text.endsWith('"')) ||
       (text.startsWith("'") && text.endsWith("'"))
     ) {
-      text = text.substring(1, text.length - 1);
+      text = text.slice(1, -1);
     }
-
-    // KEEP CODE BLOCKS SAFE — Just convert newlines
-    text = text.replace(/\\n/g, "\n");
 
     return text.trim();
   } catch (err) {
     console.error("formatResponse error:", err);
-    return String(rawResponse).trim();
+    return rawResponse;
   }
 };
+
 
 
 
@@ -194,17 +257,27 @@ const formatResponse = (rawResponse) => {
     fetchTitles();
   }, [user?.id]);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("savedChatsV1");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setSavedChats(parsed);
-      }
-    } catch (e) {
-      console.error("Failed to load saved chats:", e);
+useEffect(() => {
+  try {
+    const raw = localStorage.getItem("savedChatsV1");
+    if (raw) {
+      let parsed = JSON.parse(raw);
+
+      // 🔥 REMOVE chats that have NO messages in backend
+      parsed = parsed.filter(c => c.title && c.title !== "New Chat");
+
+      const sorted = [...parsed].sort((a, b) => {
+  return (b.createdAt || 0) - (a.createdAt || 0);
+}); 
+
+      setSavedChats(parsed);
+      persistSavedChats(parsed);
     }
-  }, []);
+  } catch (e) {
+    console.error("Failed to load saved chats:", e);
+  }
+}, []);
+
 
   const focusInput = () => {
     setTimeout(() => textInputRef.current?.focus(), 0);
@@ -311,7 +384,7 @@ const formatResponse = (rawResponse) => {
 
       const reply = formatResponse(data);
       setMessages(prev => [...prev, { sender: "bot", text: reply }]);
-
+      setFollowUps(extractFollowUps(data));
       if (currentChatId) {
         const jwtToken2 = localStorage.getItem("jwtToken");
 
@@ -353,13 +426,18 @@ const formatResponse = (rawResponse) => {
     }
   };
 
-const sendMessage = async () => {
-  if (!input.trim() || isLoading || isCoolingDown) return;
+const sendMessage = async (overrideMessage = null) => {
+  const userMessage = overrideMessage ?? input.trim();
 
-  const userMessage = input.trim();
+  if (!userMessage || isLoading || isCoolingDown) return;
+
   setIsLoading(true);
+
+  // Add user message to chat
   setMessages(prev => [...prev, { sender: "user", text: userMessage }]);
   focusInput();
+
+  if (!overrideMessage) setInput("");
 
   try {
     const jwtToken = localStorage.getItem("jwtToken");
@@ -376,13 +454,74 @@ const sendMessage = async () => {
       { headers: { Authorization: `Bearer ${jwtToken}` } }
     );
 
-    // backend gives a chatId → update
-    if (data?.chatId) setCurrentChatId(data.chatId);
+    // -------------------------------
+    // ⭐ NEW CHAT CREATED → Add to savedChats immediately
+    // -------------------------------
+    if (data?.chatId) {
+      setCurrentChatId(data.chatId);
+
+      // If chatId NOT in savedChats, push it immediately
+      if (!savedChats.some(c => c.id === data.chatId)) {
+        const newChat = {
+          id: data.chatId,
+          title: generateChatTitle([{ sender: "user", text: userMessage }]),
+          createdAt: Date.now()
+        };
+
+        setSavedChats(prev => {
+          const updated = [newChat, ...prev]; // add on top
+          persistSavedChats(updated);
+          return updated;
+        });
+      }
+    }
+    // -------------------------------
 
     const reply = formatResponse(data);
     setMessages(prev => [...prev, { sender: "bot", text: reply }]);
 
-    setInput("");
+    // 🔥 Update follow-up questions
+    setFollowUps(extractFollowUps(data));
+
+    // ===========================================
+    // 🚫 DO NOT SAVE IF:
+    //  - Chat was cleared
+    //  - No valid messages exist
+    // ===========================================
+    if (
+      currentChatId &&  
+      !isChatCleared &&  
+      messages.length > 0
+    ) {
+      const jwtToken2 = localStorage.getItem("jwtToken");
+
+      const chatArray = [
+        ...messages.map(m => ({
+          role: m.sender === "user" ? "user" : "assistant",
+          message: m.text,
+          time: new Date().toISOString(),
+        })),
+        { role: "user", message: userMessage, time: new Date().toISOString() },
+        { role: "assistant", message: reply, time: new Date().toISOString() }
+      ];
+
+      const updatedTitle = generateChatTitle([
+        ...messages,
+        { sender: "user", text: userMessage },
+        { sender: "bot", text: reply }
+      ]);
+
+      const payload = {
+        title: updatedTitle,
+        savedChat: JSON.stringify(chatArray)
+      };
+
+      await axios.put(
+        `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+        payload,
+        { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
+      );
+    }
 
   } catch (err) {
     console.error("Chat error:", err);
@@ -392,32 +531,38 @@ const sendMessage = async () => {
     ]);
   } finally {
     setIsLoading(false);
-    setTimeout(() => textInputRef.current?.focus(), 0);
+    setTimeout(() => {
+      textInputRef.current?.focus();
+    }, 0);
   }
 };
 
 
 
- const startNewChat = async () => {
+
+
+
+
+const startNewChat = async () => {
   try {
+    // 🔥 Enable saving again for NEW chat
+    setIsChatCleared(false);
+
     const isExistingChat =
       currentChatId && savedChats.some(c => c.id === currentChatId);
 
-    // Save ONLY if this chat is NEW (not yet saved)
-    if (messages.length > 0 && currentChatId && !isExistingChat) {
+    // Save ONLY if this chat is NEW and has real content
+    if (
+      messages.length > 0 &&
+      currentChatId &&
+      !isExistingChat &&
+      messages[0]?.text?.trim() !== ""
+    ) {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      // Title from first user message
-      const firstUserMsg =
-        messages.find(m => m.sender === "user")?.text || "Untitled Chat";
+      const chatTitle = generateChatTitle(messages);
 
-      const trimmedTitle =
-        firstUserMsg.length > 35
-          ? firstUserMsg.substring(0, 35) + "..."
-          : firstUserMsg;
-
-      // Format messages for backend
       const chatArray = messages.map(m => ({
         role: m.sender === "user" ? "user" : "assistant",
         message: m.text,
@@ -425,21 +570,19 @@ const sendMessage = async () => {
       }));
 
       const payload = {
-        title: trimmedTitle,
-        savedChat: JSON.stringify(chatArray),
+        title: chatTitle,
+        savedChat: JSON.stringify(chatArray)
       };
 
-      // SAVE
       await axios.put(
         `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
         payload,
         { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
       );
 
-      // Add to local list
       const newChat = {
         id: currentChatId,
-        title: trimmedTitle,
+        title: chatTitle,
         createdAt: Date.now()
       };
 
@@ -454,6 +597,7 @@ const sendMessage = async () => {
 
     // reset for brand new chat
     setMessages([]);
+    setFollowUps([]);
     setCurrentChatId(null);
     setShowDropdown(false);
     focusInput();
@@ -467,11 +611,15 @@ const sendMessage = async () => {
     });
 
     setMessages([]);
+    setFollowUps([]);
     setCurrentChatId(null);
     setShowDropdown(false);
     focusInput();
   }
 };
+
+
+
 
 
 
@@ -520,36 +668,6 @@ const sendMessage = async () => {
   }
 };
 
-
-  const renameChat = async (id, title) => {
-    const chat = savedChats.find((c) => c.id === id);
-    if (!chat || !title?.trim()) return;
-
-    const nextTitle = title.trim();
-    const updatedLocal = savedChats.map(c => c.id === id ? { ...c, title: nextTitle } : c);
-    setSavedChats(updatedLocal);
-    persistSavedChats(updatedLocal);
-    setOpenOptionsId(null);
-
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      let payload = { title: nextTitle };
-      if (currentChatId === id && Array.isArray(messages)) {
-        const apiMessages = messages.map(m => ({
-          role: m.sender === 'user' ? 'user' : 'assistant',
-          content: m.text,
-        }));
-        payload = { ...payload, savedChat: JSON.stringify({ messages: apiMessages }) };
-      }
-      await axios.put(`${apiUrl}/aiPrepChat/${id}/updateChatDetails/${user?.id}`, payload, {
-        headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-      });
-      addSnackbar({ message: 'Chat renamed successfully', type: 'success' });
-    } catch (e) {
-      console.error('Failed to update chat title on backend:', e);
-      addSnackbar({ message: 'Failed to rename chat. Please try again.', type: 'error' });
-    }
-  };
 
   const closeTitleModal = () => setTitleModal({ open: false, mode: null, chatId: null, value: '' });
 
@@ -609,11 +727,38 @@ const sendMessage = async () => {
 };
 
 
-  const handleClearChat = () => {
-    setMessages([]);
-    setShowDropdown(false);
-    focusInput();
-  };
+const handleClearChat = async () => {
+  try {
+    if (currentChatId) {
+      const jwtToken = localStorage.getItem("jwtToken");
+
+      // ❌ DELETE chat from backend
+      await axios.delete(
+        `${apiUrl}/aiPrepChat/${currentChatId}/deleteChat/${user?.id}`,
+        { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+      );
+
+      // ❌ Remove from local list
+      const updated = savedChats.filter(c => c.id !== currentChatId);
+      setSavedChats(updated);
+      persistSavedChats(updated);
+    }
+  } catch (err) {
+    console.error("Failed to delete chat while clearing:", err);
+  }
+
+  // 🚫 Prevent saving future messages accidentally
+  setIsChatCleared(true);
+
+  // Reset UI
+  setCurrentChatId(null);
+  setMessages([]);
+  setFollowUps([]);
+  setShowDropdown(false);
+  focusInput();
+};
+
+
 
   const handleExportChat = async (chatId) => {
   try {
@@ -870,69 +1015,98 @@ const sendMessage = async () => {
                   </div>
                 )}
                 <div className="interview-prep-messages">
-                  {messages.length === 0 ? (
-                    <div className="interview-prep-welcome-message">
-                     Hello! What can I help you with today?
-                    </div>
-                  ) : (
-                    messages.map((msg, idx) => (
-                      <div
-                        key={idx}
-                        className={`interview-prep-message ${msg.sender === 'user' ? 'interview-prep-user-message' : 'interview-prep-assistant-message'}`}
-                      >
-                        <div className="interview-prep-message-content">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              p: ({ node, ...props }) => (
-                                <p className="interview-prep-markdown-p" {...props} />
-                              ),
-                              li: ({ node, ...props }) => (
-                                <li className="interview-prep-markdown-li" {...props} />
-                              ),
-                              ul: ({ node, ...props }) => (
-                                <ul className="interview-prep-markdown-ul" {...props} />
-                              ),
-                              code: ({ node, inline, ...props }) =>
-                                inline ? (
-                                  <code className="interview-prep-markdown-inline-code" {...props} />
-                                ) : (
-                                  <pre className="interview-prep-markdown-code-block">
-                                    <code {...props} />
-                                  </pre>
-                                ),
-                              h1: ({ node, ...props }) => (
-                                <h1 className="interview-prep-markdown-h1" {...props} />
-                              ),
-                              h2: ({ node, ...props }) => (
-                                <h2 className="interview-prep-markdown-h2" {...props} />
-                              ),
-                              h3: ({ node, ...props }) => (
-                                <h3 className="interview-prep-markdown-h3" {...props} />
-                              ),
-                              ol: ({ node, ...props }) => (
-                                <ol className="interview-prep-markdown-ol" {...props} />
-                              ),
-                            }}
-                          >
-                            {msg.text}
-                          </ReactMarkdown>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                  {isLoading && (
-                    <div className="interview-prep-typing-indicator">
-                      <div className="interview-prep-typing-dots">
-                        <span className="interview-prep-typing-dot"></span>
-                        <span className="interview-prep-typing-dot"></span>
-                        <span className="interview-prep-typing-dot"></span>
-                      </div>
-                      <span>Thinking...</span>
-                    </div>
-                  )}
-                  <div ref={chatEndRef} className="interview-prep-chat-end" />
-                </div>
+  {messages.length === 0 ? (
+    <div className="interview-prep-welcome-message">
+      Hello! What can I help you with today?
+    </div>
+  ) : (
+    messages.map((msg, idx) => (
+      <div
+        key={idx}
+        className={`interview-prep-message ${
+          msg.sender === "user"
+            ? "interview-prep-user-message"
+            : "interview-prep-assistant-message"
+        }`}
+      >
+        <div className="interview-prep-message-content">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              p: ({ node, ...props }) => (
+                <p className="interview-prep-markdown-p" {...props} />
+              ),
+              li: ({ node, ...props }) => (
+                <li className="interview-prep-markdown-li" {...props} />
+              ),
+              ul: ({ node, ...props }) => (
+                <ul className="interview-prep-markdown-ul" {...props} />
+              ),
+              code: ({ node, inline, ...props }) =>
+                inline ? (
+                  <code
+                    className="interview-prep-markdown-inline-code"
+                    {...props}
+                  />
+                ) : (
+                  <pre className="interview-prep-markdown-code-block">
+                    <code {...props} />
+                  </pre>
+                ),
+              h1: ({ node, ...props }) => (
+                <h1 className="interview-prep-markdown-h1" {...props} />
+              ),
+              h2: ({ node, ...props }) => (
+                <h2 className="interview-prep-markdown-h2" {...props} />
+              ),
+              h3: ({ node, ...props }) => (
+                <h3 className="interview-prep-markdown-h3" {...props} />
+              ),
+              ol: ({ node, ...props }) => (
+                <ol className="interview-prep-markdown-ol" {...props} />
+              ),
+            }}
+          >
+            {msg.text}
+          </ReactMarkdown>
+        </div>
+
+        {/* FOLLOW-UP QUESTIONS */}
+        {msg.sender === "bot" &&
+          idx === messages.length - 1 &&
+          followUps.length > 0 && (
+            <div className="followup-section">
+              <h3 className="followup-heading">Choose the related question</h3>
+              <div className="followup-list">
+               {followUps.map((q, i) => (
+  <div
+    key={i}
+    className="followup-item"
+    onClick={() => handleFollowUpClick(q)}
+  >
+    <b>Q{i + 1}:</b> {q}
+  </div>
+))}
+              </div>
+            </div>
+          )}
+      </div>
+    ))
+  )}
+
+  {isLoading && (
+    <div className="interview-prep-typing-indicator">
+      <div className="interview-prep-typing-dots">
+        <span className="interview-prep-typing-dot"></span>
+        <span className="interview-prep-typing-dot"></span>
+        <span className="interview-prep-typing-dot"></span>
+      </div>
+      <span>Loading...</span>
+    </div>
+  )}
+
+  <div ref={chatEndRef} className="interview-prep-chat-end" />
+</div>
 
                 <div className="interview-prep-input-container">
   <input
@@ -984,54 +1158,120 @@ const sendMessage = async () => {
               </div>
             </div>
 
-            {snackbars.map((snackbar, index) => (
-              <Snackbar
-                key={index}
-                index={index}
-                message={snackbar.message}
-                type={snackbar.type}
-                onClose={() => handleCloseSnackbar(index)}
-                className="interview-prep-snackbar"
-              />
-            ))}
+        
 
-            <div
-              className={`interview-prep-modal ${confirmDelete.open ? 'interview-prep-modal-show' : ''}`}
-              style={{ display: confirmDelete.open ? 'flex' : 'none', zIndex: 3000 }}
-              tabIndex="-1"
-              role="dialog"
-              onClick={(e) => { if (e.target === e.currentTarget) closeDeleteConfirm(); }}
-            >
-              <div className="interview-prep-modal-dialog" role="document">
-                <div className="interview-prep-modal-content">
 
-                  <div className="interview-prep-modal-body">
-                    <p>
-                      You are about to delete <b>{confirmDelete.title}</b>. This action cannot be undone.
-                    </p>
-                  </div>
-                  <div className="interview-prep-modal-footer">
-                    <button
-                      type="button"
-                      className="ai-clear-chat"
-                      onClick={closeDeleteConfirm}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="ai-new-chat"
-                      onClick={confirmDeleteChat}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+           
           </div>
         </div>
+        {snackbars.map((snackbar, index) => (
+  <Snackbar
+    key={index}
+    index={index}
+    message={snackbar.message}
+    type={snackbar.type}
+    onClose={() => handleCloseSnackbar(index)}
+    className="interview-prep-snackbar"
+    style={{
+      position: "fixed",
+      bottom: "20px",
+      right: "20px",
+      zIndex: 99999,        // <-- higher than sidebar
+      pointerEvents: "auto" // allow clicking close button
+    }}
+  />
+))}
       </div>
+       <div
+  className={`interview-prep-modal ${confirmDelete.open ? 'interview-prep-modal-show' : ''}`}
+  style={{
+    display: confirmDelete.open ? "flex" : "none",
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 3000,
+    backdropFilter: "blur(2px)"
+  }}
+  onClick={(e) => { if (e.target === e.currentTarget) closeDeleteConfirm(); }}
+>
+
+  <div
+    style={{
+      width: "450px",
+      background: "#ffffff",
+      borderRadius: "14px",
+      boxShadow: "0 6px 25px rgba(0,0,0,0.18)",
+      padding: "30px 28px",
+      display: "flex",
+      flexDirection: "column",
+      gap: "22px",
+      animation: "fadeIn 0.2s ease"
+    }}
+  >
+
+    {/* TEXT */}
+    <div style={{ fontSize: "16px", color: "#333", lineHeight: "1.6" }}>
+      You are about to delete <b>{confirmDelete.title}</b>.  
+      This action cannot be undone.
+    </div>
+
+    {/* DIVIDER */}
+    <div style={{
+      height: "1px",
+      background: "#e5e7eb",
+      margin: "0 -10px"
+    }} />
+
+    {/* BUTTONS */}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        gap: "20px",
+        marginTop: "5px"
+      }}
+    >
+      {/* Cancel Button */}
+      <button
+        onClick={closeDeleteConfirm}
+        style={{
+          padding: "10px 28px",
+          borderRadius: "6px",
+          border: "1px solid #f97316",
+          background: "#fff",
+          color: "#f97316",
+          fontSize: "15px",
+          cursor: "pointer",
+          transition: "0.2s ease"
+        }}
+      >
+        Cancel
+      </button>
+
+      {/* Delete Button */}
+      <button
+        onClick={confirmDeleteChat}
+        style={{
+          padding: "10px 28px",
+          borderRadius: "6px",
+          border: "none",
+          background: "linear-gradient(90deg, #f97316, #fbbf24)",
+          color: "#fff",
+          fontSize: "15px",
+          fontWeight: "600",
+          cursor: "pointer",
+          transition: "0.2s ease"
+        }}
+      >
+        Delete
+      </button>
+    </div>
+
+  </div>
+</div>
+
     </div>
   );
 }
