@@ -47,6 +47,18 @@ function InterviewPrepPage() {
   setShowSidebar(prev => !prev);
 };
 
+useEffect(() => {
+  const checkWidth = () => {
+    setShowSidebar(window.innerWidth <= 992);
+  };
+
+  checkWidth(); 
+
+  window.addEventListener("resize", checkWidth);
+  return () => window.removeEventListener("resize", checkWidth);
+}, []);
+
+
   function generateChatTitle(messages) {
   if (!messages || messages.length === 0) return "New Chat";
 

@@ -640,7 +640,7 @@
 .dropdown-icon{
     display: none;
 }
-/* 
+ 
 @media (max-width: 992px) {
 
     .interview-prep-dashboard-content {
@@ -704,18 +704,18 @@
         cursor: pointer;
     }
 
-} */
-@media (max-width: 992px) {
-    .interview-prep-messages {
-        flex: 1 1 auto;         /* allow growing and shrinking */
-        min-height: 0;          /* critical for scroll inside flex container */
-        max-height: 50vh;       /* optional, keeps input visible */
-        overflow-y: auto;
-        border-radius: 5px;
-        padding: 20px;
-        scroll-behavior: smooth;
+    .ask-newton-header{
+        display: flex;
+        justify-content: end;
+        align-items: end;
     }
-}
+
+    .ask-newton-header .left-header, .ask-newton-header .center{
+        display: none;
+    }
+
+} 
+
 /* ---------------------------------*/
 /* Ensures follow-up section stays BELOW the bot message */
 .followup-section {
