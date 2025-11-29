@@ -6,11 +6,41 @@
     margin-top: -15px !important;
 }
 
-.ai-top-buttons {
+/* .ai-top-buttons {
     position: relative;
     display: flex;
     justify-content: flex-end;
     z-index: 1;
+} */
+ .ask-newton-header{
+    display: flex;
+    justify-content: space-between;
+ }
+ .clear-new-buttons{
+    display: flex;
+    
+ }
+.ask-newton-text{
+     font-size: 24px;
+    padding-left: 10px;
+    color: #7E3601;
+}
+.ai-perp .hide-chat-btn{
+     display: flex;
+    border-radius: 3px;
+    justify-self: end;
+    margin: 10px;
+    box-shadow: none;
+    font-size: 12px;
+    font-weight: 600;
+    width: 137px;
+    height: 35px;
+    justify-content: center;
+    align-items: center;
+     background: linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%);
+    color: #fff;
+    border: none;
+    
 }
 
 .ai-perp .ai-new-chat,
@@ -33,6 +63,15 @@
   .ai-perp .ai-clear-chat {
     margin-top: 17px !important;
   }
+.ask-newton-text{
+    font-size: 22px !important;
+  }
+  .ai-perp .ai-new-chat,
+.ai-perp .ai-clear-chat {
+
+    width: 100px !important;
+    height: 30px !important;
+}
 }
 
 .ai-perp .ai-new-chat {
@@ -53,6 +92,7 @@
     position: relative;
     z-index: 1;
     margin-bottom: -2px;
+    width:100%;
 }
 
 .interview-prep-sidebar {
@@ -70,6 +110,9 @@
 
 .interview-prep-sidebar.hidden {
     transform: translateX(-100%);
+    width: 0;
+  opacity: 0;
+  overflow: hidden;
 }
 
 .interview-prep-sidebar-header {
@@ -240,6 +283,9 @@
 
 .interview-prep-main {
     display: flex;
+     flex: 1;
+ 
+  transition: 0.3s;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -594,7 +640,7 @@
 .dropdown-icon{
     display: none;
 }
-
+ 
 @media (max-width: 992px) {
 
     .interview-prep-dashboard-content {
@@ -658,7 +704,17 @@
         cursor: pointer;
     }
 
-}
+    .ask-newton-header{
+        display: flex;
+        justify-content: end;
+        align-items: end;
+    }
+
+    .ask-newton-header .left-header, .ask-newton-header .center{
+        display: none;
+    }
+
+} 
 
 /* ---------------------------------*/
 /* Ensures follow-up section stays BELOW the bot message */

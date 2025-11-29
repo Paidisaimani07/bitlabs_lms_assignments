@@ -10,6 +10,7 @@ import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import "./InterviewPrepPage.css"
 import botImage from '../../images/dashboard/mobilebanners/Bot.png';
+import toggleimg from "../../images/icons/toggle.svg";
 
 function InterviewPrepPage() {
   const { user } = useUserContext();
@@ -40,6 +41,22 @@ function InterviewPrepPage() {
   const [followUps, setFollowUps] = useState([]);
   const title = generateChatTitle(messages);
   const [isChatCleared, setIsChatCleared] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+
+ const toggleSidebar = () => {
+  setShowSidebar(prev => !prev);
+};
+
+useEffect(() => {
+  const checkWidth = () => {
+    setShowSidebar(window.innerWidth <= 992);
+  };
+
+  checkWidth(); 
+
+  window.addEventListener("resize", checkWidth);
+  return () => window.removeEventListener("resize", checkWidth);
+}, []);
 
 
   function generateChatTitle(messages) {
@@ -893,16 +910,70 @@ const handleClearChat = async () => {
       <div className="blur-border-style"></div>
       <div className="dashboard__content ai-chat-prep" >
         <div className="ai-perp">
-          <div className="ai-top-buttons">
-            <button className="ai-new-chat" onClick={startNewChat} style={{ textTransform: "none" }} >New chat</button>
-            <button className="ai-clear-chat" onClick={handleClearChat} style={{ textTransform: "none" }} >Clear chat</button>
+          <div className="ask-newton-header">
+            <div className="left-header">
+              {/* <button className=" hide-chat-btn" onClick={toggleSidebar}>
+                 {showSidebar ? "Hide Saved Chat" : "Show Saved Chat"}
+                 
+                 
+              </button> */}
+              {/* import toggleImg from "../../images/icons/toggle.svg"; // make sure path is correct */}
+
+<span
+  className="hide-chat-toggle"
+  onClick={toggleSidebar}
+  style={{
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "14px",
+  }}
+  aria-label={showSidebar ? "Hide Saved Chat" : "Show Saved Chat"}
+>
+  <img
+    src={toggleimg}
+    alt="Toggle Sidebar"
+    style={{
+      width: "22px",   // adjust size as needed
+      height: "22px",
+      transform: showSidebar ? "rotate(0deg)" : "rotate(180deg)", // optional flip
+      transition: "transform 0.3s ease",
+    }}
+  />
+</span>
+
+            </div>
+            <div className="center">
+              <h2 className="ask-newton-text">Ask Newton!</h2>
+            </div>
+
+            <div className="ai-top-buttons">
+              <div className="clear-new-buttons">
+                <button
+                  className="ai-new-chat"
+                  onClick={startNewChat}
+                  style={{ textTransform: "none" }}
+                >
+                  New chat
+                </button>
+                <button
+                  className="ai-clear-chat"
+                  onClick={handleClearChat}
+                  style={{ textTransform: "none" }}
+                >
+                  Clear chat
+                </button>
+              </div>
+            </div>
           </div>
           {/* Sidebar */}
           <div className="interview-prep-dashboard-content">
-            <aside
-              className={`interview-prep-sidebar ${isMobile ? "interview-prep-mobile" : ""
-                }`}
-            >
+             <aside
+  className={`interview-prep-sidebar ${!showSidebar ? "hidden" : ""} ${
+    isMobile ? "interview-prep-mobile" : ""
+  }`}
+>
               <div className="interview-prep-sidebar-header">
                 <span>
                   <img src={botImage} alt="Bot icon" />
@@ -916,23 +987,32 @@ const handleClearChat = async () => {
                   onClick={() => setSidebarOpen(!sidebarOpen)}
                 >
                   <h3 className="interview-prep-chats-header">Saved chats</h3>
-                  <span className="dropdown-icon">{sidebarOpen ? "▲" : "▼"}</span>
+                  <span className="dropdown-icon">
+                    {sidebarOpen ? "▲" : "▼"}
+                  </span>
                 </div>
 
                 <div
-                  className={`interview-prep-chats-list-wrapper ${sidebarOpen ? "open" : ""
-                    }`}
+                  className={`interview-prep-chats-list-wrapper ${
+                    sidebarOpen ? "open" : ""
+                  }`}
                 >
                   <div className="interview-prep-chats-list">
                     {savedChats.length === 0 ? (
-                      <div className="interview-prep-no-chats">No saved chats yet</div>
+                      <div className="interview-prep-no-chats">
+                        No saved chats yet
+                      </div>
                     ) : (
-                      <ul className="interview-prep-chat-list" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                      <ul
+                        className="interview-prep-chat-list"
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                      >
                         {savedChats.map((c) => (
                           <li
                             key={c.id}
-                            className={`interview-prep-chat-item ${selectedChatId === c.id ? "selected" : ""
-                              }`}
+                            className={`interview-prep-chat-item ${
+                              selectedChatId === c.id ? "selected" : ""
+                            }`}
                             onClick={() => {
                               loadChat(c.id);
                               setSelectedChatId(c.id);
@@ -940,7 +1020,9 @@ const handleClearChat = async () => {
                             title={new Date(c.createdAt).toLocaleString()}
                           >
                             <div className="interview-prep-chat-info">
-                              <span className="interview-prep-chat-title">{c.title}</span>
+                              <span className="interview-prep-chat-title">
+                                {c.title}
+                              </span>
                             </div>
 
                             <span
@@ -948,7 +1030,9 @@ const handleClearChat = async () => {
                               data-role="options-btn"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setOpenOptionsId(openOptionsId === c.id ? null : c.id);
+                                setOpenOptionsId(
+                                  openOptionsId === c.id ? null : c.id
+                                );
                               }}
                             >
                               ⋮
@@ -978,7 +1062,6 @@ const handleClearChat = async () => {
                                 </span>
                               </div>
                             )}
-
                           </li>
                         ))}
                       </ul>
