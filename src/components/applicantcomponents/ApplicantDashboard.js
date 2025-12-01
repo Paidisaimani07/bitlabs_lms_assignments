@@ -906,7 +906,6 @@ const ApplicantDashboard = () => {
                       <img
                         src={SmartPhone}
                         alt="App Preview"
-                        width="65%"
                       />
                     </div>
 

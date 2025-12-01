@@ -325,6 +325,7 @@
     margin: 0;
     height: 350px;
   }
+
   .dashboard-top-container .robo-container {
     width: 100% !important;
   }
@@ -361,6 +362,10 @@
 
   .profile-card-row2 {
     width: 95% !important;
+  }
+
+  .profile-card-row1 .mentor-sphere{
+    height: auto;
   }
 }
 
@@ -402,13 +407,14 @@
 .app-card .app-img {
   position: absolute;
   bottom: 0;
-  left: 10px;
+  width: 200px;
+  left: -10px;
 }
 
 .app-card .app-store-icons {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: end;
   gap: 10px;
 }
 
@@ -643,10 +649,6 @@
     margin-left: 200px;
   }
 
-  .app-card .app-img img {
-    width: 80%;
-  }
-
   .profile-card-row2 .Tech-buzz {
     grid-area: buzz;
     width: 100% !important;
@@ -684,6 +686,15 @@
   .badge-progress-wrapper {
     width: 100% !important;
     height: 120px;
+  }
+
+  .app-card .app-img {
+    width: 150px !important;
+    left: 10px !important;
+  }
+
+  .app-card .app-store-icons{
+    flex-direction: row !important;
   }
 }
 
@@ -730,10 +741,9 @@
   }
 
   .app-card .app-img {
-    position: relative;
-    width: 50%;
-    margin-top: -18%;
-    margin-left: 30%;
+    position: relative !important;
+    width: 200px !important;
+    margin: -70px auto 0;
   }
 
   .app-card .app-sub-card {
@@ -789,17 +799,6 @@
   }
 }
 
-@media screen and (min-width:1302px) and (max-width:1366px) {
-  .app-card .app-img {
-    width: 85%;
-  }
-}
-
-@media screen and (min-width:1025px) and (max-width:1041px) {
-  .app-card .app-img {
-    width: 85%;
-  }
-}
 
 @media screen and (min-width:901px) and (max-width: 1302px) {
   .robo-container .robo-card {
@@ -839,9 +838,9 @@
 }
 
 @media screen and (max-width:575px) {
-.dashboard-top-container{
-  margin-top: -50px !important;
-}
+  .dashboard-top-container {
+    margin-top: -50px !important;
+  }
 
   .profile-card-row2 .Tech-buzz {
     min-height: 280px;
@@ -1139,4 +1138,25 @@
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-bottom: 6px solid #EF8C2F;
+}
+
+@media (max-width: 1500px) {
+  .app-card .app-img {
+    position: absolute;
+    bottom: 0;
+    width: 160px;
+    left: -10px;
+  }
+
+  .app-card .app-store-icons img {
+    width: 80%;
+    justify-self: end;
+  }
+}
+
+@media (min-width:1200px) and (max-width: 1300px) {
+  .app-card .app-img {
+    width: 190px;
+  }
+
 }
