@@ -545,7 +545,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor:"pointer" }} id="tour-ask-newton">Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor: "pointer" }} id="tour-ask-newton">Ask Newton!</span>
                           </p>
 
                           <button
@@ -660,7 +660,23 @@ const ApplicantDashboard = () => {
                     ) : (
                       <div className="mentor-card-content">
                         {mentorConnectData?.items
-                          ?.filter((item) => item.status === "Upcoming")
+                          ?.filter((item) => {
+                            if (item.status !== "Upcoming") return false;
+
+                            const now = new Date();
+
+                            const sessionDate = new Date(
+                              item.date[0],
+                              item.date[1] - 1,
+                              item.date[2],
+                              item.startTime[0],
+                              item.startTime[1]
+                            );
+
+                            const endTime = new Date(sessionDate.getTime() + (item.durationMinutes || 0) * 60000);
+
+                            return endTime > now;
+                          })
                           ?.sort((a, b) => {
                             const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2], a.startTime[0], a.startTime[1]);
                             const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2], b.startTime[0], b.startTime[1]);
@@ -915,7 +931,7 @@ const ApplicantDashboard = () => {
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
                       <h3 id="tour-techbuzz">Tech buzz shorts</h3>
-                      <button style={{textTransform:"none"}} onClick={handleRedirectTechBuzz}>view more</button>
+                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
