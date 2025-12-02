@@ -7,6 +7,10 @@
   font-family: "Poppins", sans-serif;
 }
 
+.sticky-area-wrap .header-ct-right .account img{
+  object-fit: fill !important;
+}
+
 .notify-bell {
   display: flex !important;
 }

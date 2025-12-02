@@ -173,6 +173,18 @@ function ApplicantNavBar() {
     setHamburgerClass('fa fa-bars');
   };
 
+   useEffect(() => {
+    const path = location.pathname;
+
+    const isExcluded =
+      path === "/applicant-hackathon" ||
+      path.startsWith("/applicant-hackathon-details/");
+
+    if (!isExcluded) {
+      localStorage.setItem("applicantHackathonTab", "MY");
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     const handleResize = () => {
       const shouldHide = hideSidebarRoutes.some(route =>
