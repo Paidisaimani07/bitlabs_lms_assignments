@@ -902,6 +902,12 @@
     flex-direction: column;
     text-align: center;
   }
+  .progress-text p{
+    font-size: 14px !important;
+  }
+  .badge-progress-wrapper .congrats-text{
+    font-size: 9.5px !important;
+  }
 }
 
 .video-thumb-container {
@@ -1120,11 +1126,14 @@
   color: #1a1a17;
 }
 
-.congrats-text {
+.badge-progress-wrapper .congrats-text {
+  position: relative;
   text-align: center;
   font-size: 11px;
   font-weight: 600;
-  margin-top: 5px;
+  color: green;
+  z-index: 2;
+  margin-bottom: 5px;
 }
 
 .bubble-indicator::after {

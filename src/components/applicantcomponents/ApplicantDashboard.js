@@ -56,7 +56,8 @@ const ApplicantDashboard = () => {
   const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
-  const [dashboardScore, setDashboardScore] = useState(null);
+  const [dashboardScore, setDashboardScore] = useState(0);   
+  const [cappedScore, setCappedScore] = useState(0);
   const bronzeScore = 150;
   const silverScore = 300;
   const goldScore = 500;
@@ -80,14 +81,14 @@ const ApplicantDashboard = () => {
     { name: "gold", score: goldScore },
   ];
 
-  const earnedBadges = badgeLevels.filter(level => dashboardScore >= level.score);
-  const nextBadge = badgeLevels.find(level => dashboardScore < level.score);
+  const earnedBadges = badgeLevels.filter(level => cappedScore >= level.score);
+  const nextBadge = badgeLevels.find(level => cappedScore < level.score);
 
   let progressPercentage = 100;
 
   if (nextBadge) {
     progressPercentage =
-      ((dashboardScore) / (nextBadge.score)) * 100;
+      ((cappedScore) / (nextBadge.score)) * 100;
     progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
   }
 
@@ -215,6 +216,7 @@ const ApplicantDashboard = () => {
       }
 
       setDashboardScore(parsedScore);
+      setCappedScore(Math.min(parsedScore, goldScore));
     } catch (err) {
       console.warn("Failed to fetch dashboard score:", err?.response || err);
       setDashboardScore(0);
@@ -562,7 +564,7 @@ const ApplicantDashboard = () => {
                   <div className="badge-progress-wrapper">
                     <div className="progress-text">
                       <p>Badge achievement level</p>
-                      {Math.round((dashboardScore / goldScore) * 100)}%
+                      {Math.round((cappedScore / goldScore) * 100)}%
                     </div>
                     <div style={{ position: "relative" }}>
                       <div className="badge-bar">
@@ -582,7 +584,7 @@ const ApplicantDashboard = () => {
                         <div
                           className="progress-fill"
                           style={{
-                            width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                            width: `${Math.min(100, (cappedScore / goldScore) * 100)}%`,
                           }}
                         ></div>
                       </div>
@@ -590,11 +592,11 @@ const ApplicantDashboard = () => {
                       <div
                         className="bubble-indicator"
                         style={{
-                          left: `${(dashboardScore / goldScore) * 100}%`,
+                          left: `${(cappedScore / goldScore) * 100}%`,
                           transform: "translateX(-50%)",
                         }}
                       >
-                        {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+                        {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
                       </div>
                     </div>
                     {!nextBadge && (
