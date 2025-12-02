@@ -231,7 +231,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [imageSrc, setImageSrc] = useState("../images/user/avatar/profile-pic.png");
   const [uploading, setUploading] = useState(false);
-  const [dashboardScore, setDashboardScore] = useState(null);
+  const [dashboardScore, setDashboardScore] = useState(0);
+  const [cappedScore, setCappedScore] = useState(0);
 
   const bronzeScore = 150;
   const silverScore = 300;
@@ -247,14 +248,14 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
     { name: "gold", score: goldScore },
   ];
 
-  const earnedBadges = badgeLevels.filter(level => dashboardScore >= level.score);
-  const nextBadge = badgeLevels.find(level => dashboardScore < level.score);
+  const earnedBadges = badgeLevels.filter(level => cappedScore >= level.score);
+  const nextBadge = badgeLevels.find(level => cappedScore < level.score);
 
   let progressPercentage = 100;
 
   if (nextBadge) {
     progressPercentage =
-      ((dashboardScore) / (nextBadge.score)) * 100;
+      ((cappedScore) / (nextBadge.score)) * 100;
     progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
   }
 
@@ -330,6 +331,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
 
           scoreFromScoresApi = Number.isFinite(parsed) ? parsed : 0;
           setDashboardScore(scoreFromScoresApi);
+          setCappedScore(Math.min(scoreFromScoresApi, goldScore));
         }
       } catch (e) {
         console.warn("Scores API failed; falling back to profile-view", e?.response || e);
@@ -521,7 +523,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
       <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px" }}>
         <div className="progress-text">
           <p>Badge achievement level</p>
-          {Math.round((dashboardScore / goldScore) * 100)}%
+          {Math.round((cappedScore / goldScore) * 100)}%
         </div>
         <div style={{position:"relative"}}>
           <div className="badge-bar">
@@ -541,7 +543,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
             <div
               className="progress-fill"
               style={{
-                width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                width: `${Math.min(100, (cappedScore / goldScore) * 100)}%`,
               }}
             ></div>
           </div>
@@ -549,14 +551,14 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
           <div
             className="bubble-indicator"
             style={{
-              left: `${(dashboardScore / goldScore) * 100}%`,
+              left: `${(cappedScore / goldScore) * 100}%`,
               transform: "translateX(-50%)",
               bottom: "4px",
               zIndex:"1",
               minWidth:"60px"
             }}
           >
-            {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+            {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
           </div>
 
           {!nextBadge && (
