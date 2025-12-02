@@ -1,9 +1,93 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./hackathon.css";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import axios from "axios";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
+
+const TechTags = ({ skills }) => {
+    const containerRef = useRef(null);
+    const [hiddenCount, setHiddenCount] = useState(0);
+    const [visibleTags, setVisibleTags] = useState([]);
+
+    const updateVisibleTags = useCallback(() => {
+        if (!containerRef.current || !skills) return;
+
+        const container = containerRef.current;
+        const tags = skills.split(',').map(tag => tag.trim());
+        
+        const tempContainer = document.createElement('div');
+        tempContainer.style.visibility = 'hidden';
+        tempContainer.style.position = 'absolute';
+        tempContainer.style.display = 'inline-block';
+        document.body.appendChild(tempContainer);
+
+        const tagElements = tags.map((tag, index) => {
+            const el = document.createElement('span');
+            el.className = 'tech-tag';
+            el.textContent = tag;
+            el.style.visibility = 'hidden';
+            tempContainer.appendChild(el);
+            return el;
+        });
+
+        const containerWidth = container.offsetWidth;
+        let totalWidth = 0;
+        let visibleCount = 0;
+        const PADDING = 8;
+        const MORE_TAG_WIDTH = 40; 
+
+        for (let i = 0; i < tagElements.length; i++) {
+            const tagWidth = tagElements[i].offsetWidth + PADDING;
+            if (totalWidth + tagWidth + (i < tagElements.length - 1 ? MORE_TAG_WIDTH : 0) <= containerWidth) {
+                totalWidth += tagWidth;
+                visibleCount++;
+            } else {
+                break;
+            }
+        }
+
+        if (visibleCount < tags.length && visibleCount > 0) {
+            const lastTagWidth = tagElements[visibleCount - 1].offsetWidth + PADDING;
+            if (totalWidth + MORE_TAG_WIDTH > containerWidth) {
+                visibleCount--;
+            }
+        }
+
+        setHiddenCount(Math.max(0, tags.length - visibleCount));
+        setVisibleTags(tags.slice(0, visibleCount));
+
+        document.body.removeChild(tempContainer);
+    }, [skills]);
+
+    useEffect(() => {
+        updateVisibleTags();
+        const resizeObserver = new ResizeObserver(updateVisibleTags);
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [updateVisibleTags]);
+
+    if (!skills) return null;
+
+    return (
+        <div className="tech-tags" ref={containerRef}>
+            {visibleTags.map((tech, index) => (
+                <span key={index} className="tech-tag">
+                    {tech}
+                </span>
+            ))}
+            {hiddenCount > 0 && (
+                <span className="tech-tag">
+                    +{hiddenCount}
+                </span>
+            )}
+        </div>
+    );
+};
 
 const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
@@ -309,14 +393,16 @@ const Hackathon = () => {
                                             <span className="timing-text">{remainingText}</span>
                                         </div>
 
-                                        <h3 className="hackathon-title">{hackathon.title}</h3>
+                                        <h3 
+                                            className="hackathon-title"
+                                            data-title={hackathon.title}
+                                            title={hackathon.title}
+                                        >
+                                            {hackathon.title}
+                                        </h3>
                                         <h5 className="company-name">{hackathon.company || 'Company'}</h5>
 
-                                        <div className="tech-tags">
-                                            {hackathon.allowedTechnologies && hackathon.allowedTechnologies.split(',').map((tech, index) => (
-                                                <span key={index} className="tech-tag">{tech.trim()}</span>
-                                            ))}
-                                        </div>
+                                        <TechTags skills={hackathon.allowedTechnologies} />
 
                                         <div className="card-footer-row">
                                             {regStatus && (
