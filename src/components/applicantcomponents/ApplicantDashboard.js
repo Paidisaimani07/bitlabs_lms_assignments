@@ -56,7 +56,8 @@ const ApplicantDashboard = () => {
   const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
-  const [dashboardScore, setDashboardScore] = useState(null);
+  const [dashboardScore, setDashboardScore] = useState(0);   
+  const [cappedScore, setCappedScore] = useState(0);
   const bronzeScore = 150;
   const silverScore = 300;
   const goldScore = 500;
@@ -80,14 +81,14 @@ const ApplicantDashboard = () => {
     { name: "gold", score: goldScore },
   ];
 
-  const earnedBadges = badgeLevels.filter(level => dashboardScore >= level.score);
-  const nextBadge = badgeLevels.find(level => dashboardScore < level.score);
+  const earnedBadges = badgeLevels.filter(level => cappedScore >= level.score);
+  const nextBadge = badgeLevels.find(level => cappedScore < level.score);
 
   let progressPercentage = 100;
 
   if (nextBadge) {
     progressPercentage =
-      ((dashboardScore) / (nextBadge.score)) * 100;
+      ((cappedScore) / (nextBadge.score)) * 100;
     progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
   }
 
@@ -215,6 +216,7 @@ const ApplicantDashboard = () => {
       }
 
       setDashboardScore(parsedScore);
+      setCappedScore(Math.min(parsedScore, goldScore));
     } catch (err) {
       console.warn("Failed to fetch dashboard score:", err?.response || err);
       setDashboardScore(0);
@@ -545,7 +547,7 @@ const ApplicantDashboard = () => {
 
                         <div className="robo-card-text">
                           <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor:"pointer" }} id="tour-ask-newton">Ask Newton!</span>
+                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor: "pointer" }} id="tour-ask-newton">Ask Newton!</span>
                           </p>
 
                           <button
@@ -562,7 +564,7 @@ const ApplicantDashboard = () => {
                   <div className="badge-progress-wrapper">
                     <div className="progress-text">
                       <p>Badge achievement level</p>
-                      {Math.round((dashboardScore / goldScore) * 100)}%
+                      {Math.round((cappedScore / goldScore) * 100)}%
                     </div>
                     <div style={{ position: "relative" }}>
                       <div className="badge-bar">
@@ -582,7 +584,7 @@ const ApplicantDashboard = () => {
                         <div
                           className="progress-fill"
                           style={{
-                            width: `${Math.min(100, (dashboardScore / goldScore) * 100)}%`,
+                            width: `${Math.min(100, (cappedScore / goldScore) * 100)}%`,
                           }}
                         ></div>
                       </div>
@@ -590,11 +592,11 @@ const ApplicantDashboard = () => {
                       <div
                         className="bubble-indicator"
                         style={{
-                          left: `${(dashboardScore / goldScore) * 100}%`,
+                          left: `${(cappedScore / goldScore) * 100}%`,
                           transform: "translateX(-50%)",
                         }}
                       >
-                        {dashboardScore} / {nextBadge ? nextBadge.score : goldScore}
+                        {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
                       </div>
                     </div>
                     {!nextBadge && (
@@ -660,7 +662,23 @@ const ApplicantDashboard = () => {
                     ) : (
                       <div className="mentor-card-content">
                         {mentorConnectData?.items
-                          ?.filter((item) => item.status === "Upcoming")
+                          ?.filter((item) => {
+                            if (item.status !== "Upcoming") return false;
+
+                            const now = new Date();
+
+                            const sessionDate = new Date(
+                              item.date[0],
+                              item.date[1] - 1,
+                              item.date[2],
+                              item.startTime[0],
+                              item.startTime[1]
+                            );
+
+                            const endTime = new Date(sessionDate.getTime() + (item.durationMinutes || 0) * 60000);
+
+                            return endTime > now;
+                          })
                           ?.sort((a, b) => {
                             const dateA = new Date(a.date[0], a.date[1] - 1, a.date[2], a.startTime[0], a.startTime[1]);
                             const dateB = new Date(b.date[0], b.date[1] - 1, b.date[2], b.startTime[0], b.startTime[1]);
@@ -906,7 +924,6 @@ const ApplicantDashboard = () => {
                       <img
                         src={SmartPhone}
                         alt="App Preview"
-                        width="65%"
                       />
                     </div>
 
@@ -916,7 +933,7 @@ const ApplicantDashboard = () => {
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
                       <h3 id="tour-techbuzz">Tech buzz shorts</h3>
-                      <button style={{textTransform:"none"}} onClick={handleRedirectTechBuzz}>view more</button>
+                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>view more</button>
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
