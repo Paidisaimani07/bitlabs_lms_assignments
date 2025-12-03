@@ -35,7 +35,7 @@ const KeySkillsCard = ({ applicantId }) => {
   }, [applicantId]);
 
   return (
-    <div className="card-base soft-shadow card-skills">
+    <div className="card-base soft-shadow card-skills" style={{overflow:"hidden"}}>
       <div className="card-title-row">
         <h3 className="card-title">Key skills <span className="req">*</span></h3>
         <button
