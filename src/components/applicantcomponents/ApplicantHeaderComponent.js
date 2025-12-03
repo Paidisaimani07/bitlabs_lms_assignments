@@ -520,7 +520,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
         </div>      </div>
-      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px" }}>
+      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px", margin:"0"}}>
         <div className="progress-text">
           <p>Badge achievement level</p>
           {Math.round((cappedScore / goldScore) * 100)}%

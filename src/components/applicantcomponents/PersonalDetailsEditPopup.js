@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
+import CustomDropdown from "../common/CustomDropdown";
 
 const PERSONAL_API = `${apiUrl}/applicant-personal`;
 
@@ -172,20 +173,14 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         </div>
 
         {/* Gender */}
-        <div className="pd-select-wrap">
-          <select
-            className="pd-select"
-            value={form.gender}
-            onChange={(e) => setField("gender", e.target.value)}
-          >
-            <option value="">Choose gender</option>
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-          <span className="pd-caret">▾</span>
-          {errors.gender && <div className="error-message">{errors.gender}</div>}
-        </div>
+        <CustomDropdown
+          value={form.gender}
+          onChange={(val) => setField("gender", val)}
+          options={["Male", "Female", "Other"]}
+          placeholder="Choose gender"
+          error={errors.gender}
+        />
+
 
         {/* Email (disabled / read-only) */}
         <div className="input-wrapper">

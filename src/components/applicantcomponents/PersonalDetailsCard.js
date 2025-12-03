@@ -158,11 +158,13 @@ const PersonalDetailsCard = ({ applicantId }) => {
               value={fullName || ""}
               style={!fullName ? hintStyle : {}}
             />
-            <div className="pd-select-wrap">
-              <select className="pd-select" disabled value={gender || ""} onChange={() => {}}>
-                <option value="">{gender || "Choose gender"}</option>
-              </select>
-              <span className="pd-caret">▾</span>
+             <div className="pd-select-wrap">
+              <div className="profile-dropdown">
+                <div className="pd-selected">
+                  {gender || "choose gender"}
+                </div>
+                <span className="pd-caret">▾</span>
+              </div>
             </div>
             <input
               className="pd-input"
