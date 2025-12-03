@@ -81,11 +81,11 @@ const EducationDetailsCard = ({ applicantId }) => {
               </p>
             </div>
             <button
-             type="button"
-             className="portfolio-edit-btn"
-             onClick={() => setEditOpen(true)}>
-             Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
-           </button>
+              type="button"
+              className="portfolio-edit-btn"
+              onClick={() => setEditOpen(true)}>
+              Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
+            </button>
           </div>
 
           {/* Graduation */}
@@ -97,10 +97,12 @@ const EducationDetailsCard = ({ applicantId }) => {
             <div className="pd-grid">
               {/* row 1 */}
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={g.degree || ""} onChange={() => {}}>
-                  <option value="">{g.degree || "Graduation/Diploma"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {g.degree || "Graduation/Diploma"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
               <input
                 className="pd-input"
@@ -110,10 +112,12 @@ const EducationDetailsCard = ({ applicantId }) => {
                 style={!g.university ? hintStyle : {}}
               />
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={g.course || ""} onChange={() => {}}>
-                  <option value="">{g.course || "Course"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {g.course || "Course"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               {/* row 2 */}
@@ -125,40 +129,44 @@ const EducationDetailsCard = ({ applicantId }) => {
                 style={!g.specialization ? hintStyle : {}}
               />
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={g.courseType || ""} onChange={() => {}}>
-                  <option value="">{g.courseType || "Course type"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {g.courseType || "Course type"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={g.gradingSystem || ""} onChange={() => {}}>
-                  <option value="">{g.gradingSystem || "Grading system"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {g.gradingSystem || "Grading system"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               {/* row 3 */}
-             <div className="pd-with-icon">
-  <input
-    className="pd-input raw"
-    readOnly
-    placeholder="Course start year"
-    value={g.startYear || ""}
-    style={!g.startYear ? hintStyle : {}}
-  />
-  <span className="pd-icon" aria-hidden>📅</span>
-</div>
+              <div className="pd-with-icon">
+                <input
+                  className="pd-input raw"
+                  readOnly
+                  placeholder="Course start year"
+                  value={g.startYear || ""}
+                  style={!g.startYear ? hintStyle : {}}
+                />
+                <span className="pd-icon" aria-hidden>📅</span>
+              </div>
 
-<div className="pd-with-icon">
-  <input
-    className="pd-input raw"
-    readOnly
-    placeholder="Course ending year"
-    value={g.endYear || ""}
-    style={!g.endYear ? hintStyle : {}}
-  />
-  <span className="pd-icon" aria-hidden>📅</span>
-</div>
+              <div className="pd-with-icon">
+                <input
+                  className="pd-input raw"
+                  readOnly
+                  placeholder="Course ending year"
+                  value={g.endYear || ""}
+                  style={!g.endYear ? hintStyle : {}}
+                />
+                <span className="pd-icon" aria-hidden>📅</span>
+              </div>
 
 
 
@@ -173,25 +181,30 @@ const EducationDetailsCard = ({ applicantId }) => {
           >
             <div className="pd-grid">
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={xii.board || ""} onChange={() => {}}>
-                  <option value="">{xii.board || "Board of education"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {xii.board || "Board of education"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={xii.passingYear || ""} onChange={() => {}}>
-                  <option value="">{xii.passingYear || "Passing out year"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {xii.passingYear || "Passing out year"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={xii.marksPercent || ""} onChange={() => {}}>
-                  <option value="">{(xii.marksPercent ?? "") || "Marks in %age"}</option>
-
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {xii.marksPercent || "Marks in %age"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
             </div>
           </Section>
@@ -204,24 +217,30 @@ const EducationDetailsCard = ({ applicantId }) => {
           >
             <div className="pd-grid">
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={x.board || ""} onChange={() => {}}>
-                  <option value="">{x.board || "Board of education"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {x.board || "Board of education"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={x.passingYear || ""} onChange={() => {}}>
-                  <option value="">{x.passingYear || "Passing out year"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {x.passingYear || "Passing out year"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
 
               <div className="pd-select-wrap">
-                <select className="pd-select" disabled value={x.marksPercent || ""} onChange={() => {}}>
-                  <option value="">{(x.marksPercent ?? "") || "Marks in %age"}</option>
-                </select>
-                <span className="pd-caret">▾</span>
+                <div className="profile-dropdown">
+                  <div className="pd-selected">
+                    {x.marksPercent || "Marks in %age"}
+                  </div>
+                  <span className="pd-caret">▾</span>
+                </div>
               </div>
             </div>
           </Section>

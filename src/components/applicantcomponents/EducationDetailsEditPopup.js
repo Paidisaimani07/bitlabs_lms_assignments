@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
+import CustomDropdown from "../common/CustomDropdown";
 
 const EDU_API = `${apiUrl}/applicant-education`;
 
@@ -145,9 +146,9 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
       console.error("Education PUT failed:", e?.response || e);
       onError?.(
         e?.response?.data?.message ||
-          e?.response?.data ||
-          e?.message ||
-          "Failed to save education details"
+        e?.response?.data ||
+        e?.message ||
+        "Failed to save education details"
       );
     } finally {
       setSaving(false);
@@ -166,130 +167,100 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           </h4>
         </div>
         <div className="pd-grid">
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.graduation.degree}
-              onChange={(e) => setField("graduation.degree", e.target.value)}
-            >
-              <option value="">Graduation/Diploma</option>
-              {degreeOptions.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["graduation.degree"] && (
-              <div className="error-message">{errors["graduation.degree"]}</div>
-            )}
-          </div>
-
-          <input
-            className="pd-input"
-            placeholder="University / Institute"
-            value={form.graduation.university}
-            onChange={(e) => setField("graduation.university", e.target.value)}
+          <CustomDropdown
+            value={form.graduation.degree}
+            options={degreeOptions}
+            placeholder="Graduation/Diploma"
+            onChange={(val) => setField("graduation.degree", val)}
+            error={errors["graduation.degree"]}
           />
-          {errors["graduation.university"] && (
-            <div className="error-message">{errors["graduation.university"]}</div>
-          )}
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.graduation.course}
-              onChange={(e) => setField("graduation.course", e.target.value)}
-            >
-              <option value="">Course</option>
-              {[
-                "Computer Science", "Information Technology", "Electronics",
-                "Mechanical", "Civil", "AI & ML", "Data Science"
-              ].map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["graduation.course"] && (
-              <div className="error-message">{errors["graduation.course"]}</div>
-            )}
-          </div>
+          <div className="field-align">
+            <input
+              className="pd-input"
+              placeholder="University / Institute"
+              value={form.graduation.university}
+              onChange={(e) => setField("graduation.university", e.target.value)}
+            />
+            {errors["graduation.university"] && (
+              <div className="error-message">{errors["graduation.university"]}</div>
+            )}</div>
 
-          <input
-            className="pd-input"
-            placeholder="Specialization"
-            value={form.graduation.specialization}
-            onChange={(e) => setField("graduation.specialization", e.target.value)}
+          <CustomDropdown
+            value={form.graduation.course}
+            options={[
+              "Computer Science", "Information Technology", "Electronics",
+              "Mechanical", "Civil", "AI & ML", "Data Science"
+            ]}
+            placeholder="Course"
+            onChange={(val) => setField("graduation.course", val)}
+            error={errors["graduation.course"]}
           />
-          {errors["graduation.specialization"] && (
-            <div className="error-message">{errors["graduation.specialization"]}</div>
-          )}
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.graduation.courseType}
-              onChange={(e) => setField("graduation.courseType", e.target.value)}
-            >
-              <option value="">Course type</option>
-              {courseTypeOptions.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["graduation.courseType"] && (
-              <div className="error-message">{errors["graduation.courseType"]}</div>
+          <div className="field-align">
+            <input
+              className="pd-input"
+              placeholder="Specialization"
+              value={form.graduation.specialization}
+              onChange={(e) => setField("graduation.specialization", e.target.value)}
+            />
+            {errors["graduation.specialization"] && (
+              <div className="error-message">{errors["graduation.specialization"]}</div>
             )}
           </div>
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.graduation.gradingSystem}
-              onChange={(e) => setField("graduation.gradingSystem", e.target.value)}
-            >
-              <option value="">Grading system</option>
-              {gradingOptions.map((g) => (
-                <option key={g} value={g}>{g}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["graduation.gradingSystem"] && (
-              <div className="error-message">{errors["graduation.gradingSystem"]}</div>
+          <CustomDropdown
+            value={form.graduation.courseType}
+            options={courseTypeOptions}
+            placeholder="Course Type"
+            onChange={(val) => setField("graduation.courseType", val)}
+            error={errors["graduation.courseType"]}
+          />
+
+          <CustomDropdown
+            value={form.graduation.gradingSystem}
+            options={gradingOptions}
+            placeholder="Grading System"
+            onChange={(val) => setField("graduation.gradingSystem", val)}
+            error={errors["graduation.gradingSystem"]}
+          />
+
+          <div className="field-align">
+            <div className="pd-input with-icon">
+              <select
+                className="pd-input raw"
+                value={form.graduation.startYear}
+                onChange={(e) => setField("graduation.startYear", e.target.value)}
+              >
+                <option value="">Course start year</option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <span className="pd-icon">📅</span>
+            </div>
+            {errors["graduation.startYear"] && (
+              <div className="error-message">{errors["graduation.startYear"]}</div>
             )}
           </div>
-
-          <div className="pd-input with-icon">
-            <select
-              className="pd-input raw"
-              value={form.graduation.startYear}
-              onChange={(e) => setField("graduation.startYear", e.target.value)}
-            >
-              <option value="">Course start year</option>
-              {YEARS.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-            <span className="pd-icon">📅</span>
+          <div className="field-align">
+            <div className="pd-input with-icon">
+              <select
+                className="pd-input raw"
+                value={form.graduation.endYear}
+                onChange={(e) => setField("graduation.endYear", e.target.value)}
+              >
+                <option value="">Course ending year</option>
+                {YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <span className="pd-icon">📅</span>
+            </div>
+            {errors["graduation.endYear"] && (
+              <div className="error-message">{errors["graduation.endYear"]}</div>
+            )}
           </div>
-          {errors["graduation.startYear"] && (
-            <div className="error-message">{errors["graduation.startYear"]}</div>
-          )}
-
-          <div className="pd-input with-icon">
-            <select
-              className="pd-input raw"
-              value={form.graduation.endYear}
-              onChange={(e) => setField("graduation.endYear", e.target.value)}
-            >
-              <option value="">Course ending year</option>
-              {YEARS.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-            <span className="pd-icon">📅</span>
-          </div>
-          {errors["graduation.endYear"] && (
-            <div className="error-message">{errors["graduation.endYear"]}</div>
-          )}
         </div>
       </div>
 
@@ -300,57 +271,36 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             Class XII details <span className="req">*</span>
           </h4>
         </div>
+
         <div className="pd-grid">
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classXii.board}
-              onChange={(e) => setField("classXii.board", e.target.value)}
-            >
-              <option value="">Board of education</option>
-              {boardOptions.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classXii.board"] && (
-              <div className="error-message">{errors["classXii.board"]}</div>
-            )}
-          </div>
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classXii.passingYear}
-              onChange={(e) => setField("classXii.passingYear", e.target.value)}
-            >
-              <option value="">Passing out year</option>
-              {YEARS.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classXii.passingYear"] && (
-              <div className="error-message">{errors["classXii.passingYear"]}</div>
-            )}
-          </div>
+          {/* Board of Education */}
+          <CustomDropdown
+            value={form.classXii.board}
+            onChange={(v) => setField("classXii.board", v)}
+            options={boardOptions}
+            placeholder="Board of education"
+            error={errors["classXii.board"]}
+          />
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classXii.marksPercent}
-              onChange={(e) => setField("classXii.marksPercent", e.target.value)}
-            >
-              <option value="">Marks in %age</option>
-              {percentBuckets.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classXii.marksPercent"] && (
-              <div className="error-message">{errors["classXii.marksPercent"]}</div>
-            )}
-          </div>
+          {/* Passing Out Year */}
+          <CustomDropdown
+            value={form.classXii.passingYear}
+            onChange={(v) => setField("classXii.passingYear", v)}
+            options={YEARS}
+            placeholder="Passing out year"
+            error={errors["classXii.passingYear"]}
+          />
+
+          {/* Marks Percentage */}
+          <CustomDropdown
+            value={form.classXii.marksPercent}
+            onChange={(v) => setField("classXii.marksPercent", v)}
+            options={percentBuckets}
+            placeholder="Marks in %age"
+            error={errors["classXii.marksPercent"]}
+          />
+
         </div>
       </div>
 
@@ -362,56 +312,37 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           </h4>
         </div>
         <div className="pd-grid">
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classX.board}
-              onChange={(e) => setField("classX.board", e.target.value)}
-            >
-              <option value="">Board of education</option>
-              {boardOptions.map((b) => (
-                <option key={b} value={b}>{b}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classX.board"] && (
-              <div className="error-message">{errors["classX.board"]}</div>
-            )}
-          </div>
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classX.passingYear}
-              onChange={(e) => setField("classX.passingYear", e.target.value)}
-            >
-              <option value="">Passing out year</option>
-              {YEARS.map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classX.passingYear"] && (
-              <div className="error-message">{errors["classX.passingYear"]}</div>
-            )}
-          </div>
+          {/* Board */}
+          <CustomDropdown
+            label="Board of education"
+            value={form.classX.board}
+            onChange={(val) => setField("classX.board", val)}
+            placeholder="Board of education"
+            options={boardOptions}
+            error={errors["classX.board"]}
+          />
 
-          <div className="pd-select-wrap">
-            <select
-              className="pd-select"
-              value={form.classX.marksPercent}
-              onChange={(e) => setField("classX.marksPercent", e.target.value)}
-            >
-              <option value="">Marks in %age</option>
-              {percentBuckets.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-            <span className="pd-caret">▾</span>
-            {errors["classX.marksPercent"] && (
-              <div className="error-message">{errors["classX.marksPercent"]}</div>
-            )}
-          </div>
+          {/* Passing Year */}
+          <CustomDropdown
+            label="Passing out year"
+            value={form.classX.passingYear}
+            onChange={(val) => setField("classX.passingYear", val)}
+            placeholder="Passing out year"
+            options={YEARS}
+            error={errors["classX.passingYear"]}
+          />
+
+          {/* Marks Percentage */}
+          <CustomDropdown
+            label="Marks in %age"
+            value={form.classX.marksPercent}
+            onChange={(val) => setField("classX.marksPercent", val)}
+            placeholder="Marks in %age"
+            options={percentBuckets}
+            error={errors["classX.marksPercent"]}
+          />
+
         </div>
       </div>
 
