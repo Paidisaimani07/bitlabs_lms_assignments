@@ -130,7 +130,7 @@ line-height: 26px;
   border-radius: 16px;
   text-align: center;
   width: 180px;
-  height: 220px;
+  height: 185px;
   margin-bottom: 10px;
 }
 
@@ -296,7 +296,7 @@ color: white;
 }
 
 .test-action.retake {
-background-color: #BEC0C1; /* Retake test background */
+background-color: #121212; /* Retake test background */
 color: black;
 }
 
