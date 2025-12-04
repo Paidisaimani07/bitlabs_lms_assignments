@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import "./ApplicantJobAlert.css"
@@ -13,6 +14,7 @@ export default function ApplicantJobAlerts() {
   const [readLoading, setReadLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
   const [deletingItems, setDeletingItems] = useState(new Set());
+  const navigate = useNavigate();
 
   const fetchAlertsFromServer = async () => {
     if (!user || !user.id) {
@@ -236,24 +238,18 @@ export default function ApplicantJobAlerts() {
 
                 {jobAlerts.length > 0 ? (
                   <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
-                    {[...jobAlerts]
-                      .sort((a, b) => {
-                        const dateA = a.createdTime ? new Date(...a.createdTime) : 0;
-                        const dateB = b.createdTime ? new Date(...b.createdTime) : 0;
-                        return dateB - dateA;
-                      })
-                      .map((alert) => {
+                    {jobAlerts.map((alert) => {
                         let redirectRoute = "/";
                         let featureName = alert.feature;
 
                         if (alert.feature === "hackathon") {
-                          redirectRoute = "/applicant-hackathon";
+                          redirectRoute = `/applicant-hackathon-details/${alert.featureId}`;
                           featureName = "Hackathon";
                         } else if (alert.feature === "blog") {
-                          redirectRoute = "/applicant-blog-list";
+                          redirectRoute = `/applicant-blog-list?blog=${alert.featureId}`;
                           featureName = "TechVibes";
                         } else if (alert.feature === "Tech buzz shorts") {
-                          redirectRoute = "/applicant-verified-videos";
+                          redirectRoute = `/applicant-verified-videos?video=${alert.featureId}`;
                           featureName = "Techbuzz";
                         }
 
@@ -310,10 +306,10 @@ export default function ApplicantJobAlerts() {
                                     )
                                   );
 
-                                  window.location.href = redirectRoute;
+                                  navigate(redirectRoute);
                                 } catch (err) {
                                   console.error("❌ ERROR MARKING NOTIFICATION AS READ:", err);
-                                  window.location.href = redirectRoute;
+                                  navigate(redirectRoute);
                                 }
                               }}
                             >
