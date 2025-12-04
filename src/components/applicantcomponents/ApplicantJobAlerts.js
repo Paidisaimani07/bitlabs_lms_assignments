@@ -175,7 +175,7 @@ export default function ApplicantJobAlerts() {
                   <div className="notification-btn" style={{ display: "flex", gap: 10 }}>
                     <button
                       onClick={handleReadAll}
-                      disabled={loading || jobAlerts.length === 0}
+                      disabled={loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))}
                       style={{
                         background: "#fd7e14",
                         color: "#fff",
@@ -184,7 +184,9 @@ export default function ApplicantJobAlerts() {
                         borderRadius: 6,
                         fontWeight: 600,
                         textTransform: "none",
-                        width: "50%"
+                        width: "50%",
+                        opacity: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 0.6 : 1,
+                        cursor: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Read all
@@ -201,7 +203,9 @@ export default function ApplicantJobAlerts() {
                         borderRadius: 6,
                         fontWeight: 600,
                         textTransform: "none",
-                        width: "50%"
+                        width: "50%",
+                        opacity: (loading || jobAlerts.length === 0) ? 0.6 : 1,
+                        cursor: (loading || jobAlerts.length === 0) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Clear all
