@@ -12,7 +12,7 @@
 
 @media (max-width: 2000px) {
   .tv-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4,minmax(0, 1fr));
   }
 }
 
@@ -22,7 +22,7 @@
   }
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1480px) {
   .tv-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -40,6 +40,12 @@
   }
 }
 
+.tv-open svg {
+  width: 22px !important;
+  height: 22px !important;
+  object-fit: contain;
+}
+  
 .tv-card {
   display: flex;
   flex-direction: column;
@@ -177,8 +183,8 @@
 
 .tv-modal-overlay .tv-modal-close {
   position: absolute;
-  top: 4px;
-  right: 10px;
+  top: -2px;
+  right: -1px;
   background: transparent;
   border: none !important;
   cursor: pointer;
