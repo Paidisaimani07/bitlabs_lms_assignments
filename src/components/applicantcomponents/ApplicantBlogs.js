@@ -3,6 +3,7 @@ import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useLocation } from "react-router-dom";
 import "./ApplicantBlog.css";
+import ExploreButton from "../../images/icons/ExploreButton.svg";
 
 export default function ApplicantBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -13,16 +14,21 @@ export default function ApplicantBlogs() {
   const hasAutoOpened = useRef(false);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const pageSize = 15;
+  const pageSize = 12;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
+  };
 
   useEffect(() => {
     let ignore = false;
     (async () => {
       try {
-        setLoading(true);
         const jwtToken = localStorage.getItem("jwtToken");
+        if (page === 0) {
+          setLoading(true);
+        }
         const res = await axios.get(
           `${apiUrl}/blogs/active?page=${page}&size=${pageSize}`,
           {
@@ -143,63 +149,116 @@ export default function ApplicantBlogs() {
           </div>
         )}
         {/* Card Grid */}
-        <div className="tv-grid">
-          {filteredBlogs.map((b) => (
-            <article
-              key={b.id}
-              className="tv-card"
-              onClick={() => openModal(b)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openModal(b)}
+        <div className="blogs-container" style={{ width: "100%" }}>
+          {loading ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "300px",
+              }}
             >
-              <div className="tv-media">
-                <img src={b.imageUrl} alt={b.title} loading="lazy" />
+              <p style={{ fontSize: "20px", fontWeight: 600, color: "#555" }}>
+                Loading...
+              </p>
+            </div>
+          ) : filteredBlogs.length === 0 ? (
+
+            <div
+              className="no-blogs-wrapper"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "300px",
+              }}
+            >
+              <p
+                className="no-blogs-message"
+                style={{ fontSize: "22px", fontWeight: 600, color: "#555" }}
+              >
+                No blogs found
+
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Blog Grid */}
+              <div className="tv-grid">
+                {filteredBlogs.map((b) => (
+                  <article
+                    key={b.id}
+                    className="tv-card"
+                    onClick={() => openModal(b)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      (e.key === "Enter" || e.key === " ") && openModal(b)
+                    }
+                  >
+                    <div className="tv-media">
+                      <img src={b.imageUrl} alt={b.title} loading="lazy" />
+                    </div>
+
+                    <div className="tv-content">
+                      <h4 className="tv-card-title">{b.title}</h4>
+
+                      <div className="tv-footer">
+                        <div className="tv-meta">
+                          <span className="tv-by">By {b.author || "bitLabs"}</span>
+                          <span className="tv-dot">•</span>
+                          <span className="tv-date">{formatDate(b.createdAt)}</span>
+                        </div>
+
+                        <button
+                          className="tv-open"
+                          title="Read More"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openModal(b);
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: `
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                        <path d="M18,10.82a1,1,0,0,0-1,1V19a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V8A1,1,0,0,1,5,7h7.18a1,1,0,1,0,0-2H5A3,3,0,0,0,2,8V19a3,3,0,0,0,3,3H16a3,3,0,0,0,3-3V11.82A1,1,0,0,0,18,10.82Zm3.92-8.2A1.015,1.015,0,0,0,21,2H15a1,1,0,0,0,0,2h3.59L8.29,14.29a1,1,0,1,0,1.42,1.42L20,5.41V9a1,1,0,0,0,2,0V3a1,1,0,0,0-.08-.38Z" fill="#e87316"/>
+                      </svg>
+                    `,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </article>
+                ))}
               </div>
 
-              <div className="tv-content">
-                <h4 className="tv-card-title">{b.title}</h4>
-                <div className="tv-footer">
-                  <div className="tv-meta">
-                    <span className="tv-by">By {b.author || "bitLabs"}</span>
-                    <span className="tv-dot">•</span>
-                    <span className="tv-date">{formatDate(b.createdAt)}</span>
-                  </div>
+              {/* Load More Button (Hidden While Searching) */}
 
-                  {/* Orange SVG Icon Button (opens popup) */}
-                  <button
-                    className="tv-open"
-                    title="Preview"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openModal(b);
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: `
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-                          <path d="M18,10.82a1,1,0,0,0-1,1V19a1,1,0,0,1-1,1H5a1,1,0,0,1-1-1V8A1,1,0,0,1,5,7h7.18a1,1,0,1,0,0-2H5A3,3,0,0,0,2,8V19a3,3,0,0,0,3,3H16a3,3,0,0,0,3-3V11.82A1,1,0,0,0,18,10.82Zm3.92-8.2A1.015,1.015,0,0,0,21,2H15a1,1,0,0,0,0,2h3.59L8.29,14.29a1,1,0,1,0,1.42,1.42L20,5.41V9a1,1,0,0,0,2,0V3a1,1,0,0,0-.08-.38Z" transform="translate(-2 -2)" fill="#e87316"/>
-                        </svg>
-                      `,
-                    }}
-                  />
-                </div>
-              </div>
-            </article>
-          ))}
+            </>
+          )}
+
+          {/* {=========} */}
+          {hasMore && query.trim() === "" && !loading && (
+            <div className="load-more-container">
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "14px",
+                }}
+              >
+                <img
+                  src={ExploreButton}
+                  alt="Load more"
+                  onClick={() => handleLoadMore()}
+                />
+              </span>
+            </div>
+          )}
+
         </div>
-
-        {hasMore && (
-          <div className="load-more-container">
-            <button
-              className="load-more-btn"
-              onClick={() => setPage((prev) => prev + 1)}
-              disabled={loading}
-              style={{textTransform:'none'}}
-            >
-              {loading ? "Loading..." : "Load more"}
-            </button>
-          </div>
-        )}
 
         {/* Popup Modal */}
         {selected && (
