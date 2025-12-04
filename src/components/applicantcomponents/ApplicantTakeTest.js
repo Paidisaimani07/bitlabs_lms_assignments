@@ -52,8 +52,8 @@ const fetchQuestion = async() => {
         const data = response.data;
         setQuestions(data);
         if(testName === 'General Aptitude Test'){
-          setTimer(60* 60); // 60 minutes for General Aptitude Test
-          setRemainingTime(60 * 60);
+          setTimer(30* 60); // 60 minutes for General Aptitude Test
+          setRemainingTime(30 * 60);
         }else{
           setTimer(30* 60);
           setRemainingTime(30 * 60);
@@ -1093,16 +1093,19 @@ const fetchQuestion = async() => {
             })}
 </div>
  
-          <div className="question-legend">
-<div>
-<span className="legend-box not-attempted"></span>Not attempted
-</div>
-<div>
-<span className="legend-box answered"></span>Answered
-</div>
-<div>
-<span className="legend-box current"></span>Current
-</div>
+<div className="question-legend">
+  <div>
+    <span className="legend-box not-attempted"></span>Not attempted
+  </div>
+  <div>
+    <span className="legend-box answered"></span>Answered
+  </div>
+  <div>
+    <span className="legend-box not-answered"></span>Not answered
+  </div>
+  <div>
+    <span className="legend-box current"></span>Current
+  </div>
 </div>
 </div>
 </div>

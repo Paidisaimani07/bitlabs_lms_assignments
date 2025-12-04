@@ -141,11 +141,11 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
   return (
     <div className={`skill-badge-card ${status === 'PASSED' ? 'passed' : status === 'FAILED' ? 'failed' : ''}`}>
       {/* Top Section: Status */}
-      <div className="status">
+      {/* <div className="status">
         <span className={status ? (status === 'PASSED' ? 'status-text status-passed' : 'status-text status-failed') : 'status-empty'}>
           &nbsp;&nbsp;{status ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase() : 'empty'}&nbsp;&nbsp;
         </span>
-      </div>
+      </div> */}
 
       {/* Second Section: Badge */}
       <div className="badge">
@@ -160,15 +160,15 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
           style={{
             backgroundColor: isRetakeAvailable ? '' : '#e0e0e0', // Red background if retake is available, grey otherwise
             color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
-            cursor: isRetakeAvailable ? 'pointer' : 'default', // Pointer cursor if retake is available
+            cursor: isRetakeAvailable ? 'pointer' : 'not-allowed', // Pointer cursor if retake is available
             padding: '20px', // Adjust padding as needed
-            borderRadius: '5px', // Rounded corners
+            borderRadius: '0px', // Rounded corners
             textAlign: 'center' // Center text
           }}
           >
             {isRetakeAvailable ? (
                 <>
-                Retake test
+                Start test
                 {/* <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i> */}
               </>
             ) : (
@@ -779,7 +779,7 @@ const steps = [
 </h2>
 
       <p style={{ color: "#333", fontSize: "18px", margin: 0 }}>
-        Your verification is successfully completed.
+        You have successfully passed the Aptitude and Technical tests. Your profile is now verified.
       </p>
     </div>
   ) : (
@@ -995,60 +995,101 @@ const steps = [
                             : `${technicalScore.toFixed(0)}%`}
                         </div>
                       ) : (
-                        <div
-                          onClick={
-                            (isDisabled &&
-                              currentStep === step.id) ||
-                            currentStep > step.id
-                              ? null
-                              : () => handleTakeTest(step.label)
-                          }
-                          style={{
-                            width: "100%",
-                            backgroundColor:
-                              isDisabled &&
-                              currentStep === step.id
-                                ? "#9b9b9b"
-                                : currentStep === step.id
-                                ? "#121212"
-                                : "#BFBFBF",
-                            borderBottomLeftRadius: "11px",
-                            borderBottomRightRadius: "11px",
-                            padding: "18px 0",
-                            textAlign: "center",
-                            height: "50px",
-                            cursor:
-                              currentStep > step.id ||
-                              (isDisabled &&
-                                currentStep === step.id)
-                                ? "not-allowed"
-                                : "pointer",
-                            marginTop: "auto",
-                          }}
-                        >
-                          <p
-                            style={{
-                              color: "#fff",
-                              margin: 0,
-                              fontSize: "14px",
-                              fontWeight: "600",
-                            }}
-                          >
-                            {isDisabled &&
-                            currentStep === step.id
-                              ? "Retake test"
-                              : currentStep === step.id
-                              ? "Start test"
-                              : "Coming soon"}
-                          </p>
-                        </div>
+                      <div
+  onClick={
+    (isDisabled && currentStep === step.id) || currentStep > step.id || step.id > currentStep     
+      ? null
+      : () => handleTakeTest(step.label)
+  }
+  style={{
+    width: "100%",
+    backgroundColor:
+      isDisabled && currentStep === step.id
+        ? "#e0e0e0"
+        : currentStep === step.id
+        ? "#121212"
+        : "#e0e0e0",
+    borderBottomLeftRadius: "11px",
+    borderBottomRightRadius: "11px",
+    padding: "0px 0",
+    textAlign: "center",
+    height: "auto",       // ⭐ important: allow button to grow
+    cursor:
+      (isDisabled && currentStep === step.id) ||
+      currentStep > step.id ||
+      step.id > currentStep   // ⛔ Cursor not allowed for Coming Soon
+        ? "not-allowed"
+        : "pointer",
+    marginTop: "auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+>
+<p
+  style={{
+    color:
+      currentStep === step.id && !isDisabled
+        ? "#fff" // Start test → white
+        : "#64666C",
+
+    padding:
+      isDisabled && currentStep === step.id
+        ? "0px"       // ⭐ Retake test after → NO padding
+        : "12px",     // ⭐ Others → normal padding
+
+    margin: 0,
+    fontSize: "16px",
+    fontWeight: "400",
+  }}
+>
+  {isDisabled && currentStep === step.id
+    ? "Retake test after"
+    : currentStep === step.id
+    ? "Start test"
+    : "Coming soon"}
+</p>
+
+
+
+  {/* ⭐ TIMER MOVED INSIDE BUTTON (LIKE IMAGE 1) */}
+  {step.id !== 3 &&
+    isDisabled &&
+    currentStep === step.id &&
+    timer && (
+      <div
+        style={{
+          // marginTop: "6px",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            fontWeight: "600",
+            color: "#F3780D",
+            fontSize: "17px",
+          }}
+        >
+          {timer.days > 0 && `${timer.days}d `}
+          {timer.hours > 0 && `${timer.hours}h `}
+          {timer.minutes > 0 && `${timer.minutes}m `}
+          {timer.seconds > 0 &&
+            timer.hours === 0 &&
+            timer.days === 0 &&
+            `${timer.seconds}sec`}
+        </div>
+      </div>
+    )}
+</div>
+
                       )
                     ) : (
                       <div
                         style={{
                           width: "100%",
                           backgroundColor:
-                            currentStep >= 3 ? "#28A745" : "#BFBFBF",
+                            currentStep >= 3 ? "#28A745" : "#e0e0e0",
                           borderBottomLeftRadius: "11px",
                           borderBottomRightRadius: "11px",
                           padding: "18px 0",
@@ -1063,49 +1104,24 @@ const steps = [
                       >
                         <p
                           style={{
-                            color: "#fff",
+                            color: "#64666C",
                             margin: 0,
-                            fontSize: "14px",
-                            fontWeight: "600",
+                            fontSize: "16px",
+                            fontWeight: "400",
                           }}
                         >
                           {currentStep >= 3
                             ? "Qualified"
                             : "Locked"}
                         </p>
+                        
                       </div>
                     )}
+                    
                   </div>
                 </div>
 
                 {/* TIMER */}
-                {step.id !== 3 &&
-                  isDisabled &&
-                  currentStep === step.id &&
-                  timer && (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        textAlign: "center",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontWeight: "700",
-                          color: "#F3780D",
-                          fontSize: "17px",
-                        }}
-                      >
-                        {timer.days > 0 && `${timer.days}d `}
-                        {timer.hours > 0 && `${timer.hours}h `}
-                        {timer.minutes > 0 && `${timer.minutes}m `}
-                        {timer.seconds > 0 &&
-                          timer.hours === 0 &&
-                          timer.days === 0 &&
-                          `${timer.seconds}sec`}
-                      </div>
-                    </div>
-                  )}
 
                 {/* TITLE */}
                 <p
