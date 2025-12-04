@@ -131,6 +131,7 @@ const VerifiedVideos = () => {
       if (index !== -1) {
         handleOpenPlayer(index);
         setAutoPlayVideoId(null);
+        window.history.replaceState({}, '', '/applicant-verified-videos');
       }
     }
   }, [filteredVideos, autoPlayVideoId, modalOpen]);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import "./ApplicantJobAlert.css"
@@ -13,6 +14,7 @@ export default function ApplicantJobAlerts() {
   const [readLoading, setReadLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
   const [deletingItems, setDeletingItems] = useState(new Set());
+  const navigate = useNavigate();
 
   const fetchAlertsFromServer = async () => {
     if (!user || !user.id) {
@@ -173,7 +175,7 @@ export default function ApplicantJobAlerts() {
                   <div className="notification-btn" style={{ display: "flex", gap: 10 }}>
                     <button
                       onClick={handleReadAll}
-                      disabled={loading || jobAlerts.length === 0}
+                      disabled={loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))}
                       style={{
                         background: "#fd7e14",
                         color: "#fff",
@@ -182,7 +184,9 @@ export default function ApplicantJobAlerts() {
                         borderRadius: 6,
                         fontWeight: 600,
                         textTransform: "none",
-                        width: "50%"
+                        width: "50%",
+                        opacity: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 0.6 : 1,
+                        cursor: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Read all
@@ -199,7 +203,9 @@ export default function ApplicantJobAlerts() {
                         borderRadius: 6,
                         fontWeight: 600,
                         textTransform: "none",
-                        width: "50%"
+                        width: "50%",
+                        opacity: (loading || jobAlerts.length === 0) ? 0.6 : 1,
+                        cursor: (loading || jobAlerts.length === 0) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Clear all
@@ -236,24 +242,18 @@ export default function ApplicantJobAlerts() {
 
                 {jobAlerts.length > 0 ? (
                   <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
-                    {[...jobAlerts]
-                      .sort((a, b) => {
-                        const dateA = a.createdTime ? new Date(...a.createdTime) : 0;
-                        const dateB = b.createdTime ? new Date(...b.createdTime) : 0;
-                        return dateB - dateA;
-                      })
-                      .map((alert) => {
+                    {jobAlerts.map((alert) => {
                         let redirectRoute = "/";
                         let featureName = alert.feature;
 
                         if (alert.feature === "hackathon") {
-                          redirectRoute = "/applicant-hackathon";
+                          redirectRoute = `/applicant-hackathon-details/${alert.featureId}`;
                           featureName = "Hackathon";
                         } else if (alert.feature === "blog") {
-                          redirectRoute = "/applicant-blog-list";
+                          redirectRoute = `/applicant-blog-list?blog=${alert.featureId}`;
                           featureName = "TechVibes";
                         } else if (alert.feature === "Tech buzz shorts") {
-                          redirectRoute = "/applicant-verified-videos";
+                          redirectRoute = `/applicant-verified-videos?video=${alert.featureId}`;
                           featureName = "Techbuzz";
                         }
 
@@ -275,7 +275,7 @@ export default function ApplicantJobAlerts() {
                             }}
                           >
                             {/* MESSAGE */}
-                            <h3
+                            <h3 className="notification-message"
                               style={{
                                 marginBottom: 5,
                                 color: alert.seenApplicantId?.includes(user?.id) ? "#666" : "#000",
@@ -310,10 +310,10 @@ export default function ApplicantJobAlerts() {
                                     )
                                   );
 
-                                  window.location.href = redirectRoute;
+                                  navigate(redirectRoute);
                                 } catch (err) {
                                   console.error("❌ ERROR MARKING NOTIFICATION AS READ:", err);
-                                  window.location.href = redirectRoute;
+                                  navigate(redirectRoute);
                                 }
                               }}
                             >
@@ -330,7 +330,7 @@ export default function ApplicantJobAlerts() {
                               {alert.message}
                             </h3>
 
-                            <div className="notification-down-content" style={{ color: "#666", fontSize: 12 }}>
+                            <div className="notification-down-content" style={{ color: "#666" }}>
                               <span>Posted On: {formatDate(alert.createdTime)}</span>
                               <button
                                 onClick={(e) => {
