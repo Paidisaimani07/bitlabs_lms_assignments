@@ -271,7 +271,7 @@ export default function ApplicantJobAlerts() {
                             }}
                           >
                             {/* MESSAGE */}
-                            <h3
+                            <h3 className="notification-message"
                               style={{
                                 marginBottom: 5,
                                 color: alert.seenApplicantId?.includes(user?.id) ? "#666" : "#000",
@@ -326,7 +326,7 @@ export default function ApplicantJobAlerts() {
                               {alert.message}
                             </h3>
 
-                            <div className="notification-down-content" style={{ color: "#666", fontSize: 12 }}>
+                            <div className="notification-down-content" style={{ color: "#666" }}>
                               <span>Posted On: {formatDate(alert.createdTime)}</span>
                               <button
                                 onClick={(e) => {
