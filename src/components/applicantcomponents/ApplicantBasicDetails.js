@@ -62,6 +62,7 @@ const ApplicantBasicDetails = () => {
     lastName: '',
     email: user.email || '',
     mobilenumber: user.mobilenumber || '',
+    address: '',
   });
   const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
@@ -69,7 +70,8 @@ const ApplicantBasicDetails = () => {
     lastName: applicant.lastName,
     alternatePhoneNumber: applicant.mobilenumber,
     email: applicant.email,
-  };
+    address: applicant.address
+    };
   const [errors, setErrors] = useState({});
   const handleQualificationChange = (selected) => {
     setQualification(selected[0] || null);
@@ -608,6 +610,19 @@ delete transformedApplicantProfileDTO.skillsRequired
           required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
+      </div>
+      <div className="input-wrapper">
+        <input
+          type="tel"
+          name="address"
+          placeholder="*Address"
+          value={applicant.address}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          className="input-form"
+          required
+        />
+        {errors.address && <div className="error-message">{errors.address}</div>}
       </div>
     </div>
         );
