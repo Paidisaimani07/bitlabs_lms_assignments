@@ -6,10 +6,116 @@ import CustomDropdown from "../common/CustomDropdown";
 const EDU_API = `${apiUrl}/applicant-education`;
 
 const degreeOptions = [
-  "B.E / B.Tech", "B.Sc", "BCA", "Diploma", "B.Com", "BBA", "M.E / M.Tech", "M.Sc", "MCA"
+  { value: "B.E / B.Tech", label: "B.E / B.Tech" },
+  { value: "B.Sc", label: "B.Sc" },
+  { value: "BCA", label: "BCA" },
+  { value: "Diploma", label: "Diploma" },
+  { value: "B.Com", label: "B.Com" },
+  { value: "BBA", label: "BBA" },
+  { value: "M.E / M.Tech", label: "M.E / M.Tech" },
+  { value: "M.Sc", label: "M.Sc" },
+  { value: "MCA", label: "MCA" },
+  { value: "MBA", label: "MBA" },
+  { value: "PhD", label: "PhD" }
 ];
+
+const specializationOptions = {
+  "B.E / B.Tech": [
+    "Computer Science & Engineering",
+    "Information Technology",
+    "Electronics & Communication",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Artificial Intelligence & Machine Learning",
+    "Data Science",
+    "Aerospace Engineering",
+    "Biotechnology",
+    "Chemical Engineering",
+    "Other"
+  ],
+  "B.Sc": [
+    "Computer Science",
+    "Mathematics",
+    "Physics",
+    "Chemistry",
+    "Biology",
+    "Electronics",
+    "Statistics",
+    "Other"
+  ],
+  "BCA": [
+    "Software Development",
+    "Web Development",
+    "Mobile App Development",
+    "Database Management",
+    "Cloud Computing",
+    "Other"
+  ],
+  "Diploma": [
+    "Computer Engineering",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Electronics & Communication",
+    "Other"
+  ],
+ "B.Com": [
+    "Accounting",
+    "Finance",
+    "Taxation",
+    "Banking",
+    "E-Commerce",
+    "Other"
+  ],
+ "BBA": [
+    "Marketing",
+    "Finance",
+    "Human Resources",
+    "International Business",
+    "Entrepreneurship",
+    "Other"
+  ],
+  "M.E / M.Tech": [
+    "Computer Science & Engineering",
+    "Data Science",
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Cyber Security",
+    "Other"
+  ],
+  "M.Sc": [
+    "Computer Science",
+    "Mathematics",
+    "Physics",
+    "Chemistry",
+    "Data Science",
+    "Other"
+  ],
+  "MCA": [
+    "Software Engineering",
+    "Cloud Computing",
+    "Mobile Application Development",
+    "Data Analytics",
+    "Other"
+  ],
+ "MBA": [
+    "Finance",
+    "Marketing",
+    "Human Resources",
+    "Operations",
+    "International Business",
+    "Other"
+  ],
+ "PhD": [
+    "Computer Science",
+    "Engineering",
+    "Sciences",
+    "Management",
+    "Other"
+  ]
+};
 const courseTypeOptions = ["Full time", "Part time", "Distance"];
-const gradingOptions = ["Percentage", "CGPA"];
 const boardOptions = ["CBSE", "ICSE", "State Board", "Other"];
 
 const yearRange = (from, to) => {
@@ -26,26 +132,57 @@ const percentBuckets = [
 const required = (msg) => (v) => (v === 0 || v ? "" : msg);
 const nonEmpty = (msg) => (v) => (String(v || "").trim() ? "" : msg);
 
+const validateYear = (value, { startYear } = {}) => {
+  if (!value) return "Year is required";
+  if (isNaN(value)) return "Must be a valid year";
+  if (value < 1900) return "Year must be after 1900";
+  if (startYear !== undefined && value < startYear) return "Must be after start year";
+  return "";
+};
+
+const validatePercentage = (value) => {
+  if (value === "") return "Marks % is required";
+  const num = parseFloat(value);
+  if (isNaN(num)) return "Must be a valid number";
+  if (num < 0 || num > 100) return "Must be between 0 and 100";
+  return "";
+};
+
 const validators = {
   graduation: {
     degree: nonEmpty("Graduation/Diploma is required"),
     university: nonEmpty("University/Institute is required"),
-    course: nonEmpty("Course (Branch) is required"),
+    course: nonEmpty("Course is required"),
     specialization: nonEmpty("Specialization is required"),
     courseType: nonEmpty("Course type is required"),
-    gradingSystem: nonEmpty("Grading system is required"),
-    startYear: required("Course start year is required"),
-    endYear: required("Course ending year is required"),
+    board: nonEmpty("Board is required"),
+    startYear: (value, form) => {
+      if (!value) return "Start year is required";
+      if (isNaN(value)) return "Must be a valid year";
+      if (value < 1900) return "Year must be after 1900";
+      if (form.graduation.endYear && value > form.graduation.endYear) {
+        return "Must be before end year";
+      }
+      return "";
+    },
+    endYear: (value, form) => {
+      if (!value) return "End year is required";
+      if (isNaN(value)) return "Must be a valid year";
+      if (value < form.graduation.startYear) return "Must be after start year";
+      if (value > new Date().getFullYear() + 5) return "Invalid future year";
+      return "";
+    },
+    marksPercent: validatePercentage,
   },
   classXii: {
     board: nonEmpty("Board of education is required"),
-    passingYear: required("Passing year is required"),
-    marksPercent: required("Marks % is required"),
+    passingYear: (value) => validateYear(value),
+    marksPercent: validatePercentage,
   },
   classX: {
     board: nonEmpty("Board of education is required"),
-    passingYear: required("Passing year is required"),
-    marksPercent: required("Marks % is required"),
+    passingYear: (value) => validateYear(value),
+    marksPercent: validatePercentage,
   },
 };
 
@@ -57,20 +194,21 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
       course: initial?.graduation?.course || "",
       specialization: initial?.graduation?.specialization || "",
       courseType: initial?.graduation?.courseType || "",
-      gradingSystem: initial?.graduation?.gradingSystem || "",
+      board: initial?.graduation?.board || "",
       startYear: initial?.graduation?.startYear || "",
       endYear: initial?.graduation?.endYear || "",
+      marksPercent: initial?.graduation?.marksPercent || ""
     },
     classXii: {
       board: initial?.classXii?.board || "",
       passingYear: initial?.classXii?.passingYear || "",
-      marksPercent: initial?.classXii?.marksPercent || "",
+      marksPercent: initial?.classXii?.marksPercent || ""
     },
     classX: {
       board: initial?.classX?.board || "",
       passingYear: initial?.classX?.passingYear || "",
-      marksPercent: initial?.classX?.marksPercent || "",
-    },
+      marksPercent: initial?.classX?.marksPercent || ""
+    }
   });
 
   const [errors, setErrors] = useState({});
@@ -78,33 +216,95 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
 
   const setField = (path, value) => {
     setForm((f) => {
-      const copy = structuredClone(f);
+      const copy = JSON.parse(JSON.stringify(f));
       const [a, b] = path.split(".");
       copy[a][b] = value;
+
+      if (path === 'graduation.degree') {
+        copy.graduation.specialization = '';
+        setErrors(e => ({
+          ...e,
+          'graduation.specialization': validators.graduation.specialization('')
+        }));
+      }
+
+      const validator = validators[a]?.[b];
+      if (validator) {
+        const error = typeof validator === 'function' 
+          ? validator(value, { ...copy, [a]: { ...copy[a] } })
+          : validator;
+        
+        setErrors(e => ({
+          ...e,
+          [path]: error || ''
+        }));
+      }
+
       return copy;
     });
-    setErrors((e) => {
-      const [a, b] = path.split(".");
-      const v = validators[a][b](value);
-      return { ...e, [path]: v };
-    });
+  };
+  
+  const getSpecializations = () => {
+    const degree = form.graduation.degree || '';
+    return specializationOptions[degree] || [];
   };
 
   const validateAll = () => {
-    const next = {};
-    for (const a of Object.keys(validators)) {
-      for (const b of Object.keys(validators[a])) {
-        const v = validators[a][b](form[a][b]);
-        if (v) next[`${a}.${b}`] = v;
-      }
-    }
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    const newErrors = {};
+    
+    Object.entries(validators).forEach(([section, sectionValidators]) => {
+      Object.entries(sectionValidators).forEach(([field, validator]) => {
+        const value = form[section][field];
+        const error = typeof validator === 'function' 
+          ? validator(value, form) 
+          : validator;
+        
+        if (error) {
+          newErrors[`${section}.${field}`] = error;
+        }
+      });
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
+  const isFormValid = useMemo(() => {
+    // Check if all required fields are filled and valid
+    let isValid = true;
+    
+    // Check graduation fields
+    const gradFields = ['degree', 'university', 'specialization', 'courseType', 'startYear', 'endYear', 'marksPercent'];
+    for (const field of gradFields) {
+      if (!form.graduation[field]) {
+        isValid = false;
+        break;
+      }
+    }
+    
+    // Check classXII fields
+    const classXIIFields = ['board', 'passingYear', 'marksPercent'];
+    for (const field of classXIIFields) {
+      if (!form.classXii[field]) {
+        isValid = false;
+        break;
+      }
+    }
+    
+    // Check classX fields
+    for (const field of classXIIFields) {
+      if (!form.classX[field]) {
+        isValid = false;
+        break;
+      }
+    }
+    
+    return isValid && Object.keys(errors).length === 0;
+  }, [form, errors]);
+
   const canSave = useMemo(
-    () => Object.values(errors).every((m) => !m) && !saving,
-    [errors, saving]
+    () => isFormValid && !saving,
+    [isFormValid, saving]
   );
 
   const parsePercent = (bucket) => {
@@ -119,18 +319,29 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
   const save = async () => {
     if (!validateAll()) return;
 
-    const payload = structuredClone(form);
-    // ensure numeric types for years & percents
-    payload.graduation.startYear = Number(payload.graduation.startYear);
-    payload.graduation.endYear = Number(payload.graduation.endYear);
-    payload.classXii.passingYear = Number(payload.classXii.passingYear);
-    payload.classX.passingYear = Number(payload.classX.passingYear);
-
-    // convert percent buckets to number if needed
-    const p1 = parsePercent(payload.classXii.marksPercent);
-    const p2 = parsePercent(payload.classX.marksPercent);
-    payload.classXii.marksPercent = p1 ?? Number(payload.classXii.marksPercent);
-    payload.classX.marksPercent = p2 ?? Number(payload.classX.marksPercent);
+    const payload = {
+      graduation: {
+        degree: form.graduation.degree,
+        university: form.graduation.university,
+        course: form.graduation.course,
+        specialization: form.graduation.specialization,
+        courseType: form.graduation.courseType,
+        board: form.graduation.board,
+        startYear: Number(form.graduation.startYear),
+        endYear: Number(form.graduation.endYear),
+        marksPercent: parseFloat(form.graduation.marksPercent) || 0
+      },
+      classXii: {
+        board: form.classXii.board,
+        passingYear: Number(form.classXii.passingYear) || 0,
+        marksPercent: parsePercent(form.classXii.marksPercent) || 0
+      },
+      classX: {
+        board: form.classX.board,
+        passingYear: Number(form.classX.passingYear) || 0,
+        marksPercent: parsePercent(form.classX.marksPercent) || 0
+      }
+    };
 
     try {
       setSaving(true);
@@ -170,8 +381,13 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           <CustomDropdown
             value={form.graduation.degree}
             options={degreeOptions}
-            placeholder="Graduation/Diploma"
-            onChange={(val) => setField("graduation.degree", val)}
+            placeholder="Select Degree"
+            onChange={(val) => {
+              const selected = degreeOptions.find(d => d.value === val);
+              setField("graduation.degree", selected.label);   
+              setField("graduation.degreeValue", selected.value); 
+              setField("graduation.specialization", ""); 
+            }}
             error={errors["graduation.degree"]}
           />
 
@@ -186,7 +402,17 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
               <div className="error-message">{errors["graduation.university"]}</div>
             )}</div>
 
-          <CustomDropdown
+            {/* Marks Percentage */}
+            <CustomDropdown
+              label="Marks in %age"
+              value={form.graduation.marksPercent}
+              onChange={(val) => setField("graduation.marksPercent", val)}
+              placeholder="Marks in %age"
+              options={percentBuckets}
+              error={errors["graduation.marksPercent"]}
+            />
+
+          {/* <CustomDropdown
             value={form.graduation.course}
             options={[
               "Computer Science", "Information Technology", "Electronics",
@@ -195,19 +421,29 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             placeholder="Course"
             onChange={(val) => setField("graduation.course", val)}
             error={errors["graduation.course"]}
-          />
+          /> */}
 
-          <div className="field-align">
-            <input
-              className="pd-input"
-              placeholder="Specialization"
-              value={form.graduation.specialization}
-              onChange={(e) => setField("graduation.specialization", e.target.value)}
-            />
-            {errors["graduation.specialization"] && (
-              <div className="error-message">{errors["graduation.specialization"]}</div>
-            )}
-          </div>
+          <CustomDropdown
+            value={form.graduation.specialization}
+            options={[
+              { value: "", label: "Select Specialization" },
+              ...getSpecializations().map(spec => ({
+                value: spec,
+                label: spec
+              })),
+              ...(form.graduation.specialization &&
+                !getSpecializations().includes(form.graduation.specialization) ? [{
+                  value: form.graduation.specialization,
+                  label: form.graduation.specialization
+                }] : [])
+            ]}
+            placeholder="Select Specialization"
+            onChange={(val) => setField("graduation.specialization", val)}
+            error={errors["graduation.specialization"]}
+            disabled={!form.graduation.degree}
+            searchable={true}
+            clearable={true}
+          />
 
           <CustomDropdown
             value={form.graduation.courseType}
@@ -217,13 +453,6 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             error={errors["graduation.courseType"]}
           />
 
-          <CustomDropdown
-            value={form.graduation.gradingSystem}
-            options={gradingOptions}
-            placeholder="Grading System"
-            onChange={(val) => setField("graduation.gradingSystem", val)}
-            error={errors["graduation.gradingSystem"]}
-          />
 
           <div className="field-align">
             <div className="pd-input with-icon">
@@ -259,7 +488,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             </div>
             {errors["graduation.endYear"] && (
               <div className="error-message">{errors["graduation.endYear"]}</div>
-            )}
+            )}            
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, o
     try {
       const jwtToken = localStorage.getItem("jwtToken");
       await axios.put(
-        `${SUMMARY_API}/${applicantId}`,
+        `${SUMMARY_API}/${applicantId}/updateApplicantSummary`,
         { summary: trimmed },
         {
           headers: {

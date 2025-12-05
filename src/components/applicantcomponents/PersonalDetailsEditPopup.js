@@ -126,7 +126,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
     try {
       const jwtToken = localStorage.getItem("jwtToken");
       const payload = {
-        fullName: form.fullName.trim(),
+        name: form.fullName.trim(),
         gender: form.gender,
         email: form.email,                // disabled but submitted (server expects)
         phone: form.phone.trim(),
@@ -135,7 +135,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         address: form.address.trim(),
         knownLanguages: form.knownLanguages, // ARRAY
       };
-      await axios.put(`${PERSONAL_API}/${applicantId}`, payload, {
+      await axios.put(`${PERSONAL_API}/${applicantId}/updateApplicantPersonalDetails`, payload, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
           "Content-Type": "application/json",

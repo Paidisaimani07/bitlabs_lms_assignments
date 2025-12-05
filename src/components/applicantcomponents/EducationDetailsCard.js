@@ -46,7 +46,7 @@ const EducationDetailsCard = ({ applicantId }) => {
   const fetchEducation = async () => {
     try {
       const jwt = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${EDU_API}/${applicantId}`, {
+      const { data } = await axios.get(`${EDU_API}/${applicantId}/getApplciantEducationDetails`, {
         headers: { Authorization: `Bearer ${jwt}` },
       });
       setData(data || {});
