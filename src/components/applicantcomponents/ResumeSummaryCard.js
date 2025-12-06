@@ -26,10 +26,10 @@ const ResumeSummaryCard = ({ applicantId }) => {
   const fetchSummary = async () => {
     try {
       const jwtToken = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${SUMMARY_API}/${applicantId}`, {
+      const { data } = await axios.get(`${SUMMARY_API}/${applicantId}/getApplicantSummary`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      setSummary((data?.summary || "").trim());
+      setSummary((data).trim());
     } catch (e) {
       console.error("Failed to load summary:", e?.response || e);
       setSummary(""); // fallback to help text

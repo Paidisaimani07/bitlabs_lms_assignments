@@ -63,17 +63,17 @@ const ProjectDetailsCard = ({ applicantId }) => {
     setSnackbars((p) => p.filter((_, i) => i !== idx));
 
   const fetchProjects = async () => {
-  try {
-    const jwt = localStorage.getItem("jwtToken");
-    const { data } = await axios.get(`${PROJ_API}/${applicantId}/current`, {
-      headers: { Authorization: `Bearer ${jwt}` },
-    });
-    setItems(data ? [data] : []); // keep existing state shape
-  } catch (e) {
-    console.error("Projects GET failed:", e?.response || e);
-    setItems([]);
-  }
-};
+    try {
+      const jwt = localStorage.getItem("jwtToken");
+      const { data } = await axios.get(`${PROJ_API}/${applicantId}/getApplicantProjects`, {
+        headers: { Authorization: `Bearer ${jwt}` },
+      });
+      setItems(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error("Projects GET failed:", e?.response || e);
+      setItems([]);
+    }
+  };
 
   useEffect(() => {
     if (applicantId) fetchProjects();
@@ -116,11 +116,11 @@ const ProjectDetailsCard = ({ applicantId }) => {
               </p>
             </div>
             <button
-                               type="button"
-                               className="portfolio-edit-btn"
-                               onClick={() => setEditOpen(true)}>
-                               Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
-                             </button>
+              type="button"
+              className="portfolio-edit-btn"
+              onClick={() => setEditOpen(true)}>
+              Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
+            </button>
           </div>
 
           <div
@@ -149,18 +149,6 @@ const ProjectDetailsCard = ({ applicantId }) => {
               placeholder="Project team size"
               value={proj.teamSize ? String(proj.teamSize) : ""}
             />
-
-            {/* row 3 */}
-            <ReadonlyInput
-              placeholder="Your role in the project"
-              value={proj.roleInProject}
-            />
-            <div className="pd-input with-add">
-              <Pills items={skillsList} />
-              <button className="pd-add" type="button" disabled>
-                +
-              </button>
-            </div>
 
             {/* row 4 */}
             <ReadonlyTextarea
@@ -192,29 +180,29 @@ const ProjectDetailsCard = ({ applicantId }) => {
           />
         </div>
 
-       <ProjectDetailsEditPopup
-  applicantId={applicantId}
-  initial={proj}
-  onClose={() => {
-    // only close the modal, do NOT call save or show snack here
-    setEditOpen(false);
-  }}
-  onSuccess={async () => {
-    // called only after Save completes successfully
-    await fetchProjects();
-    setEditOpen(false);
-    addSnackbar({
-      message: "Project details saved successfully!",
-      type: "success",
-    });
-  }}
-  onError={(msg) =>
-    addSnackbar({
-      message: msg || "Failed to save project details",
-      type: "error",
-    })
-  }
-/>
+        <ProjectDetailsEditPopup
+          applicantId={applicantId}
+          initial={proj}
+          onClose={() => {
+            // only close the modal, do NOT call save or show snack here
+            setEditOpen(false);
+          }}
+          onSuccess={async () => {
+            // called only after Save completes successfully
+            await fetchProjects();
+            setEditOpen(false);
+            addSnackbar({
+              message: "Project details saved successfully!",
+              type: "success",
+            });
+          }}
+          onError={(msg) =>
+            addSnackbar({
+              message: msg || "Failed to save project details",
+              type: "error",
+            })
+          }
+        />
 
       </Modal>
 
