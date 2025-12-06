@@ -476,11 +476,11 @@ delete transformedApplicantProfileDTO.skillsRequired
 
     try {
       if (currentStage === 1) {
-        await makeApiCall2(); // Save professional details
         setCurrentStage(2);
       } else if (currentStage === 2) {
         // Final submission
         addSnackbar({ message: 'Profile saved successfully!', type: 'success' });
+        await makeApiCall2(); 
         
         // Redirect to home page after a short delay
         setTimeout(() => {
