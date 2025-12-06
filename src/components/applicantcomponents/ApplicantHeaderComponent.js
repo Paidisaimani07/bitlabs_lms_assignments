@@ -7,10 +7,10 @@ import { faTimes, faPen } from "@fortawesome/free-solid-svg-icons";
 import BasicDetailsEditPopup from "./BasicDetailsEditPopup";
 import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
+import { useUserContext } from '../common/UserProvider';
 
 Modal.setAppElement("#root");
 
-const CARD_API = `${apiUrl}/applicant-card`;
 const PHOTO_GET_API = `${apiUrl}/applicant-image/getphoto`;
 // new: score API base
 const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
@@ -18,17 +18,13 @@ const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
 // NOTE: Upload endpoint used by uploader component: `${apiUrl}/applicant-image/${id}/upload`
 
 const DEFAULT_CARD = {
-  applicantId: null,
   name: "",
   role: "Full–Stack Developer",
   mobileNumber: "",
   email: "",
-  passYear: null,
-  city: "",
-  state: "",
-  locationDisplay: "",
-  lastUpdated: null,
-  score: 0,
+  passOutyear: "",
+  address: "",
+  lastUpdated: null
 };
 
 /**
@@ -233,6 +229,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const [uploading, setUploading] = useState(false);
   const [dashboardScore, setDashboardScore] = useState(0);
   const [cappedScore, setCappedScore] = useState(0);
+  const { user } = useUserContext();
+  const CARD_API = `${apiUrl}/applicant-card/${user?.id}/getApplciantCard`;
 
   const bronzeScore = 150;
   const silverScore = 300;
@@ -266,7 +264,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
       const jwtToken = localStorage.getItem("jwtToken");
 
       // 1) Fetch applicant card
-      const { data: cardData } = await axios.get(`${CARD_API}/${applicantId}`, {
+      const { data: cardData } = await axios.get(`${CARD_API}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
 
@@ -398,23 +396,17 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const roleTitle = useMemo(() => (card?.role?.trim() ? card.role : DEFAULT_CARD.role), [card]);
   const phoneText = useMemo(() => (card?.mobileNumber?.trim() ? card.mobileNumber : "—"), [card]);
   const emailText = useMemo(() => (card?.email?.trim() ? card.email : "—"), [card]);
-  const passOutText = useMemo(
-    () => (card?.passYear ? `${card.passYear} passed out` : "Passed out year not set"),
-    [card]
-  );
-  const locationText = useMemo(
-    () =>
-      card?.locationDisplay?.trim()
-        ? card.locationDisplay
-        : [card?.city, card?.state].filter(Boolean).join(", ") || "—",
-    [card]
-  );
+  const passOutText = useMemo(() => (card?.passOutyear ? `Pass-out: ${card.passOutyear}` : ""), [card]);
+  const locationText = useMemo(() => (card?.address || ""), [card]);
 
   // Format and show "last updated"
   const updatedOnText = useMemo(() => {
-    if (!card?.lastUpdated) return "Not updated yet";
-    // if backend gave epoch seconds
-    const date = new Date(card.lastUpdated * 1000);
+    const arr = card?.lastUpdated;
+    if (!arr || !Array.isArray(arr)) return "Not updated yet";
+    const [year, month, day, hour, minute, second] = arr;
+    const millisecond = Math.floor(arr[6] / 1_000_000);
+    const date = new Date(year, month - 1, day, hour, minute, second, millisecond);
+
     return date.toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -520,12 +512,12 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
         </div>      </div>
-      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px", margin:"0"}}>
+      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px", margin: "0" }}>
         <div className="progress-text">
           <p>Badge achievement level</p>
           {Math.round((cappedScore / goldScore) * 100)}%
         </div>
-        <div style={{position:"relative"}}>
+        <div style={{ position: "relative" }}>
           <div className="badge-bar">
 
             <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
@@ -554,8 +546,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
               left: `${(cappedScore / goldScore) * 100}%`,
               transform: "translateX(-50%)",
               bottom: "4px",
-              zIndex:"1",
-              minWidth:"60px"
+              zIndex: "1",
+              minWidth: "60px"
             }}
           >
             {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
@@ -588,9 +580,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
             name: card?.name || "",
             role: card?.role || "",
             mobileNumber: card?.mobileNumber || "",
-            passYear: card?.passYear || "",
-            city: card?.city || "",
-            state: card?.state || "",
+            passOutyear: card?.passOutyear || "",
+            address: card?.address || "",
             email: card?.email || "",
           }}
           applicantId={applicantId}
