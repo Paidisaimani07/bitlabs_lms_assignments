@@ -208,7 +208,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         </div>
 
         {/* DOB (ISO) */}
-        <div className="pd-input with-icon">
+        <div className="pd-input with-icon" style={{height:"50px"}}>
           <input
             className="pd-input raw"
             type="date"
@@ -226,6 +226,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         <div className="input-wrapper">
           <input
             className="pd-input"
+            style={{width:"100%"}}
             placeholder="* PIN code"
             value={form.pincode}
             onChange={(e) => setField("pincode", e.target.value)}
@@ -234,9 +235,10 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         </div>
 
         {/* Address (full width) */}
-        <div className="input-wrapper span-2">
+        <div className="input-wrapper">
           <input
             className="pd-input"
+            style={{width:"100%"}}
             placeholder="* Permanent address"
             value={form.address}
             onChange={(e) => setField("address", e.target.value)}

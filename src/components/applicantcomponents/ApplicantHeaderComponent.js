@@ -22,7 +22,7 @@ const DEFAULT_CARD = {
   role: "Full–Stack Developer",
   mobileNumber: "",
   email: "",
-  passOutYear: null,
+  passOutyear: "",
   address: "",
   lastUpdated: null
 };
@@ -396,17 +396,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const roleTitle = useMemo(() => (card?.role?.trim() ? card.role : DEFAULT_CARD.role), [card]);
   const phoneText = useMemo(() => (card?.mobileNumber?.trim() ? card.mobileNumber : "—"), [card]);
   const emailText = useMemo(() => (card?.email?.trim() ? card.email : "—"), [card]);
-  const passOutText = useMemo(
-    () => (card?.passYear ? `${card.passYear} passed out` : "Passed out year not set"),
-    [card]
-  );
-  const locationText = useMemo(
-    () =>
-      card?.locationDisplay?.trim()
-        ? card.locationDisplay
-        : [card?.city, card?.state].filter(Boolean).join(", ") || "—",
-    [card]
-  );
+  const passOutText = useMemo(() => (card?.passOutyear ? `Pass-out: ${card.passOutyear}` : ""), [card]);
+  const locationText = useMemo(() => (card?.address || ""), [card]);
 
   // Format and show "last updated"
   const updatedOnText = useMemo(() => {
@@ -589,9 +580,8 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
             name: card?.name || "",
             role: card?.role || "",
             mobileNumber: card?.mobileNumber || "",
-            passYear: card?.passYear || "",
-            city: card?.city || "",
-            state: card?.state || "",
+            passOutyear: card?.passOutyear || "",
+            address: card?.address || "",
             email: card?.email || "",
           }}
           applicantId={applicantId}

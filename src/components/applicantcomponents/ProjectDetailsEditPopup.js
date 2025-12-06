@@ -13,13 +13,39 @@ const required = (msg) => (v) => (String(v ?? "").trim() ? "" : msg);
 const requiredNum = (msg) => (v) => (v === 0 || v ? "" : msg);
 
 const validators = {
-  projectTitle: required("Project title is required"),
-  specialization: required("Specialization on the project is required"),
+  projectTitle: (v) => {
+    if (!v || String(v).trim().length < 3) return "Project title must be between 3 and 500 characters";
+    if (String(v).trim().length > 500) return "Project title must be between 3 and 500 characters";
+    return "";
+  },
+  specialization: (v) => {
+    if (!v || String(v).trim().length < 2) return "Specialization must be between 2 and 500 characters";
+    if (String(v).trim().length > 500) return "Specialization must be between 2 and 500 characters";
+    return "";
+  },
   technologiesUsed: required("Technologies used is required"),
-  teamSize: requiredNum("Team size is required"),
-  roleInProject: required("Your role is required"),
-  roleDescription: required("Role description is required"),
-  projectDescription: required("Project description is required"),
+  teamSize: (v) => {
+    if (v === "" || v === null || v === undefined) return "Team size is required";
+    const num = Number(v);
+    if (isNaN(num)) return "Team size must be a number";
+    if (num < 1) return "Team size must be at least 1";
+    return "";
+  },
+  roleInProject: (v) => {
+    if (!v || String(v).trim().length < 3) return "Role in project must be between 3 and 500 characters";
+    if (String(v).trim().length > 500) return "Role in project must be between 3 and 500 characters";
+    return "";
+  },
+  roleDescription: (v) => {
+    if (!v || String(v).trim().length < 10) return "Role description must be between 10 and 5000 characters";
+    if (String(v).trim().length > 5000) return "Role description must be between 10 and 5000 characters";
+    return "";
+  },
+  projectDescription: (v) => {
+    if (!v || String(v).trim().length < 10) return "Project description must be between 10 and 5000 characters";
+    if (String(v).trim().length > 5000) return "Project description must be between 10 and 5000 characters";
+    return "";
+  },
 };
 
 /* Small presentational helpers */

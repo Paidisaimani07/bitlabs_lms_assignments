@@ -10,9 +10,8 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
     name: initial?.name || "",
     role: initial?.role || "",
     mobileNumber: initial?.mobileNumber || "",
-    passYear: initial?.passYear || "",
-    city: initial?.city || "",
-    state: initial?.state || "",
+    passOutyear: initial?.passOutyear || "",
+    address: initial?.address || ""
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -43,24 +42,19 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
         return "Mobile must be 10 digits starting with 6/7/8/9.";
       return "";
     },
-    passYear: (v) => {
+    passOutyear: (v) => {
       const t = (v ?? "").toString().trim();
       if (!t) return "Pass-out year is required.";
       if (!/^\d{4}$/.test(t)) return "Enter a valid year (e.g., 2024).";
       const y = Number(t);
-      if (y < 1900 || y > 2100) return "Year must be between 1900 and 2100.";
+      const currentYear = new Date().getFullYear();
+      if (y < 2015 || y > currentYear + 4) return `Year must be between 2015 and ${currentYear + 4}`;
       return "";
     },
-    city: (v) => {
+    address: (v) => {
       const t = (v ?? "").trim();
-      if (!t) return "City is required.";
-      if (!/^[a-zA-Z .'-]{2,80}$/.test(t)) return "Enter a valid city.";
-      return "";
-    },
-    state: (v) => {
-      const t = (v ?? "").trim();
-      if (!t) return "State is required.";
-      if (!/^[a-zA-Z .'-]{2,80}$/.test(t)) return "Enter a valid state.";
+      if (!t) return "Address is required.";
+      if (t.length < 10) return "Address is too short (min 10 characters).";
       return "";
     },
   };
@@ -93,12 +87,11 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
         name: form.name.trim(),
         role: form.role.trim(),                  // ← include role
         mobileNumber: form.mobileNumber.trim(),
-        passYear: Number(form.passYear),
-        city: form.city.trim(),
-        state: form.state.trim(),
+        passOutyear: Number(form.passOutyear),
+        address: form.address.trim()
       };
 
-      await axios.put(`${CARD_API}/${applicantId}`, payload, {
+      await axios.put(`${CARD_API}/${applicantId}/updateApplicantCard`, payload, {
         headers: {
           Authorization: `Bearer ${jwtToken}`,
           "Content-Type": "application/json",
@@ -184,44 +177,31 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
         {/* Pass-out year */}
         <div className="input-wrapper">
           <input
-            type="text"
-            name="passYear"
-            placeholder="* Pass-out year (e.g., 2024)"
-            value={form.passYear}
+            type="number"
+            name="passOutyear"
+            placeholder="* Pass out year (e.g., 2024)"
+            value={form.passOutyear}
             onChange={onChange}
             className="pd-input"
-            inputMode="numeric"
+            min="2015"
+            max={new Date().getFullYear() + 5}
             required
           />
-          {errors.passYear && <div className="error-message">{errors.passYear}</div>}
+          {errors.passOutyear && <div className="error-message">{errors.passOutyear}</div>}
         </div>
 
-        {/* City */}
-        <div className="input-wrapper">
-          <input
-            type="text"
-            name="city"
-            placeholder="* City"
-            value={form.city}
+        {/* Address */}
+        <div className="input-wrapper" style={{ gridColumn: '1 / -1' }}>
+          <textarea
+            name="address"
+            placeholder="* Full address"
+            value={form.address}
             onChange={onChange}
             className="pd-input"
+            rows="3"
             required
           />
-          {errors.city && <div className="error-message">{errors.city}</div>}
-        </div>
-
-        {/* State */}
-        <div className="input-wrapper">
-          <input
-            type="text"
-            name="state"
-            placeholder="* State"
-            value={form.state}
-            onChange={onChange}
-            className="pd-input"
-            required
-          />
-          {errors.state && <div className="error-message">{errors.state}</div>}
+          {errors.address && <div className="error-message">{errors.address}</div>}
         </div>
       </div>
 

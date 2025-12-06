@@ -58,8 +58,6 @@ const yearRange = (from, to) => {
 };
 const YEARS = yearRange(1980, new Date().getFullYear() + 1);
 
-const percentBuckets = ["≥ 90", "80–89", "70–79", "60–69", "< 60"];
-
 const nonEmpty = (msg) => (v) => (String(v || "").trim() ? "" : msg);
 
 const validateYear = (value, { startYear } = {}) => {
@@ -194,14 +192,6 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
 
   const canSave = isFormValid && !saving;
 
-  const parsePercent = (bucket) => {
-    if (bucket === "≥ 90") return 90;
-    if (bucket === "< 60") return 59;
-    const m = /(\d+)[–-](\d+)/.exec(bucket || "");
-    if (m) return (Number(m[1]) + Number(m[2])) / 2;
-    return Number(bucket) || 0;
-  };
-
   const save = async () => {
     if (!validateAll()) return;
 
@@ -218,12 +208,12 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
       classXii: {
         board: form.classXii.board,
         passingYear: Number(form.classXii.passingYear) || 0,
-        marksPercent: parsePercent(form.classXii.marksPercent)
+        marksPercent: Number(form.classXii.marksPercent) || 0
       },
       classX: {
         board: form.classX.board,
         passingYear: Number(form.classX.passingYear) || 0,
-        marksPercent: parsePercent(form.classX.marksPercent)
+        marksPercent: Number(form.classX.marksPercent) || 0
       }
     };
 
@@ -355,13 +345,18 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             error={errors["classXii.passingYear"]}
           />
 
-          <CustomDropdown
-            value={form.classXii.marksPercent}
-            onChange={(v) => setField("classXii.marksPercent", v)}
-            options={percentBuckets}
-            placeholder="Marks %"
-            error={errors["classXii.marksPercent"]}
-          />
+          <div className="field-align">
+            <input
+              className="pd-input"
+              type="number"
+              placeholder="Marks in % (0–100)"
+              value={form.classXii.marksPercent}
+              onChange={(e) => setField("classXii.marksPercent", e.target.value)}
+              min="0"
+              max="100"
+            />
+            {errors["classXii.marksPercent"] && <div className="error-message">{errors["classXii.marksPercent"]}</div>}
+          </div>
         </div>
       </div>
 
@@ -389,13 +384,18 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
             error={errors["classX.passingYear"]}
           />
 
-          <CustomDropdown
-            value={form.classX.marksPercent}
-            onChange={(v) => setField("classX.marksPercent", v)}
-            options={percentBuckets}
-            placeholder="Marks %"
-            error={errors["classX.marksPercent"]}
-          />
+          <div className="field-align">
+            <input
+              className="pd-input"
+              type="number"
+              placeholder="Marks in % (0–100)"
+              value={form.classX.marksPercent}
+              onChange={(e) => setField("classX.marksPercent", e.target.value)}
+              min="0"
+              max="100"
+            />
+            {errors["classX.marksPercent"] && <div className="error-message">{errors["classX.marksPercent"]}</div>}
+          </div>
         </div>
       </div>
 
