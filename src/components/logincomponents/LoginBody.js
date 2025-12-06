@@ -225,7 +225,8 @@ function LoginBody({ handleLogin }) {
           if (profileId !== 0 && resume === 404) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
-            navigate("/applicant-basic-details-form/3");
+            navigate("/applicanthome");
+            // navigate("/applicant-basic-details-form/3");
           } else if (profileId === 0 || resume === 404) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
