@@ -1,3 +1,5 @@
+// FULL UPDATED CODE WITH GRADUATION MARKS AS NUMBER FIELD
+
 import React, { useMemo, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
@@ -6,10 +8,47 @@ import CustomDropdown from "../common/CustomDropdown";
 const EDU_API = `${apiUrl}/applicant-education`;
 
 const degreeOptions = [
-  "B.E / B.Tech", "B.Sc", "BCA", "Diploma", "B.Com", "BBA", "M.E / M.Tech", "M.Sc", "MCA"
+  { value: "B.E / B.Tech", label: "B.E / B.Tech" },
+  { value: "B.Sc", label: "B.Sc" },
+  { value: "BCA", label: "BCA" },
+  { value: "Diploma", label: "Diploma" },
+  { value: "B.Com", label: "B.Com" },
+  { value: "BBA", label: "BBA" },
+  { value: "M.E / M.Tech", label: "M.E / M.Tech" },
+  { value: "M.Sc", label: "M.Sc" },
+  { value: "MCA", label: "MCA" },
+  { value: "MBA", label: "MBA" },
+  { value: "PhD", label: "PhD" }
 ];
+
+const specializationOptions = {
+  "B.E / B.Tech": [
+    "Computer Science & Engineering",
+    "Information Technology",
+    "Electronics & Communication",
+    "Mechanical Engineering",
+    "Civil Engineering",
+    "Electrical Engineering",
+    "Artificial Intelligence & Machine Learning",
+    "Data Science",
+    "Aerospace Engineering",
+    "Biotechnology",
+    "Chemical Engineering",
+    "Other"
+  ],
+  "B.Sc": ["Computer Science", "Mathematics", "Physics", "Chemistry", "Biology", "Electronics", "Statistics", "Other"],
+  "BCA": ["Software Development", "Web Development", "Mobile App Development", "Database Management", "Cloud Computing", "Other"],
+  "Diploma": ["Computer Engineering", "Mechanical Engineering", "Civil Engineering", "Electrical Engineering", "Electronics & Communication", "Other"],
+  "B.Com": ["Accounting", "Finance", "Taxation", "Banking", "E-Commerce", "Other"],
+  "BBA": ["Marketing", "Finance", "Human Resources", "International Business", "Entrepreneurship", "Other"],
+  "M.E / M.Tech": ["Computer Science & Engineering", "Data Science", "Artificial Intelligence", "Machine Learning", "Cyber Security", "Other"],
+  "M.Sc": ["Computer Science", "Mathematics", "Physics", "Chemistry", "Data Science", "Other"],
+  "MCA": ["Software Engineering", "Cloud Computing", "Mobile Application Development", "Data Analytics", "Other"],
+  "MBA": ["Finance", "Marketing", "Human Resources", "Operations", "International Business", "Other"],
+  "PhD": ["Computer Science", "Engineering", "Sciences", "Management", "Other"]
+};
+
 const courseTypeOptions = ["Full time", "Part time", "Distance"];
-const gradingOptions = ["Percentage", "CGPA"];
 const boardOptions = ["CBSE", "ICSE", "State Board", "Other"];
 
 const yearRange = (from, to) => {
@@ -19,34 +58,63 @@ const yearRange = (from, to) => {
 };
 const YEARS = yearRange(1980, new Date().getFullYear() + 1);
 
-const percentBuckets = [
-  "≥ 90", "80–89", "70–79", "60–69", "< 60"
-];
-
-const required = (msg) => (v) => (v === 0 || v ? "" : msg);
 const nonEmpty = (msg) => (v) => (String(v || "").trim() ? "" : msg);
+
+const validateYear = (value, { startYear } = {}) => {
+  if (!value) return "Year is required";
+  if (isNaN(value)) return "Must be a valid year";
+  if (value < 1900) return "Year must be after 1900";
+  if (startYear !== undefined && value < startYear) return "Must be after start year";
+  return "";
+};
+
+const validatePercentage = (value) => {
+  if (value === "" || value === null) return "Marks % is required";
+  const num = Number(value);
+  if (isNaN(num)) return "Must be a valid number";
+  if (num < 0 || num > 100) return "Must be between 0 and 100";
+  return "";
+};
 
 const validators = {
   graduation: {
     degree: nonEmpty("Graduation/Diploma is required"),
     university: nonEmpty("University/Institute is required"),
-    course: nonEmpty("Course (Branch) is required"),
     specialization: nonEmpty("Specialization is required"),
     courseType: nonEmpty("Course type is required"),
-    gradingSystem: nonEmpty("Grading system is required"),
-    startYear: required("Course start year is required"),
-    endYear: required("Course ending year is required"),
+
+    startYear: (value, form) => {
+      if (!value) return "Start year is required";
+      if (isNaN(value)) return "Must be a valid year";
+      if (value < 1900) return "Year must be after 1900";
+      if (form.graduation.endYear && value > form.graduation.endYear) {
+        return "Must be before end year";
+      }
+      return "";
+    },
+
+    endYear: (value, form) => {
+      if (!value) return "End year is required";
+      if (isNaN(value)) return "Must be a valid year";
+      if (value < form.graduation.startYear) return "Must be after start year";
+      if (value > new Date().getFullYear() + 5) return "Invalid future year";
+      return "";
+    },
+
+    marksPercent: validatePercentage
   },
+
   classXii: {
     board: nonEmpty("Board of education is required"),
-    passingYear: required("Passing year is required"),
-    marksPercent: required("Marks % is required"),
+    passingYear: validateYear,
+    marksPercent: validatePercentage
   },
+
   classX: {
     board: nonEmpty("Board of education is required"),
-    passingYear: required("Passing year is required"),
-    marksPercent: required("Marks % is required"),
-  },
+    passingYear: validateYear,
+    marksPercent: validatePercentage
+  }
 };
 
 const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) => {
@@ -54,23 +122,22 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
     graduation: {
       degree: initial?.graduation?.degree || "",
       university: initial?.graduation?.university || "",
-      course: initial?.graduation?.course || "",
       specialization: initial?.graduation?.specialization || "",
       courseType: initial?.graduation?.courseType || "",
-      gradingSystem: initial?.graduation?.gradingSystem || "",
       startYear: initial?.graduation?.startYear || "",
       endYear: initial?.graduation?.endYear || "",
+      marksPercent: initial?.graduation?.marksPercent || ""
     },
     classXii: {
       board: initial?.classXii?.board || "",
       passingYear: initial?.classXii?.passingYear || "",
-      marksPercent: initial?.classXii?.marksPercent || "",
+      marksPercent: initial?.classXii?.marksPercent || ""
     },
     classX: {
       board: initial?.classX?.board || "",
       passingYear: initial?.classX?.passingYear || "",
-      marksPercent: initial?.classX?.marksPercent || "",
-    },
+      marksPercent: initial?.classX?.marksPercent || ""
+    }
   });
 
   const [errors, setErrors] = useState({});
@@ -78,103 +145,120 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
 
   const setField = (path, value) => {
     setForm((f) => {
-      const copy = structuredClone(f);
-      const [a, b] = path.split(".");
-      copy[a][b] = value;
+      const copy = JSON.parse(JSON.stringify(f));
+      const [section, field] = path.split(".");
+      copy[section][field] = value;
+
+      const validator = validators[section]?.[field];
+      if (validator) {
+        const error = validator(value, copy);
+        setErrors((e) => ({ ...e, [path]: error }));
+      }
+
       return copy;
-    });
-    setErrors((e) => {
-      const [a, b] = path.split(".");
-      const v = validators[a][b](value);
-      return { ...e, [path]: v };
     });
   };
 
   const validateAll = () => {
-    const next = {};
-    for (const a of Object.keys(validators)) {
-      for (const b of Object.keys(validators[a])) {
-        const v = validators[a][b](form[a][b]);
-        if (v) next[`${a}.${b}`] = v;
-      }
+    const newErrors = {};
+
+    Object.entries(validators).forEach(([section, valObj]) => {
+      Object.entries(valObj).forEach(([field, validator]) => {
+        const value = form[section][field];
+        const error = validator(value, form);
+        if (error) newErrors[`${section}.${field}`] = error;
+      });
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const isFormValid = useMemo(() => {
+    const gradFields = ["degree", "university", "specialization", "courseType", "startYear", "endYear", "marksPercent"];
+
+    for (let f of gradFields) {
+      if (!form.graduation[f]) return false;
     }
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
 
-  const canSave = useMemo(
-    () => Object.values(errors).every((m) => !m) && !saving,
-    [errors, saving]
-  );
+    const classXIIFields = ["board", "passingYear", "marksPercent"];
+    for (let f of classXIIFields) {
+      if (!form.classXii[f]) return false;
+      if (!form.classX[f]) return false;
+    }
 
-  const parsePercent = (bucket) => {
-    if (bucket === "≥ 90") return 90;
-    if (bucket === "< 60") return 59;
-    const m = /(\d+)[–-](\d+)/.exec(bucket || "");
-    if (m) return (Number(m[1]) + Number(m[2])) / 2;
-    const n = Number(bucket);
-    return Number.isFinite(n) ? n : null;
-  };
+    return Object.values(errors).every((e) => !e);
+  }, [form, errors]);
+
+  const canSave = isFormValid && !saving;
 
   const save = async () => {
     if (!validateAll()) return;
 
-    const payload = structuredClone(form);
-    // ensure numeric types for years & percents
-    payload.graduation.startYear = Number(payload.graduation.startYear);
-    payload.graduation.endYear = Number(payload.graduation.endYear);
-    payload.classXii.passingYear = Number(payload.classXii.passingYear);
-    payload.classX.passingYear = Number(payload.classX.passingYear);
-
-    // convert percent buckets to number if needed
-    const p1 = parsePercent(payload.classXii.marksPercent);
-    const p2 = parsePercent(payload.classX.marksPercent);
-    payload.classXii.marksPercent = p1 ?? Number(payload.classXii.marksPercent);
-    payload.classX.marksPercent = p2 ?? Number(payload.classX.marksPercent);
+    const payload = {
+      graduation: {
+        degree: form.graduation.degree,
+        university: form.graduation.university,
+        specialization: form.graduation.specialization,
+        courseType: form.graduation.courseType,
+        startYear: Number(form.graduation.startYear),
+        endYear: Number(form.graduation.endYear),
+        marksPercent: Number(form.graduation.marksPercent) || 0
+      },
+      classXii: {
+        board: form.classXii.board,
+        passingYear: Number(form.classXii.passingYear) || 0,
+        marksPercent: Number(form.classXii.marksPercent) || 0
+      },
+      classX: {
+        board: form.classX.board,
+        passingYear: Number(form.classX.passingYear) || 0,
+        marksPercent: Number(form.classX.marksPercent) || 0
+      }
+    };
 
     try {
       setSaving(true);
       const jwt = localStorage.getItem("jwtToken");
-      await axios.put(`${EDU_API}/${applicantId}`, payload, {
+      await axios.put(`${EDU_API}/${applicantId}/updateApplciantEducationDetails`, payload, {
         headers: {
           Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
+          "Content-Type": "application/json"
+        }
       });
       onSuccess?.();
-    } catch (e) {
-      console.error("Education PUT failed:", e?.response || e);
-      onError?.(
-        e?.response?.data?.message ||
-        e?.response?.data ||
-        e?.message ||
-        "Failed to save education details"
-      );
+    } catch (err) {
+      console.error("Education PUT failed:", err);
+      onError?.(err?.response?.data?.message || "Failed to save education details");
     } finally {
       setSaving(false);
     }
   };
+
+  const getSpecializations = () => specializationOptions[form.graduation.degree] || [];
 
   return (
     <div style={{ paddingTop: 24 }}>
       <h3 style={{ marginBottom: 12 }}>Edit education details</h3>
 
       {/* Graduation */}
-      <div className="card-base" style={{ margin: 0 }}>
-        <div className="card-title-row" style={{ marginBottom: 12 }}>
-          <h4 className="card-title" style={{ fontSize: 14 }}>
-            Graduation details <span className="req">*</span>
-          </h4>
+      <div className="card-base">
+        <div className="card-title-row">
+          <h4 className="card-title">Graduation details *</h4>
         </div>
+
         <div className="pd-grid">
+
+          {/* Degree */}
           <CustomDropdown
             value={form.graduation.degree}
             options={degreeOptions}
-            placeholder="Graduation/Diploma"
-            onChange={(val) => setField("graduation.degree", val)}
+            placeholder="Select Degree"
+            onChange={(v) => setField("graduation.degree", v)}
             error={errors["graduation.degree"]}
           />
 
+          {/* University */}
           <div className="field-align">
             <input
               className="pd-input"
@@ -182,178 +266,141 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
               value={form.graduation.university}
               onChange={(e) => setField("graduation.university", e.target.value)}
             />
-            {errors["graduation.university"] && (
-              <div className="error-message">{errors["graduation.university"]}</div>
-            )}</div>
+            {errors["graduation.university"] && <div className="error-message">{errors["graduation.university"]}</div>}
+          </div>
+
+          {/* Marks Percent (NUMBER INPUT) */}
+          <div className="field-align">
+            <input
+              className="pd-input"
+              type="number"
+              placeholder="Marks in % (0–100)"
+              value={form.graduation.marksPercent}
+              onChange={(e) => setField("graduation.marksPercent", e.target.value)}
+              min="0"
+              max="100"
+            />
+            {errors["graduation.marksPercent"] && <div className="error-message">{errors["graduation.marksPercent"]}</div>}
+          </div>
+
+          {/* Specialization */}
+          <CustomDropdown
+            value={form.graduation.specialization}
+            options={getSpecializations()}
+            placeholder="Select Specialization"
+            onChange={(v) => setField("graduation.specialization", v)}
+            error={errors["graduation.specialization"]}
+          />
+
+          {/* Course Type */}
+          <CustomDropdown
+            value={form.graduation.courseType}
+            options={courseTypeOptions}
+            placeholder="Course Type"
+            onChange={(v) => setField("graduation.courseType", v)}
+            error={errors["graduation.courseType"]}
+          />
+
+          {/* Start Year */}
+          <CustomDropdown
+            value={form.graduation.startYear}
+            options={YEARS}
+            placeholder="Start Year"
+            onChange={(v) => setField("graduation.startYear", v)}
+            error={errors["graduation.startYear"]}
+          />
+
+          {/* End Year */}
+          <CustomDropdown
+            value={form.graduation.endYear}
+            options={YEARS}
+            placeholder="End Year"
+            onChange={(v) => setField("graduation.endYear", v)}
+            error={errors["graduation.endYear"]}
+          />
+
+        </div>
+      </div>
+
+      {/* CLASS XII */}
+      <div className="card-base" style={{ marginTop: 14 }}>
+        <div className="card-title-row">
+          <h4 className="card-title">Class XII details *</h4>
+        </div>
+
+        <div className="pd-grid">
+          <CustomDropdown
+            value={form.classXii.board}
+            onChange={(v) => setField("classXii.board", v)}
+            options={boardOptions}
+            placeholder="Board"
+            error={errors["classXii.board"]}
+          />
 
           <CustomDropdown
-            value={form.graduation.course}
-            options={[
-              "Computer Science", "Information Technology", "Electronics",
-              "Mechanical", "Civil", "AI & ML", "Data Science"
-            ]}
-            placeholder="Course"
-            onChange={(val) => setField("graduation.course", val)}
-            error={errors["graduation.course"]}
+            value={form.classXii.passingYear}
+            onChange={(v) => setField("classXii.passingYear", v)}
+            options={YEARS}
+            placeholder="Passing Year"
+            error={errors["classXii.passingYear"]}
           />
 
           <div className="field-align">
             <input
               className="pd-input"
-              placeholder="Specialization"
-              value={form.graduation.specialization}
-              onChange={(e) => setField("graduation.specialization", e.target.value)}
+              type="number"
+              placeholder="Marks in % (0–100)"
+              value={form.classXii.marksPercent}
+              onChange={(e) => setField("classXii.marksPercent", e.target.value)}
+              min="0"
+              max="100"
             />
-            {errors["graduation.specialization"] && (
-              <div className="error-message">{errors["graduation.specialization"]}</div>
-            )}
-          </div>
-
-          <CustomDropdown
-            value={form.graduation.courseType}
-            options={courseTypeOptions}
-            placeholder="Course Type"
-            onChange={(val) => setField("graduation.courseType", val)}
-            error={errors["graduation.courseType"]}
-          />
-
-          <CustomDropdown
-            value={form.graduation.gradingSystem}
-            options={gradingOptions}
-            placeholder="Grading System"
-            onChange={(val) => setField("graduation.gradingSystem", val)}
-            error={errors["graduation.gradingSystem"]}
-          />
-
-          <div className="field-align">
-            <div className="pd-input with-icon">
-              <select
-                className="pd-input raw"
-                value={form.graduation.startYear}
-                onChange={(e) => setField("graduation.startYear", e.target.value)}
-              >
-                <option value="">Course start year</option>
-                {YEARS.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <span className="pd-icon">📅</span>
-            </div>
-            {errors["graduation.startYear"] && (
-              <div className="error-message">{errors["graduation.startYear"]}</div>
-            )}
-          </div>
-          <div className="field-align">
-            <div className="pd-input with-icon">
-              <select
-                className="pd-input raw"
-                value={form.graduation.endYear}
-                onChange={(e) => setField("graduation.endYear", e.target.value)}
-              >
-                <option value="">Course ending year</option>
-                {YEARS.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-              <span className="pd-icon">📅</span>
-            </div>
-            {errors["graduation.endYear"] && (
-              <div className="error-message">{errors["graduation.endYear"]}</div>
-            )}
+            {errors["classXii.marksPercent"] && <div className="error-message">{errors["classXii.marksPercent"]}</div>}
           </div>
         </div>
       </div>
 
-      {/* Class XII */}
+      {/* CLASS X */}
       <div className="card-base" style={{ marginTop: 14 }}>
-        <div className="card-title-row" style={{ marginBottom: 12 }}>
-          <h4 className="card-title" style={{ fontSize: 14 }}>
-            Class XII details <span className="req">*</span>
-          </h4>
+        <div className="card-title-row">
+          <h4 className="card-title">Class X details *</h4>
         </div>
 
         <div className="pd-grid">
 
-          {/* Board of Education */}
           <CustomDropdown
-            value={form.classXii.board}
-            onChange={(v) => setField("classXii.board", v)}
-            options={boardOptions}
-            placeholder="Board of education"
-            error={errors["classXii.board"]}
-          />
-
-          {/* Passing Out Year */}
-          <CustomDropdown
-            value={form.classXii.passingYear}
-            onChange={(v) => setField("classXii.passingYear", v)}
-            options={YEARS}
-            placeholder="Passing out year"
-            error={errors["classXii.passingYear"]}
-          />
-
-          {/* Marks Percentage */}
-          <CustomDropdown
-            value={form.classXii.marksPercent}
-            onChange={(v) => setField("classXii.marksPercent", v)}
-            options={percentBuckets}
-            placeholder="Marks in %age"
-            error={errors["classXii.marksPercent"]}
-          />
-
-        </div>
-      </div>
-
-      {/* Class X */}
-      <div className="card-base" style={{ marginTop: 14 }}>
-        <div className="card-title-row" style={{ marginBottom: 12 }}>
-          <h4 className="card-title" style={{ fontSize: 14 }}>
-            Class X details <span className="req">*</span>
-          </h4>
-        </div>
-        <div className="pd-grid">
-
-          {/* Board */}
-          <CustomDropdown
-            label="Board of education"
             value={form.classX.board}
-            onChange={(val) => setField("classX.board", val)}
-            placeholder="Board of education"
+            onChange={(v) => setField("classX.board", v)}
             options={boardOptions}
+            placeholder="Board"
             error={errors["classX.board"]}
           />
 
-          {/* Passing Year */}
           <CustomDropdown
-            label="Passing out year"
             value={form.classX.passingYear}
-            onChange={(val) => setField("classX.passingYear", val)}
-            placeholder="Passing out year"
+            onChange={(v) => setField("classX.passingYear", v)}
             options={YEARS}
+            placeholder="Passing Year"
             error={errors["classX.passingYear"]}
           />
 
-          {/* Marks Percentage */}
-          <CustomDropdown
-            label="Marks in %age"
-            value={form.classX.marksPercent}
-            onChange={(val) => setField("classX.marksPercent", val)}
-            placeholder="Marks in %age"
-            options={percentBuckets}
-            error={errors["classX.marksPercent"]}
-          />
-
+          <div className="field-align">
+            <input
+              className="pd-input"
+              type="number"
+              placeholder="Marks in % (0–100)"
+              value={form.classX.marksPercent}
+              onChange={(e) => setField("classX.marksPercent", e.target.value)}
+              min="0"
+              max="100"
+            />
+            {errors["classX.marksPercent"] && <div className="error-message">{errors["classX.marksPercent"]}</div>}
+          </div>
         </div>
       </div>
 
       <div style={{ marginTop: 16, textAlign: "right" }}>
-        <button
-          className="btn-primary"
-          onClick={save}
-          disabled={!canSave}
-          aria-busy={saving}
-          style={{ opacity: !canSave ? 0.6 : 1 }}
-        >
+        <button className="btn-primary" onClick={save} disabled={!canSave}>
           {saving ? "Saving..." : "Save changes"}
         </button>
       </div>

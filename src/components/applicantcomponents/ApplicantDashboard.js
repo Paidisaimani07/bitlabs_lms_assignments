@@ -314,7 +314,7 @@ const ApplicantDashboard = () => {
 
 
         if (profileId === 0) {
-          navigate('/applicant-basic-details-form');
+          navigate('/applicant-basic-details-form/1');
         } else {
           setLoading(false);
         }

@@ -62,6 +62,7 @@ const ApplicantBasicDetails = () => {
     lastName: '',
     email: user.email || '',
     mobilenumber: user.mobilenumber || '',
+    address: '',
   });
   const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
@@ -69,7 +70,8 @@ const ApplicantBasicDetails = () => {
     lastName: applicant.lastName,
     alternatePhoneNumber: applicant.mobilenumber,
     email: applicant.email,
-  };
+    address: applicant.address
+    };
   const [errors, setErrors] = useState({});
   const handleQualificationChange = (selected) => {
     setQualification(selected[0] || null);
@@ -156,7 +158,11 @@ const handlePreferredJobLocationsChange = (selected) => {
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const steps = ['Personal Information', 'Professional Details', 'Upload Resume'];
+  const steps = [
+    'Basic Details',
+    'Professional Details'
+    // 'Resume Upload', // Commented out as per requirement
+  ];
   const yearsOptions = Array.from({ length: 16 }, (_, i) => ({ label: `${i}` }));
 
   const qualificationsOptions = ['B.Tech', 'MCA', 'Degree', 'Intermediate', 'Diploma'];
@@ -436,7 +442,7 @@ delete transformedApplicantProfileDTO.skillsRequired
       }
   
       
-      setCurrentStage((prevStage) => Math.min(prevStage + 1, steps.length));
+      setCurrentStage((prev) => Math.min(prev + 1, 2)); // Changed from 3 to 2 since we only have 2 steps now
     } catch (error) {
       console.error('Error during API call:', error);
      
@@ -453,52 +459,41 @@ delete transformedApplicantProfileDTO.skillsRequired
   };
 
   const handleBack = () => {
-    setCurrentStage((prevStage) => Math.max(prevStage - 1, 1));
+    setCurrentStage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!selectedFile) {
-      setErrorMessage('Please upload a valid file.');
+    
+    // Validate current stage before submission
+    if (currentStage === 1 && !validateForm1()) {
+      console.log("Validation failed for basic details");
+      return;
+    } else if (currentStage === 2 && !validateFields()) {
+      console.log("Validation failed for professional details");
       return;
     }
-   
+
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      const formData = new FormData();
-      formData.append('resume', resumeFile);
-      setIsResponseSubmitted(true);
-      await axios.post(
-        `${apiUrl}/applicant-pdf/${user.id}/upload`,
-
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
-      );
-      
-      addSnackbar({ message: 'Profile saved successfully.', type: 'success' });
-
-      
-    setTimeout(() => {
-      navigate('/applicanthome');
-    }, 3000); 
-      
-    } catch (error) {
-      console.error('Error uploading resume:', error);
-      setIsResponseSubmitted(false);
-      setResumeUploaded(false);
-      if (error.code === 'ERR_NETWORK') {
-        addSnackbar({ message: 'Please check your network and try again.', type: 'error' });
+      if (currentStage === 1) {
+        setCurrentStage(2);
+      } else if (currentStage === 2) {
+        // Final submission
+        addSnackbar({ message: 'Profile saved successfully!', type: 'success' });
+        await makeApiCall2(); 
+        
+        // Redirect to home page after a short delay
+        setTimeout(() => {
+          navigate('/applicanthome');
+        }, 2000);
       }
-      else{
-        addSnackbar({ message: 'Error uploading resume. Please try again.', type: 'error' });
-      }    }
-    resetForm();
-   
-   
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      addSnackbar({ 
+        message: error.response?.data?.message || 'Error saving profile. Please try again.', 
+        type: 'error' 
+      });
+    }
   };
 
  const resetForm = () => {
@@ -608,6 +603,19 @@ delete transformedApplicantProfileDTO.skillsRequired
           required
         />
         {errors.mobilenumber && <div className="error-message">{errors.mobilenumber}</div>}
+      </div>
+      <div className="input-wrapper">
+        <input
+          type="tel"
+          name="address"
+          placeholder="*Address"
+          value={applicant.address}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
+          className="input-form"
+          required
+        />
+        {errors.address && <div className="error-message">{errors.address}</div>}
       </div>
     </div>
         );
@@ -961,18 +969,17 @@ delete transformedApplicantProfileDTO.skillsRequired
             {(currentStage > 1 && currentStage < 3) && (
               <button type="button" onClick={handleBack} className="form-button1">Back</button>
             )}
-            {currentStage < 3 && (
-              <button type="button" onClick={handleNext} className="form-button" >Next</button>
+            {currentStage < 2 ? (
+              <button type="button" onClick={handleNext} className="form-button">Next</button>
+            ) : (
+              <button 
+                type="submit" 
+                className="form-button"
+                onClick={(e) => handleSubmit(e)}
+              >
+                Submit
+              </button>
             )}
-            {currentStage == 3 && (
-  <button
-    type="submit"
-    className="form-button"
-    disabled={!resumeUploaded || isResponseSubmitted}
-  >
-    Submit
-  </button>
-)}
           </div>
         </form>
       </div>

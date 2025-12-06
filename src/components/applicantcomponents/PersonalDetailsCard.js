@@ -26,7 +26,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
   const fetchBD = async () => {
     try {
       const jwtToken = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${PERSONAL_API}/${applicantId}`, {
+      const { data } = await axios.get(`${PERSONAL_API}/${applicantId}/getApplicantPersonalDetails`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       setBd(data || {});
@@ -57,7 +57,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
 
-  const fullName = useMemo(() => (bd?.fullName || "").trim(), [bd]);
+  const fullName = useMemo(() => (bd?.name || "").trim(), [bd]);
   const phone = bd?.phone || "";
   const email = bd?.email || "";
   const dob = bd?.dateOfBirth || "";
@@ -81,9 +81,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
 
   // Try likely endpoint shapes
   const candidates = [
-    `${RESUME_API}/upload/${applicantId}`,           // we tried this (404)
-    `${RESUME_API}/${applicantId}/upload`,           // alt pattern
-    `${RESUME_API}/upload?applicantId=${applicantId}` // query param
+    `${RESUME_API}/${applicantId}/upload`, 
   ];
 
   let success = false, lastErr;
