@@ -18,7 +18,6 @@ const validators = {
   technologiesUsed: required("Technologies used is required"),
   teamSize: requiredNum("Team size is required"),
   roleInProject: required("Your role is required"),
-  skillsUsed: required("Skills used is required"),
   roleDescription: required("Role description is required"),
   projectDescription: required("Project description is required"),
 };
@@ -184,7 +183,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
 
   const canSave = useMemo(() => {
     const noErrors = Object.values(errors).every((m) => !m);
-    const requiredPresent = ["projectTitle", "specialization", "technologiesUsed", "teamSize", "roleInProject", "skillsUsed", "roleDescription", "projectDescription"].every(
+    const requiredPresent = ["projectTitle", "specialization", "technologiesUsed", "teamSize", "roleInProject", "roleDescription", "projectDescription"].every(
       (k) => {
         const v = form[k];
         return validators[k] ? !validators[k](v) : true;
@@ -201,7 +200,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
     try {
       setSaving(true);
       const jwt = localStorage.getItem("jwtToken");
-      await axios.put(`${PROJ_API}/${applicantId}`, payload, {
+      await axios.put(`${PROJ_API}/${applicantId}/saveApplicantProject`, payload, {
         headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
       });
       onSuccess?.(); // let parent know save succeeded
@@ -285,16 +284,6 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
                 />
               </Field>
               <Error msg={errors.specialization} />
-
-              <Field label="Skills used" requiredMark hint="Add skills like REST API, JPA, Docker">
-                <ChipEditor
-                  value={form.skillsUsed}
-                  onChange={(v) => setField("skillsUsed", v)}
-                  placeholder="Type a skill and press Enter"
-                  inputName="skillsUsed"
-                />
-              </Field>
-              <Error msg={errors.skillsUsed} />
 
               <Field label="Project team size" requiredMark>
                 <input

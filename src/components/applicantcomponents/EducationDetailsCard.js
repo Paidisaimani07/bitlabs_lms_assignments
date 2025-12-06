@@ -111,14 +111,6 @@ const EducationDetailsCard = ({ applicantId }) => {
                 value={g.university || ""}
                 style={!g.university ? hintStyle : {}}
               />
-              <div className="pd-select-wrap">
-                <div className="profile-dropdown">
-                  <div className="pd-selected">
-                    {g.course || "Course"}
-                  </div>
-                  <span className="pd-caret">▾</span>
-                </div>
-              </div>
 
               {/* row 2 */}
               <input
@@ -132,14 +124,6 @@ const EducationDetailsCard = ({ applicantId }) => {
                 <div className="profile-dropdown">
                   <div className="pd-selected">
                     {g.courseType || "Course type"}
-                  </div>
-                  <span className="pd-caret">▾</span>
-                </div>
-              </div>
-              <div className="pd-select-wrap">
-                <div className="profile-dropdown">
-                  <div className="pd-selected">
-                    {g.gradingSystem || "Grading system"}
                   </div>
                   <span className="pd-caret">▾</span>
                 </div>
