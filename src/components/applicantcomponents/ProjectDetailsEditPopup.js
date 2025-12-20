@@ -3,49 +3,43 @@ import React, { useMemo, useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import "./ProjectEditModal.css"; // make sure path is correct
+import { useRefresh } from "../common/RefreshContext";
 
 // Use your API base
 import { apiUrl } from "../../services/ApplicantAPIService";
 const PROJ_API = `${apiUrl}/applicant-projects`;
 
-/* validators (same as before) */
-const required = (msg) => (v) => (String(v ?? "").trim() ? "" : msg);
-const requiredNum = (msg) => (v) => (v === 0 || v ? "" : msg);
+const validateTextWithTrailingSpace = (value, fieldName, minLength, maxLength) => {
+  const trimmed = String(value).trim();
+  const hasMultipleTrailingSpaces = /\s{2,}$/.test(value);
+
+  if (!trimmed) return `${fieldName} is required`;
+  if (trimmed.length < minLength) return `${fieldName} must be at least ${minLength} characters`;
+  if (trimmed.length > maxLength) return `${fieldName} must not exceed ${maxLength} characters`;
+  if (hasMultipleTrailingSpaces) return `${fieldName} can only have one space at the end`;
+  return "";
+};
 
 const validators = {
-  projectTitle: (v) => {
-    if (!v || String(v).trim().length < 3) return "Project title must be between 3 and 500 characters";
-    if (String(v).trim().length > 500) return "Project title must be between 3 and 500 characters";
+  projectTitle: (v) => validateTextWithTrailingSpace(v, "Project title", 3, 500),
+  specialization: (v) => validateTextWithTrailingSpace(v, "Specialization", 2, 500),
+  technologiesUsed: (v) => {
+    if (!v || String(v).trim().length === 0) return "Technologies used is required";
+    const hasMultipleTrailingSpaces = /\s{2,}$/.test(v);
+    if (hasMultipleTrailingSpaces) return "Technologies used can only have one space at the end";
     return "";
   },
-  specialization: (v) => {
-    if (!v || String(v).trim().length < 2) return "Specialization must be between 2 and 500 characters";
-    if (String(v).trim().length > 500) return "Specialization must be between 2 and 500 characters";
-    return "";
-  },
-  technologiesUsed: required("Technologies used is required"),
   teamSize: (v) => {
     if (v === "" || v === null || v === undefined) return "Team size is required";
     const num = Number(v);
     if (isNaN(num)) return "Team size must be a number";
     if (num < 1) return "Team size must be at least 1";
+    if (num > 20) return "Team size cannot exceed 20";
     return "";
   },
-  roleInProject: (v) => {
-    if (!v || String(v).trim().length < 3) return "Role in project must be between 3 and 500 characters";
-    if (String(v).trim().length > 500) return "Role in project must be between 3 and 500 characters";
-    return "";
-  },
-  roleDescription: (v) => {
-    if (!v || String(v).trim().length < 10) return "Role description must be between 10 and 5000 characters";
-    if (String(v).trim().length > 5000) return "Role description must be between 10 and 5000 characters";
-    return "";
-  },
-  projectDescription: (v) => {
-    if (!v || String(v).trim().length < 10) return "Project description must be between 10 and 5000 characters";
-    if (String(v).trim().length > 5000) return "Project description must be between 10 and 5000 characters";
-    return "";
-  },
+  roleInProject: (v) => validateTextWithTrailingSpace(v, "Role in project", 3, 500),
+  roleDescription: (v) => validateTextWithTrailingSpace(v, "Role description", 10, 5000),
+  projectDescription: (v) => validateTextWithTrailingSpace(v, "Project description", 10, 5000),
 };
 
 /* Small presentational helpers */
@@ -164,6 +158,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const { triggerRefresh } = useRefresh();
 
   useEffect(() => {
     // Keep form synced if `initial` changes while open
@@ -183,7 +178,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
   useEffect(() => {
     const esc = (e) => {
       if (e.key === "Escape") {
-        (onClose || (() => {}))();
+        (onClose || (() => { }))();
       }
     };
     window.addEventListener("keydown", esc);
@@ -191,6 +186,13 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
   }, [onClose]);
 
   const setField = (name, value) => {
+    if (typeof value === 'string' && name !== 'technologiesUsed') {
+      value = value.replace(/\s+/g, ' ');
+      if (value.startsWith(' ')) {
+        value = value.trimStart();
+      }
+    }
+
     setForm((f) => ({ ...f, [name]: value }));
     if (validators[name]) {
       setErrors((e) => ({ ...e, [name]: validators[name](value) }));
@@ -229,6 +231,7 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
       await axios.put(`${PROJ_API}/${applicantId}/saveApplicantProject`, payload, {
         headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
       });
+      triggerRefresh();
       onSuccess?.(); // let parent know save succeeded
     } catch (err) {
       console.error("Project PUT failed:", err?.response || err);
@@ -245,24 +248,19 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
   };
 
   return (
-    <div className="pe-overlay" role="dialog" aria-modal="true" onClick={handleClose}>
-      <div className="pe-container" role="document" onClick={(e) => e.stopPropagation()}>
+    <div role="dialog" aria-modal="true" onClick={handleClose}>
+      <div role="document" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="pe-header">
           <div className="pe-header-left">
             <h3 className="pe-title">Edit project</h3>
           </div>
-
-          {/* Close MUST be type="button" to avoid submitting form */}
-          <button type="button"  onClick={handleClose}>
-            ×
-          </button>
         </div>
 
         {/* Body & Form */}
-        <div className="pe-body">
+        <div>
           {/* use a native <form> so Enter triggers Save, and Save button is type="submit" */}
-          <form className="pe-grid" onSubmit={handleSave} noValidate>
+          <form className="pe-grid" style={{ marginTop: "10px" }} onSubmit={handleSave} noValidate>
             {/* Left column */}
             <div className="pe-col">
               <Field label="Project title" requiredMark hint="">
@@ -358,18 +356,8 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
             <div className="pe-col pe-col-full" style={{ padding: 0 }}>
               <div className="pe-actions" role="group" aria-label="Form actions">
                 <button
-                  type="button"
-                  className="pe-btn-secondary"
-                  onClick={handleClose}
-                  disabled={saving}
-                >
-                  Cancel
-                </button>
-
-                <button
                   type="submit" /* submit triggers handleSave */
                   className="pe-btn-primary"
-                  disabled={!canSave}
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>
