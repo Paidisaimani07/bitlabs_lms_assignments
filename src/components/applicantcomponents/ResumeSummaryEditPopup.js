@@ -9,18 +9,18 @@ const MAX_LEN = 2000;
 const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, onError }) => {
   const [value, setValue] = useState(initialSummary || "");
   const [saving, setSaving] = useState(false);
+  const [isTouched, setIsTouched] = useState(false);
 
   const trimmed = useMemo(() => (value || "").trim(), [value]);
   const length = trimmed.length;
 
-  const error =
-    !length
-      ? "Summary is required."
-      : length < MIN_LEN
+  const error = !length
+    ? ""
+    : length < MIN_LEN
       ? `Summary must be at least ${MIN_LEN} characters.`
       : length > MAX_LEN
-      ? `Summary must be no more than ${MAX_LEN} characters.`
-      : "";
+        ? `Summary must be no more than ${MAX_LEN} characters.`
+        : "";
 
   const canSave = !error && !saving;
 
@@ -61,6 +61,7 @@ const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, o
         rows={10}
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onBlur={() => setIsTouched(true)}
         placeholder="Write a concise professional summary (30–2000 chars)…"
         style={{
           width: "100%",
@@ -82,10 +83,12 @@ const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, o
           fontSize: 13,
         }}
       >
-        <span>{error ? error : "Looks good."}</span>
-        <span>
-          {length}/{MAX_LEN}
-        </span>
+        {length > 0 && (
+          <>
+            <span>{error || "Looks good."}</span>
+            <span>{length}/{MAX_LEN}</span>
+          </>
+        )}
       </div>
 
       <div style={{ marginTop: 12, textAlign: "right" }}>

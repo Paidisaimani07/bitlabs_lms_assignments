@@ -46,27 +46,22 @@ const ResumeSummaryCard = ({ applicantId }) => {
 
   return (
     <>
-      <div className="col-lg-12 col-md-12">
+      <div className="col-lg-12 col-md-12 common_style">
         <div className="card-base soft-shadow">
           <div className="card-title-row">
             <h4 className="card-title">
               Resume summary <span className="req">*</span>
             </h4>
-             <button
-                                type="button"
-                                className="portfolio-edit-btn"
-                                onClick={() => setOpen(true)}>
-                                Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
-                              </button>
+            <button
+              type="button"
+              className="portfolio-edit-btn"
+              onClick={() => setOpen(true)}>
+              Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
+            </button>
           </div>
 
           <p
-            className="summary-text"
-            style={{
-              color: summary ? "#3b3b3b" : "#9ca3af",
-              fontStyle: summary ? "normal" : "italic",
-            }}
-          >
+            className="summary-text">
             {displayText}
           </p>
         </div>
