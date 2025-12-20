@@ -56,13 +56,17 @@ const ApplicantBasicDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [resumeUploaded, setResumeUploaded] = useState(false);
-  const [isResponseSubmitted, setIsResponseSubmitted] = useState(false);
   const [applicant, setApplicant] = useState({
     firstName: '',
     lastName: '',
     email: user.email || '',
     mobilenumber: user.mobilenumber || '',
     address: '',
+  });
+  const [remainingChars, setRemainingChars] = useState({
+    firstName: { current: 0, min: 3 },
+    lastName: { current: 0, min: 3 },
+    address: { current: 0, min: 10 }
   });
   const closeModal = () => setIsModalOpen(false);
   const basicDetails = {
@@ -90,19 +94,40 @@ const ApplicantBasicDetails = () => {
 
   const validateInput = (name, value) => {
     let error = '';
+    const fieldMinLengths = {
+      firstName: 3,
+      lastName: 3,
+      address: 10
+    };
+    
+    const minLength = fieldMinLengths[name] || 0;
+    const remaining = Math.max(0, minLength - value.length);
+    
+    if (fieldMinLengths.hasOwnProperty(name)) {
+      setRemainingChars(prev => ({
+        ...prev,
+        [name]: { ...prev[name], current: value.length }
+      }));
+    }
 
     if (name === 'firstName' || name === 'lastName') {
-      if (value.length < 3) {
-          error = `${name === 'firstName' ? 'First' : 'Last'} name should be at least 3 characters long.`;
+      if (value.length < minLength) {
+        error = `${name === 'firstName' ? 'First' : 'Last'} name requires ${remaining} more ${remaining === 1 ? 'character' : 'characters'}.`;
       } else if (!/^[a-zA-Z\s]+$/.test(value)) {
-          error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters and spaces without special characters and numbers.`;
+        error = `${name === 'firstName' ? 'First' : 'Last'} name should contain only letters and spaces.`;
       }
-  
-  
     } else if (name === 'mobilenumber') {
-        if (!/^[6789]\d{9}$/.test(value)) {
-            error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
-        }
+      if (!value) {
+        error = 'Mobile number is required';
+      } else if (!/^[6789]\d{9}$/.test(value)) {
+        error = 'Should be 10 digits and start with 6, 7, 8, or 9.';
+      }
+    } else if (name === 'address') {
+      if (value.length < minLength) {
+        error = `Address requires ${remaining} more ${remaining === 1 ? 'character' : 'characters'} (minimum ${minLength}).`;
+      } else if (/\s{2,}/.test(value)) {
+        error = 'Multiple spaces are not allowed.';
+      }
     }
 
     setErrors((prevErrors) => ({
@@ -115,12 +140,32 @@ const ApplicantBasicDetails = () => {
 
 const handleInputChange = (e) => {
   const { name, value } = e.target;
-  setApplicant((prevApplicant) => ({
-      ...prevApplicant,
-      [name]: value,
-  }));
-
   
+  if (name === 'mobilenumber') {
+    const numericValue = value.replace(/\D/g, '').slice(0, 10);
+    setApplicant(prev => ({
+      ...prev,
+      [name]: numericValue
+    }));
+    validateInput('mobilenumber', numericValue);
+    return;
+  }
+  
+  if ((name === 'firstName' || name === 'lastName') && /\d/.test(value)) {
+    return; 
+  }
+  
+  let newValue = value.replace(/\s{2,}/g, ' ');
+  
+  setApplicant(prev => ({
+    ...prev,
+    [name]: newValue
+  }));
+  
+  const minLengthFields = ['firstName', 'lastName', 'address'];
+  if (minLengthFields.includes(name)) {
+    validateInput(name, newValue);
+  }
 };
 
 const handleBlur = (e) => {
@@ -158,6 +203,7 @@ const handlePreferredJobLocationsChange = (selected) => {
   const [requestData, setRequestData] = useState(null);
   const [loginUrl, setLoginUrl] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const steps = [
     'Basic Details',
     'Professional Details'
@@ -184,28 +230,35 @@ const validateForm1 = () => {
   const validFirstName = validateInput('firstName', applicant.firstName);
   const validLastName = validateInput('lastName', applicant.lastName);
   const validMobileNumber = validateInput('mobilenumber', applicant.mobilenumber);
+  const validAddress = validateInput('address', applicant.address);
 
   if (!applicant.firstName) {
     newErrors.firstName = "First name is required";
-} else if (!validateInput('firstName', applicant.firstName)) {
+  } else if (!validFirstName) {
     newErrors.firstName = errors.firstName;
-}
+  }
 
-if (!applicant.lastName) {
+  if (!applicant.lastName) {
     newErrors.lastName = "Last name is required";
-} else if (!validateInput('lastName', applicant.lastName)) {
+  } else if (!validLastName) {
     newErrors.lastName = errors.lastName;
-}
+  }
 
-if (!applicant.mobilenumber) {
+  if (!applicant.mobilenumber) {
     newErrors.mobilenumber = "Mobile number is required";
 } else if (!validateInput('mobilenumber', applicant.mobilenumber)) {
     newErrors.mobilenumber = errors.mobilenumber;
-}
+  }
+
+  if (!applicant.address) {
+    newErrors.address = "Address is required";
+  } else if (!validAddress) {
+    newErrors.address = errors.address;
+  }
 
   setErrors(newErrors);
-  return validFirstName && validLastName && validMobileNumber && 
-         applicant.firstName && applicant.lastName && applicant.mobilenumber;
+  return validFirstName && validLastName && validMobileNumber && validAddress &&
+         applicant.firstName && applicant.lastName && applicant.mobilenumber && applicant.address;
 }; 
   
   const makeApiCall2 = async () => {
@@ -407,7 +460,9 @@ delete transformedApplicantProfileDTO.skillsRequired
     if (!experience) newErrors.experience = 'Experience is required';
     if (preferredJobLocations.length === 0) newErrors.preferredJobLocations = 'Preferred Job Locations are required';
     
+     if (isSubmitted) {
     setErrors(newErrors);
+  }
   
 
     return Object.keys(newErrors).length === 0;
@@ -425,15 +480,6 @@ delete transformedApplicantProfileDTO.skillsRequired
           }
           
           console.log('API call 1 response:');
-          break;
-        case 2:
-
-        if (validateFields()) {
-          const response2 = await makeApiCall2(); 
-          console.log('API call 2 response:');
-        } else {
-          return false;
-        }
           break;
         default:
           console.warn('Unexpected stage:');
@@ -463,9 +509,21 @@ delete transformedApplicantProfileDTO.skillsRequired
   };
 
   const handleSubmit = async (e) => {
+    setIsSubmitted(true);  
     e.preventDefault();
     
-    // Validate current stage before submission
+    // Trim text fields before validation
+    const trimmedApplicant = {
+      ...applicant,
+      firstName: applicant.firstName.trim(),
+      lastName: applicant.lastName.trim(),
+      address: applicant.address.trim()
+    };
+    
+    // Update state with trimmed values
+    setApplicant(trimmedApplicant);
+    
+    // Validate with trimmed values
     if (currentStage === 1 && !validateForm1()) {
       console.log("Validation failed for basic details");
       return;
