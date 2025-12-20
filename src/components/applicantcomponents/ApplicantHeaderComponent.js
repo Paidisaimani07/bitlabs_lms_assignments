@@ -8,6 +8,7 @@ import BasicDetailsEditPopup from "./BasicDetailsEditPopup";
 import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from '../common/UserProvider';
+import { useRefresh } from "../common/RefreshContext";
 
 Modal.setAppElement("#root");
 
@@ -19,7 +20,7 @@ const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
 
 const DEFAULT_CARD = {
   name: "",
-  role: "Full–Stack Developer",
+  role: "—",
   mobileNumber: "",
   email: "",
   passOutyear: "",
@@ -231,6 +232,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const [cappedScore, setCappedScore] = useState(0);
   const { user } = useUserContext();
   const CARD_API = `${apiUrl}/applicant-card/${user?.id}/getApplciantCard`;
+  const { refreshKey } = useRefresh();
 
   const bronzeScore = 150;
   const silverScore = 300;
@@ -390,13 +392,13 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
     fetchCard();
     fetchPhoto();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantId]);
+  }, [applicantId, refreshKey]);
 
   const fullName = useMemo(() => (card?.name?.trim() ? card.name : "—"), [card]);
   const roleTitle = useMemo(() => (card?.role?.trim() ? card.role : DEFAULT_CARD.role), [card]);
   const phoneText = useMemo(() => (card?.mobileNumber?.trim() ? card.mobileNumber : "—"), [card]);
   const emailText = useMemo(() => (card?.email?.trim() ? card.email : "—"), [card]);
-  const passOutText = useMemo(() => (card?.passOutyear ? `Pass-out: ${card.passOutyear}` : ""), [card]);
+  const passOutText = useMemo(() => (card?.passOutyear ? `Pass-out: ${card.passOutyear}` : "—"), [card]);
   const locationText = useMemo(() => (card?.address || ""), [card]);
 
   // Format and show "last updated"
@@ -469,7 +471,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
         <div className="portfolio-divider" aria-hidden="true" />
 
         {/* middle */}
-        <div className="portfolio-middle">
+        <div className="portfolio-middle common_style">
           <div className="portfolio-row">
             <svg className="portfolio-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path
@@ -508,11 +510,11 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
         </div>
 
         {/* right score */}
-        <div className="portfolio-right">
+        <div className="portfolio-right common_style">
           <p className="portfolio-score-label">Score</p>
           <div className="portfolio-score">{card?.score ?? 0}</div>
         </div>      </div>
-      <div className="badge-progress-wrapper" style={{ width: "100%", height: "130px", padding: "5px 15px", margin: "0" }}>
+      <div className="badge-progress-wrapper common_style" style={{ width: "100%", height: "130px", padding: "5px 15px", margin: "0" }}>
         <div className="progress-text">
           <p>Badge achievement level</p>
           {Math.round((cappedScore / goldScore) * 100)}%
