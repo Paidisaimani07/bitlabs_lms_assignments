@@ -35,15 +35,15 @@ const KeySkillsCard = ({ applicantId }) => {
   }, [applicantId]);
 
   return (
-    <div className="card-base soft-shadow card-skills" style={{overflow:"hidden"}}>
+    <div className="card-base soft-shadow card-skills common_style" style={{ overflow: "hidden" }}>
       <div className="card-title-row">
         <h3 className="card-title">Key skills <span className="req">*</span></h3>
         <button
-                    type="button"
-                    className="portfolio-edit-btn"
-                    onClick={() => setOpen(true)}>
-                    Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
-                  </button>
+          type="button"
+          className="portfolio-edit-btn"
+          onClick={() => setOpen(true)}>
+          Edit <FontAwesomeIcon icon={faPen} style={{ marginRight: "6px" }} />
+        </button>
       </div>
       <p className="card-subtitle" style={{ marginBottom: 12 }}>
         Add skills that best define your expertise (e.g., Java, React, SQL). Minimum 1.

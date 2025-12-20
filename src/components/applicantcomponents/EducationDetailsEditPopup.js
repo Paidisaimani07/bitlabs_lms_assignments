@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import CustomDropdown from "../common/CustomDropdown";
+import { useRefresh } from "../common/RefreshContext";
 
 const EDU_API = `${apiUrl}/applicant-education`;
 
@@ -68,18 +69,40 @@ const validateYear = (value, { startYear } = {}) => {
   return "";
 };
 
+const handleDecimalInput = (value) => {
+  if (value === "") return value;
+  if (!/^\d{0,3}(\.\d{0,2})?$/.test(value)) return null;
+
+  return value;
+};
+
+
 const validatePercentage = (value) => {
   if (value === "" || value === null) return "Marks % is required";
   const num = Number(value);
   if (isNaN(num)) return "Must be a valid number";
-  if (num < 0 || num > 100) return "Must be between 0 and 100";
+  if (num < 35 || num > 100) return "Must be between 35 and 100";
+  return "";
+};
+
+const validateUniversity = (value) => {
+  if (!value) return "University/Institute is required";
+
+  const trimmed = value.trim();
+
+  if (trimmed.length < 10)
+    return "University name must be at least 10 characters long";
+
+  if (/\s{2,}/.test(value))
+    return "Only single spaces are allowed between words";
+
   return "";
 };
 
 const validators = {
   graduation: {
     degree: nonEmpty("Graduation/Diploma is required"),
-    university: nonEmpty("University/Institute is required"),
+    university: validateUniversity,
     specialization: nonEmpty("Specialization is required"),
     courseType: nonEmpty("Course type is required"),
 
@@ -87,8 +110,9 @@ const validators = {
       if (!value) return "Start year is required";
       if (isNaN(value)) return "Must be a valid year";
       if (value < 1900) return "Year must be after 1900";
-      if (form.graduation.endYear && value > form.graduation.endYear) {
-        return "Must be before end year";
+
+      if (form.graduation.endYear && Number(value) >= Number(form.graduation.endYear)) {
+        return "Start year cannot be same or after end year";
       }
       return "";
     },
@@ -96,7 +120,11 @@ const validators = {
     endYear: (value, form) => {
       if (!value) return "End year is required";
       if (isNaN(value)) return "Must be a valid year";
-      if (value < form.graduation.startYear) return "Must be after start year";
+
+      if (Number(value) <= Number(form.graduation.startYear)) {
+        return "End year must be after start year";
+      }
+
       if (value > new Date().getFullYear() + 5) return "Invalid future year";
       return "";
     },
@@ -106,13 +134,34 @@ const validators = {
 
   classXii: {
     board: nonEmpty("Board of education is required"),
-    passingYear: validateYear,
+    passingYear: (value, form) => {
+      if (!value) return "Passing year is required";
+      if (isNaN(value)) return "Must be valid year";
+
+      const gradStart = Number(form.graduation.startYear);
+      if (gradStart && Number(value) > gradStart) {
+        return "Class XII year must be before or equal to Graduation start year";
+      }
+
+      return "";
+    },
     marksPercent: validatePercentage
   },
 
   classX: {
     board: nonEmpty("Board of education is required"),
-    passingYear: validateYear,
+    passingYear: (value, form) => {
+      if (!value) return "Passing year is required";
+      if (isNaN(value)) return "Must be valid year";
+
+      const xii = Number(form.classXii.passingYear);
+      if (xii && Number(value) > xii) {
+        return "Class X year must be before or equal to Class XII year";
+      }
+
+      return "";
+    },
+
     marksPercent: validatePercentage
   }
 };
@@ -139,6 +188,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
       marksPercent: initial?.classX?.marksPercent || ""
     }
   });
+  const { triggerRefresh } = useRefresh();
 
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -147,6 +197,16 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
     setForm((f) => {
       const copy = JSON.parse(JSON.stringify(f));
       const [section, field] = path.split(".");
+
+      if (section === 'graduation' && field === 'degree' && f.graduation.degree !== value) {
+        copy[section].specialization = '';
+        setErrors(e => {
+          const newErrors = { ...e };
+          delete newErrors['graduation.specialization'];
+          return newErrors;
+        });
+      }
+
       copy[section][field] = value;
 
       const validator = validators[section]?.[field];
@@ -226,6 +286,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           "Content-Type": "application/json"
         }
       });
+      triggerRefresh();
       onSuccess?.();
     } catch (err) {
       console.error("Education PUT failed:", err);
@@ -264,7 +325,10 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
               className="pd-input"
               placeholder="University / Institute"
               value={form.graduation.university}
-              onChange={(e) => setField("graduation.university", e.target.value)}
+              onChange={(e) => {
+                const cleaned = e.target.value.replace(/\s{2,}/g, " ");
+                setField("graduation.university", cleaned);
+              }}
             />
             {errors["graduation.university"] && <div className="error-message">{errors["graduation.university"]}</div>}
           </div>
@@ -273,14 +337,18 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           <div className="field-align">
             <input
               className="pd-input"
-              type="number"
-              placeholder="Marks in % (0–100)"
+              type="text"
+              placeholder="Marks in % (35–100)"
               value={form.graduation.marksPercent}
-              onChange={(e) => setField("graduation.marksPercent", e.target.value)}
-              min="0"
-              max="100"
+              onChange={(e) => {
+                const v = handleDecimalInput(e.target.value);
+                if (v !== null) setField("graduation.marksPercent", v);
+              }}
+              inputMode="decimal"
             />
-            {errors["graduation.marksPercent"] && <div className="error-message">{errors["graduation.marksPercent"]}</div>}
+            {errors["graduation.marksPercent"] && (
+              <div className="error-message">{errors["graduation.marksPercent"]}</div>
+            )}
           </div>
 
           {/* Specialization */}
@@ -348,14 +416,18 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           <div className="field-align">
             <input
               className="pd-input"
-              type="number"
-              placeholder="Marks in % (0–100)"
+              type="text"
+              placeholder="Marks in % (35–100)"
               value={form.classXii.marksPercent}
-              onChange={(e) => setField("classXii.marksPercent", e.target.value)}
-              min="0"
-              max="100"
+              onChange={(e) => {
+                const v = handleDecimalInput(e.target.value);
+                if (v !== null) setField("classXii.marksPercent", v);
+              }}
+              inputMode="decimal"
             />
-            {errors["classXii.marksPercent"] && <div className="error-message">{errors["classXii.marksPercent"]}</div>}
+            {errors["classXii.marksPercent"] && (
+              <div className="error-message">{errors["classXii.marksPercent"]}</div>
+            )}
           </div>
         </div>
       </div>
@@ -387,14 +459,18 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
           <div className="field-align">
             <input
               className="pd-input"
-              type="number"
-              placeholder="Marks in % (0–100)"
+              type="text"
+              placeholder="Marks in % (35–100)"
               value={form.classX.marksPercent}
-              onChange={(e) => setField("classX.marksPercent", e.target.value)}
-              min="0"
-              max="100"
+              onChange={(e) => {
+                const v = handleDecimalInput(e.target.value);
+                if (v !== null) setField("classX.marksPercent", v);
+              }}
+              inputMode="decimal"
             />
-            {errors["classX.marksPercent"] && <div className="error-message">{errors["classX.marksPercent"]}</div>}
+            {errors["classX.marksPercent"] && (
+              <div className="error-message">{errors["classX.marksPercent"]}</div>
+            )}
           </div>
         </div>
       </div>
