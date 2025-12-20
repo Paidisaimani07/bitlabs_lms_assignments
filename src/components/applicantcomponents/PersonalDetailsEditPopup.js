@@ -2,6 +2,7 @@ import React, { useMemo, useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import CustomDropdown from "../common/CustomDropdown";
+import { useRefresh } from "../common/RefreshContext";
 
 const PERSONAL_API = `${apiUrl}/applicant-personal`;
 
@@ -36,7 +37,19 @@ const validators = {
     if (!/^[6789]\d{9}$/.test(t)) return "Phone must be 10 digits starting with 6/7/8/9.";
     return "";
   },
-  dateOfBirth: (v) => (!v ? "Date of birth is required." : ""),
+  dateOfBirth: (v) => {
+    if (!v) return "Date of birth is required.";
+    const dob = new Date(v);
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setFullYear(today.getFullYear() - 100);
+    const maxDate = new Date();
+    maxDate.setFullYear(today.getFullYear() - 16);
+
+    if (dob > maxDate) return "You must be at least 16 years old.";
+    if (dob < minDate) return "Maximum age allowed is 100 years.";
+    return "";
+  },
   pincode: (v) => {
     const t = (v || "").trim();
     if (!t) return "PIN code is required.";
@@ -75,8 +88,25 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
   const [langInput, setLangInput] = useState("");
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
+  const { triggerRefresh } = useRefresh();
+
+  const handleNumericInput = (name, value) => {
+    // Remove any non-digit characters
+    const numericValue = value.replace(/\D/g, '');
+
+    // Set max length based on field type
+    const maxLength = name === 'pincode' ? 6 : 10;
+
+    // Truncate if exceeds max length
+    return numericValue.slice(0, maxLength);
+  };
 
   const setField = (name, value) => {
+    // Special handling for numeric fields
+    if (name === 'phone' || name === 'pincode') {
+      value = handleNumericInput(name, value);
+    }
+
     setForm((f) => ({ ...f, [name]: value }));
     const v = name === "knownLanguages" ? value : value;
     setErrors((e) => ({
@@ -141,6 +171,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
           "Content-Type": "application/json",
         },
       });
+      triggerRefresh();
       onSuccess?.();
     } catch (e) {
       console.error("Personal details update failed:", e?.response || e);
@@ -200,15 +231,24 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
           <input
             className="pd-input"
             type="tel"
-            placeholder="* Enter phone number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="* Enter 10-digit phone number"
             value={form.phone}
+            maxLength={10}
             onChange={(e) => setField("phone", e.target.value)}
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
+
           />
           {errors.phone && <div className="error-message">{errors.phone}</div>}
         </div>
 
         {/* DOB (ISO) */}
-        <div className="pd-input with-icon" style={{height:"50px"}}>
+        <div className="pd-input with-icon" style={{ height: "50px" }}>
           <input
             className="pd-input raw"
             type="date"
@@ -216,7 +256,6 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
             value={form.dateOfBirth}
             onChange={(e) => setField("dateOfBirth", e.target.value)}
           />
-          <span className="pd-icon" aria-hidden>📅</span>
         </div>
         {errors.dateOfBirth && (
           <div className="error-message" style={{ gridColumn: "1 / -1" }}>{errors.dateOfBirth}</div>
@@ -226,10 +265,20 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         <div className="input-wrapper">
           <input
             className="pd-input"
-            style={{width:"100%"}}
-            placeholder="* PIN code"
+            style={{ width: "100%" }}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="* Enter 6-digit PIN code"
             value={form.pincode}
+            maxLength={6}
             onChange={(e) => setField("pincode", e.target.value)}
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
+
           />
           {errors.pincode && <div className="error-message">{errors.pincode}</div>}
         </div>
@@ -238,7 +287,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         <div className="input-wrapper">
           <input
             className="pd-input"
-            style={{width:"100%"}}
+            style={{ width: "100%" }}
             placeholder="* Permanent address"
             value={form.address}
             onChange={(e) => setField("address", e.target.value)}

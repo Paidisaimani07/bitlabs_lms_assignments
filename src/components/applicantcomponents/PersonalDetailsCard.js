@@ -8,6 +8,7 @@ import Snackbar from "../common/Snackbar";
 import PersonalDetailsEditPopup from "./PersonalDetailsEditPopup";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { useRefresh } from "../common/RefreshContext";
 
 const PERSONAL_API = `${apiUrl}/applicant-personal`;
 const RESUME_API = `${apiUrl}/applicant-pdf`;
@@ -18,6 +19,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
   const [snackbars, setSnackbars] = useState([]);
   const [resumeAvailable, setResumeAvailable] = useState(false);
   const fileInputRef = useRef(null);
+  const { refreshKey } = useRefresh();
 
   const addSnackbar = (snackbar) => setSnackbars((p) => [...p, snackbar]);
   const handleCloseSnackbar = (index) =>
@@ -55,7 +57,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
     fetchBD();
     probeResume();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantId]);
+  }, [applicantId, refreshKey]);
 
   const fullName = useMemo(() => (bd?.name || "").trim(), [bd]);
   const phone = bd?.phone || "";
@@ -128,11 +130,10 @@ const PersonalDetailsCard = ({ applicantId }) => {
     }
   };
 
-  const hintStyle = { color: "#9ca3af", fontStyle: "italic" };
 
   return (
     <>
-      <div className="col-lg-12 col-md-12">
+      <div className="col-lg-12 col-md-12 common_style">
         <div className="card-base soft-shadow">
           <div className="card-title-row">
             <h4 className="card-title">
@@ -150,14 +151,13 @@ const PersonalDetailsCard = ({ applicantId }) => {
 
           <div className="pd-grid">
             <input
-              className="pd-input"
+              className="pd-input common_style"
               readOnly
               placeholder="Enter full name"
               value={fullName || ""}
-              style={!fullName ? hintStyle : {}}
             />
              <div className="pd-select-wrap">
-              <div className="profile-dropdown">
+              <div className="profile-dropdown common_style">
                 <div className="pd-selected">
                   {gender || "choose gender"}
                 </div>
@@ -165,65 +165,56 @@ const PersonalDetailsCard = ({ applicantId }) => {
               </div>
             </div>
             <input
-              className="pd-input"
+              className="pd-input common_style"
               readOnly
               placeholder="Enter email"
               value={email || ""}
-              style={!email ? hintStyle : {}}
             />
 
             <input
-              className="pd-input"
+              className="pd-input common_style"
               readOnly
               placeholder="Enter phone number"
               value={phone || ""}
-              style={!phone ? hintStyle : {}}
             />
             <div className="pd-input with-icon">
               <input
-                className="pd-input raw"
+                className="pd-input raw common_style"
                 readOnly
                 placeholder="Date of birth"
                 value={dob || ""}
-                style={!dob ? hintStyle : {}}
               />
-              <span className="pd-icon" aria-hidden>
+              <span className="pd-icon common_style" aria-hidden>
                 📅
               </span>
             </div>
             <input
-              className="pd-input"
+              className="pd-input common_style"
               readOnly
               placeholder="PIN code"
               value={pincode || ""}
-              style={!pincode ? hintStyle : {}}
             />
 
             <input
-              className="pd-input span-2"
+              className="pd-input span-2 common_style"
               readOnly
               placeholder="Permanent address"
               value={address || ""}
-              style={!address ? hintStyle : {}}
             />
             <div className="pd-input with-add">
               <input
-                className="pd-input raw"
+                className="pd-input raw common_style"
                 readOnly
-                placeholder="Known Language"
+                placeholder="Known language(s)"
                 value={languages || ""}
-                style={!languages ? hintStyle : {}}
               />
-              <button className="pd-add" type="button" disabled>
-                +
-              </button>
             </div>
           </div>
 
           {/* Resume upload / view */}
-          <div className="resume-drop" onClick={onResumeClick} role="button" tabIndex={0}>
+          <div className="resume-drop common_style" tabIndex={0}>
             <div className="resume-drop-inner">
-              <span className="resume-pill">
+              <span className="resume-pill"  onClick={onResumeClick}>
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 16V8M8 12h8" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
