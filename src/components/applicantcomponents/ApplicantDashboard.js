@@ -105,7 +105,7 @@ const ApplicantDashboard = () => {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const { data } = await axios.get(`${CARD_API}/${applicantId}`, {
+      const { data } = await axios.get(`${CARD_API}/${applicantId}/getApplciantCard`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
 
