@@ -142,8 +142,14 @@ const response = await axios.post(
 );
 
       if (response.data === 'Password updated and stored') {
-       setSnackbar({ open: true, message: 'Password changed successfully', type: 'success' });
-       navigate('/applicanthome');
+        setSnackbar({ 
+          open: true, 
+          message: 'Password changed successfully', 
+          type: 'success' 
+        });
+        setTimeout(() => {
+          navigate('/applicanthome');
+        }, 1000);
       } else {
         setSnackbar({ open: true, message: 'Password change failed. Old password is wrong.', type: 'error' });
       }
@@ -162,6 +168,16 @@ const response = await axios.post(
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     return passwordRegex.test(password);
+  };
+
+  const isFormValid = () => {
+    return (
+      oldPassword.trim() !== '' &&
+      newPassword.trim() !== '' &&
+      confirmedPassword.trim() !== '' &&
+      isValidPassword(newPassword) &&
+      newPassword === confirmedPassword
+    );
   };
 
   const handleCloseSnackbar = () => {
@@ -263,8 +279,16 @@ const response = await axios.post(
                           )}
                         </div>
                         <div className="tt-button submit">
-                          <button type="button" class="button-status" onClick={handleChangePassword}>
-                            {/* Update Password */}
+                          <button 
+                            type="button" 
+                            className={`button-status ${!isFormValid() ? 'disabled' : ''}`} 
+                            onClick={handleChangePassword}
+                            disabled={!isFormValid()}
+                            style={!isFormValid() ? {
+                              cursor: 'not-allowed',
+                              opacity: 0.7
+                            } : {}}
+                          >
                             Change Password
                           </button>
                         </div>
