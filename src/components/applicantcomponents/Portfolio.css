@@ -86,6 +86,7 @@
   font-weight: 800 !important;
   color: #1B1B1B !important;
   margin: 0 !important;
+  cursor: default;
 }
 
 .portfolio-role {
@@ -93,11 +94,17 @@
   font-weight: 700 !important;
   color: #F97316 !important;
   margin: 0 !important;
+  cursor: default !important;
 }
 
 .portfolio-updated {
   font-size: 12px !important;
   color: #737373 !important;
+  cursor: default;
+}
+
+.common_style{
+  cursor: default !important;
 }
 
 .portfolio-edit-btn {
@@ -218,6 +225,9 @@
   .portfolio-right {
     text-align: left !important;
   }
+  .skill-badge-empty-para p, .skill-badge-empty-para span{
+    font-size: 14px !important;    
+  }
 }
 
 /* --- shared card shell --- */
@@ -268,9 +278,9 @@
 }
 
 .summary-text {
-  color: #3b3b3b !important;
+  color: #737373 !important;
   line-height: 1.5 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
 }
 .field-align{
   display: flex !important;
@@ -411,7 +421,6 @@
   background: #FFF7F0 !important;
   border-radius: 12px !important;
   padding: 22px 18px !important;
-  cursor: pointer !important;
 }
 
 .resume-drop-inner {
@@ -427,6 +436,7 @@
   border-radius: 8px !important;
   padding: 8px 12px !important;
   font-weight: 700 !important;
+  cursor: pointer !important;
 }
 
 .resume-note {
@@ -545,9 +555,15 @@
 }
 
 /* Very narrow screens: 1 per row */
-@media (max-width: 520px) {
+@media (max-width: 530px) {
   .skill-badges-grid {
     grid-template-columns: 1fr;
+  }
+  .skill-badge-empty-para{
+    display: block !important;  
+  }
+  .skill-badge-empty-para p, .skill-badge-empty-para span{
+    font-size: 12px !important;    
   }
 }
 
@@ -816,4 +832,8 @@
   color: #fff !important;
   padding: 8px 12px !important;
   border-radius: 8px !important;
+}
+
+.skill-badge-empty-para{
+  display: flex;
 }
