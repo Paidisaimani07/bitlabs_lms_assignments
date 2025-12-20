@@ -10,7 +10,6 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 const EDU_API = `${apiUrl}/applicant-education`;
 
-const hintStyle = { color: "#9ca3af", fontStyle: "italic" };
 
 const Section = ({ title, children, open, onToggle }) => (
   <div className="card-base" style={{ margin: 0 }}>
@@ -71,7 +70,7 @@ const EducationDetailsCard = ({ applicantId }) => {
 
   return (
     <>
-      <div className="col-lg-12 col-md-12">
+      <div className="col-lg-12 col-md-12 common_style">
         <div className="card-base soft-shadow">
           <div className="card-title-row">
             <div>
@@ -97,7 +96,7 @@ const EducationDetailsCard = ({ applicantId }) => {
             <div className="pd-grid">
               {/* row 1 */}
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {g.degree || "Graduation/Diploma"}
                   </div>
@@ -105,23 +104,21 @@ const EducationDetailsCard = ({ applicantId }) => {
                 </div>
               </div>
               <input
-                className="pd-input"
+                className="pd-input common_style"
                 readOnly
                 placeholder="University / Institute"
                 value={g.university || ""}
-                style={!g.university ? hintStyle : {}}
               />
 
               {/* row 2 */}
               <input
-                className="pd-input"
+                className="pd-input common_style"
                 readOnly
                 placeholder="Specialization"
                 value={g.specialization || ""}
-                style={!g.specialization ? hintStyle : {}}
               />
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {g.courseType || "Course type"}
                   </div>
@@ -132,27 +129,31 @@ const EducationDetailsCard = ({ applicantId }) => {
               {/* row 3 */}
               <div className="pd-with-icon">
                 <input
-                  className="pd-input raw"
+                  className="pd-input raw common_style"
                   readOnly
                   placeholder="Course start year"
                   value={g.startYear || ""}
-                  style={!g.startYear ? hintStyle : {}}
                 />
-                <span className="pd-icon" aria-hidden>📅</span>
+                <span className="pd-icon common_style" aria-hidden>📅</span>
               </div>
 
               <div className="pd-with-icon">
                 <input
-                  className="pd-input raw"
+                  className="pd-input raw common_style"
                   readOnly
                   placeholder="Course ending year"
                   value={g.endYear || ""}
-                  style={!g.endYear ? hintStyle : {}}
                 />
-                <span className="pd-icon" aria-hidden>📅</span>
+                <span className="pd-icon common_style" aria-hidden>📅</span>
               </div>
 
-
+              <div className="pd-select-wrap">
+                <div className="profile-dropdown common_style">
+                  <div className="pd-selected">
+                    {g.marksPercent + "%" || "Marks in %age"}
+                  </div>
+                </div>
+              </div>
 
             </div>
           </Section>
@@ -165,7 +166,7 @@ const EducationDetailsCard = ({ applicantId }) => {
           >
             <div className="pd-grid">
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {xii.board || "Board of education"}
                   </div>
@@ -174,7 +175,7 @@ const EducationDetailsCard = ({ applicantId }) => {
               </div>
 
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {xii.passingYear || "Passing out year"}
                   </div>
@@ -183,11 +184,10 @@ const EducationDetailsCard = ({ applicantId }) => {
               </div>
 
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
-                    {xii.marksPercent || "Marks in %age"}
+                    {xii.marksPercent + "%" || "Marks in %age"}
                   </div>
-                  <span className="pd-caret">▾</span>
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ const EducationDetailsCard = ({ applicantId }) => {
           >
             <div className="pd-grid">
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {x.board || "Board of education"}
                   </div>
@@ -210,7 +210,7 @@ const EducationDetailsCard = ({ applicantId }) => {
               </div>
 
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
                     {x.passingYear || "Passing out year"}
                   </div>
@@ -219,11 +219,10 @@ const EducationDetailsCard = ({ applicantId }) => {
               </div>
 
               <div className="pd-select-wrap">
-                <div className="profile-dropdown">
+                <div className="profile-dropdown common_style">
                   <div className="pd-selected">
-                    {x.marksPercent || "Marks in %age"}
+                    {x.marksPercent + "%" || "Marks in %age"}
                   </div>
-                  <span className="pd-caret">▾</span>
                 </div>
               </div>
             </div>

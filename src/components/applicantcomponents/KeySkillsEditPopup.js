@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { apiUrl } from "../../services/ApplicantAPIService";
+import { useRefresh } from "../common/RefreshContext";
 
 const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
 
@@ -58,19 +59,20 @@ const KeySkillsEditPopup = ({
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
   // position for fixed dropdown (left, top, width)
-const [suggestionPos, setSuggestionPos] = useState(null);
+  const [suggestionPos, setSuggestionPos] = useState(null);
+  const { triggerRefresh } = useRefresh();
 
-// compute and store input coordinates (viewport-based)
-const updateSuggestionPos = () => {
-  const el = inputRef.current;
-  if (!el) return setSuggestionPos(null);
-  const rect = el.getBoundingClientRect();
-  setSuggestionPos({
-    left: Math.max(8, rect.left), // small padding from viewport edge
-    top: rect.bottom + 8,         // 8px gap below input
-    width: rect.width,
-  });
-};
+  // compute and store input coordinates (viewport-based)
+  const updateSuggestionPos = () => {
+    const el = inputRef.current;
+    if (!el) return setSuggestionPos(null);
+    const rect = el.getBoundingClientRect();
+    setSuggestionPos({
+      left: Math.max(8, rect.left), // small padding from viewport edge
+      top: rect.bottom + 8,         // 8px gap below input
+      width: rect.width,
+    });
+  };
 
 
   // Initialize when modal opens
@@ -82,8 +84,6 @@ const updateSuggestionPos = () => {
       setFilteredSuggestions([]);
       setShowSuggestions(false);
       setHighlightIndex(-1);
-      // focus input for convenience
-      setTimeout(() => inputRef.current?.focus(), 80);
     }
   }, [isOpen, initialSkills]);
 
@@ -96,25 +96,25 @@ const updateSuggestionPos = () => {
     return SUGGESTED_SKILLS.some((s) => s.toLowerCase() === v);
   };
 
-useEffect(() => {
-  if (!showSuggestions) return;
+  useEffect(() => {
+    if (!showSuggestions) return;
 
-  // compute initially
-  updateSuggestionPos();
+    // compute initially
+    updateSuggestionPos();
 
-  // reposition on scroll and resize
-  const onScroll = () => updateSuggestionPos();
-  const onResize = () => updateSuggestionPos();
+    // reposition on scroll and resize
+    const onScroll = () => updateSuggestionPos();
+    const onResize = () => updateSuggestionPos();
 
-  // attach on capture so it fires earlier (helps inside modal scrolling)
-  window.addEventListener("scroll", onScroll, true);
-  window.addEventListener("resize", onResize);
+    // attach on capture so it fires earlier (helps inside modal scrolling)
+    window.addEventListener("scroll", onScroll, true);
+    window.addEventListener("resize", onResize);
 
-  return () => {
-    window.removeEventListener("scroll", onScroll, true);
-    window.removeEventListener("resize", onResize);
-  };
-}, [showSuggestions]);
+    return () => {
+      window.removeEventListener("scroll", onScroll, true);
+      window.removeEventListener("resize", onResize);
+    };
+  }, [showSuggestions]);
 
 
   // Add skill only if it's a valid suggestion and not duplicate
@@ -158,6 +158,7 @@ useEffect(() => {
           },
         }
       );
+      triggerRefresh();
       onSaved?.();
       onClose?.();
     } catch (e) {
@@ -172,27 +173,44 @@ useEffect(() => {
     }
   };
 
-  // Typeahead behavior: filter suggestions on input
+  const handleFocus = () => {
+    const availableSkills = SUGGESTED_SKILLS.filter(
+      s => !skills.some(sk => sk.toLowerCase() === s.toLowerCase())
+    );
+    setFilteredSuggestions(availableSkills);
+    setShowSuggestions(true);
+    updateSuggestionPos();
+  };
+
   const handleChange = (e) => {
     const value = e.target.value;
     setDraft(value);
-    setError("");
-    if (value.trim().length > 0) {
-      const filtered = SUGGESTED_SKILLS.filter(
-        (s) =>
-          s.toLowerCase().includes(value.toLowerCase()) &&
-          !skills.some((sk) => sk.toLowerCase() === s.toLowerCase())
-      );
-     setFilteredSuggestions(filtered);
-setShowSuggestions(true);
-setHighlightIndex(filtered.length ? 0 : -1);
-updateSuggestionPos(); // <<-- add this
 
+    const availableSkills = SUGGESTED_SKILLS.filter(
+      s => !skills.some(sk => sk.toLowerCase() === s.toLowerCase())
+    );
+
+    if (value.trim().length > 0) {
+      const filtered = availableSkills.filter(s =>
+        s.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredSuggestions(filtered);
+      setShowSuggestions(true);
+      setHighlightIndex(filtered.length ? 0 : -1);
+
+      if (value.trim() && !availableSkills.some(s =>
+        s.toLowerCase() === value.toLowerCase().trim()
+      )) {
+        setError("Please select a skill from the suggestion list.");
+      } else {
+        setError("");
+      }
     } else {
-      setFilteredSuggestions([]);
-      setShowSuggestions(false);
+      setFilteredSuggestions(availableSkills);
       setHighlightIndex(-1);
+      setError("");
     }
+    updateSuggestionPos();
   };
 
   // Click outside to close suggestions
@@ -247,13 +265,13 @@ updateSuggestionPos(); // <<-- add this
 
   return (
     <Modal
-  isOpen={isOpen}
-  onRequestClose={onClose}
-  contentLabel="Edit Key Skills"
-  className="modal-content2 keyskills"   // <-- add "keyskills" here
-  overlayClassName="modal-overlay"
-  ariaHideApp={false}
->
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      contentLabel="Edit Key Skills"
+      className="modal-content2 keyskills"
+      overlayClassName="modal-overlay"
+      ariaHideApp={false}
+    >
 
       <div style={{ position: "absolute", top: 10, right: 20 }}>
         <FontAwesomeIcon
@@ -282,6 +300,7 @@ updateSuggestionPos(); // <<-- add this
               placeholder="Type to search and select a skill"
               value={draft}
               onChange={handleChange}
+              onFocus={handleFocus}
               onKeyDown={handleKeyDown}
               aria-autocomplete="list"
               aria-expanded={showSuggestions}
@@ -309,40 +328,40 @@ updateSuggestionPos(); // <<-- add this
 
           {/* Suggestions dropdown (positioned inside modal but overlay z-index keeps it above) */}
           {showSuggestions && filteredSuggestions.length > 0 && suggestionPos && (
-  <ul
-    className="typeahead-suggestions"
-    role="listbox"
-    ref={suggestionsRef}
-    style={{
-      position: "fixed",
-      left: suggestionPos.left,
-      top: suggestionPos.top,
-      width: suggestionPos.width,
-      marginTop: 0,           // portal controls spacing
-      zIndex: 30000,
-      maxHeight: 300,
-      overflowY: "auto",
-    }}
-  >
-    {filteredSuggestions.map((s, idx) => (
-      <li
-        id={`skill-suggestion-${idx}`}
-        key={s}
-        role="option"
-        aria-selected={idx === highlightIndex}
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => handleSuggestionClick(s)}
-        style={{
-          padding: "10px 12px",
-          background: idx === highlightIndex ? "#fff7ed" : undefined,
-          cursor: "pointer",
-        }}
-      >
-        {s}
-      </li>
-    ))}
-  </ul>
-)}
+            <ul
+              className="typeahead-suggestions"
+              role="listbox"
+              ref={suggestionsRef}
+              style={{
+                position: "fixed",
+                left: suggestionPos.left,
+                top: suggestionPos.top,
+                width: suggestionPos.width,
+                marginTop: 0,           // portal controls spacing
+                zIndex: 30000,
+                maxHeight: 300,
+                overflowY: "auto",
+              }}
+            >
+              {filteredSuggestions.map((s, idx) => (
+                <li
+                  id={`skill-suggestion-${idx}`}
+                  key={s}
+                  role="option"
+                  aria-selected={idx === highlightIndex}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleSuggestionClick(s)}
+                  style={{
+                    padding: "10px 12px",
+                    background: idx === highlightIndex ? "#fff7ed" : undefined,
+                    cursor: "pointer",
+                  }}
+                >
+                  {s}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {error ? <div className="error-message" style={{ marginBottom: 8 }}>{error}</div> : null}
@@ -367,7 +386,13 @@ updateSuggestionPos(); // <<-- add this
           <button
             className="btn-primary"
             disabled={!canSave || saving}
-            onClick={save}
+            onClick={() => {
+              if (!isValidSuggestion(draft)) {
+                setError("Please select a skill from the suggestion list.");
+                return;
+              }
+              addSkillFromValue(draft);
+            }}
             aria-busy={saving}
           >
             {saving ? "Saving..." : "Save"}
