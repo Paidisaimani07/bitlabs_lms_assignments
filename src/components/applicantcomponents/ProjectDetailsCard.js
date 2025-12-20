@@ -10,32 +10,29 @@ import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 const PROJ_API = `${apiUrl}/applicant-projects`;
 
-const hintStyle = { color: "#9ca3af", fontStyle: "italic" };
-
 const ReadonlyInput = ({ placeholder, value }) => (
   <input
-    className="pd-input"
+    className="pd-input common_style"
     readOnly
     placeholder={placeholder}
     value={value || ""}
-    style={!value ? hintStyle : {}}
   />
 );
 
 const ReadonlyTextarea = ({ placeholder, value }) => (
   <textarea
-    className="pd-input"
+    className="pd-input common_style"
     readOnly
     placeholder={placeholder}
     value={value || ""}
-    style={{ height: 120, resize: "none", ...(value ? {} : hintStyle) }}
+    style={{ height: 120, resize: "none" }}
   />
 );
 
 const Pills = ({ items }) => {
   if (!items || items.length === 0) {
     return (
-      <div className="pd-input" style={hintStyle}>
+      <div>
         Add items
       </div>
     );
@@ -57,6 +54,8 @@ const ProjectDetailsCard = ({ applicantId }) => {
   const [items, setItems] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
+  const width = useWindowWidth();
+  const isMobile = width <= 992;
 
   const addSnackbar = (snackbar) => setSnackbars((p) => [...p, snackbar]);
   const handleCloseSnackbar = (idx) =>
@@ -74,6 +73,18 @@ const ProjectDetailsCard = ({ applicantId }) => {
       setItems([]);
     }
   };
+
+  function useWindowWidth() {
+    const [width, setWidth] = useState(window.innerWidth);
+
+    useEffect(() => {
+      const handler = () => setWidth(window.innerWidth);
+      window.addEventListener("resize", handler);
+      return () => window.removeEventListener("resize", handler);
+    }, []);
+
+    return width;
+  }
 
   useEffect(() => {
     if (applicantId) fetchProjects();
@@ -103,7 +114,7 @@ const ProjectDetailsCard = ({ applicantId }) => {
 
   return (
     <>
-      <div className="col-lg-12 col-md-12">
+      <div className="col-lg-12 col-md-12 common_style">
         <div className="card-base soft-shadow">
           <div className="card-title-row">
             <div>
@@ -111,8 +122,7 @@ const ProjectDetailsCard = ({ applicantId }) => {
                 Project details <span className="req">*</span>
               </h3>
               <p className="card-subtitle">
-                Stand out for employers by adding details about projects you have
-                done in college, internships, or at work
+                Stand out for employers by adding details about projects you have done in college, internships, or at work
               </p>
             </div>
             <button
@@ -140,15 +150,20 @@ const ProjectDetailsCard = ({ applicantId }) => {
             {/* row 2 */}
             <div className="pd-input with-add">
               <Pills items={techList} />
-              <button className="pd-add" type="button" disabled>
-                +
-              </button>
             </div>
 
-            <ReadonlyInput
-              placeholder="Project team size"
-              value={proj.teamSize ? String(proj.teamSize) : ""}
-            />
+            {!isMobile ? (
+              <ReadonlyTextarea
+                placeholder="Project team size"
+                value={proj.teamSize ? String(proj.teamSize) : ""}
+              />
+            ) : (
+              <ReadonlyInput
+                placeholder="Project team size"
+                value={proj.teamSize ? String(proj.teamSize) : ""}
+              />
+            )}
+
 
             {/* row 4 */}
             <ReadonlyTextarea
