@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
+import { useRefresh } from "../common/RefreshContext";
 const CARD_API = `${apiUrl}/applicant-card`;
 
 const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
@@ -16,6 +17,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
+  const { triggerRefresh } = useRefresh();
 
   const addSnackbar = (snackbar) => setSnackbars((prev) => [...prev, snackbar]);
   const handleCloseSnackbar = (index) =>
@@ -45,10 +47,12 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
     passOutyear: (v) => {
       const t = (v ?? "").toString().trim();
       if (!t) return "Pass-out year is required.";
-      if (!/^\d{4}$/.test(t)) return "Enter a valid year (e.g., 2024).";
+      if (!/^\d{4}$/.test(t)) return "Enter a valid 4-digit year (e.g., 2024).";
       const y = Number(t);
       const currentYear = new Date().getFullYear();
-      if (y < 2015 || y > currentYear + 4) return `Year must be between 2015 and ${currentYear + 4}`;
+      const minYear = currentYear - 15;
+      if (y < minYear) return `Year must be ${minYear} or later.`;
+      if (y > currentYear) return "Year cannot be in the future.";
       return "";
     },
     address: (v) => {
@@ -61,10 +65,22 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
 
   const validateField = (name, value) => rules[name]?.(value) || "";
 
+  const handleNumericInput = (name, value) => {
+    const numericValue = value.replace(/\D/g, '');
+    const maxLength = name === 'mobileNumber' ? 10 : 4;
+    return numericValue.slice(0, maxLength);
+  };
+
   const onChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-    setErrors((er) => ({ ...er, [name]: validateField(name, value) }));
+    let processedValue = value;
+
+    if (name === 'mobileNumber' || name === 'passOutyear') {
+      processedValue = handleNumericInput(name, value);
+    }
+
+    setForm((f) => ({ ...f, [name]: processedValue }));
+    setErrors((er) => ({ ...er, [name]: validateField(name, processedValue) }));
   };
 
   const validateAll = () => {
@@ -85,7 +101,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
       const jwtToken = localStorage.getItem("jwtToken");
       const payload = {
         name: form.name.trim(),
-        role: form.role.trim(),                  // ← include role
+        role: form.role.trim(),
         mobileNumber: form.mobileNumber.trim(),
         passOutyear: Number(form.passOutyear),
         address: form.address.trim()
@@ -97,7 +113,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
           "Content-Type": "application/json",
         },
       });
-
+      triggerRefresh();
       addSnackbar({ message: "Personal details updated successfully!", type: "success" });
       onSuccess?.();
     } catch (e) {
@@ -163,28 +179,40 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
           <input
             type="tel"
             name="mobileNumber"
-            placeholder="* Mobile number"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="* Mobile number (10 digits)"
             value={form.mobileNumber}
             onChange={onChange}
             className="pd-input"
+            maxLength={10}
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
             required
           />
-          {errors.mobileNumber && (
-            <div className="error-message">{errors.mobileNumber}</div>
-          )}
+          {errors.mobileNumber && <div className="error-message">{errors.mobileNumber}</div>}
         </div>
 
         {/* Pass-out year */}
         <div className="input-wrapper">
           <input
-            type="number"
+            type="text"
             name="passOutyear"
+            inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="* Pass out year (e.g., 2024)"
             value={form.passOutyear}
             onChange={onChange}
             className="pd-input"
-            min="2015"
-            max={new Date().getFullYear() + 5}
+            maxLength={4}
+            onKeyDown={(e) => {
+              if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
+                e.preventDefault();
+              }
+            }}
             required
           />
           {errors.passOutyear && <div className="error-message">{errors.passOutyear}</div>}
