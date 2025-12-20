@@ -179,9 +179,14 @@ const VerifiedVideos = () => {
 
     if (watchedDuringSession.size > 0) {
       setFilteredVideos((prev) => {
-        const watched = prev.filter((v) => watchedVideos[v.videoId]);
-        const unwatched = prev.filter((v) => !watchedVideos[v.videoId]);
-        return [...unwatched, ...watched];
+        const newlyWatchedIds = Array.from(watchedDuringSession);
+        const newlyWatched = prev.filter(v =>
+          newlyWatchedIds.includes(v.videoId)
+        );
+        const remaining = prev.filter(
+          v => !newlyWatchedIds.includes(v.videoId)
+        );
+        return [...remaining, ...newlyWatched];
       });
 
       // Clear the session tracker
