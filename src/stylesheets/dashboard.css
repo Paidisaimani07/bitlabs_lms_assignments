@@ -2261,13 +2261,6 @@ body.close-sidebar .dashboard.show .dashboard__content {
     border-color: #14a077;
 }
 
-
-textarea:focus,
-.info-wd .input-form2:focus,
-.info-wd .input-form:focus {
-    border: 1px solid #14a077;
-}
-
 .info-wd .input-form2::placeholder {
     color: #b1b1b1;
 }
