@@ -373,3 +373,38 @@
   left: 4px;
   color: #ef6b2e;
 }
+.no-blogs-wrapper{
+  p{
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 440px) {
+ .no-blogs-wrapper p{
+    font-size: 16px!important;
+  }
+  
+}
+
+@media screen and (min-width: 800px) and (max-width: 1100px) {
+  .noblogsfound img{
+   width:500px;
+   height: auto;
+  
+  }
+  .no-blogs-wrapper p{
+    font-size: 26px;
+    
+  }
+  
+}
+
+@media (max-width: 540px) or (max-width: 1024px) {
+ .no-blogs-wrapper img {
+    width: 300px !important;
+  }
+
+  .no-blogs-wrapper p {
+    font-size: 22px;
+  }
+}
