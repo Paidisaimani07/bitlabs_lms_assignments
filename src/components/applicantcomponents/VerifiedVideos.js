@@ -5,6 +5,8 @@ import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import { useLocation } from "react-router-dom";
 import "./VerifiedVideos.css";
+import nosearchresults from "../../images/empty-state-images/no-search-results.png";
+import novideosfound from "../../images/empty-state-images/no-video-found.png";
 
 const preloadAll = true;
 
@@ -29,6 +31,7 @@ const VerifiedVideos = () => {
   const [durations, setDurations] = useState({});
   const [showReplay, setShowReplay] = useState(false);
   const [watchedDuringSession, setWatchedDuringSession] = useState(new Set()); // 🆕 all watched this session
+  const [hasFetched, setHasFetched] = useState(false);
 
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
@@ -95,7 +98,10 @@ const VerifiedVideos = () => {
       } catch (err) {
         console.error("Error fetching videos:", err);
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+          setHasFetched(true);
+        }
       }
     };
 
@@ -131,7 +137,7 @@ const VerifiedVideos = () => {
       if (index !== -1) {
         handleOpenPlayer(index);
         setAutoPlayVideoId(null);
-        window.history.replaceState({}, '', '/applicant-verified-videos');
+        window.history.replaceState({}, "", "/applicant-verified-videos");
       }
     }
   }, [filteredVideos, autoPlayVideoId, modalOpen]);
@@ -220,6 +226,28 @@ const VerifiedVideos = () => {
   };
   const onBuffer = () => setPlayerBuffering(true);
   const onBufferEnd = () => setPlayerBuffering(false);
+  const VideoSkeleton = ({ count = 15 }) => {
+    return (
+      <div className="oneminute-grid">
+        {Array.from({ length: count }).map((_, i) => (
+          <div key={i} className="oneminute-card skeleton-card">
+            {/* ✅ Uses REAL thumbnail container */}
+            <div className="oneminute-player-wrapper">
+              <div className="thumb-button skeleton-thumb-btn">
+                <div className="oneminute-thumb skeleton-fill"></div>
+              </div>
+            </div>
+
+            {/* ✅ Uses REAL meta row */}
+            <div className="oneminute-video-meta">
+              <div className="oneminute-avatar skeleton-fill"></div>
+              <p className="oneminute-title skeleton-text">&nbsp;</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="border-style">
@@ -253,74 +281,123 @@ const VerifiedVideos = () => {
         </div>
 
         {loading ? (
-          <div className="oneminute-loader-wrapper">
-            <div className="oneminute-loader"></div>
-            <p>Loading videos...</p>
+          <VideoSkeleton count={15} />
+        ) : !hasFetched ? null : videoList.length === 0 ? ( // 🛡 SAFETY: prevents flicker before API resolves
+          // 📭 DB EMPTY (no videos at all)
+          <div
+            className="no-videos-empty"
+            style={{
+              height: "70%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={novideosfound}
+              alt="No Videos"
+              width="400px"
+              maxWidth="500px"
+            />
+            <p
+              style={{fontWeight: "500",fontStyle: "sans-serif",fontSize: "17px"}}
+            >
+              No videos available yet.
+            </p>
+          </div>
+        ) : search && filteredVideos.length === 0 ? (
+          // 🔍 SEARCH RESULT EMPTY (DB has videos, search returned none)
+          <div
+            className="no-videos-empty"
+            style={{
+              height: "60vh",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img src={nosearchresults} alt="No Videos" width="400px" />
+            <p
+              style={{
+                fontWeight: "500",
+                fontStyle: "sans-serif",
+                fontSize: "17px",
+              }}
+            >
+              No video matches for your search
+            </p>
           </div>
         ) : (
+          // 🎬 VIDEOS GRID
           <div className="oneminute-grid">
-            {filteredVideos.length > 0 ? (
-              filteredVideos.map((video, index) => {
-                const isPlayingCard = playingIndex === index && modalOpen;
-                const isWatched = watchedVideos[video.videoId];
-                return (
-                  <div
-                    key={video.videoId || index}
-                    className={`oneminute-card ${isPlayingCard ? "playing-card" : ""
-                      } ${isWatched ? "watched-card" : ""}`}
-                  >
-                    <div className="oneminute-player-wrapper">
-                      <button
-                        type="button"
-                        className="thumb-button"
-                        onClick={() => handleOpenPlayer(index)}
-                        aria-label={`Play ${video.title || `Video ${index + 1}`}`}
-                      >
-                        <img
-                          src={video.thumbnail_url || "/images/default-thumb.png"}
-                          alt={video.title}
-                          className="oneminute-thumb"
-                          draggable={false}
-                        />
-                      </button>
-                    </div>
+            {filteredVideos.map((video, index) => {
+              const isPlayingCard = playingIndex === index && modalOpen;
+              const isWatched = watchedVideos[video.videoId];
 
-                    <div className="oneminute-video-meta">
-                      <svg
-                        width="36.155"
-                        height="31.211"
-                        viewBox="0 0 36.155 31.211"
-                        className="oneminute-avatar"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <defs>
-                          <linearGradient id="linear-gradient" y1="0.093" x2="1" y2="1" gradientUnits="objectBoundingBox">
-                            <stop offset="0" stopColor="#f8af50" />
-                            <stop offset="1" stopColor="#e76d10" />
-                          </linearGradient>
-                        </defs>
-                        <g transform="translate(0 -35)">
-                          <g transform="translate(0 35)">
-                            <g transform="translate(0 0)">
-                              <path
-                                d="M30.031,35H6.131A6.134,6.134,0,0,0,0,41.131V60.08a6.13,6.13,0,0,0,6.131,6.131H30.024a6.13,6.13,0,0,0,6.131-6.131V41.131A6.124,6.124,0,0,0,30.031,35ZM16.3,37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953v1.66a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953Zm-6.583,0a.957.957,0,0,1,.946-.953h1.66a.953.953,0,0,1,.953.946V39.52a.954.954,0,0,1-.953.953h-1.66a.948.948,0,0,1-.946-.953ZM6.7,63.358a.954.954,0,0,1-.953.953H4.082a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66A.954.954,0,0,1,6.7,61.7Zm0-23.837a.948.948,0,0,1-.953.946H4.082a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,23.837a.953.953,0,0,1-.946.953H10.665a.954.954,0,0,1-.953-.953V61.7a.948.948,0,0,1,.953-.946h1.66a.953.953,0,0,1,.953.946ZM11.654,54.91v-8.6a3.059,3.059,0,0,1,4.584-2.649l7.451,4.3a3.056,3.056,0,0,1,0,5.29l-7.451,4.3a3.053,3.053,0,0,1-4.584-2.642Zm8.207,8.447a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,0a.957.957,0,0,1-.946.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953H25.5a.948.948,0,0,1,.946.953Zm0-23.837a.957.957,0,0,1-.946.953h-1.66a.957.957,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953H25.5a.954.954,0,0,1,.953.953Zm6.583,23.837a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm0-23.837a.954.954,0,0,1-.953.953h-1.66a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Z"
-                                transform="translate(0 -35)"
-                                fill="url(#linear-gradient)"
-                              />
-                            </g>
+              return (
+                <div
+                  key={video.videoId || index}
+                  className={`oneminute-card ${
+                    isPlayingCard ? "playing-card" : ""
+                  } ${isWatched ? "watched-card" : ""}`}
+                >
+                  <div className="oneminute-player-wrapper">
+                    <button
+                      type="button"
+                      className="thumb-button"
+                      onClick={() => handleOpenPlayer(index)}
+                      aria-label={`Play ${video.title || `Video ${index + 1}`}`}
+                    >
+                      <img
+                        src={video.thumbnail_url || "/images/default-thumb.png"}
+                        alt={video.title}
+                        className="oneminute-thumb"
+                        draggable={false}
+                      />
+                    </button>
+                  </div>
+
+                  <div className="oneminute-video-meta">
+                    <svg
+                      width="36.155"
+                      height="31.211"
+                      viewBox="0 0 36.155 31.211"
+                      className="oneminute-avatar"
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <defs>
+                        <linearGradient
+                          id="linear-gradient"
+                          y1="0.093"
+                          x2="1"
+                          y2="1"
+                          gradientUnits="objectBoundingBox"
+                        >
+                          <stop offset="0" stopColor="#f8af50" />
+                          <stop offset="1" stopColor="#e76d10" />
+                        </linearGradient>
+                      </defs>
+                      <g transform="translate(0 -35)">
+                        <g transform="translate(0 35)">
+                          <g transform="translate(0 0)">
+                            <path
+                              d="M30.031,35H6.131A6.134,6.134,0,0,0,0,41.131V60.08a6.13,6.13,0,0,0,6.131,6.131H30.024a6.13,6.13,0,0,0,6.131-6.131V41.131A6.124,6.124,0,0,0,30.031,35ZM16.3,37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953v1.66a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953Zm-6.583,0a.957.957,0,0,1,.946-.953h1.66a.953.953,0,0,1,.953.946V39.52a.954.954,0,0,1-.953.953h-1.66a.948.948,0,0,1-.946-.953ZM6.7,63.358a.954.954,0,0,1-.953.953H4.082a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66A.954.954,0,0,1,6.7,61.7Zm0-23.837a.948.948,0,0,1-.953.946H4.082a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,23.837a.953.953,0,0,1-.946.953H10.665a.954.954,0,0,1-.953-.953V61.7a.948.948,0,0,1,.953-.946h1.66a.953.953,0,0,1,.953.946ZM11.654,54.91v-8.6a3.059,3.059,0,0,1,4.584-2.649l7.451,4.3a3.056,3.056,0,0,1,0,5.29l-7.451,4.3a3.053,3.053,0,0,1-4.584-2.642Zm8.207,8.447a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm6.583,0a.957.957,0,0,1-.946.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953H25.5a.948.948,0,0,1,.946.953Zm0-23.837a.957.957,0,0,1-.946.953h-1.66a.957.957,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953H25.5a.954.954,0,0,1,.953.953Zm6.583,23.837a.954.954,0,0,1-.953.953h-1.66a.954.954,0,0,1-.953-.953V61.7a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Zm0-23.837a.954.954,0,0,1-.953.953h-1.66a.953.953,0,0,1-.953-.946V37.86a.954.954,0,0,1,.953-.953h1.66a.954.954,0,0,1,.953.953Z"
+                              transform="translate(0 -35)"
+                              fill="url(#linear-gradient)"
+                            />
                           </g>
                         </g>
-                      </svg>
+                      </g>
+                    </svg>
 
-                      <p className="oneminute-title">{video.title}</p>
-                    </div>
+                    <p className="oneminute-title">{video.title}</p>
                   </div>
-                );
-              })
-            ) : (
-              <p>No videos found.</p>
-            )}
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -349,7 +426,10 @@ const VerifiedVideos = () => {
                   onBuffer={onBuffer}
                   onBufferEnd={onBufferEnd}
                   onProgress={(progress) =>
-                    handleProgress(progress, filteredVideos[playingIndex].videoId)
+                    handleProgress(
+                      progress,
+                      filteredVideos[playingIndex].videoId
+                    )
                   }
                   onEnded={() => setShowReplay(true)}
                   onSeek={() => setShowReplay(false)}
@@ -395,16 +475,39 @@ const VerifiedVideos = () => {
                 onClick={closeModal}
                 aria-label="Close"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="12" r="9" fill="#2A4157" fill-opacity="0.24" />
-                  <path d="M16 8L8 16" stroke="#222222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                  <path d="M8 8L16 16" stroke="#222222" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="800px"
+                  height="800px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    cx="12"
+                    cy="12"
+                    r="9"
+                    fill="#2A4157"
+                    fill-opacity="0.24"
+                  />
+                  <path
+                    d="M16 8L8 16"
+                    stroke="#222222"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M8 8L16 16"
+                    stroke="#222222"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
                 </svg>
               </button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
