@@ -33,13 +33,9 @@ import sqlServerPNG from '../../images/Icons1/Icons/SQL-Server.svg';
 import djangoPNG from '../../images/Icons1/Icons/Django.svg';
 import flaskPNG from '../../images/Icons1/Icons/Flask.png';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Verified from '../../images/user/avatar/Verified.png';
-
 import aptitudeIcon from '../../images/user/avatar/problem-solve.png';
 import technicalIcon from '../../images/user/avatar/coding.png';
-import verificationIcon from '../../images/user/avatar/verified2.png';
-
-import { ClipLoader } from 'react-spinners';
+import verificationIcon from "../../images/user/avatar/verificationdone.png";
 
 
 
@@ -158,7 +154,7 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
         {status === 'FAILED' && (
           <div className="test-action retake" onClick={isRetakeAvailable ? () => handleTakeTest(skillName) : null}
           style={{
-            backgroundColor: isRetakeAvailable ? '' : '#e0e0e0', // Red background if retake is available, grey otherwise
+            backgroundColor: isRetakeAvailable ? 'black' : '#e0e0e0', // Red background if retake is available, grey otherwise
             color: isRetakeAvailable ? '#ffffff' : '#000000', // White text if retake is available, black otherwise
             cursor: isRetakeAvailable ? 'pointer' : 'not-allowed', // Pointer cursor if retake is available
             padding: '20px', // Adjust padding as needed
@@ -168,7 +164,7 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
           >
             {isRetakeAvailable ? (
                 <>
-                Start test
+                Retake Test
                 {/* <i className="fa fa-external-link" aria-hidden="true" style={{ marginLeft: '10px' }}></i> */}
               </>
             ) : (
@@ -205,6 +201,24 @@ export const SkillBadgeCard = ({ skillName, status, badgeIcon, retakeTest, testF
     </div>
   );
 };
+const SkillBadgeSkeleton = () => {
+  return (
+    <div className="skill-badge-card skeleton-card">
+
+      {/* ICON + SKILL NAME */}
+      <div className="badge" style={{ alignItems: "center" }}>
+        <div className="skeleton-icon"></div>
+        <div className="skeleton-text"></div>
+      </div>
+
+      {/* BUTTON */}
+      <div className="test">
+        <div className="skeleton-button"></div>
+      </div>
+
+    </div>
+  );
+};
 
 const VerifiedBadges = () => {
   const [isHovered, setIsHovered] = useState(false); 
@@ -228,6 +242,7 @@ const VerifiedBadges = () => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [verificationLoading, setVerificationLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -257,9 +272,59 @@ const VerifiedBadges = () => {
   
     fetchUserData();
   }, []);
+const CongratulationsLoader = () => (
+  <div
+    style={{
+      backgroundColor: "#F9FAFB", // light grey card
+      padding: "32px 24px",
+      borderRadius: "14px",
+      width: "100%",
+      minHeight: "160px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "14px",
+      boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
+    }}
+  >
+    {/* Medal placeholder */}
+    <div
+      className="skeleton"
+      style={{
+        width: "72px",
+        height: "72px",
+        borderRadius: "50%",
+      }}
+    />
+
+    {/* Title placeholder */}
+    <div
+      className="skeleton"
+      style={{
+        width: "240px",
+        height: "26px",
+        borderRadius: "8px",
+      }}
+    />
+
+    {/* Description placeholder */}
+    <div
+      className="skeleton"
+      style={{
+        width: "520px",
+        maxWidth: "90%",
+        height: "18px",
+        borderRadius: "6px",
+      }}
+    />
+  </div>
+);
+
 
 
   useEffect(() => {
+    // if (!testData) return;
     const fetchTestData = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
@@ -269,8 +334,10 @@ const VerifiedBadges = () => {
           },
         });
         setTestData(response.data);  // Use setTestData here
+         setVerificationLoading(false);
       } catch (error) {
         console.error('Error fetching test data:', error);
+          setVerificationLoading(false);
       }
     };
 
@@ -655,7 +722,7 @@ const steps = [
       justifyContent: 'space-between', // Center items horizontally
       alignItems: 'center',
       width: '100%', // 80% of the parent container width
-      maxWidth: '900px', // Maximum width for the card
+      
       boxShadow: '0 1px 2px rgba(0,0,0,0.1)', // Light shadow for depth
       marginLeft: isBelow767px ? '6px' : '0', // Add margin-left below 767px
       marginBottom:'10px'    },
@@ -716,19 +783,13 @@ const steps = [
 
   }
   return (
-        loading ?         
-    <div className="border-style">
-
-      <div className="blur-border-style"></div>
-      <div className="spinner-container">
-          <ClipLoader color="#F97316" loading={loading} size={30}/>
-        </div></div>: (
+       (
           <div className="border-style">
 
       <div className="blur-border-style"></div>
     <div className="dashboard__content">
-      <div className="row mr-0 ml-10">
-        <div className="col-lg-12 col-md-12">
+      <div className="row mr-0 ml-0">
+        <div className="col-lg-12 col-md-12" style={{paddingRight :"0px"}}>
           <section className="">
             <div className="themes-container">
               <div className="row ">
@@ -748,7 +809,9 @@ const steps = [
   <div style={{ marginTop: "10px", width: "100%" }}>
   
   {/* 👇 CONDITION: if both tests passed, show ONLY congratulations card */}
-  {passedBothTests ? (
+  {verificationLoading ? (
+  <CongratulationsLoader />
+) :passedBothTests ? (
     <div
       style={{
         backgroundColor: "#FFF9ED",
@@ -763,7 +826,7 @@ const steps = [
       <img
         src={verificationIcon}
         alt="Verified"
-        style={{ width: "80px", marginBottom: "15px" }}
+        style={{ width: "100px",height:"auto", marginBottom: "15px" }}
       />
 
       <h2
@@ -775,7 +838,7 @@ const steps = [
     lineHeight: "1.2"
   }}
 >
-  🎉 Congratulations!
+   Congratulations!
 </h2>
 
       <p style={{ color: "#333", fontSize: "18px", margin: 0 }}>
@@ -793,9 +856,12 @@ const steps = [
             backgroundColor: "#fff",
             borderRadius: "12px",
             padding: "20px",
-            marginLeft: "-20px",
+            boxShadow:" 0px 0px 20px #F7AA4B80"
+            // marginLeft: "-20px",
+            
           }}
         >
+          <div className='scrollercontainer' style={{ overflowX: "auto" ,}}>
           {/* -------- PROGRESS STEPPER -------- */}
           <div
             style={{
@@ -805,6 +871,7 @@ const steps = [
               width: "100%",
               position: "relative",
               padding: "0 5vw",
+              minWidth:"600px",
             }}
           >
             <div
@@ -924,7 +991,7 @@ const steps = [
     alignItems: "flex-start",
     width: "100%",
     marginTop: "10px",
-    overflowX: "auto",
+    // overflowX: "auto",
     whiteSpace: "nowrap",
     paddingBottom: "10px",
     gap: "25px",
@@ -987,6 +1054,7 @@ const steps = [
                             color: "#fff",
                             fontWeight: "600",
                             fontSize: "16px",
+                            cursor: "not-allowed",
                           }}
                         >
                           Score:{" "}
@@ -1140,6 +1208,7 @@ const steps = [
             ))}
           </div>
         </div>
+        </div>
       )}
     </>
   )}
@@ -1157,37 +1226,46 @@ const steps = [
         {/*out side of stepper*/}
 
       </div>
-      <div className="row mr-0 ml-10">
+      <div className="row mr-0 ml-10" style={{width:"100%"}}>
   <h3 className='skillBadgeHeading'>Skills Badges</h3>
   
-  <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff',borderRadius:'12px',marginLeft:'20px',padding:'20px',width:'95%'}}>
-    <div className="skill-badge-container">
-      {skillBadges.skillsRequired.map((skill) => (
-       
-          <div className="skill-badge-card" key={skill.id}>
+  <div className="col-lg-10 col-md-12" style={{backgroundColor:'#ffffff', boxShadow:"0px 0px 20px #F7AA4B80",borderRadius:'12px',margin:'0 10px',padding:'20px',width:'98%'}}>
+<div className="skill-badge-container">
+
+  {loading ? (
+    Array.from({ length: 14 }).map((_, i) => (
+      <SkillBadgeSkeleton key={`skeleton-${i}`} />
+    ))
+  ) : (
+    <>
+      {/* ⭐ 1. SORTED UNATTEMPTED SKILLS (skillsRequired) */}
+      {[...skillBadges.skillsRequired]
+        .sort((a, b) => a.skillName.localeCompare(b.skillName))
+        .map(skill => (
+          <div className="skill-badge-card" key={`req-${skill.id}`}>
             <SkillBadgeCard
-              key={skill.skillName}
               skillName={skill.skillName}
               status={skill.status}
-              retakeTest={() => handleRetakeTest()}
               testFailedAt={skill.testTaken}
             />
           </div>
-        
-      ))}
+        ))
+      }
 
-      {skillBadges.applicantSkillBadges.map((badge) => (
-        
-          <div className="skill-badge-card" key={badge.id}>
-            <SkillBadgeCard 
-              skillName={badge.skillBadge.name} 
-              status={badge.status} 
-              testFailedAt={badge.testTaken}
-            />
-          </div>
-        
+      {/* ⭐ 2. ATTEMPTED SKILLS (NO SORTING) */}
+      {skillBadges.applicantSkillBadges.map(badge => (
+        <div className="skill-badge-card" key={`app-${badge.id}`}>
+          <SkillBadgeCard
+            skillName={badge.skillBadge.name}
+            status={badge.status}
+            testFailedAt={badge.testTaken}
+          />
+        </div>
       ))}
-    </div>
+    </>
+  )}
+
+</div>
   </div>
 </div>   
 </div> 

@@ -1,44 +1,44 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import $ from 'jquery';
-import 'jquery.cookie';
-import 'metismenu';
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import $ from "jquery";
+import "jquery.cookie";
+import "metismenu";
 import { useState, useEffect, useReducer } from "react";
-import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import ModalLogout from '../common/ModalLogout';
+import { useUserContext } from "../common/UserProvider";
+import { apiUrl } from "../../services/ApplicantAPIService";
+import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
-import logos from '../../images/profileIcon.png';
-import NotificationToggleWeb from '../../notifications/NotificationToggleWeb';
-import shape8 from "../../images/dashboard/mobilebanners/power.jpg";
-import shape7 from "../../images/dashboard/mobilebanners/write.jpg";
-import shape6 from "../../images/dashboard/mobilebanners/solar-energy.jpg";
-import shape5 from "../../images/dashboard/mobilebanners/coding.jpg";
-import shape3 from "../../images/dashboard/mobilebanners/score.jpg";
-import shape4 from "../../images/dashboard/mobilebanners/mentoring.jpg";
-import shape from "../../images/dashboard/mobilebanners/shape.jpg";
-import shape2 from "../../images/dashboard/mobilebanners/curriculum-vitae.jpg";
-import botImage from '../../images/dashboard/mobilebanners/Bot.png';
+import logos from "../../images/profileIcon.png";
+import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
+import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
+import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
+import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
+import shape5 from "../../images/dashboard/side-nav-icons/techBuzzShorts.svg";
+import shape3 from "../../images/dashboard/side-nav-icons/skillValidation.svg";
+import shape4 from "../../images/dashboard/side-nav-icons/mentorSphere.svg";
+import shape from "../../images/dashboard/side-nav-icons/dashboard.svg";
+import shape2 from "../../images/dashboard/side-nav-icons/buildportfolio.svg";
+import botImage from "../../images/dashboard/mobilebanners/Bot.png";
 import botImage1 from "../../images/dashboard/mobilebanners/Bot1.png";
-import './ApplicantNavBar.css'
-import notificationIcon from '../../images/notificationIcon.svg'
-
+import "./ApplicantNavBar.css";
+import notificationIcon from "../../images/notificationIcon.svg";
 
 function ApplicantNavBar() {
   const location = useLocation();
   const hideSidebarRoutes = ["/applicant-dymmy"];
-  const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"]
+  const hiddenRoutes = ["/applicant-interview-prep", "/applicanthome"];
   const [isOpen, setIsOpen] = useState(
-    window.innerWidth >= 1302 && !hideSidebarRoutes.some(route => location.pathname.startsWith(route))
+    window.innerWidth >= 1302 &&
+      !hideSidebarRoutes.some((route) => location.pathname.startsWith(route))
   );
   const { user } = useUserContext();
-  const [imageSrc, setImageSrc] = useState('');
+  const [imageSrc, setImageSrc] = useState("");
   const [alertCount, setAlertCount] = useState(0);
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
 
   const [isSubAccountVisible, setIsSubAccountVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [hamburgerClass, setHamburgerClass] = useState('fa fa-bars');
+  const [hamburgerClass, setHamburgerClass] = useState("fa fa-bars");
   const frompath = location.state?.from;
   const { pathname } = useLocation();
 
@@ -56,10 +56,9 @@ function ApplicantNavBar() {
     navigate("/applicant-interview-prep");
   };
 
-  const shouldHide = hiddenRoutes.some(route =>
+  const shouldHide = hiddenRoutes.some((route) =>
     location.pathname.startsWith(route)
   );
-
 
   const toggleSubAccount = () => {
     setIsSubAccountVisible(!isSubAccountVisible);
@@ -84,7 +83,6 @@ function ApplicantNavBar() {
       };
 
       setCard(mappedCard);
-
     } catch (err) {
       console.error("Card API failed:", err.response || err);
       setCard(DEFAULT_CARD); // fallback
@@ -95,11 +93,12 @@ function ApplicantNavBar() {
     fetchCard();
   }, [applicantId]);
 
-
   useEffect(() => {
     const updateSidebarClasses = () => {
-      const shouldHide = hideSidebarRoutes.some(route =>
-        location.pathname === route || location.pathname.startsWith(route + "/")
+      const shouldHide = hideSidebarRoutes.some(
+        (route) =>
+          location.pathname === route ||
+          location.pathname.startsWith(route + "/")
       );
 
       if (window.innerWidth >= 1301 && !shouldHide) {
@@ -122,7 +121,6 @@ function ApplicantNavBar() {
     const accountElement = document.querySelector(".account");
 
     if (accountElement && !accountElement.contains(event.target)) {
-
       setIsSubAccountVisible(false);
     }
   };
@@ -134,46 +132,45 @@ function ApplicantNavBar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
-        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
+        const response = await axios.get(
+          `${apiUrl}/applicant/getApplicantById/${user.id}`
+        );
 
         const newData = {
           identifier: response.data.email,
-          password: response.data.password
+          password: response.data.password,
         };
-        console.log(response.data)
+        console.log(response.data);
 
         setRequestData(newData);
       } catch (error) {
-        console.error('Error updating profile status:', error);
+        console.error("Error updating profile status:", error);
       }
     };
     fetchData();
   }, []);
 
-
-  const handleToggleMenu = e => {
+  const handleToggleMenu = (e) => {
     e.stopPropagation();
     setIsOpen(!isOpen);
-    if (hamburgerClass === 'fa fa-bars') {
-      setHamburgerClass('fa fa-arrow-left');
+    if (hamburgerClass === "fa fa-bars") {
+      setHamburgerClass("fa fa-arrow-left");
       document.body.classList.remove("close-sidebar");
       document.body.classList.add("grid-handler");
     } else {
-      setHamburgerClass('fa fa-bars');
+      setHamburgerClass("fa fa-bars");
       document.body.classList.add("close-sidebar");
       document.body.classList.remove("grid-handler");
     }
   };
 
-
-  const hideMenu = e => {
+  const hideMenu = (e) => {
     e.stopPropagation();
     setIsOpen(window.innerWidth >= 1302);
-    setHamburgerClass('fa fa-bars');
+    setHamburgerClass("fa fa-bars");
   };
 
-   useEffect(() => {
+  useEffect(() => {
     const path = location.pathname;
 
     const isExcluded =
@@ -187,7 +184,7 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     const handleResize = () => {
-      const shouldHide = hideSidebarRoutes.some(route =>
+      const shouldHide = hideSidebarRoutes.some((route) =>
         pathname.startsWith(route)
       );
 
@@ -240,13 +237,13 @@ function ApplicantNavBar() {
         Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
       },
     })
-      .then(response => response.blob())
-      .then(blob => {
+      .then((response) => response.blob())
+      .then((blob) => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
       })
       .catch(() => {
-        setImageSrc('../images/user/avatar/image-01.jpg');
+        setImageSrc("../images/user/avatar/image-01.jpg");
       });
 
     return () => {
@@ -255,17 +252,15 @@ function ApplicantNavBar() {
     };
   }, [pathname, user.id]);
 
-
   const handleLogout = () => {
-    console.log('Logout button clicked');
+    console.log("Logout button clicked");
     try {
-
-      localStorage.removeItem('jwtToken');
-      localStorage.removeItem('user');
-      localStorage.removeItem('userType');
+      localStorage.removeItem("jwtToken");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userType");
       window.location.href = "https://www.bitlabs.in/jobs";
     } catch (error) {
-      console.error('Logout failed', error);
+      console.error("Logout failed", error);
     }
   };
 
@@ -276,39 +271,55 @@ function ApplicantNavBar() {
   const fetchAlertCount = async () => {
     try {
       const [jobAlertsResponse, notificationsResponse] = await Promise.all([
-        axios.get(`${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
-        }),
+        axios.get(
+          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
+        ),
         axios.get(`${apiUrl}/notifications/getNotifications/${user.id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
         }),
       ]);
 
-      const notifications = Array.isArray(notificationsResponse.data) ? notificationsResponse.data : [];
-      const unreadNotificationsCount = notifications.reduce((count, notification) => {
-        const isUnread = notification.applicantId?.includes(user.id);
-        return isUnread ? count + 1 : count;
-      }, 0);
+      const notifications = Array.isArray(notificationsResponse.data)
+        ? notificationsResponse.data
+        : [];
+      const unreadNotificationsCount = notifications.reduce(
+        (count, notification) => {
+          const isUnread = notification.applicantId?.includes(user.id);
+          return isUnread ? count + 1 : count;
+        },
+        0
+      );
 
       const jobAlertsCount = Number(jobAlertsResponse.data) || 0;
       const totalCount = jobAlertsCount + unreadNotificationsCount;
 
       setAlertCount(totalCount);
-      console.log(totalCount)
+      console.log(totalCount);
     } catch (error) {
-      console.error('Error fetching alert counts:', error);
+      console.error("Error fetching alert counts:", error);
       try {
         const response = await axios.get(
           `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
-          { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+            },
+          }
         );
         setAlertCount(Number(response.data) || 0);
       } catch (fallbackError) {
-        console.error('Error fetching fallback alert count:', fallbackError);
+        console.error("Error fetching fallback alert count:", fallbackError);
         setAlertCount(0);
       }
     }
-  }
+  };
 
   useEffect(() => {
     const checkUserData = setInterval(() => {
@@ -318,10 +329,9 @@ function ApplicantNavBar() {
         clearInterval(checkUserData);
       }
     }, 200);
-    console.log(userData)
+    console.log(userData);
     return () => clearInterval(checkUserData);
   }, [user.id]);
-
 
   return (
     <div>
@@ -331,7 +341,13 @@ function ApplicantNavBar() {
           <div className="mobile-header">
             <div id="logo" className="logo">
               <a href="/applicanthome">
-                <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} />
+                <img
+                  src={imageSrc || "../images/user/avatar/image-01.jpg"}
+                  alt="Profile"
+                  onError={() =>
+                    setImageSrc("../images/user/avatar/image-01.jpg")
+                  }
+                />
               </a>
             </div>
             <a className="title-button-group">
@@ -350,28 +366,37 @@ function ApplicantNavBar() {
               <div className="sticky-area-wrap">
                 <div className="header-ct-left">
                   {window.innerWidth < 2000 && (
-                    <span id="hamburger" className={hamburgerClass} onClick={handleToggleMenu}></span>
-
+                    <span
+                      id="hamburger"
+                      className={hamburgerClass}
+                      onClick={handleToggleMenu}
+                    ></span>
                   )}
-                  <span style={{ width: '20px', height: '2px' }}></span>
+                  <span style={{ width: "20px", height: "2px" }}></span>
                   <div id="logo" className="logo">
                     <a href="/applicanthome">
-                      <img
-                        className="site-logo"
-
-                        src={logos}
-                        alt="Image"
-                      />
+                      <img className="site-logo" src={logos} alt="Image" />
                     </a>
-
                   </div>
-
                 </div>
 
                 <div className="header-ct-right">
-                  <div style={{ position: 'relative', display: 'inline-block', marginTop: '10px', marginRight: '22px' }}>
-                    <Link to="/applicant-job-alerts" className={location.pathname === "/applicant-job-alerts" ? "tf-effect active" : ""}>
-
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "inline-block",
+                      marginTop: "10px",
+                      marginRight: "22px",
+                    }}
+                  >
+                    <Link
+                      to="/applicant-job-alerts"
+                      className={
+                        location.pathname === "/applicant-job-alerts"
+                          ? "tf-effect active"
+                          : ""
+                      }
+                    >
                       <span className="notify-bell">
                         <img src={notificationIcon} />
                         {alertCount > 0 && (
@@ -381,25 +406,36 @@ function ApplicantNavBar() {
                           </span>
                         )}
                       </span>
-
-
                     </Link>
                   </div>
 
-
-                  <div id="specificDiv" className="header-customize-item account">
-
-                    <div className="profile-icon"><img width="32px" height="32px" src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onClick={toggleSubAccount} onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} /></div>
+                  <div
+                    id="specificDiv"
+                    className="header-customize-item account"
+                  >
+                    <div className="profile-icon">
+                      <img
+                        width="32px"
+                        height="32px"
+                        src={imageSrc || "../images/user/avatar/image-01.jpg"}
+                        alt="Profile"
+                        onClick={toggleSubAccount}
+                        onError={() =>
+                          setImageSrc("../images/user/avatar/image-01.jpg")
+                        }
+                      />
+                    </div>
                     {userData && (
                       <div className="user-info">
                         <p>Hi,</p>
-                        <h6 className="user-name">
-                          {card?.name}
-                        </h6>
+                        <h6 className="user-name">{card?.name}</h6>
                         <p className="user-email">{userData.identifier}</p>
                       </div>
                     )}
-                    <div className="toggle-subaccount-icon" onClick={toggleSubAccount}>
+                    <div
+                      className="toggle-subaccount-icon"
+                      onClick={toggleSubAccount}
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -414,41 +450,55 @@ function ApplicantNavBar() {
                       </svg>
                     </div>
 
-                    <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
+                    <div
+                      className={`sub-account ${
+                        isSubAccountVisible ? "show" : ""
+                      }`}
+                    >
                       <div className="sub-account-item">
                         <a href="/applicant-change-password">
-                          <span className="icon-change-passwords" /> Change Password
+                          <span className="icon-change-passwords" /> Change
+                          Password
                         </a>
                       </div>
                       <div className="sub-account-item">
-
                         <NotificationToggleWeb className="icon-change-passwords" />
                       </div>
                       <div className="sub-account-item">
-
-                        <a onClick={() => setShowModal(true)}><span className="icon-log-out" /> Log Out </a>
-
-
+                        <a onClick={() => setShowModal(true)}>
+                          <span className="icon-log-out" /> Log Out{" "}
+                        </a>
                       </div>
                     </div>
                   </div>
                 </div>
-
               </div>
-
             </div>
           </div>
         </div>
-
       </header>
-      {(
-        <div className={`left-menu ${isOpen ? 'open' : ''}`}>
+      {
+        <div className={`left-menu ${isOpen ? "open" : ""}`}>
           <div id="sidebar-menu">
             <ul className="downmenu list-unstyled" id="side-menu">
-
               <li id="tour-dashboard">
-                <Link onClick={hideMenu} to="/applicanthome" className={location.pathname === "/applicanthome" ? "tf-effect active" : ""}>
-                  <span className="dash-icon" style={{ marginRight: "15px", display: 'flex', alignItems: 'center' }}>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicanthome"
+                  className={
+                    location.pathname === "/applicanthome"
+                      ? "tf-effect active"
+                      : ""
+                  }
+                >
+                  <span
+                    className="dash-icon"
+                    style={{
+                      marginRight: "15px",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <img
                       src={shape}
                       alt="Dashboard Icon"
@@ -460,57 +510,81 @@ function ApplicantNavBar() {
                 </Link>
               </li>
               <li>
-                <Link onClick={hideMenu} to="/applicant-view-profile" className={location.pathname === "/applicant-view-profile" ? "tf-effect active" : ""}>
-
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-view-profile"
+                  className={
+                    location.pathname === "/applicant-view-profile"
+                      ? "tf-effect active"
+                      : ""
+                  }
+                >
                   <span className="dash-icon">
                     <img
                       src={shape2}
                       alt="Dashboard Icon"
-                      width="24"
-                      height="24"
+                      width="22"
+                      height="22"
                     />
                   </span>
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Build portfolio</span>
+                  <span
+                    className="dash-titles"
+                    style={{ textTransform: "none" }}
+                  >
+                    Build portfolio
+                  </span>
                 </Link>
               </li>
               <li>
-                <div
-
-                >
+                <div>
                   <Link
                     onClick={hideMenu}
                     to="/applicant-interview-prep"
-                    className={pathname === "/applicant-interview-prep" ? "tf-effect active" : ""}
+                    className={
+                      pathname === "/applicant-interview-prep"
+                        ? "tf-effect active"
+                        : ""
+                    }
                   >
                     <span className="dash-icon">
-                      <img src={botImage1} alt="Ask Newton" width="24" height="24" />
+                      <img
+                        src={botImage1}
+                        alt="Ask Newton"
+                        width="24"
+                        height="24"
+                      />
                     </span>
-                    <span className="dash-titles" style={{ textTransform: "none" }}>
+                    <span
+                      className="dash-titles"
+                      style={{ textTransform: "none" }}
+                    >
                       Ask newton
                     </span>
                   </Link>
-
                 </div>
-
               </li>
               <li>
                 <Link
                   id="tour-skill-validation"
                   onClick={hideMenu}
                   to="/applicant-verified-badges"
-                  className={location.pathname === "/applicant-verified-badges" ? "tf-effect active" : ""}
+                  className={
+                    location.pathname === "/applicant-verified-badges"
+                      ? "tf-effect active"
+                      : ""
+                  }
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
+                    display: "inline-flex",
+                    alignItems: "center",
+                    textDecoration: "none",
                   }}
                 >
                   <span
                     className="dash-icon"
                     style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
+                      display: "inline-block",
+                      transition: "fill 0.3s ease",
+                      marginRight: "12px",
                     }}
                   >
                     <img
@@ -520,25 +594,38 @@ function ApplicantNavBar() {
                       height="24"
                     />
                   </span>
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Skill validation</span>
+                  <span
+                    className="dash-titles"
+                    style={{
+                      color: "#333",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  >
+                    Skill validation
+                  </span>
                 </Link>
                 <Link
                   onClick={hideMenu}
                   to="/applicant-mentorconnect"
-                  className={location.pathname === "/applicant-mentorconnect" ? "tf-effect active" : ""}
+                  className={
+                    location.pathname === "/applicant-mentorconnect"
+                      ? "tf-effect active"
+                      : ""
+                  }
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
-                    marginTop: '13px'
+                    display: "inline-flex",
+                    alignItems: "center",
+                    textDecoration: "none",
+                    marginTop: "13px",
                   }}
                 >
                   <span
                     className="dash-icon"
                     style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
+                      display: "inline-block",
+                      transition: "fill 0.3s ease",
+                      marginRight: "12px",
                     }}
                   >
                     <img
@@ -547,29 +634,40 @@ function ApplicantNavBar() {
                       width="24"
                       height="24"
                     />
-
                   </span>
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>Mentor sphere</span>
+                  <span
+                    className="dash-titles"
+                    style={{
+                      color: "#333",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  >
+                    Mentor sphere
+                  </span>
                 </Link>
-
 
                 <Link
                   onClick={hideMenu}
                   to="/applicant-verified-videos"
-                  className={location.pathname === "/applicant-verified-videos" ? "tf-effect active" : ""}
+                  className={
+                    location.pathname === "/applicant-verified-videos"
+                      ? "tf-effect active"
+                      : ""
+                  }
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    textDecoration: 'none',
-                    marginTop: '13px'
+                    display: "inline-flex",
+                    alignItems: "center",
+                    textDecoration: "none",
+                    marginTop: "13px",
                   }}
                 >
                   <span
                     className="dash-icon"
                     style={{
-                      display: 'inline-block',
-                      transition: 'fill 0.3s ease',
-                      marginRight: '12px',
+                      display: "inline-block",
+                      transition: "fill 0.3s ease",
+                      marginRight: "12px",
                     }}
                   >
                     <img
@@ -580,16 +678,30 @@ function ApplicantNavBar() {
                     />
                   </span>
 
-                  <span className="dash-titles" style={{ color: '#333', fontSize: '16px', textTransform: "none" }}>
+                  <span
+                    className="dash-titles"
+                    style={{
+                      color: "#333",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  >
                     Tech buzz shorts
                   </span>
-
-
                 </Link>
-
               </li>
               <li>
-                <Link onClick={hideMenu} to="/applicant-hackathon" className={location.pathname === "/applicant-hackathon" || frompath === "/applicant-hackathon" || location.pathname.includes("/applicant-hackathon") ? "tf-effect active" : ""}>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-hackathon"
+                  className={
+                    location.pathname === "/applicant-hackathon" ||
+                    frompath === "/applicant-hackathon" ||
+                    location.pathname.includes("/applicant-hackathon")
+                      ? "tf-effect active"
+                      : ""
+                  }
+                >
                   <span className="dash-icon">
                     <img
                       src={shape6}
@@ -598,12 +710,25 @@ function ApplicantNavBar() {
                       height="24"
                     />
                   </span>
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Innovation arena</span>
+                  <span
+                    className="dash-titles"
+                    style={{ textTransform: "none" }}
+                  >
+                    Innovation arena
+                  </span>
                 </Link>
               </li>
 
               <li>
-                <Link onClick={hideMenu} to="/applicant-blog-list" className={location.pathname === "/applicant-blog-list" ? "tf-effect active" : ""}>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-blog-list"
+                  className={
+                    location.pathname === "/applicant-blog-list"
+                      ? "tf-effect active"
+                      : ""
+                  }
+                >
                   <span className="dash-icon blog-icon">
                     <img
                       src={shape7}
@@ -613,63 +738,68 @@ function ApplicantNavBar() {
                     />
                   </span>
 
-                  <span className="dash-titles" style={{ textTransform: "none" }}>Tech vibes</span>
+                  <span
+                    className="dash-titles"
+                    style={{ textTransform: "none" }}
+                  >
+                    Tech vibes
+                  </span>
                 </Link>
               </li>
-
             </ul>
 
             {/* Logout Button */}
-            <div style={{ marginTop: 'auto' }}>
+            <div style={{ marginTop: "auto" }}>
               <div
                 onClick={() => setShowModal(true)}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  transition: 'all 0.3s ease',
-                  margin: '0 10px'
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  borderRadius: "8px",
+                  transition: "all 0.3s ease",
+                  margin: "0 10px",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.querySelector('img').style.filter = 'none';
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.querySelector("img").style.filter = "none";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.querySelector('img').style.filter = 'none';
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.querySelector("img").style.filter = "none";
                 }}
               >
-                <div style={{
-                  width: '24px',
-                  height: '24px',
-                  marginRight: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                <div
+                  style={{
+                    width: "24px",
+                    height: "24px",
+                    marginRight: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <img
                     src={shape8}
                     alt="Dashboard Icon"
                     width="24"
                     height="24"
                   />
-
                 </div>
-                <span className="dash-titles" style={{ color: '#1A1A17' }}>Logout</span>
+                <span className="dash-titles" style={{ color: "#1A1A17" }}>
+                  Logout
+                </span>
               </div>
             </div>
-
           </div>
         </div>
-      )}
+      }
       <ModalLogout
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onConfirm={handleLogout}
       />
-
     </div>
-  )
+  );
 }
 export default ApplicantNavBar;
