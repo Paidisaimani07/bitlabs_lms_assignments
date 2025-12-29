@@ -6,27 +6,35 @@ import { useUserContext } from "../common/UserProvider";
 // Fallback images
 import DummyMentor from "../../images/mentor-dummy.png";
 import DummyBanner from "../../images/bannercard_mentor1.jpg";
+import noSearchResults from "../../images/empty-state-images/no-search-results.png";
+import noMentorConnects from "../../images/empty-state-images/noMentorConnects.png";
 
 const ApplicantMentorConnect = () => {
   const [loading, setLoading] = useState(true);
   const [meetings, setMeetings] = useState([]);
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
+
   const user = useUserContext()?.user;
 
   useEffect(() => {
+    let mounted = true;
     const controller = new AbortController();
     (async () => {
       try {
         setLoading(true);
         const jwtToken = localStorage.getItem("jwtToken");
         const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-        const resp = await axios.get(`${apiUrl}/api/mentor-connect/getAllMeetings`, {
-          headers,
-          signal: controller.signal,
-        });
+        const resp = await axios.get(
+          `${apiUrl}/api/mentor-connect/getAllMeetings`,
+          {
+            headers,
+            signal: controller.signal,
+          }
+        );
 
         // Accept either array or paged envelope { items: [...] }
+        if (!mounted) return;
         const payload = resp.data;
         const list = Array.isArray(payload)
           ? payload
@@ -42,10 +50,15 @@ const ApplicantMentorConnect = () => {
           setMeetings([]);
         }
       } finally {
-        setLoading(false);
+        if (mounted) {
+          setLoading(false);
+        }
       }
     })();
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      mounted = false;
+    };
   }, []);
 
   // ---------- helpers ----------
@@ -53,7 +66,12 @@ const ApplicantMentorConnect = () => {
   // Accept LocalTime as [hh,mm,ss?] or "hh:mm[:ss]"
   const buildStartDate = (dateVal, timeVal) => {
     try {
-      let y, m, d, hh = 0, mm = 0, ss = 0;
+      let y,
+        m,
+        d,
+        hh = 0,
+        mm = 0,
+        ss = 0;
 
       if (Array.isArray(dateVal)) {
         [y, m, d] = dateVal;
@@ -119,7 +137,6 @@ const ApplicantMentorConnect = () => {
     if (now < start) return "Upcoming";
     return "Expired";
   };
-
 
   // Google Calendar: use local time (no Z) to avoid timezone mismatch
   const toGoogleLocal = (d) => {
@@ -201,7 +218,41 @@ const ApplicantMentorConnect = () => {
       .page-title-wrap { display:flex; align-items:center; justify-content:space-between; gap:12px; }
       .search-input { width:280px; max-width:40vw; border:1px solid #E5E7EB; border-radius:10px; padding:10px 12px; font-size:14px; }
       @media (max-width:640px){ .search-input{ width:100%; max-width:none; } .page-title-wrap{ flex-direction:column; align-items:stretch; } }
-    `,
+       @media (min-width: 900px) and (min-height: 1200px){ .noMentorimg{ width:550px;  }   .noMentormsg {
+    font-size: 26px!important;    }
+    /* Default */
+.noSearchimg {
+  width: 400px;
+  max-width: 90%;
+  height: auto;
+}
+
+.noSearchText {
+  font-size: 17px;
+}
+
+/* iPad Pro 12.9" — 1024 x 1366 */
+@media (width: 1024px) and (height: 1366px) {
+  .noSearchResults {
+    width: 520px;
+  }
+
+  .noSearchText {
+    font-size: 24px;
+  }
+}
+
+/* Large tablets — 912 x 1368 */
+@media (width: 912px) and (height: 1368px) {
+  .noSearchResults {
+    width: 500px;
+  }
+
+  .noSearchText {
+    font-size: 22px;
+  }
+}
+} `,
   };
 
   const Card = ({ m }) => {
@@ -215,15 +266,22 @@ const ApplicantMentorConnect = () => {
     const startEnabled = status === "Active";
     const addCalEnabled = status === "Upcoming";
 
-
     const statusColor =
-      status === "Active" ? "#22c55e" : status === "Upcoming" ? "#F59E0B" : "#9CA3AF";
+      status === "Active"
+        ? "#22c55e"
+        : status === "Upcoming"
+          ? "#F59E0B"
+          : "#9CA3AF";
 
     // Date-time label under Duration
     const dtLabel = (() => {
       const dt = buildStartDate(m.date, m.startTime);
       return dt
-        ? dt.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short", hour12: true })
+        ? dt.toLocaleString(undefined, {
+          dateStyle: "medium",
+          timeStyle: "short",
+          hour12: true,
+        })
         : "Date not available";
     })();
 
@@ -239,7 +297,14 @@ const ApplicantMentorConnect = () => {
         }}
       >
         {/* Banner */}
-        <div style={{ width: "100%", height: 160, borderRadius: 5, overflow: "hidden" }}>
+        <div
+          style={{
+            width: "100%",
+            height: 160,
+            borderRadius: 5,
+            overflow: "hidden",
+          }}
+        >
           <img
             src={banner}
             alt={m.title || "Mentor session"}
@@ -252,28 +317,39 @@ const ApplicantMentorConnect = () => {
         </div>
 
         {/* Body */}
-        <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div
+          style={{
+            padding: 14,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+          }}
+        >
           {/* Header row: Status (left) — Copy link (right) */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
             <span
               style={{
-                background:
-                  status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
+                background: status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
                 color: status === "Active" ? "#fff" : "#F97316", // orange text for Upcoming
-                border:
-                  status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
+                border: status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
                 fontSize: 12,
                 fontWeight: 800,
                 padding: "4px 10px",
                 borderRadius: 3,
-                boxShadow: status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
+                boxShadow:
+                  status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
                 display: "inline-block",
                 textTransform: "capitalize",
               }}
             >
               {status}
             </span>
-
 
             <button
               onClick={() => copyLink(m.meetLink)}
@@ -286,7 +362,6 @@ const ApplicantMentorConnect = () => {
                 cursor: "pointer",
                 textDecoration: "underline",
                 textTransform: "none",
-
               }}
             >
               Copy link
@@ -294,9 +369,13 @@ const ApplicantMentorConnect = () => {
           </div>
 
           {/* Title/desc/duration */}
-          <div style={{ fontSize: 18, fontWeight: 800, color: "#111827" }}>{m.title}</div>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "#111827" }}>
+            {m.title}
+          </div>
           {m.description ? (
-            <div style={{ fontSize: 14, color: "#475569" }}>{m.description}</div>
+            <div style={{ fontSize: 14, color: "#475569" }}>
+              {m.description}
+            </div>
           ) : null}
           <div style={{ fontSize: 12, color: "#ef6c00", fontWeight: 700 }}>
             Duration: {duration}
@@ -323,7 +402,13 @@ const ApplicantMentorConnect = () => {
                 e.currentTarget.src = DummyMentor;
               }}
             />
-            <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                lineHeight: 1.1,
+              }}
+            >
               <span style={{ fontSize: 13, fontWeight: 700, color: "#0F172A" }}>
                 {m.mentorName || "Mentor"}
               </span>
@@ -362,7 +447,7 @@ const ApplicantMentorConnect = () => {
             {/* Add Calendar — keep colors, block click when not enabled */}
             <button
               onClick={() => {
-                if (!addCalEnabled) return;            // block click when not upcoming
+                if (!addCalEnabled) return; // block click when not upcoming
                 window.open(gcalUrl, "_blank", "noopener,noreferrer");
               }}
               aria-disabled={!addCalEnabled}
@@ -380,26 +465,153 @@ const ApplicantMentorConnect = () => {
                 padding: "12px 16px",
                 fontWeight: 800,
                 fontSize: 14,
-                cursor: addCalEnabled ? "pointer" : "not-allowed", 
-                textTransform: "none"
+                cursor: addCalEnabled ? "pointer" : "not-allowed",
+                textTransform: "none",
               }}
             >
               Add calendar
             </button>
-
           </div>
         </div>
+      </div>
+    );
+  };
+  const MentorSkeleton = ({ count = 6 }) => {
+    return (
+      <div className="mentor-grid">
+        {Array.from({ length: count }).map((_, i) => (
+          <div
+            key={i}
+            className="mentor-card"
+            style={{
+              background: "#fff",
+              borderRadius: 8,
+              border: "1px solid #EEF2F7",
+              boxShadow: "0 12px 24px rgba(17,24,39,0.06)",
+              padding: 12, // ✅ same as real card
+              pointerEvents: "none",
+              opacity: 0.95,
+            }}
+          >
+            {/* ✅ Banner — EXACT HEIGHT */}
+            <div
+              style={{
+                width: "100%",
+                height: 160, // ✅ same as real
+                borderRadius: 5,
+                overflow: "hidden",
+                background: "#e5e7eb",
+              }}
+            />
+
+            {/* ✅ Body — EXACT SPACING */}
+            <div
+              style={{
+                padding: 14, // ✅ same as real
+                display: "flex",
+                flexDirection: "column",
+                gap: 8, // ✅ same as real
+              }}
+            >
+              <div
+                style={{
+                  width: "70%",
+                  height: 20,
+                  background: "#e5e7eb",
+                  borderRadius: 6,
+                }}
+              />
+              <div
+                style={{
+                  width: "90%",
+                  height: 14,
+                  background: "#e5e7eb",
+                  borderRadius: 6,
+                }}
+              />
+              <div
+                style={{
+                  width: "50%",
+                  height: 13,
+                  background: "#e5e7eb",
+                  borderRadius: 6,
+                }}
+              />
+              <div
+                style={{
+                  width: "60%",
+                  height: 13,
+                  background: "#e5e7eb",
+                  borderRadius: 6,
+                }}
+              />
+
+              {/* ✅ Mentor Row — EXACT SIZE */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    background: "#e5e7eb",
+                  }}
+                />
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 4 }}
+                >
+                  <div
+                    style={{
+                      width: 120,
+                      height: 14,
+                      background: "#e5e7eb",
+                      borderRadius: 6,
+                    }}
+                  />
+                  <div
+                    style={{
+                      width: 90,
+                      height: 12,
+                      background: "#e5e7eb",
+                      borderRadius: 6,
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* ✅ CTA Buttons — EXACT HEIGHT */}
+              <div style={{ marginTop: 8, display: "flex", gap: 10 }}>
+                <div
+                  style={{
+                    flex: 1,
+                    height: 42,
+                    background: "#e5e7eb",
+                    borderRadius: 5,
+                  }}
+                />
+                <div
+                  style={{
+                    flex: 1,
+                    height: 42,
+                    background: "#e5e7eb",
+                    borderRadius: 5,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   };
 
   return (
     <div className="border-style">
-
       <div className="blur-border-style"></div>
-      <div className="dashboard__content" style={{ paddingTop: 4, paddingBottom: 8 }}>
+      <div
+        className="dashboard__content"
+        style={{ paddingTop: 4, paddingBottom: 8 }}
+      >
         <style>{styles.grid}</style>
-
 
         <div className="row" style={{ marginTop: "-100px" }}>
           <div className="col-lg-12 col-md-12">
@@ -433,12 +645,67 @@ const ApplicantMentorConnect = () => {
               <div className="content-tab">
                 <div className="inner">
                   {loading ? (
-                    <div style={{ padding: 18 }}>Loading sessions…</div>
-                  ) : error ? (
-                    <div style={{ color: "#b91c1c" }}>{error}</div>
-                  ) : filteredMeetings.length === 0 ? (
-                    <div style={{ padding: 24, textAlign: "center", color: "#6b7280" }}>
-                      No mentor sessions match your search.
+                    <MentorSkeleton count={6} />
+                  ) : !query && meetings.length === 0 ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "60vh",
+                        gap: "10px",
+                      }}
+                    >
+                      <img
+                        className="noMentorimg"
+                        src={noMentorConnects}
+                        alt="No Mentor Connects"
+                      />
+                      <p
+                        className="noMentormsg"
+                        style={{
+                          color: "#6b7280",
+                          textAlign: "center",
+                          fontSize: "18px",
+                          fontStyle: "sans-serif",
+                          fontWeight: "500",
+                        }}
+                      >
+                        No Mentor connects available at this time
+                      </p>
+                    </div>
+                  ) : query && filteredMeetings.length === 0 ? (
+                    <div
+                      style={{
+                        height: "60vh",
+                        textAlign: "center",
+                        color: "#6b7280",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <img
+                        className="noSearchimg"
+                        src={noSearchResults}
+                        alt="No Search Results"
+                        style={{ width: "400px" }}
+                      />
+                      <p
+                        className="noSearchText"
+                        style={{
+                          color: "#6b7280",
+                          textAlign: "center",
+                          fontSize: "18px",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {" "}
+                        No mentor connects match your search.
+                      </p>
                     </div>
                   ) : (
                     <div className="mentor-grid">
@@ -453,12 +720,19 @@ const ApplicantMentorConnect = () => {
                           if (diff !== 0) return diff;
 
                           // within same status, earlier start first
-                          const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
-                          const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
+                          const ta =
+                            buildStartDate(a.date, a.startTime)?.getTime() ??
+                            Number.MAX_SAFE_INTEGER;
+                          const tb =
+                            buildStartDate(b.date, b.startTime)?.getTime() ??
+                            Number.MAX_SAFE_INTEGER;
                           return ta - tb;
                         })
                         .map((m) => (
-                          <Card key={m.meetingId ?? m.meeting_id ?? m.id} m={m} />
+                          <Card
+                            key={m.meetingId ?? m.meeting_id ?? m.id}
+                            m={m}
+                          />
                         ))}
                     </div>
                   )}

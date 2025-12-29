@@ -4,6 +4,8 @@ import { apiUrl } from "../../services/ApplicantAPIService";
 import { useLocation } from "react-router-dom";
 import "./ApplicantBlog.css";
 import ExploreButton from "../../images/icons/ExploreButton.svg";
+import noblogsfound from "../../images/empty-state-images/no-blogs-found.png";
+import nosearchresults from "../../images/empty-state-images/no-search-results.png";
 
 export default function ApplicantBlogs() {
   const [blogs, setBlogs] = useState([]);
@@ -53,6 +55,7 @@ export default function ApplicantBlogs() {
         );
         setHasMore(false);
       } finally {
+        //  setTimeout(()=>setLoading(false),2000);//
         setLoading(false);
       }
     })();
@@ -90,12 +93,11 @@ export default function ApplicantBlogs() {
     const blogId = params.get("blog");
     if (!blogId || !blogs.length || selected || hasAutoOpened.current) return;
 
-
-    const blog = blogs.find(b => String(b.id) === blogId);
+    const blog = blogs.find((b) => String(b.id) === blogId);
     if (blog) {
       hasAutoOpened.current = true;
       setTimeout(() => openModal(blog), 0);
-      window.history.replaceState({}, '', '/applicant-blog-list');
+      window.history.replaceState({}, "", "/applicant-blog-list");
     }
   }, [blogs, location.search, selected, openModal]);
   useEffect(() => {
@@ -109,10 +111,77 @@ export default function ApplicantBlogs() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [selected]);
+  const BlogSkeleton = ({ count = 12 }) => {
+    return (
+      <div className="tv-grid">
+        {Array.from({ length: count }).map((_, i) => (
+          <div key={i} className="tv-card">
+            {/* Thumbnail Skeleton */}
+            <div className="tv-media">
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  background: "#e5e7eb",
+                  borderRadius: "5px",
+                }}
+              />
+            </div>
+
+            <div className="tv-content">
+              {/* Title Skeleton (1.5 lines) */}
+              <div
+                style={{
+                  width: "85%",
+                  height: "18px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px",
+                  marginTop: "10px",
+                }}
+              />
+              <div
+                style={{
+                  width: "55%",
+                  height: "18px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px",
+                  marginTop: "6px",
+                }}
+              />
+
+              {/* Footer Row */}
+              <div className="tv-footer">
+                {/* Author + Date Skeleton */}
+                <div className="tv-meta">
+                  <div
+                    style={{
+                      width: "120px",
+                      height: "12px",
+                      background: "#e5e7eb",
+                      borderRadius: "4px",
+                    }}
+                  />
+                </div>
+
+                {/* Read More Icon Skeleton */}
+                <div
+                  style={{
+                    width: "22px",
+                    height: "22px",
+                    background: "#e5e7eb",
+                    borderRadius: "4px",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="border-style">
-
       <div className="blur-border-style"></div>
       <div className="dashboard__content">
         {/* Title + Search */}
@@ -142,46 +211,78 @@ export default function ApplicantBlogs() {
           </div>
         </div>
 
-        {/* error in Ui */}
-        {error && (
-          <div className="error-message">
-            <p>{error}</p>
-          </div>
-        )}
         {/* Card Grid */}
         <div className="blogs-container" style={{ width: "100%" }}>
-          {loading ? (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "300px",
-              }}
-            >
-              <p style={{ fontSize: "20px", fontWeight: 600, color: "#555" }}>
-                Loading...
-              </p>
-            </div>
+          {loading && page === 0 ? (
+            <BlogSkeleton count={12} />
           ) : filteredBlogs.length === 0 ? (
-
-            <div
-              className="no-blogs-wrapper"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "300px",
-              }}
-            >
-              <p
-                className="no-blogs-message"
-                style={{ fontSize: "22px", fontWeight: 600, color: "#555" }}
+            blogs.length === 0 ? (
+              // CASE 1: No blogs in DB
+              <div
+                className="no-blogs-wrapper"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "60vh",
+                  textAlign: "center",
+                }}
               >
-                No blogs found
+                <img
+                  src={noblogsfound}
+                  width="400"
+                  // height="auto"
+                  style={{ marginBottom: "10px" }}
+                />
+                <p
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 500,
+                    color: "#555",
+                    fontStyle: "sans-serif",
+                  }}
+                >
+                  No blogs available yet
+                </p>
+              </div>
+            ) : (
+              // CASE 2: Searching but no results
 
-              </p>
-            </div>
+              <div
+                className="no-blogs-wrapper"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  height: "60vh",
+                  textAlign: "center",
+                  // backgroundColor: "#fff",
+                }}
+              >
+                <img
+                  src={nosearchresults}
+                  width="500"
+                  height="400"
+                  style={{
+                    width: "100%",
+                    maxWidth: "500px",
+                    height: "auto",
+                    minWidth: "120px",
+                  }}
+                />
+                <p
+                  style={{
+                    fontWeight: "500",
+                    fontStyle: "sans-serif",
+                    fontSize: "18px",
+                  }}
+                >
+                  No results found for your search
+                </p>
+              </div>
+            )
           ) : (
             <>
               {/* Blog Grid */}
@@ -206,9 +307,13 @@ export default function ApplicantBlogs() {
 
                       <div className="tv-footer">
                         <div className="tv-meta">
-                          <span className="tv-by">By {b.author || "bitLabs"}</span>
+                          <span className="tv-by">
+                            By {b.author || "bitLabs"}
+                          </span>
                           <span className="tv-dot">•</span>
-                          <span className="tv-date">{formatDate(b.createdAt)}</span>
+                          <span className="tv-date">
+                            {formatDate(b.createdAt)}
+                          </span>
                         </div>
 
                         <button
@@ -231,9 +336,9 @@ export default function ApplicantBlogs() {
                   </article>
                 ))}
               </div>
+              {loading && page > 0 && <BlogSkeleton count={6} />}
 
               {/* Load More Button (Hidden While Searching) */}
-
             </>
           )}
 
@@ -257,14 +362,21 @@ export default function ApplicantBlogs() {
               </span>
             </div>
           )}
-
         </div>
 
         {/* Popup Modal */}
         {selected && (
-          <div className="tv-modal-overlay" onClick={closeModal} aria-modal="true" role="dialog">
+          <div
+            className="tv-modal-overlay"
+            onClick={closeModal}
+            aria-modal="true"
+            role="dialog"
+          >
             <div className="tv-modal" onClick={(e) => e.stopPropagation()}>
-              <button className="tv-modal-close" onClick={closeModal} aria-label="Close"
+              <button
+                className="tv-modal-close"
+                onClick={closeModal}
+                aria-label="Close"
                 dangerouslySetInnerHTML={{
                   __html: `
    <svg xmlns="http://www.w3.org/2000/svg" width="800px" height="800px" viewBox="0 0 24 24" fill="none">
@@ -277,7 +389,6 @@ export default function ApplicantBlogs() {
                 }}
               ></button>
 
-
               <div className="tv-modal-header">
                 <div className="tv-modal-thumb">
                   <img src={selected.imageUrl} alt={selected.title} />
@@ -285,32 +396,48 @@ export default function ApplicantBlogs() {
                 <div className="tv-modal-headtext">
                   <h3 className="tv-modal-title">{selected.title}</h3>
                   <div className="tv-meta">
-                    <span className="tv-by">By {selected.author || "bitLabs"}</span>
+                    <span className="tv-by">
+                      By {selected.author || "bitLabs"}
+                    </span>
                     <span className="tv-dot">•</span>
-                    <span className="tv-date">{formatDate(selected.createdAt)}</span>
+                    <span className="tv-date">
+                      {formatDate(selected.createdAt)}
+                    </span>
                   </div>
                 </div>
               </div>
 
               <div className="tv-modal-body">
-                {selected.description && <p className="tv-modal-desc">{selected.description}</p>}
+                {selected.description && (
+                  <p className="tv-modal-desc">{selected.description}</p>
+                )}
                 {selected.content && (
                   <div className="tv-modal-content">
-                    {selected.content.split("\n").filter(Boolean).map((line, i) => (
-                      <p key={i} className={
-                        line.startsWith("##") ? "tv-h2" :
-                          line.startsWith("-") ? "tv-bullet" : "tv-p"
-                      }>
-                        {line.replace(/^##\s*/, "").replace(/^-/, "").trim()}
-                      </p>
-                    ))}
+                    {selected.content
+                      .split("\n")
+                      .filter(Boolean)
+                      .map((line, i) => (
+                        <p
+                          key={i}
+                          className={
+                            line.startsWith("##")
+                              ? "tv-h2"
+                              : line.startsWith("-")
+                              ? "tv-bullet"
+                              : "tv-p"
+                          }
+                        >
+                          {line
+                            .replace(/^##\s*/, "")
+                            .replace(/^-/, "")
+                            .trim()}
+                        </p>
+                      ))}
                   </div>
                 )}
               </div>
-
             </div>
           </div>
-
         )}
       </div>
     </div>
