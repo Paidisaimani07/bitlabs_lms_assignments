@@ -40,6 +40,17 @@ const ApplicantTakeTest = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [violationDetected, setViolationDetected] = useState(false);
   const [violationCount, setViolationCount] = useState(0);
+    const [visitedQuestions, setVisitedQuestions] = useState({});
+  const handleQuestionClick = (index) => {
+  setVisitedQuestions(prev => ({ ...prev, [index]: true }));
+  setCurrentQuestionIndex(index);
+};
+useEffect(() => {
+  setVisitedQuestions(prev => ({
+    ...prev,
+    [currentQuestionIndex]: true
+  }));
+}, [currentQuestionIndex]);
  useEffect(() => {
  
 const fetchQuestion = async() => {
@@ -265,10 +276,7 @@ const fetchQuestion = async() => {
   };
 
   const handleNextQuestion = () => {
-    if (!selectedOptions[currentQuestionIndex]) {
-      setValidationMessage('Please provide your answer to move to the next question');
-      return;
-    }
+
     setValidationMessage('');
     if (currentQuestionIndex < questions.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -307,10 +315,7 @@ const fetchQuestion = async() => {
 
   
   const handleSubmitTest = async () => {
-    if (!selectedOptions[currentQuestionIndex] && !violationDetected) {
-      setValidationMessage('Please provide your answer to submit the test.');
-      return;
-    }
+   
      if (isSubmitting) return;
   setIsSubmitting(true);
     setValidationMessage('');
@@ -1075,12 +1080,12 @@ const fetchQuestion = async() => {
             {questions.questions.map((_, index) => {
               const isCurrent = index === currentQuestionIndex;
               const isAnswered = !!selectedOptions[index];
-              const isNotAnswered = !selectedOptions[index] && index < currentQuestionIndex;
- 
+               const isVisited = visitedQuestions[index]; // only true if clicked
+              const isNotAnswered = isVisited && !isAnswered && !isCurrent;
               return (
 <div
                   key={index}
-                  onClick={() => setCurrentQuestionIndex(index)}
+                  onClick={() =>  handleQuestionClick(index)}
                   className={`question-indicator 
                     ${isCurrent ? "current" : ""}
                     ${isAnswered ? "answered" : ""}
@@ -1095,13 +1100,13 @@ const fetchQuestion = async() => {
  
 <div className="question-legend">
   <div>
-    <span className="legend-box not-attempted"></span>Not attempted
+    <span className="legend-box not-attempted"></span>Not visited
   </div>
   <div>
     <span className="legend-box answered"></span>Answered
   </div>
   <div>
-    <span className="legend-box not-answered"></span>Not answered
+    <span className="legend-box not-answered"></span>Visited
   </div>
   <div>
     <span className="legend-box current"></span>Current
