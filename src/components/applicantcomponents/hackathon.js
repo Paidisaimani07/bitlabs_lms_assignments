@@ -4,6 +4,7 @@ import { apiUrl } from "../../services/ApplicantAPIService";
 import axios from "axios";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
+import nosearchfound from "../../images/empty-state-images/no-search-results.png";
 
 const TechTags = ({ skills }) => {
     const containerRef = useRef(null);
@@ -259,6 +260,99 @@ const Hackathon = () => {
         if (reg.registaratinStatus) return "Registered";
         return null;
     };
+const HackathonSkeleton = ({ count = 8 }) => {
+  return (
+    <div className="newCards-grid">
+      {Array.from({ length: count }).map((_, i) => (
+        <div className="newCard skeleton-card" key={i}>
+          <div className="newCard-body">
+
+            {/* Banner */}
+            <div
+              className="newCard-header"
+              style={{
+                height: "150px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginBottom: "6px"
+              }}
+            ></div>
+
+            {/* Status + date */}
+            <div className="status-timing-row">
+              <div
+                style={{
+                  width: "70px",
+                  height: "18px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
+              <div
+                style={{
+                  width: "100px",
+                  height: "14px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
+            </div>
+
+            {/* Title */}
+            <div
+              style={{
+                width: "80%",
+                height: "20px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginTop: "12px"
+              }}
+            ></div>
+
+            {/* Company */}
+            <div
+              style={{
+                width: "50%",
+                height: "16px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                margin: "8px 0"
+              }}
+            ></div>
+
+            {/* Tags placeholder */}
+            <div
+              style={{
+                width: "100%",
+                height: "20px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginBottom: "12px"
+              }}
+            ></div>
+
+            {/* Footer Row */}
+            <div className="card-footer-row" style={{ marginTop: "6px" }}>
+            
+
+              <div
+                style={{
+                  width: "60px",
+                  height: "30px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
+            </div>
+
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
 
     return (
          <div className="border-style">
@@ -314,9 +408,34 @@ const Hackathon = () => {
                     </div>
                 </div>
 
-                {loading ? (
-                    <div className="loading"></div>
-                ) : filteredHackathons.length === 0 ? (
+              {loading ? (
+    <HackathonSkeleton count={8} />
+) : filteredHackathons.length === 0 && searchQuery? (
+
+                    <div
+                        className="no-results-message"
+                        style={{
+                            padding: "32px",
+                            fontSize: "18px",
+                            textAlign: "center",
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "12px"
+                        }}
+                    >
+                        <img width="300px"
+                            src={nosearchfound}
+                            alt={emptyMessages[statusFilter] || "No hackathons"}
+                            style={{}}
+                            onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        />
+                        <div ><p style={{fontWeight:"500",fontStyle:"sans-serif",fontSize:"18px"}}>No hackathon matches for your search</p></div>
+                    </div>
+                ):filteredHackathons.length === 0 ? (
+
                     <div
                         className="no-results-message"
                         style={{
