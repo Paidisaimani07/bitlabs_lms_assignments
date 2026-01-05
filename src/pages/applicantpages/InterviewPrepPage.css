@@ -6,27 +6,24 @@
     margin-top: -15px !important;
 }
 
-/* .ai-top-buttons {
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
-    z-index: 1;
-} */
- .ask-newton-header{
+.ask-newton-header {
     display: flex;
     justify-content: space-between;
- }
- .clear-new-buttons{
+}
+
+.clear-new-buttons {
     display: flex;
-    
- }
-.ask-newton-text{
-     font-size: 24px;
+
+}
+
+.ask-newton-text {
+    font-size: 24px;
     padding-left: 10px;
     color: #7E3601;
 }
-.ai-perp .hide-chat-btn{
-     display: flex;
+
+.ai-perp .hide-chat-btn {
+    display: flex;
     border-radius: 3px;
     justify-self: end;
     margin: 10px;
@@ -37,14 +34,13 @@
     height: 35px;
     justify-content: center;
     align-items: center;
-     background: linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%);
+    background: linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%);
     color: #fff;
     border: none;
-    
+
 }
 
-.ai-perp .ai-new-chat,
-.ai-perp .ai-clear-chat {
+.ai-perp .ai-new-chat {
     display: flex;
     border-radius: 3px;
     justify-self: end;
@@ -59,19 +55,18 @@
 }
 
 @media (max-width: 768px) {
-  .ai-perp .ai-new-chat,
-  .ai-perp .ai-clear-chat {
-    margin-top: 17px !important;
-  }
-.ask-newton-text{
-    font-size: 22px !important;
-  }
-  .ai-perp .ai-new-chat,
-.ai-perp .ai-clear-chat {
+    .ai-perp .ai-new-chat {
+        margin-top: 17px !important;
+    }
 
-    width: 100px !important;
-    height: 30px !important;
-}
+    .ask-newton-text {
+        font-size: 22px !important;
+    }
+
+    .ai-perp .ai-new-chat {
+        width: 100px !important;
+        height: 30px !important;
+    }
 }
 
 .ai-perp .ai-new-chat {
@@ -80,19 +75,12 @@
     border: none;
 }
 
-.ai-perp .ai-clear-chat {
-    background: #fff;
-    color: #E66A0E;
-    border: 1px solid #E66A0E;
-}
-
 .interview-prep-dashboard-content {
     display: flex;
     height: 69vh;
-    position: relative;
+    position: fixed;
     z-index: 1;
-    margin-bottom: -2px;
-    width:100%;
+    width: calc(100vw - 350px);
 }
 
 .interview-prep-sidebar {
@@ -111,8 +99,8 @@
 .interview-prep-sidebar.hidden {
     transform: translateX(-100%);
     width: 0;
-  opacity: 0;
-  overflow: hidden;
+    opacity: 0;
+    overflow: hidden;
 }
 
 .interview-prep-sidebar-header {
@@ -192,7 +180,6 @@
 .interview-prep-chats-list {
     flex: 1;
     overflow-y: auto;
-    min-height: 250px;
     padding-right: 4px;
     padding-right: 4px;
 }
@@ -276,16 +263,16 @@
     color: #000;
 }
 
-.interview-prep-option-btn:hover{
+.interview-prep-option-btn:hover {
     background: #F4F4F4;
     border-radius: 3px;
 }
 
 .interview-prep-main {
     display: flex;
-     flex: 1;
- 
-  transition: 0.3s;
+    flex: 1;
+
+    transition: 0.3s;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -319,9 +306,9 @@
 .interview-prep-message {
     margin-bottom: 14px;
     display: flex;
-    flex-direction: column;    /* 🔥 forces follow-ups below the message */
-  align-items: flex-start;
-  width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .interview-prep-user-message {
@@ -450,38 +437,38 @@
 .interview-prep-chats-list-wrapper::-webkit-scrollbar-thumb {
     background: #E0E0E0;
 }
+
 .interview-prep-chats-list-wrapper {
-  overflow-y: auto;
-  max-height: 60vh; 
-  transition: max-height 0.3s ease;
+    overflow-y: auto;
+    max-height: 60vh;
+    transition: max-height 0.3s ease;
 }
 
 .interview-prep-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 
-  background: rgba(0, 0, 0, 0.55);   /* 🔥 Darker overlay */
-  backdrop-filter: blur(3px);        /* 🔥 Blur background */
-  -webkit-backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  z-index: 5000;                     /* 🔥 MUST BE ABOVE sidebar/header */
+    z-index: 5000;
 
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.25s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out;
 }
 
-/* When modal is open add this class */
 .interview-prep-modal-show {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
 .interview-prep-modal-dialog {
@@ -498,20 +485,20 @@
 }
 
 .interview-prep-modal-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 420px;               /* Slightly fixed width */
-  max-width: 90%;
-  padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 420px;
+    max-width: 90%;
+    padding: 20px;
 
-  background-color: #fff;
-  border-radius: 10px;
+    background-color: #fff;
+    border-radius: 10px;
 
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
 
-  z-index: 6000;              /* Popup on top of overlay */
-  pointer-events: auto;
+    z-index: 6000;
+    pointer-events: auto;
 }
 
 .interview-prep-modal-header {
@@ -637,10 +624,19 @@
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
-.dropdown-icon{
+
+.dropdown-icon {
     display: none;
 }
- 
+
+@media (max-width: 1302px) {
+    .interview-prep-dashboard-content {
+        width: calc(100vw - 70px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
 @media (max-width: 992px) {
 
     .interview-prep-dashboard-content {
@@ -682,6 +678,10 @@
         font-size: 14px;
     }
 
+    .interview-prep-chats-list{
+        min-height: 180px !important;
+    }
+
     .interview-prep-chats-list-wrapper {
         max-height: 0;
         overflow: hidden;
@@ -704,60 +704,55 @@
         cursor: pointer;
     }
 
-    .ask-newton-header{
+    .ask-newton-header {
         display: flex;
         justify-content: end;
         align-items: end;
     }
 
-    .ask-newton-header .left-header, .ask-newton-header .center{
+    .ask-newton-header .left-header,
+    .ask-newton-header .center {
         display: none;
     }
 
-} 
+}
 
-/* ---------------------------------*/
-/* Ensures follow-up section stays BELOW the bot message */
 .followup-section {
-  width: 100%;               /* NEW — makes it take full width */
-  margin-top: 25px;
-  padding-top: 10px;
-  border-top: 1px solid #e5e5e5;
-  display: block;            /* NEW — prevents side placement */
+    width: 100%;
+    margin-top: 25px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e5e5;
+    display: block;
 }
 
-/* Heading stays same */
 .followup-heading {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #333;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #333;
 }
 
-/* Follow-up questions in vertical list */
 .followup-list {
-  display: flex;
-  flex-direction: column;     /* vertical stacking */
-  gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Each follow-up question */
 .followup-item {
-  font-size: 15px;
-  color: #0b57d0;
-  cursor: pointer;
-  padding: 6px 0;
-  border-bottom: 1px solid #f0f0f0;
+    font-size: 15px;
+    color: #0b57d0;
+    cursor: pointer;
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-/* Hover */
 .followup-item:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 .interview-prep-snackbar {
-  position: fixed !important;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999 !important;
+    position: fixed !important;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999 !important;
 }
