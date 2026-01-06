@@ -238,16 +238,15 @@
 
 
 .interview-prep-options-menu {
-    position: absolute;
-    top: 100%;
-    right: -4px;
+    position: fixed;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    z-index: 1000;
+    z-index: 10000;
+    left: 500px;
 }
 
 .interview-prep-option-btn {

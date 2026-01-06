@@ -39,6 +39,7 @@ function InterviewPrepPage() {
   const [title, setTitle] = useState("New Chat");
   const [isChatCleared, setIsChatCleared] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   const toggleSidebar = () => {
     setShowSidebar(prev => !prev);
@@ -830,9 +831,13 @@ function InterviewPrepPage() {
                               data-role="options-btn"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setOpenOptionsId(
-                                  openOptionsId === c.id ? null : c.id
-                                );
+                                const rect = e.currentTarget.getBoundingClientRect();
+
+                                setMenuPosition({
+                                  top: rect.bottom + 4,
+                                  left: rect.left - 70, 
+                                });
+                                setOpenOptionsId(openOptionsId === c.id ? null : c.id);
                               }}
                             >
                               ⋮
@@ -841,6 +846,10 @@ function InterviewPrepPage() {
                             {openOptionsId === c.id && (
                               <div
                                 className="interview-prep-options-menu"
+                                style={{
+                                  top: `${menuPosition.top}px`,
+                                  left: `${menuPosition.left}px`,
+                                }}
                                 data-role="options-menu"
                                 onClick={(e) => e.stopPropagation()}
                               >
