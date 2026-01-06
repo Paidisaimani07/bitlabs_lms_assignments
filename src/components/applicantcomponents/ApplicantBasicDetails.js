@@ -1010,7 +1010,7 @@ delete transformedApplicantProfileDTO.skillsRequired
       <div className="blur-border-style"></div>
       <img className="top-left-svg" src={Logo} alt="Company Logo" />
     <div className="card-container ">
-    <div className="card1" style={{ maxHeight: '550px', overflowY: 'auto',scrollbarWidth: 'thin'}}>
+    <div className="card1">
       <div className="header">
         <p className="form-title">Complete Your Profile</p>
         <p>Fill the form fields to go to the next step</p>
