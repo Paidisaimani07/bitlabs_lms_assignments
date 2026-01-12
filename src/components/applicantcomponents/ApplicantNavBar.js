@@ -178,7 +178,7 @@ function ApplicantNavBar() {
       path.startsWith("/applicant-hackathon-details/");
 
     if (!isExcluded) {
-      localStorage.setItem("applicantHackathonTab", "MY");
+      localStorage.setItem("applicantHackathonTab", "UPCOMING");
     }
   }, [location.pathname]);
 
@@ -258,7 +258,7 @@ function ApplicantNavBar() {
       localStorage.removeItem("jwtToken");
       localStorage.removeItem("user");
       localStorage.removeItem("userType");
-      window.location.href = "https://www.bitlabs.in/jobs";
+      window.location.href = "https://jobs.bitlabs.in/candidate";
     } catch (error) {
       console.error("Logout failed", error);
     }
@@ -413,8 +413,10 @@ function ApplicantNavBar() {
                     id="specificDiv"
                     className="header-customize-item account"
                   >
+                    
                     <div className="profile-icon">
-                      <img
+                      <a href="/applicant-view-profile"> 
+                      <img 
                         width="32px"
                         height="32px"
                         src={imageSrc || "../images/user/avatar/image-01.jpg"}
@@ -424,6 +426,7 @@ function ApplicantNavBar() {
                           setImageSrc("../images/user/avatar/image-01.jpg")
                         }
                       />
+                      </a>
                     </div>
                     {userData && (
                       <div className="user-info">
@@ -432,6 +435,7 @@ function ApplicantNavBar() {
                         <p className="user-email">{userData.identifier}</p>
                       </div>
                     )}
+                    <div>
                     <div
                       className="toggle-subaccount-icon"
                       onClick={toggleSubAccount}
@@ -448,6 +452,7 @@ function ApplicantNavBar() {
                           fill="#5F6368"
                         />
                       </svg>
+                    </div>
                     </div>
 
                     <div
