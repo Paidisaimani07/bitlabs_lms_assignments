@@ -95,7 +95,7 @@ const Hackathon = () => {
     const [registrations, setRegistrations] = useState([]);
     const [winners, setWinners] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
-    const [statusFilter, setStatusFilter] = useState(() => localStorage.getItem("applicantHackathonTab") || "MY");
+    const [statusFilter, setStatusFilter] = useState(() => localStorage.getItem("applicantHackathonTab") || "UPCOMING");
     const [loading, setLoading] = useState(false);
     const searchInputRef = useRef(null);
 

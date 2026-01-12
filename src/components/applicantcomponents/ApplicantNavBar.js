@@ -178,7 +178,7 @@ function ApplicantNavBar() {
       path.startsWith("/applicant-hackathon-details/");
 
     if (!isExcluded) {
-      localStorage.setItem("applicantHackathonTab", "MY");
+      localStorage.setItem("applicantHackathonTab", "UPCOMING");
     }
   }, [location.pathname]);
 
