@@ -249,12 +249,15 @@ export default function ApplicantJobAlerts() {
                         if (alert.feature === "hackathon") {
                           redirectRoute = `/applicant-hackathon-details/${alert.featureId}`;
                           featureName = "Hackathon";
-                        } else if (alert.feature === "blog") {
+                        } else if (alert.feature === "Tech Vibes") {
                           redirectRoute = `/applicant-blog-list?blog=${alert.featureId}`;
                           featureName = "TechVibes";
                         } else if (alert.feature === "Tech buzz shorts") {
                           redirectRoute = `/applicant-verified-videos?video=${alert.featureId}`;
                           featureName = "Techbuzz";
+                        }else if (alert.feature === "Mentor Connect") {
+                          redirectRoute = `/applicant-mentorconnect`;
+                          featureName = "Mentor Connect";
                         }
 
                         const isDeleting = deletingItems.has(alert.id);
