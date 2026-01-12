@@ -12,7 +12,7 @@ import logo from '../../images/icons/newLogo.png';
 import Backgroundimagemobile from "../../images/user/avatar/backgroundimage-mobile.png";
 import Snackbar from "../common/Snackbar";
 import CryptoJS from "crypto-js";
-import ZohoCRMService  from "../zohoCrmComponent/zohoCrm";
+import ZohoCRMService from "../zohoCrmComponent/zohoCrm";
 import { saveFcmTokenWeb } from "../../notifications/notificationWeb";
 import { generateToken } from "../../notifications/firebase";
 
@@ -44,11 +44,11 @@ function LoginBody({ handleLogin }) {
   const [utmCampaign, setUtmCampaign] = useState("bitlabs.in");
   const [utmContent, setUtmContent] = useState("bitlabs.in");
   const [utmTerm, setUtmTerm] = useState("bitlabs.in");
-  const {handleLead}= ZohoCRMService();
+  const { handleLead } = ZohoCRMService();
 
 
 
-    useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     // Update state variables with UTM parameters from URL if available
     setUtmSource(params.get("utm_source") || "bitlabs.in/jobs");
@@ -76,7 +76,7 @@ function LoginBody({ handleLogin }) {
 
         console.log("Second API");
         let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-        
+
         const response1 = await axios.post(
           loginEndpoint,
           {
@@ -101,10 +101,10 @@ function LoginBody({ handleLogin }) {
           const generatedToken = await generateToken()
           try {
             console.log("generated token", generatedToken)
-              await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
-  } catch (error) {
-    console.error("⚠️ Failed to save FCM token for web:", error);
-  }
+            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
+          } catch (error) {
+            console.error("⚠️ Failed to save FCM token for web:", error);
+          }
 
           // Log the user's activity
           const activityLogEndpoint = `${apiUrl}/api/activity/log`;
@@ -144,7 +144,7 @@ function LoginBody({ handleLogin }) {
           const id = await handleLead(leadData);
           console.log("Zoho User ID from login page :", id);
           sessionStorage.setItem("zohoUserId", id);
-    
+
 
 
           // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
@@ -209,13 +209,13 @@ function LoginBody({ handleLogin }) {
             const jwtToken = localStorage.getItem("jwtToken");
             const profileIdResponse1 = await axios.get(
 
-            `${apiUrl}/applicant-pdf/getresume/${userId}`,
+              `${apiUrl}/applicant-pdf/getresume/${userId}`,
 
-               {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
               },
-            },
 
             );
           } catch (error) {
@@ -293,9 +293,17 @@ function LoginBody({ handleLogin }) {
         console.log("this is token ", userData.data.jwt);
         localStorage.setItem("jwtToken", userData.data.jwt);
 
+
         let userType1;
         if (userData.message.includes("ROLE_JOBAPPLICANT")) {
           userType1 = "jobseeker";
+          const generatedToken = await generateToken();
+          try {
+            console.log("generated token", generatedToken);
+            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
+          } catch (error) {
+            console.error("⚠️ Failed to save FCM token for web:", error);
+          }
         } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
           userType1 = "employer";
         } else {
@@ -356,15 +364,15 @@ function LoginBody({ handleLogin }) {
         const profileId = profileIdResponse.data;
         let resume;
         try {
-              const jwtToken = localStorage.getItem("jwtToken")
-              const profileIdResponse1 = await axios.get(
+          const jwtToken = localStorage.getItem("jwtToken")
+          const profileIdResponse1 = await axios.get(
             `${apiUrl}/resume/pdf/${userId}`,
-               {
+            {
               headers: {
                 Authorization: `Bearer ${jwtToken}`,
               },
             }
- 
+
           );
         } catch (error) {
           resume = error.response.status;
@@ -656,7 +664,7 @@ function LoginBody({ handleLogin }) {
         ],
       };
 
-     
+
 
       const zohoUserId = await handleLead(leadData);
       console.log("Zoho User ID from login page :", zohoUserId);
@@ -705,12 +713,12 @@ function LoginBody({ handleLogin }) {
     if (!email.trim()) {
       return "Email is required.";
     }
- 
+
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org)$/i;
     if (!emailRegex.test(email)) {
       return "Please enter a valid email address.";
     }
- 
+
     const allowedDomains = [
       "gmail.com",
       "yahoo.com",
@@ -723,13 +731,13 @@ function LoginBody({ handleLogin }) {
       "protonmail.com",
       "tutanota.com",
     ];
- 
+
     const domain = email.trim().toLowerCase().split("@")[1];
- 
+
     if (!allowedDomains.includes(domain)) {
       return "Please enter a valid email address";
     }
- 
+
     return "";
   };
   const isPasswordValid = (password) => {
