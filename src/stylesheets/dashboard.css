@@ -1353,7 +1353,7 @@ body.close-sidebar .dashboard.show .dashboard__content {
 #sidebar-menu ul li a.active,
 #sidebar-menu ul li a:hover {
     color: #121212 !important;
-    background: transparent linear-gradient(101deg, #F3673B 0%, #F5C546 100%) 0% 0% no-repeat padding-box;
+    background: transparent linear-gradient(95deg, #fcd3c4 0%, #fcedc7 100%) 0% 0% no-repeat padding-box;
     border-radius: 3px;
     transition: background 0.3s ease, color 0.3s ease;
     opacity: 0.8;
