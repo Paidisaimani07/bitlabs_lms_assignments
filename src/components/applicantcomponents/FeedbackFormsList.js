@@ -51,28 +51,6 @@ const FeedbackFormsList = () => {
     return nameMatch || mentorMatch || collegeMatch;
   });
 
-  const formatDate = (createdAt) => {
-    if (!createdAt || !Array.isArray(createdAt) || createdAt.length < 7) {
-      return 'Unknown date';
-    }
-    
-    const [year, month, day, hour, minute, second, nanosecond] = createdAt;
-    const date = new Date(year, month - 1, day, hour, minute, second, Math.floor(nanosecond / 1000000));
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const handleFormClick = (formId) => {
-    // Navigate to form details or open form
-    console.log('Form clicked:', formId);
-    // You can add navigation logic here
-  };
-
   const FeedbackFormSkeleton = ({ count = 8 }) => {
     return (
       <div className="newCards-grid">
@@ -161,7 +139,7 @@ const FeedbackFormsList = () => {
                     <div className="form-header">
                       <h3 className="form-name">{form.formName}</h3>
                     </div>
-                    
+
                     <div className="form-details">
                       <div className="detail-row">
                         <span className="label">Mentor:</span>
@@ -172,9 +150,9 @@ const FeedbackFormsList = () => {
                         <span className="value">{form.collegeName}</span>
                       </div>
                     </div>
-                    
+
                     <div className="feedback-form-actions">
-                      <button 
+                      <button
                         className="view-button"
                         onClick={(e) => {
                           e.stopPropagation();

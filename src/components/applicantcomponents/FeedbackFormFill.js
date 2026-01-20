@@ -82,7 +82,7 @@ const FeedbackFormFill = () => {
         answer: formData[questionNo],
         questionNo: parseInt(questionNo)
       }));
-      
+
       await axios.post(
         `${apiUrl}/api/feedback-forms/applicant/${applicantId}/submitFeedback/${formId}`,
         answers,
@@ -101,11 +101,11 @@ const FeedbackFormFill = () => {
 
     } catch (err) {
       let errorMessage = err.response?.data?.message || err.message || 'Failed to submit feedback form. Please try again.';
-      
+
       if (errorMessage.includes('Feedback already submitted for this form by the applicant')) {
         errorMessage = 'You have already submitted feedback for this form.';
       }
-      
+
       setSnackbar({ open: true, message: errorMessage, type: 'error' });
     } finally {
       setSubmitting(false);
@@ -207,7 +207,7 @@ const FeedbackFormFill = () => {
                 <div className="skeleton skeleton-description"></div>
               </div>
             </div>
-            
+
             {/* Skeleton Card 2 - Multiple Input Fields */}
             <div className="newCard skeleton-card">
               <div className="card-body">
@@ -222,7 +222,7 @@ const FeedbackFormFill = () => {
                     <div className="skeleton skeleton-input-field"></div>
                   </div>
                 </div>
-                
+
                 {/* Row 2 - Two fields */}
                 <div className="skeleton-row">
                   <div className="skeleton-col">
