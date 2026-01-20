@@ -115,6 +115,8 @@ function App() {
                 <Route path="/applicant-blog-list" element={<ApplicantHomePage />} />
                 <Route path="/applicant-mentorconnect" element={<ApplicantHomePage />} />
                 <Route path="/applicant-interview-prep" element={<ApplicantHomePage />} />
+                <Route path="/applicant-feedback-forms" element={<ApplicantHomePage />} />
+                <Route path="/feedback-form-fill/:formId" element={<ApplicantHomePage />} />
                 {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
@@ -142,6 +144,7 @@ function App() {
                 <Route path="/blogs/:id" element={<ApplicantHomePage />} />
                 <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
                 <Route path="/applicant-interview-prep" element={<InterviewPrepPage />} />
+                <Route path="/applicant-feedback-forms" element={<ApplicantHomePage />} />
                 <Route path="/recruiter-hackathons" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-hackathons-create" element={<RecruiterHomePage />} />
                 <Route path="/hackathon-view-details/:id" element={<RecruiterHomePage />} />

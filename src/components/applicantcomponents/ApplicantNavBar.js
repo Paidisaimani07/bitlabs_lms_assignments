@@ -9,6 +9,7 @@ import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
+import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
 import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
 import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
@@ -567,6 +568,48 @@ function ApplicantNavBar() {
                     </span>
                   </Link>
                 </div>
+              </li>
+              <li>
+                <Link
+                  onClick={hideMenu}
+                  to="/applicant-feedback-forms"
+                  className={
+                    location.pathname === "/applicant-feedback-forms"
+                      ? "tf-effect active"
+                      : ""
+                  }
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span
+                    className="dash-icon"
+                    style={{
+                      display: "inline-block",
+                      transition: "fill 0.3s ease",
+                      marginRight: "12px",
+                    }}
+                  >
+                    <img
+                      src={shape9}
+                      alt="Feedback Forms"
+                      width="24"
+                      height="24"
+                    />
+                  </span>
+                  <span
+                    className="dash-titles"
+                    style={{
+                      color: "#333",
+                      fontSize: "16px",
+                      textTransform: "none",
+                    }}
+                  >
+                    Feedback Forms
+                  </span>
+                </Link>
               </li>
               <li>
                 <Link
