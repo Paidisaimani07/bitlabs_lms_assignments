@@ -52,7 +52,7 @@
   justify-content: flex-end;
   padding-top: 12px;
   margin-top: -10px;
-  
+
 }
 
 .feedback-form-actions .view-button {
@@ -166,13 +166,13 @@
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .form-name {
     white-space: normal;
     overflow: visible;
     text-overflow: initial;
   }
-  
+
   .value {
     text-align: left;
     max-width: 100%;
@@ -183,7 +183,7 @@
   .form-name {
     font-size: 14px;
   }
-  
+
   .label,
   .value {
     font-size: 12px;

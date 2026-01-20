@@ -1,6 +1,3 @@
-/* Feedback Form Fill - Custom Styles */
-
-/* Skeleton Loading Styles */
 .skeleton {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
@@ -12,12 +9,12 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
 }
 
-/* Skeleton elements matching original form content */
 .skeleton-title {
   height: 24px;
   width: 300px;
@@ -67,7 +64,6 @@
   margin-top: 20px;
 }
 
-/* Form Container Styles */
 .feedback-form-wrapper {
   max-width: 800px;
   margin: 0 auto;
@@ -246,6 +242,7 @@
   0% {
     background-position: 200% 0;
   }
+
   100% {
     background-position: -200% 0;
   }
@@ -301,7 +298,6 @@
   margin-top: 20px;
 }
 
-/* Form Container Styles - Custom Class Names */
 .feedback-loading-state {
   display: flex;
   flex-direction: column;
@@ -321,8 +317,13 @@
 }
 
 @keyframes feedback-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .feedback-error-state {
@@ -347,46 +348,45 @@
   background-color: #e8590c;
 }
 
-/* Responsive Design - Custom Class Names */
 @media (max-width: 768px) {
 
-  
+
   .feedback-form-wrapper {
     padding: 15px;
   }
-  
+
   .feedback-form-header,
   .feedback-form {
     padding: 20px;
   }
-  
+
   .feedback-form-title {
     font-size: 22px;
   }
-  
+
   .feedback-form-meta {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .feedback-question-label {
     font-size: 15px;
   }
-  
+
   .feedback-radio-group {
     gap: 10px;
   }
-  
+
   .feedback-radio-option {
     font-size: 14px;
   }
-  
+
   .feedback-number-input,
   .feedback-textarea {
     padding: 10px 14px;
     font-size: 14px;
   }
-  
+
   .feedback-submit-btn {
     width: 100%;
     padding: 14px 24px;
@@ -395,20 +395,20 @@
 
 @media (max-width: 480px) {
 
-  
+
   .feedback-form-title {
     font-size: 20px;
   }
-  
+
   .feedback-form-header,
   .feedback-form {
     padding: 16px;
   }
-  
+
   .feedback-question-label {
     font-size: 14px;
   }
-  
+
   .feedback-meta-item {
     font-size: 13px;
     padding: 4px 10px;
@@ -422,7 +422,6 @@
   margin-bottom: 12px;
 }
 
-/* Skeleton layout classes */
 .skeleton-row {
   display: flex;
   gap: 20px;
