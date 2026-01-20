@@ -17,8 +17,7 @@ import shape3 from "../../images/dashboard/side-nav-icons/skillValidation.svg";
 import shape4 from "../../images/dashboard/side-nav-icons/mentorSphere.svg";
 import shape from "../../images/dashboard/side-nav-icons/dashboard.svg";
 import shape2 from "../../images/dashboard/side-nav-icons/buildportfolio.svg";
-import botImage from "../../images/dashboard/mobilebanners/Bot.png";
-import botImage1 from "../../images/dashboard/mobilebanners/Bot1.png";
+import botImage1 from "../../images/dashboard/side-nav-icons/robot.png";
 import "./ApplicantNavBar.css";
 import notificationIcon from "../../images/notificationIcon.svg";
 
@@ -555,8 +554,8 @@ function ApplicantNavBar() {
                       <img
                         src={botImage1}
                         alt="Ask Newton"
-                        width="24"
-                        height="24"
+                        width="30"
+                        height="30"
                       />
                     </span>
                     <span
