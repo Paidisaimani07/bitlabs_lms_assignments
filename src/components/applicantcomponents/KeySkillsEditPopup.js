@@ -1,4 +1,3 @@
-// src/components/applicant/KeySkillsEditPopup.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Modal from "react-modal";
@@ -120,17 +119,16 @@ const KeySkillsEditPopup = ({
   // Add skill only if it's a valid suggestion and not duplicate
   const addSkillFromValue = (value) => {
     const vNorm = normalize(value);
-    if (!vNorm) return setError("Please choose a skill from the list.");
-    if (!isValidSuggestion(vNorm)) return setError("Please select a skill from suggestions.");
+    if (!vNorm) return;
+    if (!isValidSuggestion(vNorm)) return;
     if (skills.some((s) => s.toLowerCase() === vNorm.toLowerCase()))
-      return setError("Skill already added.");
+      return;
     setSkills((prev) => [...prev, vNorm]);
     setDraft("");
     setError("");
     setShowSuggestions(false);
     setHighlightIndex(-1);
-    // focus back to input
-    setTimeout(() => inputRef.current?.focus(), 50);
+    inputRef.current?.blur();
   };
 
   // Remove a skill
@@ -142,7 +140,7 @@ const KeySkillsEditPopup = ({
 
   const save = async () => {
     if (!canSave) {
-      setError("Add at least one skill.");
+      setError("Please add at least one skill from the list.");
       return;
     }
     setSaving(true);
@@ -197,19 +195,11 @@ const KeySkillsEditPopup = ({
       setFilteredSuggestions(filtered);
       setShowSuggestions(true);
       setHighlightIndex(filtered.length ? 0 : -1);
-
-      if (value.trim() && !availableSkills.some(s =>
-        s.toLowerCase() === value.toLowerCase().trim()
-      )) {
-        setError("Please select a skill from the suggestion list.");
-      } else {
-        setError("");
-      }
     } else {
       setFilteredSuggestions(availableSkills);
       setHighlightIndex(-1);
-      setError("");
     }
+    setError("");
     updateSuggestionPos();
   };
 
@@ -236,8 +226,7 @@ const KeySkillsEditPopup = ({
       if (e.key === "Enter") {
         // only allow Enter to add when it is an exact suggestion
         e.preventDefault();
-        if (isValidSuggestion(draft)) addSkillFromValue(draft);
-        else setError("Please select a skill from suggestions before adding.");
+        addSkillFromValue(draft);
       }
       return;
     }
@@ -316,9 +305,7 @@ const KeySkillsEditPopup = ({
               type="button"
               className="btn-primary"
               onClick={() => {
-                // clicking Add must only accept exact suggested skills
-                if (isValidSuggestion(draft)) addSkillFromValue(draft);
-                else setError("Please choose a skill from the suggestion list.");
+                addSkillFromValue(draft);
               }}
               style={{ whiteSpace: "nowrap" }}
             >
@@ -386,13 +373,7 @@ const KeySkillsEditPopup = ({
           <button
             className="btn-primary"
             disabled={!canSave || saving}
-            onClick={() => {
-              if (!isValidSuggestion(draft)) {
-                setError("Please select a skill from the suggestion list.");
-                return;
-              }
-              addSkillFromValue(draft);
-            }}
+            onClick={save}
             aria-busy={saving}
           >
             {saving ? "Saving..." : "Save"}
