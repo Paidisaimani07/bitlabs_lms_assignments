@@ -416,18 +416,16 @@ function ApplicantNavBar() {
                   >
                     
                     <div className="profile-icon">
-                      <a href="/applicant-view-profile"> 
                       <img 
                         width="32px"
                         height="32px"
                         src={imageSrc || "../images/user/avatar/image-01.jpg"}
                         alt="Profile"
-                        onClick={toggleSubAccount}
+                        onClick={() => navigate("/applicant-view-profile")}
                         onError={() =>
                           setImageSrc("../images/user/avatar/image-01.jpg")
                         }
                       />
-                      </a>
                     </div>
                     {userData && (
                       <div className="user-info">
