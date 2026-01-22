@@ -21,6 +21,7 @@ import botImage from "../../images/dashboard/mobilebanners/Bot.png";
 import botImage1 from "../../images/dashboard/mobilebanners/Bot1.png";
 import "./ApplicantNavBar.css";
 import notificationIcon from "../../images/notificationIcon.svg";
+import { useRefresh } from "../common/RefreshContext"
 
 function ApplicantNavBar() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function ApplicantNavBar() {
   const [hamburgerClass, setHamburgerClass] = useState("fa fa-bars");
   const frompath = location.state?.from;
   const { pathname } = useLocation();
+  const { refreshKey } =useRefresh();
 
   const DEFAULT_CARD = {
     applicantId: null,
@@ -91,7 +93,7 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     fetchCard();
-  }, [applicantId]);
+  }, [applicantId,refreshKey]);
 
   useEffect(() => {
     const updateSidebarClasses = () => {

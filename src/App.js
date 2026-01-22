@@ -31,6 +31,7 @@ import { onMessage } from 'firebase/messaging';
 import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
 import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
 import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
+import { RefreshProvider } from "./components/common/RefreshContext";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -64,6 +65,7 @@ function App() {
   return (
     <div>
       <UserProvider>
+         <RefreshProvider>
         {checkingAuth ? (
           <p>Loading...</p>
         ) : (
@@ -155,6 +157,7 @@ function App() {
             </Routes>
           </Router>
         )}
+        </RefreshProvider>
       </UserProvider>
       {/* <ChatBotWidget /> */}
     </div>
