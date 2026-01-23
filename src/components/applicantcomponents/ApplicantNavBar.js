@@ -569,48 +569,6 @@ function ApplicantNavBar() {
               </li>
               <li>
                 <Link
-                  onClick={hideMenu}
-                  to="/applicant-feedback-forms"
-                  className={
-                    location.pathname === "/applicant-feedback-forms"
-                      ? "tf-effect active"
-                      : ""
-                  }
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    textDecoration: "none",
-                  }}
-                >
-                  <span
-                    className="dash-icon"
-                    style={{
-                      display: "inline-block",
-                      transition: "fill 0.3s ease",
-                      marginRight: "12px",
-                    }}
-                  >
-                    <img
-                      src={shape9}
-                      alt="Feedback Forms"
-                      width="24"
-                      height="24"
-                    />
-                  </span>
-                  <span
-                    className="dash-titles"
-                    style={{
-                      color: "#333",
-                      fontSize: "16px",
-                      textTransform: "none",
-                    }}
-                  >
-                    Feedback Forms
-                  </span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   id="tour-skill-validation"
                   onClick={hideMenu}
                   to="/applicant-verified-badges"

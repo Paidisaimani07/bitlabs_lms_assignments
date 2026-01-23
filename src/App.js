@@ -31,6 +31,7 @@ import { onMessage } from 'firebase/messaging';
 import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
 import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
 import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,6 +92,16 @@ function App() {
 <Route path="/feedback-builder/edit/:formId" element={<FeedbackFormBuilder />} />
 <Route path="/feedback/:formId" element={<MentorConnectFeedbackForm />} />
 <Route path="/feedback-responses/:formId" element={<FeedbackResponses />} />
+<Route path="/applicant-feedback-forms" element={
+                <ProtectedRoute>
+                  <ApplicantHomePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/feedback-form-fill/:formId" element={
+                <ProtectedRoute>
+                  <ApplicantHomePage />
+                </ProtectedRoute>
+              } />
 
               {isLoggedIn ? (
                 <>
@@ -115,8 +126,6 @@ function App() {
                 <Route path="/applicant-blog-list" element={<ApplicantHomePage />} />
                 <Route path="/applicant-mentorconnect" element={<ApplicantHomePage />} />
                 <Route path="/applicant-interview-prep" element={<ApplicantHomePage />} />
-                <Route path="/applicant-feedback-forms" element={<ApplicantHomePage />} />
-                <Route path="/feedback-form-fill/:formId" element={<ApplicantHomePage />} />
                 {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                 <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                 <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
@@ -148,6 +157,9 @@ function App() {
                 <Route path="/recruiter-hackathons" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-hackathons-create" element={<RecruiterHomePage />} />
                 <Route path="/hackathon-view-details/:id" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-feedback-forms" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-create-feedback-form" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-edit-feedback-form/:id" element={<RecruiterHomePage />} />
 
               
                 </>
