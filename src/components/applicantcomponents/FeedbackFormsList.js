@@ -51,6 +51,21 @@ const FeedbackFormsList = () => {
     return nameMatch || mentorMatch || collegeMatch;
   });
 
+  const formatCreatedDate = (createdAtArray) => {
+    if (!createdAtArray || !Array.isArray(createdAtArray) || createdAtArray.length < 6) {
+      return 'Unknown';
+    }
+    
+    const [year, month, day, hour, minute, second] = createdAtArray;
+    const date = new Date(year, month - 1, day, hour, minute, second); // month - 1 because JS months are 0-indexed
+    
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   const FeedbackFormSkeleton = ({ count = 8 }) => {
     return (
       <div className="newCards-grid">
@@ -148,6 +163,10 @@ const FeedbackFormsList = () => {
                       <div className="detail-row">
                         <span className="label">College:</span>
                         <span className="value">{form.collegeName}</span>
+                      </div>
+                      <div className="detail-row">
+                        <span className="label">Created:</span>
+                        <span className="value">{formatCreatedDate(form.createdAt)}</span>
                       </div>
                     </div>
 
