@@ -328,12 +328,13 @@
 }
 
 
-input.pd-input.raw[type="date"]::-webkit-datetime-edit {
-  color: #9E9E9E !important;
+.date-empty {  color: #9E9E9E !important;
+}
+date-filled {
+  color: #000;
 }
 
-input.pd-input.raw[type="date"]::-webkit-calendar-picker-indicator {
-  filter: grayscale(1);
+input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
   opacity: 0.6;
 }
 
