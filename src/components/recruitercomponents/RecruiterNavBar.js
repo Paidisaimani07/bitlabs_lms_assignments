@@ -334,12 +334,18 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
             </Link>
           </li>
           <li>
-            <li>
             <Link to="/recruiter-hackathons" className={location.pathname === "/recruiter-hackathons" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
               <span className="icon-submit dash-icon"></span>
               <span className="dash-titles">Hackathons</span>
             </Link>
           </li>
+          <li>
+            <Link to="/recruiter-feedback-forms" className={location.pathname === "/recruiter-feedback-forms" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
+              <span className="icon-feedback dash-icon"></span>
+              <span className="dash-titles">Feedback Forms</span>
+            </Link>
+          </li>
+          <li>
           <Link
       to="/recruiter-postjob"
       className={location.pathname === "/recruiter-postjob" ? "tf-effect active" : ""}
@@ -354,13 +360,12 @@ const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
       </span>
       <span style={iconStyle}>➔</span>
     </Link>
-
           </li>
         </ul>
       </div>
     </div>
   )}
 </div>
-  )
+);
 }
 export default RecruiterNavBar;
