@@ -68,28 +68,28 @@ const FeedbackFormsList = () => {
 
   const FeedbackFormSkeleton = ({ count = 8 }) => {
     return (
-      <div className="newCards-grid">
+      <div className="feedback-forms-skeleton-grid">
         {Array.from({ length: count }).map((_, i) => (
-          <div className="newCard skeleton-card" key={i}>
-            <div className="newCard-body">
+          <div className="feedback-forms-skeleton-card" key={i}>
+            <div className="feedback-forms-skeleton-body">
               {/* Header skeleton */}
-              <div className="form-header">
-                <div className="skeleton-element skeleton-header"></div>
+              <div className="feedback-forms-skeleton-header">
+                <div className="feedback-forms-skeleton-element feedback-forms-skeleton-title"></div>
               </div>
 
               {/* Details skeleton */}
-              <div className="form-details">
-                {Array.from({ length: 2 }).map((_, j) => (
-                  <div key={j} className="detail-row">
-                    <div className="skeleton-element skeleton-label"></div>
-                    <div className="skeleton-element skeleton-value"></div>
+              <div className="feedback-forms-skeleton-details">
+                {Array.from({ length: 3 }).map((_, j) => (
+                  <div key={j} className="feedback-forms-skeleton-row">
+                    <div className="feedback-forms-skeleton-element feedback-forms-skeleton-label"></div>
+                    <div className="feedback-forms-skeleton-element feedback-forms-skeleton-value"></div>
                   </div>
                 ))}
               </div>
 
               {/* Actions skeleton */}
-              <div className="feedback-form-actions">
-                <div className="skeleton-element skeleton-action"></div>
+              <div className="feedback-forms-skeleton-actions">
+                <div className="feedback-forms-skeleton-element feedback-forms-skeleton-button"></div>
               </div>
             </div>
           </div>
