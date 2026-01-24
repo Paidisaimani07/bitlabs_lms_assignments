@@ -9,6 +9,7 @@ import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
+import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
 import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
 import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
