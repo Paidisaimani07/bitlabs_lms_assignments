@@ -274,7 +274,6 @@ const FeedbackFormFill = () => {
               onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
               className="feedback-number-input"
               min="1"
-              max="10"
               placeholder="Enter a number..."
             />
             {fieldErrors[questionNo] && (
