@@ -1,10 +1,12 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem("jwtToken");
+    const location = useLocation();
 
     if (!token) {
-        return <Navigate to="/candidate" replace />;
+        localStorage.setItem("intendedUrl", location.pathname + location.search);
+        return <Navigate to="/candidate" state={{ from: location }} replace />;
     }
 
     return children;
