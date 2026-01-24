@@ -126,15 +126,6 @@
   transition: 0.3s ease;
 }
 
-.form-actions button:first-child {
-  background-color: #6c63ff;
-  color: white;
-}
-
-.form-actions button:first-child:hover {
-  background-color: #5248ff;
-}
-
 .form-actions button:last-child {
   background-color: #ddd;
 }

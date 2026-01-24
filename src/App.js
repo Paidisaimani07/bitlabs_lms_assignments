@@ -31,6 +31,7 @@ import { onMessage } from 'firebase/messaging';
 import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
 import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
 import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,6 +92,16 @@ function App() {
 <Route path="/feedback-builder/edit/:formId" element={<FeedbackFormBuilder />} />
 <Route path="/feedback/:formId" element={<MentorConnectFeedbackForm />} />
 <Route path="/feedback-responses/:formId" element={<FeedbackResponses />} />
+<Route path="/applicant-feedback-forms" element={
+                <ProtectedRoute>
+                  <ApplicantHomePage />
+                </ProtectedRoute>
+              } />
+              <Route path="/feedback-form-fill/:formId" element={
+                <ProtectedRoute>
+                  <ApplicantHomePage />
+                </ProtectedRoute>
+              } />
 
               {isLoggedIn ? (
                 <>
@@ -142,9 +153,13 @@ function App() {
                 <Route path="/blogs/:id" element={<ApplicantHomePage />} />
                 <Route path="/applicant-verified-videos" element={<ApplicantHomePage />} />
                 <Route path="/applicant-interview-prep" element={<InterviewPrepPage />} />
+                <Route path="/applicant-feedback-forms" element={<ApplicantHomePage />} />
                 <Route path="/recruiter-hackathons" element={<RecruiterHomePage />} />
                 <Route path="/recruiter-hackathons-create" element={<RecruiterHomePage />} />
                 <Route path="/hackathon-view-details/:id" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-feedback-forms" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-create-feedback-form" element={<RecruiterHomePage />} />
+                <Route path="/recruiter-edit-feedback-form/:id" element={<RecruiterHomePage />} />
 
               
                 </>
