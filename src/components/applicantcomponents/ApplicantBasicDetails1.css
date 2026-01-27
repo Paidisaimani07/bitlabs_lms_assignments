@@ -79,7 +79,7 @@
 }
 
 .header {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .form-title {
@@ -90,8 +90,8 @@
 }
 
 .stepper-container {
-  margin-top: 52px;
-  margin-bottom: 50px;
+  margin-top: 40px;
+  margin-bottom: 40px;
   width: 80%;
   margin-left: auto;
   margin-right: auto;
@@ -178,7 +178,7 @@
   cursor: pointer;
   font-size: 16px;
   text-transform: none;
-  margin-top: 50px;
+  margin-top: 25px;
   margin-bottom: 0px;
 }
 
@@ -241,7 +241,7 @@
   cursor: pointer;
   font-size: 16px;
   text-transform: none;
-  margin-top: 50px;
+  margin-top: 25px;
   margin-bottom: 0px;
 }
 
@@ -306,15 +306,15 @@
 }
 
 .step-circle.active {
-  background-color: #e3e3e3;
-  color: #969696;
-  border-color: #969696;
+  background-color: #F97316;
+  color: #ffffff;
+  border-color: #ffffff;
 }
 
 .step-circle.completed {
   background-color: #F97316;
   color: #ffffff;
-  border-color: #F97316;
+  border: none;
 }
 
 .step-label {
