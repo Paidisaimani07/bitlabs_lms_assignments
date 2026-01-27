@@ -138,6 +138,19 @@ const ApplicantMentorConnect = () => {
     return "Expired";
   };
 
+  const isStartEnabled = (m) => {
+    const start = buildStartDate(m.date, m.startTime);
+    if (!start) return false;
+
+    const mins = Number(m.durationMinutes ?? m.duration ?? 60) || 60;
+    const end = new Date(start.getTime() + mins * 60000);
+
+    const now = new Date();
+    const tenMinutesBeforeStart = new Date(start.getTime() - 10 * 60000);
+
+    return now >= tenMinutesBeforeStart && now < end;
+  };
+
   // Google Calendar: use local time (no Z) to avoid timezone mismatch
   const toGoogleLocal = (d) => {
     const p = (x) => String(x).padStart(2, "0");
@@ -263,15 +276,19 @@ const ApplicantMentorConnect = () => {
     const gcalUrl = buildGoogleCalendarUrl(m);
 
     // Enable rules
-    const startEnabled = status === "Active";
+    const startEnabled = isStartEnabled(m);
     const addCalEnabled = status === "Upcoming";
 
+    const displayStatus = startEnabled && status === "Upcoming" ? "Ready to join" : status;
+
     const statusColor =
-      status === "Active"
+      displayStatus === "Active"
         ? "#22c55e"
-        : status === "Upcoming"
-          ? "#F59E0B"
-          : "#9CA3AF";
+        : displayStatus === "Ready to join"
+          ? "#22c55e"  
+          : displayStatus === "Upcoming"
+            ? "#F59E0B"
+            : "#9CA3AF";
 
     // Date-time label under Duration
     const dtLabel = (() => {
@@ -335,20 +352,20 @@ const ApplicantMentorConnect = () => {
           >
             <span
               style={{
-                background: status === "Active" ? statusColor : "transparent", // green for Active, transparent for Upcoming
-                color: status === "Active" ? "#fff" : "#F97316", // orange text for Upcoming
-                border: status === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
+                background: displayStatus === "Active" || displayStatus === "Ready to join" ? statusColor : "transparent",
+                color: displayStatus === "Active" || displayStatus === "Ready to join" ? "#fff" : "#F97316", 
+                border: displayStatus === "Upcoming" ? "2px solid #F97316" : "none",
                 fontSize: 12,
                 fontWeight: 800,
                 padding: "4px 10px",
                 borderRadius: 3,
                 boxShadow:
-                  status === "Active" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
+                  displayStatus === "Active" || displayStatus === "Ready to join" ? "0 6px 12px rgba(0,0,0,0.12)" : "none",
                 display: "inline-block",
                 textTransform: "capitalize",
               }}
             >
-              {status}
+              {displayStatus}
             </span>
 
             <button
