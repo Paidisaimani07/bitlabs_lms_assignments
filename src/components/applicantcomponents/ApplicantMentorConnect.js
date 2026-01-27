@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
+import Snackbar from '../common/Snackbar';
 
 // Fallback images
 import DummyMentor from "../../images/mentor-dummy.png";
@@ -12,54 +13,121 @@ import noMentorConnects from "../../images/empty-state-images/noMentorConnects.p
 const ApplicantMentorConnect = () => {
   const [loading, setLoading] = useState(true);
   const [meetings, setMeetings] = useState([]);
+  const [registeredMeetings, setRegisteredMeetings] = useState([]);
+  const [isRegistering, setIsRegistering] = useState({});
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-
   const user = useUserContext()?.user;
+  const [snackbars, setSnackbars] = useState([]);
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prevSnackbars) => prevSnackbars.filter((_, i) => i !== index));
+  };
+
+  const fetchMeetings = async (signal) => {
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
+      const resp = await axios.get(`${apiUrl}/api/mentor-connect/getAllMeetings`, {
+        headers,
+        signal,
+      });
+
+      const payload = resp.data;
+      return Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.items)
+          ? payload.items
+          : [];
+    } catch (err) {
+      if (!axios.isCancel(err)) {
+        console.error("MentorConnect fetch error:", err);
+        throw new Error("Failed to fetch sessions. Please try again.");
+      }
+      return [];
+    }
+  };
+
+  const fetchRegisteredMeetings = async () => {
+    if (!user?.id) return [];
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
+      const response = await axios.get(
+        `${apiUrl}/api/mentor-connect/applicant/getAllRegisteredMentorConnects/${user.id}`,
+        { headers }
+      );
+      if (typeof response.data === "string") {
+        const match = response.data.match(/\[(.*?)\]/);
+        if (match && match[1]) {
+          return match[1].split(",").map(id => Number(id.trim()));
+        }
+      }
+
+      return [];
+    } catch (error) {
+      console.error("Error fetching registered meetings:", error);
+      return [];
+    }
+  };
+
+  const registerForMeeting = async (meetingId) => {
+    if (!user?.id) {
+      return false;
+    }
+
+    setIsRegistering(prev => ({ ...prev, [meetingId]: true }));
+    try {
+      const jwtToken = localStorage.getItem("jwtToken");
+      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
+      await axios.post(
+        `${apiUrl}/api/mentor-connect/registerMentorConnect/${meetingId}/applicant/${user.id}`,
+        {},
+        { headers }
+      );
+
+      const registered = await fetchRegisteredMeetings();
+      setRegisteredMeetings(registered);
+      addSnackbar({ message: 'Registration successful', type: 'success' });
+      return true;
+    } catch (error) {
+      console.error("Error registering for meeting:", error);
+      addSnackbar({ message: 'Failed to register for this session. Please try again.', type: 'error' });
+      return false;
+    } finally {
+      setIsRegistering(prev => ({ ...prev, [meetingId]: false }));
+    }
+  };
 
   useEffect(() => {
-    let mounted = true;
     const controller = new AbortController();
-    (async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const jwtToken = localStorage.getItem("jwtToken");
-        const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-        const resp = await axios.get(
-          `${apiUrl}/api/mentor-connect/getAllMeetings`,
-          {
-            headers,
-            signal: controller.signal,
-          }
-        );
-
-        // Accept either array or paged envelope { items: [...] }
-        if (!mounted) return;
-        const payload = resp.data;
-        const list = Array.isArray(payload)
-          ? payload
-          : Array.isArray(payload?.items)
-            ? payload.items
-            : [];
-        setMeetings(list);
+        const [meetingsData, registered] = await Promise.all([
+          fetchMeetings(controller.signal),
+          fetchRegisteredMeetings()
+        ]);
+        setMeetings(meetingsData);
+        setRegisteredMeetings(registered);
         setError(null);
       } catch (err) {
         if (!axios.isCancel(err)) {
-          console.error("MentorConnect fetch error:", err);
-          setError("Failed to fetch sessions. Please try again.");
+          setError(err.message || "Failed to load data");
           setMeetings([]);
         }
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
-    })();
-    return () => {
-      controller.abort();
-      mounted = false;
     };
-  }, []);
+
+    loadData();
+    return () => controller.abort();
+  }, [user?.id]);
 
   // ---------- helpers ----------
   // Accept LocalDate as [yyyy,mm,dd] or "yyyy-mm-dd"
@@ -203,7 +271,12 @@ const ApplicantMentorConnect = () => {
   const filteredMeetings = useMemo(() => {
     const q = normalized(query);
 
-    const base = meetings.filter((m) => computeStatus(m) !== "Expired"); // hide expired
+    const base = meetings
+      .filter((m) => computeStatus(m) !== "Expired") // hide expired
+      .map(meeting => ({
+        ...meeting,
+        isRegistered: registeredMeetings.includes(Number(meeting.meetingId ?? meeting.meeting_id ?? meeting.id))
+      }));
 
     if (!q) return base;
 
@@ -219,7 +292,7 @@ const ApplicantMentorConnect = () => {
         .join(" ");
       return hay.includes(q);
     });
-  }, [meetings, query]);
+  }, [meetings, query, registeredMeetings]);
 
   // ---------- styles ----------
   const styles = {
@@ -269,28 +342,31 @@ const ApplicantMentorConnect = () => {
   };
 
   const Card = ({ m }) => {
+    const meetingId = m.meetingId ?? m.meeting_id ?? m.id;
+    // Check if this meeting ID exists in the registeredMeetings array
+    const isRegistered = registeredMeetings.includes(Number(meetingId));
     const status = computeStatus(m);
     const banner = m.bannerImageUrl || DummyBanner;
     const avatar = m.mentorProfileUrl || DummyMentor;
     const duration = formatDuration(m.durationMinutes ?? m.duration ?? 60);
     const gcalUrl = buildGoogleCalendarUrl(m);
 
-    // Enable rules
-    const startEnabled = isStartEnabled(m);
-    const addCalEnabled = status === "Upcoming";
+    // Enable rules - preserve 10-minute early start functionality
+    const startEnabled = isStartEnabled(m) && isRegistered;
+    const addCalEnabled = status === "Upcoming" && isRegistered;
 
+    // Determine display status - show "Ready to join" when start is enabled but not yet Active
     const displayStatus = startEnabled && status === "Upcoming" ? "Ready to join" : status;
 
     const statusColor =
       displayStatus === "Active"
         ? "#22c55e"
         : displayStatus === "Ready to join"
-          ? "#22c55e"  
+          ? "#22c55e"  // Green for ready to join
           : displayStatus === "Upcoming"
             ? "#F59E0B"
             : "#9CA3AF";
 
-    // Date-time label under Duration
     const dtLabel = (() => {
       const dt = buildStartDate(m.date, m.startTime);
       return dt
@@ -352,9 +428,9 @@ const ApplicantMentorConnect = () => {
           >
             <span
               style={{
-                background: displayStatus === "Active" || displayStatus === "Ready to join" ? statusColor : "transparent",
-                color: displayStatus === "Active" || displayStatus === "Ready to join" ? "#fff" : "#F97316", 
-                border: displayStatus === "Upcoming" ? "2px solid #F97316" : "none",
+                background: displayStatus === "Active" || displayStatus === "Ready to join" ? statusColor : "transparent", // green for Active/Ready to join, transparent for Upcoming
+                color: displayStatus === "Active" || displayStatus === "Ready to join" ? "#fff" : "#F97316", // orange text for Upcoming
+                border: displayStatus === "Upcoming" ? "2px solid #F97316" : "none", // orange border for Upcoming
                 fontSize: 12,
                 fontWeight: 800,
                 padding: "4px 10px",
@@ -368,21 +444,11 @@ const ApplicantMentorConnect = () => {
               {displayStatus}
             </span>
 
-            <button
-              onClick={() => copyLink(m.meetLink)}
-              style={{
-                background: "transparent",
-                color: "#EF8C2F",
-                border: "none",
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: "pointer",
-                textDecoration: "underline",
-                textTransform: "none",
-              }}
-            >
-              Copy link
-            </button>
+            {isRegistered && (
+              <span style={{ color: "#ef6c00", fontSize: 13, fontWeight: 600 }}>
+                Registered
+              </span>
+            )}
           </div>
 
           {/* Title/desc/duration */}
@@ -437,13 +503,13 @@ const ApplicantMentorConnect = () => {
 
           {/* CTA row */}
           <div style={{ marginTop: 8, display: "flex", gap: 10 }}>
-            {/* Start now — keep color; just block click & change cursor when not enabled */}
+            {/* Start now — preserve 10-minute early start functionality */}
             <button
               onClick={() => {
                 if (!startEnabled || !m.meetLink) return;
                 window.open(m.meetLink, "_blank", "noopener,noreferrer");
               }}
-              aria-disabled={!startEnabled || !m.meetLink}
+              disabled={!startEnabled || !m.meetLink}
               style={{
                 flex: 1,
                 background: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
@@ -453,7 +519,8 @@ const ApplicantMentorConnect = () => {
                 borderRadius: 5,
                 fontWeight: 800,
                 fontSize: 14,
-                cursor: startEnabled && m.meetLink ? "pointer" : "not-allowed",
+                cursor: (startEnabled && m.meetLink) ? "pointer" : "not-allowed",
+                opacity: (startEnabled && m.meetLink) ? 1 : 0.7,
                 boxShadow: "0 8px 18px rgba(249,115,22,0.25)",
                 textTransform: "none",
               }}
@@ -461,33 +528,62 @@ const ApplicantMentorConnect = () => {
               Start now
             </button>
 
-            {/* Add Calendar — keep colors, block click when not enabled */}
-            <button
-              onClick={() => {
-                if (!addCalEnabled) return; // block click when not upcoming
-                window.open(gcalUrl, "_blank", "noopener,noreferrer");
-              }}
-              aria-disabled={!addCalEnabled}
-              style={{
-                /* keep the same colors */
-                flex: 1,
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 8,
-                background: "#fff",
-                color: "#F97316",
-                border: "1px solid #F97316",
-                borderRadius: 5,
-                padding: "12px 16px",
-                fontWeight: 800,
-                fontSize: 14,
-                cursor: addCalEnabled ? "pointer" : "not-allowed",
-                textTransform: "none",
-              }}
-            >
-              Add calendar
-            </button>
+            {!isRegistered ? (
+              <button
+                onClick={async () => {
+                  const success = await registerForMeeting(meetingId);
+                }}
+                disabled={isRegistering[meetingId]}
+                style={{
+                  flex: 1,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  background: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
+                  color: "#fff",
+                  border: "1px solid #F97316",
+                  borderRadius: 5,
+                  padding: "12px 16px",
+                  fontWeight: 800,
+                  fontSize: 14,
+                  cursor: isRegistering[meetingId] ? "wait" : "pointer",
+                  textTransform: "none",
+                  opacity: isRegistering[meetingId] ? 0.7 : 1
+                }}
+              >
+                {isRegistering[meetingId] ? 'Registering...' : 'Register'}
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (addCalEnabled) {
+                    window.open(gcalUrl, "_blank", "noopener,noreferrer");
+                  }
+                }}
+                disabled={!addCalEnabled}
+                style={{
+                  flex: 1,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  background: "#fff",
+                  color: "#F97316",
+                  border: "1px solid #F97316",
+                  borderRadius: 5,
+                  padding: "12px 16px",
+                  fontWeight: 800,
+                  fontSize: 14,
+                  cursor: addCalEnabled ? "pointer" : "not-allowed",
+                  textTransform: "none",
+                  opacity: addCalEnabled ? 1 : 0.7
+                }}
+              >
+                Add calendar
+              </button>
+            )}
+
           </div>
         </div>
       </div>
@@ -759,6 +855,16 @@ const ApplicantMentorConnect = () => {
           </section>
         </div>
       </div>
+
+      {snackbars.map((snackbar, index) => (
+        <Snackbar
+          key={index}
+          index={index}
+          message={snackbar.message}
+          type={snackbar.type}
+          onClose={() => handleCloseSnackbar(index)}
+        />
+      ))}
     </div>
   );
 };
