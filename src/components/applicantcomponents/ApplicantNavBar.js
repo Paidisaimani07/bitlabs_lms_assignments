@@ -9,6 +9,7 @@ import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
+import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
 import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
 import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
@@ -17,8 +18,7 @@ import shape3 from "../../images/dashboard/side-nav-icons/skillValidation.svg";
 import shape4 from "../../images/dashboard/side-nav-icons/mentorSphere.svg";
 import shape from "../../images/dashboard/side-nav-icons/dashboard.svg";
 import shape2 from "../../images/dashboard/side-nav-icons/buildportfolio.svg";
-import botImage from "../../images/dashboard/mobilebanners/Bot.png";
-import botImage1 from "../../images/dashboard/mobilebanners/Bot1.png";
+import botImage1 from "../../images/dashboard/side-nav-icons/robot.png";
 import "./ApplicantNavBar.css";
 import notificationIcon from "../../images/notificationIcon.svg";
 import { useRefresh } from "../common/RefreshContext"
@@ -555,8 +555,8 @@ function ApplicantNavBar() {
                       <img
                         src={botImage1}
                         alt="Ask Newton"
-                        width="24"
-                        height="24"
+                        width="30"
+                        height="30"
                       />
                     </span>
                     <span

@@ -46,6 +46,18 @@ function LoginBody({ handleLogin }) {
   const [utmTerm, setUtmTerm] = useState("bitlabs.in");
   const { handleLead } = ZohoCRMService();
 
+  const handlePostLoginRedirect = () => {
+    const intendedUrl = localStorage.getItem("intendedUrl");
+    
+    localStorage.removeItem("intendedUrl");
+    
+    if (intendedUrl && intendedUrl !== "/candidate") {
+      navigate(intendedUrl);
+    } else {
+      navigate("/applicanthome");
+    }
+  };
+
 
 
   useEffect(() => {
@@ -225,7 +237,7 @@ function LoginBody({ handleLogin }) {
           if (profileId !== 0 && resume === 404) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
-            navigate("/applicanthome");
+            handlePostLoginRedirect();
             // navigate("/applicant-basic-details-form/3");
           } else if (profileId === 0) {
             console.log("checking ", jwtToken);
@@ -233,7 +245,7 @@ function LoginBody({ handleLogin }) {
             navigate("/applicant-basic-details-form/1");
           } else {
             localStorage.setItem("jwtToken", userData.data.jwt);
-            navigate("/applicanthome");
+            handlePostLoginRedirect();
           }
         }
       } catch (err) {
@@ -380,7 +392,7 @@ function LoginBody({ handleLogin }) {
         if (profileId !== 0 && resume === 404) {
           console.log("checking ", jwtToken);
           localStorage.setItem("jwtToken", userData.data.jwt);
-          navigate("/applicanthome");
+          handlePostLoginRedirect();
           // navigate("/applicant-basic-details-form/3");
         } else if (profileId === 0) {
           console.log("checking ", jwtToken);
@@ -388,7 +400,7 @@ function LoginBody({ handleLogin }) {
           navigate("/applicant-basic-details-form/1");
         } else {
           localStorage.setItem("jwtToken", userData.data.jwt);
-          navigate("/applicanthome");
+          handlePostLoginRedirect();
         }
       }
     } catch (error) {

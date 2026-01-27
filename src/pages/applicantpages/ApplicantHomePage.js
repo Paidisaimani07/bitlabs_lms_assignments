@@ -30,6 +30,8 @@ import BlogSingle from '../../components/applicantcomponents/BlogSingle';
 import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
 import MyJobs from '../../components/applicantcomponents/MyJobs';
 import InterviewPrepPage from './InterviewPrepPage';
+import FeedbackFormsList from '../../components/applicantcomponents/FeedbackFormsList';
+import FeedbackFormFill from '../../components/applicantcomponents/FeedbackFormFill';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -143,10 +145,15 @@ function ApplicantHomePage() {
         case '/applicant-interview-prep':
         setActiveRoute('ai-prep');
         break;
+        case '/applicant-feedback-forms':
+        setActiveRoute('feedback-forms');
+        break;
          default:
       // 👇 check if route starts with /blogs/ (for blog single page)
       if (pathname.startsWith('/blogs/')) {
         setActiveRoute('blogsingle');
+      } else if (pathname.startsWith('/feedback-form-fill/')) {
+        setActiveRoute('feedback-form-fill');
       } else {
         setActiveRoute('');
       }
@@ -188,6 +195,8 @@ function ApplicantHomePage() {
       {activeRoute === 'blogsingle' && <BlogSingle />}
       {activeRoute === 'ai-prep' && <InterviewPrepPage />}
        {activeRoute === 'mentor' && <ApplicantMentorConnect />}
+      {activeRoute === 'feedback-forms' && <FeedbackFormsList />}
+      {activeRoute === 'feedback-form-fill' && <FeedbackFormFill />}
       </div> 
   )
 }

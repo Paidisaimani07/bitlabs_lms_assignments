@@ -493,13 +493,14 @@ const HackathonSkeleton = ({ count = 8 }) => {
 
                                     <div className="newCard-body">
                                         <div
-                                            className="newCard-header"
+                                            className="newCard-header" onClick={() => handleViewClick(hackathon.id)}
                                             style={hackathon.bannerUrl ? {
                                                 backgroundImage: `url(${hackathon.bannerUrl})`,
                                                 backgroundSize: 'cover',
                                                 backgroundPosition: 'center',
                                                 borderRadius: '3px',
-                                                marginBottom: '10px'
+                                                marginBottom: '10px',
+                                                cursor: 'pointer'
                                             } : {}}
                                         >
                                         </div>
