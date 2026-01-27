@@ -4,6 +4,91 @@ import axios from "axios";
 import "./hackathonDetails.css";
 import { useUserContext } from "../common/UserProvider";
 import { apiUrl } from "../../services/ApplicantAPIService";
+const HackathonDetailsSkeleton = () => {
+  return (
+    <div className="border-style">
+      <div className="blur-border-style"></div>
+      <div className="dashboard__content">
+        <div className="row mr-0 ml-10 extraSpace">
+          <div className="hackathon-page-wrapper">
+            <div className="hackathon-details-wrapper">
+              {/* Title */}
+              <div className="hackathon-top-section">
+                <div className="skeleton skeleton-title"></div>
+              </div>
+              {/* Breadcrumb */}
+              <div className="breadcrumb-navigation">
+                <div className="skeleton skeleton-breadcrumb"></div>
+              </div>
+              <div className="hackathon-body">
+                {/* LEFT COLUMN */}
+                <div className="hackathon-left-column">
+                  {/* Banner */}
+                  <div className="hackathon-banner-wrapper">
+                    <div className="skeleton skeleton-banner"></div>
+                  </div>
+                  {/* Info Boxes */}
+                  <div className="hackathon-combine-info-box">
+                    <section className="hackathon-info-box">
+                      <div className="skeleton skeleton-section-title"></div>
+                      <div className="info-item">
+                        <div className="skeleton skeleton-label"></div>
+                        <div className="skeleton skeleton-text"></div>
+                      </div>
+                      <div className="info-item">
+                        <div className="skeleton skeleton-label"></div>
+                        <div className="skeleton skeleton-text"></div>
+                      </div>
+                      <div className="info-item">
+                        <div className="skeleton skeleton-label"></div>
+                        <div className="skeleton skeleton-text"></div>
+                      </div>
+                    </section>
+                    <section className="hackathon-info-box">
+                      <div className="skeleton skeleton-section-title"></div>
+                    <div className="skeleton-tag-row">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <span key={i} className="skeleton skeleton-tag"></span>
+                        ))}
+                      </div>
+                      <hr />
+                      <div className="skeleton skeleton-section-title"></div>
+                      <div className="skeleton-tag-row">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                          <span key={i} className="skeleton skeleton-tech-tag"></span>
+                        ))}
+                      </div>
+                    </section>
+                  </div>
+                </div>
+                {/* RIGHT COLUMN */}
+               <div className="hackathon-right-column card">
+  <section>
+    <div className="skeleton skeleton-section-title"></div>
+    <div className="skeleton skeleton-paragraph"></div>
+    <div className="skeleton skeleton-paragraph"></div>
+    <div className="skeleton skeleton-paragraph short"></div>
+  </section>
+  <section>
+    <div className="skeleton skeleton-section-title"></div>    
+    <ul className="skeleton-list">
+      {Array.from({ length: 12 }).map((_, i) => (
+        <li key={i} className="skeleton skeleton-text"></li>
+      ))}
+    </ul>
+  </section>
+  <div className="action-buttons-row">
+    <div className="skeleton skeleton-button"></div>
+  </div>
+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const HackathonDetails = () => {
     const { id } = useParams();
@@ -219,7 +304,7 @@ const HackathonDetails = () => {
         }
     };
 
-    if (loading) return <div className="loading">Loading...</div>;
+    if (loading) return <HackathonDetailsSkeleton/>;
     if (!hackathon) return <div>No hackathon found.</div>;
 
     const renderActionButton = () => {
@@ -358,16 +443,28 @@ const HackathonDetails = () => {
                                         <h3>Description</h3>
                                         <p>{hackathon.description}</p>
                                     </section>
-                                    <div className="hackathon_documenturl">
-
-                                        <p style={{ color: "#6b7280", fontWeight: "bold" }}> For more details, visit:</p>
-                                        <div className="url" style={{ color: "#2563eb" }}>
-                                            <a href={hackathon.documentUrl} style={{ color: "blue", textDecoration: "underline" }} target="_blank" rel="noopener noreferrer">
-                                                {hackathon.documentUrl}
-                                            </a>
-                                        </div>
-
-                                    </div>
+                               {hackathon.documentUrl && hackathon.documentUrl.trim() !== "" && (
+                                  <div className="hackathon_documenturl">
+                         <p style={{ color: "#6b7280", fontWeight: "bold", marginBottom: "4px" }}>
+    For more details, visit:  </p>
+  <div className="url">
+       <a 
+      href={hackathon.documentUrl} 
+      target="_blank" 
+      rel="noopener noreferrer"
+      style={{ 
+        color: "blue", 
+        textDecoration: "underline",
+        display: "inline-block", 
+        maxWidth: "100%",       
+        wordBreak: "break-all",  
+        overflowWrap: "anywhere" ,
+        paddingRight: "10px",          // Modern alternative to break-word
+      }}>
+      {hackathon.documentUrl}
+    </a>
+  </div>
+</div>)}
                                     {hackathon.instructions && hackathon.instructions.trim() !== "" && (
                                         <section>
                                             <h3>Instructions</h3>
