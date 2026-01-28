@@ -9,7 +9,6 @@ import KeySkillsCard from "./KeySkillsCard";
 import SkillBadgesGrid from './SkillBadgesGrid';
 import "./modalpopup.css";
 import "./Portfolio.css";
-import { RefreshProvider } from "../common/RefreshContext";
 
 const ApplicantViewProfile = () => {
   const { user } = useUserContext();
@@ -38,7 +37,6 @@ const ApplicantViewProfile = () => {
         </div>
         {applicantId ? (
           <>
-            <RefreshProvider>
               <ApplicantHeaderComponent applicantId={applicantId} />
               <ResumeSummaryCard applicantId={applicantId} />
               <PersonalDetailsCard applicantId={applicantId} />
@@ -53,7 +51,6 @@ const ApplicantViewProfile = () => {
                 <SkillBadgesGrid />
               </div>
               {/* =================== /Skill Badges (NEW CARD) =================== */}
-            </RefreshProvider>
           </>
         ) : (
           <div>Unable to identify applicant.</div>
