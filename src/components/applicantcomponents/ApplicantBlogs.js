@@ -293,7 +293,10 @@ export default function ApplicantBlogs() {
                   <article
                     key={b.id}
                     className="tv-card"
-                    onClick={() => openModal(b)}
+                    onClick={(e) => {
+                            analytics.track("BLOGS", currentUser?.id);
+                            openModal(b);
+                          }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) =>
