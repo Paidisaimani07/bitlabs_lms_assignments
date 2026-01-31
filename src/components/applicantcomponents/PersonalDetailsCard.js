@@ -9,6 +9,7 @@ import PersonalDetailsEditPopup from "./PersonalDetailsEditPopup";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { useRefresh } from "../common/RefreshContext";
+import analytics from "../../utils/analytics";
 
 const PERSONAL_API = `${apiUrl}/applicant-personal`;
 const RESUME_API = `${apiUrl}/applicant-pdf`;
@@ -20,6 +21,7 @@ const PersonalDetailsCard = ({ applicantId }) => {
   const [resumeAvailable, setResumeAvailable] = useState(false);
   const fileInputRef = useRef(null);
   const { refreshKey } = useRefresh();
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const addSnackbar = (snackbar) => setSnackbars((p) => [...p, snackbar]);
   const handleCloseSnackbar = (index) =>
@@ -214,7 +216,10 @@ const PersonalDetailsCard = ({ applicantId }) => {
           {/* Resume upload / view */}
           <div className="resume-drop common_style" tabIndex={0}>
             <div className="resume-drop-inner">
-              <span className="resume-pill"  onClick={onResumeClick}>
+              <span className="resume-pill"  onClick={() => {
+  analytics.track("RESUME UPLOAD", currentUser?.id);
+  onResumeClick();
+}}>
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 16V8M8 12h8" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
                 </svg>
