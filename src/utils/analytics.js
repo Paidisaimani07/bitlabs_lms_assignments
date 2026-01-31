@@ -1,6 +1,6 @@
+import { apiUrl } from '../../services/ApplicantAPIService';
 const track = (feature, userId) => {
-  //const today = new Date().toISOString().slice(0, 10);
-  fetch(`${API_BASE}/api/analytics/event`, {
+  fetch(`${apiUrl}/api/analytics/event`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
