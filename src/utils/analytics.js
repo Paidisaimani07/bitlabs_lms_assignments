@@ -12,7 +12,9 @@ const track = (feature, userId) => {
       userId
       //timestamp: today,
     }),
-  }).catch(() => {});
+  }).catch((err) => {
+  console.error("Analytics API failed:", err);
+});
 };
  
 export default { track };
