@@ -1,4 +1,4 @@
-import { apiUrl } from '../../services/ApplicantAPIService';
+import { apiUrl } from '../services/ApplicantAPIService';
 const track = (feature, userId) => {
   fetch(`${apiUrl}/api/analytics/event`, {
     method: "POST",
