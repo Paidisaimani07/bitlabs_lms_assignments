@@ -2,12 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useLocation } from "react-router-dom";
+import { useUserContext } from "../../components/common/UserProvider";
 import "./ApplicantBlog.css";
 import ExploreButton from "../../images/icons/ExploreButton.svg";
 import noblogsfound from "../../images/empty-state-images/no-blogs-found.png";
 import nosearchresults from "../../images/empty-state-images/no-search-results.png";
 
 export default function ApplicantBlogs() {
+  const { user } = useUserContext();
+  const applicantId = user.id;
   const [blogs, setBlogs] = useState([]);
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
@@ -19,6 +22,8 @@ export default function ApplicantBlogs() {
   const pageSize = 12;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalError, setModalError] = useState(null);
   const handleLoadMore = () => {
     setPage((prev) => prev + 1);
   };
@@ -78,13 +83,39 @@ export default function ApplicantBlogs() {
   };
 
   // Modal controls
-  const openModal = (blog) => {
+  const openModal = async (blog) => {
     lastFocused.current = document.activeElement;
     setSelected(blog);
     document.body.style.overflow = "hidden";
+
+    try {
+      setModalLoading(true);
+      setModalError(null);
+
+      if (!applicantId) {
+        throw new Error("Applicant ID is required");
+      }
+
+      const jwtToken = localStorage.getItem("jwtToken");
+
+      const res = await axios.get(
+        `${apiUrl}/blogs/getBlogsById/${blog.id}/${applicantId}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+
+      setSelected(res.data);
+    } catch (e) {
+      console.error("Error fetching blog details:", e);
+      setModalError("Failed to load blog details. Please try again.");
+    } finally {
+      setModalLoading(false);
+    }
   };
   const closeModal = () => {
     setSelected(null);
+    setModalError(null);
     document.body.style.overflow = "";
     lastFocused.current?.focus?.();
   };
@@ -389,53 +420,90 @@ export default function ApplicantBlogs() {
                 }}
               ></button>
 
-              <div className="tv-modal-header">
-                <div className="tv-modal-thumb">
-                  <img src={selected.imageUrl} alt={selected.title} />
-                </div>
-                <div className="tv-modal-headtext">
-                  <h3 className="tv-modal-title">{selected.title}</h3>
-                  <div className="tv-meta">
-                    <span className="tv-by">
-                      By {selected.author || "bitLabs"}
-                    </span>
-                    <span className="tv-dot">•</span>
-                    <span className="tv-date">
-                      {formatDate(selected.createdAt)}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {modalLoading ? (
+                <div className="tv-modal-loading">
+                  <div className="tv-modal-skeleton">
+                    {/* Image Skeleton */}
+                    <div className="tv-modal-skeleton-image"></div>
 
-              <div className="tv-modal-body">
-                {selected.description && (
-                  <p className="tv-modal-desc">{selected.description}</p>
-                )}
-                {selected.content && (
-                  <div className="tv-modal-content">
-                    {selected.content
-                      .split("\n")
-                      .filter(Boolean)
-                      .map((line, i) => (
-                        <p
-                          key={i}
-                          className={
-                            line.startsWith("##")
-                              ? "tv-h2"
-                              : line.startsWith("-")
-                              ? "tv-bullet"
-                              : "tv-p"
-                          }
-                        >
-                          {line
-                            .replace(/^##\s*/, "")
-                            .replace(/^-/, "")
-                            .trim()}
-                        </p>
-                      ))}
+                    {/* Title Skeleton */}
+                    <div className="tv-modal-skeleton-title">
+                      <div className="skeleton-line title-line"></div>
+                      <div className="skeleton-line title-line-short"></div>
+                    </div>
+
+                    {/* Meta Skeleton */}
+                    <div className="tv-modal-skeleton-meta">
+                      <div className="skeleton-line meta-line"></div>
+                    </div>
+
+                    {/* Content Skeleton */}
+                    <div className="tv-modal-skeleton-content">
+                      <div className="skeleton-line"></div>
+                      <div className="skeleton-line"></div>
+                      <div className="skeleton-line"></div>
+                      <div className="skeleton-line short"></div>
+                    </div>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : modalError ? (
+                <div className="tv-modal-error">
+                  <p>{modalError}</p>
+                  <button onClick={closeModal} className="tv-modal-error-close">
+                    Close
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="tv-modal-header">
+                    <div className="tv-modal-thumb">
+                      <img src={selected.imageUrl} alt={selected.title} />
+                    </div>
+                    <div className="tv-modal-headtext">
+                      <h3 className="tv-modal-title">{selected.title}</h3>
+                      <div className="tv-meta">
+                        <span className="tv-by">
+                          By {selected.author || "bitLabs"}
+                        </span>
+                        <span className="tv-dot">•</span>
+                        <span className="tv-date">
+                          {formatDate(selected.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="tv-modal-body">
+                    {selected.description && (
+                      <p className="tv-modal-desc">{selected.description}</p>
+                    )}
+                    {selected.content && (
+                      <div className="tv-modal-content">
+                        {selected.content
+                          .split("\n")
+                          .filter(Boolean)
+                          .map((line, i) => (
+                            <p
+                              key={i}
+                              className={
+                                line.startsWith("##")
+                                  ? "tv-h2"
+                                  : line.startsWith("-")
+                                    ? "tv-bullet"
+                                    : "tv-p"
+                              }
+                            >
+                              {line
+                                .replace(/^##\s*/, "")
+                                .replace(/^-/, "")
+                                .trim()}
+                            </p>
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}

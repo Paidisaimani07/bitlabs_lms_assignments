@@ -2882,10 +2882,3 @@
     margin-left : 10px !important;
   }
 }
-
-
-@media only screen and (min-width: 360px) and (max-width: 400px) {
-.sticky-area-wrap .header-ct-right {
-  margin-right: -14px;
-}
-}
