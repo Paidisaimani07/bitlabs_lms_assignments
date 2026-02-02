@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import "./VerifiedVideos.css";
 import nosearchresults from "../../images/empty-state-images/no-search-results.png";
 import novideosfound from "../../images/empty-state-images/no-video-found.png";
+import analytics from "../../utils/analytics";
 
 const preloadAll = true;
 
@@ -39,6 +40,7 @@ const VerifiedVideos = () => {
   const [autoPlayVideoId, setAutoPlayVideoId] = useState(
     startVideoId ? parseInt(startVideoId, 10) : null
   );
+  const currentUser = JSON.parse(localStorage.getItem("user"));
 
   // 🧭 Handle responsive layout
   useEffect(() => {
@@ -347,8 +349,7 @@ const VerifiedVideos = () => {
                     <button
                       type="button"
                       className="thumb-button"
-                      onClick={() => handleOpenPlayer(index)}
-                      aria-label={`Play ${video.title || `Video ${index + 1}`}`}
+                      onClick={() =>{ analytics.track("SHORTS", currentUser?.id);handleOpenPlayer(index);}}                      aria-label={`Play ${video.title || `Video ${index + 1}`}`}
                     >
                       <img
                         src={video.thumbnail_url || "/images/default-thumb.png"}
