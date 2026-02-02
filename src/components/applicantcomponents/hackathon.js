@@ -5,6 +5,7 @@ import axios from "axios";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
 import nosearchfound from "../../images/empty-state-images/no-search-results.png";
+import analytics from "../../utils/analytics";
 
 const TechTags = ({ skills }) => {
     const containerRef = useRef(null);
@@ -98,7 +99,7 @@ const Hackathon = () => {
     const [statusFilter, setStatusFilter] = useState(() => localStorage.getItem("applicantHackathonTab") || "UPCOMING");
     const [loading, setLoading] = useState(false);
     const searchInputRef = useRef(null);
-
+    const currentUser = JSON.parse(localStorage.getItem("user"));
     const { user } = useUserContext();
     const userId = user.id;
     const navigate = useNavigate();
@@ -547,7 +548,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                                                     {regStatus}
                                                 </div>
                                             )}
-                                            <button className="view-button" onClick={() => handleViewClick(hackathon.id)}>
+                                            <button className="view-button" onClick={() =>{  analytics.track("HACKATHONS", currentUser?.id);handleViewClick(hackathon.id);}}>
                                                 View
                                             </button>
                                         </div>
