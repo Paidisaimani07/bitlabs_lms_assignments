@@ -121,6 +121,10 @@ const FeedbackFormFill = () => {
       questions.forEach(question => {
         const value = formData[question.questionKey];
 
+        if (question.questionType === 'TEXTAREA' && value && value.trim().length < 10) {
+          errors[question.questionKey] = 'Response must be at least 10 characters';
+        }
+
         if (question.isRequired) {
           if (question.questionType === 'CHECKBOX') {
             // Check if at least one checkbox is selected

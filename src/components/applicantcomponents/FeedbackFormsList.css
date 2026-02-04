@@ -18,9 +18,9 @@
 
 }
 
-.form-title {
+#form-title {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 700;
   color: #1a1a1a;
   margin: 10px;
   line-height: 1.3;

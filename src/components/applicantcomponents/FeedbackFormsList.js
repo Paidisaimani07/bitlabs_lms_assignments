@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import feedbackFormEmptyImage from '../../images/empty-state-images/feedback-form-empty-state-image.png';
 import searchEmptyStateImage from '../../images/empty-state-images/no-search-results.png';
 import './FeedbackFormsList.css';
- 
+
 const FeedbackFormsList = () => {
   const { user } = useUserContext();
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const FeedbackFormsList = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const applicantId = user.id;
- 
+
   useEffect(() => {
     const fetchForms = async () => {
       try {
@@ -38,34 +38,34 @@ const FeedbackFormsList = () => {
         setLoading(false);
       }
     };
- 
+
     if (applicantId) {
       fetchForms();
     }
   }, [applicantId]);
- 
+
   const filteredForms = forms.filter(form => {
     const nameMatch = form.formName?.toLowerCase().includes(searchQuery.toLowerCase());
     const mentorMatch = form.mentorName?.toLowerCase().includes(searchQuery.toLowerCase());
     const collegeMatch = form.collegeName?.toLowerCase().includes(searchQuery.toLowerCase());
     return nameMatch || mentorMatch || collegeMatch;
   });
- 
+
   const formatCreatedDate = (createdAtArray) => {
     if (!createdAtArray || !Array.isArray(createdAtArray) || createdAtArray.length < 6) {
       return 'Unknown';
     }
- 
+
     const [year, month, day, hour, minute, second] = createdAtArray;
     const date = new Date(year, month - 1, day, hour, minute, second); // month - 1 because JS months are 0-indexed
- 
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
   };
- 
+
   const FeedbackFormSkeleton = ({ count = 8 }) => {
     return (
       <div className="feedback-forms-skeleton-grid">
@@ -76,7 +76,7 @@ const FeedbackFormsList = () => {
               <div className="feedback-forms-skeleton-header">
                 <div className="feedback-forms-skeleton-element feedback-forms-skeleton-title"></div>
               </div>
- 
+
               {/* Details skeleton */}
               <div className="feedback-forms-skeleton-details">
                 {Array.from({ length: 3 }).map((_, j) => (
@@ -86,7 +86,7 @@ const FeedbackFormsList = () => {
                   </div>
                 ))}
               </div>
- 
+
               {/* Actions skeleton */}
               <div className="feedback-forms-skeleton-actions">
                 <div className="feedback-forms-skeleton-element feedback-forms-skeleton-button"></div>
@@ -97,7 +97,7 @@ const FeedbackFormsList = () => {
       </div>
     );
   };
- 
+
   return (
     <div className="border-style">
       <div className="blur-border-style"></div>
@@ -123,7 +123,7 @@ const FeedbackFormsList = () => {
               )}
             </div>
           </div>
- 
+
           {loading ? (
             <FeedbackFormSkeleton count={8} />
           ) : error ? (
@@ -150,18 +150,20 @@ const FeedbackFormsList = () => {
             <div className="newCards-grid">
               {filteredForms.map((form) => (
                 <div className="newCard" key={form.formId}>
-                 
+
                   <div className="newCard-body">
-                    <div className="card-header">
-                     <div className="mentor-text">
-                    <h3 className="mentor-name">{form.mentorName}</h3>
-                    <p className="mentor-role">Technical Mentor</p>
+                    <div className="card-header" style={{ justifyContent: "space-between", width: "100%" }}>
+                      <div className="mentor-text">
+                        <h3 className="mentor-name">{form.mentorName}</h3>
+                        <p className="mentor-role">Technical Mentor</p>
+                      </div>
+                      <i className="fa fa-file-text-o" style={{ fontSize: "20px", color: "#F97316" }}></i>
                     </div>
+                    <div className='form-title-and-college'>
+                      <h3 id="form-title">{form.formName}</h3>
+
+                      <p className="college-name"><span style={{ color: "black" }}>College:</span> {form.collegeName}</p>
                     </div>
-                     <div className='form-title-and-college'>
-                    <h3 className="form-title">Machine Learning</h3>
-                     <p className="college-name">{form.collegeName}</p>
-                  </div>
                     <div className="feedback-form-actions">
                       <button
                         className="view-button"
@@ -170,6 +172,7 @@ const FeedbackFormsList = () => {
                           navigate(`/feedback-form-fill/${form.formId}`);
                         }}
                       >
+                        <i className="fa fa-pencil-square-o" style={{ marginRight: "8px" }}></i>
                         Fill Form
                       </button>
                     </div>
@@ -183,5 +186,5 @@ const FeedbackFormsList = () => {
     </div>
   );
 };
- 
+
 export default FeedbackFormsList;
