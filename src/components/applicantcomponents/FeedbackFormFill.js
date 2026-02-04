@@ -74,7 +74,7 @@ const FeedbackFormFill = () => {
   const handleInputChange = (questionKey, value, questionType, isChecked = null) => {
     setFormData(prev => {
       const updated = { ...prev };
-      
+
       if (questionType === 'CHECKBOX') {
         // Handle checkbox array values
         const currentValues = prev[questionKey] || [];
@@ -90,9 +90,18 @@ const FeedbackFormFill = () => {
         // Handle all other types (TEXT, EMAIL, PHONE, TEXTAREA, RADIO, REVIEW)
         updated[questionKey] = value;
       }
-      
+
       return updated;
     });
+
+    // Clear error for the field being updated
+    if (fieldErrors[questionKey]) {
+      setFieldErrors(prevErrors => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[questionKey];
+        return newErrors;
+      });
+    }
   };
 
   const handleCloseSnackbar = () => {
@@ -106,12 +115,12 @@ const FeedbackFormFill = () => {
 
   const validateForm = () => {
     const errors = {};
-    
+
     if (formDetails && formDetails.questions) {
       const questions = formDetails.questions;
       questions.forEach(question => {
         const value = formData[question.questionKey];
-        
+
         if (question.isRequired) {
           if (question.questionType === 'CHECKBOX') {
             // Check if at least one checkbox is selected
@@ -130,7 +139,7 @@ const FeedbackFormFill = () => {
         }
       });
     }
-    
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0; // Return true if no errors
   };
@@ -143,6 +152,7 @@ const FeedbackFormFill = () => {
     const isValid = validateForm();
     if (!isValid) {
       setSubmitting(false);
+      setSnackbar({ open: true, message: 'Please fill all required fields', type: 'error' });
       return;
     }
 
@@ -197,7 +207,7 @@ const FeedbackFormFill = () => {
                   {options.map((option, index) => {
                     const starLabels = {
                       1: 'Poor',
-                      2: 'Fair', 
+                      2: 'Fair',
                       3: 'Good',
                       4: 'Very Good',
                       5: 'Excellent'
@@ -220,20 +230,20 @@ const FeedbackFormFill = () => {
                   })}
                 </div>
               )}
-              
+
               {displayType === 'SCALE' && (
                 <div className="feedback-scale-container">
                   <div className="feedback-scale-line">
-                    <div 
-                      className="feedback-scale-fill" 
-                      style={{ 
-                        width: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%' 
+                    <div
+                      className="feedback-scale-fill"
+                      style={{
+                        width: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%'
                       }}
                     ></div>
-                    <div 
+                    <div
                       className="feedback-scale-bubble"
-                      style={{ 
-                        left: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%' 
+                      style={{
+                        left: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%'
                       }}
                     ></div>
                     <input
@@ -254,11 +264,11 @@ const FeedbackFormFill = () => {
                     <div className="feedback-scale-options">
                       {options.map((option, index) => {
                         return (
-                          <span 
-                            key={index} 
+                          <span
+                            key={index}
                             className={`feedback-scale-option-label ${parseInt(value) === parseInt(option) ? 'active' : ''}`}
-                            style={{ 
-                              left: `${(index / (options.length - 1)) * 100}%` 
+                            style={{
+                              left: `${(index / (options.length - 1)) * 100}%`
                             }}
                           >
                             {option}
@@ -269,7 +279,7 @@ const FeedbackFormFill = () => {
                   </div>
                 </div>
               )}
-              
+
               {displayType === 'EMOJIS' && (
                 <div className="feedback-emojis-container">
                   {options.map((option, index) => {
@@ -282,13 +292,12 @@ const FeedbackFormFill = () => {
                     };
                     const emojiLabels = {
                       1: 'Poor',
-                      2: 'Fair', 
+                      2: 'Fair',
                       3: 'Good',
                       4: 'Very Good',
                       5: 'Excellent'
                     };
                     const isSelected = parseInt(value) === parseInt(option);
-                    const isPrevious = parseInt(value) > parseInt(option);
                     return (
                       <label key={index} className="feedback-emoji-option">
                         <input
@@ -298,7 +307,7 @@ const FeedbackFormFill = () => {
                           checked={isSelected}
                           onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
                         />
-                        <span className={`feedback-emoji ${isSelected || isPrevious ? 'active' : ''}`}>
+                        <span className={`feedback-emoji ${isSelected ? 'active' : ''}`}>
                           {emojiMap[option]}
                         </span>
                         <span className="feedback-emoji-label">{emojiLabels[option]}</span>
@@ -598,8 +607,8 @@ const FeedbackFormFill = () => {
             <div className="feedback-form-header">
               <h2 className="feedback-form-title">{formDetails.formName}</h2>
               <div className="feedback-form-meta">
-                <span className="feedback-meta-item"><span style={{color:"black"}}>Mentor:</span> {formDetails.mentorName}</span>
-                <span className="feedback-meta-item"><span style={{color:"black"}}>College:</span> {formDetails.collegeName}</span>
+                <span className="feedback-meta-item"><span style={{ color: "black" }}>Mentor:</span> {formDetails.mentorName}</span>
+                <span className="feedback-meta-item"><span style={{ color: "black" }}>College:</span> {formDetails.collegeName}</span>
               </div>
             </div>
 
@@ -637,7 +646,7 @@ const FeedbackFormFill = () => {
             <div className="feedback-success-icon">✓</div>
             <h3 className="feedback-success-title">Feedback Submitted Successfully!</h3>
             <p className="feedback-success-message">Thank you for your valuable feedback. Your response has been recorded.</p>
-            <button 
+            <button
               className="feedback-success-btn"
               onClick={handleSuccessPopupClose}
             >
