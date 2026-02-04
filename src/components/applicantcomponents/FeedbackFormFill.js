@@ -155,7 +155,7 @@ const FeedbackFormFill = () => {
       }));
 
       await axios.post(
-        `${apiUrl}/api/feedback-forms/applicant/${applicantId}/submitFeedback/${formId}`,
+        `${apiUrl}/api/feedbackform/${formId}/saveApplicantResponse/${applicantId}`,
         answers,
         {
           headers: {
