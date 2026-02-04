@@ -173,15 +173,7 @@
   font-size: 15px;
   color: #495057;
   background: #f8f9fa;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-sizing: border-box;
-}
-
-.feedback-number-input:focus,
-.feedback-textarea:focus {
-  outline: none;
-  border-color: #F97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
 }
 
 .feedback-number-input {
@@ -212,7 +204,6 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
   min-width: 200px;
 }
 
@@ -330,7 +321,6 @@
   cursor: pointer;
   margin-top: 15px;
   font-size: 14px;
-  transition: background-color 0.3s ease;
 }
 
 .feedback-retry-btn:hover {
@@ -626,7 +616,6 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  transition: transform 0.2s ease;
   padding: 8px;
   border-radius: 8px;
 }
@@ -638,7 +627,6 @@
 .feedback-star {
   font-size: 32px;
   color: #F97316;
-  transition: color 0.2s ease;
   cursor: pointer;
   line-height: 1;
 }
@@ -888,14 +876,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
   background-color: #f9f9f9;
-}
-
-.feedback-email-input:focus {
-  outline: none;
-  border-color: #F97316;
-  background-color: white;
 }
 
 /* Text Input Styles */
@@ -905,14 +886,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
   background-color: #f9f9f9;
-}
-
-.feedback-text-input:focus {
-  outline: none;
-  border-color: #F97316;
-  background-color: white;
 }
 
 /* Phone Input Styles */
@@ -922,14 +896,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease;
   background-color: #f9f9f9;
-}
-
-.feedback-phone-input:focus {
-  outline: none;
-  border-color: #F97316;
-  background-color: white;
 }
 
 /* Error Message Styles */
