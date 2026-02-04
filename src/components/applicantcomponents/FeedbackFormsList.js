@@ -22,7 +22,7 @@ const FeedbackFormsList = () => {
         setLoading(true);
         const jwtToken = localStorage.getItem('jwtToken');
         const response = await axios.get(
-          `${apiUrl}/api/feedback-forms/applicant/${applicantId}/getAllForms`,
+          `${apiUrl}/api/feedbackforms/getallfeedbackforms`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
@@ -55,10 +55,10 @@ const FeedbackFormsList = () => {
     if (!createdAtArray || !Array.isArray(createdAtArray) || createdAtArray.length < 6) {
       return 'Unknown';
     }
-    
+
     const [year, month, day, hour, minute, second] = createdAtArray;
     const date = new Date(year, month - 1, day, hour, minute, second); // month - 1 because JS months are 0-indexed
-    
+
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -150,26 +150,20 @@ const FeedbackFormsList = () => {
             <div className="newCards-grid">
               {filteredForms.map((form) => (
                 <div className="newCard" key={form.formId}>
+
                   <div className="newCard-body">
-                    <div className="form-header">
-                      <h3 className="form-name">{form.formName}</h3>
+                    <div className="card-header" style={{ justifyContent: "space-between", width: "100%" }}>
+                      <div className="mentor-text">
+                        <h3 className="mentor-name">{form.mentorName}</h3>
+                        <p className="mentor-role">Technical Mentor</p>
+                      </div>
+                      <i className="fa fa-file-text-o" style={{ fontSize: "20px", color: "#F97316" }}></i>
                     </div>
+                    <div className='form-title-and-college'>
+                      <h3 id="form-title">{form.formName}</h3>
 
-                    <div className="form-details">
-                      <div className="detail-row">
-                        <span className="label">Mentor:</span>
-                        <span className="value">{form.mentorName}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">College:</span>
-                        <span className="value">{form.collegeName}</span>
-                      </div>
-                      <div className="detail-row">
-                        <span className="label">Created:</span>
-                        <span className="value">{formatCreatedDate(form.createdAt)}</span>
-                      </div>
+                      <p className="college-name"><span style={{ color: "black" }}>College:</span> {form.collegeName}</p>
                     </div>
-
                     <div className="feedback-form-actions">
                       <button
                         className="view-button"
@@ -178,6 +172,7 @@ const FeedbackFormsList = () => {
                           navigate(`/feedback-form-fill/${form.formId}`);
                         }}
                       >
+                        <i className="fa fa-pencil-square-o" style={{ marginRight: "8px" }}></i>
                         Fill Form
                       </button>
                     </div>
