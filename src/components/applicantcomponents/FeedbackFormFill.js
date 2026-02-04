@@ -18,6 +18,7 @@ const FeedbackFormFill = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const applicantId = user?.id;
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const FeedbackFormFill = () => {
         const jwtToken = localStorage.getItem('jwtToken');
 
         const response = await axios.get(
-          `${apiUrl}/api/feedback-forms/applicant/${applicantId}/getFormById/${formId}`,
+          `${apiUrl}/api/feedbackforms/getfeedbackFormById/${formId}`,
           {
             headers: {
               Authorization: `Bearer ${jwtToken}`,
@@ -40,17 +41,17 @@ const FeedbackFormFill = () => {
 
         const initialFormData = {};
         if (response.data.questions) {
-          const questions = JSON.parse(response.data.questions);
+          const questions = response.data.questions;
           questions.forEach(question => {
             if (question.questionType === 'CHECKBOX') {
-              initialFormData[question.questionNo] = [];
+              initialFormData[question.questionKey] = [];
             } else if (question.questionType === 'TEXTAREA' || question.questionType === 'TEXT' || question.questionType === 'EMAIL' || question.questionType === 'PHONE') {
-              initialFormData[question.questionNo] = '';
+              initialFormData[question.questionKey] = '';
             } else if (question.questionType === 'NUMBER') {
-              initialFormData[question.questionNo] = '';
+              initialFormData[question.questionKey] = '';
             } else {
-              // RADIO, REVIEW
-              initialFormData[question.questionNo] = '';
+              // RADIO, REVIEW, RATING - start with empty for RATING to show bubble at start
+              initialFormData[question.questionKey] = question.questionType === 'RATING' ? '' : '';
             }
           });
         }
@@ -70,24 +71,24 @@ const FeedbackFormFill = () => {
     }
   }, [formId, applicantId]);
 
-  const handleInputChange = (questionNo, value, questionType, isChecked = null) => {
+  const handleInputChange = (questionKey, value, questionType, isChecked = null) => {
     setFormData(prev => {
       const updated = { ...prev };
       
       if (questionType === 'CHECKBOX') {
         // Handle checkbox array values
-        const currentValues = prev[questionNo] || [];
+        const currentValues = prev[questionKey] || [];
         if (isChecked) {
-          updated[questionNo] = [...currentValues, value];
+          updated[questionKey] = [...currentValues, value];
         } else {
-          updated[questionNo] = currentValues.filter(item => item !== value);
+          updated[questionKey] = currentValues.filter(item => item !== value);
         }
       } else if (questionType === 'NUMBER') {
         // Handle number type
-        updated[questionNo] = value === '' ? '' : Number(value);
+        updated[questionKey] = value === '' ? '' : Number(value);
       } else {
         // Handle all other types (TEXT, EMAIL, PHONE, TEXTAREA, RADIO, REVIEW)
-        updated[questionNo] = value;
+        updated[questionKey] = value;
       }
       
       return updated;
@@ -98,28 +99,33 @@ const FeedbackFormFill = () => {
     setSnackbar({ open: false, message: '', type: '' });
   };
 
+  const handleSuccessPopupClose = () => {
+    setShowSuccessPopup(false);
+    navigate('/applicanthome');
+  };
+
   const validateForm = () => {
     const errors = {};
     
     if (formDetails && formDetails.questions) {
-      const questions = JSON.parse(formDetails.questions);
+      const questions = formDetails.questions;
       questions.forEach(question => {
-        const value = formData[question.questionNo];
+        const value = formData[question.questionKey];
         
         if (question.isRequired) {
           if (question.questionType === 'CHECKBOX') {
             // Check if at least one checkbox is selected
             if (!Array.isArray(value) || value.length === 0) {
-              errors[question.questionNo] = `Please select at least one option`;
+              errors[question.questionKey] = `Please select at least one option`;
             }
-          } else if (question.questionType === 'RADIO' || question.questionType === 'REVIEW') {
-            // Check if a radio or review option is selected
+          } else if (question.questionType === 'RADIO' || question.questionType === 'REVIEW' || question.questionType === 'RATING') {
+            // Check if a radio, review, or rating option is selected
             if (!value || value === '') {
-              errors[question.questionNo] = `Please select an option`;
+              errors[question.questionKey] = `Please select an option`;
             }
           } else if (!value || (typeof value === 'string' && value.trim() === '')) {
             // Check for TEXT, EMAIL, PHONE, TEXTAREA, NUMBER
-            errors[question.questionNo] = `This field is required`;
+            errors[question.questionKey] = `This field is required`;
           }
         }
       });
@@ -142,9 +148,10 @@ const FeedbackFormFill = () => {
 
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const answers = Object.keys(formData).map(questionNo => ({
-        answer: formData[questionNo],
-        questionNo: parseInt(questionNo)
+      const answers = Object.keys(formData).map((questionKey, index) => ({
+        answer: formData[questionKey],
+        questionKey: questionKey,
+        questionNumber: index + 1
       }));
 
       await axios.post(
@@ -158,10 +165,7 @@ const FeedbackFormFill = () => {
         }
       );
 
-      setSnackbar({ open: true, message: 'Feedback form submitted successfully!', type: 'success' });
-      setTimeout(() => {
-        navigate('/applicant-feedback-forms');
-      }, 1000);
+      setShowSuccessPopup(true);
 
     } catch (err) {
       let errorMessage = err.response?.data?.message || err.message || 'Failed to submit feedback form. Please try again.';
@@ -176,78 +180,207 @@ const FeedbackFormFill = () => {
     }
   };
 
-  const renderQuestion = (question) => {
-    const { questionNo, questionText, questionType, options, isRequired } = question;
-    const value = formData[questionNo] || '';
+  const renderQuestion = (questionData) => {
+    const { questionKey, question, questionType, options, displayType, isRequired } = questionData;
+    const value = formData[questionKey] || '';
 
     switch (questionType) {
+      case 'RATING':
+        return (
+          <div key={questionKey} className="feedback-question">
+            <label className="feedback-question-label">
+              {question} {isRequired && <span className="feedback-required">*</span>}
+            </label>
+            <div className={`feedback-rating-group feedback-rating-${displayType?.toLowerCase()}`}>
+              {displayType === 'STARS' && (
+                <div className="feedback-stars-container">
+                  {options.map((option, index) => {
+                    const starLabels = {
+                      1: 'Poor',
+                      2: 'Fair', 
+                      3: 'Good',
+                      4: 'Very Good',
+                      5: 'Excellent'
+                    };
+                    return (
+                      <label key={index} className="feedback-star-option">
+                        <input
+                          type="radio"
+                          name={`question-${questionKey}`}
+                          value={option}
+                          checked={value === option.toString()}
+                          onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
+                        />
+                        <span className="feedback-star">
+                          {parseInt(option) <= parseInt(value) ? '★' : '☆'}
+                        </span>
+                        <span className="feedback-star-label">{starLabels[option]}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+              
+              {displayType === 'SCALE' && (
+                <div className="feedback-scale-container">
+                  <div className="feedback-scale-line">
+                    <div 
+                      className="feedback-scale-fill" 
+                      style={{ 
+                        width: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%' 
+                      }}
+                    ></div>
+                    <div 
+                      className="feedback-scale-bubble"
+                      style={{ 
+                        left: value ? `${((parseInt(value) - 1) / (options.length - 1)) * 100}%` : '0%' 
+                      }}
+                    ></div>
+                    <input
+                      type="range"
+                      min={options[0]}
+                      max={options[options.length - 1]}
+                      step="0.1"
+                      value={value || options[0]}
+                      onChange={(e) => {
+                        const newValue = parseFloat(e.target.value);
+                        const percentage = (newValue - options[0]) / (options[options.length - 1] - options[0]);
+                        const optionIndex = Math.round(percentage * (options.length - 1));
+                        const snapValue = options[optionIndex];
+                        handleInputChange(questionKey, snapValue.toString(), questionType);
+                      }}
+                      className="feedback-scale-slider"
+                    />
+                    <div className="feedback-scale-options">
+                      {options.map((option, index) => {
+                        return (
+                          <span 
+                            key={index} 
+                            className={`feedback-scale-option-label ${parseInt(value) === parseInt(option) ? 'active' : ''}`}
+                            style={{ 
+                              left: `${(index / (options.length - 1)) * 100}%` 
+                            }}
+                          >
+                            {option}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {displayType === 'EMOJIS' && (
+                <div className="feedback-emojis-container">
+                  {options.map((option, index) => {
+                    const emojiMap = {
+                      1: '😞',
+                      2: '😕',
+                      3: '😐',
+                      4: '😊',
+                      5: '😃'
+                    };
+                    const emojiLabels = {
+                      1: 'Poor',
+                      2: 'Fair', 
+                      3: 'Good',
+                      4: 'Very Good',
+                      5: 'Excellent'
+                    };
+                    const isSelected = parseInt(value) === parseInt(option);
+                    const isPrevious = parseInt(value) > parseInt(option);
+                    return (
+                      <label key={index} className="feedback-emoji-option">
+                        <input
+                          type="radio"
+                          name={`question-${questionKey}`}
+                          value={option}
+                          checked={isSelected}
+                          onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
+                        />
+                        <span className={`feedback-emoji ${isSelected || isPrevious ? 'active' : ''}`}>
+                          {emojiMap[option]}
+                        </span>
+                        <span className="feedback-emoji-label">{emojiLabels[option]}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
+            )}
+          </div>
+        );
+
       case 'RADIO':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <div className="feedback-radio-group">
               {options.map((option, index) => (
                 <label key={index} className="feedback-radio-option">
                   <input
                     type="radio"
-                    name={`question-${questionNo}`}
+                    name={`question-${questionKey}`}
                     value={option}
                     checked={value === option}
-                    onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+                    onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
                   />
                   <span className="feedback-radio-text">{option}</span>
                 </label>
               ))}
             </div>
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'CHECKBOX':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <div className="feedback-checkbox-group">
               {options.map((option, index) => (
                 <label key={index} className="feedback-checkbox-option">
                   <input
                     type="checkbox"
-                    name={`question-${questionNo}-${index}`}
+                    name={`question-${questionKey}-${index}`}
                     value={option}
                     checked={Array.isArray(value) ? value.includes(option) : false}
-                    onChange={(e) => handleInputChange(questionNo, option, questionType, e.target.checked)}
+                    onChange={(e) => handleInputChange(questionKey, option, questionType, e.target.checked)}
                   />
                   <span className="feedback-checkbox-text">{option}</span>
                 </label>
               ))}
             </div>
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'REVIEW':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <div className="feedback-review-group">
               {options.map((option, index) => (
                 <label key={index} className="feedback-review-option">
                   <input
                     type="radio"
-                    name={`question-${questionNo}`}
+                    name={`question-${questionKey}`}
                     value={option}
                     checked={value === option}
-                    onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+                    onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
                   />
                   <span className="feedback-review-star">
                     {parseInt(option) <= parseInt(value) ? '★' : '☆'}
@@ -256,105 +389,105 @@ const FeedbackFormFill = () => {
                 </label>
               ))}
             </div>
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'NUMBER':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <input
               type="number"
               value={value}
-              onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+              onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
               className="feedback-number-input"
               min="1"
               placeholder="Enter a number..."
             />
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'TEXTAREA':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <textarea
               value={value}
-              onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+              onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
               className="feedback-textarea"
               rows={4}
               placeholder="Enter your response here..."
             />
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'EMAIL':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <input
               type="email"
               value={value}
-              onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+              onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
               className="feedback-email-input"
               placeholder="Enter your email address..."
             />
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'TEXT':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <input
               type="text"
               value={value}
-              onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+              onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
               className="feedback-text-input"
               placeholder="Enter your response..."
             />
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
 
       case 'PHONE':
         return (
-          <div key={questionNo} className="feedback-question">
+          <div key={questionKey} className="feedback-question">
             <label className="feedback-question-label">
-              {questionText} {isRequired && <span className="feedback-required">*</span>}
+              {question} {isRequired && <span className="feedback-required">*</span>}
             </label>
             <input
               type="tel"
               value={value}
-              onChange={(e) => handleInputChange(questionNo, e.target.value, questionType)}
+              onChange={(e) => handleInputChange(questionKey, e.target.value, questionType)}
               className="feedback-phone-input"
               placeholder="Enter your phone number..."
               pattern="[0-9]{10}"
             />
-            {fieldErrors[questionNo] && (
-              <span className="feedback-error-message">{fieldErrors[questionNo]}</span>
+            {fieldErrors[questionKey] && (
+              <span className="feedback-error-message">{fieldErrors[questionKey]}</span>
             )}
           </div>
         );
@@ -453,21 +586,25 @@ const FeedbackFormFill = () => {
               </div>
             </div>
           </div>
-        ) : (
+        ) : error ? (
+          <div className="feedback-error-state">
+            <p>{error}</p>
+            <button className="feedback-retry-btn" onClick={() => window.location.reload()}>
+              Retry
+            </button>
+          </div>
+        ) : formDetails ? (
           <div className="feedback-form-wrapper">
             <div className="feedback-form-header">
               <h2 className="feedback-form-title">{formDetails.formName}</h2>
               <div className="feedback-form-meta">
-                <span className="feedback-meta-item">Mentor: {formDetails.mentorName}</span>
-                <span className="feedback-meta-item">College: {formDetails.collegeName}</span>
+                <span className="feedback-meta-item"><span style={{color:"black"}}>Mentor:</span> {formDetails.mentorName}</span>
+                <span className="feedback-meta-item"><span style={{color:"black"}}>College:</span> {formDetails.collegeName}</span>
               </div>
-              {formDetails.description && (
-                <p className="feedback-form-description">{formDetails.description}</p>
-              )}
             </div>
 
             <form onSubmit={handleSubmit} className="feedback-form">
-              {JSON.parse(formDetails.questions).map((question) => renderQuestion(question))}
+              {formDetails.questions.map((question) => renderQuestion(question))}
               <div className="feedback-submit-section">
                 <button
                   type="submit"
@@ -479,6 +616,10 @@ const FeedbackFormFill = () => {
               </div>
             </form>
           </div>
+        ) : (
+          <div className="feedback-error-state">
+            <p>No form data available.</p>
+          </div>
         )}
       </div>
 
@@ -488,6 +629,22 @@ const FeedbackFormFill = () => {
           type={snackbar.type}
           onClose={handleCloseSnackbar}
         />
+      )}
+
+      {showSuccessPopup && (
+        <div className="feedback-success-popup-overlay">
+          <div className="feedback-success-popup">
+            <div className="feedback-success-icon">✓</div>
+            <h3 className="feedback-success-title">Feedback Submitted Successfully!</h3>
+            <p className="feedback-success-message">Thank you for your valuable feedback. Your response has been recorded.</p>
+            <button 
+              className="feedback-success-btn"
+              onClick={handleSuccessPopupClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
