@@ -230,13 +230,13 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
   const [uploading, setUploading] = useState(false);
   const [dashboardScore, setDashboardScore] = useState(0);
   const [cappedScore, setCappedScore] = useState(0);
+  const [userLevel, setUserLevel] = useState("");
+  const [bronzeScore, setBronzeScore] = useState(150);
+  const [silverScore, setSilverScore] = useState(300);
+  const [goldScore, setGoldScore] = useState(500);
   const { user } = useUserContext();
   const CARD_API = `${apiUrl}/applicant-card/${user?.id}/getApplciantCard`;
   const { refreshKey } = useRefresh();
-
-  const bronzeScore = 150;
-  const silverScore = 300;
-  const goldScore = 500;
 
   const bronzeWidth = (bronzeScore / goldScore) * 100;
   const silverWidth = ((silverScore - bronzeScore) / goldScore) * 100;
@@ -270,69 +270,39 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
 
-      // 2) Fetch SCORE
+      // 2) Fetch SCORE details
       let scoreFromScoresApi = 0;
 
       try {
         const { data: scoreRes } = await axios.get(
-          `${SCORE_API}/${applicantId}/getTotalScore`,
+          `${SCORE_API}/${applicantId}/getApplicantScoreDetails`,
           { headers: { Authorization: `Bearer ${jwtToken}` } }
         );
 
         console.debug("RAW SCORE RESPONSE:", scoreRes);
 
-        // ---------------------------
-        // CASE A: JSON OBJECT
-        // ---------------------------
         if (scoreRes && typeof scoreRes === "object") {
-          scoreFromScoresApi =
-            scoreRes.totalScore ??
-            scoreRes.score ??
-            0;
-        }
+          scoreFromScoresApi = scoreRes.total_score ?? scoreRes.totalScore ?? scoreRes.score ?? 0;
+          setUserLevel(scoreRes.level ?? "");
 
-        // ---------------------------
-        // CASE B: NUMBER
-        // ---------------------------
-        else if (typeof scoreRes === "number") {
-          scoreFromScoresApi = scoreRes;
-        }
-
-        // ---------------------------
-        // CASE C: STRING (YOUR CASE)
-        // Example: "Total score for applicant ID 16553 is 4"
-        // ---------------------------
-        else if (typeof scoreRes === "string") {
-          let parsed = 0;
-
-          // Priority patterns → catch the real score
-          const patterns = [
-            /is\s+(-?\d+)\b/i,
-            /score\s*[:\-]\s*(-?\d+)\b/i,
-            /total\s+score\s+is\s+(-?\d+)\b/i,
-            /total\s+score\s*[:\-]\s*(-?\d+)\b/i
-          ];
-
-          for (const regex of patterns) {
-            const match = scoreRes.match(regex);
-            if (match) {
-              parsed = parseInt(match[1], 10);
-              break;
-            }
+          // Update badge thresholds if available
+          if (Array.isArray(scoreRes.badgeScores)) {
+            scoreRes.badgeScores.forEach(bs => {
+              const points = bs.points ?? 0;
+              switch (bs.badge?.toUpperCase()) {
+                case 'BRONZE': setBronzeScore(points); break;
+                case 'SILVER': setSilverScore(points); break;
+                case 'GOLD': setGoldScore(points); break;
+                default: break;
+              }
+            });
           }
-
-          // Fallback → last number in the string (prevents picking ID)
-          if (!parsed) {
-            const allNumbers = scoreRes.match(/-?\d+/g);
-            if (allNumbers?.length) {
-              parsed = parseInt(allNumbers[allNumbers.length - 1], 10);
-            }
-          }
-
-          scoreFromScoresApi = Number.isFinite(parsed) ? parsed : 0;
-          setDashboardScore(scoreFromScoresApi);
-          setCappedScore(Math.min(scoreFromScoresApi, goldScore));
         }
+
+        const currentGold = scoreRes.badgeScores?.find(b => b.badge?.toUpperCase() === 'GOLD')?.points || goldScore;
+        setDashboardScore(scoreFromScoresApi);
+        setCappedScore(Math.min(scoreFromScoresApi, currentGold));
+
       } catch (e) {
         console.warn("Scores API failed; falling back to profile-view", e?.response || e);
 
@@ -516,7 +486,7 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
         </div>      </div>
       <div className="badge-progress-wrapper common_style" style={{ width: "100%", height: "130px", padding: "5px 15px", margin: "0" }}>
         <div className="progress-text">
-          <p>Badge achievement level</p>
+          <p>Badge achievement level {userLevel && `(${userLevel})`}</p>
           {Math.round((cappedScore / goldScore) * 100)}%
         </div>
         <div style={{ position: "relative" }}>
