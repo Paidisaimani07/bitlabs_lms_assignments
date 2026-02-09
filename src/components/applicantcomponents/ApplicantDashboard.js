@@ -56,11 +56,12 @@ const ApplicantDashboard = () => {
   const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
-  const [dashboardScore, setDashboardScore] = useState(0);   
+  const [dashboardScore, setDashboardScore] = useState(0);
   const [cappedScore, setCappedScore] = useState(0);
-  const bronzeScore = 150;
-  const silverScore = 300;
-  const goldScore = 500;
+  const [userLevel, setUserLevel] = useState("");
+  const [bronzeScore, setBronzeScore] = useState(200);
+  const [silverScore, setSilverScore] = useState(300);
+  const [goldScore, setGoldScore] = useState(500);
 
   const bronzeWidth = (bronzeScore / goldScore) * 100;
   const silverWidth = ((silverScore - bronzeScore) / goldScore) * 100;
@@ -179,44 +180,38 @@ const ApplicantDashboard = () => {
     try {
       const jwtToken = localStorage.getItem("jwtToken");
       const { data: scoreRes } = await axios.get(
-        `${SCORE_API}/${id}/getTotalScore`,
+        `${SCORE_API}/${id}/getApplicantScoreDetails`,
         { headers: { Authorization: `Bearer ${jwtToken}` } }
       );
 
       console.debug("Dashboard raw score response:", scoreRes);
 
       let parsedScore = 0;
+      let level = "";
 
       if (scoreRes && typeof scoreRes === "object") {
-        parsedScore = scoreRes.totalScore ?? scoreRes.score ?? 0;
-      } else if (typeof scoreRes === "number") {
-        parsedScore = scoreRes;
-      } else if (typeof scoreRes === "string") {
-        const patterns = [
-          /is\s+(-?\d+)\b/i,
-          /score\s*[:\-]\s*(-?\d+)\b/i,
-          /total\s+score\s+is\s+(-?\d+)\b/i,
-          /total\s+score\s*[:\-]\s*(-?\d+)\b/i
-        ];
+        parsedScore = scoreRes.total_score ?? scoreRes.totalScore ?? scoreRes.score ?? 0;
+        level = scoreRes.level ?? "";
 
-        for (const p of patterns) {
-          const m = scoreRes.match(p);
-          if (m) {
-            parsedScore = parseInt(m[1], 10);
-            break;
-          }
+        // Update badge thresholds if available
+        if (Array.isArray(scoreRes.badgeScores)) {
+          scoreRes.badgeScores.forEach(bs => {
+            const points = bs.points ?? 0;
+            switch (bs.badge?.toUpperCase()) {
+              case 'BRONZE': setBronzeScore(points); break;
+              case 'SILVER': setSilverScore(points); break;
+              case 'GOLD': setGoldScore(points); break;
+              default: break;
+            }
+          });
         }
-
-        if (!parsedScore) {
-          const all = scoreRes.match(/-?\d+/g);
-          if (all && all.length) parsedScore = parseInt(all[all.length - 1], 10);
-        }
-
-        parsedScore = Number.isFinite(parsedScore) ? parsedScore : 0;
       }
 
       setDashboardScore(parsedScore);
-      setCappedScore(Math.min(parsedScore, goldScore));
+      setUserLevel(level);
+      // Use the latest goldScore from the loop result or the current state
+      const currentGold = scoreRes.badgeScores?.find(b => b.badge?.toUpperCase() === 'GOLD')?.points || goldScore;
+      setCappedScore(Math.min(parsedScore, currentGold));
     } catch (err) {
       console.warn("Failed to fetch dashboard score:", err?.response || err);
       setDashboardScore(0);
@@ -563,7 +558,7 @@ const ApplicantDashboard = () => {
                   </div>
                   <div className="badge-progress-wrapper">
                     <div className="progress-text">
-                      <p>Badge achievement level</p>
+                      <p>Badge achievement level </p>
                       {Math.round((cappedScore / goldScore) * 100)}%
                     </div>
                     <div style={{ position: "relative" }}>
@@ -933,7 +928,7 @@ const ApplicantDashboard = () => {
                   <div className="Tech-buzz">
                     <div className="tech-buzz-header">
                       <h3 id="tour-techbuzz">Tech buzz shorts</h3>
-                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>view more</button>
+                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>View more</button>
                     </div>
                     <div className="tech-buzz-images">
                       {techBuzzLoading ? (
