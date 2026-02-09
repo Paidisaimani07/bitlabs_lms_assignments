@@ -596,6 +596,7 @@ function InterviewPrepPage() {
       e.preventDefault();
       const msg = input.trim();
       if (!msg) return;
+      analytics.track("ASK NEWTON", currentUser?.id);
       setInput("");
       sendMessage(msg);
     }
