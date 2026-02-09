@@ -55,7 +55,7 @@ const RecruiterFeedbackForms = () => {
     if (!createdAt || !Array.isArray(createdAt) || createdAt.length < 7) {
       return 'Unknown date';
     }
-    
+
     const [year, month, day, hour, minute, second, nanosecond] = createdAt;
     const date = new Date(year, month - 1, day, hour, minute, second, Math.floor(nanosecond / 1000000));
     return date.toLocaleDateString('en-US', {
@@ -132,7 +132,7 @@ const RecruiterFeedbackForms = () => {
               <h3>Create New Feedback Form</h3>
               <p>Design custom feedback forms</p>
             </div>
-            <button 
+            <button
               className="recruiter-feedback-forms create-form-btn"
               onClick={() => navigate('/recruiter-create-feedback-form')}
             >
@@ -174,7 +174,7 @@ const RecruiterFeedbackForms = () => {
                     {form.isActive ? 'Active' : 'Inactive'}
                   </div>
                 </div>
-                
+
                 <div className="recruiter-form-details">
                   <div className="detail-row">
                     <span className="label">Mentor:</span>
@@ -193,9 +193,9 @@ const RecruiterFeedbackForms = () => {
                     <span className="value">{formatDate(form.createdAt)}</span>
                   </div>
                 </div>
-                
+
                 <div className="recruiter-form-actions">
-                  <button 
+                  <button
                     className="recruiter-view-responses-btn"
                     onClick={() => handleViewResponses(form.formId)}
                   >
