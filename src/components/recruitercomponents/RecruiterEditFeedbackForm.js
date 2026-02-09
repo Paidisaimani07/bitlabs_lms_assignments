@@ -343,7 +343,7 @@ function RecruiterEditFeedbackForm() {
             <h1 className="main-heading">Edit Feedback Form</h1>
             <button 
               className="recruiter-create-feedback-form"
-              onClick={() => navigate('/recruiter-feedback-forms')}
+              onClick={() => navigate('/recruiter-static-feedback')}
             >
               <i className="fa fa-arrow-left"></i>
               Back to Forms

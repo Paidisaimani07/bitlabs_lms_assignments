@@ -28,6 +28,10 @@ import RecruiterHackathonViewRegistrations from '../../components/recruitercompo
 import RecruiterFeedbackForms from '../../components/recruitercomponents/RecruiterFeedbackForms';
 import RecruiterCreateFeedbackForm from '../../components/recruitercomponents/RecruiterCreateFeedbackForm';
 import RecruiterEditFeedbackForm from '../../components/recruitercomponents/RecruiterEditFeedbackForm';
+import StaticFeedbackCreate from '../../components/recruitercomponents/StaticFeedback/StaticFeedbackCreate';
+import StaticFeedbackDashboard from '../../components/recruitercomponents/StaticFeedback/StaticFeedbackDashboard';
+import StaticFeedbackUpdate from '../../components/recruitercomponents/StaticFeedback/StaticFeedbackUpdate';
+import MentorRating from '../../components/recruitercomponents/MentorRating';
 
 function RecruiterHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -115,6 +119,15 @@ function RecruiterHomePage() {
       case `/recruiter-edit-feedback-form/${id}`:
         setActiveRoute('edit-feedback-form');
         break;
+      case '/recruiter-static-feedback':
+        setActiveRoute('static-feedback');
+        break;
+      case '/recruiter-static-feedback-form':
+        setActiveRoute('static-feedback-form');
+        break;
+      case '/recruiter-mentor-rating':
+        setActiveRoute('mentor-rating');
+        break;
 
       default:
         setActiveRoute('');
@@ -152,7 +165,10 @@ function RecruiterHomePage() {
       {activeRoute === 'hackathon-view-details' && id && <RecruiterHackathonViewRegistrations hackathonId={id} />}
       {activeRoute === 'feedback-forms' && <RecruiterFeedbackForms />}
       {activeRoute === 'create-feedback-form' && <RecruiterCreateFeedbackForm />}
-      {activeRoute === 'edit-feedback-form' && <RecruiterEditFeedbackForm />}
+      {activeRoute === 'edit-feedback-form' && <StaticFeedbackUpdate />}
+      {activeRoute === 'static-feedback' && <StaticFeedbackDashboard />}
+      {activeRoute === 'static-feedback-form' && <StaticFeedbackCreate />}
+      {activeRoute === 'mentor-rating' && <MentorRating />}
     </div>
   )
 }
