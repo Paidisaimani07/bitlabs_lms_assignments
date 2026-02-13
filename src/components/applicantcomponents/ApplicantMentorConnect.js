@@ -3,7 +3,7 @@ import axios from "axios";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import Snackbar from '../common/Snackbar';
-
+import analytics from "../../utils/analytics"; 
 // Fallback images
 import DummyMentor from "../../images/mentor-dummy.png";
 import DummyBanner from "../../images/bannercard_mentor1.jpg";
@@ -19,7 +19,7 @@ const ApplicantMentorConnect = () => {
   const [query, setQuery] = useState("");
   const user = useUserContext()?.user;
   const [snackbars, setSnackbars] = useState([]);
-
+const currentUser = JSON.parse(localStorage.getItem("user"));
   const addSnackbar = (snackbar) => {
     setSnackbars((prevSnackbars) => [...prevSnackbars, snackbar]);
   };
@@ -102,6 +102,13 @@ const ApplicantMentorConnect = () => {
       setIsRegistering(prev => ({ ...prev, [meetingId]: false }));
     }
   };
+  const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
   useEffect(() => {
     const controller = new AbortController();
@@ -507,6 +514,8 @@ const ApplicantMentorConnect = () => {
             <button
               onClick={() => {
                 if (!startEnabled || !m.meetLink) return;
+                const featureWithDate = `MENTOR CONNECTS ${getCurrentDate()}`;
+  analytics.track(featureWithDate, currentUser?.id);
                 window.open(m.meetLink, "_blank", "noopener,noreferrer");
               }}
               disabled={!startEnabled || !m.meetLink}
