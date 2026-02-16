@@ -36,6 +36,7 @@ function LoginBody({ handleLogin }) {
     message: "",
     type: "",
   });
+  const [pageLoading, setPageLoading] = useState(false);
   const [message, setMessage] = useState("Welcome Back");
   const { user } = useUserContext();
   // State variables for UTM parameters
@@ -48,9 +49,9 @@ function LoginBody({ handleLogin }) {
 
   const handlePostLoginRedirect = () => {
     const intendedUrl = localStorage.getItem("intendedUrl");
-    
+
     localStorage.removeItem("intendedUrl");
-    
+
     if (intendedUrl && intendedUrl !== "/candidate") {
       navigate(intendedUrl);
     } else {
@@ -72,6 +73,7 @@ function LoginBody({ handleLogin }) {
 
   const login = useGoogleLogin({
     onSuccess: async (response) => {
+      setPageLoading(true);
       try {
         console.log("First API");
         const res = await axios.get(
@@ -237,18 +239,22 @@ function LoginBody({ handleLogin }) {
           if (profileId !== 0 && resume === 404) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
+            setPageLoading(false);
             handlePostLoginRedirect();
             // navigate("/applicant-basic-details-form/3");
           } else if (profileId === 0) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
+            setPageLoading(false);
             navigate("/applicant-basic-details-form/1");
           } else {
             localStorage.setItem("jwtToken", userData.data.jwt);
+            setPageLoading(false);
             handlePostLoginRedirect();
           }
         }
       } catch (err) {
+        setPageLoading(false);
         console.log(err);
       }
     },
@@ -268,7 +274,7 @@ function LoginBody({ handleLogin }) {
     if (!isCandidateFormValid()) {
       return;
     }
-
+    setPageLoading(true);
     const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
     const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
     const encryptedPassword = CryptoJS.AES.encrypt(
@@ -392,18 +398,22 @@ function LoginBody({ handleLogin }) {
         if (profileId !== 0 && resume === 404) {
           console.log("checking ", jwtToken);
           localStorage.setItem("jwtToken", userData.data.jwt);
+          setPageLoading(false);
           handlePostLoginRedirect();
           // navigate("/applicant-basic-details-form/3");
         } else if (profileId === 0) {
           console.log("checking ", jwtToken);
           localStorage.setItem("jwtToken", userData.data.jwt);
+          setPageLoading(false);
           navigate("/applicant-basic-details-form/1");
         } else {
           localStorage.setItem("jwtToken", userData.data.jwt);
+          setPageLoading(false)
           handlePostLoginRedirect();
         }
       }
     } catch (error) {
+      setPageLoading(false);
       console.log(error.response.data);
       if (error.response.data === "Incorrect password") {
         setErrorMessage("Incorrect password.");
@@ -1260,6 +1270,14 @@ function LoginBody({ handleLogin }) {
           </div>
         </div>
       </section>
+      {pageLoading && (
+        <div className="page-loader">
+          <div className="loader-content">
+            <div className="loader-spinner"></div>
+            <p className="loader-text">Preparing your experience...</p>
+          </div>
+        </div>
+      )}
       {snackbar.open && (
         <Snackbar
           message={snackbar.message}
