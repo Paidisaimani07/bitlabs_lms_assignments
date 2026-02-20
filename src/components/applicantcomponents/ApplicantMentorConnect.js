@@ -541,8 +541,8 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
               disabled={displayStatus !== "Active" || !isRegistered || !startEnabled || !m.meetLink}
               style={{
                 flex: 1,
-                background: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)" : "#E5E7EB",
-                color: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "#fff" : "#6B7280",
+                background: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)" : "#D1D5DB",
+                color: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "#fff" : "#4B5563",
                 border: 0,
                 padding: "12px 16px",
                 borderRadius: 5,
