@@ -134,6 +134,8 @@ function App() {
                     {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                     <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                     <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
+                    <Route path="/resume-templates" element={<ApplicantHomePage />} />
+                    <Route path="/resume-preview" element={<ApplicantHomePage />} />
                     <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                     <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />

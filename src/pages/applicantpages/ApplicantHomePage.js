@@ -129,6 +129,12 @@ function ApplicantHomePage() {
          case '/applicant-hackathon':
         setActiveRoute('hackathon')
         break;
+        case '/resume-templates':
+          setActiveRoute('resume-templates');
+        break;
+        case '/resume-preview':
+          setActiveRoute('resume-preview');
+        break;
       case `/applicant-hackathon-details/${id}`:
         setActiveRoute('hackDetails');
         break;

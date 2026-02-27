@@ -41,7 +41,8 @@ const applicantId = user?.id;
 
       // 🔥 actual API call
       const response = await axios.post(
-        `${apiUrl}/resume/download/resume`,
+        // `${apiUrl}/resume/download/resume`,
+        "http://localhost:8081/api/resume/download/resume",
         {
           applicantId: applicantId,
           resumeVersion: selectedTemplate,

@@ -50,6 +50,10 @@ const ResumeSummaryCard = ({ applicantId }) => {
   }));
 }, [summary]);
 
+useEffect(() => {
+  console.log("Updated profileData: Ganesh Ganesh", setProfileData);
+}, []);
+
   const displayText =
     summary && summary.length > 0 ? summary : HELP_TEXT;
 

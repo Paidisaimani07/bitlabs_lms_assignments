@@ -71,7 +71,8 @@ const generatePdf = useCallback(async () => {
         };
 
         const response = await axios.post(
-            `${apiUrl}/resume/download/resume`,
+            // `${apiUrl}/resume/download/resume`,
+            "http://localhost:8081/api/resume/download/resume",
             payload,
             {
                 headers: { Authorization: `Bearer ${jwt}` },
