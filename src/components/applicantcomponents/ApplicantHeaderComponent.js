@@ -353,14 +353,6 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
     }
   };
  
-useEffect(()=>{
-  onChange?.(card);
-  // fetchCard();
-},[card]);
- 
-
-
-
   const fetchPhoto = async () => {
     try {
       if (!applicantId) return;

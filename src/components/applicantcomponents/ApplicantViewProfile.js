@@ -9,10 +9,21 @@ import KeySkillsCard from "./KeySkillsCard";
 import SkillBadgesGrid from './SkillBadgesGrid';
 import "./modalpopup.css";
 import "./Portfolio.css";
+import ApplicantAtsResume from "./ApplicantAtsResume/ApplicantAtsResume"; 
+import { useResume } from "./ResumeContext";
+import { useEffect } from "react";
 
 const ApplicantViewProfile = () => {
   const { user } = useUserContext();
   const applicantId = user?.id;
+  const { resumeState, setProfileData } = useResume();
+  const profileData = resumeState.profileData;
+
+  useEffect(() => {
+  console.log("Context profileData updated:", resumeState.profileData);
+    console.log("Context profileData updated:", resumeState.jobDescription);
+ 
+}, [resumeState]);
 
   return (
     <div className="border-style">
@@ -37,12 +48,47 @@ const ApplicantViewProfile = () => {
         </div>
         {applicantId ? (
           <>
-              <ApplicantHeaderComponent applicantId={applicantId} />
-              <ResumeSummaryCard applicantId={applicantId} />
-              <PersonalDetailsCard applicantId={applicantId} />
-              <EducationDetailsCard applicantId={applicantId} />
-              <ProjectDetailsCard applicantId={applicantId} />
-              <KeySkillsCard applicantId={applicantId} />
+              <ApplicantHeaderComponent applicantId={applicantId}
+              setProfileData={setProfileData} />
+              <ResumeSummaryCard applicantId={applicantId} 
+              onChange={(data) =>
+                setProfileData((prev) => ({
+                  ...prev,
+                  resumeSummary: data,
+                }))
+              }/>
+              <PersonalDetailsCard applicantId={applicantId} 
+              onChange={
+                (data) =>
+                  setProfileData((prev) => ({
+                    ...prev,
+                    personalDetails: data,
+                  }))
+              }/>
+              <EducationDetailsCard applicantId={applicantId} 
+              onChange={(data) =>
+                setProfileData((prev) => ({
+                  ...prev,
+                  educationDetails: data,
+                }))
+              }/>
+              <ProjectDetailsCard applicantId={applicantId} 
+               onChange={(data) =>
+                setProfileData((prev) => ({
+                  ...prev,
+                  projectDetails: data,
+                }))
+              }/>
+              <KeySkillsCard applicantId={applicantId} 
+               onChange={
+                (data) =>
+                  setProfileData((prev) => ({
+                    ...prev,
+                    keySkills: data,
+                  }))
+              }/>
+
+              <ApplicantAtsResume applicantId={applicantId} />
               {/* ===================== Skill Badges (NEW CARD) ===================== */}
               <div className="card-base soft-shadow">
                 <div className="card-title-row">
