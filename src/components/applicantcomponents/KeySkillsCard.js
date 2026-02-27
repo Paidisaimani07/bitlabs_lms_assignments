@@ -5,10 +5,12 @@ import KeySkillsEditPopup from "./KeySkillsEditPopup";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useResume } from "./ResumeContext";
 
 const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
 
 const KeySkillsCard = ({ applicantId }) => {
+  const { setProfileData } = useResume();
   const [skills, setSkills] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -33,6 +35,15 @@ const KeySkillsCard = ({ applicantId }) => {
     if (applicantId) fetchSkills();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
+  
+  useEffect(() => {
+    if (skills.length > 0) {
+      setProfileData(prev => ({
+        ...prev,
+        keySkills: skills // This adds the data to the global state
+      }));
+    }
+  }, [skills]);
 
   return (
     <div className="card-base soft-shadow card-skills common_style" style={{ overflow: "hidden" }}>

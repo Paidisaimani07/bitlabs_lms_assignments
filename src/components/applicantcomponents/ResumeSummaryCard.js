@@ -7,6 +7,7 @@ import Snackbar from "../common/Snackbar";
 import ResumeSummaryEditPopup from "./ResumeSummaryEditPopup";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { useResume } from "./ResumeContext";
 
 const SUMMARY_API = `${apiUrl}/applicant-summary`;
 
@@ -18,6 +19,7 @@ const ResumeSummaryCard = ({ applicantId }) => {
   const [summary, setSummary] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
+  const { setProfileData } = useResume();
 
   const addSnackbar = (snackbar) => setSnackbars((prev) => [...prev, snackbar]);
   const handleCloseSnackbar = (index) =>
@@ -40,6 +42,13 @@ const ResumeSummaryCard = ({ applicantId }) => {
     if (applicantId) fetchSummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
+
+  useEffect(() => {
+  setProfileData(prev => ({
+    ...prev,
+    resumeSummary: summary
+  }));
+}, [summary]);
 
   const displayText =
     summary && summary.length > 0 ? summary : HELP_TEXT;

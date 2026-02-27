@@ -13,6 +13,7 @@ import JobDescriptionModal from "./JobDescriptionModel";
 import resumeBackButton from "./resume-back-button.png";
 import { useEffect } from "react";
 import JobDescriptionModel from "./JobDescriptionModel";
+import { apiUrl } from "../../../services/ApplicantAPIService";
 
 const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -40,7 +41,7 @@ const applicantId = user?.id;
 
       // 🔥 actual API call
       const response = await axios.post(
-        "http://localhost:8081/api/resume/download/resume",
+        `${apiUrl}/resume/download/resume`,
         {
           applicantId: applicantId,
           resumeVersion: selectedTemplate,

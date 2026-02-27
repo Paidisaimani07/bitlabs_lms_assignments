@@ -8,6 +8,7 @@ import axios from "axios";
 import { useResume } from '../ResumeContext';
 import { useEffect, useCallback, useState } from "react";
 import { useUserContext } from "../../common/UserProvider";
+import { apiUrl } from "../../../services/ApplicantAPIService";
 
 const ResumePreview = () => {
     const navigate = useNavigate();
@@ -69,7 +70,7 @@ const generatePdf = useCallback(async () => {
         };
 
         const response = await axios.post(
-            "http://localhost:8081/api/resume/download/resume",
+            `${apiUrl}/resume/download/resume`,
             payload,
             {
                 headers: { Authorization: `Bearer ${jwt}` },
@@ -94,29 +95,10 @@ const generatePdf = useCallback(async () => {
             generatePdf();
         }
     }, [resumeState.templateId, resumeState.pdfUrl]); 
-
-    // Also trigger if pdfUrl is blob but revoked/invalid? 
-    // Actually, on refresh, pdfUrl from localStorage is a string like "blob:..." but it's dead.
-    // We can't easily check if a blob URL is dead without fetching it.
-    // BUT we know that if we just loaded from localStorage (refresh), we SHOULD regenerate.
-    // The issue is distinguishing "just loaded from LS" vs "just generated".
-    // "Just generated" -> pdfUrl is valid.
-    // "Loaded from LS" -> pdfUrl is invalid.
-    
-    // Simplest approach: Always regenerate on mount if templateId exists.
-    // The cost is one extra generation on navigation from Templates page?
-    // When navigating from Templates, we pass state: { pdfUrl: fileURL }.
-    // But ResumeContext also has it.
-    // If we have a valid pdfUrl in state (from navigation), maybe we don't need to regen?
-    // But on refresh, we don't have navigation state.
-    
-    // Let's rely on the fact that if we just refreshed, we want to ensure it works.
     
     useEffect(() => {
         const loadPdf = async () => {
              if (resumeState.templateId) {
-                 // Check if the current pdfUrl is functional? content-length > 0?
-                 // Or just regenerate to be safe.
                  await generatePdf();
              }
         };
