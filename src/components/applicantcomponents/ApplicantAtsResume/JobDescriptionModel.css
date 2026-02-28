@@ -1,10 +1,9 @@
 .jd-modal {
-   width: 40vw;          /* 60% of screen */
+   width: 40vw;         
   max-width: 900px;
   min-width: 300px;
   max-height: 90vh;
-  min-height: 200px;   /* prevents overflow on small screens */
-  /* background: #ffffff; */
+  min-height: 200px;   
   border: 2px solid #ed8629;
   border-radius: 6px;
 margin: 0 auto;

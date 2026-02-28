@@ -1,6 +1,6 @@
 .overlay {
   position: fixed;
-  inset: 0;                 /* replaces top/left/width/height */
+  inset: 0;                
   background: #000000;
   opacity: 0.7;
 
@@ -11,7 +11,7 @@
   z-index: 9999;
 }
 
-/* wrapper just for click control */
+
 .overlay-center {
-  opacity: 1; /* important so modal is not faded */
+  opacity: 1; 
 }

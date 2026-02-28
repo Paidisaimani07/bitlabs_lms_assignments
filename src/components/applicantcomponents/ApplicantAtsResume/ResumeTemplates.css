@@ -1,26 +1,7 @@
-/* Outer white box */
-/* .resume-wrapper {
-  width: 1187px;
-  height: 90vh;
-  background: #FFFFFF;
-  box-shadow: 0px 0px 12px #0000001A;
-  border-radius: 6px;
-  padding: 30px;
-  margin: auto;
-} */
- /* .dashboard__content resume-template{
-   width: 1187px;
-  height: 90vh;
-  background: #FFFFFF;
-  box-shadow: 0px 0px 12px #0000001A;
-  border-radius: 6px;
-  padding: 30px;
-  margin: auto;
- } */
+
 
 .resume-wrapper {
   width: 98%;
-  /* max-width: 1200px; */
   height: auto;
   min-height: 90vh;
 
@@ -59,12 +40,11 @@
   font-weight: 600;
 }
 
-/* Grid layout */
 .template-container {
   display: grid;
-  /* grid-template-columns: repeat(4, 1fr); */
+  
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  /* gap: 20px; */
+ 
 }
 
 /* Each card */
@@ -77,19 +57,15 @@
 
 /* Image styling */
 .template-card img {
-  /* width: 258px;
-  height: 364px;
-  object-fit: cover;
-  border-radius: 6px;
-  cursor: pointer; */
-   width: 100%;        /* take full card width */
-  height: auto;       /* keep ratio */
-  object-fit: contain; /* or cover if you want tighter crop */
+ 
+   width: 100%;        
+  height: auto;       
+  object-fit: contain; 
   border-radius: 6px;
   cursor: pointer;
 }
 
-/* Template name */
+
 .template-card p {
   margin-top: 10px;
   font-weight: 500;
@@ -97,7 +73,7 @@
 
 /* Active selected template */
 .template-card.active {
-  /* border: 2px solid #f39c12; */
+  
   background:#FFF3E8 0% 0% no-repeat padding-box;
   padding: 30px;
   border: 2px solid #ED8629;

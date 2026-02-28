@@ -1,13 +1,5 @@
 import "./Overlay.css";
-// const Overlay = ({ children, onClose }) => {
-//   return (
-//     <div className="overlay" onClick={onClose}>
-//       <div className="overlay-center" onClick={(e) => e.stopPropagation()}>
-//         {children}
-//       </div>
-//     </div>
-//   );
-// };
+
 
 const Overlay = ({ children, onClose }) => {
   return (
@@ -16,8 +8,8 @@ const Overlay = ({ children, onClose }) => {
       style={{
         position: "fixed",
         inset: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.6)", // darker
-        backdropFilter: "blur(6px)",            // stronger blur
+        backgroundColor: "rgba(0, 0, 0, 0.6)", 
+        backdropFilter: "blur(6px)",            
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

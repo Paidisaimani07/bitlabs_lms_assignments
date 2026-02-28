@@ -4,7 +4,6 @@ import resumeBackButton from './resume-back-button.png';
 import ATSUpdateComponent from '../ATSUpdateComponent';
 import { useNavigate } from 'react-router-dom';
 import pdfUrl from './template1.png';
-// import { useEffect } from "react";
 import axios from "axios";
 import { useResume } from '../ResumeContext';
 import { useEffect, useCallback, useState } from "react";
@@ -96,14 +95,14 @@ console.log("LocalStorage ApplicantId:", localStorage.getItem("applicantId"));
     };
 
     const closeFullscreen = (e) => {
-        // Close only when clicking on the overlay (outside the resume content)
+       
         if (e.target.classList.contains('fullscreen-overlay')) {
             setShowFullscreen(false);
         }
     };
 
     const closePreviewModal = (e) => {
-        // Close only when clicking on the overlay (outside the modal content)
+       
         if (e.target.classList.contains('preview-modal-overlay')) {
             setShowPreviewModal(false);
         }

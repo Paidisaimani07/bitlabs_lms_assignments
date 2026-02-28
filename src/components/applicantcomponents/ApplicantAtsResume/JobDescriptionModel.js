@@ -87,9 +87,7 @@ const JobDescriptionModal = ({ onClose, onFinish }) => {
           Continue
         </button>
       </div>
-      {/* <div className="jd-footer">
-        <button className="jd-skip" onClick={onClose}>Skip</button>
-      </div> */}
+      
     </div>
     
     </>

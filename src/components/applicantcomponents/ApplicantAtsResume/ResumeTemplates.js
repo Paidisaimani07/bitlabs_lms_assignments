@@ -12,13 +12,11 @@ import Overlay from "./Overlay";
 import JobDescriptionModal from "./JobDescriptionModel";
 import resumeBackButton from "./resume-back-button.png";
 import { useEffect } from "react";
-import JobDescriptionModel from "./JobDescriptionModel";
 import { apiUrl } from "../../../services/ApplicantAPIService";
 
 const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  // const { resumeState, setProfileData } = useResume();
   const { resumeState, updateResumeState } = useResume();
  const { user } = useUserContext();
  const[showJD, setShowJD] = useState(false);
@@ -34,12 +32,12 @@ const applicantId = user?.id;
     }
 
     try {
-      // 🔥 open loader
+      // open loader
       setIsOpen(true);
 
       const jwt = localStorage.getItem("jwtToken");
 
-      // 🔥 actual API call
+      // actual API call
       const response = await axios.post(
         `${apiUrl}/api/resume/download/resume`,
         // "http://localhost:8081/api/resume/download/resume",
@@ -127,7 +125,7 @@ updateResumeState("templateId", selectedTemplate);
         </div>
       </div>
 
-      {/* 🔄 loader */}
+      {/* loader */}
       {isOpen && <ProcessingLoader isOpen={isOpen} />}
        {showJD && (
   <Overlay onClose={() => setShowJD(false)}>
