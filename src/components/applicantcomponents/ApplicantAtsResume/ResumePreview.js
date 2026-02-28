@@ -1,7 +1,7 @@
 import './ResumePreview.css';
 import resumeBackButton from './resume-back-button.png';
 
-import ATSUpdateComponent from '../ATSUpdateComponent 1';
+import ATSUpdateComponent from '../ATSUpdateComponent';
 import { useNavigate } from 'react-router-dom';
 import pdfUrl from './template1.png';
 // import { useEffect } from "react";
@@ -19,37 +19,6 @@ const ResumePreview = () => {
     const { user } = useUserContext();
 const applicantId = user?.id;
 
-    // const generatePdf = useCallback(async () => {
-
-        
-    //     try {
-    //         if (!resumeState.templateId) return;
-
-    //         const jwt = localStorage.getItem("jwtToken");
-
-    //         const response = await axios.post(
-    //             "http://localhost:8081/api/resume/download/resume",
-    //             {
-    //                 applicantId: applicantId,
-    //                 resumeVersion: resumeState.templateId,
-    //                 jd: resumeState.jobDescription,
-    //                 profileData: resumeState.profileData
-    //             },
-    //             {
-    //                 headers: { Authorization: `Bearer ${jwt}` },
-    //                 responseType: "blob"
-    //             }
-    //         );
-
-    //         const file = new Blob([response.data], { type: "application/pdf" });
-    //         const url = URL.createObjectURL(file);
-
-    //         updateResumeState("pdfUrl", url);
-
-    //     } catch (error) {
-    //         console.error("PDF generation failed:", error);
-    //     }
-    // }, [resumeState.templateId, resumeState.jobDescription, resumeState.profileData]);
 const generatePdf = useCallback(async () => {
     try {
         if (!resumeState.templateId) return;
@@ -57,9 +26,6 @@ const generatePdf = useCallback(async () => {
         const jwt = localStorage.getItem("jwtToken");
 
         const payload = {
-            // applicantId: localStorage.getItem("applicantId"),
-            // resumeVersion: resumeState.templateId,
-            // jd: resumeState.jobDescription,
    applicantId: applicantId,   // ✅ use context
     resumeVersion: resumeState.templateId,
     jd: resumeState.jobDescription,
@@ -71,8 +37,8 @@ const generatePdf = useCallback(async () => {
         };
 
         const response = await axios.post(
-            // `${apiUrl}/resume/download/resume`,
-            "http://localhost:8081/api/resume/download/resume",
+            `${apiUrl}/api/resume/download/resume`,
+            // "http://localhost:8081/api/resume/download/resume",
             payload,
             {
                 headers: { Authorization: `Bearer ${jwt}` },
@@ -105,12 +71,8 @@ const generatePdf = useCallback(async () => {
              }
         };
         loadPdf();
-    }, []); // Run once on mount to restore.
+    }, []); 
 
-    console.log("PDF URL:", resumeState.pdfUrl);
-    console.log("Template:", resumeState.templateId);
-    console.log("Profile:", resumeState.profileData);
-    console.log("ApplicantId:", applicantId);
 console.log("LocalStorage ApplicantId:", localStorage.getItem("applicantId"));
 
 

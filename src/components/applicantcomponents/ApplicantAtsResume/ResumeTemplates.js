@@ -41,12 +41,12 @@ const applicantId = user?.id;
 
       // 🔥 actual API call
       const response = await axios.post(
-        // `${apiUrl}/resume/download/resume`,
-        "http://localhost:8081/api/resume/download/resume",
+        `${apiUrl}/api/resume/download/resume`,
+        // "http://localhost:8081/api/resume/download/resume",
         {
           applicantId: applicantId,
           resumeVersion: selectedTemplate,
-          jd: "Experienced Java developer with knowledge in Spring Boot, microservices, and REST APIs.",
+          jd: resumeState.jobDescription || "",
         },
         {
           headers: {
