@@ -400,7 +400,6 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
         <div
           style={{
             width: "100%",
-            height: 160,
             borderRadius: 5,
             overflow: "hidden",
           }}
@@ -408,7 +407,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
           <img
             src={banner}
             alt={m.title || "Mentor session"}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{ width: "100%", height: "100%", objectFit: "contain" }}
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = DummyBanner;
@@ -423,6 +422,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
             display: "flex",
             flexDirection: "column",
             gap: 8,
+            flex: 1,
           }}
         >
           {/* Header row: Status (left) — Copy link (right) */}
@@ -453,10 +453,20 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
 
             {isRegistered && (
               <span style={{ color: "#ef6c00", fontSize: 13, fontWeight: 600 }}>
-                Registered
+               Enrolled
               </span>
             )}
           </div>
+          {/* mentor title/role container - reserved space for future use, e.g. mentor tags */}
+           <div
+            className="mentor-title-container"
+            style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
 
           {/* Title/desc/duration */}
           <div style={{ fontSize: 18, fontWeight: 800, color: "#111827" }}>
@@ -467,6 +477,16 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
               {m.description}
             </div>
           ) : null}
+          </div>
+           {/* Other elements: duration, date, mentor, CTA */}
+          <div
+            className="body-mentor-container"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
           <div style={{ fontSize: 12, color: "#ef6c00", fontWeight: 700 }}>
             Duration: {duration}
           </div>
@@ -518,19 +538,19 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
   analytics.track(featureWithDate, currentUser?.id);
                 window.open(m.meetLink, "_blank", "noopener,noreferrer");
               }}
-              disabled={!startEnabled || !m.meetLink}
+              disabled={displayStatus !== "Active" || !isRegistered || !startEnabled || !m.meetLink}
               style={{
                 flex: 1,
-                background: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
-                color: "#fff",
+                background: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)" : "#D1D5DB",
+                color: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "#fff" : "#4B5563",
                 border: 0,
                 padding: "12px 16px",
                 borderRadius: 5,
                 fontWeight: 800,
                 fontSize: 14,
-                cursor: (startEnabled && m.meetLink) ? "pointer" : "not-allowed",
-                opacity: (startEnabled && m.meetLink) ? 1 : 0.7,
-                boxShadow: "0 8px 18px rgba(249,115,22,0.25)",
+                cursor: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "pointer" : "not-allowed",
+                opacity: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? 1 : 0.7,
+                boxShadow: (displayStatus === "Active" && isRegistered && startEnabled && m.meetLink) ? "0 8px 18px rgba(249,115,22,0.25)" : "none",
                 textTransform: "none",
               }}
             >
@@ -561,7 +581,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
                   opacity: isRegistering[meetingId] ? 0.7 : 1
                 }}
               >
-                {isRegistering[meetingId] ? 'Registering...' : 'Register'}
+                {isRegistering[meetingId] ? 'Enrolling...' : 'Enroll now'}
               </button>
             ) : (
               <button
@@ -595,6 +615,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
 
           </div>
         </div>
+      </div>
       </div>
     );
   };
