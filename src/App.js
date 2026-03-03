@@ -33,6 +33,7 @@ import FeedbackDashboard from "./pages/feedbackpage/FeedbackDashboard";
 import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
 import { RefreshProvider } from "./components/common/RefreshContext";
 import ProtectedRoute from './ProtectedRoute';
+import { ResumeProvider } from './components/applicantcomponents/ResumeContext';
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
     <div>
       <UserProvider>
         <RefreshProvider>
+      <ResumeProvider>
           {checkingAuth ? (
             <p>Loading...</p>
           ) : (
@@ -132,6 +134,8 @@ function App() {
                     {/* <Route path="/verified-badges" component={VerifiedBadges} /> */}
                     <Route path="/applicant-verified-badges" element={<ApplicantHomePage />} />
                     <Route path="/applicant-resume-builder" element={<ApplicantHomePage />} />
+                    <Route path="/resume-templates" element={<ApplicantHomePage />} />
+                    <Route path="/resume-preview" element={<ApplicantHomePage />} />
                     <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
                     <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
@@ -176,6 +180,7 @@ function App() {
               </Routes>
             </Router>
           )}
+          </ResumeProvider>
         </RefreshProvider>
       </UserProvider>
       {/* <ChatBotWidget /> */}

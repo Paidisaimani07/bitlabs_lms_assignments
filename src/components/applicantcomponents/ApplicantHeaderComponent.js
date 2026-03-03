@@ -9,6 +9,7 @@ import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from '../common/UserProvider';
 import { useRefresh } from "../common/RefreshContext";
+import { useResume } from "./ResumeContext";
 
 Modal.setAppElement("#root");
 
@@ -223,6 +224,7 @@ const UploadImageComponent = ({ id, onSuccess, onClose }) => {
 };
 
 const ApplicantHeaderComponent = ({ applicantId }) => {
+    const { setProfileData } = useResume();
   const [card, setCard] = useState(DEFAULT_CARD);
   const [editOpen, setEditOpen] = useState(false);
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -324,20 +326,33 @@ const ApplicantHeaderComponent = ({ applicantId }) => {
         }
       }
 
-      // FINAL SET
-      setCard({
+           // FINAL SET
+      const updatedCard = {
         ...DEFAULT_CARD,
         ...(cardData || {}),
         score: scoreFromScoresApi
-      });
+      };
+     
+      setCard(updatedCard);
+     
+      // Store personal details in context
+      setProfileData(prev => ({
+        ...prev,
+        personalDetails: {
+          name: updatedCard.name,
+          role: updatedCard.role,
+          mobileNumber: updatedCard.mobileNumber,
+          email: updatedCard.email,
+          passOutyear: updatedCard.passOutyear,
+          address: updatedCard.address
+        }
+      }));
     } catch (e) {
       console.error("Failed to load applicant card:", e?.response || e);
       setCard({ ...DEFAULT_CARD });
     }
   };
-
-
-
+ 
   const fetchPhoto = async () => {
     try {
       if (!applicantId) return;
