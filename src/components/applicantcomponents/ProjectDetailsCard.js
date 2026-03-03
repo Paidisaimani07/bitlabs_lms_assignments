@@ -7,6 +7,7 @@ import Snackbar from "../common/Snackbar";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import ProjectDetailsEditPopup from "./ProjectDetailsEditPopup";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
+import { useResume } from "./ResumeContext";
 
 const PROJ_API = `${apiUrl}/applicant-projects`;
 
@@ -51,6 +52,7 @@ const Pills = ({ items }) => {
 };
 
 const ProjectDetailsCard = ({ applicantId }) => {
+  const { setProfileData } = useResume();
   const [items, setItems] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
@@ -93,6 +95,15 @@ const ProjectDetailsCard = ({ applicantId }) => {
     if (applicantId) fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
+
+  useEffect(() => {
+      if (items) {
+        setProfileData(prev => ({
+          ...prev,
+          projectDetails: items // This adds the data to the global state
+        }));
+      }
+    }, [items]);
 
   // Show the latest project if many exist; else empty placeholders
   const proj = useMemo(() => items[0] || {}, [items]);
