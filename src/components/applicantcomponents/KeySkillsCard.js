@@ -9,7 +9,7 @@ import { useResume } from "./ResumeContext";
 
 const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
 
-const KeySkillsCard = ({ applicantId }) => {
+const KeySkillsCard = ({ applicantId, onLoaded, showContent }) => {
   const { setProfileData } = useResume();
   const [skills, setSkills] = useState([]);
   const [open, setOpen] = useState(false);
@@ -32,7 +32,20 @@ const KeySkillsCard = ({ applicantId }) => {
   };
 
   useEffect(() => {
-    if (applicantId) fetchSkills();
+    const loadSkills = async () => {
+    if (!applicantId) return;
+
+    try {
+      await fetchSkills();
+    } catch (err) {
+      console.warn("Skills API error:", err);
+    }
+
+    console.log("SKILLS LOADED");
+    onLoaded?.();
+  };
+
+  loadSkills();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
   
@@ -59,10 +72,26 @@ const KeySkillsCard = ({ applicantId }) => {
       <p className="card-subtitle" style={{ marginBottom: 12 }}>
         Add skills that best define your expertise (e.g., Java, React, SQL). Minimum 1.
       </p>
-
-      {loading ? (
-        <div style={{ color: "#777" }}>Loading skills…</div>
-      ) : skills.length ? (
+{!showContent ? (
+  <div className="skills-pad">
+    <div className="skills-list">
+      {[...Array(6)].map((_, i) => (
+        <div
+          key={i}
+          className="skeleton"
+          style={{
+            width: 100,
+            height: 32,
+            borderRadius: 20,
+            marginRight: 10,
+            marginBottom: 10
+          }}
+        />
+      ))}
+    </div>
+  </div>
+)  : skills.length ? (
+ 
         <div className="skills-pad">
           <div className="skills-list">
             {skills.map((s) => (

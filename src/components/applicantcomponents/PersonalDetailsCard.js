@@ -14,8 +14,8 @@ import analytics from "../../utils/analytics";
 const PERSONAL_API = `${apiUrl}/applicant-personal`;
 const RESUME_API = `${apiUrl}/applicant-pdf`;
 
-const PersonalDetailsCard = ({ applicantId }) => {
-  const [bd, setBd] = useState(null);
+const PersonalDetailsCard = ({ applicantId , onLoaded, showContent, onChange}) => {
+  const [bd, setBd] = useState({});
   const [open, setOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
   const [resumeAvailable, setResumeAvailable] = useState(false);
@@ -33,10 +33,13 @@ const PersonalDetailsCard = ({ applicantId }) => {
       const { data } = await axios.get(`${PERSONAL_API}/${applicantId}/getApplicantPersonalDetails`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      setBd(data || {});
+const result = data || {};
+setBd(result);
+return result;
     } catch (e) {
       console.error("Failed to load personal details:", e?.response || e);
       setBd({});
+      return {};
     }
   };
 
@@ -55,12 +58,25 @@ const PersonalDetailsCard = ({ applicantId }) => {
   };
 
   useEffect(() => {
+    const loadPersonalDetails = async () => {
     if (!applicantId) return;
-    fetchBD();
-    probeResume();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicantId, refreshKey]);
+   await Promise.all([
+      fetchBD(),
+      probeResume()
+    ]);
 
+    onLoaded?.();
+  };
+
+  loadPersonalDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [applicantId]);
+useEffect(() => {
+  if (!applicantId) return;
+
+  fetchBD();
+  probeResume();
+}, [refreshKey]);
   const fullName = useMemo(() => (bd?.name || "").trim(), [bd]);
   const phone = bd?.phone || "";
   const email = bd?.email || "";
@@ -132,7 +148,35 @@ const PersonalDetailsCard = ({ applicantId }) => {
     }
   };
 
+if (!showContent) {
+  return (
+    <div className="col-lg-12 col-md-12 common_style">
+      <div className="card-base soft-shadow">
+        <div className="card-title-row">
+          <div className="skeleton" style={{ width: 180, height: 20 }} />
+          <div className="skeleton" style={{ width: 60, height: 20 }} />
+        </div>
 
+        <div className="skeleton" style={{ width: 320, height: 15, marginTop: 10 }} />
+
+        <div className="pd-grid" style={{ marginTop: 20 }}>
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="skeleton"
+              style={{ height: 40, borderRadius: 8 }}
+            />
+          ))}
+        </div>
+
+        <div
+          className="skeleton"
+          style={{ height: 80, marginTop: 20, borderRadius: 10 }}
+        />
+      </div>
+    </div>
+  );
+}
   return (
     <>
       <div className="col-lg-12 col-md-12 common_style">
