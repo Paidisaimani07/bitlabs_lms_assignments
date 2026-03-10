@@ -15,7 +15,7 @@ const SUMMARY_API = `${apiUrl}/applicant-summary`;
 const HELP_TEXT =
   "Try adding a resume summary — it helps employers quickly understand your strengths, tech stack, and professional goals.";
 
-const ResumeSummaryCard = ({ applicantId }) => {
+const ResumeSummaryCard = ({ applicantId, onLoaded, showContent }) => {
   const [summary, setSummary] = useState("");
   const [open, setOpen] = useState(false);
   const [snackbars, setSnackbars] = useState([]);
@@ -39,7 +39,18 @@ const ResumeSummaryCard = ({ applicantId }) => {
   };
 
   useEffect(() => {
-    if (applicantId) fetchSummary();
+     const loadSummary = async () => {
+    if (!applicantId) return;
+
+    await fetchSummary();   // wait for API
+
+    if (onLoaded) {
+      console.log("SUMMARY FINISHED LOADING");
+      onLoaded();           // notify parent
+    }
+  };
+
+  loadSummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
 
@@ -56,6 +67,24 @@ useEffect(() => {
 
   const displayText =
     summary && summary.length > 0 ? summary : HELP_TEXT;
+    if (!showContent) {
+  return (
+    <div className="col-lg-12 col-md-12 common_style">
+      <div className="card-base soft-shadow">
+        <div className="card-title-row">
+          <div className="skeleton" style={{ width: 160, height: 20 }} />
+          <div className="skeleton" style={{ width: 60, height: 20 }} />
+        </div>
+
+        <div style={{ marginTop: 15 }}>
+          <div className="skeleton" style={{ width: "100%", height: 15, marginBottom: 10 }} />
+          <div className="skeleton" style={{ width: "95%", height: 15, marginBottom: 10 }} />
+        
+        </div>
+      </div>
+    </div>
+  );
+}
 
   return (
     <>

@@ -53,6 +53,8 @@ const ApplicantDashboard = () => {
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
   const [mentorLoading, setMentorLoading] = useState(true);
+     const [portfolioLoading, setPortfolioLoading] = useState(true);
+const [badgeLoading, setBadgeLoading] = useState(true);
   const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
   const didInitRef = useRef(false);
@@ -99,7 +101,13 @@ const ApplicantDashboard = () => {
 
   const applicantId = user.id;
   const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
-
+const allLoadingDone =
+  !loading &&
+  !blogsLoading &&
+  !techBuzzLoading &&
+  !badgeLoading &&
+  !portfolioLoading &&
+  !mentorLoading;
   const fetchCard = async () => {
     try {
       if (!applicantId) return;
@@ -216,6 +224,9 @@ const ApplicantDashboard = () => {
       console.warn("Failed to fetch dashboard score:", err?.response || err);
       setDashboardScore(0);
     }
+    finally {
+  setBadgeLoading(false);
+}
   };
 
 
@@ -344,6 +355,9 @@ const ApplicantDashboard = () => {
       } catch (error) {
         console.error('Error updating profile status:', error);
       }
+      finally {
+      setPortfolioLoading(false);
+    }
     };
 
     fetchUserData();
@@ -523,6 +537,24 @@ const ApplicantDashboard = () => {
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
                 <div className="title-dashboard dashboard-top-container">
+                  {!allLoadingDone ?(<div className="display-flex robo-container">
+  <div className="card robo-card">
+    <div className="container">
+
+      <div className="robo-img">
+        <div className="robo-skeleton-img"></div>
+      </div>
+
+      <div className="robo-card-text">
+        <div className="robo-skeleton-text"></div>
+        <div className="robo-skeleton-text short"></div>
+
+        <div className="robo-skeleton-btn"></div>
+      </div>
+
+    </div>
+  </div>
+</div>) : (
                   <div className="display-flex robo-container" >
                     <div className="card robo-card">
                       <div className="container">
@@ -556,7 +588,25 @@ const ApplicantDashboard = () => {
                       </div>
                     </div>
                   </div>
+)}
                   <div className="badge-progress-wrapper">
+                    {!allLoadingDone ? (
+
+  <div className="adb-badge-skeleton-container">
+
+    <div className="adb-badge-skeleton-title-row">
+      <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-lg"></div>
+      <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-sm"></div>
+    </div>
+
+   
+
+    <div className="adb-badge-skeleton-indicator"></div>
+
+  </div>
+
+) : (
+   <>
                     <div className="progress-text">
                       <p>Badge achievement level </p>
                       {Math.round((cappedScore / goldScore) * 100)}%
@@ -597,6 +647,8 @@ const ApplicantDashboard = () => {
                     {!nextBadge && (
                       <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
                     )}
+                    </>
+)}
                   </div>
 
                 </div>
@@ -606,6 +658,22 @@ const ApplicantDashboard = () => {
               <div className="row dash-count profile-cards">
                 <div className="profile-card-row1">
                   {/* Arena Online */}
+                  {!allLoadingDone ? (<div className="arena arena-skeleton">
+
+  <div className="arena-topSection">
+    <div className="arena-skeleton-title"></div>
+
+    <div className="arena-skeleton-text"></div>
+    <div className="arena-skeleton-text short"></div>
+
+    <div className="arena-skeleton-btn"></div>
+  </div>
+
+  <div className="arena-image">
+    <div className="arena-skeleton-img"></div>
+  </div>
+
+</div>):(
                   <div className="arena">
                     <div className="arena-topSection">
                       <h4 id="tour-innovation-arena">
@@ -624,10 +692,26 @@ const ApplicantDashboard = () => {
                       />
                     </div>
 
-                  </div>
+                  </div>)}
 
                   {/* MentorSphere */}
                   <div className="mentor-sphere">
+                    {!allLoadingDone ? (
+  <div className="mentor-skeleton-header">
+
+    <div className="mentor-skeleton-top">
+      <div className="skeleton-title"></div>
+      <div className="skeleton-viewmore"></div>
+    </div>
+
+    <div className="mentor-skeleton-tabs">
+      <div className="skeleton-tab"></div>
+      <div className="skeleton-tab"></div>
+      <div className="skeleton-tab"></div>
+    </div>
+
+  </div>
+) : (<>
                     <div className="mentor-topSection">
                       <h4 id="tour-mentor-sphere">
                         Mentor sphere
@@ -644,7 +728,8 @@ const ApplicantDashboard = () => {
                       <h4 >Realm of insight</h4>
                       <h4 >Insight hour</h4>
                     </div>
-                    {mentorLoading ? (
+</>)}
+  {!allLoadingDone  ? (
                       <div className="mentor-skeleton-list">
                         {[...Array(4)].map((_, idx) => (
                           <div key={idx} className="mentor-skeleton-item">
@@ -756,6 +841,39 @@ const ApplicantDashboard = () => {
                   </div>
 
                   {/*  My Portfolio */}
+                   {!allLoadingDone ? (
+ <div className="portfolio">
+
+    {/* Header */}
+    <div className="portfolio-heading">
+      <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-lg"></div>
+      <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-sm"></div>
+    </div>
+
+    {/* Profile + Score */}
+    <div className="profile-side-section adb-portfolio-skeleton-profile">
+
+      <div className="adb-portfolio-skeleton-avatar"></div>
+
+      <div className="portfolio-score-details">
+        <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-text-short"></div>
+        <div className="adb-portfolio-skeleton-score"></div>
+      </div>
+
+    </div>
+
+    {/* Name */}
+    <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-name"></div>
+
+    {/* Skills */}
+    <div className="skills-container adb-portfolio-skeleton-skills">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="adb-portfolio-skeleton-pill"></div>
+      ))}
+    </div>
+
+  </div>
+) : (
                   <div className="portfolio">
                     <div className="portfolio-heading">
                       <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }} id="tour-portfolio">
@@ -873,10 +991,29 @@ const ApplicantDashboard = () => {
                       })()}
                     </div>
 
-                  </div>
+                  </div>)}
                 </div>
                 <div className="profile-card-row2">
                   {/* Download our App */}
+                  {!allLoadingDone ? (<div className="app-card app-card-skeleton">
+
+  <div className="app-sub-card">
+
+    <div className="app-skeleton-text"></div>
+    <div className="app-skeleton-text short"></div>
+
+    <div className="app-skeleton-store-row">
+      <div className="app-skeleton-store"></div>
+      <div className="app-skeleton-store"></div>
+    </div>
+
+  </div>
+
+  <div className="app-img">
+    <div className="app-skeleton-img"></div>
+  </div>
+
+</div>):(
                   <div className="app-card">
                     <div className="app-sub-card">
                       <p className="app-card-text">
@@ -922,7 +1059,7 @@ const ApplicantDashboard = () => {
                       />
                     </div>
 
-                  </div>
+                  </div>)}
 
                   {/* Tech buzz shots */}
                   <div className="Tech-buzz">
@@ -931,7 +1068,7 @@ const ApplicantDashboard = () => {
                       <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>View more</button>
                     </div>
                     <div className="tech-buzz-images">
-                      {techBuzzLoading ? (
+                      {!allLoadingDone  ? (
                         [...Array(maxVideos)].map((_, i) => (
                           <div key={i} className="skeleton-thumb"></div>
                         ))
@@ -978,7 +1115,7 @@ const ApplicantDashboard = () => {
 
 
                     <div className="tech-vibes-list">
-                      {blogsLoading ? (
+                      {!allLoadingDone ? (
 
                         [...Array(3)].map((_, i) => (
                           <div key={i} className="tech-vibes-item">
