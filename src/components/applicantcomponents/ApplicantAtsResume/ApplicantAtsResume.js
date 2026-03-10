@@ -6,7 +6,7 @@ import { useResume } from "../ResumeContext";
 import { useNavigate } from "react-router-dom";
 import ApplicantViewProfile from "../ApplicantViewProfile";
 
-const ApplicantAtsResume = ({ applicantId }) => {
+const ApplicantAtsResume = ({ applicantId, onLoaded, showContent}) => {
   const [showJD, setShowJD] = useState(false);
   const [continueButton, setContinueButton] = useState(false);
   // const { updateResumeState } = useResume();
@@ -55,7 +55,30 @@ const ApplicantAtsResume = ({ applicantId }) => {
     gap: "12px",
     fontFamily: "inherit",
   };
+if (!showContent) {
+  return (
+    <div style={containerStyle}>
+      <div
+        className="skeleton"
+        style={{
+          width: "320px",
+          height: "16px",
+          marginBottom: "24px",
+          borderRadius: "6px"
+        }}
+      />
 
+      <div
+        className="skeleton"
+        style={{
+          width: "220px",
+          height: "48px",
+          borderRadius: "30px"
+        }}
+      />
+    </div>
+  );
+}
   return (
     <div style={containerStyle}>
       <style>{shimmerAnimation}</style>

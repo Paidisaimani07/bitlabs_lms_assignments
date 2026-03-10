@@ -31,7 +31,7 @@ const Section = ({ title, children, open, onToggle }) => (
   </div>
 );
 
-const EducationDetailsCard = ({ applicantId }) => {
+const EducationDetailsCard = ({ applicantId, onLoaded, showContent }) => {
   const [data, setData] = useState(null);
   const [openGrad, setOpenGrad] = useState(true);
   const [openXII, setOpenXII] = useState(true);
@@ -62,7 +62,20 @@ const EducationDetailsCard = ({ applicantId }) => {
   };
 
   useEffect(() => {
-    if (applicantId) fetchEducation();
+    const loadEducation = async () => {
+    if (!applicantId) return;
+
+    try {
+      await fetchEducation();
+    } catch (err) {
+      console.warn("Education API error:", err);
+    }
+
+    console.log("EDUCATION LOADED");
+    onLoaded?.();
+  };
+
+  loadEducation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
   useEffect(() => {
@@ -77,7 +90,66 @@ const EducationDetailsCard = ({ applicantId }) => {
   const g = useMemo(() => data?.graduation || {}, [data]);
   const xii = useMemo(() => data?.classXii || {}, [data]);
   const x = useMemo(() => data?.classX || {}, [data]);
+if (!showContent) {
+  return (
+    <div className="col-lg-12 col-md-12 common_style">
+      <div className="card-base soft-shadow">
+        {/* Title */}
+        <div className="card-title-row">
+          <div className="skeleton" style={{ width: 200, height: 24 }} />
+          <div className="skeleton" style={{ width: 60, height: 20 }} />
+        </div>
 
+        <div
+          className="skeleton"
+          style={{ width: 450, height: 14, marginTop: 10 }}
+        />
+
+        {/* Graduation section */}
+        <div style={{ marginTop: 20 }}>
+          <div className="skeleton" style={{ width: 160, height: 18, marginBottom: 15 }} />
+          <div className="pd-grid">
+            {[...Array(6)].map((_, i) => (
+              <div
+                key={`grad-${i}`}
+                className="skeleton"
+                style={{ height: 40, borderRadius: 8 }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Class XII */}
+        <div style={{ marginTop: 30 }}>
+          <div className="skeleton" style={{ width: 140, height: 18, marginBottom: 15 }} />
+          <div className="pd-grid">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={`xii-${i}`}
+                className="skeleton"
+                style={{ height: 40, borderRadius: 8 }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Class X */}
+        <div style={{ marginTop: 30 }}>
+          <div className="skeleton" style={{ width: 120, height: 18, marginBottom: 15 }} />
+          <div className="pd-grid">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={`x-${i}`}
+                className="skeleton"
+                style={{ height: 40, borderRadius: 8 }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
   return (
     <>
       <div className="col-lg-12 col-md-12 common_style">
