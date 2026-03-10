@@ -51,7 +51,7 @@ const Pills = ({ items }) => {
   );
 };
 
-const ProjectDetailsCard = ({ applicantId }) => {
+const ProjectDetailsCard = ({ applicantId, onLoaded, showContent }) => {
   const { setProfileData } = useResume();
   const [items, setItems] = useState([]);
   const [editOpen, setEditOpen] = useState(false);
@@ -92,7 +92,20 @@ const ProjectDetailsCard = ({ applicantId }) => {
   }
 
   useEffect(() => {
-    if (applicantId) fetchProjects();
+    const loadProjects = async () => {
+    if (!applicantId) return;
+
+    try {
+      await fetchProjects();
+    } catch (err) {
+      console.warn("Project API error:", err);
+    }
+
+    console.log("PROJECTS LOADED");
+    onLoaded?.();
+  };
+
+  loadProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicantId]);
 
@@ -142,7 +155,57 @@ const ProjectDetailsCard = ({ applicantId }) => {
     }
   };
 
+if (!showContent) {
+  return (
+    <div className="col-lg-12 col-md-12 common_style">
+      <div className="card-base soft-shadow">
 
+        {/* Show 2 skeleton project blocks */}
+        {[1, 2].map((_, idx) => (
+          <div key={idx} className="card-base soft-shadow" style={{ marginBottom: 20 }}>
+            
+            {/* Title row */}
+            <div className="card-title-row">
+              <div>
+                <div className="skeleton" style={{ width: 200, height: 22 }} />
+                <div
+                  className="skeleton"
+                  style={{ width: 450, height: 14, marginTop: 8 }}
+                />
+              </div>
+              <div className="skeleton" style={{ width: 60, height: 20 }} />
+            </div>
+
+            {/* Grid */}
+            <div
+              className="pd-grid"
+              style={{ gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 12, marginTop: 15 }}
+            >
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className="skeleton"
+                  style={{ height: 40, borderRadius: 8 }}
+                />
+              ))}
+
+              <div
+                className="skeleton"
+                style={{ height: 120, borderRadius: 8 }}
+              />
+
+              <div
+                className="skeleton"
+                style={{ height: 120, borderRadius: 8 }}
+              />
+            </div>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+}
 
   return (
     <>
