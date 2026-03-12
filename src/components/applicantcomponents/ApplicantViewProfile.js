@@ -122,7 +122,7 @@ console.log("Loaded sections:", loadedSections);
               {/* ===================== Skill Badges (NEW CARD) ===================== */}
               <div className="card-base soft-shadow">
                 <div className="card-title-row">
-                  <h3 className="card-title common_style">Skill badges</h3>
+                  <h3 className="card-title common_style">Passed skill badges</h3>
                 </div>
                 <SkillBadgesGrid
                  onLoaded={() => markLoaded("skillBadges")}

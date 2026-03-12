@@ -52,7 +52,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
       const currentYear = new Date().getFullYear();
       const minYear = currentYear - 15;
       if (y < minYear) return `Year must be ${minYear} or later.`;
-      if (y > currentYear) return "Year cannot be in the future.";
+      if (y > currentYear + 4) return `Year cannot be more than ${currentYear + 4}.`;
       return "";
     },
     address: (v) => {
