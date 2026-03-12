@@ -566,7 +566,7 @@ const Hackathon = () => {
                                                 </div>
                                                 <div className="winner-overlay">
                                                     <div className="winner-overlay-content">
-                                                    <h4 className="winner-heading">Winner</h4>
+                                                    <h4 className="winner-heading">Winner!</h4>
                                                      <img
                                                         src={winnerInfo.imageUrl || winnerDefaultImg}
                                                         alt={`${winnerInfo.firstName} ${winnerInfo.lastName}`}
