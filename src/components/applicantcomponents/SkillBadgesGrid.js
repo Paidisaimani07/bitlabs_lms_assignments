@@ -50,7 +50,7 @@ if (!showContent) {
 
   const filteredBadges = data.applicantSkillBadges.filter((b) => {
     const status = (b?.status || b?.flag || "").toLowerCase();
-    return status === "passed" || status === "failed";
+    return status === "passed";
   });
 
   // 👉 EMPTY STATE
