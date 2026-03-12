@@ -6,6 +6,7 @@ import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
 import nosearchfound from "../../images/empty-state-images/no-search-results.png";
 import analytics from "../../utils/analytics";
+import winnerDefaultImg from "../../images/hackathons/winner.png";
 
 const TechTags = ({ skills }) => {
     const containerRef = useRef(null);
@@ -17,7 +18,7 @@ const TechTags = ({ skills }) => {
 
         const container = containerRef.current;
         const tags = skills.split(',').map(tag => tag.trim());
-        
+
         const tempContainer = document.createElement('div');
         tempContainer.style.visibility = 'hidden';
         tempContainer.style.position = 'absolute';
@@ -37,7 +38,7 @@ const TechTags = ({ skills }) => {
         let totalWidth = 0;
         let visibleCount = 0;
         const PADDING = 8;
-        const MORE_TAG_WIDTH = 40; 
+        const MORE_TAG_WIDTH = 40;
 
         for (let i = 0; i < tagElements.length; i++) {
             const tagWidth = tagElements[i].offsetWidth + PADDING;
@@ -261,328 +262,330 @@ const Hackathon = () => {
         if (reg.registaratinStatus) return "Registered";
         return null;
     };
-const HackathonSkeleton = ({ count = 8 }) => {
-  return (
-    <div className="newCards-grid">
-      {Array.from({ length: count }).map((_, i) => (
-        <div className="newCard skeleton-card" key={i}>
-          <div className="newCard-body">
+    const HackathonSkeleton = ({ count = 8 }) => {
+        return (
+            <div className="newCards-grid">
+                {Array.from({ length: count }).map((_, i) => (
+                    <div className="newCard skeleton-card" key={i}>
+                        <div className="newCard-body">
 
-            {/* Banner */}
-            <div
-              className="newCard-header"
-              style={{
-                height: "150px",
-                background: "#e5e7eb",
-                borderRadius: "4px",
-                marginBottom: "6px"
-              }}
-            ></div>
+                            {/* Banner */}
+                            <div
+                                className="newCard-header"
+                                style={{
+                                    height: "150px",
+                                    background: "#e5e7eb",
+                                    borderRadius: "4px",
+                                    marginBottom: "6px"
+                                }}
+                            ></div>
 
-            {/* Status + date */}
-            <div className="status-timing-row">
-              <div
-                style={{
-                  width: "70px",
-                  height: "18px",
-                  background: "#e5e7eb",
-                  borderRadius: "4px"
-                }}
-              ></div>
-              <div
-                style={{
-                  width: "100px",
-                  height: "14px",
-                  background: "#e5e7eb",
-                  borderRadius: "4px"
-                }}
-              ></div>
+                            {/* Status + date */}
+                            <div className="status-timing-row">
+                                <div
+                                    style={{
+                                        width: "70px",
+                                        height: "18px",
+                                        background: "#e5e7eb",
+                                        borderRadius: "4px"
+                                    }}
+                                ></div>
+                                <div
+                                    style={{
+                                        width: "100px",
+                                        height: "14px",
+                                        background: "#e5e7eb",
+                                        borderRadius: "4px"
+                                    }}
+                                ></div>
+                            </div>
+
+                            {/* Title */}
+                            <div
+                                style={{
+                                    width: "80%",
+                                    height: "20px",
+                                    background: "#e5e7eb",
+                                    borderRadius: "4px",
+                                    marginTop: "12px"
+                                }}
+                            ></div>
+
+                            {/* Company */}
+                            <div
+                                style={{
+                                    width: "50%",
+                                    height: "16px",
+                                    background: "#e5e7eb",
+                                    borderRadius: "4px",
+                                    margin: "8px 0"
+                                }}
+                            ></div>
+
+                            {/* Tags placeholder */}
+                            <div
+                                style={{
+                                    width: "100%",
+                                    height: "20px",
+                                    background: "#e5e7eb",
+                                    borderRadius: "4px",
+                                    marginBottom: "12px"
+                                }}
+                            ></div>
+
+                            {/* Footer Row */}
+                            <div className="card-footer-row" style={{ marginTop: "6px" }}>
+
+
+                                <div
+                                    style={{
+                                        width: "60px",
+                                        height: "30px",
+                                        background: "#e5e7eb",
+                                        borderRadius: "4px"
+                                    }}
+                                ></div>
+                            </div>
+
+                        </div>
+                    </div>
+                ))}
             </div>
-
-            {/* Title */}
-            <div
-              style={{
-                width: "80%",
-                height: "20px",
-                background: "#e5e7eb",
-                borderRadius: "4px",
-                marginTop: "12px"
-              }}
-            ></div>
-
-            {/* Company */}
-            <div
-              style={{
-                width: "50%",
-                height: "16px",
-                background: "#e5e7eb",
-                borderRadius: "4px",
-                margin: "8px 0"
-              }}
-            ></div>
-
-            {/* Tags placeholder */}
-            <div
-              style={{
-                width: "100%",
-                height: "20px",
-                background: "#e5e7eb",
-                borderRadius: "4px",
-                marginBottom: "12px"
-              }}
-            ></div>
-
-            {/* Footer Row */}
-            <div className="card-footer-row" style={{ marginTop: "6px" }}>
-            
-
-              <div
-                style={{
-                  width: "60px",
-                  height: "30px",
-                  background: "#e5e7eb",
-                  borderRadius: "4px"
-                }}
-              ></div>
-            </div>
-
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+        );
+    };
 
 
 
     return (
-         <div className="border-style">
+        <div className="border-style">
 
-        <div className="blur-border-style"></div>
-        <div className="dashboard__content">
-            <div className="row mr-0 ml-10 extraSpace" style={{ marginLeft: "1%" }}>
-                <div className="main-header-row">
-                    <h1 className="main-heading">Innovation arena</h1>
-                    <div className="hackathon-search-box">
-                        <i className="fa fa-search search-icon1"></i>
-                        <input
-                            type="text"
-                            placeholder="Search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            ref={searchInputRef}
-                            className="hackathon-search-input"
-                        />
-                        {searchQuery && (
-                            <i
-                                className="fa fa-times clear-icon"
-                                onMouseDown={(e) => e.preventDefault()}
-                                onClick={() => {
-                                    setSearchQuery("");
-                                    if (searchInputRef.current) {
-                                        searchInputRef.current.focus();
-                                    }
-                                }}
-                            ></i>
-                        )}
+            <div className="blur-border-style"></div>
+            <div className="dashboard__content">
+                <div className="row mr-0 ml-10 extraSpace" style={{ marginLeft: "1%" }}>
+                    <div className="main-header-row">
+                        <h1 className="main-heading">Innovation arena</h1>
+                        <div className="hackathon-search-box">
+                            <i className="fa fa-search search-icon1"></i>
+                            <input
+                                type="text"
+                                placeholder="Search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                ref={searchInputRef}
+                                className="hackathon-search-input"
+                            />
+                            {searchQuery && (
+                                <i
+                                    className="fa fa-times clear-icon"
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => {
+                                        setSearchQuery("");
+                                        if (searchInputRef.current) {
+                                            searchInputRef.current.focus();
+                                        }
+                                    }}
+                                ></i>
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <div className="header-container">
-                    <div className="status-tabs">
-                        {[
-                            { key: "MY", label: "My arenas" },
-                            { key: "RECOMMENDED", label: "Picks for you" },
-                            { key: "ACTIVE", label: "In action" },
-                            { key: "UPCOMING", label: "On the horizon" },
-                            { key: "COMPLETED", label: "Past battles" },
-                        ].map(tab => (
-                            <button
-                                key={tab.key}
-                                className={`tab ${statusFilter === tab.key ? "active" : ""}`}
-                                onClick={() => setStatusFilter(tab.key)}
-                                style={{ textTransform: "none" }}
-                            >
-                                {tab.label}
-                            </button>
-                        ))}
+                    <div className="header-container">
+                        <div className="status-tabs">
+                            {[
+                                { key: "MY", label: "My arenas" },
+                                { key: "RECOMMENDED", label: "Picks for you" },
+                                { key: "ACTIVE", label: "In action" },
+                                { key: "UPCOMING", label: "On the horizon" },
+                                { key: "COMPLETED", label: "Past battles" },
+                            ].map(tab => (
+                                <button
+                                    key={tab.key}
+                                    className={`tab ${statusFilter === tab.key ? "active" : ""}`}
+                                    onClick={() => setStatusFilter(tab.key)}
+                                    style={{ textTransform: "none" }}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                </div>
 
-              {loading ? (
-    <HackathonSkeleton count={8} />
-) : filteredHackathons.length === 0 && searchQuery? (
+                    {loading ? (
+                        <HackathonSkeleton count={8} />
+                    ) : filteredHackathons.length === 0 && searchQuery ? (
 
-                    <div
-                        className="no-results-message"
-                        style={{
-                            padding: "32px",
-                            fontSize: "18px",
-                            textAlign: "center",
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "12px"
-                        }}
-                    >
-                        <img width="300px"
-                            src={nosearchfound}
-                            alt={emptyMessages[statusFilter] || "No hackathons"}
-                            style={{}}
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                        />
-                        <div ><p style={{fontWeight:"500",fontStyle:"sans-serif",fontSize:"18px"}}>No hackathon matches for your search</p></div>
-                    </div>
-                ):filteredHackathons.length === 0 ? (
-
-                    <div
-                        className="no-results-message"
-                        style={{
-                            padding: "32px",
-                            fontSize: "18px",
-                            textAlign: "center",
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "12px"
-                        }}
-                    >
-                        <img
-                            src={getEmptyImageByTab(statusFilter)}
-                            alt={emptyMessages[statusFilter] || "No hackathons"}
-                            style={{ width: `${getEmptyImageSize(statusFilter)}px`, height: "auto", opacity: 0.95 }}
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                        />
-                        <div>{emptyMessages[statusFilter]}</div>
-                        <button
-                            className="cta-button"
-                            style={{ marginTop: "8px" }}
-                            onClick={() => setStatusFilter(getCtaTargetTab(statusFilter))}
+                        <div
+                            className="no-results-message"
+                            style={{
+                                padding: "32px",
+                                fontSize: "18px",
+                                textAlign: "center",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "12px"
+                            }}
                         >
-                            Explore
-                        </button>
-                    </div>
-                ) : (
-                    <div className="newCards-grid">
-                        {filteredHackathons.map(hackathon => {
-                            const today = new Date();
-                            const startDate = new Date(hackathon.startAt);
-                            const endDate = new Date(hackathon.endAt);
+                            <img width="300px"
+                                src={nosearchfound}
+                                alt={emptyMessages[statusFilter] || "No hackathons"}
+                                style={{}}
+                                onError={(e) => { e.currentTarget.style.display = "none"; }}
+                            />
+                            <div ><p style={{ fontWeight: "500", fontStyle: "sans-serif", fontSize: "18px" }}>No hackathon matches for your search</p></div>
+                        </div>
+                    ) : filteredHackathons.length === 0 ? (
 
-                            let remainingText = "";
-                            if (hackathon.status === "ACTIVE") {
-                                const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
-                                remainingText = diffDays > 0 ? `Expires in ${diffDays} days` : "Expires today";
-                            } else if (hackathon.status === "UPCOMING") {
-                                const diffDays = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
-                                remainingText = diffDays > 0 ? `Starts in ${diffDays} days` : "Starting soon";
-                            } else if (hackathon.status === "COMPLETED") {
-                                const diffDays = Math.floor((today - endDate) / (1000 * 60 * 60 * 24));
-                                remainingText = diffDays > 1 ? `Expired ${diffDays} days ago` : "Expired Yesterday";
-                            }
+                        <div
+                            className="no-results-message"
+                            style={{
+                                padding: "32px",
+                                fontSize: "18px",
+                                textAlign: "center",
+                                width: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "12px"
+                            }}
+                        >
+                            <img
+                                src={getEmptyImageByTab(statusFilter)}
+                                alt={emptyMessages[statusFilter] || "No hackathons"}
+                                style={{ width: `${getEmptyImageSize(statusFilter)}px`, height: "auto", opacity: 0.95 }}
+                                onError={(e) => { e.currentTarget.style.display = "none"; }}
+                            />
+                            <div>{emptyMessages[statusFilter]}</div>
+                            <button
+                                className="cta-button"
+                                style={{ marginTop: "8px" }}
+                                onClick={() => setStatusFilter(getCtaTargetTab(statusFilter))}
+                            >
+                                Explore
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="newCards-grid">
+                            {filteredHackathons.map(hackathon => {
+                                const today = new Date();
+                                const startDate = new Date(hackathon.startAt);
+                                const endDate = new Date(hackathon.endAt);
 
-                            const regStatus = getRegistrationStatus(hackathon.id);
-                            const winnerInfo = winners[hackathon.winner];
+                                let remainingText = "";
+                                if (hackathon.status === "ACTIVE") {
+                                    const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+                                    remainingText = diffDays > 0 ? `Expires in ${diffDays} days` : "Expires today";
+                                } else if (hackathon.status === "UPCOMING") {
+                                    const diffDays = Math.ceil((startDate - today) / (1000 * 60 * 60 * 24));
+                                    remainingText = diffDays > 0 ? `Starts in ${diffDays} days` : "Starting soon";
+                                } else if (hackathon.status === "COMPLETED") {
+                                    const diffDays = Math.floor((today - endDate) / (1000 * 60 * 60 * 24));
+                                    remainingText = diffDays > 1 ? `Expired ${diffDays} days ago` : "Expired Yesterday";
+                                }
 
-                            return (
-                                <div className="newCard" key={hackathon.id}>
+                                const regStatus = getRegistrationStatus(hackathon.id);
+                                const winnerInfo = winners[hackathon.winner];
+
+                                return (
+                                    <div className="newCard" key={hackathon.id}>
 
 
-                                    <div className="newCard-body">
-                                        <div
-                                            className="newCard-header" onClick={() => handleViewClick(hackathon.id)}
-                                            style={hackathon.bannerUrl ? {
-                                                backgroundImage: `url(${hackathon.bannerUrl})`,
-                                                backgroundSize: 'cover',
-                                                backgroundPosition: 'center',
-                                                borderRadius: '3px',
-                                                marginBottom: '10px',
-                                                cursor: 'pointer'
-                                            } : {}}
-                                        >
-                                        </div>
-                                        <div className="status-timing-row">
-                                            <span className={`status-badge ${hackathon.status.toLowerCase()}`}>
-                                                {hackathon.status === 'ACTIVE' ? 'Active' :
-                                                    hackathon.status === 'UPCOMING' ? 'Upcoming' :
-                                                        hackathon.status === 'COMPLETED' ? 'Expired' : hackathon.status}
-                                            </span>
-                                            <span className="timing-text">{remainingText}</span>
-                                        </div>
-
-                                        <h3 
-                                            className="hackathon-title"
-                                            data-title={hackathon.title}
-                                            title={hackathon.title}
-                                        >
-                                            {hackathon.title}
-                                        </h3>
-                                        <h5 className="company-name">{hackathon.company || 'Company'}</h5>
-
-                                        <TechTags skills={hackathon.allowedTechnologies} />
-
-                                        <div className="card-footer-row">
-                                            {regStatus && (
-                                                <div className="registration-status">
-                                                    <span className="tick-circle">
-                                                        {regStatus === "Registered" ? (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="14.474" height="14.373" viewBox="0 0 14.474 17.373">
-                                                                <path d="M49.942,99.447l-.245-.13a2.539,2.539,0,0,0-3.5,1.136l-.119.248-.277.037a2.539,2.539,0,0,0-2.161,2.973l.05.275-.2.193a2.539,2.539,0,0,0,0,3.674l.2.193-.05.274a2.539,2.539,0,0,0,2.161,2.973l.277.036.119.249a2.539,2.539,0,0,0,3.5,1.136l.24-.13.245.13a2.539,2.539,0,0,0,3.5-1.136l.118-.247.276-.038a2.539,2.539,0,0,0,2.163-2.973l-.05-.274.2-.193a2.539,2.539,0,0,0,0-3.674l-.2-.194.05-.274a2.539,2.539,0,0,0-2.161-2.972L53.8,100.7l-.119-.248a2.539,2.539,0,0,0-3.5-1.136Zm5.521,6.569a5.523,5.523,0,1,1-5.523-5.523A5.529,5.529,0,0,1,55.462,106.016Z" transform="translate(-42.702 -95.649)" fill="#ef8c2f" />
-                                                                <path d="M206.938,260.8l.832.811-.2,1.145,1.028-.541,1.028.541-.2-1.145.832-.811-1.15-.167-.514-1.042-.514,1.042Z" transform="translate(-201.365 -250.783)" fill="#ef8c2f" />
-                                                                <path d="M123.214,177.224a4.5,4.5,0,1,0,4.5-4.5A4.51,4.51,0,0,0,123.214,177.224Zm5.7-1.446,1.785.259.242.745-1.292,1.259.3,1.778-.634.461-1.6-.839-1.6.839-.634-.461.3-1.778-1.292-1.259.242-.745,1.785-.259.8-1.618h.784Z" transform="translate(-120.482 -166.858)" fill="#ef8c2f" />
-                                                                <path d="M266.407,2.342a3.584,3.584,0,0,1,2.372.936L270.418,0h-5.182Z" transform="translate(-257.684 0)" fill="#ef8c2f" />
-                                                                <path d="M96.927,2.518a3.52,3.52,0,0,1,2.55.135,3.585,3.585,0,0,1,.423-.158L98.653,0H93.98l1.639,3.279A3.544,3.544,0,0,1,96.927,2.518Z" transform="translate(-92.24)" fill="#ef8c2f" />
-                                                            </svg>
-                                                        ) : (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" id="check_1008958" width="11.833" height="11.833" viewBox="0 0 11.833 11.833">
-                                                                <g id="Group_188" data-name="Group 188">
-                                                                    <path id="Path_388" data-name="Path 388" d="M5.917,0a5.917,5.917,0,1,0,5.917,5.917A5.94,5.94,0,0,0,5.917,0ZM5.2,8.608,2.61,6.017l.98-.98L5.246,6.692,8.57,3.67,9.5,4.7Z" fill="#ef8c2f" />
-                                                                </g>
-                                                            </svg>
-                                                        )}
-                                                    </span>
-                                                    {regStatus}
-                                                </div>
-                                            )}
-                                            <button className="view-button" onClick={() =>{  analytics.track("HACKATHONS", currentUser?.id);handleViewClick(hackathon.id);}}>
-                                                View
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {(statusFilter === "COMPLETED" || statusFilter === "MY") && winnerInfo?.firstName && winnerInfo?.lastName && (
-                                        <div className="winner-card">
-                                            <div className="winner-card-content">
-                                                <img
-                                                    src={winnerInfo.imageUrl || "../images/user/avatar/image-01.jpg"}
-                                                    alt={`${winnerInfo.firstName} ${winnerInfo.lastName}`}
-                                                    className="winner-image"
-                                                />
+                                        <div className="newCard-body">
+                                            <div
+                                                className="newCard-header" onClick={() => handleViewClick(hackathon.id)}
+                                                style={hackathon.bannerUrl ? {
+                                                    backgroundImage: `url(${hackathon.bannerUrl})`,
+                                                    backgroundSize: 'cover',
+                                                    backgroundPosition: 'center',
+                                                    borderRadius: '3px',
+                                                    marginBottom: '10px',
+                                                    cursor: 'pointer'
+                                                } : {}}
+                                            >
                                             </div>
-                                            <div className="winner-overlay">
-                                                <h4 className="winner-heading">Top Performer</h4>
-                                                <img
-                                                    src={winnerInfo.imageUrl || "../images/user/avatar/image-01.jpg"}
-                                                    alt={`${winnerInfo.firstName} ${winnerInfo.lastName}`}
-                                                    className="winner-image-overlay"
-                                                />
-                                                <span className="winner-name">
-                                                    {winnerInfo.firstName} {winnerInfo.lastName}
+                                            <div className="status-timing-row">
+                                                <span className={`status-badge ${hackathon.status.toLowerCase()}`}>
+                                                    {hackathon.status === 'ACTIVE' ? 'Active' :
+                                                        hackathon.status === 'UPCOMING' ? 'Upcoming' :
+                                                            hackathon.status === 'COMPLETED' ? 'Expired' : hackathon.status}
                                                 </span>
+                                                <span className="timing-text">{remainingText}</span>
+                                            </div>
+
+                                            <h3
+                                                className="hackathon-title"
+                                                data-title={hackathon.title}
+                                                title={hackathon.title}
+                                            >
+                                                {hackathon.title}
+                                            </h3>
+                                            <h5 className="company-name">{hackathon.company || 'Company'}</h5>
+
+                                            <TechTags skills={hackathon.allowedTechnologies} />
+
+                                            <div className="card-footer-row">
+                                                {regStatus && (
+                                                    <div className="registration-status">
+                                                        <span className="tick-circle">
+                                                            {regStatus === "Registered" ? (
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="14.474" height="14.373" viewBox="0 0 14.474 17.373">
+                                                                    <path d="M49.942,99.447l-.245-.13a2.539,2.539,0,0,0-3.5,1.136l-.119.248-.277.037a2.539,2.539,0,0,0-2.161,2.973l.05.275-.2.193a2.539,2.539,0,0,0,0,3.674l.2.193-.05.274a2.539,2.539,0,0,0,2.161,2.973l.277.036.119.249a2.539,2.539,0,0,0,3.5,1.136l.24-.13.245.13a2.539,2.539,0,0,0,3.5-1.136l.118-.247.276-.038a2.539,2.539,0,0,0,2.163-2.973l-.05-.274.2-.193a2.539,2.539,0,0,0,0-3.674l-.2-.194.05-.274a2.539,2.539,0,0,0-2.161-2.972L53.8,100.7l-.119-.248a2.539,2.539,0,0,0-3.5-1.136Zm5.521,6.569a5.523,5.523,0,1,1-5.523-5.523A5.529,5.529,0,0,1,55.462,106.016Z" transform="translate(-42.702 -95.649)" fill="#ef8c2f" />
+                                                                    <path d="M206.938,260.8l.832.811-.2,1.145,1.028-.541,1.028.541-.2-1.145.832-.811-1.15-.167-.514-1.042-.514,1.042Z" transform="translate(-201.365 -250.783)" fill="#ef8c2f" />
+                                                                    <path d="M123.214,177.224a4.5,4.5,0,1,0,4.5-4.5A4.51,4.51,0,0,0,123.214,177.224Zm5.7-1.446,1.785.259.242.745-1.292,1.259.3,1.778-.634.461-1.6-.839-1.6.839-.634-.461.3-1.778-1.292-1.259.242-.745,1.785-.259.8-1.618h.784Z" transform="translate(-120.482 -166.858)" fill="#ef8c2f" />
+                                                                    <path d="M266.407,2.342a3.584,3.584,0,0,1,2.372.936L270.418,0h-5.182Z" transform="translate(-257.684 0)" fill="#ef8c2f" />
+                                                                    <path d="M96.927,2.518a3.52,3.52,0,0,1,2.55.135,3.585,3.585,0,0,1,.423-.158L98.653,0H93.98l1.639,3.279A3.544,3.544,0,0,1,96.927,2.518Z" transform="translate(-92.24)" fill="#ef8c2f" />
+                                                                </svg>
+                                                            ) : (
+                                                                <svg xmlns="http://www.w3.org/2000/svg" id="check_1008958" width="11.833" height="11.833" viewBox="0 0 11.833 11.833">
+                                                                    <g id="Group_188" data-name="Group 188">
+                                                                        <path id="Path_388" data-name="Path 388" d="M5.917,0a5.917,5.917,0,1,0,5.917,5.917A5.94,5.94,0,0,0,5.917,0ZM5.2,8.608,2.61,6.017l.98-.98L5.246,6.692,8.57,3.67,9.5,4.7Z" fill="#ef8c2f" />
+                                                                    </g>
+                                                                </svg>
+                                                            )}
+                                                        </span>
+                                                        {regStatus}
+                                                    </div>
+                                                )}
+                                                <button className="view-button" onClick={() => { analytics.track("HACKATHONS", currentUser?.id); handleViewClick(hackathon.id); }}>
+                                                    View
+                                                </button>
                                             </div>
                                         </div>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
+
+                                        {(statusFilter === "COMPLETED" || statusFilter === "MY") && winnerInfo?.firstName && winnerInfo?.lastName && (
+                                            <div className="winner-card">
+                                                <div className="winner-card-content">
+                                                    <img
+                                                        src={winnerInfo.imageUrl || winnerDefaultImg}
+                                                        alt={`${winnerInfo.firstName} ${winnerInfo.lastName}`}
+                                                        className={`winner-image ${!winnerInfo.imageUrl ? "is-fallback" : ""}`}
+                                                    />
+                                                </div>
+                                                <div className="winner-overlay">
+                                                    <div className="winner-overlay-content">
+                                                    <h4 className="winner-heading">Winner</h4>
+                                                     <img
+                                                        src={winnerInfo.imageUrl || winnerDefaultImg}
+                                                        alt={`${winnerInfo.firstName} ${winnerInfo.lastName}`}
+                                                        className={`winner-image-overlay ${!winnerInfo.imageUrl ? "is-fallback" : ""}`}
+                                                     />
+                                                    <span className="winner-name">
+                                                        {winnerInfo.firstName} {winnerInfo.lastName}
+                                                    </span>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
         </div>
     );
 };
