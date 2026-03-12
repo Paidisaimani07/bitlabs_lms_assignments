@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useGoogleLogin } from "@react-oauth/google";
 import OTPVerification from "../applicantcomponents/OTPVerification";
 import Background from "../../images/user/avatar/Backgroundimage.png";
@@ -89,19 +89,11 @@ function LoginBody({ handleLogin }) {
         const name1 = res.data.name;
 
         console.log("Second API");
-        let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-
-        const response1 = await axios.post(
-          loginEndpoint,
+        const response1 = await apiClient.post(
+          "/applicant/applicantLogin",
           {
             email: email1,
-            utmSource: utmSource,
-          },
-          {
-            headers: {
-              // Ensure no Authorization header is sent
-              Authorization: "",
-            },
+            utmSource: utmSource
           }
         );
 
@@ -112,6 +104,7 @@ function LoginBody({ handleLogin }) {
           console.log("This is response: ", userData);
           console.log("This is token: ", userData.data.jwt);
           localStorage.setItem("jwtToken", userData.data.jwt);
+          localStorage.setItem("refreshToken", userData.data.refreshToken);
           const generatedToken = await generateToken()
           try {
             console.log("generated token", generatedToken)
@@ -121,17 +114,12 @@ function LoginBody({ handleLogin }) {
           }
 
           // Log the user's activity
-          const activityLogEndpoint = `${apiUrl}/api/activity/log`;
           const activityPayload = {
             userId: userData.id,
             actionType: "Login",
           };
 
-          await axios.post(activityLogEndpoint, activityPayload, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          });
+          await apiClient.post("/api/activity/log", activityPayload);
           console.log("Activity log submitted successfully.");
 
           setCandidateEmail(email1);
@@ -159,32 +147,6 @@ function LoginBody({ handleLogin }) {
           console.log("Zoho User ID from login page :", id);
           sessionStorage.setItem("zohoUserId", id);
 
-
-
-          // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
-          // const webhookData = {
-          //   email,
-          //   name,
-          //   utmSource,
-          //   utmMedium,
-          //   utmCampaign,
-          //   utmContent,
-          //   utmTerm,
-          // };
-
-          // try {
-          //   const webhookResponse = await fetch(webhookUrl, {
-          //     method: 'POST',
-          //     headers: {
-          //       'Content-Type': 'application/json',
-          //     },
-          //     body: JSON.stringify(webhookData),
-          //   });
-          //   console.log('Webhook executed');
-          // } catch (error) {
-          //   console.error('Error sending first webhook:', error);
-          // }
-
           let userType1;
           if (userData.message.includes("ROLE_JOBAPPLICANT")) {
             userType1 = "jobseeker";
@@ -208,30 +170,14 @@ function LoginBody({ handleLogin }) {
           if (!jwtToken) {
             jwtToken = userData.data.jwt;
           }
-          const profileIdResponse = await axios.get(
-            `${apiUrl}/applicantprofile/${userId}/profileid`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
+           const profileIdResponse = await apiClient.get(
+            `/applicantprofile/${userId}/profileid`
           );
           const profileId = profileIdResponse.data;
 
           let resume;
           try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            const profileIdResponse1 = await axios.get(
-
-              `${apiUrl}/applicant-pdf/getresume/${userId}`,
-
-              {
-                headers: {
-                  Authorization: `Bearer ${jwtToken}`,
-                },
-              },
-
-            );
+            await apiClient.get(`/applicant-pdf/getresume/${userId}`);
           } catch (error) {
             resume = error.response.status;
           }
@@ -288,19 +234,12 @@ function LoginBody({ handleLogin }) {
     ).toString();
 
     try {
-      let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-      const response = await axios.post(
-        loginEndpoint,
+    const response = await apiClient.post(
+        "/applicant/applicantLogin",
         {
           email: candidateEmail,
           password: encryptedPassword,
           iv: iv.toString(CryptoJS.enc.Base64),
-        },
-        {
-          headers: {
-            // Ensure no Authorization header is sent
-            Authorization: "",
-          },
         }
       );
 
@@ -310,6 +249,7 @@ function LoginBody({ handleLogin }) {
         console.log("this is response ", userData);
         console.log("this is token ", userData.data.jwt);
         localStorage.setItem("jwtToken", userData.data.jwt);
+        localStorage.setItem("refreshToken", userData.data.refreshToken);
 
 
         let userType1;
@@ -339,21 +279,10 @@ function LoginBody({ handleLogin }) {
         const userId = userData.id;
 
         // Log the user activity
-        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
-        await axios.post(
-          activityLogEndpoint,
-          {
-            userId: userId,
-            actionType: "Login",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userData.data.jwt}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
+        await apiClient.post("/api/activity/log", {
+          userId: userId,
+          actionType: "Login",
+        });
         // Check the profile ID
         let jwtToken = localStorage.getItem("jwtToken");
         if (!jwtToken) {
@@ -361,8 +290,8 @@ function LoginBody({ handleLogin }) {
         }
 
         // ✅ Fetch Zoho User ID based on email
-        const zohoResponse = await axios.get(
-          `${apiUrl}/zoho/searchlead/${candidateEmail}`
+       const zohoResponse = await apiClient.get(
+          `/zoho/searchlead/${candidateEmail}`
         );
         const zohoUserId = zohoResponse.data?.data?.[0]?.id;
 
@@ -371,27 +300,11 @@ function LoginBody({ handleLogin }) {
           console.log("Zoho User ID:", zohoUserId);
         }
 
-        const profileIdResponse = await axios.get(
-          `${apiUrl}/applicantprofile/${userId}/profileid`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
-        );
+         const profileIdResponse = await apiClient.get(`/applicantprofile/${userId}/profileid`);
         const profileId = profileIdResponse.data;
         let resume;
         try {
-          const jwtToken = localStorage.getItem("jwtToken")
-          const profileIdResponse1 = await axios.get(
-            `${apiUrl}/resume/pdf/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
-
-          );
+          await apiClient.get(`/applicant-pdf/getresume/${userId}`)
         } catch (error) {
           resume = error.response.status;
         }
@@ -495,8 +408,7 @@ function LoginBody({ handleLogin }) {
     try {
       setCandidateOTPSendingInProgress(true);
       console.log("email is:", candidateEmail1);
-      const response = await axios.post(
-        `${apiUrl}/applicant/applicantsendotp`,
+    const response =await apiClient.post(`/applicant/applicantsendotp`,
         { email: candidateEmail1, mobilenumber: candidateMobileNumber }
       );
       console.log("email is:", candidateEmail1);
@@ -612,8 +524,7 @@ function LoginBody({ handleLogin }) {
       const modifiedUtmSource = utmSource.includes("bitlabs.in/jobs")
         ? "Web login"
         : utmSource;
-      const response = await axios.post(`${apiUrl}/applicant/saveApplicant`, {
-        name: candidateName,
+ const response = await apiClient.post(`/applicant/saveApplicant`, {        name: candidateName,
         email: candidateEmail1,
         mobilenumber: candidateMobileNumber,
         password: candidatePassword1,

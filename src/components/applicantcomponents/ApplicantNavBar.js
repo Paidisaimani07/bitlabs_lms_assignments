@@ -2,14 +2,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import $ from "jquery";
 import "jquery.cookie";
 import "metismenu";
-import { useState, useEffect, useReducer } from "react";
+import { useState, useEffect } from "react";
 import { useUserContext } from "../common/UserProvider";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import ModalLogout from "../common/ModalLogout";
-import axios from "axios";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
-import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
 import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
 import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
@@ -51,7 +49,6 @@ function ApplicantNavBar() {
     email: "",
   };
   const [card, setCard] = useState(DEFAULT_CARD);
-  const CARD_API = `${apiUrl}/applicant-card`;
   const applicantId = user.id;
 
   const handleRedirect = () => {
@@ -72,9 +69,7 @@ function ApplicantNavBar() {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const { data } = await axios.get(`${CARD_API}/${applicantId}/getApplciantCard`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+     const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
 
       // Map only fields you want into your CARD object
       const mappedCard = {
@@ -134,8 +129,8 @@ function ApplicantNavBar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${apiUrl}/applicant/getApplicantById/${user.id}`
+        const response = await apiClient.get(
+          `/applicant/getApplicantById/${user.id}`
         );
 
         const newData = {
@@ -234,11 +229,12 @@ function ApplicantNavBar() {
       $("body").addClass("sidebar-enable show-job");
     }
 
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-    })
+    apiClient
+  .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
+  .then((response) => {
+    const imageUrl = URL.createObjectURL(response.data);
+    setImageSrc(imageUrl);
+  })
       .then((response) => response.blob())
       .then((blob) => {
         const imageUrl = URL.createObjectURL(blob);
@@ -273,21 +269,9 @@ function ApplicantNavBar() {
   const fetchAlertCount = async () => {
     try {
       const [jobAlertsResponse, notificationsResponse] = await Promise.all([
-        axios.get(
-          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }
-        ),
-        axios.get(`${apiUrl}/notifications/getNotifications/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
-        }),
+          apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`),
+        apiClient.get(`/notifications/applicant/${user.id}/unread`),
       ]);
-
       const notifications = Array.isArray(notificationsResponse.data)
         ? notificationsResponse.data
         : [];
@@ -307,14 +291,7 @@ function ApplicantNavBar() {
     } catch (error) {
       console.error("Error fetching alert counts:", error);
       try {
-        const response = await axios.get(
-          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }
-        );
+        const response = await apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`);
         setAlertCount(Number(response.data) || 0);
       } catch (fallbackError) {
         console.error("Error fetching fallback alert count:", fallbackError);
