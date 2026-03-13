@@ -270,58 +270,40 @@ function ApplicantNavBar() {
     fetchAlertCount();
   }, [location.key]);
 
+
+   useEffect(() => {
+    const handleAlertsUpdate = () => {
+      fetchAlertCount();
+    };
+    window.addEventListener('alerts-updated', handleAlertsUpdate);
+    return () => {
+      window.removeEventListener('alerts-updated', handleAlertsUpdate);
+    };
+  }, [user?.id]);
+
   const fetchAlertCount = async () => {
     try {
-      const [jobAlertsResponse, notificationsResponse] = await Promise.all([
-        axios.get(
-          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }
-        ),
-        axios.get(`${apiUrl}/notifications/getNotifications/${user.id}`, {
+      // Get the count directly from the new backend API
+      const response = await axios.get(
+        `${apiUrl}/notifications/count/${user.id}`,
+        {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
           },
-        }),
-      ]);
-
-      const notifications = Array.isArray(notificationsResponse.data)
-        ? notificationsResponse.data
-        : [];
-      const unreadNotificationsCount = notifications.reduce(
-        (count, notification) => {
-          const isUnread = notification.applicantId?.includes(user.id);
-          return isUnread ? count + 1 : count;
-        },
-        0
+        }
       );
 
-      const jobAlertsCount = Number(jobAlertsResponse.data) || 0;
-      const totalCount = jobAlertsCount + unreadNotificationsCount;
-
-      setAlertCount(totalCount);
-      console.log(totalCount);
+      const count = Number(response.data) || 0;
+      console.log("🔔 Alert count response:", response.data, "Setting count to:", count);
+      setAlertCount(count);
     } catch (error) {
-      console.error("Error fetching alert counts:", error);
-      try {
-        const response = await axios.get(
-          `${apiUrl}/applyjob/applicants/${user.id}/unread-alert-count`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
-          }
-        );
-        setAlertCount(Number(response.data) || 0);
-      } catch (fallbackError) {
-        console.error("Error fetching fallback alert count:", fallbackError);
-        setAlertCount(0);
-      }
+      console.error("Error fetching alert count:", error);
+      setAlertCount(0);
     }
+
   };
+
+
 
   useEffect(() => {
     const checkUserData = setInterval(() => {
