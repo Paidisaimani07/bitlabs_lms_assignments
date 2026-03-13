@@ -139,9 +139,10 @@
 
 @media (max-width: 1300px) {
     .main-header-row {
-    margin-top: 110px;
+        margin-top: 110px;
     }
-     .newCards-grid {
+
+    .newCards-grid {
         grid-template-columns: repeat(4, 1fr);
     }
 }
@@ -187,10 +188,11 @@
     }
 
     .header-container {
-        margin-top: 0;    }
+        margin-top: 0;
+    }
 }
 
-@media (max-width:600px){
+@media (max-width:600px) {
     .newCards-grid {
         grid-template-columns: 1fr;
     }
@@ -344,7 +346,7 @@
 }
 
 .no-results-message .cta-button {
-    background: #F97316 ;
+    background: #F97316;
     color: #fff;
     padding: 6px 12px;
     border: none;
@@ -448,10 +450,9 @@ textarea {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
-    border-radius: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
+    border-radius: 5px;
+    opacity: 1;
+    pointer-events: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -459,13 +460,12 @@ textarea {
 }
 
 .winner-overlay .winner-heading {
-    font-size: 16px;
+    font-size: 32px;
     font-weight: bold;
     color: #F97316;
     margin-bottom: 8px;
     text-transform: uppercase;
 }
-
 
 .winner-overlay img {
     width: 80px;
@@ -481,8 +481,63 @@ textarea {
     font-weight: bold;
 }
 
-.winner-card-content:hover~.winner-overlay,
-.winner-overlay:hover {
-    opacity: 1;
-    pointer-events: auto;
+/* Added Styles: Moving winner info to a bottom box */
+.winner-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.winner-overlay-content {
+    width: 100%;
+    height: 58%;
+    background-image: url(../../images/hackathons/winnerbanners.png);
+    background-size: cover;
+    background-position: center;
+    /* background: linear-gradient(90deg, #F97316 11.81%, #FAA729 100%); */
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-shadow: none;
+    border: none;
+}
+
+.winner-overlay-content .winner-heading {
+    font-size: 24px !important;
+    font-weight: 800 !important;
+    color:   #F97517 !important;
+    margin: 0 0 5px 0 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.winner-overlay-content img.winner-image-overlay {
+    width: 65px !important;
+    height: 65px !important;
+    border-radius: 50% !important;
+    border: 3px solid #fff !important;
+    margin-bottom: 10px !important;
+    object-fit: cover !important;
+}
+
+.winner-overlay-content img.winner-image-overlay.is-fallback,
+.winner-card-content img.winner-image.is-fallback {
+    border-radius: 12px !important;
+    background-color: #fff !important;
+    padding: 5px !important;
+}
+
+.winner-overlay-content .winner-name {
+    color: #000000;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
 }
