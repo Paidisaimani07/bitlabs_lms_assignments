@@ -1,8 +1,6 @@
 import React from "react";
 import { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { useUserContext } from "../common/UserProvider";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useNavigate } from "react-router-dom";
 import Nagulmeera from "../../images/dashboard/mobilebanners/mentor1.png";
 import Karunakar from "../../images/dashboard/mobilebanners/karun.png";
@@ -75,7 +73,6 @@ const ApplicantDashboard = () => {
     email: "",
   };
   const [card, setCard] = useState(DEFAULT_CARD);
-  const CARD_API = `${apiUrl}/applicant-card`;
 
   const badgeLevels = [
     { name: "bronze", score: bronzeScore },
@@ -88,18 +85,10 @@ const ApplicantDashboard = () => {
   );
   const nextBadge = badgeLevels.find((level) => cappedScore < level.score);
 
-  let progressPercentage = 100;
-
-  if (nextBadge) {
-    progressPercentage = (cappedScore / nextBadge.score) * 100;
-    progressPercentage = Math.min(Math.max(progressPercentage, 0), 100);
-  }
-
   // Build unique key for this user's tour flag
   const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
 
   const applicantId = user.id;
-  const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
   const allLoadingDone =
     !loading &&
     !blogsLoading &&
@@ -111,9 +100,9 @@ const ApplicantDashboard = () => {
     try {
       if (!applicantId) return;
 
-      const jwtToken = localStorage.getItem("jwtToken");
-
-      const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
+      const { data } = await apiClient.get(
+        `/applicant-card/${applicantId}/getApplciantCard`,
+      );
 
       // Map only fields you want into your CARD object
       const mappedCard = {
@@ -143,16 +132,12 @@ const ApplicantDashboard = () => {
 
     const checkTourStatus = async () => {
       try {
-        const jwt = localStorage.getItem("jwtToken");
         const localSeen = safeGet(TOUR_KEY);
         if (localSeen === "true") {
           console.debug("[TOUR] Already seen locally.");
           return;
         }
-        const res = await apiClient.get(
-          `/applicant/${user.id}/tour-seen`,
-          
-        );
+        const res = await apiClient.get(`/applicant/${user.id}/tour-seen`);
 
         const seen = res?.data?.seen === true;
         console.debug("[TOUR] Server response:", seen);
@@ -182,9 +167,8 @@ const ApplicantDashboard = () => {
   const fetchDashboardScore = async (id) => {
     if (!id) return setDashboardScore(0);
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
       const { data: scoreRes } = await apiClient.get(
-        `/applicant-scores/applicant/${id}/getApplicantScoreDetails`
+        `/applicant-scores/applicant/${id}/getApplicantScoreDetails`,
       );
 
       console.debug("Dashboard raw score response:", scoreRes);
@@ -240,15 +224,8 @@ const ApplicantDashboard = () => {
     }
 
     try {
-      const jwt = localStorage.getItem("jwtToken");
-
-      await axios.post(`${apiUrl}/applicant/${user.id}/tour-seen`, null, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
-
+      await apiClient.post(`/applicant/${user.id}/tour-seen`);
       safeSet(TOUR_KEY, "true");
-
-      console.debug("[TOUR] Tour marked as seen.");
     } catch (error) {
       console.warn("[TOUR] Failed to mark tour as seen on server:", error);
       safeSet(TOUR_KEY, "true");
@@ -258,34 +235,33 @@ const ApplicantDashboard = () => {
   };
 
   useEffect(() => {
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const imageUrl = URL.createObjectURL(blob);
-        setImageSrc(imageUrl);
-      })
-      .catch(() => {
+    let objectUrl;
+
+    const fetchImage = async () => {
+      try {
+        const res = await apiClient.get(
+          `/applicant-image/getphoto/${user.id}`,
+          { responseType: "blob" },
+        );
+
+        objectUrl = URL.createObjectURL(res.data);
+        setImageSrc(objectUrl);
+      } catch {
         setImageSrc("../images/user/avatar/image-01.jpg");
-      });
-  }, [user.id]);
+      }
+    };
+
+    if (user?.id) fetchImage();
+
+    return () => objectUrl && URL.revokeObjectURL(objectUrl);
+  }, [user?.id]);
 
   useEffect(() => {
     const fetchHiredCount = async () => {
       try {
-        const token = localStorage.getItem("jwtToken");
-        const response = await axios.get(`${apiUrl}/api/hiredCount/1`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log("Hired Count Response:", response.data);
+        const response = await apiClient.get(`/api/hiredCount/1`);
 
         setHiredCount(response.data);
-        console.log("hired count", hiredCount);
       } catch (error) {
         console.error("Error fetching hired count:", error);
       }
@@ -308,14 +284,8 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const checkUserProfile = async () => {
       try {
-        const jwtToken = localStorage.getItem("jwtToken");
-        const profileIdResponse = await axios.get(
-          `${apiUrl}/applicantprofile/${userId}/profileid`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          },
+        const profileIdResponse = await apiClient.get(
+          `/applicantprofile/${userId}/profileid`,
         );
         const profileId = profileIdResponse.data;
 
@@ -335,14 +305,8 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const jwtToken = localStorage.getItem("jwtToken");
-        const response = await axios.get(
-          `${apiUrl}/applicantprofile/${user.id}/profile-view`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          },
+        const profileIdResponse = await apiClient.get(
+          `/applicantprofile/${userId}/profileid`,
         );
         setProfileData(response.data);
         const newData = {
@@ -387,22 +351,9 @@ const ApplicantDashboard = () => {
   useEffect(() => {
     const fetchTestData = async () => {
       try {
-        const jwtToken = localStorage.getItem("jwtToken");
-        const response = await axios.get(
-          `${apiUrl}/applicant1/tests/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          },
-        );
-        const response1 = await axios.get(
-          `${apiUrl}/api/mentor-connect/getAllMeetings`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          },
+        const response = await apiClient.get(`/applicant1/tests/${user.id}`);
+        const response1 = await apiClient.get(
+          `/api/mentor-connect/getAllMeetings`,
         );
         setMentorConnectData(response1.data);
       } catch (error) {
@@ -419,10 +370,7 @@ const ApplicantDashboard = () => {
     const fetchBlogs = async () => {
       try {
         setBlogsLoading(true);
-        const jwt = localStorage.getItem("jwtToken");
-        const { data } = await axios.get(`${apiUrl}/blogs/active?size=3`, {
-          headers: { Authorization: `Bearer ${jwt}` },
-        });
+        const { data } = await apiClient.get(`/blogs/active?size=3`);
         setBlogs(data);
       } catch (err) {
         console.error(err);
@@ -437,11 +385,7 @@ const ApplicantDashboard = () => {
     const fetchTechBuzz = async () => {
       try {
         setTechBuzzLoading(true);
-        const jwtToken = localStorage.getItem("jwtToken");
-        const res = await axios.get(`${apiUrl}/videos/recommended/${user.id}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
-
+        const res = await apiClient.get(`/videos/recommended/${user.id}`);
         console.log(maxVideos);
         const videos = (res.data || []).slice(0, maxVideos).map((v) => ({
           videoId: v.videoId,
@@ -527,12 +471,6 @@ const ApplicantDashboard = () => {
       placement: "left",
       text: "📝 Tech Vibes — Stay updated with the latest technology news and trends. Receive notifications to keep your knowledge current and relevant.",
     },
-    // {
-    //   id: "skills",
-    //   selector: "#tour-skill-validation",
-    //   placement: "right",
-    //   text: "✅ Skill Validation — Take skill assessment tests and earn verified badges to validate your technical skills for employers."
-    // },
   ];
 
   return (

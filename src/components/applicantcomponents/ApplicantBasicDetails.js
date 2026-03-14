@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import apiClient from "../../services/apiClient";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import "react-international-phone/style.css";
@@ -369,8 +367,8 @@ const ApplicantBasicDetails = () => {
 
         while (retryCount < MAX_RETRIES) {
           try {
-            const response = await axios.put(
-              `${apiUrl}/zoho/update/${zohoUserId}`,
+            const response = await apiClient.put(
+              `/zoho/update/${zohoUserId}`,
               zohoUpdateData,
             );
 
