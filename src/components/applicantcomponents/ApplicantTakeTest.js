@@ -4,11 +4,10 @@ import './css/ApplicantTakeTest.css';
 import Alibaba from '../../images/ZumZum.png';
 import TestExitPopup from './TestExitPopup';
 import TestTimeUp from './TestTimeUp';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import TestPassAcknowledgment from './TestPassAcknowledgment';
 import TestFailAcknowledgment from './TestFailAcknowledgment';
-import axios from 'axios';
 
 
 const shuffleArray = (array) => {
@@ -54,12 +53,7 @@ useEffect(() => {
  useEffect(() => {
  
 const fetchQuestion = async() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    const response = await axios.get(`${apiUrl}/test/getTestByName/${testName}`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+    const response = await apiClient.get(`/test/getTestByName/${testName}`);
         const data = response.data;
         setQuestions(data);
         if(testName === 'General Aptitude Test'){
@@ -391,11 +385,7 @@ const fetchQuestion = async() => {
     };
 
     const zohoUserId = sessionStorage.getItem('zohoUserId');
-    const response = await axios.put(`${apiUrl}/zoho/update/${zohoUserId}`, zohoPayload, {
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
+    const response = await apiClient.put(`/zoho/update/${zohoUserId}`, zohoPayload);
     if (response.status === 200 || response.status === 201) {
       console.log("Zoho API updated successfully", response.data);
     } else {

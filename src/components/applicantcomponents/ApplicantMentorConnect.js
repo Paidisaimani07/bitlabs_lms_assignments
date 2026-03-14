@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
-import { useUserContext } from "../common/UserProvider";
+import apiClient from "../../services/apiClient";
 import Snackbar from '../common/Snackbar';
 import analytics from "../../utils/analytics"; 
 // Fallback images
@@ -30,10 +28,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
 
   const fetchMeetings = async (signal) => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-      const resp = await axios.get(`${apiUrl}/api/mentor-connect/getAllMeetings`, {
-        headers,
+      const resp = await apiClient.get(`/api/mentor-connect/getAllMeetings`, {
         signal,
       });
 
@@ -44,7 +39,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
           ? payload.items
           : [];
     } catch (err) {
-      if (!axios.isCancel(err)) {
+      if (err.name !== 'AbortError') {
         console.error("MentorConnect fetch error:", err);
         throw new Error("Failed to fetch sessions. Please try again.");
       }
@@ -55,11 +50,8 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
   const fetchRegisteredMeetings = async () => {
     if (!user?.id) return [];
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-      const response = await axios.get(
-        `${apiUrl}/api/mentor-connect/applicant/getAllRegisteredMentorConnects/${user.id}`,
-        { headers }
+      const response = await apiClient.get(
+        `/api/mentor-connect/applicant/getAllRegisteredMentorConnects/${user.id}`
       );
       if (typeof response.data === "string") {
         const match = response.data.match(/\[(.*?)\]/);
@@ -82,12 +74,9 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
 
     setIsRegistering(prev => ({ ...prev, [meetingId]: true }));
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const headers = jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {};
-      await axios.post(
-        `${apiUrl}/api/mentor-connect/registerMentorConnect/${meetingId}/applicant/${user.id}`,
-        {},
-        { headers }
+      await apiClient.post(
+        `/api/mentor-connect/registerMentorConnect/${meetingId}/applicant/${user.id}`,
+        {}
       );
 
       const registered = await fetchRegisteredMeetings();
@@ -123,7 +112,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
         setRegisteredMeetings(registered);
         setError(null);
       } catch (err) {
-        if (!axios.isCancel(err)) {
+        if (err.name !== 'AbortError') {
           setError(err.message || "Failed to load data");
           setMeetings([]);
         }

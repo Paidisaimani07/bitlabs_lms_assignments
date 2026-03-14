@@ -1,11 +1,8 @@
 // src/components/applicant/BasicDetailsEditPopup.jsx
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Snackbar from "../common/Snackbar";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useRefresh } from "../common/RefreshContext";
-const CARD_API = `${apiUrl}/applicant-card`;
-
 const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
   const [form, setForm] = useState({
     name: initial?.name || "",
@@ -107,12 +104,7 @@ const BasicDetailsEditPopup = ({ initial, applicantId, onSuccess }) => {
         address: form.address.trim()
       };
 
-      await axios.put(`${CARD_API}/${applicantId}/updateApplicantCard`, payload, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await apiClient.put(`/applicant-card/${applicantId}/updateApplicantCard`, payload);
       triggerRefresh();
       addSnackbar({ message: "Personal details updated successfully!", type: "success" });
       onSuccess?.();
