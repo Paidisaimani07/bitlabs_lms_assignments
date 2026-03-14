@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useNavigate, useLocation } from "react-router-dom";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
@@ -184,7 +184,7 @@ function JobListSection({ tab, userId, jwt, setSelectedJobId, addSnackbar }) {
     setLoading(true);
     try {
       // count
-      const c = await axios.get(countUrl, { headers });
+      const c = await apiClient.get(countUrl);
       const total = Number(c.data || 0);
       const tp = Math.max(1, Math.ceil(total / size));
       setTotalPages(tp);
@@ -192,7 +192,7 @@ function JobListSection({ tab, userId, jwt, setSelectedJobId, addSnackbar }) {
       if (page > tp) setPage(tp);
 
       // list
-      const res = await axios.get(listUrl, { headers });
+      const res = await apiClient.get(listUrl);
       setJobs(Array.isArray(res.data) ? res.data : []);
     } catch (e) {
       console.error("Error loading jobs", e);
@@ -215,7 +215,7 @@ function JobListSection({ tab, userId, jwt, setSelectedJobId, addSnackbar }) {
 
   const handleSave = async (jobId) => {
     try {
-      await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, null, { headers });
+      await apiClient.post(`/savedjob/applicants/savejob/${userId}/${jobId}`, null);
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
       addSnackbar({
         message: "Job saved successfully.",
@@ -231,7 +231,7 @@ function JobListSection({ tab, userId, jwt, setSelectedJobId, addSnackbar }) {
 
   const handleRemove = async (jobId) => {
     try {
-      await axios.delete(`${apiUrl}/savedjob/applicants/deletejob/${userId}/${jobId}`, { headers });
+      await apiClient.delete(`/savedjob/applicants/deletejob/${userId}/${jobId}`);
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
       addSnackbar({ message: "Job removed successfully.", type: "success" });
     } catch (e) {
@@ -302,9 +302,9 @@ export default function MyJobs({ setSelectedJobId }) {
     const loadCounts = async () => {
       try {
         const [r, a, s] = await Promise.all([
-          axios.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, { headers }),
-          axios.get(`${apiUrl}/applyjob/countAppliedJobs/${userId}`, { headers }),
-          axios.get(`${apiUrl}/savedjob/countSavedJobs/${userId}`, { headers }),
+          apiClient.get(`/recommendedjob/countRecommendedJobsForApplicant/${userId}`),
+          apiClient.get(`/applyjob/countAppliedJobs/${userId}`),
+          apiClient.get(`/savedjob/countSavedJobs/${userId}`),
         ]);
         setCounts({
           recommended: Number(r.data || 0),
@@ -316,7 +316,7 @@ export default function MyJobs({ setSelectedJobId }) {
       }
     };
     loadCounts();
-  }, [userId, headers]);
+  }, [userId]);
 
   return (
     <div className="dashboard__content">
