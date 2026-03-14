@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import axios from  'axios';
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import Spinner from "../common/Spinner";
 import Snackbar from "../common/Snackbar";
@@ -36,12 +35,10 @@ const fetchJobs = async (pageNum = 0, profileId = profileid1) => {
   try {
     const url =
       profileId === 0
-        ? `${apiUrl}/job/promote/${userId}/yes`
-        : `${apiUrl}/recommendedjob/findrecommendedjob/${userId}?page=${pageNum}&size=${size}`;
+        ? `/job/promote/${userId}/yes`
+        : `/recommendedjob/findrecommendedjob/${userId}?page=${pageNum}&size=${size}`;
 
-    const response = await axios.get(url, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+    const response = await apiClient.get(url);
 
     const newJobs = response.data;
     
@@ -68,9 +65,7 @@ const fetchProfileId = async () => {
   if (profileid1) return; // Prevent re-fetching if profileId is already set
 
   try {
-    const profileRes = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+    const profileRes = await apiClient.get(`/applicantprofile/${userId}/profileid`);
     setProfileId(profileRes.data); // Set profile ID
     fetchJobCount(); // Fetch the total job count after setting profile ID
     fetchJobs(0, profileRes.data); // Fetch the first page of jobs
@@ -82,9 +77,7 @@ const fetchProfileId = async () => {
 // Fetch total job count
 const fetchJobCount = async () => {
   try {
-    const response = await axios.get(`${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`, {
-      headers: { Authorization: `Bearer ${jwtToken}` },
-    });
+    const response = await apiClient.get(`/recommendedjob/countRecommendedJobsForApplicant/${userId}`);
     const count = response.data;
     setTotalJobCount(count);
     setTotalPages(Math.ceil(count / size)); // Calculate total pages
@@ -118,9 +111,7 @@ const handlePageClick = (pageNum) => {
 
   const handleSaveJob = async (jobId) => {
     try {
-      await axios.post(`${apiUrl}/savedjob/applicants/savejob/${userId}/${jobId}`, null, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      await apiClient.post(`/savedjob/applicants/savejob/${userId}/${jobId}`);
   
       // Remove the job from the UI without reloading
       setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
