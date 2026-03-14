@@ -1,13 +1,12 @@
 // src/components/applicant/KeySkillsCard.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import KeySkillsEditPopup from "./KeySkillsEditPopup";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useResume } from "./ResumeContext";
 
-const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
+const SKILLS_API = (id) => `/applicantprofile/${id}/skills`;
 
 const KeySkillsCard = ({ applicantId, onLoaded, showContent }) => {
   const { setProfileData } = useResume();
@@ -18,10 +17,7 @@ const KeySkillsCard = ({ applicantId, onLoaded, showContent }) => {
 
   const fetchSkills = async () => {
     try {
-      const jwt = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(SKILLS_API(applicantId), {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      const { data } = await apiClient.get(SKILLS_API(applicantId));
       setSkills(Array.isArray(data) ? data : []);
     } catch (e) {
       // keep empty; show friendly help text on UI

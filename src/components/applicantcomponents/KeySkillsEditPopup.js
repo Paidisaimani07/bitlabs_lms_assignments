@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useRefresh } from "../common/RefreshContext";
 
-const SKILLS_API = (id) => `${apiUrl}/applicantprofile/${id}/skills`;
+const SKILLS_API = (id) => `/applicantprofile/${id}/skills`;
 
 const normalize = (s = "") => s.trim().replace(/\s+/g, " ");
 
@@ -145,17 +144,7 @@ const KeySkillsEditPopup = ({
     }
     setSaving(true);
     try {
-      const jwt = localStorage.getItem("jwtToken");
-      await axios.put(
-        SKILLS_API(applicantId),
-        { skills },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await apiClient.put(SKILLS_API(applicantId), { skills });
       triggerRefresh();
       onSaved?.();
       onClose?.();

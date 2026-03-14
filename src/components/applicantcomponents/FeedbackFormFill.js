@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
@@ -25,15 +24,9 @@ const FeedbackFormFill = () => {
     const fetchFormDetails = async () => {
       try {
         setLoading(true);
-        const jwtToken = localStorage.getItem('jwtToken');
 
-        const response = await axios.get(
-          `${apiUrl}/api/feedbackforms/getfeedbackFormById/${formId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
+        const response = await apiClient.get(
+          `/api/feedbackforms/getfeedbackFormById/${formId}`
         );
 
         setFormDetails(response.data);
@@ -161,22 +154,15 @@ const FeedbackFormFill = () => {
     }
 
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
       const answers = Object.keys(formData).map((questionKey, index) => ({
         answer: formData[questionKey],
         questionKey: questionKey,
         questionNumber: index + 1
       }));
 
-      await axios.post(
-        `${apiUrl}/api/feedbackform/${formId}/saveApplicantResponse/${applicantId}`,
-        answers,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json',
-          },
-        }
+      await apiClient.post(
+        `/api/feedbackform/${formId}/saveApplicantResponse/${applicantId}`,
+        answers
       );
 
       setShowSuccessPopup(true);
