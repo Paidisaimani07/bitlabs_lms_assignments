@@ -5,6 +5,7 @@ import { apiUrl } from '../../services/ApplicantAPIService';
 const clearUserData = () => {
   try {
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     localStorage.removeItem('userType');
   } catch (error) {

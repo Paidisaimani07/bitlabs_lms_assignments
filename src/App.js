@@ -57,8 +57,7 @@ function App() {
   useEffect(() => {
     const jwtToken = localStorage.getItem('jwtToken');
     if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      delete axios.defaults.headers.common['Authorization'];
+      // axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
       setIsLoggedIn(true);
     }
     setCheckingAuth(false);
@@ -174,7 +173,7 @@ function App() {
 
                   </>
                 ) : (
-                  <Route path="/login" element={<Navigate to="/login" />} />
+                  <Route path="*" element={<Navigate to="/candidate" />} />
                 )}
                 <Route path="/logout" element={<Logout onLogout={handleLogout} />} />
               </Routes>

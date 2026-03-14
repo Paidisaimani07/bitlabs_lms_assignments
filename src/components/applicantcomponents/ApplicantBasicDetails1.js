@@ -1,11 +1,7 @@
 import React, { useState,useEffect } from 'react';
-import axios from 'axios';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
-import { useNavigate } from 'react-router-dom';
-import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { ClipLoader } from 'react-spinners';
 import './ApplicantBasicDetails.css';
@@ -32,20 +28,7 @@ const handleResumeSelect = (e) => {
       };
       const handleResumeUpload = async () => {
         try {
-          const jwtToken = localStorage.getItem('jwtToken');
-          const formData = new FormData();
-          formData.append('resume', resumeFile);
-          const response = await axios.post(
-            `${apiUrl}/resume/upload/${user.id}
-            
-            `,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
-          );
+         const response = await apiClient.post(`/resume/upload/${user.id}`,formData);
           console.log(response.data);
           window.alert(response.data);
           window.location.reload();
@@ -93,8 +76,7 @@ const handleResumeSelect = (e) => {
         const fetchData = async () => {
           try {
             
-            const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
-   
+              const response = await apiClient.get(`/applicant/getApplicantById/${user.id}`);   
           
             const newData = {
               identifier: response.data.email,

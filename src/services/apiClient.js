@@ -1,6 +1,7 @@
 import axios from "axios";
 import { apiUrl } from "./ApplicantAPIService.js";
 
+// Create an Axios instance with default configuration
 const apiClient = axios.create({
   baseURL: apiUrl,
   headers: {
@@ -11,126 +12,54 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
-let refreshSubscribers = [];
-
-// -----------------------------------
-// Add subscribers (pending requests)
-// -----------------------------------
-const subscribeTokenRefresh = (callback) => {
-  refreshSubscribers.push(callback);
-};
-
-// -----------------------------------
-// Notify all subscribers with new token
-// -----------------------------------
-const onRefreshed = (token) => {
-  refreshSubscribers.forEach((callback) => callback(token));
-  refreshSubscribers = [];
-};
-
-// -----------------------------------
-// REQUEST INTERCEPTOR
-// -----------------------------------
+// Request interceptor to add JWT token to headers
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("jwtToken");
-
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const jwtToken = localStorage.getItem("jwtToken"); 
+    if (jwtToken) {
+      config.headers.Authorization = `Bearer ${jwtToken}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error)
 );
 
-// -----------------------------------
-// RESPONSE INTERCEPTOR
-// -----------------------------------
 apiClient.interceptors.response.use(
-  (response) => response,
-
-  async (error) => {
+  response => response, 
+  async error => {
     const originalRequest = error.config;
 
-    if (!originalRequest) {
-      return Promise.reject(error);
-    }
-
-    // only handle 401
-    if (error.response?.status === 401 && !originalRequest._retry) {
-
-      const refreshToken = localStorage.getItem("refreshToken");
-
-      if (!refreshToken) {
-        localStorage.clear();
-        window.location.replace("/candidate");
-        return Promise.reject(error);
-      }
-
-      // -----------------------------
-      // If refresh already running
-      // -----------------------------
-      if (isRefreshing) {
-
-        return new Promise((resolve) => {
-          subscribeTokenRefresh((token) => {
-
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-
-            resolve(apiClient(originalRequest));
-
-          });
-        });
-
-      }
-
+    // Check if the error is due to an unauthorized access 
+    if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      isRefreshing = true;
-
       try {
+        const refreshToken = localStorage.getItem('refreshToken'); 
+        console.log('Attempting to refresh token with refresh token:', refreshToken);
+        // Make a request to your auth server to refresh the token.
+        const response = await axios.post(`${apiUrl}/applicant/refreshToken`, {
+          token: refreshToken,
+        });
+        const { jwt:accessToken, refreshToken: newRefreshToken } = response.data.data;
 
-        const response = await axios.post(
-          `${apiUrl}/auth/refreshToken`,
-          { token: refreshToken }
-        );
 
-        const newToken = response.data.data.jwt;
-        const newRefreshToken = response.data.data.refreshToken;
+        // Store the new access and refresh tokens.
+        localStorage.setItem('jwtToken', accessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
 
-        // save tokens
-        localStorage.setItem("jwtToken", newToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
-
-        // update default header
-        apiClient.defaults.headers.Authorization = `Bearer ${newToken}`;
-
-        // notify waiting requests
-        onRefreshed(newToken);
-
-        // retry original request
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-        return apiClient(originalRequest);
-
-      } catch (err) {
-
-        localStorage.clear();
-        window.location.replace("/candidate");
-
-        return Promise.reject(err);
-
-      } finally {
-
-        isRefreshing = false;
-
+        // Update the authorization header with the new access token.
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        return apiClient(originalRequest); 
+        
+      } catch (refreshError) {
+        // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
+        console.error('Token refresh failed:', refreshError);
+        localStorage.removeItem('jwtToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/candidate'; 
+        return Promise.reject(refreshError);
       }
-
     }
-
-    return Promise.reject(error);
-
+    return Promise.reject(error); 
   }
 );
 
