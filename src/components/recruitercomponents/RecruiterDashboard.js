@@ -50,12 +50,8 @@ function RecruiterDashboard() {
     }, [user.id]); 
 
     useEffect(() => {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-      axios
-          .get(`${apiUrl}/job/recruiterscountinactivejobs/${user.id}`)
+      apiClient
+          .get(`/job/recruiterscountinactivejobs/${user.id}`)
           .then((response) => {
               setInActiveCountJobs(response.data);
           })
@@ -65,12 +61,8 @@ function RecruiterDashboard() {
   }, [user.id]); 
 
     useEffect(() => {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
-        axios
-            .get(`${apiUrl}/applyjob/recruiters/applyjobapplicantscount/${user.id}`)
+        apiClient
+            .get(`/applyjob/recruiters/applyjobapplicantscount/${user.id}`)
             .then((response) => {
                 setJobApplicants(response.data);
             })
@@ -80,12 +72,8 @@ function RecruiterDashboard() {
     }, [user.id]);
 
     useEffect(() => {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
-        axios
-            .get(`${apiUrl}/applyjob/recruiters/selected/count`)
+        apiClient
+            .get(`/applyjob/recruiters/selected/count`)
             .then((response) => {
                 setJobHires(response.data);
             })
@@ -102,12 +90,8 @@ function RecruiterDashboard() {
       }, []);
 
       useEffect(() => {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
-        axios
-        .get(`${apiUrl}/applyjob/recruiter/${user.id}/interviews/Interviewing`)
+        apiClient
+        .get(`/applyjob/recruiter/${user.id}/interviews/Interviewing`)
           .then((response) => {
             setApplicants(response.data);
           })

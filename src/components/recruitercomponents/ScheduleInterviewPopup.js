@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { Modal, Form } from "react-bootstrap";
  
  
@@ -298,10 +297,10 @@ const ScheduleInterviewPopup = ({ show, handleClose, handleAddTeamMember, applyj
       Authorization: `Bearer ${jwtToken}`,
       'Content-Type': 'application/json',
     };
- 
- 
-    axios
-      .post(`${apiUrl}/applyjob/scheduleInterview/${applyjobid}`, interviewData, { headers })
+
+
+    apiClient
+      .post(`/applyjob/scheduleInterview/${applyjobid}`, interviewData)
       .then((response) => {
         console.log('API Response:', response.data);
         window.alert('Interview schedule has been done');
