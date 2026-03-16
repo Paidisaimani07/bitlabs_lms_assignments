@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import './MentorRating.css';
 
@@ -20,14 +19,8 @@ const MentorRating = () => {
         const fetchMentorsAction = async () => {
             try {
                 setLoading(true);
-                const jwtToken = localStorage.getItem('jwtToken');
-                const response = await axios.get(
-                    `${apiUrl}/api/feedbackforms/getAllMentorNamesAndCollegeNames`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${jwtToken}`,
-                        },
-                    }
+                const response = await apiClient.get(
+                    `/api/feedbackforms/getAllMentorNamesAndCollegeNames`
                 );
 
                 setMentorsData(response.data || {});
@@ -91,9 +84,8 @@ const MentorRating = () => {
 
             // Fetch Overall Rating
             try {
-                const overallRes = await axios.get(
-                    `${apiUrl}/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor`,
-                    { headers }
+                const overallRes = await apiClient.get(
+                    `/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor`
                 );
                 // Handle both number and object responses
                 overallRating = typeof overallRes.data === 'object' ? (overallRes.data.rating || 0) : overallRes.data;
@@ -104,9 +96,8 @@ const MentorRating = () => {
             // Fetch Particular College Rating
             if (college !== "All") {
                 try {
-                    const collegeRes = await axios.get(
-                        `${apiUrl}/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?collegeName=${encodedCollege}`,
-                        { headers }
+                    const collegeRes = await apiClient.get(
+                        `/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?collegeName=${encodedCollege}`
                     );
                     collegeRating = typeof collegeRes.data === 'object' ? (collegeRes.data.rating || 0) : collegeRes.data;
                 } catch (err) {
@@ -121,10 +112,10 @@ const MentorRating = () => {
                 try {
                     // If college is "All", we omit collegeName to get ratings across all colleges
                     const categoryUrl = college === "All"
-                        ? `${apiUrl}/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?category=${category}`
-                        : `${apiUrl}/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?collegeName=${encodedCollege}&category=${category}`;
+                        ? `/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?category=${category}`
+                        : `/api/feedbackform/mentor/${encodedName}/calculateRatingOfMentor?collegeName=${encodedCollege}&category=${category}`;
 
-                    const categoryRes = await axios.get(categoryUrl, { headers });
+                    const categoryRes = await apiClient.get(categoryUrl);
                     categoryRating = categoryRes.data;
                 } catch (err) {
                     console.error('Error fetching category rating:', err);

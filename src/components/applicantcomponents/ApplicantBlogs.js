@@ -96,11 +96,8 @@ export default function ApplicantBlogs() {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const res = await axios.get(
+      const res = await apiClient.get(
         `/blogs/getBlogsById/${blog.id}/${applicantId}`,
-        {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        },
       );
 
       setSelected(res.data);

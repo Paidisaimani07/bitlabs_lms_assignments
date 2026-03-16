@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import apiClient from "../../../services/apiClient";
 import { useNavigate } from "react-router-dom";
 
 import "../../../stylesheets/dashboard.css";
@@ -12,7 +12,6 @@ import Overlay from "./Overlay";
 import JobDescriptionModal from "./JobDescriptionModel";
 import resumeBackButton from "./resume-back-button.png";
 import { useEffect } from "react";
-import { apiUrl } from "../../../services/ApplicantAPIService";
 
 const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -35,23 +34,15 @@ const applicantId = user?.id;
       // open loader
       setIsOpen(true);
 
-      const jwt = localStorage.getItem("jwtToken");
-
-      // actual API call
-      const response = await axios.post(
-        `${apiUrl}/api/resume/download/resume`,
-        // "http://localhost:8081/api/resume/download/resume",
+      const response = await apiClient.post(
+        "/api/resume/download/resume",
         {
           applicantId: applicantId,
           resumeVersion: selectedTemplate,
           jd: resumeState.jobDescription || "",
         },
         {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            "Content-Type": "application/json",
-          },
-          responseType: "blob", 
+          responseType: "blob",
         }
       );
 
