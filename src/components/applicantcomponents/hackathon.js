@@ -113,12 +113,12 @@ const Hackathon = () => {
  
     const getApiUrlByTab = (tabKey) => {
         switch (tabKey) {
-            case "RECOMMENDED": return `${apiUrl}/api/hackathons/recommended/${userId}`;
-            case "ACTIVE": return `${apiUrl}/api/hackathons/active`;
-            case "UPCOMING": return `${apiUrl}/api/hackathons/upcoming`;
-            case "COMPLETED": return `${apiUrl}/api/hackathons/completed`;
+            case "RECOMMENDED": return `/api/hackathons/recommended/${userId}`;
+            case "ACTIVE": return `/api/hackathons/active`;
+            case "UPCOMING": return `/api/hackathons/upcoming`;
+            case "COMPLETED": return `/api/hackathons/completed`;
             case "MY":
-            default: return `${apiUrl}/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
+            default: return `/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
         }
     };
  
@@ -217,9 +217,8 @@ const Hackathon = () => {
  
     const fetchRegistrations = async () => {
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
             const response = await apiClient.get(
-                `${apiUrl}/hackathons/${userId}/getAllRegistrationStatus`,
+                `/hackathons/${userId}/getAllRegistrationStatus`,
             );
             setRegistrations(response.data || []);
         } catch (error) {
@@ -388,7 +387,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                             { key: "MY", label: "My arenas" },
                             { key: "RECOMMENDED", label: "Picks for you" },
                             { key: "ACTIVE", label: "In action" },
-                            { key: "UPCOMING", label: "On the horizon" },
+                            { key: "UPCOMING", label: "On the horizons" },
                             { key: "COMPLETED", label: "Past battles" },
                         ].map(tab => (
                             <button
