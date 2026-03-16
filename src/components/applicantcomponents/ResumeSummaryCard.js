@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Snackbar from "../common/Snackbar";
 import ResumeSummaryEditPopup from "./ResumeSummaryEditPopup";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { useResume } from "./ResumeContext";
 
-const SUMMARY_API = `${apiUrl}/applicant-summary`;
+const SUMMARY_API = "/applicant-summary";
 
 // Help text (shown only if summary is NULL or empty)
 const HELP_TEXT =
@@ -27,10 +26,7 @@ const ResumeSummaryCard = ({ applicantId, onLoaded, showContent }) => {
 
   const fetchSummary = async () => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${SUMMARY_API}/${applicantId}/getApplicantSummary`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await apiClient.get(`${SUMMARY_API}/${applicantId}/getApplicantSummary`);
       setSummary((data).trim());
     } catch (e) {
       console.error("Failed to load summary:", e?.response || e);

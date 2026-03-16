@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { SkillBadgeCard } from './VerifiedBadges';
 import emptySkillImg from '../../images/skillbadge-empty-state-img.png';
@@ -16,10 +15,7 @@ const { user } = useUserContext();
   useEffect(() => {
     (async () => {
       try {
-        const jwt = localStorage.getItem('jwtToken');
-        const res = await axios.get(`${apiUrl}/skill-badges/${user.id}/skill-badges`, {
-          headers: { Authorization: `Bearer ${jwt}` },
-        });
+        const res = await apiClient.get(`/skill-badges/${user.id}/skill-badges`);
         setData(res.data || { skillsRequired: [], applicantSkillBadges: [] });
       } catch (e) {
         console.error('Failed to load skill badges', e);

@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 
-const SUMMARY_API = `${apiUrl}/applicant-summary`;
+const SUMMARY_API = "/applicant-summary";
 const MIN_LEN = 30;
 const MAX_LEN = 2000;
 
@@ -28,17 +27,9 @@ const ResumeSummaryEditPopup = ({ initialSummary = "", applicantId, onSuccess, o
     if (!canSave) return;
     setSaving(true);
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      await axios.put(
-        `${SUMMARY_API}/${applicantId}/updateApplicantSummary`,
-        { summary: trimmed },
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await apiClient.put(`${SUMMARY_API}/${applicantId}/updateApplicantSummary`, {
+        summary: trimmed,
+      });
       onSuccess?.();
     } catch (e) {
       console.error("Summary update failed:", e?.response || e);
