@@ -1,25 +1,23 @@
-// src/components/feedback/MentorConnectFeedbackForm.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import "./MentorConnectFeedbackForm.css";
-
+ 
 const MentorConnectFeedbackForm = () => {
   const { formId } = useParams();
-
+ 
   const [form, setForm] = useState(null);         // { id, fields: [...] }
   const [answers, setAnswers] = useState({});     // { [label]: value }
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loadErr, setLoadErr] = useState("");
-
+ 
   // Load form safely (default fields to [])
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const res = await axios.get(`${apiUrl}/mentorfeedback/form/${formId}`);
+        const res = await apiClient.get(`/mentorfeedback/form/${formId}`);
         if (!mounted) return;
         const data = res?.data || {};
         const fields = Array.isArray(data.fields) ? data.fields : [];
@@ -31,11 +29,11 @@ const MentorConnectFeedbackForm = () => {
     })();
     return () => { mounted = false; };
   }, [formId]);
-
+ 
   const handleChange = (label, value) => {
     setAnswers((prev) => ({ ...prev, [label]: value }));
   };
-
+ 
   // Accept JSON array options OR comma-separated
   const parseOptions = (options) => {
     if (!options) return [];
@@ -49,7 +47,7 @@ const MentorConnectFeedbackForm = () => {
       .map((s) => s.trim())
       .filter(Boolean);
   };
-
+ 
   // Client-side required validation
   const missingRequired = useMemo(() => {
     if (!form?.fields?.length) return false;
@@ -66,7 +64,7 @@ const MentorConnectFeedbackForm = () => {
     }
     return false;
   }, [answers, form]);
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (missingRequired) {
@@ -75,17 +73,15 @@ const MentorConnectFeedbackForm = () => {
     }
     try {
       setSubmitting(true);
-
+ 
       // Backend accepts empty meta; we always send strings
       const payload = {
-
+ 
         answers,
       };
-
-      await axios.post(`${apiUrl}/mentorfeedback/form/${formId}/submit`, payload, {
-        headers: { "Content-Type": "application/json" },
-      });
-
+ 
+      await apiClient.post(`/mentorfeedback/form/${formId}/submit`, payload);
+ 
       setSubmitted(true);
     } catch (err) {
       console.error("Submit error:", err?.response || err);
@@ -98,7 +94,7 @@ const MentorConnectFeedbackForm = () => {
       setSubmitting(false);
     }
   };
-
+ 
   if (loadErr) return <p className="loading-text">{loadErr}</p>;
   if (!form) return <p className="loading-text">Loading form...</p>;
   if (submitted) {
@@ -111,43 +107,43 @@ const MentorConnectFeedbackForm = () => {
       </div>
     );
   }
-
+ 
   return (
     <div className="feedback-container">
       <h2 className="feedback-title">Mentor Feedback Form</h2>
-
+ 
       <form onSubmit={handleSubmit} className="feedback-form">
         {form.fields.length === 0 && (
           <div className="empty-state">This form has no questions.</div>
         )}
-
+ 
         {form.fields.map((f, i) => (
           <div key={`${f.label}-${i}`} className="form-field">
             <label>
               {f.label} {f.required && <span className="required">*</span>}
             </label>
-
+ 
             {f.fieldType === "text" && (
               <input
                 type="text"
                 onChange={(e) => handleChange(f.label, e.target.value)}
               />
             )}
-
+ 
             {f.fieldType === "textarea" && (
               <textarea
                 rows="4"
                 onChange={(e) => handleChange(f.label, e.target.value)}
               />
             )}
-
+ 
             {f.fieldType === "number" && (
               <input
                 type="number"
                 onChange={(e) => handleChange(f.label, e.target.value)}
               />
             )}
-
+ 
             {f.fieldType === "dropdown" && (
               <select onChange={(e) => handleChange(f.label, e.target.value)} defaultValue="">
                 <option value="" disabled>
@@ -160,7 +156,7 @@ const MentorConnectFeedbackForm = () => {
                 ))}
               </select>
             )}
-
+ 
             {f.fieldType === "rating" && (
               <div className="rating">
                 {[1, 2, 3, 4, 5].map((r) => (
@@ -176,7 +172,7 @@ const MentorConnectFeedbackForm = () => {
                 ))}
               </div>
             )}
-
+ 
             {f.fieldType === "checkbox" && (
               <label className="checkbox-row">
                 <input
@@ -188,7 +184,7 @@ const MentorConnectFeedbackForm = () => {
             )}
           </div>
         ))}
-
+ 
         <button type="submit" disabled={submitting || form.fields.length === 0 || missingRequired}>
           {submitting ? "Submitting..." : "Submit Feedback"}
         </button>
@@ -196,5 +192,6 @@ const MentorConnectFeedbackForm = () => {
     </div>
   );
 };
-
+ 
 export default MentorConnectFeedbackForm;
+ 

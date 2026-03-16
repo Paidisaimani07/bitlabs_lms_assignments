@@ -429,37 +429,6 @@ const urlPattern = new RegExp(
   const triggerFileInput = () => {
     document.getElementById('tf-upload-img').click();
   };
- 
-  // Upload Photo
-  // const uploadPhoto = async () => {
-  //   if (!photoFile) {
-  //     setSnackbar({ open: true, message: 'Please select a file to upload.', type: 'error' });
-  //     return;
-  //   }
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('logoFile', photoFile);
-
-  //     const response = await axios.post(
-  //       `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const imageUrl = URL.createObjectURL(photoFile);
-  //     setImgSrc(imageUrl)
-  //     setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
-  //     fetchCompanyLogo(); // Refresh the logo
-  //   } catch (error) {
-  //     console.error('Error uploading photo:', error);
-  //     setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
-  //   }
-  // };
 
   // // Handle Snackbar Close
   const handleCloseSnackbar = () => {

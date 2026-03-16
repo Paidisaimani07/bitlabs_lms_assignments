@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../../services/ApplicantAPIService';
+import apiClient from '../../../services/apiClient';
 import { useUserContext } from '../../common/UserProvider';
 import { useNavigate, useParams } from 'react-router-dom';
 import Snackbar from '../../common/Snackbar';
 import './StaticFeedbackCreate.css'; // Reusing create styles
-
+ 
 const StaticFeedbackUpdate = () => {
     const { id: formId } = useParams();
     const { user } = useUserContext();
     const navigate = useNavigate();
     const recruiterId = user?.id;
-
+ 
     const [formData, setFormData] = useState({
         mentorName: '',
         collegeName: '',
@@ -19,24 +18,18 @@ const StaticFeedbackUpdate = () => {
         description: '',
         isActive: true
     });
-
+ 
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-
+ 
     useEffect(() => {
         const fetchFormDetails = async () => {
             try {
                 setLoading(true);
-                const jwtToken = localStorage.getItem('jwtToken');
-                const response = await axios.get(
-                    `${apiUrl}/api/feedbackforms/getfeedbackFormById/${formId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${jwtToken}`
-                        }
-                    }
+                const response = await apiClient.get(
+                    `/api/feedbackforms/getfeedbackFormById/${formId}`
                 );
                 const data = response.data;
                 setFormData({
@@ -53,12 +46,12 @@ const StaticFeedbackUpdate = () => {
                 setLoading(false);
             }
         };
-
+ 
         if (formId) {
             fetchFormDetails();
         }
     }, [formId]);
-
+ 
     const validateForm = () => {
         const newErrors = {};
         if (!formData.mentorName?.trim() || formData.mentorName?.trim().length < 3)
@@ -69,11 +62,11 @@ const StaticFeedbackUpdate = () => {
             newErrors.formName = 'Form name must be at least 3 characters';
         if (!formData.description?.trim() || formData.description?.trim().length < 3)
             newErrors.description = 'Description must be at least 3 characters';
-
+ 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
+ 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -88,25 +81,18 @@ const StaticFeedbackUpdate = () => {
             });
         }
     };
-
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
+ 
         setIsSubmitting(true);
         try {
-            const jwtToken = localStorage.getItem('jwtToken');
-            await axios.put(
-                `${apiUrl}/api/feedbackforms/recruiter/updateFeedBackFormById/${formId}`,
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
+            await apiClient.put(
+                `/api/feedbackforms/recruiter/updateFeedBackFormById/${formId}`,
+                formData
             );
-
+ 
             setSnackbar({ open: true, message: 'Feedback form updated successfully!', type: 'success' });
             setTimeout(() => {
                 navigate('/recruiter-static-feedback');
@@ -122,11 +108,11 @@ const StaticFeedbackUpdate = () => {
             setIsSubmitting(false);
         }
     };
-
+ 
     if (loading) {
         return <div className="border-style"><div className="dashboard__content"><p>Loading...</p></div></div>;
     }
-
+ 
     return (
         <div className="border-style">
             <div className="blur-border-style"></div>
@@ -140,7 +126,7 @@ const StaticFeedbackUpdate = () => {
                         <i className="fa fa-arrow-left"></i> Back To Forms
                     </button>
                 </div>
-
+ 
                 <div className="static-feedback-container">
                     <form onSubmit={handleSubmit} className="static-feedback-form">
                         <div className="form-grid">
@@ -155,7 +141,7 @@ const StaticFeedbackUpdate = () => {
                                 />
                                 {errors.mentorName && <span className="error-message">{errors.mentorName}</span>}
                             </div>
-
+ 
                             <div className="form-group">
                                 <label>College Name *</label>
                                 <input
@@ -167,7 +153,7 @@ const StaticFeedbackUpdate = () => {
                                 />
                                 {errors.collegeName && <span className="error-message">{errors.collegeName}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <label>Form Name *</label>
                                 <input
@@ -179,7 +165,7 @@ const StaticFeedbackUpdate = () => {
                                 />
                                 {errors.formName && <span className="error-message">{errors.formName}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <label>Description *</label>
                                 <textarea
@@ -191,7 +177,7 @@ const StaticFeedbackUpdate = () => {
                                 />
                                 {errors.description && <span className="error-message">{errors.description}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <div className="status-radio-group">
                                     <label className="radio-label">
@@ -217,7 +203,7 @@ const StaticFeedbackUpdate = () => {
                                 </div>
                             </div>
                         </div>
-
+ 
                         <div className="form-actions-new">
                             <button
                                 type="button"
@@ -237,7 +223,7 @@ const StaticFeedbackUpdate = () => {
                     </form>
                 </div>
             </div>
-
+ 
             {snackbar.open && (
                 <Snackbar
                     message={snackbar.message}
@@ -248,5 +234,5 @@ const StaticFeedbackUpdate = () => {
         </div>
     );
 };
-
+ 
 export default StaticFeedbackUpdate;
