@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import apiClient from "../../services/apiClient";
 import Snackbar from '../common/Snackbar';
 import analytics from "../../utils/analytics"; 
+import { useUserContext } from "../common/UserProvider";
 // Fallback images
 import DummyMentor from "../../images/mentor-dummy.png";
 import DummyBanner from "../../images/bannercard_mentor1.jpg";
