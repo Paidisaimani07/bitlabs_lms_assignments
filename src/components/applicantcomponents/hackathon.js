@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./hackathon.css";
-import { apiUrl } from "../../services/ApplicantAPIService";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
 import nosearchfound from "../../images/empty-state-images/no-search-results.png";
@@ -163,11 +162,8 @@ const Hackathon = () => {
     const fetchHackathons = async (tabKey) => {
         try {
             setLoading(true);
-            const jwtToken = localStorage.getItem("jwtToken");
 
-            const hackathonsRes = await axios.get(getApiUrlByTab(tabKey), {
-                headers: { Authorization: `Bearer ${jwtToken}` },
-            });
+            const hackathonsRes = await apiClient.get(getApiUrlByTab(tabKey));
 
             const normalized = hackathonsRes.data.map(h => ({
                 ...h,
@@ -187,10 +183,9 @@ const Hackathon = () => {
             if (tabKey === "COMPLETED" || tabKey === "MY") {
                 const winnerIds = [...new Set(normalized.map(h => h.winner).filter(Boolean))];
                 if (winnerIds.length > 0) {
-                    axios.post(
-                        `${apiUrl}/applicant-image/hackathon/winners`,
-                        winnerIds,
-                        { headers: { Authorization: `Bearer ${jwtToken}` } }
+                    apiClient.post(
+                        `/applicant-image/hackathon/winners`,
+                        winnerIds
                     )
                         .then(winnersRes => {
                             const winnersMap = {};

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './ContactStyle.css';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Snackbar from '../common/Snackbar';
 
 export default function ContacBody() {
@@ -46,11 +45,7 @@ export default function ContacBody() {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/send-message`, formData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiClient.post('/send-message', formData);
   
       if (response.status === 200) {
         

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../services/ApplicantAPIService';
+import apiClient from '../services/apiClient';
 import { Link } from 'react-router-dom'; // Import Link component
 
 const JobWidget = () => {
@@ -12,7 +11,7 @@ const JobWidget = () => {
     const fetchJobs = async () => {
       try {
         // API call without JWT token
-        const recommendedJobsResponse = await axios.get(`${apiUrl}/getAllJobs`);
+        const recommendedJobsResponse = await apiClient.get('/getAllJobs');
         // Update job data state
         setJobs(recommendedJobsResponse.data);
       } catch (error) {

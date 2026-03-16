@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import './RecruiterHackathonCreate.css';
 import '../applicantcomponents/hackathonDetails.css';
 
@@ -95,16 +94,12 @@ Your submission will be judged on innovation, functionality, code quality, scala
         setError('');
         setSubmitting(true);
         try {
-            const jwtToken = localStorage.getItem('jwtToken');
-            if (jwtToken) {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-            }
             const payload = {
                 ...form,
                 recruiterId: user?.id,
                 eligibility: (form.eligibility && form.eligibility.trim().length > 0) ? form.eligibility : 'All',
             };
-            await axios.post(`${apiUrl}/recruiter/hackathons/createHackathon`, payload);
+            await apiClient.post('/recruiter/hackathons/createHackathon', payload);
             navigate('/recruiter-hackathons');
         } catch (e) {
             setError(e?.response?.data?.message || 'Failed to create hackathon');

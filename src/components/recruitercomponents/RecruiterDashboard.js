@@ -1,8 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
 import { Link, useLocation } from 'react-router-dom';
 import Postjobimg from '../../images/user/avatar/Postjobimg.png';
@@ -40,12 +39,8 @@ function RecruiterDashboard() {
     }, []);
 
     useEffect(() => {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
-        axios
-            .get(`${apiUrl}/job/recruiterscountjobs/${user.id}`)
+        apiClient
+            .get(`/job/recruiterscountjobs/${user.id}`)
             .then((response) => {
                 setActiveCountJobs(response.data);
             })
