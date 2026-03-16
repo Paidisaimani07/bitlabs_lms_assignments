@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import BackButton from "../common/BackButton";
 import "./RecruiterHackathonViewRegistrations.css";

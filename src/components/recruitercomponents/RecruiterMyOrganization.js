@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
 import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Snackbar from '../common/Snackbar';
 import $ from 'jquery';
  
@@ -215,16 +215,9 @@ function RecruiterMyOrganization() {
             headOffice,
             aboutCompany,
           };
-          const response = await fetch(`${apiUrl}/companyprofile/recruiters/company-profiles/${user.id}`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(requestData),
-          });
+          const response = await apiClient.post(`/companyprofile/recruiters/company-profiles/${user.id}`, requestData);
           if (response.status === 200) {
-            const responseData = await response.text();
+            const responseData = response.data;
             console.log('Success:', responseData);
             if (responseData === 'CompanyProfile was already updated.') {
              
@@ -299,13 +292,12 @@ function RecruiterMyOrganization() {
         const formData = new FormData();
         formData.append('logoFile', photoFile);
    
-        const response = await axios.post(
-          `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
+        const response = await apiClient.post(
+          `/recruiters/companylogo/upload/${user.id}`,
           formData,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${jwtToken}`,
             },
           }
         );
@@ -345,14 +337,11 @@ function RecruiterMyOrganization() {
       if ($.cookie("isButtonActive") == 1) {
         $("body").addClass("sidebar-enable show-job");
       }
-      fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
+      apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
+        responseType: 'blob',
       })
-        .then(response => response.blob())
-        .then(blob => {
-          const imageUrl = URL.createObjectURL(blob);
+        .then(response => {
+          const imageUrl = URL.createObjectURL(response.data);
           setImageSrc(imageUrl);
         })
         .catch(error => {

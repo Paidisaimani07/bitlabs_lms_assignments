@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { Link, useLocation } from 'react-router-dom';
 import { apiUrl } from '../../services/ApplicantAPIService';
@@ -27,7 +27,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   const fetchActiveJobs = async () => {
     try {
       setLoading(true);
-      const activeJobsResponse = await axios.get(`${apiUrl}/job/${user.id}/active`);
+      const activeJobsResponse = await apiClient.get(`/job/${user.id}/active`);
       const sortedActiveJobs = activeJobsResponse.data.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
       setJobs(sortedActiveJobs);
       setLoading(false);
@@ -40,7 +40,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   const getInactiveJobs = async () => {
     try {
       setLoading(true);
-      const inactiveJobsResponse = await axios.get(`${apiUrl}/job/${user.id}/inactive`);
+      const inactiveJobsResponse = await apiClient.get(`/job/${user.id}/inactive`);
       const sortedInactiveJobs = inactiveJobsResponse.data.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
       setJobs(sortedInactiveJobs);
       setLoading(false);

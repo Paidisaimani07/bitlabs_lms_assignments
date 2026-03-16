@@ -5,15 +5,15 @@ import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
 import nosearchfound from "../../images/empty-state-images/no-search-results.png";
 import analytics from "../../utils/analytics";
-
+ 
 const TechTags = ({ skills }) => {
     const containerRef = useRef(null);
     const [hiddenCount, setHiddenCount] = useState(0);
     const [visibleTags, setVisibleTags] = useState([]);
-
+ 
     const updateVisibleTags = useCallback(() => {
         if (!containerRef.current || !skills) return;
-
+ 
         const container = containerRef.current;
         const tags = skills.split(',').map(tag => tag.trim());
         
@@ -22,7 +22,7 @@ const TechTags = ({ skills }) => {
         tempContainer.style.position = 'absolute';
         tempContainer.style.display = 'inline-block';
         document.body.appendChild(tempContainer);
-
+ 
         const tagElements = tags.map((tag, index) => {
             const el = document.createElement('span');
             el.className = 'tech-tag';
@@ -31,13 +31,13 @@ const TechTags = ({ skills }) => {
             tempContainer.appendChild(el);
             return el;
         });
-
+ 
         const containerWidth = container.offsetWidth;
         let totalWidth = 0;
         let visibleCount = 0;
         const PADDING = 8;
-        const MORE_TAG_WIDTH = 40; 
-
+        const MORE_TAG_WIDTH = 40;
+ 
         for (let i = 0; i < tagElements.length; i++) {
             const tagWidth = tagElements[i].offsetWidth + PADDING;
             if (totalWidth + tagWidth + (i < tagElements.length - 1 ? MORE_TAG_WIDTH : 0) <= containerWidth) {
@@ -47,20 +47,20 @@ const TechTags = ({ skills }) => {
                 break;
             }
         }
-
+ 
         if (visibleCount < tags.length && visibleCount > 0) {
             const lastTagWidth = tagElements[visibleCount - 1].offsetWidth + PADDING;
             if (totalWidth + MORE_TAG_WIDTH > containerWidth) {
                 visibleCount--;
             }
         }
-
+ 
         setHiddenCount(Math.max(0, tags.length - visibleCount));
         setVisibleTags(tags.slice(0, visibleCount));
-
+ 
         document.body.removeChild(tempContainer);
     }, [skills]);
-
+ 
     useEffect(() => {
         updateVisibleTags();
         const resizeObserver = new ResizeObserver(updateVisibleTags);
@@ -71,9 +71,9 @@ const TechTags = ({ skills }) => {
             resizeObserver.disconnect();
         };
     }, [updateVisibleTags]);
-
+ 
     if (!skills) return null;
-
+ 
     return (
         <div className="tech-tags" ref={containerRef}>
             {visibleTags.map((tech, index) => (
@@ -89,7 +89,7 @@ const TechTags = ({ skills }) => {
         </div>
     );
 };
-
+ 
 const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
     const [registrations, setRegistrations] = useState([]);
@@ -102,7 +102,7 @@ const Hackathon = () => {
     const { user } = useUserContext();
     const userId = user.id;
     const navigate = useNavigate();
-
+ 
     const emptyMessages = {
         MY: "Looks like you’re not in any hackathons — tap the button and discover exciting ones now!",
         RECOMMENDED: "No perfect match found? No worries — dive into other hackathons and keep the momentum going",
@@ -110,7 +110,7 @@ const Hackathon = () => {
         UPCOMING: "Looks like nothing’s coming up soon — see which hackathons are active now!",
         COMPLETED: "No hackathons have been completed yet — explore some active ones while you wait!"
     };
-
+ 
     const getApiUrlByTab = (tabKey) => {
         switch (tabKey) {
             case "RECOMMENDED": return `${apiUrl}/api/hackathons/recommended/${userId}`;
@@ -121,7 +121,7 @@ const Hackathon = () => {
             default: return `${apiUrl}/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
         }
     };
-
+ 
     const getEmptyImageByTab = (tabKey) => {
         switch (tabKey) {
             case "MY":
@@ -138,18 +138,18 @@ const Hackathon = () => {
                 return '';
         }
     };
-
+ 
     const getCtaTargetTab = (tabKey) => {
         if (tabKey === "ACTIVE") return "UPCOMING";
         if (tabKey === "UPCOMING") return "ACTIVE";
         return "ACTIVE";
     };
-
+ 
     const getEmptyImageSize = (tabKey) => {
         if (tabKey === "MY" || tabKey === "ACTIVE" || tabKey === "UPCOMING") return 300;
         return 220;
     };
-
+ 
     const toDateObject = (value) => {
         if (!value) return new Date(0);
         if (Array.isArray(value)) {
@@ -158,13 +158,13 @@ const Hackathon = () => {
         }
         return new Date(value);
     };
-
+ 
     const fetchHackathons = async (tabKey) => {
         try {
             setLoading(true);
-
+ 
             const hackathonsRes = await apiClient.get(getApiUrlByTab(tabKey));
-
+ 
             const normalized = hackathonsRes.data.map(h => ({
                 ...h,
                 createdAt: h.createdAt ? new Date(h.createdAt).getTime() : 0,
@@ -179,7 +179,7 @@ const Hackathon = () => {
             } else {
                 setHackathons(normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
             }
-
+ 
             if (tabKey === "COMPLETED" || tabKey === "MY") {
                 const winnerIds = [...new Set(normalized.map(h => h.winner).filter(Boolean))];
                 if (winnerIds.length > 0) {
@@ -204,7 +204,7 @@ const Hackathon = () => {
             } else {
                 setWinners({});
             }
-
+ 
         } catch (error) {
             console.error("Error fetching hackathons:", error);
             setHackathons([]);
@@ -213,14 +213,13 @@ const Hackathon = () => {
             setLoading(false);
         }
     };
-
-
+ 
+ 
     const fetchRegistrations = async () => {
         try {
             const jwtToken = localStorage.getItem("jwtToken");
-            const response = await axios.get(
+            const response = await apiClient.get(
                 `${apiUrl}/hackathons/${userId}/getAllRegistrationStatus`,
-                { headers: { Authorization: `Bearer ${jwtToken}` } }
             );
             setRegistrations(response.data || []);
         } catch (error) {
@@ -228,27 +227,27 @@ const Hackathon = () => {
             setRegistrations([]);
         }
     };
-
+ 
     useEffect(() => {
         setSearchQuery("");
         fetchHackathons(statusFilter);
         fetchRegistrations();
     }, [statusFilter]);
-
+ 
     useEffect(() => {
         try {
             localStorage.setItem("applicantHackathonTab", statusFilter);
         } catch (_) { }
     }, [statusFilter]);
-
+ 
     const filteredHackathons = hackathons.filter(h => {
         const titleMatch = h.title?.toLowerCase().includes(searchQuery.toLowerCase());
         const techMatch = h.allowedTechnologies?.toLowerCase().includes(searchQuery.toLowerCase());
         return titleMatch || techMatch;
     });
-
+ 
     const handleViewClick = (hackathonId) => navigate(`/applicant-hackathon-details/${hackathonId}`);
-
+ 
     const getRegistrationStatus = (hackathonId) => {
         const reg = registrations.find(r => r.hackathonId === hackathonId);
         if (!reg) return null;
@@ -262,7 +261,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
       {Array.from({ length: count }).map((_, i) => (
         <div className="newCard skeleton-card" key={i}>
           <div className="newCard-body">
-
+ 
             {/* Banner */}
             <div
               className="newCard-header"
@@ -273,7 +272,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 marginBottom: "6px"
               }}
             ></div>
-
+ 
             {/* Status + date */}
             <div className="status-timing-row">
               <div
@@ -293,7 +292,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 }}
               ></div>
             </div>
-
+ 
             {/* Title */}
             <div
               style={{
@@ -304,7 +303,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 marginTop: "12px"
               }}
             ></div>
-
+ 
             {/* Company */}
             <div
               style={{
@@ -315,7 +314,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 margin: "8px 0"
               }}
             ></div>
-
+ 
             {/* Tags placeholder */}
             <div
               style={{
@@ -326,11 +325,11 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 marginBottom: "12px"
               }}
             ></div>
-
+ 
             {/* Footer Row */}
             <div className="card-footer-row" style={{ marginTop: "6px" }}>
             
-
+ 
               <div
                 style={{
                   width: "60px",
@@ -340,19 +339,19 @@ const HackathonSkeleton = ({ count = 8 }) => {
                 }}
               ></div>
             </div>
-
+ 
           </div>
         </div>
       ))}
     </div>
   );
 };
-
-
-
+ 
+ 
+ 
     return (
          <div className="border-style">
-
+ 
         <div className="blur-border-style"></div>
         <div className="dashboard__content">
             <div className="row mr-0 ml-10 extraSpace" style={{ marginLeft: "1%" }}>
@@ -382,7 +381,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                         )}
                     </div>
                 </div>
-
+ 
                 <div className="header-container">
                     <div className="status-tabs">
                         {[
@@ -403,11 +402,11 @@ const HackathonSkeleton = ({ count = 8 }) => {
                         ))}
                     </div>
                 </div>
-
+ 
               {loading ? (
     <HackathonSkeleton count={8} />
 ) : filteredHackathons.length === 0 && searchQuery? (
-
+ 
                     <div
                         className="no-results-message"
                         style={{
@@ -431,7 +430,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                         <div ><p style={{fontWeight:"500",fontStyle:"sans-serif",fontSize:"18px"}}>No hackathon matches for your search</p></div>
                     </div>
                 ):filteredHackathons.length === 0 ? (
-
+ 
                     <div
                         className="no-results-message"
                         style={{
@@ -467,7 +466,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                             const today = new Date();
                             const startDate = new Date(hackathon.startAt);
                             const endDate = new Date(hackathon.endAt);
-
+ 
                             let remainingText = "";
                             if (hackathon.status === "ACTIVE") {
                                 const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
@@ -479,14 +478,14 @@ const HackathonSkeleton = ({ count = 8 }) => {
                                 const diffDays = Math.floor((today - endDate) / (1000 * 60 * 60 * 24));
                                 remainingText = diffDays > 1 ? `Expired ${diffDays} days ago` : "Expired Yesterday";
                             }
-
+ 
                             const regStatus = getRegistrationStatus(hackathon.id);
                             const winnerInfo = winners[hackathon.winner];
-
+ 
                             return (
                                 <div className="newCard" key={hackathon.id}>
-
-
+ 
+ 
                                     <div className="newCard-body">
                                         <div
                                             className="newCard-header" onClick={() => handleViewClick(hackathon.id)}
@@ -508,8 +507,8 @@ const HackathonSkeleton = ({ count = 8 }) => {
                                             </span>
                                             <span className="timing-text">{remainingText}</span>
                                         </div>
-
-                                        <h3 
+ 
+                                        <h3
                                             className="hackathon-title"
                                             data-title={hackathon.title}
                                             title={hackathon.title}
@@ -517,9 +516,9 @@ const HackathonSkeleton = ({ count = 8 }) => {
                                             {hackathon.title}
                                         </h3>
                                         <h5 className="company-name">{hackathon.company || 'Company'}</h5>
-
+ 
                                         <TechTags skills={hackathon.allowedTechnologies} />
-
+ 
                                         <div className="card-footer-row">
                                             {regStatus && (
                                                 <div className="registration-status">
@@ -548,7 +547,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                                             </button>
                                         </div>
                                     </div>
-
+ 
                                     {(statusFilter === "COMPLETED" || statusFilter === "MY") && winnerInfo?.firstName && winnerInfo?.lastName && (
                                         <div className="winner-card">
                                             <div className="winner-card-content">
@@ -581,5 +580,5 @@ const HackathonSkeleton = ({ count = 8 }) => {
         </div>
     );
 };
-
+ 
 export default Hackathon;

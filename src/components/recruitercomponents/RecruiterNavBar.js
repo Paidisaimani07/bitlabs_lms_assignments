@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
@@ -67,13 +67,11 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     if (savedImage) {
       setImageSrc(savedImage);
     } else {
-      fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
+      apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
+        responseType: 'blob'
       })
-        .then(response => response.blob())
-        .then(blob => {
+        .then(response => {
+          const blob = response.data;
           const imageUrl = URL.createObjectURL(blob);
           setImageSrc(imageUrl);
           const reader = new FileReader();
@@ -118,26 +116,14 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
 
   const fetchAlertCount = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/recuriters/appledjobs/${user.id}/unread-alert-count`);
+      const response = await apiClient.get(`/recuriters/appledjobs/${user.id}/unread-alert-count`);
       setAlertCount(response.data);
-
     } catch (error) {
       console.error('Error fetching alert count:', error);
     }
   };
+
   useEffect(() => {
-    const fetchAlertCount = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/recuriters/appledjobs/${user.id}/unread-alert-count`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        });
-        setAlertCount(response.data);
-      } catch (error) {
-        console.error('Error fetching alert count:', error);
-      }
-    };
     fetchAlertCount();
   }, [user.id]);
 
