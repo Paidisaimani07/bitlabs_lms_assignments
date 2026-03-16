@@ -1,7 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import apiClient from '../../services/apiClient';
 import Snackbar from '../common/Snackbar';
 import $ from 'jquery';
@@ -288,7 +287,6 @@ function RecruiterMyOrganization() {
       };
     const uploadPhoto = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwtToken');
         const formData = new FormData();
         formData.append('logoFile', photoFile);
    

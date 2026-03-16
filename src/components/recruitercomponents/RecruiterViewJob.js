@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { Link, useLocation } from 'react-router-dom';
@@ -26,17 +25,7 @@ function RecruiterViewJob({ selectedJobId }) {
   const fetchJobDetails = async () => {
     try {
       console.log(jobId);
-      const response = await axios.get(
-
-      
-
-        `${apiUrl}/viewjob/recruiter/viewjob/${selectedJobId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        }
-      );
+      const response = await apiClient.get(`/viewjob/recruiter/viewjob/${selectedJobId}`);
       const { body } = response.data;
       setLoading(false);
       if (body) {
@@ -74,11 +63,7 @@ function RecruiterViewJob({ selectedJobId }) {
   const handleApplyNow = async () => {
     try {
       
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
+      const profileIdResponse = await apiClient.get(`/applicantprofile/${user.id}/profileid`);
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
@@ -87,14 +72,9 @@ function RecruiterViewJob({ selectedJobId }) {
         return;
       } else {
         setApplied(true);
-        const response = await axios.post(
-          `${apiUrl}/applyjob/applicants/applyjob/${applicantId}/${selectedJobId}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-            },
-          }
+        const response = await apiClient.post(
+          `/applyjob/applicants/applyjob/${applicantId}/${selectedJobId}`,
+          {}
         );
         const { applied } = response.data;
       
@@ -114,7 +94,7 @@ function RecruiterViewJob({ selectedJobId }) {
   useEffect(() => {
     const getStatus = async () => {
       try {
-        const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${selectedJobId}`);
+        const statusResponse = await apiClient.get(`/job/getStatus/${selectedJobId}`);
         
         setJobStatus(statusResponse.data);
         console.log('Job status:', statusResponse.data);
@@ -145,7 +125,7 @@ function RecruiterViewJob({ selectedJobId }) {
 
   const fetchAllApplicants = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/applyjob/appliedapplicants/${selectedJobId}`);
+      const response = await apiClient.get(`/applyjob/appliedapplicants/${selectedJobId}`);
     const applicantsArray = Object.values(response.data).flat();
     setCount(applicantsArray.length);
     } catch (error) {
@@ -154,23 +134,19 @@ function RecruiterViewJob({ selectedJobId }) {
   };
  
   useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
     fetchAllApplicants();
   }, [user.id]);
 
 const handleStatusChange = async (jobId, newStatus, action) => {
     try {
       if (action === 'Repost') {
-        const response = await axios.post(`${apiUrl}/job/recruiters/cloneJob/${jobId}/${applicantId}`);
+        const response = await apiClient.post(`/job/recruiters/cloneJob/${jobId}/${applicantId}`);
         const message = response.data.message; 
        
        setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
       } else {
         
-        await axios.post(`${apiUrl}/job/changeStatus/${jobId}/${newStatus}`);
+        await apiClient.post(`/job/changeStatus/${jobId}/${newStatus}`);
         setJobDetails((prevJobDetails) => ({
           ...prevJobDetails,
           status: newStatus

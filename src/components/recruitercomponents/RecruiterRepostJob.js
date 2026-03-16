@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate} from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import BackButton from '../common/BackButton';
 import Snackbar from '../common/Snackbar';
 import 'react-quill/dist/quill.snow.css'; 
@@ -59,16 +58,10 @@ const RecruiterRepostJob = ({selectedJobId}) => {
             console.log("Data fetching started...");
             
             const fetchJobData = async () => {
-              const jwtToken = localStorage.getItem('jwtToken');
-              if (jwtToken) {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-                console.log("JWT Token set in headers:", jwtToken);
-              }
-              
               try {
                 console.log(`Fetching job data for job ID: ${selectedJobId}, user ID: ${user.id}`);
                 
-                const response = await axios.get(`${apiUrl}/job/${selectedJobId}/${user.id}`);
+                const response = await apiClient.get(`/job/${selectedJobId}/${user.id}`);
                 const jobDataFromApi = response.data;
           
                 console.log("API Response Data:", jobDataFromApi);
@@ -139,28 +132,16 @@ const RecruiterRepostJob = ({selectedJobId}) => {
             uploadDocument: jobData.uploadDocument,
           };
         try {
-          const jwtToken = localStorage.getItem('jwtToken');
-          console.log('jwt token new', jwtToken);
-         
-          const response = await axios
-            .post(`${apiUrl}/job/recruiters/saveJob/${user.id}`,
-            formData, 
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
-          );
+          const response = await apiClient.post(`/job/recruiters/saveJob/${user.id}`, formData);
      
           if (response.status === 200) {
-            console.log(response.body);
+            console.log(response.data);
           
             setSnackbar({ open: true, message: 'Job reposted successfully', type: 'success' });
             localStorage.setItem('jobs', JSON.stringify(''));
             
           } else {
-            console.error('An error occurred:', response.status, response.body);
+            console.error('An error occurred:', response.status, response.data);
           }
         } catch (error) {
           console.error('Error updating job:', error);

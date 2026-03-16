@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { apiUrl } from '../../services/ApplicantAPIService';
-import { useUserContext } from '../common/UserProvider';
 import apiClient from '../../services/apiClient';
+import { useUserContext } from '../common/UserProvider';
 import clearJWTToken from '../common/clearJWTToken';
 import { Link, useLocation } from 'react-router-dom';
 import $ from 'jquery';
@@ -68,7 +67,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
       setImageSrc(savedImage);
     } else {
       apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
         .then(response => {
           const blob = response.data;
@@ -118,12 +117,20 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     try {
       const response = await apiClient.get(`/recuriters/appledjobs/${user.id}/unread-alert-count`);
       setAlertCount(response.data);
+
     } catch (error) {
       console.error('Error fetching alert count:', error);
     }
   };
-
   useEffect(() => {
+    const fetchAlertCount = async () => {
+      try {
+        const response = await apiClient.get(`/recuriters/appledjobs/${user.id}/unread-alert-count`);
+        setAlertCount(response.data);
+      } catch (error) {
+        console.error('Error fetching alert count:', error);
+      }
+    };
     fetchAlertCount();
   }, [user.id]);
 

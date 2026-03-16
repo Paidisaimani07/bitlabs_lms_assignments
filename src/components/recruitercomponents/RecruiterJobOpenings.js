@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { Link, useLocation } from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
 
 function RecruiterJobOpenings({ setSelectedJobId }) {
   const [jobs, setJobs] = useState([]);

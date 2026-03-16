@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useRef, useCallback } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useParams } from 'react-router-dom';
@@ -207,12 +207,7 @@ useEffect(() => {
   const fetchResume = async () => {
     try {
       console.log('Making resume API call...');
-      const token = localStorage.getItem('jwtToken');
-      const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include JWT token
-        },
-      });
+      const resumeResponse = await apiClient.get(`/applicant/getResumeId/${id}`);
       console.log('Resume API call response:', resumeResponse);
  
       if (resumeResponse.data) {
@@ -234,12 +229,7 @@ useEffect(() => {
   const fetchActiveJob = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('jwtToken');
-      const response = await axios.get(`${apiUrl}/job/${jobid}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include JWT token
-        },
-      });
+      const response = await apiClient.get(`/job/${jobid}`);
       const job = response.data;
  
       if (job && job.screeningQuestions) {
@@ -267,13 +257,7 @@ useEffect(() => {
     const fetchResume = async () => {
       try {
         console.log('Making resume API call...');
-        const token = localStorage.getItem('jwtToken');
-
-        const resumeResponse = await axios.get(`${apiUrl}/applicant/getResumeId/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include JWT token
-          },
-        });
+        const resumeResponse = await apiClient.get(`/applicant/getResumeId/${id}`);
         console.log('Resume API call response:', resumeResponse);
  
         if (resumeResponse.data) {
@@ -300,7 +284,7 @@ useEffect(() => {
  
   const handleResumeClick1 = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/resume/pdf/${id}`, { responseType: 'blob' });
+      const response = await apiClient.get(`/resume/pdf/${id}`, { responseType: 'blob' });
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
@@ -329,26 +313,14 @@ useEffect(() => {
     let count = 0;
     let profileResponse = null;
     let isMounted = true;
- 
-    const token = localStorage.getItem('jwtToken');
+
     const fetchData = async () => {
       try {
-        profileResponse = await axios.get(`${apiUrl}/applicantprofile/${id}/profile-view1`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include JWT token
-          },
-        });
-        // Sort skills once when setting the state
-        const sortedSkills = profileResponse.data.skillsRequired.sort((a, b) => a.skillName.localeCompare(b.skillName));
+        profileResponse = await apiClient.get(`/applicantprofile/${id}/profile-view1`);
         setProfileData({ ...profileResponse.data, skillsRequired: sortedSkills });
         count = 1;
  
-        const imageResponse = await axios.get(`${apiUrl}/applicant-image/getphoto1/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the JWT token in the Authorization header
-          },
-          responseType: 'arraybuffer', // Set responseType to arraybuffer
-        });
+        const imageResponse = await apiClient.get(`/applicant-image/getphoto1/${id}`, { responseType: 'arraybuffer' });
         
         const base64Image = btoa(
           new Uint8Array(imageResponse.data).reduce(
@@ -376,7 +348,7 @@ useEffect(() => {
 
   const fetchApplicantDetails = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/applicantprofile/getalldetails/${id}/${jobid}`);
+      const response = await apiClient.get(`/applicantprofile/getalldetails/${id}/${jobid}`);
       const data = response.data;
   
       if (data) {
@@ -435,14 +407,8 @@ useEffect(() => {
       if (!applyJobId) {
         return;
       }
-      const token = localStorage.getItem('jwtToken');
-      const response = await axios.put(
-        `${apiUrl}/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }
+      const response = await apiClient.put(
+        `/applyjob/recruiters/applicant/${id}/applyjob-update-status/${applyJobId}/${newStatus}`
       );
       const message1 = `Status changed to ${newStatus}`;
       setSnackbar({ open: true, message: message1, type: 'success' });

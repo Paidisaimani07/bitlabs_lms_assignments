@@ -1,5 +1,5 @@
 import React from 'react';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -8,7 +8,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
 import { useNavigate,useLocation } from 'react-router-dom';
 
-import apiClient from '../../services/apiClient';
 import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
@@ -281,7 +280,6 @@ const handleJobTitleChange1 = (event) => {
   useEffect(() => {
     const fetchApprovalStatus = async () => {
       try {
-        const token = localStorage.getItem('jwtToken'); // Get the token from storage or wherever it's stored
         const response = await apiClient.get(
           `/companyprofile/companyprofile/approval-status/${user.id}`
         );

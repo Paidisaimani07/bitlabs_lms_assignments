@@ -3,7 +3,6 @@ import './RecruiterPostJob2.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
 import apiClient from '../../services/apiClient';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 
 const RecruiterPostJob2 = () => {
