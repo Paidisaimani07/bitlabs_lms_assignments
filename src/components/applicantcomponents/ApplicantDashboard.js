@@ -528,13 +528,15 @@ const allLoadingDone =
         const profileId = profileIdResponse.data;
 
 
-        if (profileId === 0) {
-          navigate('/applicant-basic-details-form/1');
+        if (profileIdResponse.status === 200 && profileId === 0) {
+           navigate('/applicant-basic-details-form/1');
         } else {
           setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
+          setLoading(false);
+
       }
     };
 
