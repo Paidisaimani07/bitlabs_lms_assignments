@@ -236,13 +236,13 @@ function LoginBody({ handleLogin }) {
             resume = error.response.status;
           }
 
-          if (profileId !== 0 && resume === 404) {
-            console.log("checking ", jwtToken);
-            localStorage.setItem("jwtToken", userData.data.jwt);
-            setPageLoading(false);
-            handlePostLoginRedirect();
-            // navigate("/applicant-basic-details-form/3");
-          } else if (profileId === 0) {
+          // if (profileIdResponse.status === 200 && profileId !== 0 && resume === 404) {            console.log("checking ", jwtToken);
+          //   localStorage.setItem("jwtToken", userData.data.jwt);
+          //   setPageLoading(false);
+          //   handlePostLoginRedirect();
+          //   // navigate("/applicant-basic-details-form/3");
+          // } else 
+            if (profileIdResponse.status === 200 && profileId === 0) {
             console.log("checking ", jwtToken);
             localStorage.setItem("jwtToken", userData.data.jwt);
             setPageLoading(false);
@@ -395,13 +395,14 @@ function LoginBody({ handleLogin }) {
         } catch (error) {
           resume = error.response.status;
         }
-        if (profileId !== 0 && resume === 404) {
-          console.log("checking ", jwtToken);
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          setPageLoading(false);
-          handlePostLoginRedirect();
-          // navigate("/applicant-basic-details-form/3");
-        } else if (profileId === 0) {
+        // if (profileId !== 0 && resume === 404) {
+        //   console.log("checking ", jwtToken);
+        //   localStorage.setItem("jwtToken", userData.data.jwt);
+        //   setPageLoading(false);
+        //   handlePostLoginRedirect();
+        //   // navigate("/applicant-basic-details-form/3");
+        // } else
+           if (profileIdResponse.status === 200 && profileId === 0) {
           console.log("checking ", jwtToken);
           localStorage.setItem("jwtToken", userData.data.jwt);
           setPageLoading(false);
@@ -414,13 +415,13 @@ function LoginBody({ handleLogin }) {
       }
     } catch (error) {
       setPageLoading(false);
-      console.log(error.response.data);
-      if (error.response.data === "Incorrect password") {
+      console.log(error?.response?.data || error.message);
+      if (error?.response?.data === "Incorrect password") {
         setErrorMessage("Incorrect password.");
         console.error("login failed");
       } else if (
-        error.response.data === "No account found with this email address"
-      ) {
+        error?.response?.data === "No account found with this email address"
+            ) {
         setErrorMessage("No account found with this email address.");
         console.error("login failed");
       } else {
