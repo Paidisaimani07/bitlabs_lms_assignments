@@ -7,6 +7,7 @@ import { useUserContext } from "../common/UserProvider";
 import { apiUrl } from "../../services/ApplicantAPIService";
 import ModalLogout from "../common/ModalLogout";
 import axios from "axios";
+import clearJWTToken from "../common/clearJWTToken";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
 import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
@@ -254,15 +255,14 @@ function ApplicantNavBar() {
     };
   }, [pathname, user.id]);
 
-  const handleLogout = () => {
-    console.log("Logout button clicked");
+  const handleLogout = async () => {
+    console.log("🔍 ApplicantNavBar handleLogout called");
     try {
-      localStorage.removeItem("jwtToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userType");
+      await clearJWTToken();;
       window.location.href = "https://jobs.bitlabs.in/candidate";
     } catch (error) {
       console.error("Logout failed", error);
+      window.location.href = "https://jobs.bitlabs.in/candidate";
     }
   };
 
