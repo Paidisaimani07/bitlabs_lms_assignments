@@ -52,9 +52,9 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
       const response = await apiClient.get(`/savedjob/getSavedJobs/${applicantId}?page=${pageNum}&size=${size}`);
  
  
-      setSavedJobs(newJobs);
+       setSavedJobs(response);
       setSavedJobsPage(pageNum);
-      setSavedHasMore(newJobs.length === size);
+      setSavedHasMore(response.length === size);
     } catch (error) {
       console.error("Error fetching saved jobs:", error);
     } finally {
