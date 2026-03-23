@@ -317,7 +317,7 @@ useEffect(() => {
     const fetchData = async () => {
       try {
         profileResponse = await apiClient.get(`/applicantprofile/${id}/profile-view1`);
-        setProfileData({ ...profileResponse.data, skillsRequired: sortedSkills });
+        setProfileData(profileResponse.data);
         count = 1;
  
         const imageResponse = await apiClient.get(`/applicant-image/getphoto1/${id}`, { responseType: 'arraybuffer' });

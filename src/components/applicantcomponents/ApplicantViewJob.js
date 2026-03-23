@@ -550,7 +550,6 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         questions={screeningQuestions}
         onClose={() => setScreeningModalOpen(false)}
         onSubmit={handleScreeningSubmit}
-        apiUrl={apiUrl}
         user={user}
         jobId={jobId}
       />

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import apiClient from '../../services/apiClient';
 import './ScreeningQuestionsModal.css';
 
 const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, user, jobId }) => {

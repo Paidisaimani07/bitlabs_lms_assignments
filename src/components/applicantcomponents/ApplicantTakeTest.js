@@ -322,24 +322,16 @@ const fetchQuestion = async() => {
     try {
     if(testName === 'General Aptitude Test' || testName === 'Technical Test'){
        // Submit the test result to the API
-    fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    await apiClient.post(`/applicant1/saveTest/${userId}`, {
         testName,
         testScore: calculatedScore,
         testStatus,
         applicant: {
           id: userId,
         },
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Test submitted successfully:', data);
+      })
+      .then((response) => {
+        console.log('Test submitted successfully:', response.data);
       })
       .catch((error) => {
         console.error('Error submitting the test:', error);
@@ -347,21 +339,13 @@ const fetchQuestion = async() => {
     }else{
       const skillBadgeStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
       // Submit the skill badge information to the API
-  fetch(`${apiUrl}/skill-badges/save`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  await apiClient.post('/skill-badges/save', {
       applicantId: userId, // Use the applicant's ID
       skillBadgeName: testName, // Use the test name as the skill badge name
       status: skillBadgeStatus, // Use PASS or FAILED based on score
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Skill badge saved successfully:', data);
+    })
+    .then((response) => {
+      console.log('Skill badge saved successfully:', response.data);
     })
     .catch((error) => {
       console.error('Error saving the skill badge:', error);
@@ -417,28 +401,20 @@ const fetchQuestion = async() => {
     setShowExitPopup(true); // Show exit confirmation popup
   };
 
-  const handleConfirmExit = () => {
+  const handleConfirmExit = async () => {
     setShowExitPopup(false);
     if(testStarted && testName !== 'General Aptitude Test' && testName !== 'Technical Test'){
       handleTestCompletion();
     setShowGoBackButton(false);
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the skill badge information to the API
-  fetch(`${apiUrl}/skill-badges/save`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  await apiClient.post('/skill-badges/save', {
       applicantId: userId, // Use the applicant's ID
       skillBadgeName: testName, // Use the test name as the skill badge name
       status: 'FAILED', // Use PASS or FAILED based on score
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Skill badge saved successfully:', data);
+    })
+    .then((response) => {
+      console.log('Skill badge saved successfully:', response.data);
     })
     .catch((error) => {
       console.error('Error saving the skill badge:', error);
@@ -451,24 +427,16 @@ const fetchQuestion = async() => {
       const testStatus = calculatedScore >= 70 ? 'P' : 'F'; // Determine pass/fail status
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the test result to the API
-      fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
+      await apiClient.post(`/applicant1/saveTest/${userId}`, {
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
         },
-        body: JSON.stringify({
-          testName,
-          testScore: calculatedScore,
-          testStatus,
-          applicant: {
-            id: userId,
-          },
-        }),
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Test result submitted successfully:', data);
+        .then((response) => {
+          console.log('Test result submitted successfully:', response.data);
         })
         .catch((error) => {
           console.error('Error submitting test result:', error);
@@ -504,7 +472,7 @@ const fetchQuestion = async() => {
     navigate('/applicant-take-test', { state: { testName } }); // Then navigate to the test
   };
 
-  const handleViewResults = () => {
+  const handleViewResults = async () => {
   
     const calculatedScore = calculateScore();
     const testStatus = calculatedScore >= 70 ? 'P' : 'F';
@@ -514,21 +482,13 @@ const fetchQuestion = async() => {
       const jwtToken = localStorage.getItem('jwtToken');
       const testStatus = calculatedScore >= 70 ? 'PASSED' : 'FAILED';
       // Submit the skill badge information to the API
-  fetch(`${apiUrl}/skill-badges/save`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${jwtToken}`, // Add jwtToken for authorization
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
+  await apiClient.post('/skill-badges/save', {
       applicantId: userId, // Use the applicant's ID
       skillBadgeName: testName, // Use the test name as the skill badge name
       status: testStatus, // Use PASS or FAILED based on score
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('Skill badge saved successfully:', data);
+    })
+    .then((response) => {
+      console.log('Skill badge saved successfully:', response.data);
     })
     .catch((error) => {
       console.error('Error saving the skill badge:', error);
@@ -539,24 +499,16 @@ const fetchQuestion = async() => {
       const testStatus = calculatedScore >= 70 ? 'P' : 'F'; // Determine pass/fail status
       const jwtToken = localStorage.getItem('jwtToken');
       // Submit the test result to the API
-      fetch(`${apiUrl}/applicant1/saveTest/${userId}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          'Content-Type': 'application/json',
+      await apiClient.post(`/applicant1/saveTest/${userId}`, {
+        testName,
+        testScore: calculatedScore,
+        testStatus,
+        applicant: {
+          id: userId,
         },
-        body: JSON.stringify({
-          testName,
-          testScore: calculatedScore,
-          testStatus,
-          applicant: {
-            id: userId,
-          },
-        }),
       })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Test result submitted successfully:', data);
+        .then((response) => {
+          console.log('Test result submitted successfully:', response.data);
         })
         .catch((error) => {
           console.error('Error submitting test result:', error);
