@@ -93,16 +93,15 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     };
   }, [user.id]);
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
     console.log('Logout button clicked');
     try {
 
-      localStorage.removeItem('jwtToken');
-      localStorage.removeItem('user');
-      localStorage.removeItem('userType');
+     await clearJWTToken();
       window.location.href = "https://www.bitlabs.in/jobs";
     } catch (error) {
       console.error('Logout failed', error);
+      window.location.href = "https://www.bitlabs.in/jobs";
     }
   };
   const handleToggleMenu = () => {

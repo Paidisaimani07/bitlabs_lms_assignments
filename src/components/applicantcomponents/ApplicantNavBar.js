@@ -6,6 +6,9 @@ import { useState, useEffect } from "react";
 import { useUserContext } from "../common/UserProvider";
 import apiClient from "../../services/apiClient";
 import ModalLogout from "../common/ModalLogout";
+import axios from "axios";
+import clearJWTToken from "../common/clearJWTToken";
+
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
@@ -250,15 +253,14 @@ function ApplicantNavBar() {
     };
   }, [pathname, user.id]);
 
-  const handleLogout = () => {
-    console.log("Logout button clicked");
+  const handleLogout = async () => {
+    console.log("🔍 ApplicantNavBar handleLogout called");
     try {
-      localStorage.removeItem("jwtToken");
-      localStorage.removeItem("user");
-      localStorage.removeItem("userType");
+      await clearJWTToken();;
       window.location.href = "https://jobs.bitlabs.in/candidate";
     } catch (error) {
       console.error("Logout failed", error);
+      window.location.href = "https://jobs.bitlabs.in/candidate";
     }
   };
 
@@ -266,8 +268,20 @@ function ApplicantNavBar() {
     fetchAlertCount();
   }, [location.key]);
 
+
+   useEffect(() => {
+    const handleAlertsUpdate = () => {
+      fetchAlertCount();
+    };
+    window.addEventListener('alerts-updated', handleAlertsUpdate);
+    return () => {
+      window.removeEventListener('alerts-updated', handleAlertsUpdate);
+    };
+  }, [user?.id]);
+
   const fetchAlertCount = async () => {
     try {
+
       const [jobAlertsResponse, notificationsResponse] = await Promise.all([
           apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`),
         apiClient.get(`/notifications/applicant/${user.id}/unread`),
@@ -281,14 +295,23 @@ function ApplicantNavBar() {
           return isUnread ? count + 1 : count;
         },
         0
+
+      // Get the count directly from the new backend API
+      const response = await axios.get(
+        `${apiUrl}/notifications/count/${user.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+          },
+        }
+
       );
 
-      const jobAlertsCount = Number(jobAlertsResponse.data) || 0;
-      const totalCount = jobAlertsCount + unreadNotificationsCount;
-
-      setAlertCount(totalCount);
-      console.log(totalCount);
+      const count = Number(response.data) || 0;
+      console.log("🔔 Alert count response:", response.data, "Setting count to:", count);
+      setAlertCount(count);
     } catch (error) {
+
       console.error("Error fetching alert counts:", error);
       try {
         const response = await apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`);
@@ -297,8 +320,15 @@ function ApplicantNavBar() {
         console.error("Error fetching fallback alert count:", fallbackError);
         setAlertCount(0);
       }
+
+      console.error("Error fetching alert count:", error);
+      setAlertCount(0);
+
     }
+
   };
+
+
 
   useEffect(() => {
     const checkUserData = setInterval(() => {

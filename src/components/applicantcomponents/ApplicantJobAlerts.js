@@ -1,5 +1,9 @@
+
 import { useState, useEffect } from "react";
 import apiClient from "../../services/apiClient";
+import { useState, useEffect, useRef } from "react";
+import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../common/UserProvider";
 import "./ApplicantJobAlert.css"
@@ -9,40 +13,121 @@ import "react-loading-skeleton/dist/skeleton.css";
 export default function ApplicantJobAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [readLoading, setReadLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
   const [deletingItems, setDeletingItems] = useState(new Set());
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [exploreLoading, setExploreLoading] = useState(false);
   const navigate = useNavigate();
+ const isInitialLoad = useRef(true);
+  const currentUserId = useRef(null);
 
-  const fetchAlertsFromServer = async () => {
-    if (!user || !user.id) {
+   const fetchAlertsFromServer = async (reset = false) => {
+    if (!user?.id) {
+      console.log(" No user ID found");
       return [];
     }
-
     try {
 
       const url = `/notifications/getNotifications/${user.id}`;
       const resp = await apiClient.get(url);
 
-      const alerts = Array.isArray(resp.data) ? resp.data : [];
+      const authToken = localStorage.getItem("jwtToken");
+      const currentPage = reset ? 0 : page;
+      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${currentPage}&size=10`;
+      const resp = await axios.get(url, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      // Get alerts array from response
+      let alerts = [];
+      if (Array.isArray(resp.data)) {
+        alerts = resp.data;
+      } else if (resp.data && Array.isArray(resp.data.content)) {
+        alerts = resp.data.content;
+      } else if (resp.data && Array.isArray(resp.data.data)) {
+        alerts = resp.data.data;
+      }
+      if (reset) {
+        setJobAlerts(alerts);
+        setPage(0);
+        // If we got exactly 10, there might be more - show explore button
+        const hasMoreNotifications = alerts.length === 10;
+        setHasMore(hasMoreNotifications);
+        console.log("🔍 Has more notifications (reset):", hasMoreNotifications);
+        // Dispatch event to update navbar count
+        window.dispatchEvent(new CustomEvent("alerts-updated"));
+      } else {
+        setJobAlerts(prev => {
+          const updated = [...prev, ...alerts];
+          // If we got exactly 10, there might be more - show explore button
+          const hasMoreNotifications = alerts.length === 10;
+          setHasMore(hasMoreNotifications);
+          return updated;
+        });
+        setPage(prevPage => prevPage + 1);
+      }
+      return alerts;
 
-      setJobAlerts(alerts);
+
+    } catch (err) {
+      console.error(" ERROR:", err);
+      if (reset) {
+        setJobAlerts([]);
+      }
+      return [];
+    }
+  };
+
+  const fetchAlertsFromServerWithPage = async (pageNumber) => {
+    if (!user?.id) {
+      console.log(" No user ID found");
+      return [];
+    }
+    try {
+      const authToken = localStorage.getItem("jwtToken");
+      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${pageNumber}&size=10`;
+      const resp = await axios.get(url, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      // Get alerts array from response
+      let alerts = [];
+      if (Array.isArray(resp.data)) {
+        alerts = resp.data;
+      } else if (resp.data && Array.isArray(resp.data.content)) {
+        alerts = resp.data.content;
+      } else if (resp.data && Array.isArray(resp.data.data)) {
+        alerts = resp.data.data;
+      }
+      setJobAlerts(prev => {
+          const updated = [...prev, ...alerts];
+          // If we got exactly 10, there might be more - show explore button
+          const hasMoreNotifications = alerts.length === 10;
+          setHasMore(hasMoreNotifications);  
+          return updated;
+        });
+        setPage(pageNumber);
       return alerts;
     } catch (err) {
-      console.error("❌ ERROR:", err);
-      setJobAlerts([]);
       return [];
     }
   };
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
+       
 
-    fetchAlertsFromServer().finally(() => {
-      if (mounted) setLoading(false);
-    });
+    // Always fetch if we have a user
+
+    if (user?.id) {
+      setLoading(true);
+      fetchAlertsFromServer(true).finally(() => {
+        if (mounted) setLoading(false);
+      });
+    } else {
+      console.log("⏭️ No user found, skipping fetch");
+    }
 
     return () => (mounted = false);
   }, [user?.id]);
@@ -95,14 +180,13 @@ export default function ApplicantJobAlerts() {
       setJobAlerts((prevAlerts) =>
         prevAlerts.map((alert) => ({
           ...alert,
-          seenApplicantId: [...new Set([...(alert.seenApplicantId || []), user.id])],
-          applicantId: (alert.applicantId || []).filter(id => id !== user.id)
+           seenStatus: true
         }))
       );
 
-      window.dispatchEvent(
-        new CustomEvent("alerts-updated", { detail: { unreadCount: 0 } })
-      );
+     // Dispatch event to update navbar count
+      window.dispatchEvent(new CustomEvent("alerts-updated"));
+      
     } catch (err) {
       console.error("❌ ERROR MARKING ALL AS READ:", err);
     } finally {
@@ -129,9 +213,11 @@ export default function ApplicantJobAlerts() {
       // Clear all notifications
       setJobAlerts([]);
       setDeletingItems(new Set());
+      setPage(0);
+      setHasMore(true);
 
       // Update notification count in header
-      window.dispatchEvent(new CustomEvent("alerts-updated", { detail: { unreadCount: 0 } }));
+    window.dispatchEvent(new CustomEvent("alerts-updated"));
     } catch (error) {
       console.error("Error clearing all notifications:", error);
       setDeletingItems(new Set());
@@ -140,17 +226,36 @@ export default function ApplicantJobAlerts() {
     }
   };
 
-  function formatDate(dateArray) {
-    if (!Array.isArray(dateArray)) return "";
-    const [year, month, day] = dateArray;
-    const date = new Date(year, month - 1, day);
+ 
+  function formatDate(dateString) {
+    if (!dateString) return "";
+    const date = new Date(dateString);
     return date.toDateString();
   }
+  const handleExploreMore = async () => {
+    if (!hasMore || exploreLoading) return;
+    setExploreLoading(true);
+    try {
+      // Pass the next page number directly
+      const nextPage = page + 1;
+      await fetchAlertsFromServerWithPage(nextPage);
+    } catch (error) {
+      console.error("Error exploring more notifications:", error);
+    } finally {
+      setExploreLoading(false);
+    }
+  };
 
-  const anyActionRunning = readLoading || clearLoading;
+  const anyActionRunning = readLoading || clearLoading || exploreLoading;
 
   return (
     <div className="border-style">
+         <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
       <div className="blur-border-style" />
       <div className="dashboard__content notifications">
         <section className="page-title-dashboard extraSpace">
@@ -165,7 +270,7 @@ export default function ApplicantJobAlerts() {
                   <div className="notification-btn" style={{ display: "flex", gap: 10 }}>
                     <button
                       onClick={handleReadAll}
-                      disabled={loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))}
+                      disabled={loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenStatus)}
                       style={{
                         background: "#fd7e14",
                         color: "#fff",
@@ -175,8 +280,8 @@ export default function ApplicantJobAlerts() {
                         fontWeight: 600,
                         textTransform: "none",
                         width: "50%",
-                        opacity: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 0.6 : 1,
-                        cursor: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenApplicantId?.includes(user?.id))) ? 'not-allowed' : 'pointer'
+                         opacity: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenStatus)) ? 0.6 : 1,
+                         cursor: (loading || jobAlerts.length === 0 || !jobAlerts.some(alert => !alert.seenStatus)) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       Read all
@@ -229,10 +334,12 @@ export default function ApplicantJobAlerts() {
               </div>
             ) : (
               <div className="box-notifications">
-
                 {jobAlerts.length > 0 ? (
-                  <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
-                    {jobAlerts.map((alert) => {
+              <>
+                    <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
+                      {jobAlerts.map((alert) => {
+
+
                         let redirectRoute = "/";
                         let featureName = alert.feature;
 
@@ -263,7 +370,7 @@ export default function ApplicantJobAlerts() {
                               position: "relative",
                               boxShadow: "0 0 4px rgba(0,0,0,0.1)",
                               cursor: "pointer",
-                              background: alert.seenApplicantId?.includes(user?.id) ? "#E8E8E8" : "#fff",
+                              background: alert.seenStatus  ? "#E8E8E8" : "#fff",
                               transition: 'all 0.3s ease',
                             }}
                           >
@@ -271,8 +378,8 @@ export default function ApplicantJobAlerts() {
                             <h3 className="notification-message"
                               style={{
                                 marginBottom: 5,
-                                color: alert.seenApplicantId?.includes(user?.id) ? "#666" : "#000",
-                                fontWeight: alert.seenApplicantId?.includes(user?.id) ? "normal" : "bold",
+                                color: alert.seenStatus ? "#666" : "#000",
+                                fontWeight: alert.seenStatus ? "normal" : "bold",
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px'
@@ -292,15 +399,12 @@ export default function ApplicantJobAlerts() {
                                   setJobAlerts((prevAlerts) =>
                                     prevAlerts.map((a) =>
                                       a.id === alert.id
-                                        ? {
-                                          ...a,
-                                          seenApplicantId: [...(a.seenApplicantId || []), user.id],
-                                          applicantId: (a.applicantId || []).filter(id => id !== user.id)
-                                        }
+                                        ? { ...a, seenStatus: true }
                                         : a
                                     )
                                   );
-
+                                     // Update navbar count
+                                            window.dispatchEvent(new CustomEvent("alerts-updated"));
                                   navigate(redirectRoute);
                                 } catch (err) {
                                   console.error("❌ ERROR MARKING NOTIFICATION AS READ:", err);
@@ -314,7 +418,7 @@ export default function ApplicantJobAlerts() {
                                 height: '8px',
                                 borderRadius: '50%',
                                 border: '2px solid #fd7e14',
-                                background: alert.seenApplicantId?.includes(user?.id) ? 'transparent' : '#fd7e14',
+                                background:  alert.seenStatus ? 'transparent' : '#fd7e14',
                                 flexShrink: 0,
                                 boxSizing: 'border-box'
                               }} />
@@ -344,6 +448,69 @@ export default function ApplicantJobAlerts() {
                         );
                       })}
                   </ul>
+                    {/* Debug explore button conditions */}
+
+                 
+
+                  {jobAlerts.length > 0 && hasMore && (
+                    <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                      <button
+                        onClick={handleExploreMore}
+                        disabled={exploreLoading}
+                        style={{
+                          background: "transparent linear-gradient(293deg, #fbbb5c 0%, #e66a0e 100%) 0% 0%",
+                          border: "none",
+                          padding: "8px",
+                          borderRadius: "50%",
+                          width: "32px",
+                          height: "32px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          opacity: exploreLoading ? 0.6 : 1,
+                          cursor: exploreLoading ? 'not-allowed' : 'pointer',
+                          margin: '0 auto'
+                        }}
+                      >
+                        {exploreLoading ? (
+                          <div className="spinner" style={{
+                            width: '16px',
+                            height: '16px',
+                            border: '2px solid #fff',
+                            borderTop: '2px solid transparent',
+                            borderRadius: '50%',
+                            animation: 'spin 1s linear infinite'
+                          }}></div>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                          >
+                            <line
+                              x1="12"
+                              y1="7"
+                              x2="12"
+                              y2="15"
+                              stroke="#fff"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                            />
+                            <path
+                              d="M7 13L12 18L17 13"
+                              stroke="#fff"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                  </>
                 ) : (
                   <div className="notification-empty-state">
                     <img src="/images/notification-empty-state.png" width="400px" />

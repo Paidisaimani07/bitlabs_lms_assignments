@@ -25,7 +25,7 @@ import JobWidget from './components/jobWidget';
 import FinalizeBlog from "./components/applicantcomponents/FinalizeBlog";
 import InterviewPrepPage from './pages/applicantpages/InterviewPrepPage';
 import MentorConnectFeedbackForm from './pages/feedbackpage/MentorConnectFeedbackForm';
-
+import ApplicantMyStreaks from './components/applicantcomponents/ApplicantMyStreaks';
 import { messaging } from './notifications/firebase';
 import { onMessage } from 'firebase/messaging';
 import FeedbackFormBuilder from "./pages/feedbackpage/FeedbackFormBuilder";
@@ -136,6 +136,7 @@ function App() {
                     <Route path="/resume-templates" element={<ApplicantHomePage />} />
                     <Route path="/resume-preview" element={<ApplicantHomePage />} />
                     <Route path="/applicant-basic-details-form/:number" element={<ApplicantBasicDetails />} />
+                    <Route path="/applicant-my-streaks" element={<ApplicantMyStreaks />} />
                     <Route path="/recruiterhome" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-my-organization" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-postjob" element={<RecruiterHomePage />} />

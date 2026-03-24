@@ -216,6 +216,128 @@ function LoginBody({ handleLogin }) {
             name: name1,
             fromGoogle: true,
           });
+
+          console.log("Activity log submitted successfully.");
+
+          setCandidateEmail(email1);
+          setCandidateName(name1);
+
+          const leadData = {
+            data: [
+              {
+                Last_Name: name1,
+                Email: email1,
+                // Lead_Status: "signedup",
+                Status_TS: "Signed-Up",
+                // Lead_Source: utmSource || "Direct", // Set a default if empty
+                Industry: "Software",
+                Utm_Source_TS: utmSource || "",
+                Utm_Medium_TS: utmMedium || "",
+                Utm_Campaign_TS: utmCampaign || "",
+                Utm_Content_TS: utmContent || "",
+                Utm_Term_TS: utmTerm || "",
+              },
+            ],
+          };
+
+          const id = await handleLead(leadData);
+          console.log("Zoho User ID from login page :", id);
+          sessionStorage.setItem("zohoUserId", id);
+
+
+
+          // const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
+          // const webhookData = {
+          //   email,
+          //   name,
+          //   utmSource,
+          //   utmMedium,
+          //   utmCampaign,
+          //   utmContent,
+          //   utmTerm,
+          // };
+
+          // try {
+          //   const webhookResponse = await fetch(webhookUrl, {
+          //     method: 'POST',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //     },
+          //     body: JSON.stringify(webhookData),
+          //   });
+          //   console.log('Webhook executed');
+          // } catch (error) {
+          //   console.error('Error sending first webhook:', error);
+          // }
+
+          let userType1;
+          if (userData.message.includes("ROLE_JOBAPPLICANT")) {
+            userType1 = "jobseeker";
+          } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
+            userType1 = "employer";
+          } else {
+            userType1 = "unknown";
+          }
+          console.log("This userType: ", userType1);
+          localStorage.setItem("userType", userType1);
+
+          setErrorMessage("");
+          handleLogin();
+
+          setUser(userData);
+          setUserType(userType1);
+          console.log("Login successful", userData);
+          const userId = userData.id;
+
+          let jwtToken = localStorage.getItem("jwtToken");
+          if (!jwtToken) {
+            jwtToken = userData.data.jwt;
+          }
+          const profileIdResponse = await axios.get(
+            `${apiUrl}/applicantprofile/${userId}/profileid`,
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+              },
+            }
+          );
+          const profileId = profileIdResponse.data;
+
+          let resume;
+          try {
+            const jwtToken = localStorage.getItem("jwtToken");
+            const profileIdResponse1 = await axios.get(
+
+              `${apiUrl}/applicant-pdf/getresume/${userId}`,
+
+              {
+                headers: {
+                  Authorization: `Bearer ${jwtToken}`,
+                },
+              },
+
+            );
+          } catch (error) {
+            resume = error.response.status;
+          }
+
+          // if (profileIdResponse.status === 200 && profileId !== 0 && resume === 404) {            console.log("checking ", jwtToken);
+          //   localStorage.setItem("jwtToken", userData.data.jwt);
+          //   setPageLoading(false);
+          //   handlePostLoginRedirect();
+          //   // navigate("/applicant-basic-details-form/3");
+          // } else 
+            if (profileIdResponse.status === 200 && profileId === 0) {
+            console.log("checking ", jwtToken);
+            localStorage.setItem("jwtToken", userData.data.jwt);
+            setPageLoading(false);
+            navigate("/applicant-basic-details-form/1");
+          } else {
+            localStorage.setItem("jwtToken", userData.data.jwt);
+            setPageLoading(false);
+            handlePostLoginRedirect();
+          }
+
         }
       } catch (err) {
         setPageLoading(false);
@@ -250,6 +372,7 @@ function LoginBody({ handleLogin }) {
       });
 
       if (response.status === 200) {
+
         await handlePostLogin({
           userData: response.data,
           email: candidateEmail,
@@ -260,10 +383,124 @@ function LoginBody({ handleLogin }) {
     } catch (error) {
       setPageLoading(false);
       if (error.response.data === "Incorrect password") {
+
+        setErrorMessage("");
+        const userData = response.data;
+        console.log("this is response ", userData);
+        console.log("this is token ", userData.data.jwt);
+        localStorage.setItem("jwtToken", userData.data.jwt);
+
+
+        let userType1;
+        if (userData.message.includes("ROLE_JOBAPPLICANT")) {
+          userType1 = "jobseeker";
+          const generatedToken = await generateToken();
+          try {
+            console.log("generated token", generatedToken);
+            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
+          } catch (error) {
+            console.error("⚠️ Failed to save FCM token for web:", error);
+          }
+        } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
+          userType1 = "employer";
+        } else {
+          userType1 = "unknown";
+        }
+        console.log("this userType ", userType1);
+        localStorage.setItem("userType", userType1);
+
+        setErrorMessage("");
+        handleLogin();
+
+        setUser(userData);
+        setUserType(userData.userType);
+        console.log("Login successful", userData);
+        const userId = userData.id;
+
+        // Log the user activity
+        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
+        await axios.post(
+          activityLogEndpoint,
+          {
+            userId: userId,
+            actionType: "Login",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userData.data.jwt}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        // Check the profile ID
+        let jwtToken = localStorage.getItem("jwtToken");
+        if (!jwtToken) {
+          jwtToken = userData.data.jwt;
+        }
+
+        // ✅ Fetch Zoho User ID based on email
+        const zohoResponse = await axios.get(
+          `${apiUrl}/zoho/searchlead/${candidateEmail}`
+        );
+        const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+
+        if (zohoUserId) {
+          sessionStorage.setItem("zohoUserId", zohoUserId); // Store Zoho User ID in session
+          console.log("Zoho User ID:", zohoUserId);
+        }
+
+        const profileIdResponse = await axios.get(
+          `${apiUrl}/applicantprofile/${userId}/profileid`,
+          {
+            headers: {
+              Authorization: `Bearer ${jwtToken}`,
+            },
+          }
+        );
+        const profileId = profileIdResponse.data;
+        let resume;
+        try {
+          const jwtToken = localStorage.getItem("jwtToken")
+          const profileIdResponse1 = await axios.get(
+            `${apiUrl}/resume/pdf/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${jwtToken}`,
+              },
+            }
+
+          );
+        } catch (error) {
+          resume = error.response.status;
+        }
+        // if (profileId !== 0 && resume === 404) {
+        //   console.log("checking ", jwtToken);
+        //   localStorage.setItem("jwtToken", userData.data.jwt);
+        //   setPageLoading(false);
+        //   handlePostLoginRedirect();
+        //   // navigate("/applicant-basic-details-form/3");
+        // } else
+           if (profileIdResponse.status === 200 && profileId === 0) {
+          console.log("checking ", jwtToken);
+          localStorage.setItem("jwtToken", userData.data.jwt);
+          setPageLoading(false);
+          navigate("/applicant-basic-details-form/1");
+        } else {
+          localStorage.setItem("jwtToken", userData.data.jwt);
+          setPageLoading(false)
+          handlePostLoginRedirect();
+        }
+      }
+    } catch (error) {
+      setPageLoading(false);
+      console.log(error?.response?.data || error.message);
+      if (error?.response?.data === "Incorrect password") {
+
         setErrorMessage("Incorrect password.");
       } else if (
-        error.response.data === "No account found with this email address"
-      ) {
+        error?.response?.data === "No account found with this email address"
+            ) {
         setErrorMessage("No account found with this email address.");
       } else {
         setErrorMessage(

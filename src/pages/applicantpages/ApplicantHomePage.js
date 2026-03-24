@@ -1,3 +1,4 @@
+
 import React from "react";
 import apiClient from "../../services/apiClient";
 import { useUserContext } from "../../components/common/UserProvider";
@@ -33,6 +34,45 @@ import FeedbackFormsList from "../../components/applicantcomponents/FeedbackForm
 import FeedbackFormFill from "../../components/applicantcomponents/FeedbackFormFill";
 import ResumeTemplates from "../../components/applicantcomponents/ApplicantAtsResume/ResumeTemplates";
 import ResumePreview from "../../components/applicantcomponents/ApplicantAtsResume/ResumePreview";
+=======
+import React from 'react';
+import axios from 'axios';
+import { useUserContext } from '../../components/common/UserProvider';
+import { apiUrl } from '../../services/ApplicantAPIService';
+import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBar';
+import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
+import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
+import ApplicantViewProfile from '../../components/applicantcomponents/ApplicantViewProfile';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useState,useEffect } from 'react';
+import ApplicantFindJobs from '../../components/applicantcomponents/ApplicantFindJobs';
+import ApplicantViewJob from '../../components/applicantcomponents/ApplicantViewJob';
+import ApplicantAppliedJobs from '../../components/applicantcomponents/ApplicantAppliedJobs';
+import ApplicantSavedJobs from '../../components/applicantcomponents/ApplicantSavedJobs';
+import ApplicantInterviewStatus from '../../components/applicantcomponents/ApplicantInterviewStatus';
+import ApplicantChangePassword from '../../components/applicantcomponents/ApplicantChangePassword';
+import ApplicantDeleteProfile from '../../components/applicantcomponents/ApplicantDeleteProfile';
+import ApplicantJobAlerts from '../../components/applicantcomponents/ApplicantJobAlerts';
+import ApplicantResume from '../../components/applicantcomponents/ApplicantResume';
+import ApplicantEditProfile from '../../components/applicantcomponents/ApplicantEditProfile';
+import ApplicantBasicDetails from '../../components/applicantcomponents/ApplicantBasicDetails';
+import ResumeBuilder from '../../components/applicantcomponents/ResumeBuilder';
+import ApplicantTakeTest from '../../components/applicantcomponents/ApplicantTakeTest';
+import VerifiedBadges from '../../components/applicantcomponents/VerifiedBadges';
+import VerifiedVideos from '../../components/applicantcomponents/VerifiedVideos';
+import Hackathon from '../../components/applicantcomponents/hackathon';
+import HackathonDetails from '../../components/applicantcomponents/HackathonDetails';
+import ApplicantBlogsList from '../../components/applicantcomponents/ApplicantBlogs';
+import BlogSingle from '../../components/applicantcomponents/BlogSingle';
+import ApplicantMentorConnect from '../../components/applicantcomponents/ApplicantMentorConnect';
+import MyJobs from '../../components/applicantcomponents/MyJobs';
+import InterviewPrepPage from './InterviewPrepPage';
+import ApplicantMyStreaks from '../../components/applicantcomponents/ApplicantMyStreaks';
+import FeedbackFormsList from '../../components/applicantcomponents/FeedbackFormsList';
+import FeedbackFormFill from '../../components/applicantcomponents/FeedbackFormFill';
+import ResumeTemplates from '../../components/applicantcomponents/ApplicantAtsResume/ResumeTemplates';
+import ResumePreview from '../../components/applicantcomponents/ApplicantAtsResume/ResumePreview';
+
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState("");
@@ -98,8 +138,16 @@ function ApplicantHomePage() {
       case "/applicant-interview-status":
         setActiveRoute("interviewstatus");
         break;
+
       case "/applicant-change-password":
         setActiveRoute("changepassword");
+
+        case '/applicant-my-streaks':
+          setActiveRoute('mystreaks');
+        break;
+        case '/applicant-change-password':
+          setActiveRoute('changepassword');
+
         break;
       case "/applicant-delete-profile":
         setActiveRoute("deleteprofile");
@@ -169,6 +217,7 @@ function ApplicantHomePage() {
   }, [location.pathname]);
 
   return (
+
     <div class="dashboard show">
       <ApplicantNavBar />
       {activeRoute === "findjobs" && (
@@ -207,6 +256,32 @@ function ApplicantHomePage() {
       {activeRoute === "videos" && <VerifiedVideos />}
       {activeRoute === "resume-templates" && <ResumeTemplates />}
       {activeRoute === "resume-preview" && <ResumePreview />}
+
+    <div  class="dashboard show"> 
+     <ApplicantNavBar />
+     {activeRoute === 'findjobs' && (<ApplicantFindJobs setSelectedJobId={setSelectedJobId} /> )}
+     {activeRoute === 'myjobs' && (<MyJobs setSelectedJobId={setSelectedJobId} /> )}
+     {activeRoute === 'dashboard' && <ApplicantDashboard />}
+     {activeRoute === 'profile' && <ApplicantUpdateProfile />}
+    {activeRoute === 'mystreaks' && <ApplicantMyStreaks />}
+     {activeRoute === 'viewprofile' && <ApplicantViewProfile />}
+     {activeRoute === 'editprofile' && <ApplicantEditProfile />}
+     {activeRoute === 'viewjob' && (<ApplicantViewJob selectedJobId={selectedJobId} /> )}
+     {activeRoute === 'appliedjobs' && <ApplicantAppliedJobs setSelectedJobId={setSelectedJobId}/>}
+     {activeRoute === 'savedjobs' && <ApplicantSavedJobs setSelectedJobId={setSelectedJobId} />}
+     {activeRoute === 'interviewstatus' && (<ApplicantInterviewStatus selectedJobId={selectedJobId} setSelectedJobId={setSelectedJobId} /> )}
+     {activeRoute === 'changepassword' && <ApplicantChangePassword />}
+     {activeRoute === 'deleteprofile' && <ApplicantDeleteProfile />}
+     {activeRoute === 'jobalerts' && <ApplicantJobAlerts />}
+     {activeRoute === 'resume' && <ApplicantResume />}
+     {activeRoute === 'resumebuilder' && <ResumeBuilder />}
+     {activeRoute === 'abdf' && <ApplicantBasicDetails />}
+     {activeRoute === 'taketest' && <ApplicantTakeTest />}
+     {activeRoute === 'badges' && <VerifiedBadges />}
+      {activeRoute === 'videos' && <VerifiedVideos />}
+       {activeRoute === 'resume-templates' && <ResumeTemplates />}
+      {activeRoute === 'resume-preview' && <ResumePreview />}
+
 
       {activeRoute === "hackathon" && <Hackathon />}
       {activeRoute === "hackDetails" && <HackathonDetails />}
