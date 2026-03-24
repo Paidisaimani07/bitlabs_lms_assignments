@@ -295,16 +295,11 @@ function ApplicantNavBar() {
           return isUnread ? count + 1 : count;
         },
         0
+      );
 
       // Get the count directly from the new backend API
-      const response = await axios.get(
-        `${apiUrl}/notifications/count/${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
-        }
-
+      const response = await apiClient.get(
+        `/notifications/count/${user.id}`
       );
 
       const count = Number(response.data) || 0;

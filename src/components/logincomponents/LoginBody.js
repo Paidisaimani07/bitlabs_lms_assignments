@@ -210,6 +210,8 @@ function LoginBody({ handleLogin }) {
           utmSource: utmSource,
         });
         if (response1.status === 200) {
+          setErrorMessage("");
+          const userData = response1.data;
           await handlePostLogin({
             userData: response1.data,
             email: email1,
@@ -293,32 +295,16 @@ function LoginBody({ handleLogin }) {
           if (!jwtToken) {
             jwtToken = userData.data.jwt;
           }
-          const profileIdResponse = await axios.get(
-            `${apiUrl}/applicantprofile/${userId}/profileid`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
+          const profileIdResponse = await apiClient.get(
+            `/applicantprofile/${userId}/profileid`,
           );
           const profileId = profileIdResponse.data;
 
           let resume;
           try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            const profileIdResponse1 = await axios.get(
-
-              `${apiUrl}/applicant-pdf/getresume/${userId}`,
-
-              {
-                headers: {
-                  Authorization: `Bearer ${jwtToken}`,
-                },
-              },
-
-            );
+            await apiClient.get(`/applicant-pdf/getresume/${userId}`);
           } catch (error) {
-            resume = error.response.status;
+            resume = error.response?.status;
           }
 
           // if (profileIdResponse.status === 200 && profileId !== 0 && resume === 404) {            console.log("checking ", jwtToken);
@@ -346,169 +332,113 @@ function LoginBody({ handleLogin }) {
     },
   });
 
-  const handleCandidateSubmit = async (e) => {
-    e.preventDefault();
-    if (!isCandidateFormValid()) {
-      return;
-    }
-    setPageLoading(true);
+ const handleCandidateSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!isCandidateFormValid()) return;
+
+  setPageLoading(true);
+
+  try {
     const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
-    const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+    const iv = CryptoJS.lib.WordArray.random(16);
+
     const encryptedPassword = CryptoJS.AES.encrypt(
       candidatePassword,
       CryptoJS.enc.Utf8.parse(secretKey),
       {
-        iv: iv,
+        iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
-      },
+      }
     ).toString();
 
-    try {
-      const response = await apiClient.post("/applicant/applicantLogin", {
+    const response = await apiClient.post("/applicant/applicantLogin", {
+      email: candidateEmail,
+      password: encryptedPassword,
+      iv: iv.toString(CryptoJS.enc.Base64),
+    });
+
+    // ✅ SUCCESS FLOW
+    if (response.status === 200) {
+      const userData = response.data;
+
+      await handlePostLogin({
+        userData,
         email: candidateEmail,
-        password: encryptedPassword,
-        iv: iv.toString(CryptoJS.enc.Base64),
+        name: userData.name ?? candidateEmail,
+        fromGoogle: false,
       });
 
-      if (response.status === 200) {
+      localStorage.setItem("jwtToken", userData.data.jwt);
 
-        await handlePostLogin({
-          userData: response.data,
-          email: candidateEmail,
-          name: response.data.name ?? candidateEmail,
-          fromGoogle: false,
-        });
-      }
-    } catch (error) {
-      setPageLoading(false);
-      if (error.response.data === "Incorrect password") {
+      let userType1 = "unknown";
+      if (userData.message.includes("ROLE_JOBAPPLICANT")) {
+        userType1 = "jobseeker";
 
-        setErrorMessage("");
-        const userData = response.data;
-        console.log("this is response ", userData);
-        console.log("this is token ", userData.data.jwt);
-        localStorage.setItem("jwtToken", userData.data.jwt);
-
-
-        let userType1;
-        if (userData.message.includes("ROLE_JOBAPPLICANT")) {
-          userType1 = "jobseeker";
-          const generatedToken = await generateToken();
-          try {
-            console.log("generated token", generatedToken);
-            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
-          } catch (error) {
-            console.error("⚠️ Failed to save FCM token for web:", error);
-          }
-        } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
-          userType1 = "employer";
-        } else {
-          userType1 = "unknown";
-        }
-        console.log("this userType ", userType1);
-        localStorage.setItem("userType", userType1);
-
-        setErrorMessage("");
-        handleLogin();
-
-        setUser(userData);
-        setUserType(userData.userType);
-        console.log("Login successful", userData);
-        const userId = userData.id;
-
-        // Log the user activity
-        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
-        await axios.post(
-          activityLogEndpoint,
-          {
-            userId: userId,
-            actionType: "Login",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userData.data.jwt}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        // Check the profile ID
-        let jwtToken = localStorage.getItem("jwtToken");
-        if (!jwtToken) {
-          jwtToken = userData.data.jwt;
-        }
-
-        // ✅ Fetch Zoho User ID based on email
-        const zohoResponse = await axios.get(
-          `${apiUrl}/zoho/searchlead/${candidateEmail}`
-        );
-        const zohoUserId = zohoResponse.data?.data?.[0]?.id;
-
-        if (zohoUserId) {
-          sessionStorage.setItem("zohoUserId", zohoUserId); // Store Zoho User ID in session
-          console.log("Zoho User ID:", zohoUserId);
-        }
-
-        const profileIdResponse = await axios.get(
-          `${apiUrl}/applicantprofile/${userId}/profileid`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
-        );
-        const profileId = profileIdResponse.data;
-        let resume;
         try {
-          const jwtToken = localStorage.getItem("jwtToken")
-          const profileIdResponse1 = await axios.get(
-            `${apiUrl}/resume/pdf/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
-
-          );
-        } catch (error) {
-          resume = error.response.status;
+          const generatedToken = await generateToken();
+          await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
+        } catch (err) {
+          console.error("FCM error:", err);
         }
-        // if (profileId !== 0 && resume === 404) {
-        //   console.log("checking ", jwtToken);
-        //   localStorage.setItem("jwtToken", userData.data.jwt);
-        //   setPageLoading(false);
-        //   handlePostLoginRedirect();
-        //   // navigate("/applicant-basic-details-form/3");
-        // } else
-           if (profileIdResponse.status === 200 && profileId === 0) {
-          console.log("checking ", jwtToken);
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          setPageLoading(false);
-          navigate("/applicant-basic-details-form/1");
-        } else {
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          setPageLoading(false)
-          handlePostLoginRedirect();
-        }
+      } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
+        userType1 = "employer";
       }
-    } catch (error) {
-      setPageLoading(false);
-      console.log(error?.response?.data || error.message);
-      if (error?.response?.data === "Incorrect password") {
 
-        setErrorMessage("Incorrect password.");
-      } else if (
-        error?.response?.data === "No account found with this email address"
-            ) {
-        setErrorMessage("No account found with this email address.");
+      localStorage.setItem("userType", userType1);
+
+      setUser(userData);
+      setUserType(userType1);
+
+      const userId = userData.id;
+      const jwtToken = userData.data.jwt;
+
+      // Activity log
+      await apiClient.post("/api/activity/log", { userId, actionType: "Login" });
+
+      // Zoho
+      try {
+        const zohoRes = await apiClient.get(`/zoho/searchlead/${candidateEmail}`);
+        const zohoUserId = zohoRes.data?.data?.[0]?.id;
+        if (zohoUserId) {
+          sessionStorage.setItem("zohoUserId", zohoUserId);
+        }
+      } catch (e) {
+        console.log("Zoho fetch failed");
+      }
+
+      // Profile check
+      const profileRes = await apiClient.get(
+        `/applicantprofile/${userId}/profileid`,
+      );
+
+      const profileId = profileRes.data;
+
+      if (profileRes.status === 200 && profileId === 0) {
+        navigate("/applicant-basic-details-form/1");
       } else {
-        setErrorMessage(
-          "login failed. Please check your user name and password.",
-        );
+        handlePostLoginRedirect();
       }
     }
-  };
+
+  } catch (error) {
+    console.error(error?.response?.data || error.message);
+
+    // ❌ ERROR HANDLING ONLY
+    if (error?.response?.data === "Incorrect password") {
+      setErrorMessage("Incorrect password.");
+    } else if (
+      error?.response?.data === "No account found with this email address"
+    ) {
+      setErrorMessage("No account found with this email address.");
+    } else {
+      setErrorMessage("Login failed. Please check your credentials.");
+    }
+  } finally {
+    setPageLoading(false);
+  }
+};
 
   const isCandidateFormValid = () => {
     const emailError = validateEmail(candidateEmail);

@@ -1,5 +1,4 @@
 
-import { useState, useEffect } from "react";
 import apiClient from "../../services/apiClient";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -31,13 +30,13 @@ export default function ApplicantJobAlerts() {
     }
     try {
 
-      const url = `/notifications/getNotifications/${user.id}`;
-      const resp = await apiClient.get(url);
+      // const url = `/notifications/getNotifications/${user.id}`;
+      // const resp = await apiClient.get(url);
 
       const authToken = localStorage.getItem("jwtToken");
       const currentPage = reset ? 0 : page;
-      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${currentPage}&size=10`;
-      const resp = await axios.get(url, {
+      const url = `/notifications/getNotifications/${user.id}?page=${currentPage}&size=10`;
+      const resp = await apiClient.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       // Get alerts array from response
@@ -87,8 +86,8 @@ export default function ApplicantJobAlerts() {
     }
     try {
       const authToken = localStorage.getItem("jwtToken");
-      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${pageNumber}&size=10`;
-      const resp = await axios.get(url, {
+      const url = `/notifications/getNotifications/${user.id}?page=${pageNumber}&size=10`;
+      const resp = await apiClient.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       // Get alerts array from response
