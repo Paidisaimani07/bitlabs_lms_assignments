@@ -2,15 +2,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import $ from "jquery";
 import "jquery.cookie";
 import "metismenu";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
 import { useUserContext } from "../common/UserProvider";
 import apiClient from "../../services/apiClient";
 import ModalLogout from "../common/ModalLogout";
-import axios from "axios";
 import clearJWTToken from "../common/clearJWTToken";
-
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
+import shape9 from "../../images/dashboard/side-nav-icons/feedback.svg";
 import shape8 from "../../images/dashboard/side-nav-icons/power.svg";
 import shape7 from "../../images/dashboard/side-nav-icons/techVibes.svg";
 import shape6 from "../../images/dashboard/side-nav-icons/innovationArena.svg";
@@ -72,7 +71,7 @@ function ApplicantNavBar() {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-     const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
+      const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
 
       // Map only fields you want into your CARD object
       const mappedCard = {
@@ -233,14 +232,9 @@ function ApplicantNavBar() {
     }
 
     apiClient
-  .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
-  .then((response) => {
-    const imageUrl = URL.createObjectURL(response.data);
-    setImageSrc(imageUrl);
-  })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const imageUrl = URL.createObjectURL(blob);
+      .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
+      .then((response) => {
+        const imageUrl = URL.createObjectURL(response.data);
         setImageSrc(imageUrl);
       })
       .catch(() => {
@@ -281,22 +275,6 @@ function ApplicantNavBar() {
 
   const fetchAlertCount = async () => {
     try {
-
-      const [jobAlertsResponse, notificationsResponse] = await Promise.all([
-          apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`),
-        apiClient.get(`/notifications/applicant/${user.id}/unread`),
-      ]);
-      const notifications = Array.isArray(notificationsResponse.data)
-        ? notificationsResponse.data
-        : [];
-      const unreadNotificationsCount = notifications.reduce(
-        (count, notification) => {
-          const isUnread = notification.applicantId?.includes(user.id);
-          return isUnread ? count + 1 : count;
-        },
-        0
-      );
-
       // Get the count directly from the new backend API
       const response = await apiClient.get(
         `/notifications/count/${user.id}`
@@ -306,19 +284,8 @@ function ApplicantNavBar() {
       console.log("🔔 Alert count response:", response.data, "Setting count to:", count);
       setAlertCount(count);
     } catch (error) {
-
-      console.error("Error fetching alert counts:", error);
-      try {
-        const response = await apiClient.get(`/applyjob/applicants/${user.id}/unread-alert-count`);
-        setAlertCount(Number(response.data) || 0);
-      } catch (fallbackError) {
-        console.error("Error fetching fallback alert count:", fallbackError);
-        setAlertCount(0);
-      }
-
       console.error("Error fetching alert count:", error);
       setAlertCount(0);
-
     }
 
   };

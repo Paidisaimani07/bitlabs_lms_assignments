@@ -1,6 +1,5 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import apiClient from '../../services/apiClient';
 import AddTeamMemberPopup from './AddTeamMemberPopup';
 function TeamMember() {

@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import apiClient from "../../services/apiClient";
 import { useNavigate, useLocation } from "react-router-dom";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import Spinner from "../common/Spinner";
 import Snackbar from "../common/Snackbar";
@@ -162,19 +161,19 @@ function JobListSection({ tab, userId, jwt, setSelectedJobId, addSnackbar }) {
 
   const countUrl = useMemo(() => {
     switch (tab) {
-      case "recommended": return `${apiUrl}/recommendedjob/countRecommendedJobsForApplicant/${userId}`;
-      case "applied":     return `${apiUrl}/applyjob/countAppliedJobs/${userId}`;
-      case "saved":       return `${apiUrl}/savedjob/countSavedJobs/${userId}`;
+      case "recommended": return `/recommendedjob/countRecommendedJobsForApplicant/${userId}`;
+      case "applied":     return `/applyjob/countAppliedJobs/${userId}`;
+      case "saved":       return `/savedjob/countSavedJobs/${userId}`;
       default: return "";
     }
   }, [tab, userId]);
 
   const listUrl = useMemo(() => {
     const base = tab === "recommended"
-      ? `${apiUrl}/recommendedjob/findrecommendedjob/${userId}`
+      ? `/recommendedjob/findrecommendedjob/${userId}`
       : tab === "applied"
-      ? `${apiUrl}/applyjob/getAppliedJobs/${userId}`
-      : `${apiUrl}/savedjob/getSavedJobs/${userId}`;
+      ? `/applyjob/getAppliedJobs/${userId}`
+      : `/savedjob/getSavedJobs/${userId}`;
     return `${base}?page=${page - 1}&size=${size}`; // backend 0-indexed
   }, [tab, userId, page, size]);
 

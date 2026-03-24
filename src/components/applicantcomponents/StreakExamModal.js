@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './StreakExamModal.css';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import sirenImg from '../../images/dashboard/siren.png';
 
 const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
@@ -39,9 +38,7 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
       const dateString = `${year}-${month}-${day}`;
 
       console.log(`Fetching questions for date: ${dateString}...`);
-      const response = await axios.get(`${apiUrl}/streak/questions/${dateString}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
-      });
+      const response = await apiClient.get(`/streak/questions/${dateString}`);
 
       console.log("Questions response:", response.data);
       if (response.data && response.data.length > 0) {
@@ -93,11 +90,7 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
   }
 
   try {
-    const jwtToken = localStorage.getItem('jwtToken');
-
-    await axios.post(`${apiUrl}/streak/${userId}/complete`, selectedAnswers, {
-      headers: { Authorization: `Bearer ${jwtToken}` }
-    });
+    await apiClient.post(`/streak/${userId}/complete`, selectedAnswers);
 
     setIsSubmitted(true);
 

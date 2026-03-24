@@ -1,6 +1,5 @@
 import React, { useState, useEffect,useRef, useCallback } from 'react';
 import apiClient from '../../services/apiClient';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import { useParams } from 'react-router-dom';
 import BackButton from '../common/BackButton';
@@ -419,7 +418,6 @@ useEffect(() => {
   
   
   const handleDownloadPDF = async () => {
-    const resumeUrl = `${apiUrl}/resume/pdf/${id}`;
     const element = pageRef.current;
    
     const wrapper = document.createElement('div');
@@ -498,8 +496,8 @@ useEffect(() => {
    
     const imgData = canvas.toDataURL("image/png");
    
-    const resumeResponse = await fetch(resumeUrl);
-    const resumeBlob = await resumeResponse.blob();
+    const resumeResponse = await apiClient.get(`/resume/pdf/${id}`, { responseType: 'blob' });
+    const resumeBlob = resumeResponse.data;
     const resumePdfBytes = await resumeBlob.arrayBuffer();
    
     const { PDFDocument } = await import('pdf-lib');
@@ -921,14 +919,9 @@ useEffect(() => {
       className="file-name-input-resume1" 
       onClick={handleResumeClick1} // Open resume in a new tab
     >
-      {/* <Link  
-        to={`${apiUrl}/resume/pdf/${id}`} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        style={{ textDecoration: 'none', color: '#0000EE' }}
-      > */}
+      {/* Commented out Link */}
         {resumeFileName}
-      {/* </Link> */}
+      {/* End Link */}
     </span></div>
                     </div>
                   </div>
