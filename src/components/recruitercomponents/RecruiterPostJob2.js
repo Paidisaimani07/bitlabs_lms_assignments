@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './RecruiterPostJob2.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 
 const RecruiterPostJob2 = () => {
@@ -71,15 +70,9 @@ const RecruiterPostJob2 = () => {
       })),
     };
 
-    const jwtToken = localStorage.getItem('jwtToken');
-    const headers = {
-      Authorization: `Bearer ${jwtToken}`,
-      'Content-Type': 'application/json',
-    };
-
     try {
       // Save job details and questions
-      const jobResponse = await axios.post(`${apiUrl}/job/recruiters/saveJob/${user.id}`, formData, { headers });
+      const jobResponse = await apiClient.post(`/job/recruiters/saveJob/${user.id}`, formData);
       console.log('Job saved successfully', jobResponse.data);
 
       setSnackbar({ open: true, message: 'Job saved successfully', type: 'success' });

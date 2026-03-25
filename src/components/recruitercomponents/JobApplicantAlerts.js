@@ -1,8 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 export default function JobApplicantAlerts() {
   const [jobAlerts, setJobAlerts] = useState([]);
@@ -10,7 +9,7 @@ export default function JobApplicantAlerts() {
   useEffect(() => {
     const fetchJobAlerts = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/recuriters/job-alerts/${user.id}`);
+        const response = await apiClient.get(`/recuriters/job-alerts/${user.id}`);
         const alerts = response.data;
         setJobAlerts(alerts);
       } catch (error) {
@@ -18,7 +17,7 @@ export default function JobApplicantAlerts() {
       }
     };
     fetchJobAlerts();
-  }, []);
+  }, [user.id]);
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);

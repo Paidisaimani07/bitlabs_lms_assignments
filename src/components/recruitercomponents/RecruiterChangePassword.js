@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 import CryptoJS from "crypto-js";
- 
+
 function RecruiterChangePassword() {
   const { user } = useUserContext();
   const [oldPassword, setOldPassword] = useState('');
@@ -115,17 +114,9 @@ function RecruiterChangePassword() {
     };
   
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-  
-      const response = await axios.post(
-        `${apiUrl}/recuriters/authenticateRecruiter/${user.id}`,
+      const response = await apiClient.post(
+        `/recuriters/authenticateRecruiter/${user.id}`,
         formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            "Content-Type": "application/json",
-          },
-        }
       );
   
       if (response.data === "Password updated and stored") {

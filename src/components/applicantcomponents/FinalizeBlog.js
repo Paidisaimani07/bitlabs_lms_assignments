@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -36,15 +35,7 @@ export default function FinalizeBlog() {
         };
         console.log(body)
         try {
-            const jwtToken = localStorage.getItem('jwtToken');
-            const res = await axios.put(`${apiUrl}/blogs/updateOrDelete`,
-                body,
-                {
-                    headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                    },
-                }
-            );
+            const res = await apiClient.put('/blogs/updateOrDelete', body);
              if (res.status === 200) {
                 console.log(blogs)
       setBlogs((prev) => prev.filter((blog) => blog.id !== blogId));
@@ -73,14 +64,7 @@ export default function FinalizeBlog() {
     useEffect(() => {
         async function fetchBlogs() {
             try {
-                const jwtToken = localStorage.getItem('jwtToken');
-                const res = await axios.get(`${apiUrl}/blogs/inactive`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${jwtToken}`,
-                        },
-                    }
-                );
+                const res = await apiClient.get('/blogs/inactive');
                 setBlogs(res.data);
             } catch (err) {
                 console.error("Error fetching blogs:", err);

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import ReactPlayer from "react-player";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import { useLocation } from "react-router-dom";
 import "./VerifiedVideos.css";
@@ -55,10 +54,7 @@ const VerifiedVideos = () => {
     const fetchVideos = async () => {
       try {
         setLoading(true);
-        const jwtToken = localStorage.getItem("jwtToken");
-        const res = await axios.get(`${apiUrl}/videos/recommended/${userId}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        const res = await apiClient.get(`/videos/recommended/${userId}`);
 
         if (!mounted) return;
         const data = res.data || [];
@@ -148,17 +144,10 @@ const VerifiedVideos = () => {
   const handleProgress = async (progress, videoId) => {
     if (progress.played >= 0.7 && !watchedVideos[videoId]) {
       try {
-        const jwtToken = localStorage.getItem("jwtToken");
-        await axios.post(
-          `${apiUrl}/api/video-watch/track`,
-          { applicantId: userId, videoId },
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        await apiClient.post(`/api/video-watch/track`, {
+          applicantId: userId,
+          videoId,
+        });
         setWatchedVideos((prev) => ({ ...prev, [videoId]: true }));
         setWatchedDuringSession((prev) => new Set(prev.add(videoId)));
       } catch (err) {

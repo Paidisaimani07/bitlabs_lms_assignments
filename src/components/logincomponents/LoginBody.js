@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useGoogleLogin } from "@react-oauth/google";
 import OTPVerification from "../applicantcomponents/OTPVerification";
 import Background from "../../images/user/avatar/Backgroundimage.png";
-import logo from '../../images/icons/newLogo.png';
+import logo from "../../images/icons/newLogo.png";
 
 import Backgroundimagemobile from "../../images/user/avatar/backgroundimage-mobile.png";
 import Snackbar from "../common/Snackbar";
@@ -15,9 +15,36 @@ import CryptoJS from "crypto-js";
 import ZohoCRMService from "../zohoCrmComponent/zohoCrm";
 import { saveFcmTokenWeb } from "../../notifications/notificationWeb";
 import { generateToken } from "../../notifications/firebase";
-
+import {
+  isEmailValid,
+  isFullNameValid,
+  isMobileNumberValid,
+  isPasswordValid,
+  SNACKBAR_PROPS,
+  validateEmail,
+  validatePassword,
+} from "./validations";
 
 function LoginBody({ handleLogin }) {
+  const [candidateName, setCandidateName] = useState("");
+  const [candidateEmail1, setCandidateEmail1] = useState("");
+  const [candidateMobileNumber, setCandidateMobileNumber] = useState("");
+  const [candidatePassword1, setCandidatePassword1] = useState("");
+  const [candidateNameError, setCandidateNameError] = useState("");
+  const [candidateEmailError1, setCandidateEmailError1] = useState("");
+  const [candidateMobileNumberError, setCandidateMobileNumberError] =
+    useState("");
+  const [candidatePasswordError1, setCandidatePasswordError1] = useState("");
+  const [candidateOTPSent, setCandidateOTPSent] = useState(false);
+  const [candidateOTPVerified, setCandidateOTPVerified] = useState(false);
+  const [candidateOTPVerifyingInProgress, setCandidateOTPVerifyingInProgress] =
+    useState(false);
+  const [candidateOTPSendingInProgress, setCandidateOTPSendingInProgress] =
+    useState(false);
+  const [candidateRegistrationSuccess, setCandidateRegistrationSuccess] =
+    useState(false);
+  const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
+
   const [candidateEmail, setCandidateEmail] = useState("");
   const [candidatePassword, setCandidatePassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,14 +58,9 @@ function LoginBody({ handleLogin }) {
   const [candidatePasswordError, setCandidatePasswordError] = useState("");
   const [registrationSuccessMessage, setRegistrationSuccessMessage] =
     useState("");
-  const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    type: "",
-  });
+  const [snackbar, setSnackbar] = useState(SNACKBAR_PROPS);
   const [pageLoading, setPageLoading] = useState(false);
   const [message, setMessage] = useState("Welcome Back");
-  const { user } = useUserContext();
   // State variables for UTM parameters
   const [utmSource, setUtmSource] = useState("bitlabs.in");
   const [utmMedium, setUtmMedium] = useState("bitlabs.in");
@@ -47,91 +69,156 @@ function LoginBody({ handleLogin }) {
   const [utmTerm, setUtmTerm] = useState("bitlabs.in");
   const { handleLead } = ZohoCRMService();
 
-  const handlePostLoginRedirect = () => {
-    const intendedUrl = localStorage.getItem("intendedUrl");
-
-    localStorage.removeItem("intendedUrl");
-
-    if (intendedUrl && intendedUrl !== "/candidate") {
-      navigate(intendedUrl);
-    } else {
-      navigate("/applicanthome");
-    }
+  const saveTokens = (jwtToken, refreshToken) => {
+    localStorage.setItem("jwtToken", jwtToken);
+    localStorage.setItem("refreshToken", refreshToken);
   };
 
-
+  const handlePostLoginRedirect = () => {
+    const intendedUrl = localStorage.getItem("intendedUrl");
+    localStorage.removeItem("intendedUrl");
+    navigate(
+      intendedUrl && intendedUrl !== "/candidate"
+        ? intendedUrl
+        : "/applicanthome",
+    );
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    // Update state variables with UTM parameters from URL if available
     setUtmSource(params.get("utm_source") || "bitlabs.in/jobs");
     setUtmMedium(params.get("utm_medium") || "bitlabs.in/jobs");
     setUtmCampaign(params.get("utm_campaign") || "bitlabs.in/jobs");
     setUtmContent(params.get("utm_content") || "bitlabs.in/jobs");
     setUtmTerm(params.get("utm_term") || "bitlabs.in/jobs");
-  }, [location, navigate]);
+  }, [location]);
+
+  const handlePostLogin = async ({
+    userData,
+    email,
+    name,
+    fromGoogle = false,
+  }) => {
+    const userId = userData.id;
+    const jwt = userData.data.jwt;
+
+    saveTokens(jwt, userData.data.refreshToken);
+
+    // Determine user type
+    let userType1;
+    if (userData.message.includes("ROLE_JOBAPPLICANT")) {
+      userType1 = "jobseeker";
+    } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
+      userType1 = "employer";
+    } else {
+      userType1 = "unknown";
+    }
+    localStorage.setItem("userType", userType1);
+// Write userData so the navbar can display the logged-in user's email.
+    // This overwrites any stale value from a previous session (fixes Edge stale-data bug).
+    localStorage.setItem("userData", JSON.stringify({ identifier: email }));
+    // Save FCM token (jobseekers only)
+    if (userType1 === "jobseeker") {
+      try {
+        const generatedToken = await generateToken();
+        await saveFcmTokenWeb(userId, jwt, generatedToken);
+      } catch (error) {
+        console.error("⚠️ Failed to save FCM token for web:", error);
+      }
+    }
+
+    // Log activity
+    await apiClient.post("/api/activity/log", { userId, actionType: "Login" });
+
+    // Update app state
+    setErrorMessage("");
+    handleLogin();
+    setUser(userData);
+    setUserType(userType1);
+    setCandidateEmail(email);
+    setCandidateName(name);
+
+    // Zoho CRM — Google uses handleLead, email/pass uses searchlead
+    if (fromGoogle) {
+      const leadData = {
+        data: [
+          {
+            Last_Name: name,
+            Email: email,
+            Status_TS: "Signed-Up",
+            Industry: "Software",
+            Utm_Source_TS: utmSource || "",
+            Utm_Medium_TS: utmMedium || "",
+            Utm_Campaign_TS: utmCampaign || "",
+            Utm_Content_TS: utmContent || "",
+            Utm_Term_TS: utmTerm || "",
+          },
+        ],
+      };
+      const id = await handleLead(leadData);
+      sessionStorage.setItem("zohoUserId", id);
+    } else {
+      const zohoResponse = await apiClient.get(`/zoho/searchlead/${email}`);
+      const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+      if (zohoUserId) sessionStorage.setItem("zohoUserId", zohoUserId);
+    }
+
+    // Navigate based on profile completeness
+    const profileIdResponse = await apiClient.get(
+      `/applicantprofile/${userId}/profileid`,
+    );
+    const profileId = profileIdResponse.data;
+
+    let resume;
+    // TODO: this API call is just to check if resume exists.
+
+    // try {
+    //   await apiClient.get(`/applicant-pdf/getresume/${userId}`);
+    // } catch (error) {
+    //   resume = error.response.status;
+    // }
+
+    saveTokens(jwt, userData.data.refreshToken);
+
+    if (profileId === 0) {
+      navigate("/applicant-basic-details-form/1");
+    } else if (profileId !== 0 && resume === 404) {
+      handlePostLoginRedirect();
+    } else {
+      handlePostLoginRedirect();
+    }
+  };
 
   const login = useGoogleLogin({
     onSuccess: async (response) => {
       setPageLoading(true);
       try {
-        console.log("First API");
         const res = await axios.get(
           "https://www.googleapis.com/oauth2/v3/userinfo",
           {
             headers: {
               Authorization: `Bearer ${response.access_token}`,
             },
-          }
+          },
         );
-        console.log(res);
+
         const email1 = res.data.email;
         const name1 = res.data.name;
 
-        console.log("Second API");
-        let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-
-        const response1 = await axios.post(
-          loginEndpoint,
-          {
-            email: email1,
-            utmSource: utmSource,
-          },
-          {
-            headers: {
-              // Ensure no Authorization header is sent
-              Authorization: "",
-            },
-          }
-        );
-
-        console.log(response1);
+        const response1 = await apiClient.post("/applicant/applicantLogin", {
+          email: email1,
+          utmSource: utmSource,
+        });
         if (response1.status === 200) {
           setErrorMessage("");
           const userData = response1.data;
-          console.log("This is response: ", userData);
-          console.log("This is token: ", userData.data.jwt);
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          const generatedToken = await generateToken()
-          try {
-            console.log("generated token", generatedToken)
-            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
-          } catch (error) {
-            console.error("⚠️ Failed to save FCM token for web:", error);
-          }
-
-          // Log the user's activity
-          const activityLogEndpoint = `${apiUrl}/api/activity/log`;
-          const activityPayload = {
-            userId: userData.id,
-            actionType: "Login",
-          };
-
-          await axios.post(activityLogEndpoint, activityPayload, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-            },
+          await handlePostLogin({
+            userData: response1.data,
+            email: email1,
+            name: name1,
+            fromGoogle: true,
           });
+
           console.log("Activity log submitted successfully.");
 
           setCandidateEmail(email1);
@@ -208,32 +295,16 @@ function LoginBody({ handleLogin }) {
           if (!jwtToken) {
             jwtToken = userData.data.jwt;
           }
-          const profileIdResponse = await axios.get(
-            `${apiUrl}/applicantprofile/${userId}/profileid`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
+          const profileIdResponse = await apiClient.get(
+            `/applicantprofile/${userId}/profileid`,
           );
           const profileId = profileIdResponse.data;
 
           let resume;
           try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            const profileIdResponse1 = await axios.get(
-
-              `${apiUrl}/applicant-pdf/getresume/${userId}`,
-
-              {
-                headers: {
-                  Authorization: `Bearer ${jwtToken}`,
-                },
-              },
-
-            );
+            await apiClient.get(`/applicant-pdf/getresume/${userId}`);
           } catch (error) {
-            resume = error.response.status;
+            resume = error.response?.status;
           }
 
           // if (profileIdResponse.status === 200 && profileId !== 0 && resume === 404) {            console.log("checking ", jwtToken);
@@ -252,186 +323,122 @@ function LoginBody({ handleLogin }) {
             setPageLoading(false);
             handlePostLoginRedirect();
           }
+
         }
       } catch (err) {
         setPageLoading(false);
-        console.log(err);
+        console.error("Google login failed", err);
       }
     },
   });
-  const handleTogglePassword = () => {
-    setShowPassword(!showPassword);
-  };
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-    setErrorMessage("");
-  };
-  let userType1;
+ const handleCandidateSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleCandidateSubmit = async (e) => {
-    e.preventDefault();
-    if (!isCandidateFormValid()) {
-      return;
-    }
-    setPageLoading(true);
+  if (!isCandidateFormValid()) return;
+
+  setPageLoading(true);
+
+  try {
     const secretKey = "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p";
-    const iv = CryptoJS.lib.WordArray.random(16); // Generate a random IV (16 bytes for AES)
+    const iv = CryptoJS.lib.WordArray.random(16);
+
     const encryptedPassword = CryptoJS.AES.encrypt(
       candidatePassword,
       CryptoJS.enc.Utf8.parse(secretKey),
       {
-        iv: iv,
+        iv,
         mode: CryptoJS.mode.CBC,
         padding: CryptoJS.pad.Pkcs7,
       }
     ).toString();
 
-    try {
-      let loginEndpoint = `${apiUrl}/applicant/applicantLogin`;
-      const response = await axios.post(
-        loginEndpoint,
-        {
-          email: candidateEmail,
-          password: encryptedPassword,
-          iv: iv.toString(CryptoJS.enc.Base64),
-        },
-        {
-          headers: {
-            // Ensure no Authorization header is sent
-            Authorization: "",
-          },
+    const response = await apiClient.post("/applicant/applicantLogin", {
+      email: candidateEmail,
+      password: encryptedPassword,
+      iv: iv.toString(CryptoJS.enc.Base64),
+    });
+
+    // ✅ SUCCESS FLOW
+    if (response.status === 200) {
+      const userData = response.data;
+
+      await handlePostLogin({
+        userData,
+        email: candidateEmail,
+        name: userData.name ?? candidateEmail,
+        fromGoogle: false,
+      });
+
+      localStorage.setItem("jwtToken", userData.data.jwt);
+
+      let userType1 = "unknown";
+      if (userData.message.includes("ROLE_JOBAPPLICANT")) {
+        userType1 = "jobseeker";
+
+        try {
+          const generatedToken = await generateToken();
+          await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
+        } catch (err) {
+          console.error("FCM error:", err);
         }
+      } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
+        userType1 = "employer";
+      }
+
+      localStorage.setItem("userType", userType1);
+
+      setUser(userData);
+      setUserType(userType1);
+
+      const userId = userData.id;
+      const jwtToken = userData.data.jwt;
+
+      // Activity log
+      await apiClient.post("/api/activity/log", { userId, actionType: "Login" });
+
+      // Zoho
+      try {
+        const zohoRes = await apiClient.get(`/zoho/searchlead/${candidateEmail}`);
+        const zohoUserId = zohoRes.data?.data?.[0]?.id;
+        if (zohoUserId) {
+          sessionStorage.setItem("zohoUserId", zohoUserId);
+        }
+      } catch (e) {
+        console.log("Zoho fetch failed");
+      }
+
+      // Profile check
+      const profileRes = await apiClient.get(
+        `/applicantprofile/${userId}/profileid`,
       );
 
-      if (response.status === 200) {
-        setErrorMessage("");
-        const userData = response.data;
-        console.log("this is response ", userData);
-        console.log("this is token ", userData.data.jwt);
-        localStorage.setItem("jwtToken", userData.data.jwt);
+      const profileId = profileRes.data;
 
-
-        let userType1;
-        if (userData.message.includes("ROLE_JOBAPPLICANT")) {
-          userType1 = "jobseeker";
-          const generatedToken = await generateToken();
-          try {
-            console.log("generated token", generatedToken);
-            await saveFcmTokenWeb(userData.id, userData.data.jwt, generatedToken);
-          } catch (error) {
-            console.error("⚠️ Failed to save FCM token for web:", error);
-          }
-        } else if (userData.message.includes("ROLE_JOBRECRUITER")) {
-          userType1 = "employer";
-        } else {
-          userType1 = "unknown";
-        }
-        console.log("this userType ", userType1);
-        localStorage.setItem("userType", userType1);
-
-        setErrorMessage("");
-        handleLogin();
-
-        setUser(userData);
-        setUserType(userData.userType);
-        console.log("Login successful", userData);
-        const userId = userData.id;
-
-        // Log the user activity
-        const activityLogEndpoint = `${apiUrl}/api/activity/log`;
-        await axios.post(
-          activityLogEndpoint,
-          {
-            userId: userId,
-            actionType: "Login",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userData.data.jwt}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        // Check the profile ID
-        let jwtToken = localStorage.getItem("jwtToken");
-        if (!jwtToken) {
-          jwtToken = userData.data.jwt;
-        }
-
-        // ✅ Fetch Zoho User ID based on email
-        const zohoResponse = await axios.get(
-          `${apiUrl}/zoho/searchlead/${candidateEmail}`
-        );
-        const zohoUserId = zohoResponse.data?.data?.[0]?.id;
-
-        if (zohoUserId) {
-          sessionStorage.setItem("zohoUserId", zohoUserId); // Store Zoho User ID in session
-          console.log("Zoho User ID:", zohoUserId);
-        }
-
-        const profileIdResponse = await axios.get(
-          `${apiUrl}/applicantprofile/${userId}/profileid`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
-        );
-        const profileId = profileIdResponse.data;
-        let resume;
-        try {
-          const jwtToken = localStorage.getItem("jwtToken")
-          const profileIdResponse1 = await axios.get(
-            `${apiUrl}/resume/pdf/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
-
-          );
-        } catch (error) {
-          resume = error.response.status;
-        }
-        // if (profileId !== 0 && resume === 404) {
-        //   console.log("checking ", jwtToken);
-        //   localStorage.setItem("jwtToken", userData.data.jwt);
-        //   setPageLoading(false);
-        //   handlePostLoginRedirect();
-        //   // navigate("/applicant-basic-details-form/3");
-        // } else
-           if (profileIdResponse.status === 200 && profileId === 0) {
-          console.log("checking ", jwtToken);
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          setPageLoading(false);
-          navigate("/applicant-basic-details-form/1");
-        } else {
-          localStorage.setItem("jwtToken", userData.data.jwt);
-          setPageLoading(false)
-          handlePostLoginRedirect();
-        }
-      }
-    } catch (error) {
-      setPageLoading(false);
-      console.log(error?.response?.data || error.message);
-      if (error?.response?.data === "Incorrect password") {
-        setErrorMessage("Incorrect password.");
-        console.error("login failed");
-      } else if (
-        error?.response?.data === "No account found with this email address"
-            ) {
-        setErrorMessage("No account found with this email address.");
-        console.error("login failed");
+      if (profileRes.status === 200 && profileId === 0) {
+        navigate("/applicant-basic-details-form/1");
       } else {
-        setErrorMessage(
-          "login failed. Please check your user name and password."
-        );
+        handlePostLoginRedirect();
       }
-      console.error("Login failed", error);
     }
-  };
+
+  } catch (error) {
+    console.error(error?.response?.data || error.message);
+
+    // ❌ ERROR HANDLING ONLY
+    if (error?.response?.data === "Incorrect password") {
+      setErrorMessage("Incorrect password.");
+    } else if (
+      error?.response?.data === "No account found with this email address"
+    ) {
+      setErrorMessage("No account found with this email address.");
+    } else {
+      setErrorMessage("Login failed. Please check your credentials.");
+    }
+  } finally {
+    setPageLoading(false);
+  }
+};
 
   const isCandidateFormValid = () => {
     const emailError = validateEmail(candidateEmail);
@@ -450,157 +457,38 @@ function LoginBody({ handleLogin }) {
     return true;
   };
 
-  const validateEmail = (email) => {
-    if (!email.trim()) {
-      return "Email is required.";
-    }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email) ? "" : "Please enter a valid email address.";
-  };
-  const validatePassword = (password) => {
-    if (!password.trim()) {
-      return "Password is required.";
-    }
-
-    return "";
-  };
-
-  const [candidateName, setCandidateName] = useState("");
-  const [candidateEmail1, setCandidateEmail1] = useState("");
-  const [candidateMobileNumber, setCandidateMobileNumber] = useState("");
-  const [candidatePassword1, setCandidatePassword1] = useState("");
-  const [allErrors, setAllErrors] = useState(false);
-  const [candidateNameError, setCandidateNameError] = useState("");
-  const [candidateEmailError1, setCandidateEmailError1] = useState("");
-  const [candidateMobileNumberError, setCandidateMobileNumberError] =
-    useState("");
-  const [candidatePasswordError1, setCandidatePasswordError1] = useState("");
-  const [candidateOTPSent, setCandidateOTPSent] = useState(false);
-  const [candidateOTPVerified, setCandidateOTPVerified] = useState(false);
-  const [candidateOTPVerifyingInProgress, setCandidateOTPVerifyingInProgress] =
-    useState(false);
-  const [candidateOTPSendingInProgress, setCandidateOTPSendingInProgress] =
-    useState(false);
-  const [candidateRegistrationSuccess, setCandidateRegistrationSuccess] =
-    useState(false);
-  const [candidateRegistrationInProgress, setCandidateRegistrationInProgress] =
-    useState(false);
-  const [allFieldsDisabled, setAllFieldsDisabled] = useState(false);
-  const [resendOtpMessage, setResendOtpMessage] = useState("");
-
   const handleSendOTP = async () => {
     if (!isFormValid1()) {
-      setAllErrors(true);
       return;
     }
     try {
       setCandidateOTPSendingInProgress(true);
-      console.log("email is:", candidateEmail1);
-      const response = await axios.post(
-        `${apiUrl}/applicant/applicantsendotp`,
-        { email: candidateEmail1, mobilenumber: candidateMobileNumber }
-      );
-      console.log("email is:", candidateEmail1);
-      setCandidateOTPSent(true);
-      setCandidateOTPSendingInProgress(false);
-
-      if (response.data === "Email is already registered as a Recruiter.") {
-        setCandidateOTPSent(false);
-
-        setSnackbar({
-          open: true,
-          message: "Email already registered as recruiter,please try to login",
-          type: "error",
-        });
-      }
-
-      if (response.data === "Email is already registered as an Applicant.") {
-        setCandidateOTPSent(false);
-
-        setSnackbar({
-          open: true,
-          message: "Email already exists,Please provide a new email ID",
-          type: "error",
-        });
-      }
+      const response = await apiClient.post(`/applicant/applicantsendotp`, {
+        email: candidateEmail1,
+        mobilenumber: candidateMobileNumber,
+      });
 
       if (
-        response.data === "Mobile number is already registered as a Recruiter."
-      ) {
-        setCandidateOTPSent(false);
-
-        setSnackbar({
-          open: true,
-          message: "Mobile number already existed as recruiter",
-          type: "error",
-        });
-      }
-
-      if (
+        response.data === "Email is already registered as a Recruiter." ||
+        response.data === "Email is already registered as an Applicant." ||
+        response.data ===
+          "Mobile number is already registered as a Recruiter." ||
         response.data === "Mobile number is already registered as an Applicant."
       ) {
         setCandidateOTPSent(false);
-
-        setSnackbar({
-          open: true,
-          message: "Mobile number already existed as candidate",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Error sending OTP:", error.response.data);
-      if (error.response && error.response.status === 400) {
-        if (
-          error.response.data === "Email is already registered as a Recruiter."
-        ) {
-          setSnackbar({
-            open: true,
-            message:
-              "Email already registered as recruiter, please try to login",
-            type: "error",
-          });
-        } else if (
-          error.response.data === "Email is already registered as an Applicant."
-        ) {
-          setSnackbar({
-            open: true,
-            message: "Email already exists, please provide a new email ID",
-            type: "error",
-          });
-        } else if (
-          error.response.data ===
-          "Mobile number is already registered as a Recruiter."
-        ) {
-          setSnackbar({
-            open: true,
-            message: "Mobile number already existed as recruiter",
-            type: "error",
-          });
-        } else if (
-          error.response.data ===
-          "Mobile number is already registered as an Applicant."
-        ) {
-          setSnackbar({
-            open: true,
-            message:
-              "Mobile number already exists,please provide a new mobile number",
-            type: "error",
-          });
-        } else {
-          setSnackbar({
-            open: true,
-            message: "Email is already registered.",
-            type: "error",
-          });
-        }
+        setSnackbar({ open: true, message: response.data, type: "error" });
       } else {
-        setSnackbar({
-          open: true,
-          message: "An error occurred while sending OTP.",
-          type: "error",
-        });
+        setCandidateOTPSent(true);
       }
       setCandidateOTPSendingInProgress(false);
+    } catch (error) {
+      setCandidateOTPSendingInProgress(false);
+      const msg = error?.response?.data;
+      setSnackbar({
+        open: true,
+        message: msg || "An error occurred while sending OTP.",
+        type: "error",
+      });
     }
   };
 
@@ -609,11 +497,10 @@ function LoginBody({ handleLogin }) {
       return;
     }
     try {
-      setCandidateRegistrationInProgress(true);
       const modifiedUtmSource = utmSource.includes("bitlabs.in/jobs")
         ? "Web login"
         : utmSource;
-      const response = await axios.post(`${apiUrl}/applicant/saveApplicant`, {
+      const response = await apiClient.post(`/applicant/saveApplicant`, {
         name: candidateName,
         email: candidateEmail1,
         mobilenumber: candidateMobileNumber,
@@ -635,38 +522,6 @@ function LoginBody({ handleLogin }) {
       setCandidateEmail1("");
       setCandidateMobileNumber("");
       setCandidatePassword1("");
-      setCandidateRegistrationInProgress(false);
-      //  const userId = response.data.user.id;
-      const email = candidateEmail1;
-      const name = candidateName;
-      const mobilenumber = candidateMobileNumber;
-      //   const webhookUrl = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjUwNTY1MDYzZTA0MzQ1MjZlNTUzNjUxMzci_pc';
-      //   const webhookData = {
-      //    //userId,
-      //    email,
-      //    name,
-      //    mobilenumber,
-      //    utmSource,
-      //    utmMedium,
-      //    utmCampaign,
-      //    utmContent,
-      //    utmTerm,
-      //   };
-
-      //   try {
-      //     const webhookResponse = await fetch(webhookUrl, {
-      //       method: 'POST',
-      //       headers: {
-      //         'Content-Type': 'application/json',
-      //       },
-      //       body: JSON.stringify(webhookData),
-      //     });
-      //  console.log('web hook excuted');
-
-      //   }catch (error) {
-      //     console.error('Error sending first webhook:', error);
-      //     // Handle network errors or other exceptions
-      //   }
 
       const leadData = {
         data: [
@@ -687,8 +542,6 @@ function LoginBody({ handleLogin }) {
         ],
       };
 
-
-
       const zohoUserId = await handleLead(leadData);
       console.log("Zoho User ID from login page :", zohoUserId);
       sessionStorage.setItem("zohoUserId", zohoUserId);
@@ -698,7 +551,6 @@ function LoginBody({ handleLogin }) {
       }
     } catch (error) {
       setErrorMessage("Registration failed. Please try again later.");
-      setCandidateRegistrationInProgress(false);
       console.error("Registration failed", error);
       if (error.response && error.response.status === 400) {
         if (error.response.data === "Email already registered") {
@@ -719,98 +571,7 @@ function LoginBody({ handleLogin }) {
     }
   };
 
-  const isFullNameValid = (fullName) => {
-    if (!fullName.trim()) {
-      return "Full name is required.";
-    }
-    if (!/^[a-zA-Z\s]+$/.test(fullName)) {
-      return "Please enter a valid full name and should not have any numbers and special char.";
-    }
-    if (fullName.trim().length < 3) {
-      return "Full name should be at least three characters long.";
-    }
-    return "";
-  };
-
-  const isEmailValid = (email) => {
-    if (!email.trim()) {
-      return "Email is required.";
-    }
-
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in|org)$/i;
-    if (!emailRegex.test(email)) {
-      return "Please enter a valid email address.";
-    }
-
-    const allowedDomains = [
-      "gmail.com",
-      "yahoo.com",
-      "outlook.com",
-      "aol.com",
-      "mail.com",
-      "icloud.com",
-      "zoho.com",
-      "yandex.com",
-      "protonmail.com",
-      "tutanota.com",
-    ];
-
-    const domain = email.trim().toLowerCase().split("@")[1];
-
-    if (!allowedDomains.includes(domain)) {
-      return "Please enter a valid email address";
-    }
-
-    return "";
-  };
-  const isPasswordValid = (password) => {
-    if (!password.trim()) {
-      return "Password is required.";
-    }
-    // Regular expression to match the password criteria
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
-    if (!passwordRegex.test(password)) {
-      return "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, one special character, and no spaces.";
-    }
-
-    return "";
-  };
-  const isMobileNumberValid = (mobilenumber) => {
-    if (!mobilenumber.trim()) {
-      return "Please enter a valid 10 digit mobile number";
-    }
-    if (!/^\d+$/.test(mobilenumber)) {
-      return "Mobile number must contain only numeric digits.";
-    }
-    if (mobilenumber.length !== 10) {
-      return "Please enter a valid 10 digit mobile number";
-    }
-    if (/\s/.test(mobilenumber)) {
-      return "Mobile number cannot contain spaces.";
-    }
-    const firstDigit = mobilenumber.charAt(0);
-    if (!["6", "7", "8", "9"].includes(firstDigit)) {
-      return "Mobile number should begin with 6, 7, 8, or 9.";
-    }
-    return "";
-  };
-  const isFormValid = () => {
-    setAllErrors(false);
-    const nameError = isFullNameValid(candidateName);
-    const emailError = isEmailValid(candidateEmail);
-    const mobileNumberError = isMobileNumberValid(candidateMobileNumber);
-    const passwordError = isPasswordValid(candidatePassword);
-    setCandidateNameError(nameError);
-    setCandidateEmailError(emailError);
-    setCandidateMobileNumberError(mobileNumberError);
-    setCandidatePasswordError(passwordError);
-    return !(nameError || emailError || mobileNumberError || passwordError);
-  };
-
   const isFormValid1 = () => {
-    setAllErrors(false);
     const nameError = isFullNameValid(candidateName);
     const emailError = isEmailValid(candidateEmail1);
     const mobileNumberError = isMobileNumberValid(candidateMobileNumber);
@@ -829,7 +590,6 @@ function LoginBody({ handleLogin }) {
       message: "OTP resend successfully",
       type: "success",
     });
-    setResendOtpMessage("OTP Resent successfully. Check your email.");
   };
   const handleOTPSendFail = () => {
     setSnackbar({
@@ -837,7 +597,6 @@ function LoginBody({ handleLogin }) {
       message: "Failed to resend OTP.Please try again.",
       type: "error",
     });
-    setResendOtpMessage("Failed to Resent OTP. Please try again.");
   };
 
   const handleTabClick1 = (tab) => {
@@ -1019,7 +778,7 @@ function LoginBody({ handleLogin }) {
                           />
                           <div
                             className="password-toggle-icon"
-                            onClick={handleTogglePassword}
+                            onClick={() => setShowPassword(!showPassword)}
                             id="password-addon"
                           >
                             {showPassword ? <FaEye /> : <FaEyeSlash />}
@@ -1069,7 +828,7 @@ function LoginBody({ handleLogin }) {
                               setCandidateNameError("");
                             } else {
                               setCandidateNameError(
-                                "Name should only contain alphabetic characters"
+                                "Name should only contain alphabetic characters",
                               );
                             }
                           }}
@@ -1140,7 +899,7 @@ function LoginBody({ handleLogin }) {
                           />
                           <div
                             className="password-toggle-icon"
-                            onClick={handleTogglePassword}
+                            onClick={() => setShowPassword(!showPassword)}
                             id="password-addon"
                           >
                             {showPassword ? <FaEye /> : <FaEyeSlash />}

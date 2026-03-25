@@ -1,13 +1,12 @@
 // src/components/applicant/ProjectDetailsEditPopup.jsx
 import React, { useMemo, useState, useEffect } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import PropTypes from "prop-types";
 import "./ProjectEditModal.css"; // make sure path is correct
 import { useRefresh } from "../common/RefreshContext";
 
 // Use your API base
-import { apiUrl } from "../../services/ApplicantAPIService";
-const PROJ_API = `${apiUrl}/applicant-projects`;
+const PROJ_API = "/applicant-projects";
 
 const validateTextWithTrailingSpace = (value, fieldName, minLength, maxLength) => {
   const trimmed = String(value).trim();
@@ -229,57 +228,19 @@ const ProjectDetailsEditPopup = ({ applicantId, initial = {}, onClose, onSuccess
     const payload = { ...form, teamSize: Number(form.teamSize) };
     try {
       setSaving(true);
-      const jwt = localStorage.getItem("jwtToken");
-     if (form.id) {
-
-      console.log("form id" ,form.id)
-
-      // === EXISTING PROJECT → PUT ===
-
-      await axios.put(
-
-        `${PROJ_API}/${applicantId}/updateApplicantProject/${form.id}`, // your existing update endpoint
-
-        payload,
-
-        {
-
-          headers: {
-
-            Authorization: `Bearer ${jwt}`,
-
-            "Content-Type": "application/json",
-
-          },
-
-        }
-
-      );
-
-    } else {
-
-      // === NEW PROJECT → POST ===
-
-      await axios.post(
-
-        `${PROJ_API}/${applicantId}/saveApplicantProject`, // your new create endpoint
-
-        payload,
-
-        {
-
-          headers: {
-
-            Authorization: `Bearer ${jwt}`,
-
-            "Content-Type": "application/json",
-
-          },
-
-        }
-
-      );
-    }
+      if (form.id) {
+        // === EXISTING PROJECT → PUT ===
+        await apiClient.put(
+          `${PROJ_API}/${applicantId}/updateApplicantProject/${form.id}`,
+          payload
+        );
+      } else {
+        // === NEW PROJECT → POST ===
+        await apiClient.post(
+          `${PROJ_API}/${applicantId}/saveApplicantProject`,
+          payload
+        );
+      }
       triggerRefresh();
       onSuccess?.(); // let parent know save succeeded
     } catch (err) {

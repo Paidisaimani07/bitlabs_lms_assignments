@@ -1,7 +1,6 @@
 import React from 'react';
-import axios from 'axios';
 import { useUserContext } from '../../components/common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import ApplicantNavBar from '../../components/applicantcomponents/ApplicantNavBar';
 import ApplicantDashboard from '../../components/applicantcomponents/ApplicantDashboard';
 import ApplicantUpdateProfile from '../../components/applicantcomponents/ApplicantUpdateProfile';
@@ -51,12 +50,7 @@ function ApplicantHomePage() {
     }
     const checkUserProfile = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const profileIdResponse = await apiClient.get(`/applicantprofile/${userId}/profileid`);
         const profileId = profileIdResponse.data;
         
         if (profileId === 0) {

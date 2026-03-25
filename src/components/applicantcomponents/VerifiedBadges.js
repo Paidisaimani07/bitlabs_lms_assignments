@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './VerifiedBadges.css';
 import Taketest from '../../images/user/avatar/Taketest.png';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import javaPNG from '../../images/Icons1/Icons/Java.svg';
 import htmlPNG from '../../images/Icons1/Icons/HTML.svg';
 import cssPNG from '../../images/Icons1/Icons/CSS.svg';
@@ -247,12 +246,7 @@ const VerifiedBadges = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+const response = await apiClient.get(`/applicantprofile/${user.id}/profile-view`);
     
         const newData = {
           identifier: response.data.applicant.email,
@@ -327,12 +321,7 @@ const CongratulationsLoader = () => (
     // if (!testData) return;
     const fetchTestData = async () => {
       try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${apiUrl}/applicant1/tests/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const response = await apiClient.get(`/applicant1/tests/${user.id}`);
         setTestData(response.data);  // Use setTestData here
          setVerificationLoading(false);
       } catch (error) {
@@ -349,15 +338,7 @@ const CongratulationsLoader = () => (
   useEffect(() => {
     const fetchSkillBadges = async () => {
       try {
-        // Assuming JWT token is stored in localStorage
-        const jwtToken = localStorage.getItem('jwtToken'); // Retrieve from localStorage
-        console.log(jwtToken);
-
-        const skillBadgesResponse = await axios.get(`${apiUrl}/skill-badges/${userId}/skill-badges`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`, // Pass the JWT token in headers
-          },
-        });
+        const skillBadgesResponse = await apiClient.get(`/skill-badges/${userId}/skill-badges`);
 
         const skillBadgeData = skillBadgesResponse.data;
         setSkillBadges(skillBadgeData); // Update state with the fetched data

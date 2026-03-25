@@ -1,8 +1,7 @@
 // src/components/feedback/FeedbackDashboard.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useNavigate } from "react-router-dom";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import "./FeedbackDashboard.css";
 
 const FeedbackDashboard = () => {
@@ -10,8 +9,8 @@ const FeedbackDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/mentorfeedback/forms`)
+    apiClient
+      .get(`/mentorfeedback/forms`)
       .then((res) => setForms(Array.isArray(res.data) ? res.data : []))
       .catch((err) => {
         console.error("Error loading forms", err);

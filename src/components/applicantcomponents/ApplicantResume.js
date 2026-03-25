@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import MyResumeComponent from './MyResumeComponent';
 import EditAndDownloadComponent from './EditAndDownloadComponent';
@@ -17,18 +17,9 @@ const ApplicantResume = () => {
   const fetchApplicantDetails = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const response = await fetch(`${apiUrl}/applicant/getApplicantById/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setShowBanner(data.localResume);
-        fetchResumeContent();
-      } else {
-        console.error('Error fetching applicant details:', response);
-      }
+      const response = await apiClient.get(`/applicant/getApplicantById/${user.id}`);
+      setShowBanner(response.data.localResume);
+      fetchResumeContent();
     } catch (error) {
       console.error('Error fetching applicant details:', error);
     }
@@ -37,19 +28,11 @@ const ApplicantResume = () => {
   const fetchResumeContent = async () => {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
-      const response = await fetch(`${apiUrl}/applicant-pdf/getresume/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        setPdfUrl(url);
-        setLoading(false);
-      } else {
-        console.error('Error fetching resume content:', response);
-      }
+      const response = await apiClient.get(`/applicant-pdf/getresume/${user.id}`);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+      setLoading(false);
     } catch (error) {
       console.error('Error fetching resume content:', error);
     }

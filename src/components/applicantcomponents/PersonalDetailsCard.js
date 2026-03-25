@@ -1,18 +1,17 @@
 // src/components/applicant/PersonalDetailsCard.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Snackbar from "../common/Snackbar";
 import PersonalDetailsEditPopup from "./PersonalDetailsEditPopup";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { useRefresh } from "../common/RefreshContext";
 import analytics from "../../utils/analytics";
 
-const PERSONAL_API = `${apiUrl}/applicant-personal`;
-const RESUME_API = `${apiUrl}/applicant-pdf`;
+const PERSONAL_API = '/applicant-personal';
+const RESUME_API = '/applicant-pdf';
 
 const PersonalDetailsCard = ({ applicantId , onLoaded, showContent, onChange}) => {
   const [bd, setBd] = useState({});
@@ -29,10 +28,7 @@ const PersonalDetailsCard = ({ applicantId , onLoaded, showContent, onChange}) =
 
   const fetchBD = async () => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${PERSONAL_API}/${applicantId}/getApplicantPersonalDetails`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await apiClient.get(`${PERSONAL_API}/${applicantId}/getApplicantPersonalDetails`);
 const result = data || {};
 setBd(result);
 return result;
@@ -45,9 +41,7 @@ return result;
 
   const probeResume = async () => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const res = await axios.get(`${RESUME_API}/getresume/${applicantId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
+      const res = await apiClient.get(`${RESUME_API}/getresume/${applicantId}`, {
         responseType: "blob",
         validateStatus: (s) => (s >= 200 && s < 300) || s === 404,
       });
@@ -108,7 +102,7 @@ useEffect(() => {
 
   for (const url of candidates) {
     try {
-      await axios.post(url, form, { headers: { Authorization: `Bearer ${jwt}` } });
+      await apiClient.post(url, form);
       success = true;
       addSnackbar({ message: "Resume uploaded successfully!", type: "success" });
       await probeResume?.(); // if you have this in your file
@@ -134,9 +128,7 @@ useEffect(() => {
 
   const onViewResume = async () => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-      const response = await axios.get(`${RESUME_API}/getresume/${applicantId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
+      const response = await apiClient.get(`${RESUME_API}/getresume/${applicantId}`, {
         responseType: "blob",
       });
       const blob = new Blob([response.data], { type: "application/pdf" });

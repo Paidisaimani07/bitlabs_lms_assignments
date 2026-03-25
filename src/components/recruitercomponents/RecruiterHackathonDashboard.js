@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from 'react-router-dom';
 import './RecruiterHackathonDashboard.css';
 
@@ -17,11 +16,7 @@ function RecruiterHackathonDashboard() {
 
     const fetchHackathons = async () => {
         try {
-            const jwtToken = localStorage.getItem('jwtToken');
-            if (jwtToken) {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-            }
-            const response = await axios.get(`${apiUrl}/recruiter/hackathons/getAllCreadtedHackathons/${user.id}`);
+            const response = await apiClient.get(`/recruiter/hackathons/getAllCreadtedHackathons/${user.id}`);
             setHackathons(response.data);
             setLoading(false);
         } catch (error) {

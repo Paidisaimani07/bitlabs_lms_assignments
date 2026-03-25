@@ -1,16 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Snackbar from "../common/Snackbar";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import EducationDetailsEditPopup from "./EducationDetailsEditPopup";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { useResume } from "./ResumeContext";
-
-const EDU_API = `${apiUrl}/applicant-education`;
-
 
 const Section = ({ title, children, open, onToggle }) => (
   <div className="card-base" style={{ margin: 0 }}>
@@ -46,10 +42,7 @@ const EducationDetailsCard = ({ applicantId, onLoaded, showContent }) => {
 
   const fetchEducation = async () => {
     try {
-      const jwt = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${EDU_API}/${applicantId}/getApplciantEducationDetails`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      const { data } = await apiClient.get(`/applicant-education/${applicantId}/getApplciantEducationDetails`);
       setData(data || {});
     } catch (e) {
       console.error("Education GET failed:", e?.response || e);

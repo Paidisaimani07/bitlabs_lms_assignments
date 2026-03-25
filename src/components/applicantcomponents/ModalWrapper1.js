@@ -5,11 +5,10 @@ import Button from '@mui/material/Button';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Box } from '@mui/material';
-import ResumeBuilder from './ResumeBuilder'; 
-import axios from 'axios';
+import ResumeBuilder from './ResumeBuilder';
+import apiClient from '../../services/apiClient';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import './ModalWrap.css';
 import ModalClose from '../common/ModalClose';
 import Logo from '../../images/artboard.svg';
@@ -38,7 +37,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
     const handleMessage = async (event) => {
       if (event.data === 'close-modal' || event.data === 'close-modal-saveexit') {
         try {
-          await axios.get(`${apiUrl}/resume/pdf/${user.id}`);
+          await apiClient.get(`/resume/pdf/${user.id}`);
           navigate('/applicanthome');
         } catch (error) {
           if (error.response && error.response.status === 404) {
@@ -55,7 +54,7 @@ const ModalWrapper1 = ({ isOpen, onClose }) => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [onClose, user.id, apiUrl, navigate]);
+  }, [onClose, user.id, navigate]);
 
   const handleCloseClick = () => {
     setShowCloseModal(true);

@@ -4,9 +4,8 @@ import "jquery.cookie";
 import "metismenu";
 import { useState, useEffect, useReducer } from "react";
 import { useUserContext } from "../common/UserProvider";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import ModalLogout from "../common/ModalLogout";
-import axios from "axios";
 import clearJWTToken from "../common/clearJWTToken";
 import logos from "../../images/profileIcon.png";
 import NotificationToggleWeb from "../../notifications/NotificationToggleWeb";
@@ -52,7 +51,6 @@ function ApplicantNavBar() {
     email: "",
   };
   const [card, setCard] = useState(DEFAULT_CARD);
-  const CARD_API = `${apiUrl}/applicant-card`;
   const applicantId = user.id;
 
   const handleRedirect = () => {
@@ -73,9 +71,7 @@ function ApplicantNavBar() {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const { data } = await axios.get(`${CARD_API}/${applicantId}/getApplciantCard`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
 
       // Map only fields you want into your CARD object
       const mappedCard = {
@@ -135,8 +131,8 @@ function ApplicantNavBar() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `${apiUrl}/applicant/getApplicantById/${user.id}`
+        const response = await apiClient.get(
+          `/applicant/getApplicantById/${user.id}`
         );
 
         const newData = {
@@ -235,14 +231,10 @@ function ApplicantNavBar() {
       $("body").addClass("sidebar-enable show-job");
     }
 
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-      },
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const imageUrl = URL.createObjectURL(blob);
+    apiClient
+      .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
+      .then((response) => {
+        const imageUrl = URL.createObjectURL(response.data);
         setImageSrc(imageUrl);
       })
       .catch(() => {
@@ -284,13 +276,8 @@ function ApplicantNavBar() {
   const fetchAlertCount = async () => {
     try {
       // Get the count directly from the new backend API
-      const response = await axios.get(
-        `${apiUrl}/notifications/count/${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/notifications/count/${user.id}`
       );
 
       const count = Number(response.data) || 0;

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
  
@@ -46,7 +45,7 @@ function RecruiterForgotPassword() {
     };
     const handleSendOTP = async () => {
       try {
-        const response = await axios.post(`${apiUrl}/forgotpassword/recuritersend-otp`, { email });
+        const response = await apiClient.post('/forgotpassword/recuritersend-otp', { email });
         setOTPTimerResend(60);
       const timerInterval = setInterval(() => {
         setOTPTimerResend((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
@@ -74,7 +73,7 @@ function RecruiterForgotPassword() {
     const handleResendOTP = async () => {
       try {
         setResendButtonDisabled(true);
-        await axios.post(`${apiUrl}/forgotpassword/recuritersend-otp`, { email });
+        await apiClient.post('/forgotpassword/recuritersend-otp', { email });
         setOTPTimerResend(60);
         const timerInterval = setInterval(() => {
           setOTPTimerResend((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
@@ -92,7 +91,7 @@ function RecruiterForgotPassword() {
  
     const handleVerifyOTP = async () => {
       try {
-        const response = await axios.post(`${apiUrl}/forgotpassword/recuriterverify-otp`, { email, otp });
+        const response = await apiClient.post('/forgotpassword/recuriterverify-otp', { email, otp });
         if (response.data === 'OTP verified successfully') {
           setOtpVerified(true);
           setResetError('');
@@ -118,7 +117,7 @@ function RecruiterForgotPassword() {
     return;
   }
       try {
-        const response = await axios.post(`${apiUrl}/forgotpassword/recuriterreset-password/set-new-password/${email}`, {
+        const response = await apiClient.post(`/forgotpassword/recuriterreset-password/set-new-password/${email}`, {
           password,
           confirmedPassword,
         });

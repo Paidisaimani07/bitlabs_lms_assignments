@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import BackButton from "../common/BackButton";
 import "./RecruiterHackathonViewRegistrations.css";
@@ -52,21 +51,18 @@ const RecruiterHackathonViewRegistrations = ({ hackathonId }) => {
 
   useEffect(() => {
     if (!hackathonId) return;
-    const jwtToken = localStorage.getItem("jwtToken");
-    if (jwtToken)
-      axios.defaults.headers.common["Authorization"] = `Bearer ${jwtToken}`;
 
     const fetchData = async () => {
       try {
         setLoading(true);
         const candidateOrRecruiterId = user?.id || 0;
-        const detailsResp = await axios.get(
-          `${apiUrl}/api/hackathons/getHackathonDetails/${hackathonId}/${candidateOrRecruiterId}`
+        const detailsResp = await apiClient.get(
+          `/api/hackathons/getHackathonDetails/${hackathonId}/${candidateOrRecruiterId}`
         );
         setHackathon(detailsResp.data || null);
         try {
-          const regsResp = await axios.get(
-            `${apiUrl}/hackathons/${hackathonId}/getAllHackathonRegistrations`
+          const regsResp = await apiClient.get(
+            `/hackathons/${hackathonId}/getAllHackathonRegistrations`
           );
           setRegistrations(regsResp.data || []);
         } catch (regErr) {
@@ -74,8 +70,8 @@ const RecruiterHackathonViewRegistrations = ({ hackathonId }) => {
           setRegistrations([]);
         }
         try {
-          const subResp = await axios.get(
-            `${apiUrl}/api/hackathons/${hackathonId}/getAllSubmissionsByHackathonId`
+          const subResp = await apiClient.get(
+            `/api/hackathons/${hackathonId}/getAllSubmissionsByHackathonId`
           );
           setSubmissions(subResp.data || []);
         } catch (subErr) {
@@ -107,16 +103,14 @@ const RecruiterHackathonViewRegistrations = ({ hackathonId }) => {
 
     try {
       setDeclaringWinner(registration.id);
-      const jwtToken = localStorage.getItem("jwtToken");
 
-      await axios.post(
-        `${apiUrl}/recruiter/hackathons/${hackathonId}/declare-winner/${registration.userId}`,
-        {},
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      await apiClient.post(
+        `/recruiter/hackathons/${hackathonId}/declare-winner/${registration.userId}`,
+        {}
       );
 
-      const detailsResp = await axios.get(
-        `${apiUrl}/api/hackathons/getHackathonDetails/${hackathonId}/${user?.id || 0}`
+      const detailsResp = await apiClient.get(
+        `/api/hackathons/getHackathonDetails/${hackathonId}/${user?.id || 0}`
       );
       setHackathon(detailsResp.data || null);
 

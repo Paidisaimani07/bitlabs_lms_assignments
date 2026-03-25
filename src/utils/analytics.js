@@ -1,20 +1,13 @@
-import { apiUrl } from '../services/ApplicantAPIService';
+import apiClient from '../services/apiClient';
+
 const track = (feature, userId) => {
-  fetch(`${apiUrl}/api/analytics/event`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({
-      feature,
-      
-      userId
-      //timestamp: today,
-    }),
+  apiClient.post(`/api/analytics/event`, {
+    feature,
+    userId
+    //timestamp: today,
   }).catch((err) => {
-  console.error("Analytics API failed:", err);
-});
+    console.error("Analytics API failed:", err);
+  });
 };
  
 export default { track };

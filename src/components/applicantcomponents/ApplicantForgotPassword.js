@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import logoCompany1 from '../../images/bitlabs-logo.png';
 import Snackbar from '../common/Snackbar';
@@ -175,7 +174,7 @@ function ApplicantForgotPassword() {
   const handleSendOTP = async () => {
     try {
       setIsEmailFieldDisabled(true);
-      const response = await axios.post(`${apiUrl}/applicant/forgotpasswordsendotp`, { email });
+      const response = await apiClient.post(`/applicant/forgotpasswordsendotp`, { email });
       setOtpResendTimer(60);
       const timerInterval = setInterval(() => {
         setOtpResendTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
@@ -203,7 +202,7 @@ function ApplicantForgotPassword() {
 
   const handleVerifyOTP = async () => {
     try {
-      const response = await axios.post(`${apiUrl}/applicant/applicantverify-otp`, { email, otp });
+      const response = await apiClient.post(`/applicant/applicantverify-otp`, { email, otp });
       if (response.data === 'OTP verified successfully') {
         setOtpVerified(true);
         setResetError('');
@@ -245,7 +244,7 @@ function ApplicantForgotPassword() {
   const handleResendOTP = async () => {
     try {
       setResendButtonDisabled(true);
-      await axios.post(`${apiUrl}/applicant/forgotpasswordsendotp`, { email });
+      await apiClient.post(`/applicant/forgotpasswordsendotp`, { email });
       setOtpResendTimer(60);
       const timerInterval = setInterval(() => {
         setOtpResendTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
@@ -276,8 +275,8 @@ function ApplicantForgotPassword() {
     }
 
     try {
-      const response = await axios.post(
-        `${apiUrl}/applicant/applicantreset-password/${email}`,
+      const response = await apiClient.post(
+        `/applicant/applicantreset-password/${email}`,
         {
           password,
           confirmedPassword,

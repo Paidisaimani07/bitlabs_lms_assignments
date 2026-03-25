@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import "./hackathonDetails.css";
 import { useUserContext } from "../common/UserProvider";
-import { apiUrl } from "../../services/ApplicantAPIService";
 const HackathonDetailsSkeleton = () => {
   return (
     <div className="border-style">
@@ -126,11 +125,7 @@ const HackathonDetails = () => {
     useEffect(() => {
         const fetchHackathon = async () => {
             try {
-                const jwtToken = localStorage.getItem("jwtToken");
-                const response = await axios.get(
-                    `${apiUrl}/api/hackathons/getHackathonDetails/${id}/${userId}`,
-                    { headers: { Authorization: `Bearer ${jwtToken}` } }
-                );
+                const response = await apiClient.get(`/api/hackathons/getHackathonDetails/${id}/${userId}`);
                 setHackathon(response.data);
             } catch (error) {
                 console.error("Error fetching hackathon details:", error);
@@ -143,11 +138,7 @@ const HackathonDetails = () => {
 
     const fetchRegistration = async () => {
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            const res = await axios.get(
-                `${apiUrl}/hackathons/${id}/getRegistrationStatus/${userId}`,
-                { headers: { Authorization: `Bearer ${jwtToken}` } }
-            );
+            const res = await apiClient.get(`/hackathons/${id}/getRegistrationStatus/${userId}`);
             setRegistration(res.data);
         } catch (error) {
             console.error("Error while getting registration:", error);
@@ -166,12 +157,7 @@ const HackathonDetails = () => {
     const handleConfirmRegister = async () => {
         setShowConfirmation(false);
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            await axios.post(
-                `${apiUrl}/hackathons/${id}/registerForHackathon/${userId}`,
-                {},
-                { headers: { Authorization: `Bearer ${jwtToken}` } }
-            );
+            await apiClient.post(`/hackathons/${id}/registerForHackathon/${userId}`, {});
             setShowThankYou(true);
             await fetchRegistration();
         } catch (err) {
@@ -291,10 +277,7 @@ const HackathonDetails = () => {
 
         try {
             setSubmitting(true);
-            const jwtToken = localStorage.getItem("jwtToken");
-            await axios.post(`${apiUrl}/api/hackathons/${id}/submit`, payload, {
-                headers: { Authorization: `Bearer ${jwtToken}` },
-            });
+            await apiClient.post(`/api/hackathons/${id}/submit`, payload);
             setRegistration({ ...registration, submitStatus: true });
             setShowForm(false);
         } catch (error) {
