@@ -35,16 +35,19 @@ const applicantId = user?.id;
       setIsOpen(true);
 
       const response = await apiClient.post(
-        "/api/resume/download/resume",
-        {
-          applicantId: applicantId,
-          resumeVersion: selectedTemplate,
-          jd: resumeState.jobDescription || "",
-        },
-        {
-          responseType: "blob",
-        }
-      );
+  "/api/resume/download/resume",
+  {
+    applicantId: applicantId,
+    resumeVersion: selectedTemplate,
+    jd: resumeState.jobDescription || "",
+  },
+  {
+    responseType: "blob",
+    headers: {
+      Accept: "application/pdf", // 👈 IMPORTANT
+    },
+  }
+);
 
       
       const file = new Blob([response.data], { type: "application/pdf" });

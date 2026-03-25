@@ -32,13 +32,16 @@ const generatePdf = useCallback(async () => {
           keySkills: resumeState.profileData.keySkills,
         };
 
-        const response = await apiClient.post(
-            "/api/resume/download/resume",
-            payload,
-            {
-                responseType: "blob",
-            }
-        );
+   const response = await apiClient.post(
+    "/api/resume/download/resume",
+    payload,
+    {
+        responseType: "blob",
+        headers: {
+            Accept: "application/pdf",   // ✅ VERY IMPORTANT
+        },
+    }
+);
 
         const file = new Blob([response.data], { type: "application/pdf" });
         // const url = URL.createObjectURL(file);
