@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../../services/ApplicantAPIService';
+import apiClient from '../../../services/apiClient';
 import { useUserContext } from '../../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '../../common/Snackbar';
 import './StaticFeedbackCreate.css';
-
+ 
 const StaticFeedbackCreate = () => {
     const { user } = useUserContext();
     const navigate = useNavigate();
     const recruiterId = user?.id;
-
+ 
     const [formData, setFormData] = useState({
         mentorName: '',
         collegeName: '',
@@ -18,11 +17,11 @@ const StaticFeedbackCreate = () => {
         description: '',
         isActive: true
     });
-
+ 
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', type: '' });
-
+ 
     const validateForm = () => {
         const newErrors = {};
         if (!formData.mentorName.trim() || formData.mentorName.trim().length < 3)
@@ -33,11 +32,11 @@ const StaticFeedbackCreate = () => {
             newErrors.formName = 'Form name must be at least 3 characters';
         if (!formData.description.trim() || formData.description.trim().length < 3)
             newErrors.description = 'Description must be at least 3 characters';
-
+ 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-
+ 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -53,25 +52,18 @@ const StaticFeedbackCreate = () => {
             });
         }
     };
-
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
+ 
         setIsSubmitting(true);
         try {
-            const jwtToken = localStorage.getItem('jwtToken');
-            const response = await axios.post(
-                `${apiUrl}/api/feedbackforms/recruiter/${recruiterId}/createFeedbackForm`,
-                formData,
-                {
-                    headers: {
-                        Authorization: `Bearer ${jwtToken}`,
-                        'Content-Type': 'application/json'
-                    }
-                }
+            const response = await apiClient.post(
+                `/api/feedbackforms/recruiter/${recruiterId}/createFeedbackForm`,
+                formData
             );
-
+ 
             setSnackbar({ open: true, message: 'Feedback form created successfully!', type: 'success' });
             setTimeout(() => {
                 navigate('/recruiter-feedback-forms');
@@ -87,7 +79,7 @@ const StaticFeedbackCreate = () => {
             setIsSubmitting(false);
         }
     };
-
+ 
     return (
         <div className="border-style">
             <div className="blur-border-style"></div>
@@ -101,7 +93,7 @@ const StaticFeedbackCreate = () => {
                         <i className="fa fa-arrow-left"></i> Back To Forms
                     </button>
                 </div>
-
+ 
                 <div className="static-feedback-container">
                     <form onSubmit={handleSubmit} className="static-feedback-form">
                         <div className="form-grid">
@@ -117,7 +109,7 @@ const StaticFeedbackCreate = () => {
                                 />
                                 {errors.mentorName && <span className="error-message">{errors.mentorName}</span>}
                             </div>
-
+ 
                             <div className="form-group">
                                 <label>College Name *</label>
                                 <input
@@ -130,7 +122,7 @@ const StaticFeedbackCreate = () => {
                                 />
                                 {errors.collegeName && <span className="error-message">{errors.collegeName}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <label>Form Name *</label>
                                 <input
@@ -143,7 +135,7 @@ const StaticFeedbackCreate = () => {
                                 />
                                 {errors.formName && <span className="error-message">{errors.formName}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <label>Description *</label>
                                 <textarea
@@ -156,7 +148,7 @@ const StaticFeedbackCreate = () => {
                                 />
                                 {errors.description && <span className="error-message">{errors.description}</span>}
                             </div>
-
+ 
                             <div className="form-group full-width">
                                 <div className="status-radio-group">
                                     <label className="radio-label">
@@ -182,7 +174,7 @@ const StaticFeedbackCreate = () => {
                                 </div>
                             </div>
                         </div>
-
+ 
                         <div className="form-actions-new">
                             <button
                                 type="button"
@@ -202,7 +194,7 @@ const StaticFeedbackCreate = () => {
                     </form>
                 </div>
             </div>
-
+ 
             {snackbar.open && (
                 <Snackbar
                     message={snackbar.message}
@@ -213,5 +205,5 @@ const StaticFeedbackCreate = () => {
         </div>
     );
 };
-
+ 
 export default StaticFeedbackCreate;

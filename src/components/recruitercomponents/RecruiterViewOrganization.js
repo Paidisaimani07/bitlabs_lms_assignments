@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate,Link } from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
 import './css/RecruiterViewOrganization.css'; // Assuming this file contains the CSS above
-
+ 
 const RecruiterViewOrganization = () => {
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [formLoaded, setFormLoaded] = useState(false);
@@ -13,25 +12,19 @@ const RecruiterViewOrganization = () => {
   const { user } = useUserContext();
   const [token, setToken] = useState('');
   const [imageSrc, setImageSrc] = useState('');
-
+ 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
     if (storedToken) {
       setToken(storedToken);
     }
   }, []);
-
+ 
   // Check if recruiter is new or returning
   useEffect(() => {
     const fetchApprovalStatus = async () => {
       try {
-        const token = localStorage.getItem('jwtToken');
-  
-        const response = await axios.get(`${apiUrl}/companyprofile/companyprofile/approval-status/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiClient.get(`/companyprofile/companyprofile/approval-status/${user.id}`);
         
         setApprovalStatus(response.data);
         setFormLoaded(true);
@@ -45,7 +38,7 @@ const RecruiterViewOrganization = () => {
     }
   }, [user.id, formLoaded]);
   
-
+ 
   // Redirect if profile is not approved
   useEffect(() => {
     if (approvalStatus && approvalStatus !== 'approved') {
@@ -53,18 +46,12 @@ const RecruiterViewOrganization = () => {
       navigate('/recruiter-my-organization');
     }
   }, [approvalStatus, navigate]);
-
+ 
   // Fetch Organization details if approved
   useEffect(() => {
     const fetchOrganizationDetails = async () => {
       try {
-        const token = localStorage.getItem('jwtToken');
-  
-        const response = await axios.get(`${apiUrl}/companyprofile/recruiter/getCompanyProfile/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiClient.get(`/companyprofile/recruiter/getCompanyProfile/${user.id}`);
         
         setOrganizationDetails(response.data);
       } catch (error) {
@@ -77,7 +64,7 @@ const RecruiterViewOrganization = () => {
     }
   }, [approvalStatus, user.id]);
   
-
+ 
   useEffect(() => {
     // Define an async function to fetch the logo
     const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
@@ -122,8 +109,8 @@ const RecruiterViewOrganization = () => {
     
   
   }, [user.id]); // No condition outside the hook; always executed
-
-
+ 
+ 
   // Preview Page with organization details
   if (organizationDetails) {
     const {
@@ -213,7 +200,7 @@ fontSize: '16px',fontStyle: 'normal',fontWeight: '400',}}> {headOffice}</div>
 <path d="M13.167 1.49993C13.3859 1.28106 13.6457 1.10744 13.9317 0.988988C14.2176 0.870536 14.5241 0.80957 14.8337 0.80957C15.1432 0.80957 15.4497 0.870536 15.7357 0.988988C16.0216 1.10744 16.2815 1.28106 16.5003 1.49993C16.7192 1.7188 16.8928 1.97863 17.0113 2.2646C17.1297 2.55057 17.1907 2.85706 17.1907 3.16659C17.1907 3.47612 17.1297 3.78262 17.0113 4.06859C16.8928 4.35455 16.7192 4.61439 16.5003 4.83326L5.25033 16.0833L0.666992 17.3333L1.91699 12.7499L13.167 1.49993Z" stroke="#495057" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
                       </Link>
-
+ 
                     </div>
                     <h3>About</h3>
                     <div>
@@ -249,7 +236,7 @@ fontSize: '16px',fontStyle: 'normal',fontWeight: '400'}}>
             )}
           </ul>
         </div>
-
+ 
                   </div>
                 </div>
               </div>
@@ -259,8 +246,8 @@ fontSize: '16px',fontStyle: 'normal',fontWeight: '400'}}>
       );
       
   }
-
+ 
   return null;
 };
-
+ 
 export default RecruiterViewOrganization;

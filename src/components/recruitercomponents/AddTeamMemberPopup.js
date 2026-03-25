@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import axios from "axios";
+import { FiEye, FiEyeOff } from 'react-icons/fi';
+import apiClient from "../../services/apiClient";
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import { FiEye, FiEyeOff } from 'react-icons/fi'; 
-
 
 const AddTeamMemberPopup = ({ show, handleClose, handleAddTeamMember, userId }) => {
   const user = useUserContext();
@@ -72,32 +70,24 @@ const AddTeamMemberPopup = ({ show, handleClose, handleAddTeamMember, userId }) 
     return errors;
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       return;
     }
-    const jwtToken = localStorage.getItem('jwtToken');
-    const headers = {
-      Authorization: `Bearer ${jwtToken}`,
-      'Content-Type': 'application/json',
-    };
-
-    axios
-      .post(`${apiUrl}/team/add/${userId}/team-members`, formData, { headers })
-      .then((response) => {
-        console.log('API Response:', response.data);
-        window.alert('Team member added successfully');
-        window.location.reload();
-        resetForm();
-        setTimeout(() => {
-          handleClose();
-        }, 1000);
-      })
-      .catch((error) => {
-        console.error('API Error:', error);
-      });
+    try {
+      const response = await apiClient.post(`/team/add/${userId}/team-members`, formData);
+      console.log('API Response:', response.data);
+      window.alert('Team member added successfully');
+      window.location.reload();
+      resetForm();
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
   };
 
   const resetForm = () => {

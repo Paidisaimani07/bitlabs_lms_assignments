@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./hackathon.css";
-import { apiUrl } from "../../services/ApplicantAPIService";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../common/UserProvider";
 import { useNavigate } from "react-router-dom";
 import nosearchfound from "../../images/empty-state-images/no-search-results.png";
 import analytics from "../../utils/analytics";
 import winnerDefaultImg from "../../images/hackathons/winner.png";
 
+
 const TechTags = ({ skills }) => {
     const containerRef = useRef(null);
     const [hiddenCount, setHiddenCount] = useState(0);
     const [visibleTags, setVisibleTags] = useState([]);
-
+ 
     const updateVisibleTags = useCallback(() => {
         if (!containerRef.current || !skills) return;
-
+ 
         const container = containerRef.current;
         const tags = skills.split(',').map(tag => tag.trim());
 
@@ -24,7 +24,7 @@ const TechTags = ({ skills }) => {
         tempContainer.style.position = 'absolute';
         tempContainer.style.display = 'inline-block';
         document.body.appendChild(tempContainer);
-
+ 
         const tagElements = tags.map((tag, index) => {
             const el = document.createElement('span');
             el.className = 'tech-tag';
@@ -33,13 +33,12 @@ const TechTags = ({ skills }) => {
             tempContainer.appendChild(el);
             return el;
         });
-
+ 
         const containerWidth = container.offsetWidth;
         let totalWidth = 0;
         let visibleCount = 0;
         const PADDING = 8;
         const MORE_TAG_WIDTH = 40;
-
         for (let i = 0; i < tagElements.length; i++) {
             const tagWidth = tagElements[i].offsetWidth + PADDING;
             if (totalWidth + tagWidth + (i < tagElements.length - 1 ? MORE_TAG_WIDTH : 0) <= containerWidth) {
@@ -49,20 +48,20 @@ const TechTags = ({ skills }) => {
                 break;
             }
         }
-
+ 
         if (visibleCount < tags.length && visibleCount > 0) {
             const lastTagWidth = tagElements[visibleCount - 1].offsetWidth + PADDING;
             if (totalWidth + MORE_TAG_WIDTH > containerWidth) {
                 visibleCount--;
             }
         }
-
+ 
         setHiddenCount(Math.max(0, tags.length - visibleCount));
         setVisibleTags(tags.slice(0, visibleCount));
-
+ 
         document.body.removeChild(tempContainer);
     }, [skills]);
-
+ 
     useEffect(() => {
         updateVisibleTags();
         const resizeObserver = new ResizeObserver(updateVisibleTags);
@@ -73,9 +72,9 @@ const TechTags = ({ skills }) => {
             resizeObserver.disconnect();
         };
     }, [updateVisibleTags]);
-
+ 
     if (!skills) return null;
-
+ 
     return (
         <div className="tech-tags" ref={containerRef}>
             {visibleTags.map((tech, index) => (
@@ -91,7 +90,7 @@ const TechTags = ({ skills }) => {
         </div>
     );
 };
-
+ 
 const Hackathon = () => {
     const [hackathons, setHackathons] = useState([]);
     const [registrations, setRegistrations] = useState([]);
@@ -104,7 +103,7 @@ const Hackathon = () => {
     const { user } = useUserContext();
     const userId = user.id;
     const navigate = useNavigate();
-
+ 
     const emptyMessages = {
         MY: "Looks like you’re not in any hackathons — tap the button and discover exciting ones now!",
         RECOMMENDED: "No perfect match found? No worries — dive into other hackathons and keep the momentum going",
@@ -112,18 +111,18 @@ const Hackathon = () => {
         UPCOMING: "Looks like nothing’s coming up soon — see which hackathons are active now!",
         COMPLETED: "No hackathons have been completed yet — explore some active ones while you wait!"
     };
-
+ 
     const getApiUrlByTab = (tabKey) => {
         switch (tabKey) {
-            case "RECOMMENDED": return `${apiUrl}/api/hackathons/recommended/${userId}`;
-            case "ACTIVE": return `${apiUrl}/api/hackathons/active`;
-            case "UPCOMING": return `${apiUrl}/api/hackathons/upcoming`;
-            case "COMPLETED": return `${apiUrl}/api/hackathons/completed`;
+            case "RECOMMENDED": return `/api/hackathons/recommended/${userId}`;
+            case "ACTIVE": return `/api/hackathons/active`;
+            case "UPCOMING": return `/api/hackathons/upcoming`;
+            case "COMPLETED": return `/api/hackathons/completed`;
             case "MY":
-            default: return `${apiUrl}/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
+            default: return `/api/hackathons/getApplicantRegisteredHackathons/${userId}`;
         }
     };
-
+ 
     const getEmptyImageByTab = (tabKey) => {
         switch (tabKey) {
             case "MY":
@@ -140,18 +139,18 @@ const Hackathon = () => {
                 return '';
         }
     };
-
+ 
     const getCtaTargetTab = (tabKey) => {
         if (tabKey === "ACTIVE") return "UPCOMING";
         if (tabKey === "UPCOMING") return "ACTIVE";
         return "ACTIVE";
     };
-
+ 
     const getEmptyImageSize = (tabKey) => {
         if (tabKey === "MY" || tabKey === "ACTIVE" || tabKey === "UPCOMING") return 300;
         return 220;
     };
-
+ 
     const toDateObject = (value) => {
         if (!value) return new Date(0);
         if (Array.isArray(value)) {
@@ -160,16 +159,13 @@ const Hackathon = () => {
         }
         return new Date(value);
     };
-
+ 
     const fetchHackathons = async (tabKey) => {
         try {
             setLoading(true);
-            const jwtToken = localStorage.getItem("jwtToken");
-
-            const hackathonsRes = await axios.get(getApiUrlByTab(tabKey), {
-                headers: { Authorization: `Bearer ${jwtToken}` },
-            });
-
+ 
+            const hackathonsRes = await apiClient.get(getApiUrlByTab(tabKey));
+ 
             const normalized = hackathonsRes.data.map(h => ({
                 ...h,
                 createdAt: h.createdAt ? new Date(h.createdAt).getTime() : 0,
@@ -184,14 +180,13 @@ const Hackathon = () => {
             } else {
                 setHackathons(normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)));
             }
-
+ 
             if (tabKey === "COMPLETED" || tabKey === "MY") {
                 const winnerIds = [...new Set(normalized.map(h => h.winner).filter(Boolean))];
                 if (winnerIds.length > 0) {
-                    axios.post(
-                        `${apiUrl}/applicant-image/hackathon/winners`,
-                        winnerIds,
-                        { headers: { Authorization: `Bearer ${jwtToken}` } }
+                    apiClient.post(
+                        `/applicant-image/hackathon/winners`,
+                        winnerIds
                     )
                         .then(winnersRes => {
                             const winnersMap = {};
@@ -210,7 +205,7 @@ const Hackathon = () => {
             } else {
                 setWinners({});
             }
-
+ 
         } catch (error) {
             console.error("Error fetching hackathons:", error);
             setHackathons([]);
@@ -219,14 +214,12 @@ const Hackathon = () => {
             setLoading(false);
         }
     };
-
-
+ 
+ 
     const fetchRegistrations = async () => {
         try {
-            const jwtToken = localStorage.getItem("jwtToken");
-            const response = await axios.get(
-                `${apiUrl}/hackathons/${userId}/getAllRegistrationStatus`,
-                { headers: { Authorization: `Bearer ${jwtToken}` } }
+            const response = await apiClient.get(
+                `/hackathons/${userId}/getAllRegistrationStatus`,
             );
             setRegistrations(response.data || []);
         } catch (error) {
@@ -234,27 +227,27 @@ const Hackathon = () => {
             setRegistrations([]);
         }
     };
-
+ 
     useEffect(() => {
         setSearchQuery("");
         fetchHackathons(statusFilter);
         fetchRegistrations();
     }, [statusFilter]);
-
+ 
     useEffect(() => {
         try {
             localStorage.setItem("applicantHackathonTab", statusFilter);
         } catch (_) { }
     }, [statusFilter]);
-
+ 
     const filteredHackathons = hackathons.filter(h => {
         const titleMatch = h.title?.toLowerCase().includes(searchQuery.toLowerCase());
         const techMatch = h.allowedTechnologies?.toLowerCase().includes(searchQuery.toLowerCase());
         return titleMatch || techMatch;
     });
-
+ 
     const handleViewClick = (hackathonId) => navigate(`/applicant-hackathon-details/${hackathonId}`);
-
+ 
     const getRegistrationStatus = (hackathonId) => {
         const reg = registrations.find(r => r.hackathonId === hackathonId);
         if (!reg) return null;
@@ -262,101 +255,100 @@ const Hackathon = () => {
         if (reg.registaratinStatus) return "Registered";
         return null;
     };
-    const HackathonSkeleton = ({ count = 8 }) => {
-        return (
-            <div className="newCards-grid">
-                {Array.from({ length: count }).map((_, i) => (
-                    <div className="newCard skeleton-card" key={i}>
-                        <div className="newCard-body">
 
-                            {/* Banner */}
-                            <div
-                                className="newCard-header"
-                                style={{
-                                    height: "150px",
-                                    background: "#e5e7eb",
-                                    borderRadius: "4px",
-                                    marginBottom: "6px"
-                                }}
-                            ></div>
-
-                            {/* Status + date */}
-                            <div className="status-timing-row">
-                                <div
-                                    style={{
-                                        width: "70px",
-                                        height: "18px",
-                                        background: "#e5e7eb",
-                                        borderRadius: "4px"
-                                    }}
-                                ></div>
-                                <div
-                                    style={{
-                                        width: "100px",
-                                        height: "14px",
-                                        background: "#e5e7eb",
-                                        borderRadius: "4px"
-                                    }}
-                                ></div>
-                            </div>
-
-                            {/* Title */}
-                            <div
-                                style={{
-                                    width: "80%",
-                                    height: "20px",
-                                    background: "#e5e7eb",
-                                    borderRadius: "4px",
-                                    marginTop: "12px"
-                                }}
-                            ></div>
-
-                            {/* Company */}
-                            <div
-                                style={{
-                                    width: "50%",
-                                    height: "16px",
-                                    background: "#e5e7eb",
-                                    borderRadius: "4px",
-                                    margin: "8px 0"
-                                }}
-                            ></div>
-
-                            {/* Tags placeholder */}
-                            <div
-                                style={{
-                                    width: "100%",
-                                    height: "20px",
-                                    background: "#e5e7eb",
-                                    borderRadius: "4px",
-                                    marginBottom: "12px"
-                                }}
-                            ></div>
-
-                            {/* Footer Row */}
-                            <div className="card-footer-row" style={{ marginTop: "6px" }}>
-
-
-                                <div
-                                    style={{
-                                        width: "60px",
-                                        height: "30px",
-                                        background: "#e5e7eb",
-                                        borderRadius: "4px"
-                                    }}
-                                ></div>
-                            </div>
-
-                        </div>
-                    </div>
-                ))}
+const HackathonSkeleton = ({ count = 8 }) => {
+  return (
+    <div className="newCards-grid">
+      {Array.from({ length: count }).map((_, i) => (
+        <div className="newCard skeleton-card" key={i}>
+          <div className="newCard-body">
+ 
+            {/* Banner */}
+            <div
+              className="newCard-header"
+              style={{
+                height: "150px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginBottom: "6px"
+              }}
+            ></div>
+ 
+            {/* Status + date */}
+            <div className="status-timing-row">
+              <div
+                style={{
+                  width: "70px",
+                  height: "18px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
+              <div
+                style={{
+                  width: "100px",
+                  height: "14px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
             </div>
-        );
-    };
+ 
+            {/* Title */}
+            <div
+              style={{
+                width: "80%",
+                height: "20px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginTop: "12px"
+              }}
+            ></div>
+ 
+            {/* Company */}
+            <div
+              style={{
+                width: "50%",
+                height: "16px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                margin: "8px 0"
+              }}
+            ></div>
+ 
+            {/* Tags placeholder */}
+            <div
+              style={{
+                width: "100%",
+                height: "20px",
+                background: "#e5e7eb",
+                borderRadius: "4px",
+                marginBottom: "12px"
+              }}
+            ></div>
+ 
+            {/* Footer Row */}
+            <div className="card-footer-row" style={{ marginTop: "6px" }}>
+            
+ 
+              <div
+                style={{
+                  width: "60px",
+                  height: "30px",
+                  background: "#e5e7eb",
+                  borderRadius: "4px"
+                }}
+              ></div>
+            </div>
+ 
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
-
-
-    return (
+  return (
         <div className="border-style">
 
             <div className="blur-border-style"></div>

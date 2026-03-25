@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import BackButton from '../common/BackButton';
-import { apiUrl } from '../../services/ApplicantAPIService';
 
 import SemiCircleProgressBar from "react-progressbar-semicircle";
 import Python from '../../images/Python.svg';
@@ -64,13 +63,8 @@ const ApplicantViewJob = ({ selectedJobId }) => {
  
   const fetchSkillBadges = async () => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/skill-badges/${user.id}/skill-badges`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/skill-badges/${user.id}/skill-badges`
       );
       const { skillsRequired, applicantSkillBadges } = response.data;
       setSkillBadges(skillsRequired || []);
@@ -102,13 +96,8 @@ const ApplicantViewJob = ({ selectedJobId }) => {
 
   const fetchJobDetails = async () => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${user.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/viewjob/applicant/viewjob/${jobId}/${user.id}`
       );
       const { body } = response.data;
       setLoading(false);
@@ -159,9 +148,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
 
   const handleInternalJobApply = async () => {
     try {
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
-      });
+      const profileIdResponse = await apiClient.get(`/applicantprofile/${user.id}/profileid`);
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
@@ -169,10 +156,9 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         return;
       }
 
-      const response = await axios.post(
-        `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
-        {},
-        { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
+      const response = await apiClient.post(
+        `/applyjob/applicants/applyjob/${user.id}/${jobId}`,
+        {}
       );
       const { applied } = response.data;
 
@@ -195,17 +181,11 @@ const ApplicantViewJob = ({ selectedJobId }) => {
   const handleExternalJobVisit = async () => {
     if (!visited) {
       try {
-        await axios.post(`${apiUrl}/jobVisit/applicant/track-visit`, { jobId }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` },
-        });
+        await apiClient.post(`/jobVisit/applicant/track-visit`, { jobId });
         setVisited(true);
-        const response = await axios.post(
-          `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
-          {},
-          { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } }
-        );
-        const { applied } = response.data;
-  
+        const response = await apiClient.post(
+          `/applyjob/applicants/applyjob/${user.id}/${jobId}`,
+        )
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
         setApplied(applied);
         fetchJobDetails();
@@ -227,11 +207,7 @@ const ApplicantViewJob = ({ selectedJobId }) => {
 
   const applyJob = async () => {
     try {
-      const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profileid`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-        },
-      });
+      const profileIdResponse = await apiClient.get(`/applicantprofile/${user.id}/profileid`);
       const profileId = profileIdResponse.data;
 
       if (profileId === 0) {
@@ -239,14 +215,9 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         return;
       } else {
         setApplied(true);
-        const response = await axios.post(
-          `${apiUrl}/applyjob/applicants/applyjob/${user.id}/${jobId}`,
-          { answers },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-            },
-          }
+        const response = await apiClient.post(
+          `/applyjob/applicants/applyjob/${user.id}/${jobId}`,
+          { answers }
         );
         const { applied } = response.data;
         localStorage.setItem(`appliedStatus-${selectedJobId}`, 'true');
@@ -579,7 +550,6 @@ const ApplicantViewJob = ({ selectedJobId }) => {
         questions={screeningQuestions}
         onClose={() => setScreeningModalOpen(false)}
         onSubmit={handleScreeningSubmit}
-        apiUrl={apiUrl}
         user={user}
         jobId={jobId}
       />

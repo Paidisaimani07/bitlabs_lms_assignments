@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import './ScreeningQuestionsModal.css';
 
-const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, apiUrl, user, jobId }) => {
+const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, user, jobId }) => {
   const [answers, setAnswers] = useState({});
   const [errors, setErrors] = useState({});
   const [submissionError, setSubmissionError] = useState('');
@@ -52,13 +52,13 @@ const ScreeningQuestionsModal = ({ isOpen, questions, onClose, onSubmit, apiUrl,
     }
 
     try {
-      const response = await axios.post(
-        `${apiUrl}/job/applicants/${user.id}/saveAnswers/${jobId}`,
-        { answers: Object.entries(answers).map(([questionId, answerText]) => ({ questionId: parseInt(questionId, 10), answerText })) },
+      const response = await apiClient.post(
+        `/job/applicants/${user.id}/saveAnswers/${jobId}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-          },
+          answers: Object.entries(answers).map(([questionId, answerText]) => ({
+            questionId: parseInt(questionId, 10),
+            answerText,
+          })),
         }
       );
       console.log('Screening answers saved:', response.data);

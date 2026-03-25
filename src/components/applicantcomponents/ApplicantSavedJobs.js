@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate, useLocation } from "react-router-dom";
 import Snackbar from '../common/Snackbar';
@@ -39,9 +38,7 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   }, []);
   const fetchSavedJobCount = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/savedjob/countSavedJobs/${applicantId}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const response = await apiClient.get(`/savedjob/countSavedJobs/${applicantId}`);
       const count = response.data;
       setTotalSavedJobs(count);
       setTotalSavedPages(Math.ceil(count / size));
@@ -52,17 +49,12 @@ function ApplicantSavedJobs({ setSelectedJobId }) {
   const fetchSavedJobs = async (pageNum = 0) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiUrl}/savedjob/getSavedJobs/${applicantId}?page=${pageNum}&size=${size}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
- 
-      const newJobs = Array.isArray(response.data) ? response.data : [];
-setJobs(newJobs);
+      const response = await apiClient.get(`/savedjob/getSavedJobs/${applicantId}?page=${pageNum}&size=${size}`);
  
  
-      setSavedJobs(newJobs);
+       setSavedJobs(response);
       setSavedJobsPage(pageNum);
-      setSavedHasMore(newJobs.length === size);
+      setSavedHasMore(response.length === size);
     } catch (error) {
       console.error("Error fetching saved jobs:", error);
     } finally {
@@ -113,14 +105,8 @@ setJobs(newJobs);
 const handleRemoveJob = async (jobId, e) => {
     e.stopPropagation();
     try {
-        const authToken = localStorage.getItem('jwtToken');
-        const response = await axios.delete(
-            `${apiUrl}/savedjob/applicants/deletejob/${applicantId}/${jobId}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${authToken}`,
-                },
-            }
+        const response = await apiClient.delete(
+            `/savedjob/applicants/deletejob/${applicantId}/${jobId}`
         );
 
         if (response.status === 200) {

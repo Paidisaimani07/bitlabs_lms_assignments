@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import BackButton from '../common/BackButton';
  
 function formatDateTime(dateTimeArray) {
@@ -27,13 +26,8 @@ function RecruiterApplicantInterviews() {
   const { user } = useUserContext();
  
   useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
-
-    axios
-    .get(`${apiUrl}/applyjob/recruiter/${user.id}/interviews/Interviewing`)
+    apiClient
+      .get(`/applyjob/recruiter/${user.id}/interviews/Interviewing`)
       .then((response) => {
         setApplicants(response.data);
       })

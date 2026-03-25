@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Modal from 'react-modal';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); 
@@ -42,18 +41,12 @@ const UploadImageComponent = ({ id}) => {
 
   const uploadPhoto = async () => {
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
       const formData = new FormData();
       formData.append('photo', photoFile);
 
-      const response = await axios.post(
-        `${apiUrl}/applicant-image/${id}/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
+      const response = await apiClient.post(
+        `/applicant-image/${id}/upload`,
+        formData
       );
 
       console.log('Photo uploaded successfully:', response.data);

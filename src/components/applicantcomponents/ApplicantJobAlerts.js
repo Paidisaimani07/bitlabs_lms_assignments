@@ -1,7 +1,9 @@
+
+import apiClient from "../../services/apiClient";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+
 import { useNavigate } from "react-router-dom";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from "../common/UserProvider";
 import "./ApplicantJobAlert.css"
 import Skeleton from "react-loading-skeleton";
@@ -27,10 +29,14 @@ export default function ApplicantJobAlerts() {
       return [];
     }
     try {
+
+      // const url = `/notifications/getNotifications/${user.id}`;
+      // const resp = await apiClient.get(url);
+
       const authToken = localStorage.getItem("jwtToken");
       const currentPage = reset ? 0 : page;
-      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${currentPage}&size=10`;
-      const resp = await axios.get(url, {
+      const url = `/notifications/getNotifications/${user.id}?page=${currentPage}&size=10`;
+      const resp = await apiClient.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       // Get alerts array from response
@@ -63,6 +69,7 @@ export default function ApplicantJobAlerts() {
       }
       return alerts;
 
+
     } catch (err) {
       console.error(" ERROR:", err);
       if (reset) {
@@ -79,8 +86,8 @@ export default function ApplicantJobAlerts() {
     }
     try {
       const authToken = localStorage.getItem("jwtToken");
-      const url = `${apiUrl}/notifications/getNotifications/${user.id}?page=${pageNumber}&size=10`;
-      const resp = await axios.get(url, {
+      const url = `/notifications/getNotifications/${user.id}?page=${pageNumber}&size=10`;
+      const resp = await apiClient.get(url, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       // Get alerts array from response
@@ -132,10 +139,8 @@ export default function ApplicantJobAlerts() {
       // Wait for animation to complete
       await new Promise(resolve => setTimeout(resolve, 400));
 
-      const authToken = localStorage.getItem("jwtToken");
-      await axios.delete(
-        `${apiUrl}/notifications/${id}/deleteNotification/${user.id}`,
-        { headers: { Authorization: `Bearer ${authToken}` } }
+      await apiClient.delete(
+        `/notifications/${id}/deleteNotification/${user.id}`
       );
 
       // Update UI after successful deletion
@@ -163,15 +168,13 @@ export default function ApplicantJobAlerts() {
     if (!user?.id) return;
 
     setReadLoading(true);
-    const authToken = localStorage.getItem("jwtToken");
 
     try {
-      const url = `${apiUrl}/notifications/move-to-seen-everywhere/${user.id}`;
+      const url = `/notifications/move-to-seen-everywhere/${user.id}`;
 
-      await axios.put(
+      await apiClient.put(
         url,
-        {},
-        { headers: { Authorization: `Bearer ${authToken}` } }
+        {}
       );
       setJobAlerts((prevAlerts) =>
         prevAlerts.map((alert) => ({
@@ -202,10 +205,8 @@ export default function ApplicantJobAlerts() {
       // Wait for animation to complete
       await new Promise(resolve => setTimeout(resolve, 400));
 
-      const authToken = localStorage.getItem("jwtToken");
-      await axios.delete(
-        `${apiUrl}/notifications/deleteAllNotifications/${user.id}`,
-        { headers: { Authorization: `Bearer ${authToken}` } }
+      await apiClient.delete(
+        `/notifications/deleteAllNotifications/${user.id}`
       );
 
       // Clear all notifications
@@ -387,13 +388,11 @@ export default function ApplicantJobAlerts() {
                                 if (!user?.id) return;
 
                                 try {
-                                  const authToken = localStorage.getItem("jwtToken");
-                                  const url = `${apiUrl}/notifications/${alert.id}/move-to-seen/${user.id}`;
+                                  const url = `/notifications/${alert.id}/move-to-seen/${user.id}`;
 
-                                  await axios.put(
+                                  await apiClient.put(
                                     url,
-                                    {},
-                                    { headers: { Authorization: `Bearer ${authToken}` } }
+                                    {}
                                   );
 
                                   setJobAlerts((prevAlerts) =>

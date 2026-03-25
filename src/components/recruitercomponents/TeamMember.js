@@ -1,7 +1,6 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from "axios";
+import apiClient from '../../services/apiClient';
 import AddTeamMemberPopup from './AddTeamMemberPopup';
 function TeamMember() {
     const { user } = useUserContext();
@@ -10,12 +9,8 @@ function TeamMember() {
     const tableref=useRef(null);
     const isMounted = useRef(true);
     useEffect(() => {
-        const jwtToken = localStorage.getItem('jwtToken');
-        if (jwtToken) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-        }
-        axios
-          .get(`${apiUrl}/team/get/teammembers/${user.id}`)
+        apiClient
+          .get(`/team/get/teammembers/${user.id}`)
           .then((response) => {
             setTeamMembers(response.data);
             const $table= window.$(tableref.current);
@@ -34,8 +29,8 @@ function TeamMember() {
       const handleAddTeamMember = (formData) => {
       };
       const handleDeleteTeamMember = (teamMemberId) => {
-        axios
-          .delete(`${apiUrl}/team/delete/${teamMemberId}`)
+        apiClient
+          .delete(`/team/delete/${teamMemberId}`)
           .then((response) => {
             window.alert('Team member deleted successfully');
             setTeamMembers((prevTeamMembers) =>
@@ -118,5 +113,6 @@ const Table = ({ data, handleDelete }) => {
     </div>
   );
 };
-
+ 
 export default TeamMember;
+ 

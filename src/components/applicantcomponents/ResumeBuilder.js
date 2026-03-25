@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 
 function ResumeBuilder() {
   const [loginUrl, setLoginUrl] = useState('');
@@ -11,7 +10,7 @@ function ResumeBuilder() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/applicant/getApplicantById/${user.id}`);
+        const response = await apiClient.get(`/applicant/getApplicantById/${user.id}`);
         const newData = {
           identifier: response.data.email,
           password: response.data.password,

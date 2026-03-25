@@ -1,5 +1,5 @@
 import React from 'react';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useState, useEffect, useRef } from "react";
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -8,7 +8,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; 
 import { useNavigate,useLocation } from 'react-router-dom';
 
-import axios from 'axios';
 import Snackbar from '../common/Snackbar';
 
 function RecruiterPostJob() {
@@ -161,10 +160,9 @@ function RecruiterPostJob() {
       console.log('Payload being sent to API:', formData);
   
       // Call the Save Job API
-      const jobResponse = await axios.post(
-        `${apiUrl}/job/recruiters/saveJob/${user.id}`,
-        formData,
-        { headers }
+      const jobResponse = await apiClient.post(
+        `/job/recruiters/saveJob/${user.id}`,
+        formData
       );
   
       console.log('Job posted successfully:', jobResponse.data);
@@ -282,14 +280,8 @@ const handleJobTitleChange1 = (event) => {
   useEffect(() => {
     const fetchApprovalStatus = async () => {
       try {
-        const token = localStorage.getItem('jwtToken'); // Get the token from storage or wherever it's stored
-        const response = await axios.get(
-          `${apiUrl}/companyprofile/companyprofile/approval-status/${user.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}` // Add the token to the headers
-            }
-          }
+        const response = await apiClient.get(
+          `/companyprofile/companyprofile/approval-status/${user.id}`
         );
         setApprovalStatus(response.data);
         setFormLoaded(true);

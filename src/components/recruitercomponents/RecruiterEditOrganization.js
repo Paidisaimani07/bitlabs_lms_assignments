@@ -1,7 +1,6 @@
 import React, { useState, useEffect,useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Snackbar from '../common/Snackbar';
 import { useNavigate } from 'react-router-dom'; // Ensure react-router-dom is installed and set up
 import RecruiterNavBar from '../../components/recruitercomponents/RecruiterNavBar';
@@ -98,13 +97,9 @@ function RecruiterEditOrganization({setImgSrc}) {
 
   // Fetch Company Profile
   const fetchCompanyProfile = async () => {
-    const token=localStorage.getItem('jwtToken');
     try {
-      const response = await axios.get(
-        `${apiUrl}/companyprofile/recruiter/getCompanyProfile/${user.id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+      const response = await apiClient.get(
+        `/companyprofile/recruiter/getCompanyProfile/${user.id}`
       );
 
       const data = response.data;
@@ -141,10 +136,8 @@ function RecruiterEditOrganization({setImgSrc}) {
       setImageSrc(savedImage);
     }else{
     try {
-      const response = await fetch(`${apiUrl}/recruiters/companylogo/download/${user.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
+        responseType: 'blob'
       });
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -314,15 +307,9 @@ const urlPattern = new RegExp(
       };
   
       try {
-        await axios.put(
-          `${apiUrl}/companyprofile/companyprofile/update-companyprofile/${user.id}`,
-          requestData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        await apiClient.put(
+          `/companyprofile/companyprofile/update-companyprofile/${user.id}`,
+          requestData
         );
       } catch (error) {
         console.error('Error updating profile:', error);
@@ -339,15 +326,9 @@ const urlPattern = new RegExp(
           const formData = new FormData();
           formData.append('logoFile', photoFile);
   
-          await axios.post(
-            `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ${token}`,
-              },
-            }
+          await apiClient.post(
+            `/recruiters/companylogo/upload/${user.id}`,
+            formData
           );
   
            // Display the image temporarily in the UI
@@ -448,37 +429,6 @@ const urlPattern = new RegExp(
   const triggerFileInput = () => {
     document.getElementById('tf-upload-img').click();
   };
- 
-  // Upload Photo
-  // const uploadPhoto = async () => {
-  //   if (!photoFile) {
-  //     setSnackbar({ open: true, message: 'Please select a file to upload.', type: 'error' });
-  //     return;
-  //   }
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('logoFile', photoFile);
-
-  //     const response = await axios.post(
-  //       `${apiUrl}/recruiters/companylogo/upload/${user.id}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const imageUrl = URL.createObjectURL(photoFile);
-  //     setImgSrc(imageUrl)
-  //     setSnackbar({ open: true, message: 'Photo uploaded successfully.', type: 'success' });
-  //     fetchCompanyLogo(); // Refresh the logo
-  //   } catch (error) {
-  //     console.error('Error uploading photo:', error);
-  //     setSnackbar({ open: true, message: 'Error uploading photo.', type: 'error' });
-  //   }
-  // };
 
   // // Handle Snackbar Close
   const handleCloseSnackbar = () => {

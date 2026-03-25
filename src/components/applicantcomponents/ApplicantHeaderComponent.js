@@ -1,23 +1,16 @@
 // src/components/applicant/ApplicantHeaderComponent.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faPen } from "@fortawesome/free-solid-svg-icons";
 import BasicDetailsEditPopup from "./BasicDetailsEditPopup";
 import Snackbar from "../common/Snackbar";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import { useUserContext } from '../common/UserProvider';
 import { useRefresh } from "../common/RefreshContext";
 import { useResume } from "./ResumeContext";
 
 Modal.setAppElement("#root");
-
-const PHOTO_GET_API = `${apiUrl}/applicant-image/getphoto`;
-// new: score API base
-const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
-
-// NOTE: Upload endpoint used by uploader component: `${apiUrl}/applicant-image/${id}/upload`
 
 const DEFAULT_CARD = {
   name: "",
@@ -69,16 +62,11 @@ const UploadImageComponent = ({ id, onSuccess, onClose }) => {
   const uploadPhoto = async () => {
     if (!photoFile) return;
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
       const formData = new FormData();
       // backend expects field name 'photo' in this uploader implementation
       formData.append("photo", photoFile);
 
-      const response = await axios.post(`${apiUrl}/applicant-image/${id}/upload`, formData, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      });
+      const response = await apiClient.post(`/applicant-image/${id}/upload`, formData);
 
       console.log("Photo uploaded successfully:", response.data);
       addSnackbar({ message: "Photo uploaded successfully", type: "success" });
@@ -237,7 +225,7 @@ const ApplicantHeaderComponent = ({ applicantId, onLoaded, showContent }) => {
   const [silverScore, setSilverScore] = useState(300);
   const [goldScore, setGoldScore] = useState(500);
   const { user } = useUserContext();
-  const CARD_API = `${apiUrl}/applicant-card/${user?.id}/getApplciantCard`;
+  const CARD_API = `/applicant-card/${user?.id}/getApplciantCard`;
   const { refreshKey } = useRefresh();
 
   const bronzeWidth = (bronzeScore / goldScore) * 100;
@@ -268,17 +256,14 @@ const ApplicantHeaderComponent = ({ applicantId, onLoaded, showContent }) => {
       const jwtToken = localStorage.getItem("jwtToken");
 
       // 1) Fetch applicant card
-      const { data: cardData } = await axios.get(`${CARD_API}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data: cardData } = await apiClient.get(`${CARD_API}`);
 
       // 2) Fetch SCORE details
       let scoreFromScoresApi = 0;
 
       try {
-        const { data: scoreRes } = await axios.get(
-          `${SCORE_API}/${applicantId}/getApplicantScoreDetails`,
-          { headers: { Authorization: `Bearer ${jwtToken}` } }
+        const { data: scoreRes } = await apiClient.get(
+          `/applicant-scores/applicant/${applicantId}/getApplicantScoreDetails`
         );
 
         console.debug("RAW SCORE RESPONSE:", scoreRes);
@@ -310,9 +295,8 @@ const ApplicantHeaderComponent = ({ applicantId, onLoaded, showContent }) => {
 
         // FALLBACK SCORE
         try {
-          const { data: pv } = await axios.get(
-            `${apiUrl}/applicantprofile/${applicantId}/profile-view`,
-            { headers: { Authorization: `Bearer ${jwtToken}` } }
+          const { data: pv } = await apiClient.get(
+            `/applicantprofile/${applicantId}/profile-view`
           );
 
           scoreFromScoresApi =
@@ -356,11 +340,9 @@ const ApplicantHeaderComponent = ({ applicantId, onLoaded, showContent }) => {
   const fetchPhoto = async () => {
     try {
       if (!applicantId) return;
-      const jwtToken = localStorage.getItem("jwtToken");
       // appended timestamp to bust caches
-      const res = await axios.get(`${apiUrl}/applicant-image/getphoto/${applicantId}?t=${Date.now()}`, {
+      const res = await apiClient.get(`/applicant-image/getphoto/${applicantId}?t=${Date.now()}`, {
         responseType: "arraybuffer",
-        headers: { Authorization: `Bearer ${jwtToken}` },
       });
       const base64 = btoa(
         new Uint8Array(res.data).reduce((s, b) => s + String.fromCharCode(b), "")

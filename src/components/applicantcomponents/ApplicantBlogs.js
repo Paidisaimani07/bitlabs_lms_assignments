@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useLocation } from "react-router-dom";
 import { useUserContext } from "../../components/common/UserProvider";
 import "./ApplicantBlog.css";
 import ExploreButton from "../../images/icons/ExploreButton.svg";
 import noblogsfound from "../../images/empty-state-images/no-blogs-found.png";
 import nosearchresults from "../../images/empty-state-images/no-search-results.png";
-import analytics from "../../utils/analytics"; 
+import analytics from "../../utils/analytics";
 
 export default function ApplicantBlogs() {
   const { user } = useUserContext();
@@ -38,11 +37,8 @@ export default function ApplicantBlogs() {
         if (page === 0) {
           setLoading(true);
         }
-        const res = await axios.get(
-          `${apiUrl}/blogs/active?page=${page}&size=${pageSize}`,
-          {
-            headers: { Authorization: `Bearer ${jwtToken}` },
-          }
+        const res = await apiClient.get(
+          `/blogs/active?page=${page}&size=${pageSize}`,
         );
 
         const newBlogs = res.data.content || res.data || [];
@@ -58,7 +54,7 @@ export default function ApplicantBlogs() {
       } catch (e) {
         console.error("Error fetching blogs:", e);
         setError(
-          "Failed to load blogs. Please check your connection or try again later."
+          "Failed to load blogs. Please check your connection or try again later.",
         );
         setHasMore(false);
       } finally {
@@ -74,7 +70,7 @@ export default function ApplicantBlogs() {
     return blogs.filter(
       (b) =>
         b.title?.toLowerCase().includes(q) ||
-        b.author?.toLowerCase().includes(q)
+        b.author?.toLowerCase().includes(q),
     );
   }, [blogs, query]);
 
@@ -100,11 +96,8 @@ export default function ApplicantBlogs() {
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const res = await axios.get(
-        `${apiUrl}/blogs/getBlogsById/${blog.id}/${applicantId}`,
-        {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        }
+      const res = await apiClient.get(
+        `/blogs/getBlogsById/${blog.id}/${applicantId}`,
       );
 
       setSelected(res.data);
@@ -325,9 +318,9 @@ export default function ApplicantBlogs() {
                     key={b.id}
                     className="tv-card"
                     onClick={(e) => {
-                            analytics.track("BLOGS", currentUser?.id);
-                            openModal(b);
-                          }}
+                      analytics.track("BLOGS", currentUser?.id);
+                      openModal(b);
+                    }}
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) =>

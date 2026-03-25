@@ -1,12 +1,9 @@
 // FULL UPDATED CODE WITH GRADUATION MARKS AS NUMBER FIELD
 
 import React, { useMemo, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import CustomDropdown from "../common/CustomDropdown";
 import { useRefresh } from "../common/RefreshContext";
-
-const EDU_API = `${apiUrl}/applicant-education`;
 
 const degreeOptions = [
   { value: "B.E / B.Tech", label: "B.E / B.Tech" },
@@ -279,13 +276,7 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
 
     try {
       setSaving(true);
-      const jwt = localStorage.getItem("jwtToken");
-      await axios.put(`${EDU_API}/${applicantId}/updateApplciantEducationDetails`, payload, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          "Content-Type": "application/json"
-        }
-      });
+      await apiClient.put(`/applicant-education/${applicantId}/updateApplciantEducationDetails`, payload);
       triggerRefresh();
       onSuccess?.();
     } catch (err) {

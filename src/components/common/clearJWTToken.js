@@ -1,10 +1,10 @@
 
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 
 const clearUserData = () => {
   try {
     localStorage.removeItem('jwtToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     localStorage.removeItem('userType');
     sessionStorage.clear();
@@ -22,7 +22,7 @@ const clearUserData = () => {
 
 const clearJWTToken = async () => {
   try {
-    await axios.post(`${apiUrl}/applicant/applicantsignOut`);
+    await apiClient.post('/applicant/applicantsignOut');
     clearUserData();
   } catch (error) {
     console.error('Error logging out:', error);

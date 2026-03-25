@@ -1,19 +1,14 @@
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
-
+import apiClient from '../../services/apiClient';
+ 
 function ZohoCRMService() {
   const createLead = async (leadData) => {
     try {
-      const response = await axios.post(`${apiUrl}/zoho/create-lead`, leadData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await apiClient.post(`/zoho/create-lead`, leadData);
       console.log("response", response.data?.data?.[0].details.id);
       if (response.status === 200 || response.status === 201) {
        
         // console.log("Lead submitted successfully", res.data[0].details.id);
-
+ 
         return response.data?.data?.[0].details.id || null;
       } else {
         console.error("Failed to submit lead", response.data);
@@ -25,16 +20,16 @@ function ZohoCRMService() {
       throw new Error(`Failed to create lead: ${errorMessage}`);
     }
   };
-
+ 
   const searchLead = async (email) => {
     if (!email) {
       console.error("Email is required for searching leads");
       return null;
     }
-
+ 
     try {
-      const response = await axios.get(`${apiUrl}/zoho/searchlead/${encodeURIComponent(email)}`);
-
+      const response = await apiClient.get(`/zoho/searchlead/${encodeURIComponent(email)}`);
+ 
       if (response.status === 200 || response.status === 201) {
         const leadId = response.data?.data?.[0]?.id || null;
         console.log("Lead search result:", leadId ? "Found" : "Not found");
@@ -49,7 +44,7 @@ function ZohoCRMService() {
       throw new Error(`Failed to search lead: ${errorMessage}`);
     }
   };
-
+ 
   //retry on failure
   const retryOperation = async (operation, maxRetries = 3, delay = 1000) => {
     let lastError;
@@ -64,14 +59,14 @@ function ZohoCRMService() {
         if (attempt < maxRetries) {
           console.log(`Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
-          delay *= 2; //exponential bckoff 
+          delay *= 2; //exponential bckoff
         }
       }
     }
     
     throw lastError;
   };
-
+ 
   const handleLead = async (leadData, retryOptions = { maxRetries: 3, delay: 1000 }) => {
     if (!leadData || !leadData.data || !leadData.data[0] || !leadData.data[0].Email) {
       console.error("Invalid lead data structure");
@@ -106,7 +101,7 @@ function ZohoCRMService() {
     }
   };
  
-
+ 
   return {
     createLead,
     searchLead,
@@ -114,5 +109,5 @@ function ZohoCRMService() {
     retryOperation
   };
 }
-
+ 
 export default ZohoCRMService;

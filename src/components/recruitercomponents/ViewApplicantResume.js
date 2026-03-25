@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation } from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
  
 const ViewApplicantResume = () => {
   const location = useLocation();
@@ -13,13 +13,8 @@ const ViewApplicantResume = () => {
     const userId = pathnameParts[pathnameParts.length - 1];
  
   
-    fetch(`${apiUrl}/resume/pdf/${userId}`)
-      .then(response => {
-        if (response.ok) {
-          return response.blob();
-        }
-        throw new Error('Network response was not ok.');
-      })
+    apiClient.get(`/resume/pdf/${userId}`, { responseType: 'blob' })
+      .then(response => response.data)
       .then(blob => {
         
         const resumeBlobUrl = URL.createObjectURL(blob);

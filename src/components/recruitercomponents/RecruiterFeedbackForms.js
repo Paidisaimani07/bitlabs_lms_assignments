@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import feedbackFormEmptyImage from '../../images/empty-state-images/feedback-form-empty-state-image.png';
@@ -20,14 +19,8 @@ const RecruiterFeedbackForms = () => {
     const fetchForms = async () => {
       try {
         setLoading(true);
-        const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(
-          `${apiUrl}/api/feedback-forms/recruiter/${recruiterId}/getAllFeedbackForms`,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
+        const response = await apiClient.get(
+          `/api/feedback-forms/recruiter/${recruiterId}/getAllFeedbackForms`
         );
         setForms(response.data);
         setError(null);

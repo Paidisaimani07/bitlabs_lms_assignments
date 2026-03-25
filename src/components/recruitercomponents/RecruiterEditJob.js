@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate} from 'react-router-dom';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import BackButton from '../common/BackButton';
@@ -133,13 +132,8 @@ const RecruiterEditJob = ({selectedJobId}) => {
     useEffect(() => {
         console.log("data fetching..");
         const fetchJobData = async () => {
-          const jwtToken = localStorage.getItem('jwtToken');
-          if (jwtToken) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-          }
-     
           try {
-            const response = await axios.get(`${apiUrl}/job/${selectedJobId}/${user.id}`);
+            const response = await apiClient.get(`/job/${selectedJobId}/${user.id}`);
             const jobDataFromApi = response.data;
      
             setJobData({
@@ -218,18 +212,9 @@ const RecruiterEditJob = ({selectedJobId}) => {
             uploadDocument: jobData.uploadDocument,
           };
         try {
-          const jwtToken = localStorage.getItem('jwtToken');
-          console.log('jwt token new', jwtToken);
-         
-          const response = await axios.put(
-            `${apiUrl}/job/editJob/${selectedJobId}/${user.id}`,
-            formData,  
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwtToken}`,
-              },
-            }
+          const response = await apiClient.put(
+            `/job/editJob/${selectedJobId}/${user.id}`,
+            formData
           );
      
           if (response.status === 200) {

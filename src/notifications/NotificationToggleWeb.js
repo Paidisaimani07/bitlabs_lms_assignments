@@ -1,32 +1,29 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../services/ApplicantAPIService";
+import apiClient from "../services/apiClient";
 import { LiaBell, LiaBellSlash } from "react-icons/lia";
-
+ 
 export default function NotificationToggleWeb() {
   const [muted, setMuted] = useState(() => {
     const saved = localStorage.getItem("notificationsMuted");
     return saved === "true";
   });
-
+ 
   const jwt = localStorage.getItem("jwtToken");
-
+ 
   useEffect(() => {
     const fcmToken = localStorage.getItem("fcmToken");
     if (!fcmToken) {
       console.warn("⚠️ No fcmToken found in localStorage; cannot fetch mute state");
       return;
     }
-
+ 
     const fetchFcmDetails = async () => {
       try {
-        const endpoint = `${apiUrl}/notification/getFcmTokenDetails/${fcmToken}`;
+        const endpoint = `/notification/getFcmTokenDetails/${fcmToken}`;
         console.log("📡 Fetching FCM token details:", { endpoint, fcmToken });
-
-        const response = await axios.get(endpoint, {
-          headers: { Authorization: `Bearer ${jwt}` },
-        });
-
+ 
+        const response = await apiClient.get(endpoint);
+ 
         const isTokenActive = response?.data?.isTokenActive;
         if (typeof isTokenActive === "boolean") {
           const newMuted = !isTokenActive; // active => unmuted, inactive => muted
@@ -37,10 +34,10 @@ export default function NotificationToggleWeb() {
         console.error("❌ Failed to fetch FCM token details:", err?.response?.data || err.message);
       }
     };
-
+ 
     fetchFcmDetails();
   }, [jwt]);
-
+ 
   const updateServerMute = async (isMuted) => {
     try {
       const fcmToken = localStorage.getItem("fcmToken");
@@ -48,27 +45,25 @@ export default function NotificationToggleWeb() {
         console.warn("⚠️ No fcmToken found in localStorage; cannot update mute state");
         return;
       }
-
-      const endpoint = `${apiUrl}/notification/${isMuted ? "mute" : "unmute"}/${fcmToken}`;
+ 
+      const endpoint = `/notification/${isMuted ? "mute" : "unmute"}/${fcmToken}`;
       console.log("📡 Updating server mute state:", { isMuted, fcmToken, endpoint });
-
-      await axios.put(endpoint, null, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+ 
+      await apiClient.put(endpoint);
       console.log("✅ Server mute state updated");
     } catch (err) {
       console.error("❌ Failed to update server mute state:", err?.response?.data || err.message);
     }
   };
-
+ 
   const handleToggle = async () => {
     const newMuted = !muted;
     setMuted(newMuted);
     localStorage.setItem("notificationsMuted", newMuted ? "true" : "false");
-
+ 
     await updateServerMute(newMuted);
   };
-
+ 
   return (
     <div
       style={{

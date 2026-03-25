@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import $ from 'jquery';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
@@ -77,100 +76,168 @@ function RecruiterAppliedApplicants({selectedJobId}) {
  
   window.location.reload();
 };
-  const applyFilter = () => {
-   
-    let url = `${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants1?name=${name}&email=${email}&mobileNumber=${mobileNumber}&jobTitle=${jobTitle}&applicantStatus=${applicantStatus}&skillName=${skillName}&minimumExperience=${minimumExperience}&location=${location}&minimumQualification=${minimumQualification}`;
-   
-   
-const body = {
-  "name": filterOptions.nameFilter === "contains" ? "contains" : filterOptions.nameFilter === "is" ? "is" : null,
-  "email": filterOptions.emailFilter === "contains" ? "contains" : filterOptions.emailFilter === "is" ? "is" : null,
-  "mobilenumber": filterOptions.mobileFilter === "contains" ? "contains" : filterOptions.mobileFilter === "is" ? "is" : null,
-  "jobTitle": filterOptions.jobFilter === "contains" ? "contains" : filterOptions.jobFilter === "is" ? "is" : null,
-  "applicantStatus": filterOptions.statusFilter === "contains" ? "contains" : filterOptions.statusFilter === "is" ? "is" : null,
-  "skillName": filterOptions.skillFilter === "contains" ? "contains" : filterOptions.skillFilter === "is" ? "is" : null,
-  "minimumExperience": filterOptions.experienceFilter === "greaterThan" ? "greaterThan":filterOptions.experienceFilter === "lessThan" ? "lessThan" : filterOptions.experienceFilter === "is" ? "is" : null,
-  "location": filterOptions.locationFilter === "contains" ? "contains" : filterOptions.locationFilter === "is" ? "is" : null,
-  "minimumQualification": filterOptions.minimumQualification === "contains" ? "contains" : filterOptions.minimumQualification === "is" ? "is" : null
-};
-    console.log(filterOptions);
-   
-    const token = localStorage.getItem('jwtToken');
-    console.log(token);
- 
-    
-    const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+  const applyFilter = async () => {
+    const body = {
+      name:
+        filterOptions.nameFilter === "contains"
+          ? "contains"
+          : filterOptions.nameFilter === "is"
+          ? "is"
+          : null,
+      email:
+        filterOptions.emailFilter === "contains"
+          ? "contains"
+          : filterOptions.emailFilter === "is"
+          ? "is"
+          : null,
+      mobilenumber:
+        filterOptions.mobileFilter === "contains"
+          ? "contains"
+          : filterOptions.mobileFilter === "is"
+          ? "is"
+          : null,
+      jobTitle:
+        filterOptions.jobFilter === "contains"
+          ? "contains"
+          : filterOptions.jobFilter === "is"
+          ? "is"
+          : null,
+      applicantStatus:
+        filterOptions.statusFilter === "contains"
+          ? "contains"
+          : filterOptions.statusFilter === "is"
+          ? "is"
+          : null,
+      skillName:
+        filterOptions.skillFilter === "contains"
+          ? "contains"
+          : filterOptions.skillFilter === "is"
+          ? "is"
+          : null,
+      minimumExperience:
+        filterOptions.experienceFilter === "greaterThan"
+          ? "greaterThan"
+          : filterOptions.experienceFilter === "lessThan"
+          ? "lessThan"
+          : filterOptions.experienceFilter === "is"
+          ? "is"
+          : null,
+      location:
+        filterOptions.locationFilter === "contains"
+          ? "contains"
+          : filterOptions.locationFilter === "is"
+          ? "is"
+          : null,
+      minimumQualification:
+        filterOptions.minimumQualification === "contains"
+          ? "contains"
+          : filterOptions.minimumQualification === "is"
+          ? "is"
+          : null,
     };
- 
-  
-   fetch(url, {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify(body)
-})
-.then(response => response.json())
-.then(data => {
-   
-   
-    console.log('testing ',count);
-    const $table = window.$(tableref.current);
-    $table.DataTable().clear().destroy();
- 
-  
-    $table.DataTable({
+
+    console.log(filterOptions);
+
+    try {
+      const response = await apiClient.post(
+        `/applyjob/recruiter/${user.id}/appliedapplicants1`,
+        body,
+        {
+          params: {
+            name,
+            email,
+            mobileNumber,
+            jobTitle,
+            applicantStatus,
+            skillName,
+            minimumExperience,
+            location,
+            minimumQualification,
+          },
+        },
+      );
+      const data = response.data;
+
+      console.log('testing ', count);
+      const $table = window.$(tableref.current);
+      $table.DataTable().clear().destroy();
+
+      $table.DataTable({
         responsive: true,
         data: data,
         columns: [
           {
             data: null,
-            render: function(data, type, row) {
-              return '<input type="radio" value="' + row.applyjobid + '" ' +
-                (selectedApplicant && selectedApplicant.applyjobid === row.applyjobid ? 'checked' : '') +
-                ' onChange="handleRadioChange(' + JSON.stringify(row) + ')" name="applicantRadio"/>';
-            }
+            render: function (data, type, row) {
+              return (
+                '<input type="radio" value="' +
+                row.applyjobid +
+                '" ' +
+                (selectedApplicant &&
+                selectedApplicant.applyjobid === row.applyjobid
+                  ? 'checked'
+                  : '') +
+                ' name="applicantRadio"/>'
+              );
+            },
           },
-          { 
+          {
             data: 'name',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
+            render: function (data, type, row) {
+              return (
+                '<a href="/viewapplicant/' +
+                row.id +
+                '" style="color: #0583D2; text-decoration: none;">' +
+                data +
+                '</a>'
+              );
+            },
           },
-          { 
+          {
             data: 'email',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
+            render: function (data, type, row) {
+              return (
+                '<a href="/viewapplicant/' +
+                row.id +
+                '" style="color: #0583D2; text-decoration: none;">' +
+                data +
+                '</a>'
+              );
+            },
           },
-          { 
+          {
             data: 'mobilenumber',
-            render: function(data, type, row) {
-              return '<a href="/viewapplicant/' + row.id + '" style="color: #0583D2; text-decoration: none;">' + data + '</a>';
-            }
+            render: function (data, type, row) {
+              return (
+                '<a href="/viewapplicant/' +
+                row.id +
+                '" style="color: #0583D2; text-decoration: none;">' +
+                data +
+                '</a>'
+              );
+            },
           },
-            { data: 'jobTitle' },
-            { data: 'applicantStatus' },
-            { data: 'experience' },
-           
-            { data: 'minimumQualification' },
-           
-            {
-              data: null,
-              render: function(data, type, row) {
-                return '<a href="/view-resume/' + row.id + '" style="color: blue;">View Resume</a>';
-              }
-            }
-        ]
-    });
-    count=setCount(data.length);
- 
-})
-.catch(error => {
-   
-    console.error('Error fetching or processing data:', error);
-});
-};
+          { data: 'jobTitle' },
+          { data: 'applicantStatus' },
+          { data: 'experience' },
+          { data: 'minimumQualification' },
+          {
+            data: null,
+            render: function (data, type, row) {
+              return (
+                '<a href="/view-resume/' +
+                row.id +
+                '" style="color: blue;">View Resume</a>'
+              );
+            },
+          },
+        ],
+      });
+      setCount(data.length);
+    } catch (error) {
+      console.error('Error fetching or processing data:', error);
+    }
+  };
  
 const handleTextFieldChange = (e) => {
   const { id, value } = e.target;
@@ -250,30 +317,26 @@ const handleTextFieldChange = (e) => {
   }, [selectedFilter]);
   const fetchAllApplicants = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/applyjob/appliedapplicants/${selectedJobId}`);
-    const applicantsArray = Object.values(response.data).flat();
-    setCount(applicantsArray.length);
-    setApplicants(applicantsArray);
-        const $table= window.$(tableref.current);
-          const timeoutId = setTimeout(() => {  
-           $table.DataTable().destroy();
-            $table.DataTable({responsive:true});
-                  }, 500);
-         return () => {
-            isMounted.current = false;
-         };
+      const response = await apiClient.get(`/applyjob/appliedapplicants/${selectedJobId}`);
+      const applicantsArray = Object.values(response.data).flat();
+      setCount(applicantsArray.length);
+      setApplicants(applicantsArray);
+      const $table = window.$(tableref.current);
+      const timeoutId = setTimeout(() => {
+        $table.DataTable().destroy();
+        $table.DataTable({ responsive: true });
+      }, 500);
+      return () => {
+        isMounted.current = false;
+      };
     } catch (error) {
       console.error('Error fetching applicants:', error);
     }
   };
  
   useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
     fetchAllApplicants();
-  }, [user.id]);
+  }, [user.id, selectedJobId]);
  
   const handleSelectChange1 = (e) => {
   const { id, value } = e.target;
@@ -350,8 +413,8 @@ const handleSelectChange = async (e) => {
           return null; 
         }
 
-        const response = await axios.put(
-          `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
+        const response = await apiClient.put(
+          `/applyjob/recruiters/applyjob-update-status/${applyJobId}/${newStatus}`
         );
         return { applyJobId, newStatus };
       });

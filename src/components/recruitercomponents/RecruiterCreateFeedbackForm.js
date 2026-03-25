@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import './RecruiterCreateFeedbackForm.css';
@@ -164,8 +163,6 @@ const RecruiterCreateFeedbackForm = () => {
     setIsSubmitting(true);
     
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      
       // Ensure questions array is properly formatted
       const formattedFormData = {
         ...formData,
@@ -177,15 +174,9 @@ const RecruiterCreateFeedbackForm = () => {
       
       console.log('Submitting form data:', JSON.stringify(formattedFormData, null, 2));
       
-      const response = await axios.post(
-        `${apiUrl}/api/feedback-forms/recruiter/${recruiterId}/createFeedbackForm`,
-        formattedFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
+      const response = await apiClient.post(
+        `/api/feedback-forms/recruiter/${recruiterId}/createFeedbackForm`,
+        formattedFormData
       );
 
       console.log('Form created successfully:', response.data);

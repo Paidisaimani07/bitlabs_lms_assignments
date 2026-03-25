@@ -1,7 +1,6 @@
 // InterviewPrepPage.js
 import React, { useState, useRef, useEffect } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from "../../components/common/UserProvider";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -164,10 +163,7 @@ function InterviewPrepPage() {
     const fetchSkills = async () => {
       try {
         if (!user?.id) return;
-        const jwtToken = localStorage.getItem('jwtToken');
-        const resp = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        const resp = await apiClient.get(`/applicantprofile/${user.id}/profile-view`);
         setApplicantProfile(resp?.data || null);
 
       } catch (e) {
@@ -182,10 +178,7 @@ function InterviewPrepPage() {
     const fetchTitles = async () => {
       try {
         if (!user?.id) return;
-        const jwtToken = localStorage.getItem('jwtToken');
-        const { data } = await axios.get(`${apiUrl}/aiPrepChat/getAllChatTitles/${user.id}`, {
-          headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-        });
+        const { data } = await apiClient.get(`/aiPrepChat/getAllChatTitles/${user.id}`);
         const list = Array.isArray(data) ? data : (data?.titles || []);
         const toJsDate = (v) => {
           try {
@@ -321,18 +314,15 @@ function InterviewPrepPage() {
     setIsLoading(true);
 
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-
       const postBody = {
         applicantId: user?.id ?? null,
         chatId: currentChatId ?? null,
         request: queuedMessage,
       };
 
-      const { data } = await axios.post(
-        `${apiUrl}/aiPrepModel/postQuery`,
-        postBody,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      const { data } = await apiClient.post(
+        `/aiPrepModel/postQuery`,
+        postBody
       );
 
       if (data?.chatId) {
@@ -346,8 +336,6 @@ function InterviewPrepPage() {
       setMessages(prev => [...prev, { sender: "bot", text: reply }]);
       setFollowUps(extractFollowUps(data));
       if (currentChatId) {
-        const jwtToken2 = localStorage.getItem("jwtToken");
-
         const chatArray = [
           ...messages.map(m => ({
             role: m.sender === "user" ? "user" : "assistant",
@@ -361,10 +349,9 @@ function InterviewPrepPage() {
           savedChat: JSON.stringify(chatArray)
         };
 
-        await axios.put(
-          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
-          payload,
-          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
+        await apiClient.put(
+          `/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+          payload
         );
       }
 
@@ -399,18 +386,15 @@ function InterviewPrepPage() {
     if (!overrideMessage) setInput("");
 
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-
       const postBody = {
         applicantId: user?.id ?? null,
         chatId: currentChatId ?? null,
         request: userMessage
       };
 
-      const { data } = await axios.post(
-        `${apiUrl}/aiPrepModel/postQuery`,
-        postBody,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      const { data } = await apiClient.post(
+        `/aiPrepModel/postQuery`,
+        postBody
       );
 
       if (data?.chatId) {
@@ -456,10 +440,9 @@ function InterviewPrepPage() {
           savedChat: JSON.stringify(chatArray)
         };
 
-        await axios.put(
-          `${apiUrl}/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
-          payload,
-          { headers: jwtToken2 ? { Authorization: `Bearer ${jwtToken2}` } : undefined }
+        await apiClient.put(
+          `/aiPrepChat/${currentChatId}/updateChatDetails/${user?.id}`,
+          payload
         );
       }
 
@@ -501,11 +484,8 @@ function InterviewPrepPage() {
     setCurrentChatId(id);
 
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-
-      const { data } = await axios.get(
-        `${apiUrl}/aiPrepChat/${id}/getChatDetailsById/${user?.id}`,
-        { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+      const { data } = await apiClient.get(
+        `/aiPrepChat/${id}/getChatDetailsById/${user?.id}`
       );
 
       let messagesArr = [];
@@ -551,10 +531,7 @@ function InterviewPrepPage() {
     const chat = savedChats.find((c) => c.id === id);
     if (!chat) return;
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      await axios.delete(`${apiUrl}/aiPrepChat/${id}/deleteChat/${user?.id}`, {
-        headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined,
-      });
+      await apiClient.delete(`/aiPrepChat/${id}/deleteChat/${user?.id}`);
       const updated = savedChats.filter(c => c.id !== id);
       setSavedChats(updated);
       persistSavedChats(updated);
@@ -604,11 +581,8 @@ function InterviewPrepPage() {
 
   const handleExportChat = async (chatId) => {
     try {
-      const jwtToken = localStorage.getItem("jwtToken");
-
-      const { data } = await axios.get(
-        `${apiUrl}/aiPrepChat/${chatId}/getChatDetailsById/${user?.id}`,
-        { headers: jwtToken ? { Authorization: `Bearer ${jwtToken}` } : undefined }
+      const { data } = await apiClient.get(
+        `/aiPrepChat/${chatId}/getChatDetailsById/${user?.id}`
       );
 
       let messagesArr = [];

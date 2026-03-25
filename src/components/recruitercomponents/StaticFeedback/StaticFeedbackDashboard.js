@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../../services/ApplicantAPIService';
+import apiClient from '../../../services/apiClient';
 import { useUserContext } from '../../common/UserProvider';
 import { useNavigate } from 'react-router-dom';
 import './StaticFeedbackDashboard.css';
-
+ 
 const StaticFeedbackDashboard = () => {
     const { user } = useUserContext();
     const navigate = useNavigate();
@@ -13,27 +12,19 @@ const StaticFeedbackDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterType, setFilterType] = useState("All");
-
+ 
     useEffect(() => {
         const fetchForms = async () => {
             try {
                 setLoading(true);
-                const jwtToken = localStorage.getItem('jwtToken');
-                let apiEndpoint = `${apiUrl}/api/feedbackforms/recruiter/getallfeedbackforms`;
-
+                let apiEndpoint = '/api/feedbackforms/recruiter/getallfeedbackforms';
+ 
                 if (filterType === "Created by me" && recruiterId) {
                     apiEndpoint += `?recruiterId=${recruiterId}`;
                 }
-
-                const response = await axios.get(
-                    apiEndpoint,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${jwtToken}`,
-                        },
-                    }
-                );
-                // We might want to filter only static forms here if there's a flag, 
+ 
+                const response = await apiClient.get(apiEndpoint);
+                // We might want to filter only static forms here if there's a flag,
                 // but for now we'll show all as requested "like this" listing.
                 setForms(response.data);
             } catch (err) {
@@ -42,12 +33,12 @@ const StaticFeedbackDashboard = () => {
                 setLoading(false);
             }
         };
-
+ 
         if (recruiterId) {
             fetchForms();
         }
     }, [recruiterId, filterType]);
-
+ 
     const formatDate = (createdAt) => {
         if (!createdAt || !Array.isArray(createdAt) || createdAt.length < 3) {
             return 'Unknown date';
@@ -62,12 +53,12 @@ const StaticFeedbackDashboard = () => {
             minute: '2-digit'
         });
     };
-
+ 
     const filteredForms = forms.filter(form =>
         form.formName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         form.mentorName?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-
+ 
     return (
         <div className="border-style">
             <div className="blur-border-style"></div>
@@ -99,7 +90,7 @@ const StaticFeedbackDashboard = () => {
                         </div>
                     </div>
                 </div>
-
+ 
                 <div className="static-feedback-dashboard">
                     <div className="static-create-banner">
                         <div className="static-create-info">
@@ -114,14 +105,14 @@ const StaticFeedbackDashboard = () => {
                             Create Form
                         </button>
                     </div>
-
+ 
                     <div className="static-feedback-grid">
                         {(filteredForms.length === 0 && !loading) && (
                             <div className="no-feedback-message">
                                 <p>No feedback available</p>
                             </div>
                         )}
-
+ 
                         {filteredForms.map((form) => (
                             <div className="static-form-card" key={form.formId}>
                                 <div className="static-card-header">
@@ -162,5 +153,5 @@ const StaticFeedbackDashboard = () => {
         </div>
     );
 };
-
+ 
 export default StaticFeedbackDashboard;

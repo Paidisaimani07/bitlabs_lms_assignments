@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import{ apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import OTPVerification1 from '../recruitercomponents/OTPVerification1';
@@ -11,9 +10,9 @@ import CryptoJS from "crypto-js";
 import Background from '../../images/user/avatar/Recruiterloginbg.png';
 import logo from '../../images/user/avatar/bitlabslogo.svg';
 import Backgroundimagemobile1 from '../../images/user/avatar/backgroundimage-mobile-recruiter.png';
-
  
- function RegisterBody({handleLogin}) {
+ 
+function RegisterBody({handleLogin}) {
   const [activeTab, setActiveTab] = useState('Candidate');
   const navigate = useNavigate();
    const [candidateName, setCandidateName] = useState('');
@@ -59,13 +58,13 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   const { setUser, setUserType } = useUserContext();
   const [recruiterEmailError, setRecruiterEmailError] = useState('');
   const [recruiterPasswordError, setRecruiterPasswordError] = useState('');
- const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
-
- useEffect(()=>{
+const [candidateLoginInProgress, setCandidateLoginInProgress] = useState(false);
+ 
+useEffect(()=>{
   if (recruiterEmail || recruiterPassword){
     setErrorMessage("")
   }
-
+ 
 },[recruiterEmail,recruiterPassword])
  
  
@@ -85,7 +84,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
     try {
       setCandidateOTPSendingInProgress(true);
       console.log("email is:", candidateEmail);
-      const response=await axios.post(`${apiUrl}/applicant/applicantsendotp`, { email: candidateEmail , mobilenumber: candidateMobileNumber});
+      const response=await apiClient.post(`/applicant/applicantsendotp`, { email: candidateEmail , mobilenumber: candidateMobileNumber});
       console.log("email is:", candidateEmail);
       setCandidateOTPSent(true);
       setCandidateOTPSendingInProgress(false);
@@ -133,7 +132,7 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
   try {
     setRecruiterOTPSendingInProgress(true);
  
-    const response = await axios.post(`${apiUrl}/recuriters/registration-send-otp`, {
+    const response = await apiClient.post(`/recuriters/registration-send-otp`, {
       email: employerEmail,
       mobilenumber: employerMobileNumber,
     });
@@ -145,11 +144,11 @@ const [employerPasswordError, setEmployerPasswordError] = useState('');
       setRecruiterOTPSent(false);
      
      setSnackbar({ open: true, message: 'Email already registered as recruiter,please try to login', type: 'error' });
-
+ 
     } else if (response.data === 'Email already registered as applicant') {
       setRecruiterOTPSent(false);
       
-      setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' }); 
+      setSnackbar({ open: true, message: 'Email already registered as candidate,please try to login', type: 'error' });
     } else if (response.data === "Mobile number already existed in recruiter") {
       setRecruiterOTPSent(false);
       
@@ -183,10 +182,9 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
   mode: CryptoJS.mode.CBC,
   padding: CryptoJS.pad.Pkcs7
 }).toString();
-
+ 
     try {
-      let loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`;
-      const response = await axios.post(loginEndpoint, {
+      const response = await apiClient.post(`/recuriters/recruiterLogin`, {
         email: recruiterEmail,
         password: encryptedPassword,
         iv: iv.toString(CryptoJS.enc.Base64),
@@ -237,7 +235,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
           setErrorMessage('Incorrect password');
     }
   };
-
+ 
   
  
   const handleSubmit = async (e) => {
@@ -247,7 +245,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     }
     try {
       setCandidateRegistrationInProgress(true);
-      const response = await axios.post(`${apiUrl}/applicant/saveApplicant`, {
+      const response = await apiClient.post(`/applicant/saveApplicant`, {
         name: candidateName,
         email: candidateEmail,
         mobilenumber: candidateMobileNumber,
@@ -343,7 +341,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     if (!email.includes('@')) {
       return 'Please enter a valid email.';
     }
-
+ 
     if (excludedDomains.includes(domain)) {
       return 'Please enter your official email ID.';
     }
@@ -355,7 +353,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     }
      // Regular expression to match the password criteria
      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
+ 
      if (!passwordRegex.test(password)) {
          return 'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, one number, one special character, and no spaces.';
      }
@@ -431,7 +429,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
  
       
    
-      const response = await axios.post(`${apiUrl}/recuriters/saverecruiters`, {
+      const response = await apiClient.post(`/recuriters/saverecruiters`, {
         companyname: companyName,
         mobilenumber: employerMobileNumber,
         email: employerEmail,
@@ -475,7 +473,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     }
   };
   const handleOTPSendSuccess = () => {
-
+ 
   setSnackbar({ open: true, message: 'OTP resend successfully', type: 'success' });
    setResendOtpMessage('OTP Resent successfully. Check your email.');
   };
@@ -541,8 +539,8 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     // }
     return '';
   };
-
-
+ 
+ 
   const handleTabClick1 = (tab) => {
     setActiveTab(tab);
     if (tab === 'Candidate') {
@@ -569,7 +567,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
   const handleCloseSnackbar = () => {
     setSnackbar({ open: false, message: '', type: '' });
   };
-
+ 
   return (
     <div className='full-page'>
       <div style={{position:'relative'}}>
@@ -585,7 +583,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
           zIndex: '1',
         }}
       />
-
+ 
       <div style={{position:'absolute' , zIndex:'1' , display:'flex',bottom:0,justifyContent:'center',width:'100%'}}>
         <h1 className='find-your2'>Find the Best freshers, fuel your workforce!</h1>
       </div>
@@ -613,24 +611,24 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
       <div
   style={{
     ...getTabStyle('Candidate'),
-    fontWeight: 'bold' 
+    fontWeight: 'bold'
   }}
   onClick={() => handleTabClick1('Candidate')}
 >
   Login
 </div>
-
+ 
 <div
   style={{
     ...getTabStyle('Employer'),
-    fontWeight: 'bold' 
+    fontWeight: 'bold'
   }}
   onClick={() => handleTabClick1('Employer')}
 >
   Sign Up
 </div>
 </div>
-
+ 
             
             <div className="content-tab">
               <div className="inner" style={{ display: activeTab === 'Candidate' ? 'block' : 'none' }}>
@@ -808,7 +806,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
     )}
   </div>
 )}
-
+ 
                 </form>
               </div>
             </div>
@@ -832,7 +830,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
         <h1 className='find-your2' style={{ marginBottom: '5px',fontSize:'35px' }}>Fuel Your Workforce!</h1>
       </div>
 </div>
-
+ 
 <div>
       <img
         src={logo}
@@ -843,7 +841,7 @@ const encryptedPassword = CryptoJS.AES.encrypt(recruiterPassword, CryptoJS.enc.U
         }}
       />
     </div>
-
+ 
 </div>
           </div>
         </div>

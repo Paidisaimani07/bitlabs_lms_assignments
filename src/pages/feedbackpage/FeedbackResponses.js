@@ -1,8 +1,7 @@
 // src/components/feedback/FeedbackResponses.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import "./FeedbackResponses.css";
 
 const FeedbackResponses = () => {
@@ -13,8 +12,8 @@ const FeedbackResponses = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`${apiUrl}/mentorfeedback/form/${formId}/responses`)
+    apiClient
+      .get(`/mentorfeedback/form/${formId}/responses`)
       .then((res) => {
         setResponses(res.data || []);
       })

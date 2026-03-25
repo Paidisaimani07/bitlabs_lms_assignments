@@ -1,15 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import Snackbar from "../common/Snackbar";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import ProjectDetailsEditPopup from "./ProjectDetailsEditPopup";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { useResume } from "./ResumeContext";
 
-const PROJ_API = `${apiUrl}/applicant-projects`;
+const PROJ_API = "/applicant-projects";
 
 const ReadonlyInput = ({ placeholder, value }) => (
   <input
@@ -68,10 +67,7 @@ const ProjectDetailsCard = ({ applicantId, onLoaded, showContent }) => {
 
   const fetchProjects = async () => {
     try {
-      const jwt = localStorage.getItem("jwtToken");
-      const { data } = await axios.get(`${PROJ_API}/${applicantId}/getApplicantProjects`, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      const { data } = await apiClient.get(`${PROJ_API}/${applicantId}/getApplicantProjects`);
       setItems(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error("Projects GET failed:", e?.response || e);
@@ -140,11 +136,8 @@ const ProjectDetailsCard = ({ applicantId, onLoaded, showContent }) => {
   );
   const deleteProject = async (projectId) => {
     try {
-      const jwt = localStorage.getItem("jwtToken");
-
-      await axios.delete(
-        `${PROJ_API}/${applicantId}/deleteApplicantProject/${projectId}`,
-        { headers: { Authorization: `Bearer ${jwt}` } }
+      await apiClient.delete(
+        `${PROJ_API}/${applicantId}/deleteApplicantProject/${projectId}`
       );
 
       await fetchProjects(); // refresh list
