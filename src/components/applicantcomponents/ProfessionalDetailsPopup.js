@@ -1,6 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
 import Snackbar from '../common/Snackbar';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -185,17 +184,11 @@ const ProfessionalDetailsPopup = ({ applicantDetails }) => {
  
     if (Object.keys(newErrors).length === 0) {
       try {
-        const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.put(
-        `${apiUrl}/applicantprofile/${user.id}/professional-details`,
-          formValues,
-          {
-            headers: {
-              Authorization: `Bearer ${jwtToken}`,
-            },
-          }
+        const response = await apiClient.put(
+        `/applicantprofile/${user.id}/professional-details`,
+          formValues
         );
- 
+
         if (response.status === 200) {
         
          addSnackbar({ message: 'Professional details updated successfully', type: 'success' });

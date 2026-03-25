@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
- 
+import apiClient from '../../services/apiClient';
+
 const OTPVerification1 = ({ email, mobilenumber, onOTPVerified, onOTPSendSuccess, onOTPSendFail, recruiterOTPVerifyingInProgress, setRecruiterOTPVerifyingInProgress }) => {
   const [otp, setOTP] = useState('');
   const [verificationError, setVerificationError] = useState('');
@@ -11,7 +10,7 @@ const OTPVerification1 = ({ email, mobilenumber, onOTPVerified, onOTPSendSuccess
   const handleVerifyOTP = async () => {
     try {
       setRecruiterOTPVerifyingInProgress(true); 
-      await axios.post(`${apiUrl}/forgotpassword/recuriterverify-otp`, { email, otp });
+      await apiClient.post(`/forgotpassword/recuriterverify-otp`, { email, otp });
       setOTPVerified(true); 
       onOTPVerified(); 
     } catch (error) {
@@ -25,7 +24,7 @@ const OTPVerification1 = ({ email, mobilenumber, onOTPVerified, onOTPSendSuccess
   const handleResendOTP = async () => {
     try {
       setResendButtonDisabled(true);
-      await axios.post(`${apiUrl}/applicant/applicantsendotp`, {email, mobilenumber});
+      await apiClient.post(`/applicant/applicantsendotp`, { email, mobilenumber });
       
       setOTPResendTimer(60);
       onOTPSendSuccess();

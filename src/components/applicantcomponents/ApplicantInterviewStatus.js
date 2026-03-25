@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import 'react-calendar-timeline/lib/Timeline.css';
 import BackButton from '../common/BackButton';
@@ -34,14 +33,8 @@ const ApplicantInterviewStatus = ({ setSelectedJobId }) => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const authToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(
-          `${apiUrl}/viewjob/applicant/viewjob/${jobId}/${applicantId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
+        const response = await apiClient.get(
+          `/viewjob/applicant/viewjob/${jobId}/${applicantId}`
         );
 
         const { body } = response.data;
@@ -64,14 +57,8 @@ const ApplicantInterviewStatus = ({ setSelectedJobId }) => {
 
   const fetchJobStatus = async () => {
     try {
-      const authToken = localStorage.getItem('jwtToken');
-      const response = await axios.get(
-        `${apiUrl}/applyjob/recruiters/applyjob-status-history/${applyJobId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
+      const response = await apiClient.get(
+        `/applyjob/recruiters/applyjob-status-history/${applyJobId}`
       );
 
       const body = response.data;

@@ -1,7 +1,6 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
-import { apiUrl } from '../../services/ApplicantAPIService';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
  
 function ApplicantUpdateProfile() {
@@ -466,13 +465,7 @@ if (!graduationDetails.gState) {
     };
  
    try {
-    const jwtToken = localStorage.getItem('jwtToken');
-     console.log('jwt token new',jwtToken);
-    const response = await axios.post(`${apiUrl}/applicantprofile/createprofile/${user.id}`, userData, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      },
-    });
+    const response = await apiClient.post(`/applicantprofile/createprofile/${user.id}`, userData);
     if (response.status === 201) {
       if (response.data === 'profile saved sucessfully') {
         console.log(response.body);
@@ -480,7 +473,7 @@ if (!graduationDetails.gState) {
         navigate('/applicanthome');
       }  else {
         console.error('An unexpected success response:', response.body);
-      }  
+      }
     }
     else {
       console.error('An error occurred:', response.status, response.body);
@@ -500,14 +493,9 @@ const uploadPhoto = async () => {
     const jwtToken = localStorage.getItem('jwtToken');
     const formData = new FormData();
     formData.append('photo', photoFile); 
-    const response = await axios.post(
-      `${apiUrl}/applicant-image/${user.id}/upload`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      }
+    const response = await apiClient.post(
+      `/applicant-image/${user.id}/upload`,
+      formData
     );
 
     console.log(response.data);
@@ -524,17 +512,11 @@ const handleResumeSelect = (e) => {
 };
 const handleResumeUpload = async () => {
   try {
-    const jwtToken = localStorage.getItem('jwtToken');
     const formData = new FormData();
     formData.append('resume', resumeFile);
-    const response = await axios.post(
-      `${apiUrl}/applicant-pdf/${user.id}/upload`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-        },
-      }
+    const response = await apiClient.post(
+      `/applicant-pdf/${user.id}/upload`,
+      formData
     );
     console.log(response.data);
     window.alert(response.data);

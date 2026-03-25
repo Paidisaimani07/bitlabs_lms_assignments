@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import Modal from 'react-modal';
 import { useUserContext } from '../common/UserProvider';
 import ModalWrapper from './ModalWrapper';
 import ResumeBuilder from './ResumeBuilder';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 
 Modal.setAppElement('#root'); 
@@ -56,17 +55,11 @@ const ResumeEditPopup = ({ id, resumeFileName }) => {
 
   const handleResumeUpload = async () => {
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
       const formData = new FormData();
       formData.append('resume', resumeFile);
-      const response = await axios.post(
-        `${apiUrl}/applicant-pdf/${user.id}/upload`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        }
+      const response = await apiClient.post(
+        `/applicant-pdf/${user.id}/upload`,
+        formData
       );
       console.log(response.data);
      

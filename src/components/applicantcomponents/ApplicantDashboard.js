@@ -1,9 +1,8 @@
 import React from "react";
 import { useState, useEffect, useRef } from 'react';
-import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useUserContext } from '../common/UserProvider';
 import StreakExamModal from "./StreakExamModal";
-import { apiUrl } from '../../services/ApplicantAPIService';
 import { useNavigate } from "react-router-dom";
 import Nagulmeera from '../../images/dashboard/mobilebanners/mentor1.png';
 import Karunakar from '../../images/dashboard/mobilebanners/karun.png';
@@ -96,7 +95,6 @@ const ApplicantDashboard = () => {
     email: "",
   };
   const [card, setCard] = useState(DEFAULT_CARD);
-  const CARD_API = `${apiUrl}/applicant-card`;
 
   const badgeLevels = [
     { name: "bronze", score: bronzeScore },
@@ -120,7 +118,6 @@ const ApplicantDashboard = () => {
   const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
 
   const applicantId = user.id;
-  const SCORE_API = `${apiUrl}/applicant-scores/applicant`;
 const allLoadingDone =
   !loading &&
   !blogsLoading &&
@@ -140,9 +137,7 @@ const allLoadingDone =
 
       const jwtToken = localStorage.getItem("jwtToken");
 
-      const { data } = await axios.get(`${CARD_API}/${applicantId}/getApplciantCard`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      const { data } = await apiClient.get(`/applicant-card/${applicantId}/getApplciantCard`);
 
       // Map only fields you want into your CARD object
       const mappedCard = {
@@ -168,9 +163,7 @@ const allLoadingDone =
       if (showLoading) setStreakLoading(true);
       const jwtToken = localStorage.getItem('jwtToken');
       if (!user?.id) return;
-      const response = await axios.get(`${apiUrl}/streak/${user.id}/getStreakDetails`, {
-        headers: { Authorization: `Bearer ${jwtToken}` }
-      });
+      const response = await apiClient.get(`/streak/${user.id}/getStreakDetails`);
 
       const data = response.data;
       setStreakDetails(data);
@@ -240,9 +233,8 @@ const allLoadingDone =
       if (!user?.id) return;
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(
-          `${apiUrl}/streak/${user.id}/getAttemptedDates`,
-          { headers: { Authorization: `Bearer ${jwtToken}` } }
+        const response = await apiClient.get(
+          `/streak/${user.id}/getAttemptedDates`
         );
         if (Array.isArray(response.data)) {
           const dateSet = new Set(
@@ -272,9 +264,7 @@ const allLoadingDone =
 
       // 1. Perform restore
       try {
-        await axios.put(`${apiUrl}/streak/${user.id}/restore`, {}, {
-          headers: { Authorization: `Bearer ${jwtToken}` }
-        });
+        await apiClient.put(`/streak/${user.id}/restore`, {});
       } catch (putErr) {
         if (putErr.response?.status !== 409) throw putErr;
       }
@@ -282,9 +272,7 @@ const allLoadingDone =
       // 2. Fetch updated details
       let data;
       try {
-        const response = await axios.get(`${apiUrl}/streak/${user.id}/getStreakDetails`, {
-          headers: { Authorization: `Bearer ${jwtToken}` }
-        });
+        const response = await apiClient.get(`/streak/${user.id}/getStreakDetails`);
         data = response.data;
       } catch (getErr) {
         data = { ...streakDetails, restoreAvailable: false };
@@ -305,9 +293,8 @@ const allLoadingDone =
 
       // Re-fetch attempted dates so the weekly row refreshes
       try {
-        const datesRes = await axios.get(
-          `${apiUrl}/streak/${user.id}/getAttemptedDates`,
-          { headers: { Authorization: `Bearer ${jwtToken}` } }
+        const datesRes = await apiClient.get(
+          `/streak/${user.id}/getAttemptedDates`
         );
         if (Array.isArray(datesRes.data)) {
           setAttemptedDates(new Set(
@@ -363,9 +350,7 @@ const allLoadingDone =
           console.debug("[TOUR] Already seen locally.");
           return;
         }
-        const res = await axios.get(`${apiUrl}/applicant/${user.id}/tour-seen`, {
-          headers: { Authorization: `Bearer ${jwt}` },
-        });
+        const res = await apiClient.get(`/applicant/${user.id}/tour-seen`);
 
         const seen = res?.data?.seen === true;
         console.debug("[TOUR] Server response:", seen);
@@ -396,9 +381,8 @@ const allLoadingDone =
     if (!id) return setDashboardScore(0);
     try {
       const jwtToken = localStorage.getItem("jwtToken");
-      const { data: scoreRes } = await axios.get(
-        `${SCORE_API}/${id}/getApplicantScoreDetails`,
-        { headers: { Authorization: `Bearer ${jwtToken}` } }
+      const { data: scoreRes } = await apiClient.get(
+        `/applicant-scores/applicant/${id}/getApplicantScoreDetails`
       );
 
       console.debug("Dashboard raw score response:", scoreRes);
@@ -448,9 +432,7 @@ const allLoadingDone =
     try {
       const jwt = localStorage.getItem("jwtToken");
 
-      await axios.post(`${apiUrl}/applicant/${user.id}/tour-seen`, null, {
-        headers: { Authorization: `Bearer ${jwt}` },
-      });
+      await apiClient.post(`/applicant/${user.id}/tour-seen`, null);
 
       safeSet(TOUR_KEY, "true");
 
@@ -464,13 +446,8 @@ const allLoadingDone =
   };
 
   useEffect(() => {
-    fetch(`${apiUrl}/applicant-image/getphoto/${user.id}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwtToken')}`,
-      },
-    })
-
-      .then(response => response.blob())
+    apiClient.get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
+      .then(response => response.data)
       .then(blob => {
         const imageUrl = URL.createObjectURL(blob);
         setImageSrc(imageUrl);
@@ -484,13 +461,8 @@ const allLoadingDone =
     const fetchHiredCount = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const response = await axios.get(
-          `${apiUrl}/api/hiredCount/1`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+        const response = await apiClient.get(
+          `/api/hiredCount/1`
         );
         console.log('Hired Count Response:', response.data);
 
@@ -520,11 +492,7 @@ const allLoadingDone =
     const checkUserProfile = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const profileIdResponse = await axios.get(`${apiUrl}/applicantprofile/${userId}/profileid`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const profileIdResponse = await apiClient.get(`/applicantprofile/${userId}/profileid`);
         const profileId = profileIdResponse.data;
 
 
@@ -548,11 +516,7 @@ const allLoadingDone =
     const fetchUserData = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${apiUrl}/applicantprofile/${user.id}/profile-view`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
+        const response = await apiClient.get(`/applicantprofile/${user.id}/profile-view`);
         setProfileData(response.data);
         const newData = {
           identifier: response.data.applicant.email,
@@ -590,16 +554,8 @@ const allLoadingDone =
     const fetchTestData = async () => {
       try {
         const jwtToken = localStorage.getItem('jwtToken');
-        const response = await axios.get(`${apiUrl}/applicant1/tests/${user.id}`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          },
-        });
-        const response1 = await axios.get(`${apiUrl}/api/mentor-connect/getAllMeetings`, {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-          }
-        });
+        const response = await apiClient.get(`/applicant1/tests/${user.id}`);
+        const response1 = await apiClient.get(`/api/mentor-connect/getAllMeetings`);
         setMentorConnectData(response1.data)
 
       } catch (error) {
@@ -618,9 +574,7 @@ const allLoadingDone =
       try {
         setBlogsLoading(true);
         const jwt = localStorage.getItem('jwtToken');
-        const { data } = await axios.get(`${apiUrl}/blogs/active?size=3`, {
-          headers: { Authorization: `Bearer ${jwt}` },
-        });
+        const { data } = await apiClient.get(`/blogs/active?size=3`);
         setBlogs(data);
       } catch (err) {
         console.error(err);
@@ -636,9 +590,7 @@ const allLoadingDone =
       try {
         setTechBuzzLoading(true);
         const jwtToken = localStorage.getItem('jwtToken');
-        const res = await axios.get(`${apiUrl}/videos/recommended/${user.id}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        const res = await apiClient.get(`/videos/recommended/${user.id}`);
 
         console.log(maxVideos)
         const videos = (res.data || []).slice(0, maxVideos).map(v => ({
@@ -1617,9 +1569,8 @@ const allLoadingDone =
             // Re-fetch attempted dates so today's cell turns green immediately
             try {
               const jwtToken = localStorage.getItem('jwtToken');
-              const res = await axios.get(
-                `${apiUrl}/streak/${user.id}/getAttemptedDates`,
-                { headers: { Authorization: `Bearer ${jwtToken}` } }
+              const res = await apiClient.get(
+                `/streak/${user.id}/getAttemptedDates`
               );
               if (Array.isArray(res.data)) {
                 setAttemptedDates(new Set(

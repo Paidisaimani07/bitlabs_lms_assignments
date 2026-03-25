@@ -9,8 +9,7 @@ import ResumeBuilder from './ResumeBuilder'; // Ensure the path is correct
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
 import './ModalWrap.css';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
-import axios from "axios";
+import apiClient from '../../services/apiClient';
 
 const ModalWrapper = ({ isOpen, onClose }) => {
   const [showCloseModal, setShowCloseModal] = useState(false);
@@ -38,7 +37,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       }
       if (event.data === 'close-modal-saveexit') {
         try {
-          const response = await axios.put(`${apiUrl}/applicantprofile/updateResumeSource/${user.id}`);
+          const response = await apiClient.put(`/applicantprofile/updateResumeSource/${user.id}`);
           // Handle the response if needed
           console.log('API call successful:', response.data);
         } catch (error) {
@@ -49,7 +48,7 @@ const ModalWrapper = ({ isOpen, onClose }) => {
       }
       if (event.data === 'close-modal-save') {
         try {
-          const response = await axios.put(`${apiUrl}/applicantprofile/updateResumeSource/${user.id}`);
+          const response = await apiClient.put(`/applicantprofile/updateResumeSource/${user.id}`);
           // Handle the response if needed
           console.log('API call successful:', response.data);
         } catch (error) {

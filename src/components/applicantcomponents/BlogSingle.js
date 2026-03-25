@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import "./BlogSingle.css";
 import BackButton from "../common/BackButton";
 
@@ -12,10 +11,7 @@ export default function BlogSingle() {
   useEffect(() => {
     async function fetchBlog() {
       try {
-        const jwtToken = localStorage.getItem("jwtToken");
-        const res = await axios.get(`${apiUrl}/blogs/getBlogById/${id}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        const res = await apiClient.get(`/blogs/getBlogById/${id}`);
         setBlog(res.data);
       } catch (err) {
         console.error("Error fetching blog:", err);

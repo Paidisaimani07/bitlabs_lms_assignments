@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import apiClient from "../../services/apiClient";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../common/UserProvider";
 import "./ApplicantMyStreaks.css";
-import { apiUrl } from "../../services/ApplicantAPIService";
 import calendarGuyImg from '../../images/empty-state-images/calendar-guy.png';
 
 const ApplicantMyStreaks = () => {
@@ -25,8 +25,8 @@ const ApplicantMyStreaks = () => {
                 setLoading(true);
                 const jwtToken = localStorage.getItem("jwtToken");
                 if (!user?.id) return;
-                const response = await axios.get(
-                    `${apiUrl}/streak/${user.id}/getStreakDetails`,
+                const response = await apiClient.get(
+                    `/streak/${user.id}/getStreakDetails`,
                     {
                         headers: { Authorization: `Bearer ${jwtToken}` },
                     }
@@ -47,8 +47,8 @@ const ApplicantMyStreaks = () => {
             if (!user?.id) return;
             try {
                 const jwtToken = localStorage.getItem("jwtToken");
-                const response = await axios.get(
-                    `${apiUrl}/streak/${user.id}/getAttemptedDates`,
+                const response = await apiClient.get(
+                    `/streak/${user.id}/getAttemptedDates`,
                     { headers: { Authorization: `Bearer ${jwtToken}` } }
                 );
                 // Response is an array of [year, month, day] arrays
@@ -91,8 +91,8 @@ const ApplicantMyStreaks = () => {
             const jwtToken = localStorage.getItem("jwtToken");
             // Assuming API supports filtering by date or we get all and filter locally for now.
             // Using the full fetch as an example, update API path if date query is supported.
-            const response = await axios.get(
-                `${apiUrl}/streak/${user.id}/questions/attempted`,
+            const response = await apiClient.get(
+                `/streak/${user.id}/questions/attempted`,
                 {
                     headers: { Authorization: `Bearer ${jwtToken}` },
                 }

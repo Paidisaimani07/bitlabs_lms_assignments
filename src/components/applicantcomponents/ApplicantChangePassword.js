@@ -1,8 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import ApplicantAPIService, { apiUrl } from '../../services/ApplicantAPIService';
 import { Link } from 'react-router-dom';
 import BackButton from '../common/BackButton';
 import { useNavigate } from "react-router-dom";
@@ -128,18 +127,10 @@ const validateForm = (customTouched = touchedFields) => {
     };
   
     try {
-      const jwtToken =localStorage.getItem('jwtToken'); // Replace with the actual JWT token
-
-const response = await axios.post(
-  `${apiUrl}/applicant/authenticateUsers/${user.id}`, 
-  formData, 
-  {
-    headers: {
-      Authorization: `Bearer ${jwtToken}`,
-      // Add other headers if required, e.g., Content-Type
-    }
-  }
-);
+      const response = await apiClient.post(
+        `/applicant/authenticateUsers/${user.id}`, 
+        formData
+      );
 
       if (response.data === 'Password updated and stored') {
         setSnackbar({ 

@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from './services/apiClient';
 import './ChatBotWidget.css'; // Make sure this CSS file exists
-import { apiUrl } from './services/ApplicantAPIService.js'; // Adjust the import path as necessary
  
 const ChatBotWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,11 +47,11 @@ const ChatBotWidget = () => {
     setLoading(true);
  
     //update
-    const source = axios.CancelToken.source();
+    const source = apiClient.CancelToken.source();
     setCancelTokenSource(source);
     try {
-      const res = await axios.post(
-        `${apiUrl}/api/gemini/chat`,
+      const res = await apiClient.post(
+        '/api/gemini/chat',
         {
           contents: [{ parts: [{ text: input }] }]
         },
@@ -65,7 +64,7 @@ const ChatBotWidget = () => {
     } catch (error) {
       console.error('Error fetching response:', error);
       //update
-      if (axios.isCancel(error)) {
+      if (error.code === 'ERR_CANCELED') {
         setMessages((prev) => [...prev, { sender: 'bot', text: 'Cancelled.' }]);
       } else {
         setMessages((prev) => [...prev, { sender: 'bot', text: 'Sorry, something went wrong.' }]);
@@ -87,7 +86,7 @@ const ChatBotWidget = () => {
   return (
     <>
       {/* Chat Icon Button */}
- <button
+<button
   className="chat-icon"
   ref={chatIconRef}
   onClick={toggleChat}
@@ -201,4 +200,3 @@ const ChatBotWidget = () => {
 };
  
 export default ChatBotWidget;
- 

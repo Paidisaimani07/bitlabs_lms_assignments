@@ -4,11 +4,10 @@ import resumeBackButton from './resume-back-button.png';
 import ATSUpdateComponent from '../ATSUpdateComponent';
 import { useNavigate } from 'react-router-dom';
 import pdfUrl from './template1.png';
-import axios from "axios";
+import apiClient from "../../../services/apiClient";
 import { useResume } from '../ResumeContext';
 import { useEffect, useCallback, useState } from "react";
 import { useUserContext } from "../../common/UserProvider";
-import { apiUrl } from "../../../services/ApplicantAPIService";
 
 const ResumePreview = () => {
     const navigate = useNavigate();
@@ -22,29 +21,27 @@ const generatePdf = useCallback(async () => {
     try {
         if (!resumeState.templateId) return;
 
-        const jwt = localStorage.getItem("jwtToken");
-
         const payload = {
-   applicantId: applicantId,   // ✅ use context
-    resumeVersion: resumeState.templateId,
-    jd: resumeState.jobDescription,
-            resumeSummary: resumeState.profileData.resumeSummary,
-            personalDetails: resumeState.profileData.personalDetails,
-            educationDetails: resumeState.profileData.educationDetails,
-            projectDetails: resumeState.profileData.projectDetails,
-            keySkills: resumeState.profileData.keySkills
+          applicantId: applicantId,   // ✅ use context
+          resumeVersion: resumeState.templateId,
+          jd: resumeState.jobDescription,
+          resumeSummary: resumeState.profileData.resumeSummary,
+          personalDetails: resumeState.profileData.personalDetails,
+          educationDetails: resumeState.profileData.educationDetails,
+          projectDetails: resumeState.profileData.projectDetails,
+          keySkills: resumeState.profileData.keySkills,
         };
 
-        const response = await axios.post(
-            `${apiUrl}/api/resume/download/resume`,
-            // "http://localhost:8081/api/resume/download/resume",
-            payload,
-            {
-                headers: { Authorization: `Bearer ${jwt}` },
-                responseType: "blob"
-            }
-            
-        );
+   const response = await apiClient.post(
+    "/api/resume/download/resume",
+    payload,
+    {
+        responseType: "blob",
+        headers: {
+            Accept: "application/pdf",   // ✅ VERY IMPORTANT
+        },
+    }
+);
 
         const file = new Blob([response.data], { type: "application/pdf" });
         // const url = URL.createObjectURL(file);

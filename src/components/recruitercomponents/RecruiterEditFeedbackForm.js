@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
 import Snackbar from '../common/Snackbar';
 import './RecruiterEditFeedbackForm.css';
 
@@ -42,11 +41,6 @@ function RecruiterEditFeedbackForm() {
   ];
 
   useEffect(() => {
-    console.log('=== RecruiterEditFeedbackForm Mounted ===');
-    console.log('formId from useParams:', formId);
-    console.log('user from context:', user);
-    console.log('user.id:', user?.id);
-    console.log('API URL would be:', `${apiUrl}/api/feedback-forms/recruiter/${user?.id}/getFeedBackFormById/${formId}`);
     
     if (formId && user?.id) {
       console.log('Conditions met - calling fetchFormDetails');
@@ -59,16 +53,10 @@ function RecruiterEditFeedbackForm() {
   const fetchFormDetails = async () => {
     console.log('fetchFormDetails called - formId:', formId, 'user.id:', user?.id);
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      console.log('Making API call to:', `${apiUrl}/api/feedback-forms/recruiter/${user.id}/getFeedBackFormById/${formId}`);
+      console.log('Making API call to:', `/api/feedback-forms/recruiter/${user.id}/getFeedBackFormById/${formId}`);
       
-      const response = await axios.get(
-        `${apiUrl}/api/feedback-forms/recruiter/${user.id}/getFeedBackFormById/${formId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
+      const response = await apiClient.get(
+        `/api/feedback-forms/recruiter/${user.id}/getFeedBackFormById/${formId}`
       );
 
       console.log('API response:', response.data);
@@ -211,8 +199,6 @@ function RecruiterEditFeedbackForm() {
     setIsSubmitting(true);
 
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      
       const formattedFormData = {
         ...formData,
         questions: formData.questions.map(q => ({
@@ -221,15 +207,9 @@ function RecruiterEditFeedbackForm() {
         }))
       };
       
-      const response = await axios.put(
-        `${apiUrl}/api/feedback-forms/recruiter/${user.id}/updateFeedbackForm/${formId}`,
-        formattedFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
+      const response = await apiClient.put(
+        `/api/feedback-forms/recruiter/${user.id}/updateFeedbackForm/${formId}`,
+        formattedFormData
       );
 
       setSnackbar({ open: true, message: 'Form updated successfully!', type: 'success' });
@@ -249,8 +229,6 @@ function RecruiterEditFeedbackForm() {
     setIsSubmitting(true);
     
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      
       const formattedFormData = {
         mentorName: formData.mentorName,
         collegeName: formData.collegeName,
@@ -263,15 +241,9 @@ function RecruiterEditFeedbackForm() {
         }))
       };
 
-      const response = await axios.post(
-        `${apiUrl}/api/feedback-forms/recruiter/${user.id}/createFeedbackForm`,
-        formattedFormData,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`,
-            'Content-Type': 'application/json'
-          }
-        }
+      const response = await apiClient.post(
+        `/api/feedback-forms/recruiter/${user.id}/createFeedbackForm`,
+        formattedFormData
       );
 
       // Show success message
@@ -294,14 +266,8 @@ function RecruiterEditFeedbackForm() {
 
   const handleDeleteForm = async () => {
     try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      await axios.delete(
-        `${apiUrl}/api/feedback-forms/recruiter/${user.id}/deleteFeedbackForm/${formId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwtToken}`
-          }
-        }
+      await apiClient.delete(
+        `/api/feedback-forms/recruiter/${user.id}/deleteFeedbackForm/${formId}`
       );
 
       // Show success message

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useUserContext } from '../common/UserProvider';
-import { apiUrl } from '../../services/ApplicantAPIService';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import $ from 'jquery';
 import { Link, useNavigate } from 'react-router-dom';
 import Snackbar from '../common/Snackbar';
@@ -22,6 +21,7 @@ $.DataTable = require('datatables.net')
 function RecruiterAllApplicants() {
   const [applicants, setApplicants] = useState([]);
   const { user } = useUserContext();
+  const baseUrl = apiClient.defaults.baseURL || window.location.origin;
   let [selectedApplicant, setSelectedApplicant] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedMenuOption, setSelectedMenuOption] = useState('All');
@@ -125,7 +125,7 @@ if (!parsedData || FilterData.length > 0) {
   const handleResumeClick1 = async () => {
     try {
       console.log(user.id)
-      const response = await axios.get(`${apiUrl}/resume/pdf/${user.id}`, { responseType: 'blob' });
+      const response = await apiClient.get(`/resume/pdf/${user.id}`, { responseType: 'blob' });
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       window.open(url, '_blank');
@@ -1159,7 +1159,7 @@ const handleTextFieldChange = (id, value) => {
         setSelectedCheckboxes(JSON.parse(tableSelectedCheckBoxes1));
         setSelectedColumns(JSON.parse(savedSelectedColoumns));
        }
-      const response = await axios.get(`${apiUrl}/applyjob/recruiter/${user.id}/appliedapplicants`);
+      const response = await apiClient.get(`/applyjob/recruiter/${user.id}/appliedapplicants`);
        applicantsArray = Object.values(response.data).flat();
       setCount(applicantsArray.length);
       setApplicants(applicantsArray);
@@ -1301,10 +1301,6 @@ const handleTextFieldChange = (id, value) => {
   }, []);
  
   useEffect(() => {
-    const jwtToken = localStorage.getItem('jwtToken');
-    if (jwtToken) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-    }
     fetchAllApplicants();
   }, [user.id]);
  
@@ -1457,8 +1453,8 @@ const handleSelectChange = (e) => {
 const updateApplicantStatus = async (status, reason = null) => {
   try {
     const updatePromises = selectedApplicants.map(async (applyJobId) => {
-      const response = await axios.put(
-        `${apiUrl}/applyjob/recruiters/applyjob-update-status/${applyJobId}`,
+      const response = await apiClient.put(
+        `/applyjob/recruiters/applyjob-update-status/${applyJobId}`,
         { newStatus: status, reason: reason || null }
       );
       return { applyJobId, newStatus: status }; // Return data for updating UI
@@ -1598,7 +1594,7 @@ const exportCSV = () => {
       }
  
       if (headerText === 'Resume') {
-        const resumeLink = `${apiUrl}/resume/pdf/${user.id}`;
+        const resumeLink = `${baseUrl}/resume/pdf/${user.id}`;
         return resumeLink 
           ? `"=HYPERLINK(""${resumeLink}"", ""${resumeLink}"")"` 
           : 'N/A';
@@ -1712,7 +1708,7 @@ const exportCSV = () => {
       rowData.push(applicant.technicalScore); 
     }
   
-    const resumeLink = `${apiUrl}/view-resume/${applicant.id}`;
+    const resumeLink = `${baseUrl}/view-resume/${applicant.id}`;
     const hyperlinkFormula = resumeLink 
       ? `"=HYPERLINK(""${resumeLink}"", ""${resumeLink}"")"` 
       : 'N/A';

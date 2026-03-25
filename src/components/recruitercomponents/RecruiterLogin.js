@@ -1,9 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../../services/apiClient';
 import { useUserContext } from '../common/UserProvider';
-import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import ApplicantAPIService from '../../services/ApplicantAPIService';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function RecruiterLogin({handleLogin}) {
@@ -41,18 +41,15 @@ function RecruiterLogin({handleLogin}) {
   
         if (email === 'admin' && password === 'admin') {
           count = 0;
-          loginEndpoint = `${apiUrl}/adminlogin`; 
+          loginEndpoint = `/adminlogin`; 
         } else {
           count = 1;
-          loginEndpoint = `${apiUrl}/recuriters/recruiterLogin`; 
+          loginEndpoint = `/recuriters/recruiterLogin`; 
         }
         console.log('Email:', email);
         
 
-        // Explicitly remove the Authorization header for this request
-        delete axios.defaults.headers.common['Authorization'];
-
-        const response = await axios.post(loginEndpoint, {
+        const response = await apiClient.post(loginEndpoint, {
           email,
           password,
         }, {

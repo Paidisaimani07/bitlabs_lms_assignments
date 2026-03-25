@@ -1,10 +1,9 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import CustomDropdown from "../common/CustomDropdown";
 import { useRefresh } from "../common/RefreshContext";
 
-const PERSONAL_API = `${apiUrl}/applicant-personal`;
+const PERSONAL_API = '/applicant-personal';
 
 const toISO = (v) => {
   // normalize to YYYY-MM-DD for the date input & backend
@@ -165,12 +164,7 @@ const PersonalDetailsEditPopup = ({ applicantId, initial, onSuccess, onError }) 
         address: form.address.trim(),
         knownLanguages: form.knownLanguages, // ARRAY
       };
-      await axios.put(`${PERSONAL_API}/${applicantId}/updateApplicantPersonalDetails`, payload, {
-        headers: {
-          Authorization: `Bearer ${jwtToken}`,
-          "Content-Type": "application/json",
-        },
-      });
+      await apiClient.put(`${PERSONAL_API}/${applicantId}/updateApplicantPersonalDetails`, payload);
       triggerRefresh();
       onSuccess?.();
     } catch (e) {

@@ -1,8 +1,7 @@
 // src/components/feedback/FeedbackFormBuilder.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { apiUrl } from "../../services/ApplicantAPIService";
+import apiClient from "../../services/apiClient";
 import "./FeedbackFormBuilder.css";
 
 const FeedbackFormBuilder = () => {
@@ -28,7 +27,7 @@ const FeedbackFormBuilder = () => {
     if (!formId) return;
     (async () => {
       try {
-        const res = await axios.get(`${apiUrl}/mentorfeedback/forms/${formId}`);
+        const res = await apiClient.get(`/mentorfeedback/forms/${formId}`);
         if (!mounted) return;
 
         const data = res.data || {};
@@ -55,7 +54,7 @@ const FeedbackFormBuilder = () => {
     return () => {
       mounted = false;
     };
-  }, [formId, apiUrl]);
+  }, [formId]);
 
   // Field CRUD
   const addField = () => {
@@ -103,8 +102,8 @@ const FeedbackFormBuilder = () => {
       };
 
       const res = formId
-        ? await axios.put(`${apiUrl}/mentorfeedback/forms/${formId}`, payload)
-        : await axios.post(`${apiUrl}/mentorfeedback/forms`, payload);
+        ? await apiClient.put(`/mentorfeedback/forms/${formId}`, payload)
+        : await apiClient.post(`/mentorfeedback/forms`, payload);
 
       const saved = res.data;
       const message = `
