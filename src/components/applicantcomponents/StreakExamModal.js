@@ -94,7 +94,10 @@ return;
 
     try {
       await apiClient.post(`/streak/${userId}/complete`, selectedAnswers);
-
+      addSnackbar({
+  message: "Your streak submitted successfully",
+  type: "success"
+});
       setIsSubmitted(true);
 
       if (onExamCompleted) {

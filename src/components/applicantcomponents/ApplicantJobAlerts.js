@@ -419,8 +419,13 @@ export default function ApplicantJobAlerts() {
                                     navigate(redirectRoute);
                                   }
                                 } catch (err) {
-                                  console.error("❌ ERROR MARKING NOTIFICATION AS READ:", err);
-                                  navigate(redirectRoute);
+                                    if (isStreakNotification) {
+                                    navigate("/applicanthome", {
+                                      state: { action: "OPEN_STREAK_MODAL", fromNotification: true }
+                                    });
+                                  } else {
+                                    navigate(redirectRoute);
+                                  }
                                 }
                               }}
                             >
