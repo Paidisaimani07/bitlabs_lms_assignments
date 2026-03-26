@@ -338,11 +338,18 @@ export default function ApplicantJobAlerts() {
                     <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
                       {jobAlerts.map((alert) => {
 
-
+                        let isStreakNotification = false;
                         let redirectRoute = "/";
                         let featureName = alert.feature;
 
-                        if (alert.feature === "hackathon") {
+                           if (
+                          alert.feature?.toLowerCase().includes("streak") ||
+                          alert.message?.toLowerCase().includes("streak")
+                        ) {
+                          isStreakNotification = true;
+                          redirectRoute = "/applicanthome";
+                        }
+                        else if (alert.feature === "hackathon") {
                           redirectRoute = `/applicant-hackathon-details/${alert.featureId}`;
                           featureName = "Hackathon";
                         } else if (alert.feature === "Tech Vibes") {
@@ -404,7 +411,13 @@ export default function ApplicantJobAlerts() {
                                   );
                                      // Update navbar count
                                             window.dispatchEvent(new CustomEvent("alerts-updated"));
-                                  navigate(redirectRoute);
+                                   if (isStreakNotification) {
+                                    navigate("/applicanthome", {
+                                      state: { action: "OPEN_STREAK_MODAL" }
+                                    });
+                                  } else {
+                                    navigate(redirectRoute);
+                                  }
                                 } catch (err) {
                                   console.error("❌ ERROR MARKING NOTIFICATION AS READ:", err);
                                   navigate(redirectRoute);

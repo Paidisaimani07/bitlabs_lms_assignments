@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import apiClient from '../../services/apiClient';
 import './StreakExamModal.css';
 import sirenImg from '../../images/dashboard/siren.png';
+import Snackbar from "../common/Snackbar";
 
 const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
   const [questions, setQuestions] = useState([]);
@@ -11,8 +12,12 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showWarning, setShowWarning] = useState(false);
-  const [showSnackBar, setShowSnackBar] = useState(false);
+  const [snackbars, setSnackbars] = useState([]);
+const addSnackbar = (snackbar) =>
+  setSnackbars((prev) => [...prev, snackbar]);
 
+const handleCloseSnackbar = (index) =>
+  setSnackbars((prev) => prev.filter((_, i) => i !== index));
   // Formatted current date logic for header
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-GB', {
@@ -78,37 +83,35 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
 
   const handleSubmit = async () => {
 
-  // Check if all questions attempted
-  if (Object.keys(selectedAnswers).length < questions.length) {
-    setShowSnackBar(true);
-
-    setTimeout(() => {
-      setShowSnackBar(false);
-    }, 3000);
-
-    return;
-  }
-
-  try {
-    await apiClient.post(`/streak/${userId}/complete`, selectedAnswers);
-
-    setIsSubmitted(true);
-
-    if (onExamCompleted) {
-      onExamCompleted();
+    // Check if all questions attempted
+    if (Object.keys(selectedAnswers).length < questions.length) {
+    addSnackbar({
+  message: "Attempt all the questions to submit the test",
+  type: "error"   // 🔥 THIS FIXES GREEN ISSUE
+});
+return;
     }
 
-  } catch (err) {
-    console.error("Failed to submit streak exam", err);
+    try {
+      await apiClient.post(`/streak/${userId}/complete`, selectedAnswers);
 
-    if (err.response && err.response.status === 409) {
       setIsSubmitted(true);
-      if (onExamCompleted) onExamCompleted();
-    } else {
-      alert(err.response?.data?.message || "Failed to submit exam results.");
+
+      if (onExamCompleted) {
+        onExamCompleted();
+      }
+
+    } catch (err) {
+      console.error("Failed to submit streak exam", err);
+
+      if (err.response && err.response.status === 409) {
+        setIsSubmitted(true);
+        if (onExamCompleted) onExamCompleted();
+      } else {
+        alert(err.response?.data?.message || "Failed to submit exam results.");
+      }
     }
-  }
-};
+  };
 
   const handleCloseClick = () => {
     if (isSubmitted) {
@@ -142,7 +145,7 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
     console.log("Returning error state. error:", error, "questions.length:", questions.length);
     return (
       <div className="streak-modal-overlay">
-        
+
         <div className="streak-modal-content">
           <div className="streak-modal-header">
             <div className="streak-header-titles">
@@ -168,21 +171,15 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
 
   return (
     <div className="streak-modal-overlay">
-  {showSnackBar && (
-  <div className="streak-snackbar">
-    <div className="snackbar-icon">✓</div>
-    <span className="snackbar-text">
-      Attempt all the questions to submit the test
-    </span>
-
-    <button
-      className="snackbar-close"
-      onClick={() => setShowSnackBar(false)}
-    >
-      ✕
-    </button>
-  </div>
-)}
+     {snackbars.map((snackbar, index) => (
+  <Snackbar
+    key={index}
+    index={index}
+    message={snackbar.message}
+    type={snackbar.type}
+    onClose={handleCloseSnackbar}
+  />
+))}
       <div className="streak-modal-content">
         {/* Warning Popup */}
         {showWarning && (
@@ -199,7 +196,7 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
                 <img src={sirenImg} alt="Warning Icon" className="warning-siren-icon" />
               </div>
               <h2 className="warning-title">Warning!</h2>
-              <p className="warning-text">You are about to close the exam.<br />Unsaved progress will be lost. Do you wish to continue?</p>
+              <p className="warning-text">You are about to close the exam.<br />You can check notifications later to take the test. Do you wish to close the test now?</p>
               <button className="warning-sure-btn" onClick={handleConfirmClose}>I'm Sure</button>
             </div>
           </div>
@@ -320,13 +317,14 @@ const StreakExamModal = ({ userId, onClose, onExamCompleted }) => {
                 >
                   Prev
                 </button>
-                <button
-                  className="streak-nav-btn"
-                  onClick={handleNext}
-                  disabled={currentQuestionIndex === questions.length - 1}
-                >
-                  Next
-                </button>
+                {currentQuestionIndex < questions.length - 1 && (
+                  <button
+                    className="streak-nav-btn"
+                    onClick={handleNext}
+                  >
+                    Next
+                  </button>
+                )}
               </>
             )}
           </div>
