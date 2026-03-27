@@ -19,11 +19,19 @@ import { useEffect } from "react";
 const ResumeTemplates = () => {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState({});
   const { resumeState, updateResumeState } = useResume();
  const { user } = useUserContext();
  const[showJD, setShowJD] = useState(false);
 const applicantId = user?.id;
   const navigate = useNavigate();
+
+  const handleImageLoad = (templateId) => {
+    setImagesLoaded(prev => ({
+      ...prev,
+      [templateId]: true
+    }));
+  };
 
   const handleGenerate = async (e) => {
     e.stopPropagation();
@@ -98,12 +106,15 @@ updateResumeState("templateId", selectedTemplate);
             {[1, 2, 3, 4].map((id) => (
               <div
                 key={id}
-                className={`template-card ${
-                  selectedTemplate === id ? "active" : ""
-                }`}
+                className={`template-card ${selectedTemplate === id ? "active" : ""} ${imagesLoaded[id] ? "loaded" : "loading"}`}
                 onClick={() => setSelectedTemplate(id)}
               >
-                <img src={id === 1 ? template1 : id === 2 ? template2 : id === 3 ? template3 : template4} alt={`template${id}`} />
+                {!imagesLoaded[id] && <div className="template-skeleton"></div>}
+                <img 
+                  src={id === 1 ? template1 : id === 2 ? template2 : id === 3 ? template3 : template4} 
+                  alt={`template${id}`} 
+                  onLoad={() => handleImageLoad(id)}
+                />
                 <p><b>
                   {id === 1 && "Professional Classic"}
                   {id === 2 && "Modern Executive"}
