@@ -15,7 +15,7 @@ import characterImg from '../../images/dashboard/mobilebanners/Group.png';
 import './ApplicantDashboard.css';
 import flameImg from '../../images/dashboard/flame.png';
 import GuidedTour from "./GuidedTour";
-
+import { useLocation } from "react-router-dom";
 
 const safeGet = (key) => {
   if (!key) return null;
@@ -53,7 +53,7 @@ const ApplicantDashboard = () => {
     const [showStreakModal, setShowStreakModal] = useState(false);
   const [streakDetails, setStreakDetails] = useState(null);
   const [streakLoading, setStreakLoading] = useState(true);
-
+   const location = useLocation();
   const [imageSrc, setImageSrc] = useState('../images/user/avatar/image-01.jpg');
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
@@ -207,10 +207,20 @@ const allLoadingDone =
         }, 500);
       }
     } catch (err) {
-      if (err.response?.status === 404) {
+      if (err.response?.status === 404&&!sessionSkipped) {
         setStreakDetails({ currentStreak: 0, longestStreak: 0, attemptedToday: false });
         setTimeout(() => setShowStreakModal(true), 500);
-      } else {
+      }
+     else if (err.response?.status === 404) {
+  
+
+  setStreakDetails({
+    currentStreak: 0,
+    longestStreak: 0,
+    attemptedToday: false
+  });
+
+} else {
         console.error("Failed to fetch streak details:", err);
       }
     } finally {
@@ -221,6 +231,20 @@ const allLoadingDone =
   useEffect(() => {
     fetchStreakDetails();
   }, [user?.id]);
+
+    useEffect(() => {
+  if (streakLoading) return;   // 🔥 wait for API
+
+  if (
+    location.state?.action === "OPEN_STREAK_MODAL" &&
+    streakDetails?.attemptedToday === false    // 🔥 strict check
+  ) {
+    setShowStreakModal(true);
+
+    // clear navigation state
+    navigate(location.pathname, { replace: true });
+  }
+}, [location.state, streakLoading, streakDetails]);
 
 
    useEffect(() => {
@@ -1523,7 +1547,7 @@ const allLoadingDone =
                 You have a streak to restore from yesterday!
               </p>
               <p style={{ fontSize: '13px', color: '#888' }}>
-                Restore now to keep your streak, or take today's test first.
+                Restore now to keep your streak, or start fresh by taking today's test.
               </p>
             </div>
             <div className="streak-modal-footer" style={{ justifyContent: 'center', gap: '12px' }}>
@@ -1534,7 +1558,7 @@ const allLoadingDone =
                   setShowStreakModal(true); // proceed to test
                 }}
               >
-                Take Test First
+                Take Test
               </button>
               <button
                 className="streak-submit-btn"
