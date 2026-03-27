@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 
 import "../../../stylesheets/dashboard.css";
 import template1 from "./template1.png";
+import template2 from "./template2.png";
+import template3 from "./template3.png";
+import template4 from "./template4.png";
 import "./ResumeTemplates.css";
 import ProcessingLoader from "../ProcessingLoader";
 import { useUserContext } from "../../common/UserProvider";
@@ -100,7 +103,7 @@ updateResumeState("templateId", selectedTemplate);
                 }`}
                 onClick={() => setSelectedTemplate(id)}
               >
-                <img src={template1} alt={`template${id}`} />
+                <img src={id === 1 ? template1 : id === 2 ? template2 : id === 3 ? template3 : template4} alt={`template${id}`} />
                 <p><b>
                   {id === 1 && "Professional Classic"}
                   {id === 2 && "Modern Executive"}

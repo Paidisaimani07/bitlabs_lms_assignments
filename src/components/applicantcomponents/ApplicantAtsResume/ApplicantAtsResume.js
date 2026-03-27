@@ -5,13 +5,38 @@ import JobDescriptionModal from "./JobDescriptionModel";
 import { useResume } from "../ResumeContext";
 import { useNavigate } from "react-router-dom";
 import ApplicantViewProfile from "../ApplicantViewProfile";
+import apiClient from "../../../services/apiClient";
+import Snackbar from "../../common/Snackbar";
 
 const ApplicantAtsResume = ({ applicantId, onLoaded, showContent}) => {
   const [showJD, setShowJD] = useState(false);
   const [continueButton, setContinueButton] = useState(false);
+  const [snackbars, setSnackbars] = useState([]);
   // const { updateResumeState } = useResume();
   const navigate = useNavigate();
   const { resumeState, updateResumeState } = useResume();
+
+  const addSnackbar = (snackbar) => {
+    setSnackbars((prev) => [...prev, snackbar]);
+  };
+
+  const handleCloseSnackbar = (index) => {
+    setSnackbars((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleGenerateClick = async () => {
+    try {
+      const response = await apiClient.get(`/api/resume/validate/${applicantId}`);
+      if (response.status === 200) {
+        setShowJD(true);
+      }
+    } catch (error) {
+      addSnackbar({
+        message: "please fill basic details and education details to generate resume",
+        type: "error",
+      });
+    }
+  };
 
   const shimmerAnimation = `
     @keyframes shimmer {
@@ -109,7 +134,7 @@ if (!showContent) {
           e.currentTarget.style.color = "#FFFFFF";
           e.currentTarget.style.border = "none";
         }}
-        onClick={() => setShowJD(true)}
+        onClick={handleGenerateClick}
       >
         {/* Shimmer Effect Overlay */}
         <div
@@ -150,6 +175,18 @@ if (!showContent) {
           />
         </Overlay>
       )}
+
+      <div className="snackbar-container">
+        {snackbars.map((snackbar, index) => (
+          <Snackbar
+            key={index}
+            index={index}
+            message={snackbar.message}
+            type={snackbar.type}
+            onClose={handleCloseSnackbar}
+          />
+        ))}
+      </div>
     </div>
   );
 };
