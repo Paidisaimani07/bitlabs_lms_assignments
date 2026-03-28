@@ -79,7 +79,7 @@ useEffect(() => {
   const address = bd?.address || "";
   const gender = bd?.gender || "";
   const languages = Array.isArray(bd?.knownLanguages) ? bd.knownLanguages.join(", ") : "";
-
+const onResumeClick = () => fileInputRef.current?.click();
   // resume upload handlers
 const onFilePicked = async (e) => {
   const file = e.target.files?.[0];
