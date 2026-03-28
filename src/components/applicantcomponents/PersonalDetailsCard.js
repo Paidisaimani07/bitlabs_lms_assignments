@@ -81,50 +81,71 @@ useEffect(() => {
   const languages = Array.isArray(bd?.knownLanguages) ? bd.knownLanguages.join(", ") : "";
 
   // resume upload handlers
-  const onResumeClick = () => fileInputRef.current?.click();
-
-  const onFilePicked = async (e) => {
+const onFilePicked = async (e) => {
   const file = e.target.files?.[0];
   if (!file) return;
-
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+  if (file.size > MAX_SIZE) {
+    addSnackbar({
+      message: "File size should be less than 5 MB",
+      type: "error",
+    });
+    e.target.value = "";
+    return;
+  }
   const jwt = localStorage.getItem("jwtToken");
   const form = new FormData();
-  // add both keys to cover either backend signature
   form.append("resume", file);
-  form.append("file", file);
-
-  // Try likely endpoint shapes
   const candidates = [
-    `${RESUME_API}/${applicantId}/upload`, 
-  ];
-
+    `${RESUME_API}/${applicantId}/upload`,
+  ]; 
   let success = false, lastErr;
-
   for (const url of candidates) {
     try {
-      await apiClient.post(url, form);
+      await apiClient.post(url, form, {
+        headers: {
+          "Content-Type": "multipart/form-data"
+        },
+        timeout: 30000 
+      });
       success = true;
       addSnackbar({ message: "Resume uploaded successfully!", type: "success" });
-      await probeResume?.(); // if you have this in your file
+      await probeResume?.();
       break;
     } catch (err) {
       lastErr = err;
-      // continue to try next candidate
     }
   }
-
   if (!success) {
     const status = lastErr?.response?.status;
     const url = lastErr?.config?.url;
-    const serverText = typeof lastErr?.response?.data === "string" ? lastErr.response.data : "";
+    // 🚨 IMPORTANT: when request is canceled 
+    if (!lastErr?.response) {
+      addSnackbar({
+        message: "Upload failed. File size should be less than 5 MB",
+        type: "error",
+      });
+      e.target.value = "";
+      return;
+    }
+    const data = lastErr.response.data;
+    let serverText = "";
+    if (typeof data === "string") {
+      serverText = data;
+    } else if (typeof data === "object" && data !== null) {
+      serverText = data.message || data.error || "";
+    }
     addSnackbar({
-      message: `Upload failed (${status || "network error"}) at ${url}. ${serverText ? serverText.slice(0,120) : ""}`,
+      message: serverText
+        ? serverText
+        : `Upload failed (${status || "network error"}) at ${url}`,
       type: "error",
     });
-  }
-
+  } 
   e.target.value = "";
+
 };
+ 
 
   const onViewResume = async () => {
     try {
