@@ -107,6 +107,11 @@ const validators = {
       if (!value) return "Start year is required";
       if (isNaN(value)) return "Must be a valid year";
       if (value < 1900) return "Year must be after 1900";
+       const xii = Number(form.classXii.passingYear);
+ 
+      if (xii && Number(value) <= xii) {
+        return "Graduation must start after Class XII";
+      }
 
       if (form.graduation.endYear && Number(value) >= Number(form.graduation.endYear)) {
         return "Start year cannot be same or after end year";
@@ -136,7 +141,13 @@ const validators = {
       if (isNaN(value)) return "Must be valid year";
 
       const gradStart = Number(form.graduation.startYear);
-      if (gradStart && Number(value) > gradStart) {
+
+       const classX = Number(form.classX.passingYear);
+ 
+      if (classX && Number(value) <= classX) {
+        return "Class XII must be after Class X";
+      }
+      if (gradStart && Number(value) >= gradStart) {
         return "Class XII year must be before or equal to Graduation start year";
       }
 
@@ -152,8 +163,14 @@ const validators = {
       if (isNaN(value)) return "Must be valid year";
 
       const xii = Number(form.classXii.passingYear);
-      if (xii && Number(value) > xii) {
-        return "Class X year must be before or equal to Class XII year";
+      const gradStart = Number(form.graduation.startYear);
+ 
+     if (xii && Number(value) >= xii) {
+        return "Class X must be before Class XII";
+      }
+ 
+      if (gradStart && Number(value) >= gradStart) {
+        return "Class X must be before Graduation start year";
       }
 
       return "";
