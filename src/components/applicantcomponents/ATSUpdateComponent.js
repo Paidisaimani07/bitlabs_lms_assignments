@@ -50,7 +50,7 @@ const [loadedSections, setLoadedSections] = useState({
                 <KeySkillsCard applicantId={applicantId} 
                   onLoaded={() => markLoaded("skills")}
   showContent={allLoaded}       />
-                <SkillBadgesGrid applicantId={applicantId} />
+                
             </div>
         </div>
     );
