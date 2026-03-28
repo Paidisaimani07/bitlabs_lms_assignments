@@ -1,12 +1,10 @@
 import React from "react";
-import { useUserContext } from "../common/UserProvider";
-import ApplicantHeaderComponent from "./ApplicantHeaderComponent";
-import ResumeSummaryCard from "./ResumeSummaryCard";
-import PersonalDetailsCard from "./PersonalDetailsCard";
-import EducationDetailsCard from "./EducationDetailsCard";
-import ProjectDetailsCard from "./ProjectDetailsCard";
-import KeySkillsCard from "./KeySkillsCard";
-import SkillBadgesGrid from "./SkillBadgesGrid";
+import { useUserContext } from "../../common/UserProvider";
+import ResumeSummaryCard from "../ResumeSummaryCard";
+import PersonalDetailsCard from "../PersonalDetailsCard";
+import EducationDetailsCard from "../EducationDetailsCard";
+import ProjectDetailsCard from "../ProjectDetailsCard";
+import KeySkillsCard from "../KeySkillsCard";
 import "./ATSUpdateComponent.css";
 import {useState} from "react";
 
