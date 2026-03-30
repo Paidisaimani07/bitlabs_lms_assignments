@@ -1,7 +1,7 @@
 import './ResumePreview.css';
 import resumeBackButton from './resume-back-button.png';
 
-import ATSUpdateComponent from '../ATSUpdateComponent';
+import ATSUpdateComponent from './ATSUpdateComponent';
 import { useNavigate } from 'react-router-dom';
 import pdfUrl from './template1.png';
 import apiClient from "../../../services/apiClient";
