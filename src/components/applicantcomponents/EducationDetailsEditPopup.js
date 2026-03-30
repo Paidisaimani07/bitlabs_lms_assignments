@@ -147,7 +147,7 @@ const validators = {
       if (classX && Number(value) <= classX) {
         return "Class XII must be after Class X";
       }
-      if (gradStart && Number(value) >= gradStart) {
+      if (gradStart > 0 && Number(value) > gradStart) {
         return "Class XII year must be before or equal to Graduation start year";
       }
 
@@ -165,11 +165,11 @@ const validators = {
       const xii = Number(form.classXii.passingYear);
       const gradStart = Number(form.graduation.startYear);
  
-     if (xii && Number(value) >= xii) {
+     if (xii > 0 && Number(value) >= xii) {
         return "Class X must be before Class XII";
       }
  
-      if (gradStart && Number(value) >= gradStart) {
+      if (gradStart > 0 && Number(value) >= gradStart) {
         return "Class X must be before Graduation start year";
       }
 
@@ -227,6 +227,60 @@ const EducationDetailsEditPopup = ({ applicantId, initial, onSuccess, onError })
       if (validator) {
         const error = validator(value, copy);
         setErrors((e) => ({ ...e, [path]: error }));
+      }
+
+      // Revalidate dependent fields
+      if (section === 'classXii' && field === 'passingYear') {
+        // Revalidate graduation start year when classXii year changes
+        const gradStartValidator = validators.graduation?.startYear;
+        if (gradStartValidator && copy.graduation.startYear) {
+          const gradError = gradStartValidator(copy.graduation.startYear, copy);
+          setErrors((e) => ({ ...e, 'graduation.startYear': gradError }));
+        }
+        // Revalidate classX passing year
+        const xValidator = validators.classX?.passingYear;
+        if (xValidator && copy.classX.passingYear) {
+          const xError = xValidator(copy.classX.passingYear, copy);
+          setErrors((e) => ({ ...e, 'classX.passingYear': xError }));
+        }
+      }
+
+      if (section === 'classX' && field === 'passingYear') {
+        // Revalidate classXii passing year when classX changes
+        const xiiValidator = validators.classXii?.passingYear;
+        if (xiiValidator && copy.classXii.passingYear) {
+          const xiiError = xiiValidator(copy.classXii.passingYear, copy);
+          setErrors((e) => ({ ...e, 'classXii.passingYear': xiiError }));
+        }
+      }
+
+      if (section === 'graduation' && field === 'startYear') {
+        // Revalidate classXii and classX when graduation start changes
+        const xiiValidator = validators.classXii?.passingYear;
+        if (xiiValidator && copy.classXii.passingYear) {
+          const xiiError = xiiValidator(copy.classXii.passingYear, copy);
+          setErrors((e) => ({ ...e, 'classXii.passingYear': xiiError }));
+        }
+        const xValidator = validators.classX?.passingYear;
+        if (xValidator && copy.classX.passingYear) {
+          const xError = xValidator(copy.classX.passingYear, copy);
+          setErrors((e) => ({ ...e, 'classX.passingYear': xError }));
+        }
+        // Revalidate graduation end year
+        const endValidator = validators.graduation?.endYear;
+        if (endValidator && copy.graduation.endYear) {
+          const endError = endValidator(copy.graduation.endYear, copy);
+          setErrors((e) => ({ ...e, 'graduation.endYear': endError }));
+        }
+      }
+
+      if (section === 'graduation' && field === 'endYear') {
+        // Revalidate graduation start year when end year changes
+        const startValidator = validators.graduation?.startYear;
+        if (startValidator && copy.graduation.startYear) {
+          const startError = startValidator(copy.graduation.startYear, copy);
+          setErrors((e) => ({ ...e, 'graduation.startYear': startError }));
+        }
       }
 
       return copy;
