@@ -1,11 +1,15 @@
 import './JobDescriptionModel.css';
 import { useState } from 'react';
 import { useResume } from '../ResumeContext';
+import resumeBackButton from "./resume-back-button.png";
+import { useNavigate } from "react-router-dom";
 
 const JobDescriptionModal = ({ onClose, onFinish }) => {
+  const navigate = useNavigate();
 
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+
   const { updateResumeState } = useResume();
 
   const validateText = (inputText) => {
@@ -51,7 +55,19 @@ const JobDescriptionModal = ({ onClose, onFinish }) => {
      <div className="jd-modal">
       <button className="jd-close" onClick={onClose}>✕</button>
 
-      <h3 className="jd-title">Job Description</h3>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <img 
+          src={resumeBackButton} 
+          alt="Back" 
+          onClick={() => {
+            onClose();
+            navigate('/applicant-view-profile');
+          }} 
+          style={{ cursor: 'pointer', height: '35px', width: 'auto', paddingBottom: '16px' }} 
+        />
+        <h3 className="jd-title" style={{ margin: 0, paddingBottom: '16px' }}>Job Description</h3>
+      </div>
+
       <p className="jd-subtitle">
         Would you like to check the job description here?
       </p>

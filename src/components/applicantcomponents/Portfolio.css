@@ -103,7 +103,7 @@
   cursor: default;
 }
 
-.common_style{
+.common_style {
   cursor: default !important;
 }
 
@@ -225,8 +225,10 @@
   .portfolio-right {
     text-align: left !important;
   }
-  .skill-badge-empty-para p, .skill-badge-empty-para span{
-    font-size: 14px !important;    
+
+  .skill-badge-empty-para p,
+  .skill-badge-empty-para span {
+    font-size: 14px !important;
   }
 }
 
@@ -246,20 +248,23 @@
 .card-title-row {
   display: flex !important;
   align-items: flex start;
-  justify-content: space-between ;
+  justify-content: space-between;
 
   margin-bottom: 8px !important;
 }
+
 .card-title-text {
   flex: 1;
-  min-width: 0; /* IMPORTANT: allows wrapping correctly */
+  min-width: 0;
+  /* IMPORTANT: allows wrapping correctly */
 }
+
 .project-title-actions {
   display: flex;
   gap: 8px;
   flex-shrink: 0;
 }
- 
+
 
 .card-title {
   font-size: 16px !important;
@@ -293,13 +298,16 @@
   line-height: 1.5 !important;
   font-size: 13px !important;
 }
-.field-align{
+
+.field-align {
   display: flex !important;
   flex-direction: column !important;
 }
-.field-align input{
+
+.field-align input {
   height: 50px;
 }
+
 /* --- personal details grid --- */
 .pd-grid {
   display: grid !important;
@@ -328,13 +336,16 @@
 }
 
 
-.date-empty {  color: #9E9E9E !important;
+.date-empty {
+  color: #9E9E9E !important;
 }
+
 date-filled {
   color: #000;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: grayscale(1);
   opacity: 0.6;
 }
 
@@ -386,11 +397,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
   border-color: #BDBDBD;
 }
 
- 
+
 .profile-dropdown.placeholder .pd-selected {
   color: #9E9E9E;
 }
- 
+
 
 
 .pd-select {
@@ -411,7 +422,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
   background: white;
   border: 1px solid #E5E5E5;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   z-index: 999;
   overflow: hidden;
   overflow-y: auto;
@@ -588,11 +599,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
   .skill-badges-grid {
     grid-template-columns: 1fr;
   }
-  .skill-badge-empty-para{
-    display: block !important;  
+
+  .skill-badge-empty-para {
+    display: block !important;
   }
-  .skill-badge-empty-para p, .skill-badge-empty-para span{
-    font-size: 12px !important;    
+
+  .skill-badge-empty-para p,
+  .skill-badge-empty-para span {
+    font-size: 12px !important;
   }
 }
 
@@ -863,48 +877,61 @@ input[type="date"]::-webkit-calendar-picker-indicator {  filter: grayscale(1);
   border-radius: 8px !important;
 }
 
-.skill-badge-empty-para{
+.skill-badge-empty-para {
   display: flex;
 }
 
- 
+.project-action-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-left: 5px;
+  ;
+}
+
+
 @media (max-width: 768px) {
   .project-title-actions {
     gap: 6px;
-       flex-direction: row;
+    flex-direction: row;
   }
 }
+
 @media (max-width: 425px) {
   .card-title-row {
     flex-direction: column;
     align-items: flex-start;
   }
- 
+
   .project-title-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
 }
-}
+
 @media (max-width: 375px) {
   .project-title-actions {
-    flex-direction: column;  /* stack */
+    flex-direction: column;
+    /* stack */
     align-items: flex-end;
     gap: 6px;
   }
 }
- 
+
 /* Mobile */
 @media (max-width: 425px) {
   .project-action-buttons {
-   display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 }
- 
-.badge-progress-wrapper-skeleton{
-   background: white;
+
+.badge-progress-wrapper-skeleton {
+  background: white;
   border-radius: 6px;
   box-shadow: 0px 0px 15px #F7AA4B;
   box-sizing: border-box;
