@@ -109,8 +109,8 @@ const validators = {
       if (value < 1900) return "Year must be after 1900";
        const xii = Number(form.classXii.passingYear);
  
-      if (xii && Number(value) <= xii) {
-        return "Graduation must start after Class XII";
+      if (xii && Number(value) < xii) {
+        return "Graduation start year cannot be before Class XII passing year";
       }
 
       if (form.graduation.endYear && Number(value) >= Number(form.graduation.endYear)) {
