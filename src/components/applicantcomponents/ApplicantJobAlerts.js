@@ -144,7 +144,19 @@ export default function ApplicantJobAlerts() {
       );
 
       // Update UI after successful deletion
-      setJobAlerts(prev => prev.filter(alert => alert.id !== id));
+      setJobAlerts(prev => {
+        const filtered = prev.filter(alert => alert.id !== id);
+        
+        // If no notifications left but there are more on server, fetch them
+        if (filtered.length === 0 && hasMore) {
+          setLoading(true);
+          setTimeout(() => {
+            fetchAlertsFromServer(true).finally(() => setLoading(false));
+          }, 0);
+        }
+        
+        return filtered;
+      });
       setDeletingItems(prev => {
         const newSet = new Set(prev);
         newSet.delete(id);
@@ -213,7 +225,7 @@ export default function ApplicantJobAlerts() {
       setJobAlerts([]);
       setDeletingItems(new Set());
       setPage(0);
-      setHasMore(true);
+      setHasMore(false);
 
       // Update notification count in header
     window.dispatchEvent(new CustomEvent("alerts-updated"));
