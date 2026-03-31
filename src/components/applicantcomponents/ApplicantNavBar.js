@@ -398,7 +398,7 @@ function ApplicantNavBar() {
                       />
                     </div>
                     {userData && (
-                      <div className="user-info">
+                      <div className="user-info" onClick={() => navigate("/applicant-view-profile")}>
                         <p>Hi,</p>
                         <h6 className="user-name">{card?.name}</h6>
                         <p className="user-email">{userData.identifier}</p>
