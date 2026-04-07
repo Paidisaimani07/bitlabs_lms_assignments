@@ -66,7 +66,12 @@ const UploadImageComponent = ({ id, onSuccess, onClose }) => {
       // backend expects field name 'photo' in this uploader implementation
       formData.append("photo", photoFile);
 
-      const response = await apiClient.post(`/applicant-image/${id}/upload`, formData);
+      const response = await apiClient.post(`/applicant-image/${id}/upload`, formData,
+  {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
       console.log("Photo uploaded successfully:", response.data);
       addSnackbar({ message: "Photo uploaded successfully", type: "success" });
