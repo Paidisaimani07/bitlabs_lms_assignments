@@ -12,7 +12,7 @@ import logo from "../../images/icons/newLogo.png";
 import Backgroundimagemobile from "../../images/user/avatar/backgroundimage-mobile.png";
 import Snackbar from "../common/Snackbar";
 import CryptoJS from "crypto-js";
-import ZohoCRMService from "../zohoCrmComponent/zohoCrm";
+// import ZohoCRMService from "../zohoCrmComponent/zohoCrm";
 import { saveFcmTokenWeb } from "../../notifications/notificationWeb";
 import { generateToken } from "../../notifications/firebase";
 import {
@@ -67,7 +67,7 @@ function LoginBody({ handleLogin }) {
   const [utmCampaign, setUtmCampaign] = useState("bitlabs.in");
   const [utmContent, setUtmContent] = useState("bitlabs.in");
   const [utmTerm, setUtmTerm] = useState("bitlabs.in");
-  const { handleLead } = ZohoCRMService();
+  // const { handleLead } = ZohoCRMService();
 
   const saveTokens = (jwtToken, refreshToken) => {
     localStorage.setItem("jwtToken", jwtToken);
@@ -139,29 +139,29 @@ function LoginBody({ handleLogin }) {
     setCandidateName(name);
 
     // Zoho CRM — Google uses handleLead, email/pass uses searchlead
-    if (fromGoogle) {
-      const leadData = {
-        data: [
-          {
-            Last_Name: name,
-            Email: email,
-            Status_TS: "Signed-Up",
-            Industry: "Software",
-            Utm_Source_TS: utmSource || "",
-            Utm_Medium_TS: utmMedium || "",
-            Utm_Campaign_TS: utmCampaign || "",
-            Utm_Content_TS: utmContent || "",
-            Utm_Term_TS: utmTerm || "",
-          },
-        ],
-      };
-      const id = await handleLead(leadData);
-      sessionStorage.setItem("zohoUserId", id);
-    } else {
-      const zohoResponse = await apiClient.get(`/zoho/searchlead/${email}`);
-      const zohoUserId = zohoResponse.data?.data?.[0]?.id;
-      if (zohoUserId) sessionStorage.setItem("zohoUserId", zohoUserId);
-    }
+    // if (fromGoogle) {
+    //   const leadData = {
+    //     data: [
+    //       {
+    //         Last_Name: name,
+    //         Email: email,
+    //         Status_TS: "Signed-Up",
+    //         Industry: "Software",
+    //         Utm_Source_TS: utmSource || "",
+    //         Utm_Medium_TS: utmMedium || "",
+    //         Utm_Campaign_TS: utmCampaign || "",
+    //         Utm_Content_TS: utmContent || "",
+    //         Utm_Term_TS: utmTerm || "",
+    //       },
+    //     ],
+    //   };
+    //   const id = await handleLead(leadData);
+    //   sessionStorage.setItem("zohoUserId", id);
+    // } else {
+    //   const zohoResponse = await apiClient.get(`/zoho/searchlead/${email}`);
+    //   const zohoUserId = zohoResponse.data?.data?.[0]?.id;
+    //   if (zohoUserId) sessionStorage.setItem("zohoUserId", zohoUserId);
+    // }
 
     // Navigate based on profile completeness
     const profileIdResponse = await apiClient.get(
@@ -224,27 +224,27 @@ function LoginBody({ handleLogin }) {
           setCandidateEmail(email1);
           setCandidateName(name1);
 
-          const leadData = {
-            data: [
-              {
-                Last_Name: name1,
-                Email: email1,
-                // Lead_Status: "signedup",
-                Status_TS: "Signed-Up",
-                // Lead_Source: utmSource || "Direct", // Set a default if empty
-                Industry: "Software",
-                Utm_Source_TS: utmSource || "",
-                Utm_Medium_TS: utmMedium || "",
-                Utm_Campaign_TS: utmCampaign || "",
-                Utm_Content_TS: utmContent || "",
-                Utm_Term_TS: utmTerm || "",
-              },
-            ],
-          };
+          // const leadData = {
+          //   data: [
+          //     {
+          //       Last_Name: name1,
+          //       Email: email1,
+          //        Lead_Status: "signedup",
+          //       Status_TS: "Signed-Up",
+          //        Lead_Source: utmSource || "Direct", // Set a default if empty
+          //       Industry: "Software",
+          //       Utm_Source_TS: utmSource || "",
+          //       Utm_Medium_TS: utmMedium || "",
+          //       Utm_Campaign_TS: utmCampaign || "",
+          //       Utm_Content_TS: utmContent || "",
+          //       Utm_Term_TS: utmTerm || "",
+          //     },
+          //   ],
+          // };
 
-          const id = await handleLead(leadData);
-          console.log("Zoho User ID from login page :", id);
-          sessionStorage.setItem("zohoUserId", id);
+          // const id = await handleLead(leadData);
+          // console.log("Zoho User ID from login page :", id);
+          // sessionStorage.setItem("zohoUserId", id);
 
 
 
@@ -398,15 +398,15 @@ function LoginBody({ handleLogin }) {
       await apiClient.post("/api/activity/log", { userId, actionType: "Login" });
 
       // Zoho
-      try {
-        const zohoRes = await apiClient.get(`/zoho/searchlead/${candidateEmail}`);
-        const zohoUserId = zohoRes.data?.data?.[0]?.id;
-        if (zohoUserId) {
-          sessionStorage.setItem("zohoUserId", zohoUserId);
-        }
-      } catch (e) {
-        console.log("Zoho fetch failed");
-      }
+      // try {
+      //   const zohoRes = await apiClient.get(`/zoho/searchlead/${candidateEmail}`);
+      //   const zohoUserId = zohoRes.data?.data?.[0]?.id;
+      //   if (zohoUserId) {
+      //     sessionStorage.setItem("zohoUserId", zohoUserId);
+      //   }
+      // } catch (e) {
+      //   console.log("Zoho fetch failed");
+      // }
 
       // Profile check
       const profileRes = await apiClient.get(
@@ -523,28 +523,28 @@ function LoginBody({ handleLogin }) {
       setCandidateMobileNumber("");
       setCandidatePassword1("");
 
-      const leadData = {
-        data: [
-          {
-            Last_Name: candidateName,
-            Email: candidateEmail1,
-            Phone: candidateMobileNumber,
-            Status_TS: "Signed-Up",
-            // Lead_Source: utmSource || "Direct", // Set a default if empty
-            Industry: "Software",
-            Mobile: candidateMobileNumber,
-            Utm_Source_TS: utmSource || "Unknown",
-            Utm_Medium_TS: utmMedium || "Unknown",
-            Utm_Campaign_TS: utmCampaign || "Unknown",
-            Utm_Content_TS: utmContent || "Unknown",
-            Utm_Term_TS: utmTerm || "Unknown",
-          },
-        ],
-      };
+      // const leadData = {
+      //   data: [
+      //     {
+      //       Last_Name: candidateName,
+      //       Email: candidateEmail1,
+      //       Phone: candidateMobileNumber,
+      //       Status_TS: "Signed-Up",
+      //        Lead_Source: utmSource || "Direct", 
+      //       Industry: "Software",
+      //       Mobile: candidateMobileNumber,
+      //       Utm_Source_TS: utmSource || "Unknown",
+      //       Utm_Medium_TS: utmMedium || "Unknown",
+      //       Utm_Campaign_TS: utmCampaign || "Unknown",
+      //       Utm_Content_TS: utmContent || "Unknown",
+      //       Utm_Term_TS: utmTerm || "Unknown",
+      //     },
+      //   ],
+      // };
 
-      const zohoUserId = await handleLead(leadData);
-      console.log("Zoho User ID from login page :", zohoUserId);
-      sessionStorage.setItem("zohoUserId", zohoUserId);
+      // const zohoUserId = await handleLead(leadData);
+      // console.log("Zoho User ID from login page :", zohoUserId);
+      // sessionStorage.setItem("zohoUserId", zohoUserId);
 
       if (candidateOTPSent && candidateOTPVerified) {
         navigate("/candidate", { state: { registrationSuccess: true } });
