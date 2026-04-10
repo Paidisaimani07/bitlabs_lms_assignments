@@ -353,28 +353,28 @@ const fetchQuestion = async() => {
     }
 
     // Update Zoho API
-    const roundedScore = Math.round(calculatedScore);
-    const zohoPayload = {
-      data: [{
-      Owner: { id: "4569859000019865042" },
-      ...(testName === 'General Aptitude Test' && {
-      GAT: testStatus === 'P' ? 'PASS' : 'FAIL',
-      GAT_Score: roundedScore
-      }),
-      ...(testName === 'Technical Test' && {
-      TT: testStatus === 'P' ? 'PASS' : 'FAIL',
-      TT_Score: roundedScore
-      }),
-      }]
-    };
+    // const roundedScore = Math.round(calculatedScore);
+    // const zohoPayload = {
+    //   data: [{
+    //   Owner: { id: "4569859000019865042" },
+    //   ...(testName === 'General Aptitude Test' && {
+    //   GAT: testStatus === 'P' ? 'PASS' : 'FAIL',
+    //   GAT_Score: roundedScore
+    //   }),
+    //   ...(testName === 'Technical Test' && {
+    //   TT: testStatus === 'P' ? 'PASS' : 'FAIL',
+    //   TT_Score: roundedScore
+    //   }),
+    //   }]
+    // };
 
-    const zohoUserId = sessionStorage.getItem('zohoUserId');
-    const response = await apiClient.put(`/zoho/update/${zohoUserId}`, zohoPayload);
-    if (response.status === 200 || response.status === 201) {
-      console.log("Zoho API updated successfully", response.data);
-    } else {
-      console.error("Failed to update Zoho API", response.data);
-    }
+    // const zohoUserId = sessionStorage.getItem('zohoUserId');
+    // const response = await apiClient.put(`/zoho/update/${zohoUserId}`, zohoPayload);
+    // if (response.status === 200 || response.status === 201) {
+    //   console.log("Zoho API updated successfully", response.data);
+    // } else {
+    //   console.error("Failed to update Zoho API", response.data);
+    // }
   } 
   catch (error) {
     if (!navigator.onLine || error.message === 'Failed to fetch') {

@@ -340,67 +340,67 @@ const ApplicantBasicDetails = () => {
       const MAX_RETRIES = 50; // Maximum retry attempts
       let retryCount = 0;
 
-      async function updateZohoCRM() {
-        const zohoUpdateData = {
-          data: [
-            {
-              Owner: { id: "4569859000019865042" },
-              Last_Name: basicDetails.lastName,
-              First_Name: basicDetails.firstName,
-              Email: basicDetails.email,
-              Phone: basicDetails.alternatePhoneNumber,
-              Status_TS: "Completed Profile",
-              Industry: "Software",
-              Technical_Skills: applicantProfileDTO.skillsRequired.map(
-                (skill) => skill.skillName.toLowerCase(),
-              ),
-              Specialization: applicantProfileDTO.specialization,
-              Education_Qualifications: applicantProfileDTO.qualification,
-              Degree_level: applicantProfileDTO.qualification,
-              Total_work_experience_in_years: applicantProfileDTO.experience,
-              Preferred_Job_Locations:
-                applicantProfileDTO.preferredJobLocations.join(", "),
-            },
-          ],
-        };
-        const zohoUserId = sessionStorage.getItem("zohoUserId");
+      // async function updateZohoCRM() {
+      //   const zohoUpdateData = {
+      //     data: [
+      //       {
+      //         Owner: { id: "4569859000019865042" },
+      //         Last_Name: basicDetails.lastName,
+      //         First_Name: basicDetails.firstName,
+      //         Email: basicDetails.email,
+      //         Phone: basicDetails.alternatePhoneNumber,
+      //         Status_TS: "Completed Profile",
+      //         Industry: "Software",
+      //         Technical_Skills: applicantProfileDTO.skillsRequired.map(
+      //           (skill) => skill.skillName.toLowerCase(),
+      //         ),
+      //         Specialization: applicantProfileDTO.specialization,
+      //         Education_Qualifications: applicantProfileDTO.qualification,
+      //         Degree_level: applicantProfileDTO.qualification,
+      //         Total_work_experience_in_years: applicantProfileDTO.experience,
+      //         Preferred_Job_Locations:
+      //           applicantProfileDTO.preferredJobLocations.join(", "),
+      //       },
+      //     ],
+      //   };
+      //   const zohoUserId = sessionStorage.getItem("zohoUserId");
 
-        while (retryCount < MAX_RETRIES) {
-          try {
-            const response = await apiClient.put(
-              `/zoho/update/${zohoUserId}`,
-              zohoUpdateData,
-            );
+      //   while (retryCount < MAX_RETRIES) {
+      //     try {
+      //       const response = await apiClient.put(
+      //         `/zoho/update/${zohoUserId}`,
+      //         zohoUpdateData,
+      //       );
 
-            if (response.status === 200 || response.status === 201) {
-              console.log("✅ Lead successfully updated in Zoho CRM.");
-              return response; // Exit function on success
-            }
-          } catch (error) {
-            const status = error.response?.status;
+      //       if (response.status === 200 || response.status === 201) {
+      //         console.log("✅ Lead successfully updated in Zoho CRM.");
+      //         return response; // Exit function on success
+      //       }
+      //     } catch (error) {
+      //       const status = error.response?.status;
 
-            if (status === 401) {
-              break; // Stop retrying on 401
-            }
+      //       if (status === 401) {
+      //         break; // Stop retrying on 401
+      //       }
 
-            if (status === 403 || status === 500) {
-              console.warn(
-                `⚠️ Error ${status}. Retrying (${retryCount + 1}/${MAX_RETRIES})...`,
-              );
-              retryCount++;
-              await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait before retrying
-            } else {
-              console.error(`🚨 Unexpected Error: ${status}`, error);
-              break; // Stop retrying on any other error
-            }
-          }
-        }
+      //       if (status === 403 || status === 500) {
+      //         console.warn(
+      //           `⚠️ Error ${status}. Retrying (${retryCount + 1}/${MAX_RETRIES})...`,
+      //         );
+      //         retryCount++;
+      //         await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait before retrying
+      //       } else {
+      //         console.error(`🚨 Unexpected Error: ${status}`, error);
+      //         break; // Stop retrying on any other error
+      //       }
+      //     }
+      //   }
 
-        console.error("❌ Max retries reached. Could not update Zoho CRM.");
-      }
+      //   console.error("❌ Max retries reached. Could not update Zoho CRM.");
+      // }
 
       // Call the function
-      await updateZohoCRM();
+      // await updateZohoCRM();
 
       const transformedApplicantProfileDTO = {
         ...applicantProfileDTO,
