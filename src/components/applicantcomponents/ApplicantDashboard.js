@@ -15,7 +15,12 @@ import characterImg from '../../images/dashboard/mobilebanners/Group.png';
 import './ApplicantDashboard.css';
 import flameImg from '../../images/dashboard/flame.png';
 import GuidedTour from "./GuidedTour";
+import defaultAvatarImg from '../../images/user/avatar/image-01.jpg';
 import { useLocation } from "react-router-dom";
+import badge1 from '../../images/LeaderBoardBadges/1.png';
+import badge2 from '../../images/LeaderBoardBadges/2.png';
+import badge3 from '../../images/LeaderBoardBadges/3.png';
+import LeaderboardModal from './LeaderboardModal';
 
 const safeGet = (key) => {
   if (!key) return null;
@@ -39,6 +44,10 @@ const safeSet = (key, value) => {
 const ApplicantDashboard = () => {
   const { user } = useUserContext();
   const [loading, setLoading] = useState(true);
+  const [imageMap, setImageMap] = useState({});
+  const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [modalLeaderboard, setModalLeaderboard] = useState([]);
+  const [modalLoading, setModalLoading] = useState(false);
   // const [contRecJobs, setCountRecJobs] = useState(0);
   // const [contAppliedJob, setAppliedJobs] = useState(0);
   // const [contSavedJobs, setSavedJobs] = useState(0);
@@ -84,6 +93,10 @@ const ApplicantDashboard = () => {
   const [silverScore, setSilverScore] = useState(300);
   const [goldScore, setGoldScore] = useState(500);
 
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [leaderboardError, setLeaderboardError] = useState(null);
+
   const bronzeWidth = (bronzeScore / goldScore) * 100;
   const silverWidth = ((silverScore - bronzeScore) / goldScore) * 100;
   const goldWidth = ((goldScore - silverScore) / goldScore) * 100;
@@ -125,7 +138,8 @@ const allLoadingDone =
   !badgeLoading &&
   !portfolioLoading &&
   !streakLoading &&
-  !mentorLoading;
+  !mentorLoading &&
+  !leaderboardLoading;
   
   const fetchCard = async () => {
     try {
@@ -637,6 +651,91 @@ const allLoadingDone =
     fetchTechBuzz();
   }, [user.id]);
 
+   // Fetch leaderboard top-3
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setLeaderboardLoading(true);
+        setLeaderboardError(null);
+        const { data } = await apiClient.get(`/applicant-scores/leaderboard?limit=3`);
+        setLeaderboard(data || []);
+      } catch (err) {
+        console.error('Failed to fetch leaderboard:', err);
+        setLeaderboard([]);
+        setLeaderboardError('Unable to load leaderboard. Please try again later.');
+      } finally {
+        setLeaderboardLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, []);
+
+  // Fetch modal leaderboard with 10 leaders
+  const fetchModalLeaderboard = async () => {
+    try {
+      setModalLoading(true);
+      const { data } = await apiClient.get(`/applicant-scores/leaderboard?limit=10`);
+      console.log("Leader Board ",data);
+      setModalLeaderboard(data || []);
+    } catch (err) {
+      console.error('Failed to fetch modal leaderboard:', err);
+      setModalLeaderboard([]);
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const openLeaderboardModal = () => {
+    setIsLeaderboardModalOpen(true);
+    fetchModalLeaderboard();
+  };
+
+  const closeLeaderboardModal = () => {
+    setIsLeaderboardModalOpen(false);
+  };
+
+  useEffect(() => {
+  const fetchImages = async () => {
+    const newImageMap = {};
+
+    // Fetch images for main leaderboard
+    for (const entry of leaderboard) {
+      try {
+        const res = await apiClient.get(
+          `/applicant-image/getphoto/${entry.applicantId}`,
+          { responseType: "blob" } // important
+        );
+
+        newImageMap[entry.applicantId] = URL.createObjectURL(res.data);
+      } catch (err) {
+        newImageMap[entry.applicantId] = defaultAvatarImg; // fallback
+      }
+    }
+
+    // Fetch images for modal leaderboard
+    for (const entry of modalLeaderboard) {
+      if (!newImageMap[entry.applicantId]) {
+        try {
+          const res = await apiClient.get(
+            `/applicant-image/getphoto/${entry.applicantId}`,
+            { responseType: "blob" } // important
+          );
+
+          newImageMap[entry.applicantId] = URL.createObjectURL(res.data);
+        } catch (err) {
+          newImageMap[entry.applicantId] = defaultAvatarImg; // fallback
+        }
+      }
+    }
+
+    setImageMap(newImageMap);
+  };
+
+  if (leaderboard.length > 0 || modalLeaderboard.length > 0) {
+    fetchImages();
+  }
+}, [leaderboard, modalLeaderboard]);
+
 
   const handleRedirectTechBuzz = () => {
     navigate("/applicant-verified-videos");
@@ -844,6 +943,8 @@ const allLoadingDone =
             <div className="col-lg-12 col-md-12">
               <div className="row dash-count profile-cards">
                 <div className="profile-card-row1">
+                   {/* Arena + Leaderboard column */}
+                  <div className="arena-leaderboard-col">
                   {/* Arena Online */}
                   {!allLoadingDone ? (<div className="arena arena-skeleton">
 
@@ -864,9 +965,10 @@ const allLoadingDone =
                   <div className="arena">
                     <div className="arena-topSection">
                       <h4 id="tour-innovation-arena">
-                        Compete. Learn. Win.
+                        {/* Compete. Learn. Win. */}
+                        Take challenges. Climb the leaderboard!
                       </h4>
-                      <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p>
+                      {/* <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p> */}
                       <button onClick={handleRedirectHackathon}>
                         Enter arena!
                       </button>
@@ -880,6 +982,69 @@ const allLoadingDone =
                     </div>
 
                   </div>)}
+
+                    {/* Our Leaderboard */}
+                  {!allLoadingDone ? (
+                    <div className="leaderboard-card leaderboard-skeleton">
+                      <div className="lb-skeleton-title"></div>
+                      <div className="lb-skeleton-podium">
+                        {[0,1,2].map(i => (
+                          <div key={i} className="lb-skeleton-member">
+                            <div className="lb-skeleton-avatar"></div>
+                            <div className="lb-skeleton-name"></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : leaderboardError ? (
+                    <div className="leaderboard-card">
+                      <div className="leaderboard-top-section">
+                        <h4 className="leaderboard-title">Our Leaderboard</h4>
+                        <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
+                      </div>
+                      <div className="leaderboard-error">
+                        <p>{leaderboardError}</p>
+                      
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="leaderboard-card">
+                      <div className="leaderboard-top-section">
+                        <h4 className="leaderboard-title">Our Leaderboard</h4>
+                        <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
+                      </div>
+                      <div className="leaderboard-podium">
+                        {/* Arrange as 2nd, 1st, 3rd for podium effect */}
+                        {(() => {
+                          const medals = [badge1, badge2, badge3];
+                          const podiumOrder = [1, 0, 2]; // indices: 2nd, 1st, 3rd
+                          return podiumOrder.map((rankIdx) => {
+                            const entry = leaderboard[rankIdx];
+                            if (!entry) return null;
+                            const isFirst = rankIdx === 0;
+                            const defaultAvatar = defaultAvatarImg;
+                            return (
+                              <div key={entry.applicantId} className={`leaderboard-member${isFirst ? ' leaderboard-member--first' : ''}`}>
+                                <div className="leaderboard-avatar-wrap">
+                                  <div className="leaderboard-halo-rings">
+                                      
+<img
+  src={imageMap[entry.applicantId] || defaultAvatarImg}
+  alt={entry.name}
+  className="leaderboard-avatar"
+/>
+                                  </div>
+                                  <img src={medals[rankIdx]} alt={`Rank ${rankIdx + 1}`} className="leaderboard-medal" />
+                                </div>
+                                <span className="leaderboard-name">{entry.name?.split(' ')[0]} ({entry.score})</span>
+                              </div>
+                            );
+                          });
+                        })()}
+                      </div>
+                    </div>
+                  )}
+                  </div> {/* end arena-leaderboard-col */}
 
                   {/* MentorSphere */}
                   <div className="mentor-sphere">
@@ -1329,117 +1494,8 @@ const allLoadingDone =
                   </div>
                 </div>
                 <div className="profile-card-row2">
-                  {/* Download our App */}
-                  {!allLoadingDone ? (<div className="app-card app-card-skeleton">
 
-  <div className="app-sub-card">
-
-    <div className="app-skeleton-text"></div>
-    <div className="app-skeleton-text short"></div>
-
-    <div className="app-skeleton-store-row">
-      <div className="app-skeleton-store"></div>
-      <div className="app-skeleton-store"></div>
-    </div>
-
-  </div>
-
-  <div className="app-img">
-    <div className="app-skeleton-img"></div>
-  </div>
-
-</div>):(
-                  <div className="app-card">
-                    <div className="app-sub-card">
-                      <p className="app-card-text">
-                        Why open laptop when bitLabs can be right in your pocket.
-                      </p>
-
-                      <p className="app-card-download-text">
-                        Download the app now!
-                      </p>
-
-                      <div
-                        className="app-store-icons"
-                      >
-                        <a
-                          href="https://apps.apple.com/in/app/bitlabs/id6742783587"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        > <img
-                            src={appStoreIcon}
-                            alt="App Store"
-                          /></a>
-
-
-                        <a
-                          href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <img
-                            src={playStore}
-                            alt="Google Play"
-                          />
-                        </a>
-                      </div>
-                    </div>
-
-
-                    {/* ✅ Mobile Image Below */}
-                    <div className="app-img">
-                      <img
-                        src={SmartPhone}
-                        alt="App Preview"
-                      />
-                    </div>
-
-                  </div>)}
-
-                  {/* Tech buzz shots */}
-                  <div className="Tech-buzz">
-                    <div className="tech-buzz-header">
-                      <h3 id="tour-techbuzz">Tech buzz shorts</h3>
-                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>View more</button>
-                    </div>
-                    <div className="tech-buzz-images">
-                      {!allLoadingDone  ? (
-                        [...Array(maxVideos)].map((_, i) => (
-                          <div key={i} className="skeleton-thumb"></div>
-                        ))
-                      ) : techBuzzVideos.length > 0 ? (
-                        techBuzzVideos.map((video) => (
-                          <div className="video-thumb-container hover-scale" onClick={() => navigate(`/applicant-verified-videos?video=${video.videoId}`)}>
-                            <img
-                              key={video.videoId}
-                              src={video.thumbnail_url || "https://via.placeholder.com/120x80?text=No+Img"}
-                              alt={video.title}
-
-                              onError={(e) => (e.target.src = "https://via.placeholder.com/120x80?text=No+Img")}
-                              style={{ cursor: "pointer" }}
-                            />
-                            <div className="video-overlay">
-                              <div className="play-icon">▶</div>
-                              <div className="video-title">{video.title}</div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        [...Array(maxVideos)].map((_, i) => (
-                          <img
-                            key={i}
-                            src="https://via.placeholder.com/120x80?text=No+Video"
-                            alt="No video"
-                            style={{ opacity: 0.5 }}
-                          />
-                        ))
-                      )}
-                    </div>
-                  </div>
-
-
-
-                  {/* Tech Vibes */}
+                      {/* Tech Vibes */}
                   <div className="tech-vibes">
                     <div className="tech-vibes-header">
                       <h3 id="tour-techvibes">Tech vibes</h3>
@@ -1516,6 +1572,118 @@ const allLoadingDone =
                       )}
                     </div>
                   </div>
+
+                  {/* Tech buzz shots */}
+                  <div className="Tech-buzz">
+                    <div className="tech-buzz-header">
+                      <h3 id="tour-techbuzz">Tech buzz shorts</h3>
+                      <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>View more</button>
+                    </div>
+                    <div className="tech-buzz-images">
+                      {!allLoadingDone  ? (
+                        [...Array(maxVideos)].map((_, i) => (
+                          <div key={i} className="skeleton-thumb"></div>
+                        ))
+                      ) : techBuzzVideos.length > 0 ? (
+                        techBuzzVideos.map((video) => (
+                          <div className="video-thumb-container hover-scale" onClick={() => navigate(`/applicant-verified-videos?video=${video.videoId}`)}>
+                            <img
+                              key={video.videoId}
+                              src={video.thumbnail_url || "https://via.placeholder.com/120x80?text=No+Img"}
+                              alt={video.title}
+
+                              onError={(e) => (e.target.src = "https://via.placeholder.com/120x80?text=No+Img")}
+                              style={{ cursor: "pointer" }}
+                            />
+                            <div className="video-overlay">
+                              <div className="play-icon">▶</div>
+                              <div className="video-title">{video.title}</div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        [...Array(maxVideos)].map((_, i) => (
+                          <img
+                            key={i}
+                            src="https://via.placeholder.com/120x80?text=No+Video"
+                            alt="No video"
+                            style={{ opacity: 0.5 }}
+                          />
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+
+
+            
+
+                    {/* Download our App */}
+                  {!allLoadingDone ? (<div className="app-card app-card-skeleton">
+
+  <div className="app-sub-card">
+
+    <div className="app-skeleton-text"></div>
+    <div className="app-skeleton-text short"></div>
+
+    <div className="app-skeleton-store-row">
+      <div className="app-skeleton-store"></div>
+      <div className="app-skeleton-store"></div>
+    </div>
+
+  </div>
+
+  <div className="app-img">
+    <div className="app-skeleton-img"></div>
+  </div>
+
+</div>):(
+                  <div className="app-card">
+                    <div className="app-sub-card">
+                      <p className="app-card-text">
+                        Why open laptop when bitLabs can be right in your pocket.
+                      </p>
+
+                      <p className="app-card-download-text">
+                        Download the app now!
+                      </p>
+
+                      <div
+                        className="app-store-icons"
+                      >
+                        <a
+                          href="https://apps.apple.com/in/app/bitlabs/id6742783587"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        > <img
+                            src={appStoreIcon}
+                            alt="App Store"
+                          /></a>
+
+
+                        <a
+                          href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <img
+                            src={playStore}
+                            alt="Google Play"
+                          />
+                        </a>
+                      </div>
+                    </div>
+
+
+                    {/* ✅ Mobile Image Below */}
+                    <div className="app-img">
+                      <img
+                        src={SmartPhone}
+                        alt="App Preview"
+                      />
+                    </div>
+
+                  </div>)}
                 </div>
 
               </div>
@@ -1610,7 +1778,15 @@ const allLoadingDone =
           }}
         />
       )}
-
+ {/* Leaderboard Modal */}
+      <LeaderboardModal
+        isOpen={isLeaderboardModalOpen}
+        onClose={closeLeaderboardModal}
+        leaderboard={modalLeaderboard}
+        loading={modalLoading}
+        imageMap={imageMap}
+        defaultAvatarImg={defaultAvatarImg}
+      />
 
     </div>
   );
