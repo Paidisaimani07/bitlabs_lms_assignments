@@ -283,7 +283,7 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
         m.description,
         m.mentorName,
         m.technology,
-        m.mentorRole,
+        m.mentorDesignation,
       ]
         .map(normalized)
         .join(" ");
@@ -512,8 +512,8 @@ const currentUser = JSON.parse(localStorage.getItem("user"));
               <span style={{ fontSize: 13, fontWeight: 700, color: "#0F172A" }}>
                 {m.mentorName || "Mentor"}
               </span>
-              <span style={{ fontSize: 12, color: "#94A3B8" }}>
-                {m.mentorRole || "Career coach"}
+              <span style={{ fontSize: 12, color: "#94A3B8", marginTop: "4px" }}>
+                {m.mentorDesignation || "Career coach"}
               </span>
             </div>
           </div>
