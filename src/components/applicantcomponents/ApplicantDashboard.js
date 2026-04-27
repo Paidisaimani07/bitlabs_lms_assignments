@@ -21,6 +21,7 @@ import badge1 from '../../images/LeaderBoardBadges/1.png';
 import badge2 from '../../images/LeaderBoardBadges/2.png';
 import badge3 from '../../images/LeaderBoardBadges/3.png';
 import LeaderboardModal from './LeaderboardModal';
+import { HiDocumentText } from "react-icons/hi";
 
 const safeGet = (key) => {
   if (!key) return null;
@@ -749,7 +750,9 @@ const allLoadingDone =
   };
 
   const handleRedirectResume = () => {
-    navigate("/applicant-view-profile");
+     navigate("/applicant-view-profile", {
+    state: { scrollToATS: true }
+  });
   };
 
   const handleRedirectHackathon = () => {
@@ -822,7 +825,26 @@ const allLoadingDone =
           <div className="row mr-0 ml-10" style={{ marginTop: '-85px' }}>
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
-                <div className="title-dashboard dashboard-top-container">
+                  <div className="title-dashboard" style={{ position: "relative" }}>
+                                  
+                  <div>
+                 {!allLoadingDone ? ( 
+                  <div className="build-btn-skeleton"></div>
+                 ) : (
+                   <div className="build-btn-wrapper">
+                    
+ <button
+  onClick={handleRedirectResume}
+  className="build-resume-btn"
+>
+  <HiDocumentText className="btn-icon" />
+  ATS Resume Builder
+</button>
+                </div>
+                 )}
+
+
+                <div className="dashboard-top-container">
                   {!allLoadingDone ?(<div className="display-flex robo-container">
   <div className="card robo-card">
     <div className="container">
@@ -939,6 +961,9 @@ const allLoadingDone =
 
                 </div>
               </div>
+              
+            </div>
+            </div>
             </div>
             <div className="col-lg-12 col-md-12">
               <div className="row dash-count profile-cards">
