@@ -87,6 +87,11 @@ function ApplicantNavBar() {
       setCard(DEFAULT_CARD); // fallback
     }
   };
+  useEffect(() => {
+  if (!localStorage.getItem("jwtToken")) {
+    setShowModal(false);
+  }
+}, [location.pathname]);
 
   useEffect(() => {
     fetchCard();
@@ -688,7 +693,7 @@ function ApplicantNavBar() {
                     className="dash-titles"
                     style={{ textTransform: "none" }}
                   >
-                    Innovation arena
+                    Hackathons
                   </span>
                 </Link>
               </li>
