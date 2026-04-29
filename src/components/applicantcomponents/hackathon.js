@@ -355,7 +355,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
             <div className="dashboard__content">
                 <div className="row mr-0 ml-10 extraSpace" style={{ marginLeft: "1%" }}>
                     <div className="main-header-row">
-                        <h1 className="main-heading">Innovation arena</h1>
+                        <h1 className="main-heading">Hackathons</h1>
                         <div className="hackathon-search-box">
                             <i className="fa fa-search search-icon1"></i>
                             <input
