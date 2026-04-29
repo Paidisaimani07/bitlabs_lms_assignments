@@ -256,10 +256,10 @@ function ApplicantNavBar() {
     console.log("🔍 ApplicantNavBar handleLogout called");
     try {
       await clearJWTToken();;
-      window.location.href = "https://jobs.bitlabs.in/candidate";
+      window.location.replace("https://jobs.bitlabs.in/candidate");
     } catch (error) {
       console.error("Logout failed", error);
-      window.location.href = "https://jobs.bitlabs.in/candidate";
+     window.location.replace("https://jobs.bitlabs.in/candidate");
     }
   };
 
@@ -774,7 +774,7 @@ function ApplicantNavBar() {
         </div>
       }
       <ModalLogout
-        isOpen={showModal}
+        isOpen={showModal && !!localStorage.getItem("jwtToken")}
         onClose={() => setShowModal(false)}
         onConfirm={handleLogout}
       />
