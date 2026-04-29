@@ -777,7 +777,7 @@ const allLoadingDone =
       id: "arena",
       selector: "#tour-innovation-arena",
       placement: "left",
-      text: "💻 Innovation Arena — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
+      text: "💻 Hackathons — Participate in hackathons, coding challenges, and innovation contests. Showcase your problem-solving skills."
     },
     {
       id: "mentor",
