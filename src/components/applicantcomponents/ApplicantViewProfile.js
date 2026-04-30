@@ -1,6 +1,7 @@
 import { useUserContext } from "../common/UserProvider";
 import ApplicantHeaderComponent from "./ApplicantHeaderComponent";
-import ResumeSummaryCard from "./ResumeSummaryCard"; // ← add this
+import ResumeSummaryCard from "./ResumeSummaryCard";
+import SocialLinksCard from "./SocialLinksCard";
 import PersonalDetailsCard from "./PersonalDetailsCard";
 import EducationDetailsCard from "./EducationDetailsCard";
 import ProjectDetailsCard from "./ProjectDetailsCard";
@@ -22,6 +23,7 @@ const ApplicantViewProfile = () => {
   const [loadedSections, setLoadedSections] = useState({
     header: false,
     summary: false,
+    socialLinks: false,
     personal: false,
     education: false,
     projects: false,
@@ -97,6 +99,11 @@ const ApplicantViewProfile = () => {
                   resumeSummary: data,
                 }))
               }
+            />
+            <SocialLinksCard
+              applicantId={applicantId}
+              onLoaded={() => markLoaded("socialLinks")}
+              showContent={allLoaded}
             />
             <PersonalDetailsCard
               applicantId={applicantId}
