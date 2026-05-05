@@ -170,6 +170,8 @@ function App() {
                     <Route path="/recruiter-static-feedback-form" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-edit-feedback-form/:id" element={<RecruiterHomePage />} />
                     <Route path="/recruiter-mentor-rating" element={<RecruiterHomePage />} />
+                      <Route path="/applicant-lmscourses-list" element={<ApplicantHomePage />} />
+                      <Route path="/course/:courseName" element={<ApplicantHomePage />} />
 
 
                   </>
