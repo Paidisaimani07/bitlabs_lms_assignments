@@ -995,7 +995,7 @@ const allLoadingDone =
                       </h4>
                       {/* <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p> */}
                       <button onClick={handleRedirectHackathon}>
-                        Enter arena!
+                        Enter Hackathons!
                       </button>
                     </div>
 
