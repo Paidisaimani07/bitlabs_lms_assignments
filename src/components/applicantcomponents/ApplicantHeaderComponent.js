@@ -450,6 +450,7 @@ if (!showContent) {
   return (
     <>
       <div className="portfolio-card">
+         <h3 className="card-title">Basic details <span className="req">*</span></h3>
         {/* left cluster */}
         <div className="portfolio-left">
           <div className="portfolio-avatar-wrap">

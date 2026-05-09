@@ -37,8 +37,8 @@ const validators = {
     return "";
   },
   roleInProject: (v) => validateTextWithTrailingSpace(v, "Role in project", 3, 500),
-  roleDescription: (v) => validateTextWithTrailingSpace(v, "Role description", 10, 5000),
-  projectDescription: (v) => validateTextWithTrailingSpace(v, "Project description", 10, 5000),
+  roleDescription: (v) => validateTextWithTrailingSpace(v, "Role description", 10, 1000),
+  projectDescription: (v) => validateTextWithTrailingSpace(v, "Project description", 10, 1000),
 };
 
 /* Small presentational helpers */
