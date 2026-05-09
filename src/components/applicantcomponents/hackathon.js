@@ -384,7 +384,7 @@ const HackathonSkeleton = ({ count = 8 }) => {
                     <div className="header-container">
                         <div className="status-tabs">
                             {[
-                                { key: "MY", label: "My arenas" },
+                                { key: "MY", label: "My Hackathons" },
                                 { key: "RECOMMENDED", label: "Picks for you" },
                                 { key: "ACTIVE", label: "In action" },
                                 { key: "UPCOMING", label: "On the horizon" },

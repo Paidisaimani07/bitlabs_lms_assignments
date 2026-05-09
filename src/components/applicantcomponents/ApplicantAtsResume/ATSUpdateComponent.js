@@ -5,6 +5,7 @@ import PersonalDetailsCard from "../PersonalDetailsCard";
 import EducationDetailsCard from "../EducationDetailsCard";
 import ProjectDetailsCard from "../ProjectDetailsCard";
 import KeySkillsCard from "../KeySkillsCard";
+import SocialLinksCard from "../SocialLinksCard";
 import "./ATSUpdateComponent.css";
 import {useState} from "react";
 
@@ -35,6 +36,9 @@ const [loadedSections, setLoadedSections] = useState({
             <div className="ats-update-content">
                   <ResumeSummaryCard applicantId={applicantId}  
                 onLoaded={() => markLoaded("summary")}
+  showContent={allLoaded}/>
+  <SocialLinksCard applicantId={applicantId} 
+                  onLoaded={() => markLoaded("social")}
   showContent={allLoaded}/>
                 <PersonalDetailsCard applicantId={applicantId} 
                   onLoaded={() => markLoaded("personal")}
