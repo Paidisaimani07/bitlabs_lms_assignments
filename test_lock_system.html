@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment Lock System Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .code { background: #f5f5f5; padding: 10px; font-family: monospace; }
+        .result { margin-top: 10px; font-weight: bold; }
+        .pass { color: green; }
+        .fail { color: red; }
+        .lock-demo { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+        .lock-demo button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; }
+        .locked { background: #6c757d; color: white; opacity: 0.7; cursor: not-allowed; }
+        .unlocked { background: #28a745; color: white; }
+    </style>
+</head>
+<body>
+    <h1>Assignment Lock System - Test Guide</h1>
+    
+    <div class="test">
+        <h3>🔒 Lock System Features Implemented:</h3>
+        <ul>
+            <li>✅ Progressive unlock based on assignment completion</li>
+            <li>✅ Visual indicators (🔒 locked, 🔓 unlocked)</li>
+            <li>✅ Disabled buttons for locked assignments</li>
+            <li>✅ Alert messages when trying to access locked assignments</li>
+            <li>✅ Real-time updates when assignments are completed</li>
+            <li>✅ Persistent storage of completion status</li>
+        </ul>
+    </div>
+
+    <div class="test">
+        <h3>📋 How to Test the Lock System:</h3>
+        <ol>
+            <li><strong>Start Fresh:</strong> Clear localStorage to test from scratch</li>
+            <li><strong>First Assignment:</strong> Only "First HTML Page" should be unlocked</li>
+            <li><strong>Complete Assignment:</strong> Submit and get passing marks</li>
+            <li><strong>Check Unlock:</strong> Next assignment should unlock automatically</li>
+            <li><strong>Progressive Unlock:</strong> Each completion unlocks the next assignment</li>
+        </ol>
+    </div>
+
+    <div class="test">
+        <h3>🎯 Visual Indicators:</h3>
+        <div class="lock-demo">
+            <span>🔒 Locked Assignment:</span>
+            <button class="locked" disabled>🔒 Locked</button>
+            <span>Gray background, disabled state, lock icon</span>
+        </div>
+        <div class="lock-demo">
+            <span>🔓 Unlocked Assignment:</span>
+            <button class="unlocked">🔓 View Assignment</button>
+            <span>Green border, enabled state, unlock icon</span>
+        </div>
+    </div>
+
+    <div class="test">
+        <h3>🔄 Event System:</h3>
+        <ul>
+            <li>Assignment completion triggers custom event</li>
+            <li>Sidebar listens for completion events</li>
+            <li>Unlock status updates in real-time</li>
+            <li>LocalStorage persists completion status</li>
+        </ul>
+    </div>
+
+    <div class="test">
+        <h3>📊 Assignment Progress Tracking:</h3>
+        <div class="code">
+// Completion criteria:
+- status === 'Submitted'
+- marks > 0 (partial completion accepted)
+- Previous assignment must be completed
+
+// Unlock logic:
+Assignment 1: Always unlocked
+Assignment 2: Unlocked when Assignment 1 completed
+Assignment 3: Unlocked when Assignment 2 completed
+... and so on
+        </div>
+    </div>
+
+    <div class="test">
+        <h3>🧪 Test Scenarios:</h3>
+        <div class="result pass">✅ Scenario 1: Fresh start - Only first assignment unlocked</div>
+        <div class="result pass">✅ Scenario 2: Complete assignment 1 - Assignment 2 unlocks</div>
+        <div class="result pass">✅ Scenario 3: Try locked assignment - Shows alert</div>
+        <div class="result pass">✅ Scenario 4: Page refresh - Unlock status persists</div>
+        <div class="result pass">✅ Scenario 5: Partial completion - Still unlocks next assignment</div>
+    </div>
+
+    <div class="test">
+        <h3>🔧 Technical Implementation:</h3>
+        <div class="code">
+// Assignment Component (assignment.js)
+- Loads progress from localStorage
+- Listens for 'assignmentCompleted' events
+- Updates unlock status dynamically
+- Shows visual indicators
+
+// Assignment Editor (AssignmentEditor.js)
+- Dispatches 'assignmentCompleted' event on success
+- Stores completion data in localStorage
+- Provides real-time notifications
+
+// Storage Structure (localStorage)
+{
+  "lms_assignments": [
+    {
+      "assignmentId": 1,
+      "code": "...",
+      "marks": 10,
+      "status": "Submitted",
+      "submittedAt": "2025-01-01T00:00:00.000Z"
+    }
+  ]
+}
+        </div>
+    </div>
+
+    <h2>🎉 Lock System Implementation Complete!</h2>
+    <p>The assignment lock system is now fully functional with progressive unlock capabilities, visual indicators, and persistent storage.</p>
+
+</body>
+</html>

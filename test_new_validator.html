@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test New Dynamic Validator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .code { background: #f5f5f5; padding: 10px; font-family: monospace; }
+        .result { margin-top: 10px; font-weight: bold; }
+        .pass { color: green; }
+        .fail { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Testing New Dynamic Validator</h1>
+    
+    <div class="test">
+        <h3>Test 1: Perfect Headings (Should PASS)</h3>
+        <div class="code">
+Student Code:
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;h1&gt;Apple&lt;/h1&gt;
+  &lt;h2&gt;Banana&lt;/h2&gt;
+  &lt;h3&gt;Orange&lt;/h3&gt;
+  &lt;h4&gt;Grape&lt;/h4&gt;
+  &lt;h5&gt;Mango&lt;/h5&gt;
+  &lt;h6&gt;Cherry&lt;/h6&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Test Cases:
+[
+  { selector: 'h1', marks: 2, message: '✓ H1 tag found' },
+  { selector: 'h2', marks: 2, message: '✓ H2 tag found' },
+  { selector: 'h3', marks: 2, message: '✓ H3 tag found' },
+  { selector: 'h4', marks: 2, message: '✓ H4 tag found' },
+  { selector: 'h5', marks: 2, message: '✓ H5 tag found' },
+  { selector: 'h6', marks: 2, message: '✓ H6 tag found' }
+]
+        </div>
+        <div class="result pass">Expected: Score: 12/12, Passed: true</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Missing H6 (Should PARTIAL PASS)</h3>
+        <div class="code">
+Student Code:
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;h1&gt;Apple&lt;/h1&gt;
+  &lt;h2&gt;Banana&lt;/h2&gt;
+  &lt;h3&gt;Orange&lt;/h3&gt;
+  &lt;h4&gt;Grape&lt;/h4&gt;
+  &lt;h5&gt;Mango&lt;/h5&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Test Cases: Same as above
+        </div>
+        <div class="result pass">Expected: Score: 10/12, Passed: false</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: Image with Alt (Should PASS)</h3>
+        <div class="code">
+Student Code:
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;img src="car.jpg" alt="A beautiful red sports car" /&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Test Cases:
+[
+  { selector: 'img', marks: 3, message: '✓ Image found' },
+  { selector: 'img', attribute: { name: 'alt' }, marks: 7, message: '✓ Image with alt text found' }
+]
+        </div>
+        <div class="result pass">Expected: Score: 10/10, Passed: true</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 4: Image without Alt (Should PARTIAL PASS)</h3>
+        <div class="code">
+Student Code:
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;img src="car.jpg" /&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Test Cases: Same as above
+        </div>
+        <div class="result pass">Expected: Score: 3/10, Passed: false</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 5: Table Validation (Should PASS)</h3>
+        <div class="code">
+Student Code:
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+  &lt;table&gt;
+    &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;John&lt;/td&gt;&lt;td&gt;25&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+Test Cases:
+[
+  { selector: 'table', marks: 2, message: '✓ Table found' },
+  { selector: 'table tr', marks: 4, message: '✓ Table rows found' },
+  { selector: 'table td, table th', marks: 4, message: '✓ Table cells found' }
+]
+        </div>
+        <div class="result pass">Expected: Score: 10/10, Passed: true</div>
+    </div>
+
+    <h2>Validator Architecture Benefits:</h2>
+    <ul>
+        <li>✅ Single reusable validation function</li>
+        <li>✅ Dynamic testcase configuration</li>
+        <li>✅ Support for selector, text, and attribute validation</li>
+        <li>✅ Partial scoring support</li>
+        <li>✅ Scalable - no need to modify validator for new assignment types</li>
+        <li>✅ Production-ready - similar to real coding assessment platforms</li>
+        <li>✅ Under 100 lines of code</li>
+        <li>✅ Modern JavaScript ES6+ features</li>
+    </ul>
+
+</body>
+</html>

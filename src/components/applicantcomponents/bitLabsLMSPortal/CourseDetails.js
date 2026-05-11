@@ -279,7 +279,10 @@ const CourseDetails = () => {
                   <div className="sidebar-tabs">
                     <button 
                       className={`tab-btn ${sidebarView === 'topics' ? 'active' : ''}`}
-                      onClick={() => setSidebarView('topics')}
+                      onClick={() => {
+                        setSidebarView('topics');
+                        setViewingAssignment(false);
+                      }}
                     >
                       Topics
                     </button>

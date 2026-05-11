@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Specific Case</title>
+    <script src="src/components/applicantcomponents/bitLabsLMSPortal/AssignmentValidator.js"></script>
+</head>
+<body>
+    <h1>Testing Your Malformed HTML</h1>
+    <div id="test-result"></div>
+    
+    <script>
+        // Test the specific HTML you provided
+        const malformedHTML = `<html>
+<body>
+<h1>Apple</h1>
+<h2>Banana</h2>
+<h3>Orange</h3>
+<h4>Grape</h4>
+<h5>Mango</h5>
+<h6>Cherry</h6>
+
+
+
+</html>`;
+
+        // Parse and validate
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(malformedHTML, 'text/html');
+        
+        // Test the validator (if available)
+        if (typeof AssignmentValidator !== 'undefined') {
+            const result = AssignmentValidator.validateHeadings(doc);
+            
+            const resultDiv = document.getElementById('test-result');
+            resultDiv.innerHTML = `
+                <h2>Validation Results:</h2>
+                <p><strong>Valid:</strong> ${result.isValid ? '✅ YES' : '❌ NO'}</p>
+                <p><strong>Score:</strong> ${result.score}/${result.maxScore}</p>
+                <p><strong>Message:</strong> ${result.message}</p>
+                <h3>Details:</h3>
+                <ul>
+                    ${result.details.map(detail => `<li>${detail}</li>`).join('')}
+                </ul>
+            `;
+        } else {
+            document.getElementById('test-result').innerHTML = 
+                '<p style="color: red;">AssignmentValidator not loaded. Please run in the actual application.</p>';
+        }
+        
+        // Also show what the DOM parser actually created
+        console.log('Parsed HTML structure:', doc.documentElement.outerHTML);
+    </script>
+</body>
+</html>
