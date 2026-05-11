@@ -1,0 +1,209 @@
+.assignment-container {
+  width: 100%;
+  height: 100vh;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+.assignment-header {
+  padding: 20px;
+  background: white;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.assignment-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.assignment-sidebar {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.topic-section {
+  margin-bottom: 30px;
+}
+
+.topic-header {
+  margin-bottom: 15px;
+  padding: 10px 0;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.topic-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.assignments-list {
+  margin-left: 10px;
+}
+
+.sub-button-container {
+  margin-left: 20px;
+  margin-top: 8px;
+}
+
+.sub-button {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 6px;
+}
+
+.sub-button:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+}
+
+.sub-button-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.assignments-section {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.assignments-list {
+  margin-left: 10px;
+}
+
+.assignment-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.assignment-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.assignment-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.assignment-title {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.assignment-actions {
+  display: flex;
+  align-items: center;
+}
+
+.mark-done-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mark-done-btn.pending {
+  background: #ff9800;
+  color: white;
+}
+
+.mark-done-btn.pending:hover {
+  background: #f57c00;
+  transform: scale(1.05);
+}
+
+.mark-done-btn.completed {
+  background: #4caf50;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mark-done-btn.completed:hover {
+  background: #45a049;
+  transform: scale(1.05);
+}
+
+/* Scrollbar styling */
+.assignment-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.assignment-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.assignment-sidebar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.assignment-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .assignment-container {
+    height: calc(100vh - 60px);
+  }
+  
+  .assignment-sidebar {
+    padding: 15px;
+  }
+  
+  .assignment-item {
+    padding: 10px 12px;
+  }
+  
+  .assignment-title {
+    font-size: 13px;
+  }
+  
+  .mark-done-btn {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+.first-html-page-wrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: auto;
+  background: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  display: block !important;
+}
