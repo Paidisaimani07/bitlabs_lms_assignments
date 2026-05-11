@@ -752,11 +752,7 @@ function ApplicantNavBar() {
                   </span>
                 </Link>
               </li>
-<<<<<<< HEAD
-                          </ul>
-=======
             </ul>
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
 
             {/* Logout Button */}
             <div style={{ marginTop: "auto" }}>

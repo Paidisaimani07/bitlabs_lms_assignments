@@ -325,7 +325,6 @@
 .immersive-overlay:hover .overlay-msg {
   opacity: 1;
   transform: translateY(0);
-<<<<<<< HEAD
 }
 
 /* ── Sidebar Tabs ───────────────────────────────────────── */
@@ -385,6 +384,4 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-=======
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
 }

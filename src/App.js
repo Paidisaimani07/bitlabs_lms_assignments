@@ -37,10 +37,7 @@ import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
 import { RefreshProvider } from "./components/common/RefreshContext";
 import ProtectedRoute from './ProtectedRoute';
 import { ResumeProvider } from './components/applicantcomponents/ResumeContext';
-<<<<<<< HEAD
 import FirstHtmlPage from './components/applicantcomponents/bitLabsLMSPortal/FirstHtmlPage';
-=======
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
 
 
 function App() {
@@ -178,13 +175,9 @@ function App() {
                       <Route path="/recruiter-edit-feedback-form/:id" element={<RecruiterHomePage />} />
                       <Route path="/recruiter-mentor-rating" element={<RecruiterHomePage />} />
                       <Route path="/applicant-lmscourses-list" element={<ApplicantHomePage />} />
-<<<<<<< HEAD
                       <Route path="/applicant-assignments" element={<ApplicantHomePage />} />
                       <Route path="/course/:courseName" element={<ApplicantHomePage />} />
                       <Route path="/assignment/first-html-page" element={<FirstHtmlPage />} />
-=======
-                      <Route path="/course/:courseName" element={<ApplicantHomePage />} />
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
 
 
                     </>

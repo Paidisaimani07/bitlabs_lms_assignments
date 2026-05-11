@@ -4,10 +4,8 @@ import "./coursedetails.css";
 import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
 import { useUserContext } from "../../common/UserProvider";
-<<<<<<< HEAD
 import FirstHtmlPage from "./FirstHtmlPage";
-=======
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
+
 
 // ─── Static course data (outside component so it never re-creates) ───────────
 // Course mapping to convert course names to actual course IDs
@@ -111,16 +109,10 @@ const CourseDetails = () => {
   useEffect(() => {
     const loadProgress = async () => {
       if (!applicantId) return;
-<<<<<<< HEAD
-
-=======
-      
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
       try {
         setLoading(true);
         // Get all courses progress for this applicant
         const applicantCourses = await ProgressAPIService.getApplicantProgress(applicantId);
-<<<<<<< HEAD
 
         // Find the current course progress
         const currentCourse = applicantCourses.find(course =>
@@ -130,19 +122,7 @@ const CourseDetails = () => {
         if (currentCourse) {
           setCourseProgressId(currentCourse.id);
           setOverallProgress(currentCourse.overallProgress);
-
-=======
         
-        // Find the current course progress
-        const currentCourse = applicantCourses.find(course => 
-          course.courseName.toLowerCase() === courseName.toLowerCase()
-        );
-        
-        if (currentCourse) {
-          setCourseProgressId(currentCourse.id);
-          setOverallProgress(currentCourse.overallProgress);
-          
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
           // Get topics progress for this course
           const topicsProgress = await ProgressAPIService.getCourseTopics(currentCourse.id);
           const progressMap = {};
@@ -150,29 +130,15 @@ const CourseDetails = () => {
             progressMap[topic.topicIndex] = topic.topicProgress;
           });
           setTopicProgress(progressMap);
-<<<<<<< HEAD
 
-=======
-          
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
           // Find the last accessed topic (highest progress that's not 100%)
           const lastTopicIndex = topicsProgress.reduce((lastIdx, topic) => {
             return topic.topicProgress < 100 && topic.topicIndex > lastIdx ? topic.topicIndex : lastIdx;
           }, 0);
-<<<<<<< HEAD
-
-=======
-          
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
           // Find the first incomplete topic (progress < 100)
           const firstIncompleteTopic = topicsProgress.reduce((firstIdx, topic) => {
             return topic.topicProgress < 100 && topic.topicIndex < firstIdx ? topic.topicIndex : firstIdx;
           }, topicsProgress.length);
-<<<<<<< HEAD
-
-=======
-          
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
           // If there are incomplete topics, go to the first one; otherwise go to last completed
           const targetTopicIndex = firstIncompleteTopic !== topicsProgress.length ? firstIncompleteTopic : lastTopicIndex;
           setSelectedTopicIndex(targetTopicIndex);
@@ -199,11 +165,6 @@ const CourseDetails = () => {
   // ── 3. Progress update — save to backend ────────────────────────────────────
   const handleProgressUpdate = useCallback(async (p) => {
     if (!applicantId) return;
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
     const idx = topicIndexRef.current;
     const currentProgress = topicProgress[idx] || 0;
 
@@ -212,21 +173,13 @@ const CourseDetails = () => {
     try {
       // Update local state immediately for UI responsiveness
       setTopicProgress(prev => ({ ...prev, [idx]: p }));
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
       // Calculate new overall progress
       const newTopicProgress = { ...topicProgress, [idx]: p };
       const totalProgress = Object.values(newTopicProgress).reduce((a, b) => a + b, 0);
       const newOverallProgress = Math.round(totalProgress / courseContent.length);
       setOverallProgress(newOverallProgress);
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
       // Save to backend
       await ProgressAPIService.saveProgress({
         applicantId,
@@ -244,7 +197,7 @@ const CourseDetails = () => {
   }, [applicantId, courseName, courseContent, topicProgress]);
 
   // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
-<<<<<<< HEAD
+
   const [sidebarView, setSidebarView] = useState("topics"); // 'topics' or 'assignments'
   const [viewingAssignment, setViewingAssignment] = useState(false);
   const [assignmentType, setAssignmentType] = useState(null);
@@ -252,9 +205,7 @@ const CourseDetails = () => {
   // ── 4. Topic selection ────────────────────────────────
   const selectTopic = (index) => {
     setViewingAssignment(false);
-=======
-  const selectTopic = (index) => {
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
+
     // Check if topic is locked (not first topic AND previous not 100%)
     const isLocked = index > 0 && (topicProgress[index - 1] || 0) < 100;
     if (isLocked) return;
@@ -267,7 +218,7 @@ const CourseDetails = () => {
     }
   };
 
-<<<<<<< HEAD
+
   const handleAssignmentClick = (type) => {
     setAssignmentType(type);
     setViewingAssignment(true);
@@ -277,8 +228,7 @@ const CourseDetails = () => {
     setViewingAssignment(false);
   };
 
-=======
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
+
   // ── 5. Overall progress from backend ───────────────────────────────────────────
   const averageProgress = overallProgress;
 
@@ -324,7 +274,7 @@ const CourseDetails = () => {
                       <div className="cd-progress-fill" style={{ width: `${averageProgress}%` }} />
                     </div>
                   </div>
-<<<<<<< HEAD
+
 
                   <div className="sidebar-tabs">
                     <button 
@@ -448,71 +398,6 @@ const CourseDetails = () => {
                       </button>
                     </>
                   )}
-=======
-                  <h4 className="cd-topics-heading">Topics</h4>
-                  {courseContent.map((t, index) => {
-                    const progress = topicProgress[index] || 0;
-                    const isLocked = index > 0 && (topicProgress[index - 1] || 0) < 100;
-                    const isActive = selectedTopicIndex === index;
-
-                    return (
-                      <div
-                        key={index}
-                        className={`topic-block ${isLocked ? "topic-locked" : ""} ${isActive ? "topic-active" : ""}`}
-                        onClick={() => !isLocked && selectTopic(index)}
-                      >
-                        <div className="topic-info">
-                          <strong>
-                            {isLocked ? "🔒 " : (progress === 100 ? <span style={{ color: "#D26B15" }}>✔ </span> : "▶ ")}
-                            {t.topic}
-                          </strong>
-                        </div>
-                        {!isLocked && (
-                          <>
-                            <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
-                              <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
-                            </div>
-                            <p style={{ fontSize: "12px", color: "#666" }}>{progress}% completed</p>
-                          </>
-                        )}
-                        {t.videos.map((video, i) => (
-                          <p
-                            key={i}
-                            className={`video-link ${isActive ? "active" : ""} ${isLocked ? "disabled" : ""}`}
-                          >
-                            {video.title}
-                          </p>
-                        ))}
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="course-player" ref={playerRef}>
-                  {!isFullscreen && (
-                    <div className="immersive-overlay" onClick={toggleFullscreen}>
-                      <div className="overlay-msg">
-                        <span>⛶ Click anywhere to start Fullscreen Learning</span>
-                      </div>
-                    </div>
-                  )}
-                  <WorkingScormPlayer
-                    courseId={`${courseName}_${selectedTopicIndex}`}
-                    onProgressUpdate={handleProgressUpdate}
-                  />
-                  <iframe
-                    key={`${courseName}_${selectedTopicIndex}`}
-                    src={selectedVideo}
-                    className="video-frame"
-                    title="Course Player"
-                    allowFullScreen
-                  />
-                  <button
-                    onClick={toggleFullscreen}
-                    className="fullscreen-btn"
-                  >
-                    {isFullscreen ? "✕ Exit Fullscreen" : "⛶ Fullscreen"}
-                  </button>
->>>>>>> 57cbab08c4b264b34ef522b9ebbf5c76168a6ae6
                 </div>
               </div>
             </div>
