@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import "./coursedetails.css";
 import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
@@ -51,7 +51,19 @@ const COURSE_DATA = {
 
 const CourseDetails = () => {
   const { courseName } = useParams();
+  const location = useLocation();
   const { user } = useUserContext();
+  const currentPath = location.pathname.toLowerCase();
+
+  const allowedRoutes = [
+    '/courses/html',
+    '/courses/css',
+    '/course/html',
+    '/course/css',
+    '/assignment/first-html-page'
+  ];
+
+  const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
   const applicantId = user?.id;
 
   const [selectedTopicIndex, setSelectedTopicIndex] = useState(0);
@@ -220,6 +232,7 @@ const CourseDetails = () => {
 
 
   const handleAssignmentClick = (type) => {
+    if (!isAssignmentAllowed) return;
     setAssignmentType(type);
     setViewingAssignment(true);
   };
@@ -335,38 +348,46 @@ const CourseDetails = () => {
                         })}
                       </div>
                     ) : (
-                      <div className="assignments-list-sidebar">
-                        <div 
-                          className={`topic-block ${viewingAssignment && !assignmentType ? "topic-active" : ""}`}
-                          onClick={() => handleAssignmentClick(null)}
-                        >
-                          <strong>▶ First HTML Page</strong>
+                      !isAssignmentAllowed ? (
+                        <div className="no-assignments-message-sidebar" style={{ padding: '20px', textAlign: 'center' }}>
+                          <p style={{ color: '#666', fontSize: '14px', lineHeight: '1.5' }}>
+                            Assignments were not uploaded for this course.
+                          </p>
                         </div>
-                        <div 
-                          className={`topic-block ${assignmentType === 'styling' ? "topic-active" : ""}`}
-                          onClick={() => handleAssignmentClick('styling')}
-                        >
-                          <strong>▶ CSS Part 1</strong>
+                      ) : (
+                        <div className="assignments-list-sidebar">
+                          <div 
+                            className={`topic-block ${viewingAssignment && !assignmentType ? "topic-active" : ""}`}
+                            onClick={() => handleAssignmentClick(null)}
+                          >
+                            <strong>▶ First HTML Page</strong>
+                          </div>
+                          <div 
+                            className={`topic-block ${assignmentType === 'styling' ? "topic-active" : ""}`}
+                            onClick={() => handleAssignmentClick('styling')}
+                          >
+                            <strong>▶ CSS Part 1</strong>
+                          </div>
+                          <div 
+                            className={`topic-block ${assignmentType === 'styling2' ? "topic-active" : ""}`}
+                            onClick={() => handleAssignmentClick('styling2')}
+                          >
+                            <strong>▶ CSS Part 2</strong>
+                          </div>
+                          <div 
+                            className={`topic-block ${assignmentType === 'forms' ? "topic-active" : ""}`}
+                            onClick={() => handleAssignmentClick('forms')}
+                          >
+                            <strong>▶ Registration Forms</strong>
+                          </div>
                         </div>
-                        <div 
-                          className={`topic-block ${assignmentType === 'styling2' ? "topic-active" : ""}`}
-                          onClick={() => handleAssignmentClick('styling2')}
-                        >
-                          <strong>▶ CSS Part 2</strong>
-                        </div>
-                        <div 
-                          className={`topic-block ${assignmentType === 'forms' ? "topic-active" : ""}`}
-                          onClick={() => handleAssignmentClick('forms')}
-                        >
-                          <strong>▶ Registration Forms</strong>
-                        </div>
-                      </div>
+                      )
                     )}
                   </div>
                 </div>
 
                 <div className="course-player" ref={playerRef}>
-                  {viewingAssignment ? (
+                  {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
                       <FirstHtmlPage 
                         type={assignmentType} 

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './assignment.css';
 import { useUserContext } from "../../common/UserProvider";
 
 const Assignment = () => {
   const { user } = useUserContext();
+  const location = useLocation();
+  const currentPath = location.pathname.toLowerCase();
 
-  const [assignments, setAssignments] = useState([
+  // Full set of HTML/CSS assignments
+  const HTML_CSS_ASSIGNMENTS = [
     {
       id: 1,
       topic: "First Html Page",
@@ -77,22 +81,51 @@ const Assignment = () => {
       topic: "Bill Table",
       subButton: "Sample Bill Creation",
       unlocked: false
-    },
-    {
-      id: 13,
-      topic: "Registration Forms",
-      subButton: "Basic Form Creation",
-      unlocked: false
-    },
-    {
-      id: 14,
-      topic: "Advanced Forms",
-      subButton: "Complex Form Elements",
-      unlocked: false
     }
-  ]);
+  ];
 
-  // Load completion status from localStorage on mount
+  // Course-specific assignments - allow navigation but control assignment content
+  const getCourseAssignments = () => {
+    // Requirement 3: Use exact route matching with an array
+    const allowedRoutes = [
+      '/courses/html',
+      '/courses/css',
+      '/course/html', // Added to ensure compatibility with existing singular routes
+      '/course/css',  // Added to ensure compatibility with existing singular routes
+      '/assignment/first-html-page'
+    ];
+
+    // Requirement 4: Check whether the current route starts with one of the allowed routes
+    const isAllowedRoute = allowedRoutes.some(route => currentPath.startsWith(route));
+
+    console.log("Current Path:", currentPath);
+    console.log("Is HTML/CSS course with assignments:", isAllowedRoute);
+
+    // Requirement 6: If the route IS an allowed HTML/CSS route - show all HTML/CSS assignments
+    if (isAllowedRoute) {
+      console.log("HTML/CSS course - showing full assignments");
+      return [...HTML_CSS_ASSIGNMENTS];
+    }
+
+    // Requirement 5: If the route is NOT an allowed HTML/CSS route - return empty array
+    console.log("Non-HTML/CSS course - showing 'Assignments were not uploaded for this course.'");
+    return []; 
+  };
+
+  const [assignments, setAssignments] = useState([]);
+
+  // Requirement 7: Update assignments dynamically whenever location.pathname changes
+  useEffect(() => {
+    const courseAssignments = getCourseAssignments();
+    setAssignments(courseAssignments);
+    
+    // Requirement 6: Preserve progress tracking
+    if (courseAssignments.length > 0) {
+      loadAssignmentProgress();
+    }
+  }, [location.pathname]); 
+
+  // Load completion status from localStorage
   useEffect(() => {
     loadAssignmentProgress();
     
@@ -123,6 +156,8 @@ const Assignment = () => {
       
       // Update unlocked status based on completed assignments
       setAssignments(prevAssignments => {
+        if (prevAssignments.length === 0) return [];
+        
         return prevAssignments.map((assignment, index) => {
           if (index === 0) {
             // First assignment is always unlocked
@@ -149,6 +184,12 @@ const Assignment = () => {
   };
 
   const handleViewAssignment = (topic, assignment) => {
+    // Check if assignments are available for current course
+    if (assignments.length === 0) {
+      alert('No assignments available for this course yet.');
+      return;
+    }
+
     // Check if assignment is locked
     if (isAssignmentLocked(assignment)) {
       alert(`Please complete the previous assignment first: "${assignments[assignment.id - 2]?.topic || 'Previous assignment'}"`);
@@ -168,14 +209,13 @@ const Assignment = () => {
       "html tables": 'table',
       "html links": 'links',
       "smartphone description": 'smartphone',
-      "bill table": 'bill',
-      "registration forms": 'forms',
-      "advanced forms": 'advanced-forms'
+      "bill table": 'bill'
     };
     
     const type = typeMap[t] || '';
     const url = type ? `/assignment/first-html-page?type=${type}` : '/assignment/first-html-page';
     
+    // Requirement 8: Ensure window.open() behavior continue working correctly
     window.open(url, '_blank', 'width=1000,height=800');
   };
 
@@ -186,58 +226,43 @@ const Assignment = () => {
       </div>
 
       <div className="assignment-sidebar">
-        {assignments.map((topic) => (
-          <div key={topic.id} className="topic-section">
-            <div className="topic-header">
-              <span className="topic-title">{topic.topic}</span>
-            </div>
-
-            <div className="sub-button-container">
-              <div className="sub-button">
-                <span className="sub-button-text">
-                  {topic.subButton}
-                </span>
-              </div>
-            </div>
+        {assignments.length === 0 ? (
+          <div className="no-assignments-message">
+            <h3>No Assignments Available</h3>
+            <p>Assignments were not uploaded for this course.</p>
           </div>
-        ))}
-
-        <div className="assignments-section">
-          <h3>Assignments</h3>
-
-          <div className="assignments-list">
-            {assignments.map((assignment) => (
-              <div
-                key={assignment.id}
-                className={`assignment-item ${isAssignmentLocked(assignment) ? 'locked' : 'unlocked'}`}
-              >
-                <div className="assignment-content">
-                  <div className="assignment-title-container">
-                    <span className="assignment-title">
-                      {assignment.topic}
-                    </span>
-                    {isAssignmentLocked(assignment) && (
-                      <span className="lock-indicator">🔒</span>
-                    )}
-                    {!isAssignmentLocked(assignment) && (
-                      <span className="unlock-indicator">🔓</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="assignment-actions">
-                  <button
-                    className={`mark-done-btn ${isAssignmentLocked(assignment) ? 'locked' : 'pending'}`}
-                    onClick={() => handleViewAssignment(assignment.topic, assignment)}
-                    disabled={isAssignmentLocked(assignment)}
-                  >
-                    {isAssignmentLocked(assignment) ? '🔒 Locked' : 'View Assignment'}
-                  </button>
+        ) : (
+          assignments.map((topic) => (
+            <div
+              key={topic.id}
+              className={`assignment-item ${isAssignmentLocked(topic) ? 'locked' : 'unlocked'}`}
+            >
+              <div className="assignment-content">
+                <div className="assignment-title-container">
+                  <span className="assignment-title">
+                    {topic.topic}
+                  </span>
+                  {isAssignmentLocked(topic) && (
+                    <span className="lock-indicator">🔒</span>
+                  )}
+                  {!isAssignmentLocked(topic) && (
+                    <span className="unlock-indicator">🔓</span>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
+
+              <div className="assignment-actions">
+                <button
+                  className={`mark-done-btn ${isAssignmentLocked(topic) ? 'locked' : 'pending'}`}
+                  onClick={() => handleViewAssignment(topic.topic, topic)}
+                  disabled={isAssignmentLocked(topic)}
+                >
+                  {isAssignmentLocked(topic) ? '🔒 Locked' : 'View Assignment'}
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

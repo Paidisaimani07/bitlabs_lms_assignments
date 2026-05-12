@@ -309,83 +309,6 @@ const ASSIGNMENTS = [
       { selector: 'table td, table th', marks: 3, message: '✓ Bill cells found' }
     ],
     topic: 'HTML Tables'
-  },
-  {
-    id: 13,
-    title: "Exercise 3.1: Registration Forms - Basic Form",
-    question: "Create a registration form with input fields for name, email, and password. Include proper labels and a submit button.",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>User Registration</h1>
-  <form>
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required>
-    
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-    
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
-    
-    <button type="submit">Register</button>
-  </form>
-</body>
-</html>`,
-    testCases: [
-      { selector: 'form', marks: 2, message: '✓ Form found' },
-      { selector: 'input[type="text"], input[type="email"], input[type="password"]', marks: 4, message: '✓ Input fields found' },
-      { selector: 'label', marks: 2, message: '✓ Labels found' },
-      { selector: 'button[type="submit"], input[type="submit"]', marks: 2, message: '✓ Submit button found' }
-    ],
-    topic: 'HTML Forms'
-  },
-  {
-    id: 14,
-    title: "Exercise 3.2: Registration Forms - Advanced Form",
-    question: "Create an advanced registration form with checkboxes, radio buttons, textarea, and select dropdown.",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>Advanced Registration</h1>
-  <form>
-    <label for="fullname">Full Name:</label>
-    <input type="text" id="fullname" name="fullname" required>
-    
-    <label>Gender:</label>
-    <input type="radio" name="gender" value="male" id="male">
-    <label for="male">Male</label>
-    <input type="radio" name="gender" value="female" id="female">
-    <label for="female">Female</label>
-    
-    <label for="interests">Interests:</label>
-    <input type="checkbox" name="interests" value="sports" id="sports">
-    <label for="sports">Sports</label>
-    <input type="checkbox" name="interests" value="music" id="music">
-    <label for="music">Music</label>
-    
-    <label for="country">Country:</label>
-    <select id="country" name="country">
-      <option value="">Select Country</option>
-      <option value="us">United States</option>
-      <option value="uk">United Kingdom</option>
-    </select>
-    
-    <label for="comments">Comments:</label>
-    <textarea id="comments" name="comments" rows="4"></textarea>
-    
-    <button type="submit">Submit</button>
-  </form>
-</body>
-</html>`,
-    testCases: [
-      { selector: 'form', marks: 2, message: '✓ Form found' },
-      { selector: 'input[type="radio"]', marks: 2, message: '✓ Radio buttons found' },
-      { selector: 'input[type="checkbox"]', marks: 2, message: '✓ Checkboxes found' },
-      { selector: 'select', marks: 2, message: '✓ Select dropdown found' },
-      { selector: 'textarea', marks: 2, message: '✓ Textarea found' }
-    ],
-    topic: 'HTML Forms'
   }
 ];
 
@@ -411,9 +334,7 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
         'table': 8,
         'links': 9,
         'smartphone': 10,
-        'bill': 11,
-        'forms': 12,
-        'advanced-forms': 13
+        'bill': 11
       };
       
       const mappedIndex = typeToIndexMap[assignmentType] || 0;
