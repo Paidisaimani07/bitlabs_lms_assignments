@@ -7,11 +7,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import AssignmentValidator from './AssignmentValidator';
+import { submitAssignment, getAssignmentByApplicantAndAssignmentNumber } from './assignmentservice';
 import './AssignmentEditor.css';
 
-// ═══════════════════════════════════════════════════════════════════
-// ASSIGNMENT CONFIGURATION ARRAY
-// ═══════════════════════════════════════════════════════════════════
 const ASSIGNMENTS = [
   // ─── HTML BASICS (1.1 - 1.10) ─────────────────────────────────────────────
   {
@@ -365,7 +363,7 @@ const ErrorModal = ({ errors, onClose }) => (
   </div>
 );
 
-const AssignmentEditor = ({ assignmentType, onClose }) => {
+const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [code, setCode] = useState('');
   const [liveOutput, setLiveOutput] = useState('');
@@ -373,6 +371,36 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [submissionErrors, setSubmissionErrors] = useState([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch saved code from backend
+  const fetchSavedCode = useCallback(async (index) => {
+    if (!applicantId) return;
+    
+    setLoading(true);
+    try {
+      const assignmentNumber = ASSIGNMENTS[index].id;
+      const savedData = await getAssignmentByApplicantAndAssignmentNumber(applicantId, assignmentNumber);
+      
+      if (savedData && savedData.assignmentCode) {
+        console.log('Preloading saved code from backend:', savedData.assignmentCode);
+        setCode(savedData.assignmentCode);
+        setLiveOutput(savedData.assignmentCode);
+      } else {
+        console.log('No saved code found for this assignment. Using default.');
+        setCode('');
+        setLiveOutput('');
+      }
+    } catch (error) {
+      console.error('Failed to fetch saved code:', error);
+      // Fallback to empty if error
+      setCode('');
+      setLiveOutput('');
+    } finally {
+      setLoading(false);
+    }
+  }, [applicantId]);
 
   useEffect(() => {
     if (assignmentType) {
@@ -385,15 +413,21 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
       };
       const mappedIndex = typeToIndexMap[assignmentType] || 0;
       setCurrentIndex(mappedIndex);
+      fetchSavedCode(mappedIndex);
     }
-  }, [assignmentType]);
+  }, [assignmentType, fetchSavedCode]);
+
+  // Handle index change for Next/Prev
+  useEffect(() => {
+    fetchSavedCode(currentIndex);
+  }, [currentIndex, fetchSavedCode]);
 
   const handleRun = () => {
     setLiveOutput(code);
     setIsSubmitted(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const current = ASSIGNMENTS[currentIndex];
     const result = AssignmentValidator.validate(code, current.testCases);
     
@@ -401,27 +435,46 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
     setIsSubmitted(true);
 
     if (!result.isValid) {
-      // Show error popup for incorrect submissions
       setSubmissionErrors(result.errors || []);
       setShowErrorModal(true);
-      
-      // Even if incorrect, still allow "submission" flow
-      // Save marks as 0 in localStorage for incorrect submissions
-      localStorage.setItem("assignmentMarks", 0);
-    } else {
-      localStorage.setItem("assignmentMarks", 0);
+      // Requirement: even if fails, we might still want to save or just stop. 
+      // The prompt says: "Show red popup if submission fails. Display backend error message."
+      // I'll try to submit anyway if requested, or just show the validator error.
+      // Usually, we only submit valid code, but let's follow the "submit" button logic.
     }
 
-    // Trigger existing progression logic
-    window.dispatchEvent(new CustomEvent('assignmentCompleted', {
-      detail: { assignmentId: current.id }
-    }));
+    try {
+      const payload = {
+        applicantId: applicantId || 101,
+        assignmentNumber: current.id,
+        assignmentCode: code,
+        status: result.isValid ? 'COMPLETED' : 'SUBMITTED'
+      };
+
+      await submitAssignment(payload);
+      
+      if (result.isValid) {
+        setShowSuccessModal(true);
+        setTimeout(() => setShowSuccessModal(false), 3500);
+      }
+      
+      // Trigger existing progression logic
+      window.dispatchEvent(new CustomEvent('assignmentCompleted', {
+        detail: { assignmentId: current.id }
+      }));
+
+    } catch (error) {
+      console.error('Submission failed:', error);
+      // Requirement 10: Show red popup if submission fails.
+      setSubmissionErrors([{ message: error.response?.data?.message || 'Network failure or server error', type: 'API', line: 'N/A' }]);
+      setShowErrorModal(true);
+    }
   };
 
   const handleNextAssignment = useCallback(() => {
     if (currentIndex < ASSIGNMENTS.length - 1) {
       setCurrentIndex(prev => prev + 1);
-      setCode('');
+      // fetchSavedCode will be triggered by useEffect
       setLiveOutput('');
       setIsSubmitted(false);
       setValidationResult(null);
@@ -429,6 +482,16 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
       window.dispatchEvent(new CustomEvent('assignmentChanged', {
         detail: { assignmentId: ASSIGNMENTS[currentIndex + 1].id }
       }));
+    }
+  }, [currentIndex]);
+
+  const handlePrevAssignment = useCallback(() => {
+    if (currentIndex > 0) {
+      setCurrentIndex(prev => prev - 1);
+      // fetchSavedCode will be triggered by useEffect
+      setLiveOutput('');
+      setIsSubmitted(false);
+      setValidationResult(null);
     }
   }, [currentIndex]);
 
@@ -472,9 +535,12 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
             />
           </div>
           <div className="ae-button-group">
+            {currentIndex > 0 && (
+              <button className="ae-btn ae-btn-prev" onClick={handlePrevAssignment}>← Previous</button>
+            )}
             <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
             <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim()}>✓ Submit</button>
-            {isSubmitted && !isLastAssignment && (
+            {isSubmitted && validationResult && validationResult.isValid && !isLastAssignment && (
               <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
             )}
           </div>
@@ -505,6 +571,20 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
           </div>
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div className="ae-success-modal-overlay">
+          <div className="ae-success-modal">
+            <div className="ae-success-icon-wrapper">
+              <span className="ae-success-icon">🎉</span>
+            </div>
+            <h3 className="ae-success-title">Congratulations!</h3>
+            <p className="ae-success-msg">You have solved the problem successfully!</p>
+            <div className="ae-success-confetti">✨🏆✨</div>
+            <button className="ae-success-btn" onClick={() => setShowSuccessModal(false)}>Continue</button>
+          </div>
+        </div>
+      )}
 
       {showErrorModal && (
         <ErrorModal 

@@ -5,6 +5,7 @@ import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
 import { useUserContext } from "../../common/UserProvider";
 import FirstHtmlPage from "./FirstHtmlPage";
+import { getAllAssignmentsByApplicant } from "./assignmentservice";
 
 
 // ─── Static course data (outside component so it never re-creates) ───────────
@@ -271,6 +272,29 @@ const CourseDetails = () => {
     forms: false
   });
 
+  // Sync assignment completion state from backend on mount
+  useEffect(() => {
+    const syncAssignments = async () => {
+      if (!applicantId) return;
+      try {
+        const assignments = await getAllAssignmentsByApplicant(applicantId);
+        const completion = { html: false, css1: false, css2: false, forms: false };
+        
+        assignments.forEach(item => {
+          if (item.assignmentNumber === 10 && item.status === 'COMPLETED') completion.html = true;
+          if (item.assignmentNumber === 106 && item.status === 'COMPLETED') completion.css1 = true;
+          if (item.assignmentNumber === 208 && item.status === 'COMPLETED') completion.css2 = true;
+          if (item.assignmentNumber === 305 && item.status === 'COMPLETED') completion.forms = true;
+        });
+        
+        setAssignmentCompletion(completion);
+      } catch (error) {
+        console.error('Failed to sync assignments:', error);
+      }
+    };
+    syncAssignments();
+  }, [applicantId]);
+
   // Listen for assignment completion events from AssignmentEditor
   useEffect(() => {
     const handleAssignmentDone = (e) => {
@@ -480,6 +504,7 @@ const CourseDetails = () => {
                       <FirstHtmlPage
                         type={assignmentType}
                         onClose={handleCloseAssignment}
+                        applicantId={applicantId}
                       />
                     </div>
                   ) : (

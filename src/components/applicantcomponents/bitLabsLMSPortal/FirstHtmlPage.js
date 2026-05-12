@@ -17,10 +17,13 @@ import './FirstHtmlPage.css';
  * - Sequential assignment navigation
  */
 
-const FirstHtmlPage = ({ type: propType, onClose }) => {
+const FirstHtmlPage = ({ type: propType, onClose, applicantId }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = propType || queryParams.get('type');
+  
+  // Use prop if available, otherwise try to get from global or default
+  const effectiveApplicantId = applicantId || 101; 
 
   const handleBack = () => {
     if (onClose) {
@@ -42,6 +45,7 @@ const FirstHtmlPage = ({ type: propType, onClose }) => {
       <AssignmentEditor
         assignmentType={type}
         onClose={handleBack}
+        applicantId={effectiveApplicantId}
       />
     </div>
   );

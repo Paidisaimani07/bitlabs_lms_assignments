@@ -250,6 +250,17 @@
   box-shadow: 0 4px 12px rgba(247, 147, 30, 0.4);
 }
 
+.ae-btn-prev {
+  background: #6c757d;
+  color: white;
+}
+
+.ae-btn-prev:hover:not(:disabled) {
+  background: #545b62;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+}
+
 .ae-btn-complete {
   background: #a0aec0;
   color: white;
