@@ -149,9 +149,9 @@ const Assignment = () => {
       const stored = localStorage.getItem('lms_assignments');
       const submissions = stored ? JSON.parse(stored) : [];
       
-      // Get completed assignments (more lenient criteria: any submission with marks)
+      // Get completed assignments (criteria: any submission with Submitted status)
       const completedAssignments = submissions
-        .filter(sub => sub.status === 'Submitted' && sub.marks > 0)
+        .filter(sub => sub.status === 'Submitted')
         .map(sub => sub.assignmentId);
       
       // Update unlocked status based on completed assignments

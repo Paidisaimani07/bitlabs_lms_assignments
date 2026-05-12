@@ -39,7 +39,7 @@ const FirstHtmlPage = ({ type: propType, onClose }) => {
   // ═══════════════════════════════════════════════════════════════════
   return (
     <div className="first-html-page">
-      <AssignmentEditor 
+      <AssignmentEditor
         assignmentType={type}
         onClose={handleBack}
       />

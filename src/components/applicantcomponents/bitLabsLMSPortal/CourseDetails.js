@@ -134,7 +134,7 @@ const CourseDetails = () => {
         if (currentCourse) {
           setCourseProgressId(currentCourse.id);
           setOverallProgress(currentCourse.overallProgress);
-        
+
           // Get topics progress for this course
           const topicsProgress = await ProgressAPIService.getCourseTopics(currentCourse.id);
           const progressMap = {};
@@ -195,24 +195,110 @@ const CourseDetails = () => {
       // Save to backend
       await ProgressAPIService.saveProgress({
         applicantId,
-        courseId: getCourseId(courseName), // Map courseName to actual courseId
+        courseId: getCourseId(courseName),
         courseName,
         topicIndex: idx,
         topicName: courseContent[idx]?.topic || '',
         topicProgress: p
       });
+
+      if (p === 100) {
+        handleTopicComplete(idx);
+      }
     } catch (error) {
       console.error('Error saving progress:', error);
-      // Optionally revert the state if backend save fails
       setTopicProgress(prev => ({ ...prev, [idx]: currentProgress }));
     }
   }, [applicantId, courseName, courseContent, topicProgress]);
 
+  const handleTopicComplete = (index) => {
+    const topic = courseContent[index];
+    if (!topic) return;
+
+    setPopupContent({
+      title: "🎉 Congratulations!",
+      message: `You successfully completed ${topic.topic}.`,
+      subMessage: "Your next assignment is now unlocked.",
+      type: "topic"
+    });
+    setShowSuccessPopup(true);
+
+    setTimeout(() => {
+      setShowSuccessPopup(false);
+      setSidebarView('assignments');
+      setViewingAssignment(true);
+    }, 3000);
+  };
+
+  const handleModuleComplete = (index) => {
+    const nextIdx = index + 1;
+    const isLastModule = nextIdx >= courseContent.length;
+
+    if (isLastModule) {
+      setPopupContent({
+        title: "🏆 Congratulations!",
+        message: `You have successfully completed the ${courseName} course.`,
+        subMessage: "Your certificate is now ready for download.",
+        type: "course"
+      });
+    } else {
+      setPopupContent({
+        title: "🎉 Great Job!",
+        message: `You completed all ${courseContent[index].topic} assignments.`,
+        subMessage: `${courseContent[nextIdx].topic} is now unlocked.`,
+        type: "module"
+      });
+    }
+    setShowSuccessPopup(true);
+
+    setTimeout(() => {
+      setShowSuccessPopup(false);
+      if (!isLastModule) selectTopic(nextIdx);
+    }, 3000);
+  };
+
   // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
 
-  const [sidebarView, setSidebarView] = useState("topics"); // 'topics' or 'assignments'
+  const [sidebarView, setSidebarView] = useState("topics");
   const [viewingAssignment, setViewingAssignment] = useState(false);
   const [assignmentType, setAssignmentType] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({ title: "", message: "", subMessage: "", type: "topic" });
+  const [assignmentCompletion, setAssignmentCompletion] = useState({
+    html: false,
+    css1: false,
+    css2: false,
+    forms: false
+  });
+
+  // Listen for assignment completion events from AssignmentEditor
+  useEffect(() => {
+    const handleAssignmentDone = (e) => {
+      const { assignmentId } = e.detail;
+      
+      // Update completion based on last IDs of each group
+      if (assignmentId === 10) setAssignmentCompletion(prev => ({ ...prev, html: true }));
+      if (assignmentId === 106) setAssignmentCompletion(prev => ({ ...prev, css1: true }));
+      if (assignmentId === 208) setAssignmentCompletion(prev => ({ ...prev, css2: true }));
+      if (assignmentId === 305) setAssignmentCompletion(prev => ({ ...prev, forms: true }));
+
+      // Trigger module success popup if it was the last assignment of a group
+      const groups = [
+        { lastId: 10, index: 1 }, // HTML
+        { lastId: 106, index: 2 }, // CSS1
+        { lastId: 208, index: 3 }, // CSS2
+        { lastId: 305, index: 4 }  // Forms
+      ];
+      
+      const group = groups.find(g => g.lastId === assignmentId);
+      if (group) {
+        handleModuleComplete(group.index);
+      }
+    };
+
+    window.addEventListener('assignmentCompleted', handleAssignmentDone);
+    return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
+  }, []);
 
   // ── 4. Topic selection ────────────────────────────────
   const selectTopic = (index) => {
@@ -268,6 +354,20 @@ const CourseDetails = () => {
     }
   };
 
+  const SuccessPopup = () => (
+    <div className={`success-popup-overlay ${showSuccessPopup ? 'active' : ''}`}>
+      <div className="success-popup-content">
+        <div className="success-icon-wrapper">
+          <div className="success-icon">✔</div>
+        </div>
+        <h2>{popupContent.title}</h2>
+        <p className="success-message">{popupContent.message}</p>
+        <p className="success-submessage">{popupContent.subMessage}</p>
+        <div className="success-loader"></div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="border-style">
       <div className="blur-border-style"></div>
@@ -281,116 +381,104 @@ const CourseDetails = () => {
                     <h3 className="cd-title">{courseName}</h3>
                     <div className="cd-progress-labels">
                       <span>Overall Progress</span>
-                      <span className="cd-progress-pct">{averageProgress}%</span>
+
                     </div>
                     <div className="cd-progress-track">
-                      <div className="cd-progress-fill" style={{ width: `${averageProgress}%` }} />
+                      <div className="cd-progress-fill" style={{ width: `${overallProgress}%` }} />
                     </div>
                   </div>
 
 
-                  <div className="sidebar-tabs">
-                    <button 
-                      className={`tab-btn ${sidebarView === 'topics' ? 'active' : ''}`}
-                      onClick={() => {
-                        setSidebarView('topics');
-                        setViewingAssignment(false);
-                      }}
-                    >
-                      Topics
-                    </button>
-                    <button 
-                      className={`tab-btn ${sidebarView === 'assignments' ? 'active' : ''}`}
-                      onClick={() => setSidebarView('assignments')}
-                    >
-                      Assignments
-                    </button>
-                  </div>
+
 
                   <div className="sidebar-scrollable">
-                    {sidebarView === 'topics' ? (
-                      <div className="topics-list">
-                        {courseContent.map((t, index) => {
-                          const progress = topicProgress[index] || 0;
-                          const isLocked = index > 0 && (topicProgress[index - 1] || 0) < 100;
-                          const isActive = !viewingAssignment && selectedTopicIndex === index;
+                    <div className="topics-list">
+                      {courseContent.map((t, index) => {
+                        const progress = topicProgress[index] || 0;
+                        
+                        let isTopicLocked = false;
+                        if (index === 1) isTopicLocked = (topicProgress[0] || 0) < 100;
+                        if (index === 2) isTopicLocked = !assignmentCompletion.html;
+                        if (index === 3) isTopicLocked = !assignmentCompletion.css1;
+                        if (index === 4) isTopicLocked = !assignmentCompletion.css2;
 
-                          return (
-                            <div
-                              key={index}
-                              className={`topic-block ${isLocked ? "topic-locked" : ""} ${isActive ? "topic-active" : ""}`}
-                              onClick={() => !isLocked && selectTopic(index)}
-                            >
-                              <div className="topic-info">
-                                <strong>
-                                  {isLocked ? "🔒 " : (progress === 100 ? <span style={{ color: "#D26B15" }}>✔ </span> : "▶ ")}
-                                  {t.topic}
-                                </strong>
-                              </div>
-                              {!isLocked && (
-                                <>
-                                  <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
-                                    <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
-                                  </div>
-                                  <p style={{ fontSize: "12px", color: "#666" }}>{progress}% completed</p>
-                                </>
-                              )}
-                              {t.videos.map((video, i) => (
-                                <p
-                                  key={i}
-                                  className={`video-link ${isActive ? "active" : ""} ${isLocked ? "disabled" : ""}`}
-                                >
-                                  {video.title}
-                                </p>
-                              ))}
+                        const isActive = !viewingAssignment && selectedTopicIndex === index;
+
+                        // Integrated Assignment Data
+                        const assignments = [
+                          null, // Topic 0
+                          { title: "First HTML Page", type: null, completionKey: 'html' }, // Topic 1
+                          { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
+                          { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
+                          { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
+                        ];
+                        const topicAssignment = assignments[index];
+                        const isAssignmentUnlocked = progress === 100 && !isTopicLocked;
+                        const isAssignmentCompleted = topicAssignment ? assignmentCompletion[topicAssignment.completionKey] : false;
+
+                        return (
+                          <div
+                            key={index}
+                            className={`topic-block ${isTopicLocked ? "topic-locked" : ""} ${isActive ? "topic-active" : ""}`}
+                            onClick={() => !isTopicLocked && selectTopic(index)}
+                          >
+                            <div className="topic-info">
+                              <strong>
+                                {isTopicLocked ? "🔒 " : (progress === 100 ? <span style={{ color: "#D26B15" }}>✔ </span> : "▶ ")}
+                                {t.topic}
+                              </strong>
                             </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      !isAssignmentAllowed ? (
-                        <div className="no-assignments-message-sidebar" style={{ padding: '20px', textAlign: 'center' }}>
-                          <p style={{ color: '#666', fontSize: '14px', lineHeight: '1.5' }}>
-                            Assignments were not uploaded for this course.
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="assignments-list-sidebar">
-                          <div 
-                            className={`topic-block ${viewingAssignment && !assignmentType ? "topic-active" : ""}`}
-                            onClick={() => handleAssignmentClick(null)}
-                          >
-                            <strong>▶ First HTML Page</strong>
+                            {!isTopicLocked && (
+                              <>
+                                <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
+                                  <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
+                                </div>
+
+                              </>
+                            )}
+                            {t.videos.map((video, i) => (
+                              <p
+                                key={i}
+                                className={`video-link ${isActive ? "active" : ""} ${isTopicLocked ? "disabled" : ""}`}
+                              >
+                                {video.title}
+                              </p>
+                            ))}
+
+                            {/* Integrated Assignment Section */}
+                            {topicAssignment && isAssignmentAllowed && (
+                              <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
+                                <div 
+                                  className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
+                                  onClick={() => isAssignmentUnlocked && handleAssignmentClick(topicAssignment.type)}
+                                >
+                                  <div className="assignment-icon">
+                                    {isAssignmentCompleted ? "✔" : "📝"}
+                                  </div>
+                                  <div className="assignment-info">
+                                    <h4>{topicAssignment.title}</h4>
+                                    <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
+                                      {!isAssignmentUnlocked ? "Locked (Complete topic first)" : (isAssignmentCompleted ? "Completed" : "Start Assignment")}
+                                    </span>
+                                  </div>
+                                  {isAssignmentUnlocked && !isAssignmentCompleted && (
+                                    <div className="assignment-arrow">→</div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
-                          <div 
-                            className={`topic-block ${assignmentType === 'styling' ? "topic-active" : ""}`}
-                            onClick={() => handleAssignmentClick('styling')}
-                          >
-                            <strong>▶ CSS Part 1</strong>
-                          </div>
-                          <div 
-                            className={`topic-block ${assignmentType === 'styling2' ? "topic-active" : ""}`}
-                            onClick={() => handleAssignmentClick('styling2')}
-                          >
-                            <strong>▶ CSS Part 2</strong>
-                          </div>
-                          <div 
-                            className={`topic-block ${assignmentType === 'forms' ? "topic-active" : ""}`}
-                            onClick={() => handleAssignmentClick('forms')}
-                          >
-                            <strong>▶ Registration Forms</strong>
-                          </div>
-                        </div>
-                      )
-                    )}
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 
                 <div className="course-player" ref={playerRef}>
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
-                      <FirstHtmlPage 
-                        type={assignmentType} 
+                      <FirstHtmlPage
+                        type={assignmentType}
                         onClose={handleCloseAssignment}
                       />
                     </div>
@@ -428,6 +516,7 @@ const CourseDetails = () => {
           </div>
         </div>
       </div>
+      <SuccessPopup />
     </div>
   );
 };

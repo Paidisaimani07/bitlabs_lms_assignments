@@ -3,15 +3,6 @@
  * 
  * Modern LMS assignment workflow component.
  * Manages coding exercises with real-time preview and validation.
- * 
- * Flow:
- * 1. Display assignment question
- * 2. Student writes code in textarea
- * 3. Click "Run" to preview live output
- * 4. Click "Submit" to validate and generate marks
- * 5. View marks and results in side-by-side comparison
- * 6. Move to next assignment after submission
- * 7. All data saved to localStorage
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -20,25 +11,14 @@ import './AssignmentEditor.css';
 
 // ═══════════════════════════════════════════════════════════════════
 // ASSIGNMENT CONFIGURATION ARRAY
-// Each assignment has: id, title, question, expectedOutput, validationType
-// This allows dynamic loading of all assignments
 // ═══════════════════════════════════════════════════════════════════
 const ASSIGNMENTS = [
+  // ─── HTML BASICS (1.1 - 1.10) ─────────────────────────────────────────────
   {
     id: 1,
     title: "Exercise 1.1: Using six heading tags display names of fruits",
     question: "Create h1 to h6 tags to display fruit names. Logic: bigger fruit → bigger heading",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>Apple</h1>
-  <h2>Banana</h2>
-  <h3>Orange</h3>
-  <h4>Grape</h4>
-  <h5>Mango</h5>
-  <h6>Cherry</h6>
-</body>
-</html>`,
+    expectedOutput: `<h1>Apple</h1><h2>Banana</h2><h3>Orange</h3><h4>Grape</h4><h5>Mango</h5><h6>Cherry</h6>`,
     testCases: [
       { selector: 'h1', marks: 2, message: '✓ H1 tag found' },
       { selector: 'h2', marks: 2, message: '✓ H2 tag found' },
@@ -53,566 +33,454 @@ const ASSIGNMENTS = [
     id: 2,
     title: "Exercise 1.2: Describe about your family",
     question: "Each family member's name as heading followed by 3-4 lines of description paragraph",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>My Family</h1>
-  <h2>Father</h2>
-  <p>Description about father...</p>
-  <h2>Mother</h2>
-  <p>Description about mother...</p>
-  <h2>Sister</h2>
-  <p>Description about sister...</p>
-</body>
-</html>`,
+    expectedOutput: `<h1>My Family</h1><h2>Father</h2><p>Description...</p><h2>Mother</h2><p>Description...</p>`,
     testCases: [
-      { selector: 'h1', text: 'family', marks: 2, message: '✓ Main family heading found' },
-      { selector: 'h2', marks: 3, message: '✓ Family member headings found' },
-      { selector: 'p', marks: 5, message: '✓ Description paragraphs found' }
+      { selector: 'h1', marks: 2, message: '✓ Main heading found' },
+      { selector: 'h2', marks: 4, message: '✓ Family member headings' },
+      { selector: 'p', marks: 4, message: '✓ Description paragraphs' }
     ],
     topic: 'HTML Basics'
   },
   {
     id: 3,
-    title: "Exercise 2.1: CSS Part 1 - Basic Styling",
-    question: "Apply CSS styles to HTML elements. Use inline styles or internal CSS to style headings and paragraphs.",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    h1 { color: blue; font-size: 24px; }
-    p { color: green; font-family: Arial; }
-  </style>
-</head>
-<body>
-  <h1>Styled Heading</h1>
-  <p>Styled paragraph with CSS.</p>
-</body>
-</html>`,
+    title: "Exercise 1.3: Display ordered list of Phone brands",
+    question: "Create an ordered list of phone brands.",
+    expectedOutput: `<ol><li>Apple</li><li>Samsung</li><li>Pixel</li></ol>`,
     testCases: [
-      { selector: 'h1', attribute: { name: 'style' }, marks: 3, message: '✓ H1 has styling' },
-      { selector: 'p', attribute: { name: 'style' }, marks: 3, message: '✓ Paragraph has styling' },
-      { selector: 'style', marks: 4, message: '✓ CSS styles found' }
+      { selector: 'ol', marks: 4, message: '✓ Ordered list found' },
+      { selector: 'li', marks: 6, message: '✓ List items found' }
     ],
-    topic: 'CSS Basics'
+    topic: 'HTML Lists'
   },
   {
     id: 4,
-    title: "Exercise 2.2: CSS Part 2 - Advanced Styling",
-    question: "Apply advanced CSS styling including backgrounds, borders, margins, and padding to create a styled layout.",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    .container { 
-      background: #f0f0f0; 
-      border: 2px solid #333; 
-      padding: 20px; 
-      margin: 10px; 
-    }
-    .box { 
-      background: #ff6b35; 
-      color: white; 
-      padding: 15px; 
-      border-radius: 5px; 
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Advanced CSS</h1>
-    <div class="box">Styled box with CSS</div>
-  </div>
-</body>
-</html>`,
+    title: "Exercise 1.4: Display unordered list of cars",
+    question: "Create an unordered list of car models.",
+    expectedOutput: `<ul><li>Tesla</li><li>BMW</li><li>Audi</li></ul>`,
     testCases: [
-      { selector: '.container', marks: 3, message: '✓ Container class found' },
-      { selector: '.box', marks: 3, message: '✓ Box class found' },
-      { selector: 'style', marks: 4, message: '✓ CSS styles found' }
+      { selector: 'ul', marks: 4, message: '✓ Unordered list found' },
+      { selector: 'li', marks: 6, message: '✓ List items found' }
     ],
-    topic: 'CSS Advanced'
+    topic: 'HTML Lists'
   },
   {
     id: 5,
-    title: "Exercise 1.3: Display ordered list of Phone brands",
-    question: "Create an ordered list of phone brands. Logic: order by your preference",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>My Favorite Phone Brands</h1>
-  <ol>
-    <li>Apple iPhone</li>
-    <li>Samsung Galaxy</li>
-    <li>Google Pixel</li>
-  </ol>
-</body>
-</html>`,
+    title: "Exercise 1.5: Describe soft drinks using dl, dt, dd",
+    question: "Use definition list tags to describe 5 soft drink brands.",
+    expectedOutput: `<dl><dt>Coke</dt><dd>Cola</dd><dt>Pepsi</dt><dd>Cola</dd></dl>`,
     testCases: [
-      { selector: 'ol', marks: 3, message: '✓ Ordered list found' },
-      { selector: 'ol > li', marks: 7, message: '✓ List items found' }
+      { selector: 'dl', marks: 3, message: '✓ DL found' },
+      { selector: 'dt', marks: 4, message: '✓ DT found' },
+      { selector: 'dd', marks: 3, message: '✓ DD found' }
     ],
     topic: 'HTML Lists'
   },
   {
     id: 6,
-    title: "Exercise 1.4: Display unordered list of cars",
-    question: "Create an unordered list of your preferred car models",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>My Preferred Cars</h1>
-  <ul>
-    <li>Tesla Model 3</li>
-    <li>BMW 3 Series</li>
-    <li>Mercedes C-Class</li>
-  </ul>
-</body>
-</html>`,
-    testCases: [
-      { selector: 'ul', marks: 3, message: '✓ Unordered list found' },
-      { selector: 'ul > li', marks: 7, message: '✓ List items found' }
-    ],
-    topic: 'HTML Lists'
-  },
-  {
-    id: 7,
-    title: "Exercise 1.5: Display soft drink brands using dl, dt, dd tags",
-    question: "Use definition list tags (dl, dt, dd) to describe at least 5 soft drink brands",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>Favorite Soft Drinks</h1>
-  <dl>
-    <dt>Coca-Cola</dt>
-    <dd>Classic carbonated soft drink</dd>
-    <dt>Pepsi</dt>
-    <dd>Popular cola competitor</dd>
-    <dt>Sprite</dt>
-    <dd>Lemon-lime soft drink</dd>
-    <dt>Fanta</dt>
-    <dd>Orange-flavored drink</dd>
-    <dt>Mountain Dew</dt>
-    <dd>Citrus-flavored soft drink</dd>
-  </dl>
-</body>
-</html>`,
-    testCases: [
-      { selector: 'dl', marks: 2, message: '✓ Definition list found' },
-      { selector: 'dl > dt', marks: 4, message: '✓ Definition terms found' },
-      { selector: 'dl > dd', marks: 4, message: '✓ Definition descriptions found' }
-    ],
-    topic: 'HTML Lists'
-  },
-  {
-    id: 8,
     title: "Exercise 1.6: Display Car Image",
-    question: "Add an image with appropriate alt text for accessibility",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>My Dream Car</h1>
-  <img src="image-url" alt="A beautiful red sports car" />
-</body>
-</html>`,
+    question: "Add an image of a car with alt text.",
+    expectedOutput: `<img src="car.jpg" alt="A sports car" />`,
     testCases: [
-      { selector: 'img', marks: 3, message: '✓ Image found' },
-      { selector: 'img', attribute: { name: 'alt' }, marks: 7, message: '✓ Image with alt text found' }
+      { selector: 'img', marks: 5, message: '✓ Image found' },
+      { selector: 'img[alt]', marks: 5, message: '✓ Alt text found' }
     ],
     topic: 'HTML Media'
   },
   {
-    id: 9,
-    title: "Exercise 1.7: Display people's names with age and city in table",
-    question: "Create a table showing people's information (Name, Age, City) with at least 3 rows",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>People Information</h1>
-  <table border="1">
-    <tr><th>Name</th><th>Age</th><th>City</th></tr>
-    <tr><td>John</td><td>25</td><td>NYC</td></tr>
-    <tr><td>Jane</td><td>30</td><td>LA</td></tr>
-    <tr><td>Bob</td><td>28</td><td>Chicago</td></tr>
-  </table>
-</body>
-</html>`,
+    id: 7,
+    title: "Exercise 1.7: Five people's names, age, city in table",
+    question: "Create a table with 5 rows showing Name, Age, and City.",
+    expectedOutput: `<table><tr><th>Name</th><th>Age</th><th>City</th></tr><tr><td>John</td><td>25</td><td>NYC</td></tr></table>`,
     testCases: [
-      { selector: 'table', marks: 2, message: '✓ Table found' },
-      { selector: 'table tr', marks: 4, message: '✓ Table rows found' },
-      { selector: 'table td, table th', marks: 4, message: '✓ Table cells found' }
+      { selector: 'table', marks: 3, message: '✓ Table found' },
+      { selector: 'tr', marks: 4, message: '✓ Rows found' },
+      { selector: 'td', marks: 3, message: '✓ Cells found' }
     ],
     topic: 'HTML Tables'
   },
   {
-    id: 10,
-    title: "Exercise 1.8: Create HTML links",
-    question: "Create at least 2 links to navigate to different websites (YouTube, BitLabs, etc)",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>Useful Websites</h1>
-  <a href="https://www.youtube.com">YouTube</a>
-  <a href="https://www.bitlabs.in">BitLabs</a>
-</body>
-</html>`,
+    id: 8,
+    title: "Exercise 1.8: Create links to YouTube and bitLabs",
+    question: "Create two links with appropriate href attributes.",
+    expectedOutput: `<a href="https://youtube.com">YouTube</a><a href="https://bitlabs.in">BitLabs</a>`,
     testCases: [
-      { selector: 'a', marks: 5, message: '✓ Links found' },
-      { selector: 'a', attribute: { name: 'href' }, marks: 5, message: '✓ Links with href found' }
+      { selector: 'a[href*="youtube"]', marks: 5, message: '✓ YouTube link found' },
+      { selector: 'a[href*="bitlabs"]', marks: 5, message: '✓ BitLabs link found' }
     ],
     topic: 'HTML Navigation'
   },
   {
-    id: 11,
-    title: "Exercise 1.9: Describe a smartphone with image and features",
-    question: "Display smartphone name as heading, add image, and list key features",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>iPhone 14 Pro</h1>
-  <img src="image-url" alt="iPhone 14 Pro" />
-  <h2>Features:</h2>
-  <ul>
-    <li>6.1-inch display</li>
-    <li>A16 Bionic chip</li>
-    <li>48MP camera system</li>
-    <li>All-day battery life</li>
-  </ul>
-</body>
-</html>`,
+    id: 9,
+    title: "Exercise 1.9: Describe smartphone with image and features",
+    question: "Heading, Image, and list of features.",
+    expectedOutput: `<h1>iPhone</h1><img src="ip.jpg" alt="ip" /><ul><li>5G</li></ul>`,
     testCases: [
-      { selector: 'h1', marks: 2, message: '✓ Product heading found' },
-      { selector: 'img', marks: 2, message: '✓ Product image found' },
-      { selector: 'ul, ol', marks: 6, message: '✓ Features list found' }
+      { selector: 'h1', marks: 3, message: '✓ Heading found' },
+      { selector: 'img', marks: 3, message: '✓ Image found' },
+      { selector: 'ul', marks: 4, message: '✓ Features found' }
     ],
     topic: 'HTML Media'
   },
   {
-    id: 12,
-    title: "Exercise 1.10: Create sample bill in table format",
-    question: "Create a professional bill table with Item, Quantity, Price, Total columns",
-    expectedOutput: `<!DOCTYPE html>
-<html>
-<body>
-  <h1>Sample Bill</h1>
-  <table border="1">
-    <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
-    <tr><td>Notebook</td><td>2</td><td>$5</td><td>$10</td></tr>
-    <tr><td>Pen</td><td>3</td><td>$2</td><td>$6</td></tr>
-    <tr><td>Eraser</td><td>1</td><td>$1</td><td>$1</td></tr>
-    <tr><th colspan="3">Grand Total</th><th>$17</th></tr>
-  </table>
-</body>
-</html>`,
+    id: 10,
+    title: "Exercise 1.10: Create a sample bill in table format",
+    question: "Table with Item, Qty, Price, Total.",
+    expectedOutput: `<table><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr><tr><td>Pen</td><td>2</td><td>$5</td><td>$10</td></tr></table>`,
     testCases: [
-      { selector: 'table', marks: 3, message: '✓ Bill table found' },
-      { selector: 'table tr', marks: 4, message: '✓ Bill rows found' },
-      { selector: 'table td, table th', marks: 3, message: '✓ Bill cells found' }
+      { selector: 'table', marks: 10, message: '✓ Bill table found' }
     ],
     topic: 'HTML Tables'
+  },
+
+  // ─── CSS PART 1 (101 - 106) ───────────────────────────────────────────────
+  {
+    id: 101,
+    title: "Exercise 2.1: Inline Style Red Body",
+    question: "Red colour with inline style for the body element.",
+    expectedOutput: `<body style="color: red;">Hello BitLabs!</body>`,
+    testCases: [
+      { selector: 'body', attribute: { name: 'style' }, text: 'color: red', marks: 10, message: '✓ Body has inline red style' }
+    ],
+    topic: 'CSS Basics'
+  },
+  {
+    id: 102,
+    title: "Exercise 2.2: Red Text using Internal Style",
+    question: "Red coloured text in paragraph using Internal style.",
+    expectedOutput: `<style>p { color: red; }</style><p>Internal CSS</p>`,
+    testCases: [
+      { selector: 'style', text: 'color: red', marks: 10, message: '✓ Style tag with red color' }
+    ],
+    topic: 'CSS Basics'
+  },
+  {
+    id: 103,
+    title: "Exercise 2.3: Heading and Paragraph with External CSS",
+    question: "Heading and paragraph in different color and font size.",
+    expectedOutput: `<style>h1 { color: blue; font-size: 30px; } p { color: green; font-size: 18px; }</style><h1>Title</h1><p>Text</p>`,
+    testCases: [
+      { selector: 'h1', marks: 5, message: '✓ Styled heading found' },
+      { selector: 'p', marks: 5, message: '✓ Styled paragraph found' }
+    ],
+    topic: 'CSS Basics'
+  },
+  {
+    id: 104,
+    title: "Exercise 2.4: ID and Class Selectors",
+    question: "Use ID for main heading and Class for paragraphs.",
+    expectedOutput: `<style>#main { color: red; } .desc { font-size: 12px; }</style><h1 id="main">H</h1><p class="desc">P</p>`,
+    testCases: [
+      { selector: '#main', marks: 5, message: '✓ ID selector' },
+      { selector: '.desc', marks: 5, message: '✓ Class selector' }
+    ],
+    topic: 'CSS Basics'
+  },
+  {
+    id: 105,
+    title: "Exercise 2.5: Descendant Selector",
+    question: "Change background color to yellow using descendant selectors.",
+    expectedOutput: `<style>ol li { background: yellow; }</style><ol><li>Item</li></ol>`,
+    testCases: [
+      { selector: 'ol li', marks: 10, message: '✓ Descendant selector' }
+    ],
+    topic: 'CSS Basics'
+  },
+  {
+    id: 106,
+    title: "Exercise 2.6: Pseudo-Selectors",
+    question: "Change link colors for hover, active, visited.",
+    expectedOutput: `<style>a:hover { color: orange; }</style><a href="#">Link</a>`,
+    testCases: [
+      { selector: 'style', text: ':hover', marks: 10, message: '✓ Pseudo-selector found' }
+    ],
+    topic: 'CSS Basics'
+  },
+
+  // ─── CSS PART 2 (201 - 208) ───────────────────────────────────────────────
+  {
+    id: 201,
+    title: "Exercise 3.1: Fruit Colors",
+    question: "Six heading tags with colors for fruit names.",
+    expectedOutput: `<style>.apple { color: red; }</style><h1 class="apple">Apple</h1>`,
+    testCases: [
+      { selector: 'h1', marks: 10, message: '✓ Heading found' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 202,
+    title: "Exercise 3.2: Font Size and Weight",
+    question: "Change font size and font-weight for heading and para.",
+    expectedOutput: `<style>h1 { font-size: 30px; font-weight: bold; }</style><h1>Text</h1>`,
+    testCases: [
+      { selector: 'h1', marks: 10, message: '✓ Styled heading' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 203,
+    title: "Exercise 3.3: Class Attribute",
+    question: "Display text using class attribute.",
+    expectedOutput: `<style>.txt { color: blue; }</style><p class="txt">T</p>`,
+    testCases: [
+      { selector: '.txt', marks: 10, message: '✓ Class attribute' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 204,
+    title: "Exercise 3.4: Class and ID",
+    question: "Apply CSS using Class and ID.",
+    expectedOutput: `<style>#id1 { color: red; } .cls1 { color: blue; }</style>`,
+    testCases: [
+      { selector: 'style', marks: 10, message: '✓ CSS found' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 205,
+    title: "Exercise 3.5: Paragraph Margin",
+    question: "Apply margin (top, bottom, left, right) using ID.",
+    expectedOutput: `<style>#p1 { margin: 10px; }</style><p id="p1">P</p>`,
+    testCases: [
+      { selector: '#p1', marks: 10, message: '✓ Margin applied' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 206,
+    title: "Exercise 3.6: Red Text Color",
+    question: "Change text color to red using ID or Class.",
+    expectedOutput: `<style>.red { color: red; }</style><p class="red">P</p>`,
+    testCases: [
+      { selector: '.red', marks: 10, message: '✓ Red color' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 207,
+    title: "Exercise 3.7: Text Alignment",
+    question: "Align text Center, Right, Left.",
+    expectedOutput: `<style>.c { text-align: center; }</style><p class="c">C</p>`,
+    testCases: [
+      { selector: '.c', marks: 10, message: '✓ Text alignment' }
+    ],
+    topic: 'CSS Advanced'
+  },
+  {
+    id: 208,
+    title: "Exercise 3.8: Styled Google Link",
+    question: "Link with light gray background to Google.",
+    expectedOutput: `<style>a { background: lightgray; }</style><a href="https://google.com">G</a>`,
+    testCases: [
+      { selector: 'a', marks: 10, message: '✓ Styled link' }
+    ],
+    topic: 'CSS Advanced'
+  },
+
+  // ─── HTML FORMS (301 - 305) ───────────────────────────────────────────────
+  {
+    id: 301,
+    title: "Exercise 4.1: Registration Form",
+    question: "Create a registration form.",
+    expectedOutput: `<form><input type="text" /><button>Reg</button></form>`,
+    testCases: [
+      { selector: 'form', marks: 10, message: '✓ Form found' }
+    ],
+    topic: 'HTML Forms'
+  },
+  {
+    id: 302,
+    title: "Exercise 4.2: Login Form",
+    question: "Create a login form.",
+    expectedOutput: `<form><input type="password" /></form>`,
+    testCases: [
+      { selector: 'form', marks: 10, message: '✓ Form found' }
+    ],
+    topic: 'HTML Forms'
+  },
+  {
+    id: 303,
+    title: "Exercise 4.3: Feedback Form",
+    question: "Create a feedback form with textarea.",
+    expectedOutput: `<form><textarea></textarea></form>`,
+    testCases: [
+      { selector: 'textarea', marks: 10, message: '✓ Textarea found' }
+    ],
+    topic: 'HTML Forms'
+  },
+  {
+    id: 304,
+    title: "Exercise 4.4: Survey Form",
+    question: "Create a survey form with radio buttons.",
+    expectedOutput: `<form><input type="radio" /></form>`,
+    testCases: [
+      { selector: 'input[type="radio"]', marks: 10, message: '✓ Radio found' }
+    ],
+    topic: 'HTML Forms'
+  },
+  {
+    id: 305,
+    title: "Exercise 4.5: Contact Form",
+    question: "Create a contact form with dropdown.",
+    expectedOutput: `<form><select><option>O</option></select></form>`,
+    testCases: [
+      { selector: 'select', marks: 10, message: '✓ Select found' }
+    ],
+    topic: 'HTML Forms'
   }
 ];
 
-const AssignmentEditor = ({ assignmentType, onClose }) => {
-  // ═══════════════════════════════════════════════════════════════════
-  // STATE MANAGEMENT
-  // ═══════════════════════════════════════════════════════════════════
-  
-  // Current assignment index
-  const [currentIndex, setCurrentIndex] = useState(0);
+const ErrorModal = ({ errors, onClose }) => (
+  <div className="ae-error-modal-overlay">
+    <div className="ae-error-modal">
+      <div className="ae-error-header">
+        <h3>Submission Error</h3>
+        <button className="ae-error-close" onClick={onClose}>×</button>
+      </div>
+      <div className="ae-error-content">
+        <span className="ae-error-warning-icon">⚠️</span>
+        <p className="ae-error-main-msg">
+          “Your code is not correct and you are still trying to submit the code.”
+        </p>
+        <div className="ae-error-details-box">
+          {errors.map((err, idx) => (
+            <div key={idx} className="ae-error-item">
+              <div><span className="ae-error-label">Error:</span> {err.message}</div>
+              <div><span className="ae-error-label">Type:</span> {err.type}</div>
+              <div><span className="ae-error-label">Line:</span> {err.line}</div>
+            </div>
+          ))}
+          {errors.length === 0 && (
+            <div className="ae-error-item">
+              <span className="ae-error-label">Status:</span> Some requirements are missing in your implementation.
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="ae-error-footer">
+        <button className="ae-error-btn-ok" onClick={onClose}>Understood</button>
+      </div>
+    </div>
+  </div>
+);
 
-  // Map assignmentType to assignment index
+const AssignmentEditor = ({ assignmentType, onClose }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [code, setCode] = useState('');
+  const [liveOutput, setLiveOutput] = useState('');
+  const [validationResult, setValidationResult] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [submissionErrors, setSubmissionErrors] = useState([]);
+
   useEffect(() => {
     if (assignmentType) {
       const typeToIndexMap = {
-        'family': 1,
-        'styling': 2,
-        'styling2': 3,
-        'ordered-list': 4,
-        'unordered-list': 5,
-        'definition-list': 6,
-        'image': 7,
-        'table': 8,
-        'links': 9,
-        'smartphone': 10,
-        'bill': 11
+        'html-1.1': 0, 'html-1.2': 1, 'html-1.3': 2, 'html-1.4': 3, 'html-1.5': 4,
+        'html-1.6': 5, 'html-1.7': 6, 'html-1.8': 7, 'html-1.9': 8, 'html-1.10': 9,
+        'css1-1.1': 10, 'css1-1.2': 11, 'css1-1.3': 12, 'css1-1.4': 13, 'css1-1.5': 14, 'css1-1.6': 15,
+        'css2-2.1': 16, 'css2-2.2': 17, 'css2-2.3': 18, 'css2-2.4': 19, 'css2-2.5': 20, 'css2-2.6': 21, 'css2-2.7': 22, 'css2-2.8': 23,
+        'forms-3.1': 24, 'forms-3.2': 25, 'forms-3.3': 26, 'forms-3.4': 27, 'forms-3.5': 28
       };
-      
       const mappedIndex = typeToIndexMap[assignmentType] || 0;
       setCurrentIndex(mappedIndex);
     }
   }, [assignmentType]);
-  
-  // Student's code input
-  const [code, setCode] = useState('');
-  
-  // Live preview output (iframe srcDoc)
-  const [liveOutput, setLiveOutput] = useState('');
-  
-  // Validation results
-  const [validationResult, setValidationResult] = useState(null);
-  
-  // Submission status
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  
-  // Mark score
-  const [marks, setMarks] = useState(0);
-  
-  // Show preview or assignment
-  const [showPreview, setShowPreview] = useState(false);
-  
-  // Clear all function
-  const handleClearAll = useCallback(() => {
-    setLiveOutput('');
-    setValidationResult(null);
-    setIsSubmitted(false);
-    setMarks(0);
-    saveSubmissionToStorage(code, 0, 'Draft', null);
-  }, [code]);
 
-  // ═══════════════════════════════════════════════════════════════════
-  // LIFECYCLE: Load submission data from localStorage on component mount
-  // ═══════════════════════════════════════════════════════════════════
-  useEffect(() => {
-    loadSubmissionFromStorage();
-  }, [currentIndex]);
-
-  // ═══════════════════════════════════════════════════════════════════
-  // localStorage FLOW: Load saved submission data
-  // Checks localStorage for existing assignment submission
-  // If found, restore code, marks, and submission status
-  // ═══════════════════════════════════════════════════════════════════
-  const loadSubmissionFromStorage = () => {
-    try {
-      const stored = localStorage.getItem('lms_assignments');
-      const submissions = stored ? JSON.parse(stored) : [];
-      
-      const currentSubmission = submissions.find(
-        sub => sub.assignmentId === ASSIGNMENTS[currentIndex].id
-      );
-
-      if (currentSubmission) {
-        setCode(currentSubmission.code);
-        setMarks(currentSubmission.marks);
-        setIsSubmitted(currentSubmission.status === 'Submitted');
-        
-        // Restore validation result
-        if (currentSubmission.validationResult) {
-          setValidationResult(currentSubmission.validationResult);
-        }
-      } else {
-        setCode('');
-        setMarks(0);
-        setIsSubmitted(false);
-        setValidationResult(null);
-      }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
-    }
-  };
-
-  // ═══════════════════════════════════════════════════════════════════
-  // localStorage FLOW: Save submission data
-  // Stores code, marks, status, and validation results
-  // Allows resume from where student left off
-  // ═══════════════════════════════════════════════════════════════════
-  const saveSubmissionToStorage = (updatedCode, updatedMarks, updatedStatus, validation) => {
-    try {
-      const stored = localStorage.getItem('lms_assignments');
-      let submissions = stored ? JSON.parse(stored) : [];
-
-      // Remove existing entry if present
-      submissions = submissions.filter(
-        sub => sub.assignmentId !== ASSIGNMENTS[currentIndex].id
-      );
-
-      // Add new/updated entry
-      submissions.push({
-        assignmentId: ASSIGNMENTS[currentIndex].id,
-        code: updatedCode,
-        marks: updatedMarks,
-        status: updatedStatus,
-        validationResult: validation,
-        submittedAt: new Date().toISOString()
-      });
-
-      localStorage.setItem('lms_assignments', JSON.stringify(submissions));
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
-    }
-  };
-
-  // ═══════════════════════════════════════════════════════════════════
-  // PREVIEW FLOW: Display live preview of student code
-  // Called when "Run" button is clicked
-  // Updates iframe with student's HTML code in real-time
-  // ═══════════════════════════════════════════════════════════════════
-  const handleRun = useCallback(() => {
-    // Set iframe srcDoc to display student code output
+  const handleRun = () => {
     setLiveOutput(code);
-    
-    // Update localStorage (auto-save while writing)
-    saveSubmissionToStorage(code, marks, 'Draft', null);
-  }, [code, marks]);
+    setIsSubmitted(false);
+  };
 
-  // ═══════════════════════════════════════════════════════════════════
-  // VALIDATION FLOW: Validate submitted code
-  // 1. Call dynamic validator with test cases
-  // 2. Calculate marks based on validation results
-  // 3. Save to localStorage
-  // 4. Mark as submitted
-  // ═══════════════════════════════════════════════════════════════════
-  const handleSubmit = useCallback(() => {
-    // Call the dynamic validator with test cases
-    const result = AssignmentValidator.validate(
-      code,
-      ASSIGNMENTS[currentIndex].testCases
-    );
-
-    // Convert to legacy format for compatibility
-    const legacyResult = {
-      isValid: result.passed,
-      score: result.score,
-      maxScore: result.maxScore,
-      details: result.results.map(r => r.message),
-      message: result.passed ? 'All tests passed!' : 'Some tests failed'
-    };
-
-    // Update validation result state
-    setValidationResult(legacyResult);
+  const handleSubmit = () => {
+    const current = ASSIGNMENTS[currentIndex];
+    const result = AssignmentValidator.validate(code, current.testCases);
     
-    // Use the validator's score directly
-    const finalMarks = result.score;
-    setMarks(finalMarks);
-    
-    // Mark as submitted
+    setValidationResult(result);
     setIsSubmitted(true);
-    
-    // Save to localStorage with all submission data
-    saveSubmissionToStorage(code, finalMarks, 'Submitted', legacyResult);
-    
-    // Notify sidebar of assignment completion
-    // More lenient completion criteria: any submission with marks >= 50% or any marks > 0
-    const completionThreshold = Math.max(1, Math.floor(result.maxScore * 0.5));
-    if (finalMarks >= completionThreshold) {
-      // Dispatch custom event to notify sidebar
-      window.dispatchEvent(new CustomEvent('assignmentCompleted', {
-        detail: {
-          assignmentId: ASSIGNMENTS[currentIndex].id,
-          score: finalMarks,
-          maxScore: result.maxScore
-        }
-      }));
-    }
-  }, [code, currentIndex]);
 
-  // ═══════════════════════════════════════════════════════════════════
-  // NAVIGATION FLOW: Move to next assignment
-  // Only enabled after successful submission
-  // Updates currentIndex to load next assignment
-  // ═══════════════════════════════════════════════════════════════════
+    if (!result.isValid) {
+      // Show error popup for incorrect submissions
+      setSubmissionErrors(result.errors || []);
+      setShowErrorModal(true);
+      
+      // Even if incorrect, still allow "submission" flow
+      // Save marks as 0 in localStorage for incorrect submissions
+      localStorage.setItem("assignmentMarks", 0);
+    } else {
+      localStorage.setItem("assignmentMarks", 0);
+    }
+
+    // Trigger existing progression logic
+    window.dispatchEvent(new CustomEvent('assignmentCompleted', {
+      detail: { assignmentId: current.id }
+    }));
+  };
+
   const handleNextAssignment = useCallback(() => {
     if (currentIndex < ASSIGNMENTS.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setShowPreview(false);
+      setCurrentIndex(prev => prev + 1);
+      setCode('');
+      setLiveOutput('');
+      setIsSubmitted(false);
+      setValidationResult(null);
+      
+      window.dispatchEvent(new CustomEvent('assignmentChanged', {
+        detail: { assignmentId: ASSIGNMENTS[currentIndex + 1].id }
+      }));
     }
   }, [currentIndex]);
 
   const handleBack = () => {
-    if (onClose) {
-      onClose();
-    }
+    if (onClose) onClose();
   };
 
-  // Get current assignment
   const currentAssignment = ASSIGNMENTS[currentIndex];
   const isLastAssignment = currentIndex === ASSIGNMENTS.length - 1;
-  const canSubmitNext = isSubmitted;
 
   return (
     <div className="assignment-editor">
-      {/* Header Section */}
       <div className="ae-header">
-        <button className="ae-back-btn" onClick={handleBack}>
-          ← Back
-        </button>
+        <button className="ae-back-btn" onClick={handleBack}>← Back</button>
         <div className="ae-title-section">
           <h2>{currentAssignment.title}</h2>
           <span className="ae-badge">{currentAssignment.topic}</span>
         </div>
         <div className="ae-progress">
-          <span className="ae-progress-text">
-            Assignment {currentIndex + 1} / {ASSIGNMENTS.length}
-          </span>
+          <span className="ae-progress-text">Exercise {currentIndex + 1} / {ASSIGNMENTS.length}</span>
           <div className="ae-progress-bar">
-            <div 
-              className="ae-progress-fill"
-              style={{ width: `${((currentIndex + 1) / ASSIGNMENTS.length) * 100}%` }}
-            />
+            <div className="ae-progress-fill" style={{ width: `${((currentIndex + 1) / ASSIGNMENTS.length) * 100}%` }} />
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="ae-content">
-        {/* Left Panel - Question & Editor */}
         <div className="ae-left-panel">
           <div className="ae-question">
             <h3>Question</h3>
             <p>{currentAssignment.question}</p>
           </div>
-
-          {/* Code Editor */}
           <div className="ae-editor-section">
             <label className="ae-label">Write your HTML code here:</label>
             <textarea
               className="ae-textarea"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              placeholder="<!DOCTYPE html>&#10;<html>&#10;<body>&#10;  <!-- Write your code here -->&#10;</body>&#10;</html>"
+              placeholder="<!DOCTYPE html><html><body><!-- Write here --></body></html>"
               spellCheck="false"
             />
           </div>
-
-          {/* Control Buttons */}
           <div className="ae-button-group">
-            <button 
-              className="ae-btn ae-btn-primary"
-              onClick={handleRun}
-            >
-              ▶ Run
-            </button>
-            <button 
-              className="ae-btn ae-btn-success"
-              onClick={handleSubmit}
-              disabled={!code.trim()}
-            >
-              ✓ Submit
-            </button>
-            {canSubmitNext && !isLastAssignment && (
-              <button 
-                className="ae-btn ae-btn-next"
-                onClick={handleNextAssignment}
-              >
-                Next Assignment →
-              </button>
-            )}
-            {isLastAssignment && canSubmitNext && (
-              <button 
-                className="ae-btn ae-btn-complete"
-                disabled
-              >
-                ✓ All Complete
-              </button>
+            <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
+            <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim()}>✓ Submit</button>
+            {isSubmitted && !isLastAssignment && (
+              <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
             )}
           </div>
-
-          {/* Submission Status */}
           {isSubmitted && validationResult && (
             <div className={`ae-submission-status ${validationResult.isValid ? 'ae-passed' : 'ae-failed'}`}>
-              <h4>
-                {validationResult.isValid ? '✓ Passed' : '✗ Needs Improvement'}
-              </h4>
-              <p className="ae-marks">Marks: {marks} / {validationResult.maxScore}</p>
+              <h4>{validationResult.isValid ? '✓ Submission Completed Successfully!' : '⚠ Review Your Code'}</h4>
               <div className="ae-validation-details">
                 {validationResult.details.map((detail, idx) => (
                   <p key={idx} className="ae-detail">{detail}</p>
@@ -622,43 +490,28 @@ const AssignmentEditor = ({ assignmentType, onClose }) => {
           )}
         </div>
 
-        {/* Right Panel - Output Comparison */}
         <div className="ae-right-panel">
-          {/* User Output */}
           <div className="ae-output-section">
-            <div className="ae-output-header">
-              <h3>Your Output</h3>
-              <button 
-                className="ae-btn ae-btn-clear"
-                onClick={handleClearAll}
-              >
-                🗑️ Clear All
-              </button>
-            </div>
+            <h3>Your Output</h3>
             <div className="ae-iframe-container">
-              <iframe
-                className="ae-preview-iframe"
-                srcDoc={liveOutput}
-                title="User Output"
-                sandbox="allow-same-origin allow-scripts"
-              />
+              <iframe className="ae-preview-iframe" srcDoc={liveOutput} title="User Output" sandbox="allow-same-origin allow-scripts" />
             </div>
           </div>
-
-          {/* Expected Output */}
           <div className="ae-output-section ae-expected">
             <h3>Expected Output</h3>
             <div className="ae-iframe-container">
-              <iframe
-                className="ae-preview-iframe ae-expected-iframe"
-                srcDoc={currentAssignment.expectedOutput}
-                title="Expected Output"
-                sandbox="allow-same-origin allow-scripts"
-              />
+              <iframe className="ae-preview-iframe ae-expected-iframe" srcDoc={currentAssignment.expectedOutput} title="Expected Output" sandbox="allow-same-origin allow-scripts" />
             </div>
           </div>
         </div>
       </div>
+
+      {showErrorModal && (
+        <ErrorModal 
+          errors={submissionErrors} 
+          onClose={() => setShowErrorModal(false)} 
+        />
+      )}
     </div>
   );
 };
