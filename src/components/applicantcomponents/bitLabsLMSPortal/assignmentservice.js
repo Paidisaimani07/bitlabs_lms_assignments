@@ -1,6 +1,29 @@
-import axios from 'axios';
+import apiClient from '../../../services/apiClient';
 
-const BASE_URL = 'http://localhost:8081/api/assignments';
+const API_ROOT = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8081';
+const BASE_URL = `${API_ROOT}/api/assignments`;
+
+// ─── DEBUG: Verify env var on module load ────────────────────────────────────
+console.log('[AssignmentService] REACT_APP_API_URL =', process.env.REACT_APP_API_URL);
+console.log('[AssignmentService] Resolved API_ROOT =', API_ROOT);
+console.log('[AssignmentService] BASE_URL =', BASE_URL);
+
+
+/**
+ * Helper to extract a user-friendly error message
+ */
+const getErrorMessage = (error) => {
+    if (error.code === 'ECONNABORTED') {
+        return 'Request timed out. Please check your connection and try again.';
+    }
+    if (error.code === 'ERR_NETWORK' || !error.response) {
+        return `Network error: Unable to reach the server at ${API_ROOT}. Make sure the backend is running.`;
+    }
+    if (error.response) {
+        return error.response.data?.message || error.response.data || `Server error (${error.response.status})`;
+    }
+    return error.message;
+};
 
 /**
  * Submits a new assignment or updates an existing one if the backend handles upserts.
@@ -8,12 +31,24 @@ const BASE_URL = 'http://localhost:8081/api/assignments';
  */
 export const submitAssignment = async (payload) => {
     try {
-        console.log('API Request Payload (submit):', payload);
-        const response = await axios.post(`${BASE_URL}/submit`, payload);
-        console.log('API Response (submit):', response.data);
+        const url = `${BASE_URL}/submit`;
+        console.log('[AssignmentService] POST URL:', url);
+        console.log('[AssignmentService] Payload:', JSON.stringify(payload, null, 2));
+        const response = await apiClient.post(url, payload);
+        console.log('[AssignmentService] Response status:', response.status);
+        console.log('[AssignmentService] Response data:', response.data);
         return response.data;
     } catch (error) {
-        console.error('API Error (submit):', error.response ? error.response.data : error.message);
+        console.error('[AssignmentService] Submit FAILED:');
+        console.error('  - Error code:', error.code);
+        console.error('  - Error message:', error.message);
+        if (error.response) {
+            console.error('  - Response status:', error.response.status);
+            console.error('  - Response data:', error.response.data);
+        } else {
+            console.error('  - No response received (network/CORS issue)');
+        }
+        // Re-throw the original error so the caller can access error.response
         throw error;
     }
 };
@@ -25,14 +60,22 @@ export const submitAssignment = async (payload) => {
  */
 export const getAssignmentByApplicantAndAssignmentNumber = async (applicantId, assignmentNumber) => {
     try {
-        console.log(`Fetching assignment for applicant ${applicantId}, assignment ${assignmentNumber}`);
-        const response = await axios.get(`${BASE_URL}/fetch`, {
+        const url = `${BASE_URL}/fetch`;
+        console.log(`[AssignmentService] GET ${url}?applicantId=${applicantId}&assignmentNumber=${assignmentNumber}`);
+        const response = await apiClient.get(url, {
             params: { applicantId, assignmentNumber }
         });
-        console.log('Assignment Fetch Response:', response.data);
+        console.log('[AssignmentService] Fetch response:', response.data);
         return response.data;
     } catch (error) {
-        console.error('API Error (fetch):', error.response ? error.response.data : error.message);
+        console.error('[AssignmentService] Fetch FAILED:', error.message);
+        if (error.response) {
+            console.error('  - Response status:', error.response.status);
+        }
+        // Return null on 404 (no saved code yet) instead of crashing
+        if (error.response && error.response.status === 404) {
+            return null;
+        }
         throw error;
     }
 };
@@ -44,12 +87,13 @@ export const getAssignmentByApplicantAndAssignmentNumber = async (applicantId, a
 export const getAllAssignmentsByApplicant = async (applicantId) => {
     try {
         console.log(`Fetching all assignments for applicant ${applicantId}`);
-        const response = await axios.get(`${BASE_URL}/applicant/${applicantId}`);
+        const response = await apiClient.get(`${BASE_URL}/applicant/${applicantId}`);
         console.log('All Assignments Fetch Response:', response.data);
         return response.data;
     } catch (error) {
-        console.error('API Error (fetchAll):', error.response ? error.response.data : error.message);
-        throw error;
+        const msg = getErrorMessage(error);
+        console.error('API Error (fetchAll):', msg);
+        throw new Error(msg);
     }
 };
 
@@ -61,11 +105,12 @@ export const getAllAssignmentsByApplicant = async (applicantId) => {
 export const updateAssignmentCode = async (id, payload) => {
     try {
         console.log(`API Request Payload (update ID: ${id}):`, payload);
-        const response = await axios.put(`${BASE_URL}/update/${id}`, payload);
+        const response = await apiClient.put(`${BASE_URL}/update/${id}`, payload);
         console.log('API Response (update):', response.data);
         return response.data;
     } catch (error) {
-        console.error('API Error (update):', error.response ? error.response.data : error.message);
-        throw error;
+        const msg = getErrorMessage(error);
+        console.error('API Error (update):', msg);
+        throw new Error(msg);
     }
 };

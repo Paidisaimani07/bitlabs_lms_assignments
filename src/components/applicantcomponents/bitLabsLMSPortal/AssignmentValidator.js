@@ -70,17 +70,20 @@ class AssignmentValidator {
   static checkUnclosedTags(code) {
     const errors = [];
     const tagStack = [];
-    const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)[^>]*>/g;
+    const VOID_ELEMENTS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr', '!doctype']);
+    
+    const tagRegex = /<(\/?)([a-zA-Z][a-zA-Z0-9]*)(\s+[^>]*?)?(\/?)>/g;
     let match;
     
     while ((match = tagRegex.exec(code)) !== null) {
-      const fullTag = match[0];
-      const tagName = match[1].toLowerCase();
+      const isClosing = match[1] === '/';
+      const tagName = match[2].toLowerCase();
+      const isSelfClosing = match[4] === '/' || VOID_ELEMENTS.has(tagName);
       const line = this.getLineNumber(code, match.index);
       
-      if (fullTag.includes('/>') || fullTag.includes('!--') || tagName === '!doctype') continue;
+      if (tagName === '!doctype' || tagName.startsWith('!--')) continue;
       
-      if (fullTag.startsWith('</')) {
+      if (isClosing) {
         if (tagStack.length === 0) {
           errors.push({ type: 'Syntax Error', message: `Unexpected closing tag </${tagName.toUpperCase()}>`, line });
         } else {
@@ -89,7 +92,7 @@ class AssignmentValidator {
             errors.push({ type: 'Mismatched Tag', message: `Mismatched closing tag </${tagName.toUpperCase()}>. Expected </${last.name.toUpperCase()}>`, line });
           }
         }
-      } else {
+      } else if (!isSelfClosing) {
         tagStack.push({ name: tagName, line });
       }
     }
@@ -99,6 +102,14 @@ class AssignmentValidator {
     });
     
     return { isValid: errors.length === 0, errors };
+  }
+
+  /**
+   * Helper to normalize strings (remove extra whitespace, newlines, etc.)
+   */
+  static normalize(str) {
+    if (!str) return '';
+    return str.replace(/\s+/g, ' ').trim().toLowerCase();
   }
 
   /**
@@ -120,29 +131,34 @@ class AssignmentValidator {
       }
 
       if (text) {
+        const normalizedExpected = this.normalize(text);
         const hasText = Array.from(elements).some(el => 
-          el.textContent.trim().includes(text.trim())
+          this.normalize(el.textContent).includes(normalizedExpected)
         );
         
         if (!hasText) {
           return {
             testCase: selector,
             passed: false,
-            message: `✗ ${selector} with text "${text}" not found`,
+            message: `✗ ${selector} with text similar to "${text}" not found`,
             marks: 0
           };
         }
       }
 
       if (attribute) {
-        const hasAttribute = Array.from(elements).some(el => 
-          el.hasAttribute(attribute.name) && 
-          (!attribute.value || el.getAttribute(attribute.name) === attribute.value)
-        );
+        const hasAttribute = Array.from(elements).some(el => {
+          if (!el.hasAttribute(attribute.name)) return false;
+          if (!attribute.value) return true;
+          
+          const actualAttr = this.normalize(el.getAttribute(attribute.name));
+          const expectedAttr = this.normalize(attribute.value);
+          return actualAttr.includes(expectedAttr);
+        });
         
         if (!hasAttribute) {
           const attrMsg = attribute.value 
-            ? `${selector} with ${attribute.name}="${attribute.value}"`
+            ? `${selector} with ${attribute.name} similar to "${attribute.value}"`
             : `${selector} with ${attribute.name} attribute`;
           return {
             testCase: selector,
