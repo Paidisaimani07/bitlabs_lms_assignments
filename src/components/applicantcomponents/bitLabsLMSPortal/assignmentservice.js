@@ -81,6 +81,24 @@ export const getAssignmentByApplicantAndAssignmentNumber = async (applicantId, a
 };
 
 /**
+ * Fetches previously submitted code using path variables as per backend controller.
+ * GET /api/assignments/{applicantId}/{assignmentNumber}
+ */
+export const getSubmittedAssignment = async (applicantId, assignmentNumber) => {
+    try {
+        const url = `${BASE_URL}/${applicantId}/${assignmentNumber}`;
+        console.log(`[AssignmentService] GET ${url}`);
+        const response = await apiClient.get(url);
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return null;
+        }
+        throw error;
+    }
+};
+
+/**
  * Fetches all assignments submitted by a specific applicant.
  * @param {number|string} applicantId 
  */
