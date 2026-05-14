@@ -28,7 +28,7 @@ const COURSE_DATA = {
     { topic: "HTML for Beginners", videos: [{ title: "Basics of HTML Structure", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/htmlforbegginers_topic2/story.html" }] },
     { topic: "CSS Part 1", videos: [{ title: "Introduction to CSS Styling", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/csspart1_topic3/story.html" }] },
     { topic: "CSS Part 2", videos: [{ title: "Advanced CSS Concepts", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/csspart2_topic4/story.html" }] },
-    { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTML+FORMS_topic5/story.html" }] },
+    { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTML%20FORMS_topic5/story.html" }] },
   ],
   "python": [
     { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "/python for beginners/Introduction to Python_topic1/index_lms.html" }] },
@@ -495,7 +495,7 @@ const CourseDetails = () => {
                             {topicAssignment && isAssignmentAllowed && (
                               <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
                                 <div
-                                  className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
+                                  className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
                                   onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
                                 >
                                   <div className="assignment-icon">
@@ -504,7 +504,7 @@ const CourseDetails = () => {
                                   <div className="assignment-info">
                                     <h4>{topicAssignment.title}</h4>
                                     <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
-                                      {!isAssignmentUnlocked ? "Locked (Complete topic first)" : (isAssignmentCompleted ? "Completed" : "Start Assignment")}
+                                      {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Start Assignment")}
                                     </span>
                                   </div>
                                   {isAssignmentUnlocked && !isAssignmentCompleted && (
