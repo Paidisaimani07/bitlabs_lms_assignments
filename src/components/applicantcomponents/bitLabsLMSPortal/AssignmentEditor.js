@@ -17,10 +17,10 @@ const ASSIGNMENTS = [
   { id: 3, title: "Exercise 1.3: Phone brands", question: "Ordered list of phone brands.", expectedOutput: `<ol><li>Apple</li><li>Samsung</li></ol>`, testCases: [{ selector: 'ol', marks: 1 }, { selector: 'li', marks: 1 }], topic: 'HTML Basics' },
   { id: 4, title: "Exercise 1.4: Unordered list of cars", question: "Unordered list of car models.", expectedOutput: `<ul><li>Tesla</li><li>BMW</li></ul>`, testCases: [{ selector: 'ul', marks: 1 }, { selector: 'li', marks: 1 }], topic: 'HTML Basics' },
   { id: 5, title: "Exercise 1.5: Soft drinks", question: "Definition list (dl, dt, dd) for soft drinks.", expectedOutput: `<dl><dt>Coke</dt><dd>Cola</dd></dl>`, testCases: [{ selector: 'dl', marks: 1 }, { selector: 'dt', marks: 1 }, { selector: 'dd', marks: 1 }], topic: 'HTML Basics' },
-  { id: 6, title: "Exercise 1.6: Car Image", question: "Add an image of a car.", expectedOutput: `<img src="car.jpg" alt="car" />`, testCases: [{ selector: 'img', marks: 5 }], topic: 'HTML Basics' },
+  { id: 6, title: "Exercise 1.6: Car Image", question: "Add an image of a car.", expectedOutput: `<img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70" alt="car" style="max-width: 100%; border-radius: 8px;" />`, testCases: [{ selector: 'img', marks: 5 }], topic: 'HTML Basics' },
   { id: 7, title: "Exercise 1.7: Table of people", question: "Table with Name, Age, City.", expectedOutput: `<table><tr><th>Name</th></tr><tr><td>John</td></tr></table>`, testCases: [{ selector: 'table', marks: 2 }, { selector: 'tr', marks: 2 }, { selector: 'td', marks: 2 }], topic: 'HTML Basics' },
   { id: 8, title: "Exercise 1.8: Links", question: "Links to YouTube and bitLabs.", expectedOutput: `<a href="https://youtube.com">YT</a>`, testCases: [{ selector: 'a', marks: 5 }], topic: 'HTML Basics' },
-  { id: 9, title: "Exercise 1.9: Smartphone", question: "Heading, Image, and list of features.", expectedOutput: `<h1>IP</h1><img src="ip.jpg" /><ul><li>5G</li></ul>`, testCases: [{ selector: 'h1', marks: 2 }, { selector: 'img', marks: 2 }, { selector: 'ul', marks: 2 }], topic: 'HTML Basics' },
+  { id: 9, title: "Exercise 1.9: Smartphone", question: "Heading, Image, and list of features.", expectedOutput: `<h1>Smartphone</h1><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70" alt="phone" style="max-width: 100%; border-radius: 8px;" /><ul><li>Amoled Display</li><li>5G Connectivity</li><li>Triple Camera</li></ul>`, testCases: [{ selector: 'h1', marks: 2 }, { selector: 'img', marks: 2 }, { selector: 'ul', marks: 2 }], topic: 'HTML Basics' },
   { id: 10, title: "Exercise 1.10: Sample Bill", question: "Table format for a sample bill.", expectedOutput: `<table><tr><td>Item</td><td>Price</td></tr></table>`, testCases: [{ selector: 'table', marks: 10 }], topic: 'HTML Basics' },
 
   // ─── CSS BASICS (Module 2: 2.1 - 2.6) ─────────────────────────────────────
@@ -69,6 +69,8 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   const [submissionErrors, setSubmissionErrors] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false); // Track if already completed in backend
+  const [completedIds, setCompletedIds] = useState(new Set()); // Track all completed assignment IDs
 
   const activeAssignmentIdRef = useRef(ASSIGNMENTS[0].id);
   const isNavigatingRef = useRef(false);
@@ -100,7 +102,6 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
       let backendCode = null;
       if (data) {
-        // Extract directly from AssignmentSubmission object
         backendCode = data.assignmentCode || data.assignment_code || data.code;
       }
 
@@ -111,27 +112,28 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           setCode(finalCode);
           setLiveOutput(finalCode);
           
-          // Re-validate the loaded code to unlock the Next button if it's correct
           const validation = AssignmentValidator.validate(finalCode, target.testCases);
           setValidationResult(validation);
-          setIsSubmitted(true); // This ensures the Next button logic is evaluated
+          setIsSubmitted(true);
+          setIsCompleted(true);
         } else {
           const template = `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
           console.log('[AssignmentEditor] No submission found. Loading default template.');
           setCode(template);
           setLiveOutput(template);
+          setIsSubmitted(false);
+          setIsCompleted(false);
         }
-      } else {
-        console.warn(`[AssignmentEditor] Race condition: Fetch for ${assignmentId} finished but current is ${activeAssignmentIdRef.current}`);
       }
     } catch (e) {
       console.error('[AssignmentEditor] Fetch Error:', e);
       const template = `<!DOCTYPE html>\n<html>\n<body>\n    <!-- Template Fallback -->\n</body>\n</html>`;
       setCode(template);
       setLiveOutput(template);
+      setIsSubmitted(false);
+      setIsCompleted(false);
     } finally {
       setLoading(false);
-      setIsSubmitted(false);
       isNavigatingRef.current = false;
     }
   }, [applicantId]);
@@ -163,11 +165,16 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   const handleCodeChange = (newCode) => {
     if (isNavigatingRef.current) return;
     setCode(newCode);
-    
-    // Reset submission/validation state when user edits code
-    // This ensures "Next Assignment" button disappears until they submit the new code correctly
     setIsSubmitted(false);
     setValidationResult(null);
+  };
+
+  const handleClear = () => {
+    setCode('');
+    setLiveOutput('');
+    setIsSubmitted(false);
+    setValidationResult(null);
+    setIsCompleted(false);
   };
 
   useEffect(() => {
@@ -176,20 +183,25 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       setLoading(true);
       try {
         let targetIdx = 0;
+        
+        // Fetch ALL submissions to show progress buttons
+        const allSubmissions = await getAllAssignmentsByApplicant(applicantId).catch(() => null);
+        if (allSubmissions) {
+          const ids = new Set(allSubmissions.filter(s => s.status === 'COMPLETED').map(s => s.assignmentNumber));
+          setCompletedIds(ids);
+        }
+
         if (assignmentType) {
-          const map = { 'styling': 10, 'styling2': 16, 'forms': 24 };
+          const map = { 'html': 0, 'styling': 10, 'styling2': 16, 'forms': 24 };
           targetIdx = map[assignmentType] ?? 0;
         } else {
-          const allSubmissions = await getAllAssignmentsByApplicant(applicantId).catch(() => null);
           if (allSubmissions && allSubmissions.length > 0) {
             const highest = allSubmissions.reduce((p, c) => (p.assignmentNumber > c.assignmentNumber) ? p : c);
             const resumeIndex = ASSIGNMENTS.findIndex(a => a.id === highest.assignmentNumber);
-            // If they completed 'highest', start them at the next one (resumeIndex + 1)
             if (resumeIndex !== -1) {
               targetIdx = Math.min(resumeIndex + 1, ASSIGNMENTS.length - 1);
             }
           } else {
-            // FALLBACK: Use localStorage to resume from last viewed assignment if backend "get all" fails
             const savedIdx = localStorage.getItem('bitlabs_last_assignment_idx');
             if (savedIdx !== null) {
               const parsed = parseInt(savedIdx, 10);
@@ -204,7 +216,6 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
         activeAssignmentIdRef.current = ASSIGNMENTS[targetIdx].id;
         
         if (currentIndex === targetIdx) {
-          // If already at target index, useEffect won't trigger, so call manually
           fetchSavedCodeFromBackend(targetIdx);
         } else {
           setCurrentIndex(targetIdx);
@@ -241,6 +252,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       }
 
       setShowSuccessModal(true);
+      setCompletedIds(prev => new Set(prev).add(currentAssignment.id));
       setTimeout(() => setShowSuccessModal(false), 3500);
       window.dispatchEvent(new CustomEvent('assignmentCompleted', { detail: { assignmentId: currentAssignment.id } }));
     } catch (e) {
@@ -254,17 +266,51 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       <div className="ae-header">
         <button className="ae-back-btn" onClick={handleBack}>← Back</button>
         <div className="ae-title-section"><h2>{currentAssignment.title}</h2><span className="ae-badge">{currentAssignment.topic}</span></div>
-        <div className="ae-progress"><span className="ae-progress-text">{currentIndex + 1} / {ASSIGNMENTS.length}</span><div className="ae-progress-bar"><div className="ae-progress-fill" style={{ width: `${((currentIndex + 1) / ASSIGNMENTS.length) * 100}%` }} /></div></div>
+        <div className="ae-progress">
+          <div className="ae-nav-dots">
+            {ASSIGNMENTS.filter(a => a.topic === currentAssignment.topic).map((a, tIdx) => {
+              const globalIdx = ASSIGNMENTS.findIndex(ga => ga.id === a.id);
+              return (
+                <button 
+                  key={a.id} 
+                  className={`ae-dot ${globalIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
+                  onClick={() => performNavigation(globalIdx)}
+                  title={a.title}
+                >
+                  {tIdx + 1}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
       <div className="ae-content">
         <div className="ae-left-panel">
           <div className="ae-question"><h3>Question</h3><p>{currentAssignment.question}</p></div>
-          <div className="ae-editor-section"><label className="ae-label">HTML Code:</label><textarea className="ae-textarea" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} /></div>
+          <div className="ae-editor-section">
+            <div className="ae-editor-header">
+              <label className="ae-label">HTML Code:</label>
+              <button className="ae-clear-btn" onClick={handleClear} disabled={loading}>Clear</button>
+            </div>
+            <textarea className="ae-textarea" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} />
+          </div>
           <div className="ae-button-group">
-            {currentIndex > 0 && <button className="ae-btn ae-btn-prev" onClick={handlePrevAssignment}>← Previous</button>}
-            <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
-            <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim() || loading}>✓ Submit</button>
-            {isSubmitted && validationResult?.isValid && currentIndex < ASSIGNMENTS.length - 1 && <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>}
+            <div className="ae-btn-slot">
+              {currentIndex > 0 && <button className="ae-btn ae-btn-prev" onClick={handlePrevAssignment}>← Previous</button>}
+            </div>
+            
+            <div className="ae-btn-center">
+              <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
+              {(!isSubmitted || !validationResult?.isValid) && (
+                <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim() || loading}>✓ Submit</button>
+              )}
+            </div>
+
+            <div className="ae-btn-slot ae-btn-right">
+              {isSubmitted && validationResult?.isValid && currentIndex < ASSIGNMENTS.length - 1 && (
+                <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
+              )}
+            </div>
           </div>
           {isSubmitted && validationResult && <div className={`ae-submission-status ${validationResult.isValid ? 'ae-passed' : 'ae-failed'}`}><h4>{validationResult.isValid ? '✓ Passed!' : '⚠ Failed'}</h4>{validationResult.details.map((d, i) => <p key={i} className="ae-detail">{d}</p>)}</div>}
         </div>

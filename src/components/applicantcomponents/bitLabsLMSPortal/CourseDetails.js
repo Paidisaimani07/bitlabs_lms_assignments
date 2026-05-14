@@ -28,7 +28,7 @@ const COURSE_DATA = {
     { topic: "HTML for Beginners", videos: [{ title: "Basics of HTML Structure", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/htmlforbegginers_topic2/story.html" }] },
     { topic: "CSS Part 1", videos: [{ title: "Introduction to CSS Styling", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/csspart1_topic3/story.html" }] },
     { topic: "CSS Part 2", videos: [{ title: "Advanced CSS Concepts", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/csspart2_topic4/story.html" }] },
-    { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTMLFORMS_topic5/story.html" }] },
+    { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTML+FORMS_topic5/story.html" }] },
   ],
   "python": [
     { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "/python for beginners/Introduction to Python_topic1/index_lms.html" }] },
@@ -226,8 +226,19 @@ const CourseDetails = () => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
-      setSidebarView('assignments');
-      setViewingAssignment(true);
+      // Only switch to assignments if the current topic has an assignment that just unlocked
+      const assignments = [
+        null,
+        { type: 'html' },
+        { type: 'styling' },
+        { type: 'styling2' },
+        { type: 'forms' }
+      ];
+      if (assignments[index]) {
+        setSidebarView('assignments');
+        setViewingAssignment(true);
+        setAssignmentType(assignments[index].type);
+      }
     }, 3000);
   };
 
@@ -279,14 +290,14 @@ const CourseDetails = () => {
       try {
         const assignments = await getAllAssignmentsByApplicant(applicantId);
         const completion = { html: false, css1: false, css2: false, forms: false };
-        
+
         assignments.forEach(item => {
           if (item.assignmentNumber === 10 && item.status === 'COMPLETED') completion.html = true;
           if (item.assignmentNumber === 106 && item.status === 'COMPLETED') completion.css1 = true;
           if (item.assignmentNumber === 208 && item.status === 'COMPLETED') completion.css2 = true;
           if (item.assignmentNumber === 305 && item.status === 'COMPLETED') completion.forms = true;
         });
-        
+
         setAssignmentCompletion(completion);
       } catch (error) {
         console.error('Failed to sync assignments:', error);
@@ -299,7 +310,7 @@ const CourseDetails = () => {
   useEffect(() => {
     const handleAssignmentDone = (e) => {
       const { assignmentId } = e.detail;
-      
+
       // Update completion based on last IDs of each group
       if (assignmentId === 10) setAssignmentCompletion(prev => ({ ...prev, html: true }));
       if (assignmentId === 106) setAssignmentCompletion(prev => ({ ...prev, css1: true }));
@@ -313,7 +324,7 @@ const CourseDetails = () => {
         { lastId: 208, index: 3 }, // CSS2
         { lastId: 305, index: 4 }  // Forms
       ];
-      
+
       const group = groups.find(g => g.lastId === assignmentId);
       if (group) {
         handleModuleComplete(group.index);
@@ -419,7 +430,7 @@ const CourseDetails = () => {
                     <div className="topics-list">
                       {courseContent.map((t, index) => {
                         const progress = topicProgress[index] || 0;
-                        
+
                         let isTopicLocked = false;
                         if (index === 1) isTopicLocked = (topicProgress[0] || 0) < 100;
                         if (index === 2) isTopicLocked = !assignmentCompletion.html;
@@ -431,14 +442,14 @@ const CourseDetails = () => {
                         // Integrated Assignment Data
                         const assignments = [
                           null, // Topic 0
-                          { title: "First HTML Page", type: null, completionKey: 'html' }, // Topic 1
+                          { title: "First HTML Page", type: 'html', completionKey: 'html' }, // Topic 1
                           { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
                           { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
                           { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
                         ];
                         const topicAssignment = assignments[index];
-                        const isAssignmentUnlocked = progress === 100 && !isTopicLocked;
                         const isAssignmentCompleted = topicAssignment ? assignmentCompletion[topicAssignment.completionKey] : false;
+                        const isAssignmentUnlocked = (progress === 100 || isAssignmentCompleted) && !isTopicLocked;
 
                         return (
                           <div
@@ -472,9 +483,9 @@ const CourseDetails = () => {
                             {/* Integrated Assignment Section */}
                             {topicAssignment && isAssignmentAllowed && (
                               <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
-                                <div 
+                                <div
                                   className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
-                                  onClick={() => isAssignmentUnlocked && handleAssignmentClick(topicAssignment.type)}
+                                  onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
                                 >
                                   <div className="assignment-icon">
                                     {isAssignmentCompleted ? "✔" : "📝"}
