@@ -46,7 +46,20 @@ const ASSIGNMENTS = [
   { id: 302, title: "Exercise 4.2: Login", question: "Login form.", expectedOutput: `<form><input type="password" /></form>`, testCases: [{ selector: 'form', marks: 5 }], topic: 'HTML Forms' },
   { id: 303, title: "Exercise 4.3: Feedback", question: "Feedback form with textarea.", expectedOutput: `<form><textarea></textarea></form>`, testCases: [{ selector: 'textarea', marks: 5 }], topic: 'HTML Forms' },
   { id: 304, title: "Exercise 4.4: Survey", question: "Survey form with radio buttons.", expectedOutput: `<form><input type="radio" /></form>`, testCases: [{ selector: 'input[type="radio"]', marks: 5 }], topic: 'HTML Forms' },
-  { id: 305, title: "Exercise 4.5: Contact", question: "Contact form with select dropdown.", expectedOutput: `<form><select><option>O</option></select></form>`, testCases: [{ selector: 'select', marks: 5 }], topic: 'HTML Forms' }
+  { id: 305, title: "Exercise 4.5: Contact", question: "Contact form with select dropdown.", expectedOutput: `<form><select><option>O</option></select></form>`, testCases: [{ selector: 'select', marks: 5 }], topic: 'HTML Forms' },
+  
+  // ─── PYTHON (Module 5: 401 - 411) ────────────────────────────────────────
+  { id: 401, title: "Convert Distance", question: "Write program to convert the distance (in feet) to inches, yards, and miles.", expectedOutput: "Distance in feet : 5.0\nDistance in inches : 60.0\nDistance in yards : 1.6666666666666667\nDistance in miles : 0.000946969696969697", defaultCode: "feet = float(input(\"Enter the distance in feet : \"))\n", topic: 'Python', keywords: ['feet', 'float', 'input', 'print'] },
+  { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Display total marks, average, result and grade properly.", defaultCode: "# Enter student details and marks\n", topic: 'Python', keywords: ['input', 'print'] },
+  { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Display yearly capital with interest.", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
+  { id: 404, title: "Tuple", question: "Sort tuples using last element.", expectedOutput: "[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]", defaultCode: "data = [(2, 5), (1, 2), (4, 4), (2, 3), (2, 1)]\n", topic: 'Python', keywords: ['sort', 'lambda'] },
+  { id: 405, title: "Remove Dups", question: "Remove duplicates from list while preserving order.", expectedOutput: "[12, 24, 35, 88, 120, 155]", defaultCode: "items = [12, 24, 35, 24, 88, 120, 155, 88, 120, 155]\n", topic: 'Python', keywords: ['set', 'list', 'append'] },
+  { id: 406, title: "Capitalize", question: "Convert all input lines to uppercase.", expectedOutput: "HELLO WORLD\nPRACTICE MAKES PERFECT", defaultCode: "lines = []\nwhile True:\n    s = input()\n    if s: lines.append(s.upper())\n    else: break\n", topic: 'Python', keywords: ['upper', 'input'] },
+  { id: 407, title: "Conditional Capitalize", question: "Implement preLetterCase(string, letter)", expectedOutput: "preLetterCase(\"CAtCHa\",\"a\") → \"cATCHA\"", defaultCode: "def preLetterCase(string, letter):\n    # implementation\n    pass\n", topic: 'Python', keywords: ['def', 'return', 'if'] },
+  { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Display hypotenuse value.", defaultCode: "import math\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
+  { id: 409, title: "Student Roster", question: "Create Student class with attributes and display values.", expectedOutput: "Student ID: M11\nStudent Name: Anusha Rao", defaultCode: "class Student:\n    pass\n", topic: 'Python', keywords: ['class', 'def', '__init__'] },
+  { id: 410, title: "Animal Counts", question: "Use try/except while summing dictionary values.", expectedOutput: "Total number of puppies:130", defaultCode: "animals = {'puppies': 70, 'kittens': 60}\n", topic: 'Python', keywords: ['try', 'except', 'print'] },
+  { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "Display square area properly.", defaultCode: "class Shape:\n    def area(self): return 0\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
 ];
 
 const ErrorModal = ({ errors, onClose }) => (
@@ -95,6 +108,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       if (assignmentType === 'styling') return a.topic === 'CSS Basics';
       if (assignmentType === 'styling2') return a.topic === 'CSS Advanced';
       if (assignmentType === 'forms') return a.topic === 'HTML Forms';
+      if (assignmentType?.startsWith('python')) return a.topic === 'Python';
       return true;
     });
     console.log('[AssignmentEditor] Filtered Topic Assignments:', filtered.length);
@@ -131,28 +145,31 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
         backendCode = data.assignmentCode || data.assignment_code || data.code;
       }
 
-      if (activeAssignmentIdRef.current === assignmentId) {
-        if (backendCode !== null && backendCode !== undefined) {
-          const finalCode = String(backendCode);
-          console.log('[AssignmentEditor] Success! Loaded assignment code (length):', finalCode.length);
-          setCode(finalCode);
-          setLiveOutput(finalCode);
-
-          const validation = AssignmentValidator.validate(finalCode, target.testCases);
-          setValidationResult(validation);
-          setIsSubmitted(true);
-          setIsCompleted(true);
-          // Ensure this dot stays green since it exists in the database
-          setCompletedIds(prev => new Set(prev).add(assignmentId));
-        } else {
-          const template = `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
-          console.log('[AssignmentEditor] No submission found. Loading default template.');
-          setCode(template);
-          setLiveOutput(template);
-          setIsSubmitted(false);
-          setIsCompleted(false);
-        }
-      }
+          if (activeAssignmentIdRef.current === assignmentId) {
+            if (backendCode !== null && backendCode !== undefined) {
+              const finalCode = String(backendCode);
+              setCode(finalCode);
+              setLiveOutput(finalCode);
+    
+              const isPython = target.topic === 'Python';
+              const validation = isPython 
+                ? AssignmentValidator.validatePython(finalCode, { expectedOutput: target.expectedOutput, keywords: target.keywords })
+                : AssignmentValidator.validate(finalCode, target.testCases);
+              
+              setValidationResult(validation);
+              setIsSubmitted(true);
+              setIsCompleted(true);
+              setCompletedIds(prev => new Set(prev).add(assignmentId));
+            } else {
+              const template = target.topic === 'Python' 
+                ? (target.defaultCode || "") 
+                : `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
+              setCode(template);
+              setLiveOutput(template);
+              setIsSubmitted(false);
+              setIsCompleted(false);
+            }
+          }
     } catch (e) {
       console.error('[AssignmentEditor] Fetch Error:', e);
       const template = `<!DOCTYPE html>\n<html>\n<body>\n    <!-- Template Fallback -->\n</body>\n</html>`;
@@ -225,8 +242,16 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           setCompletedIds(ids);
         }
 
-        // Always start at the first assignment of the selected topic
-        targetIdx = 0;
+        // Start at the correct index based on assignmentType (e.g. 'python2' -> index 1)
+        if (assignmentType?.startsWith('python')) {
+          const match = assignmentType.match(/python(\d+)/);
+          if (match) {
+            const num = parseInt(match[1]);
+            if (!isNaN(num)) targetIdx = num - 1;
+          }
+        } else {
+          targetIdx = 0;
+        }
 
         console.log(`[AssignmentEditor] Initializing with topic index ${targetIdx} (ID: ${filtered[targetIdx].id})`);
         activeAssignmentIdRef.current = filtered[targetIdx].id;
@@ -254,7 +279,11 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   const handleRun = () => { setLiveOutput(code); setIsSubmitted(false); };
 
   const handleSubmit = async () => {
-    const result = AssignmentValidator.validate(code, currentAssignment.testCases);
+    const isPython = currentAssignment.topic === 'Python';
+    const result = isPython
+      ? AssignmentValidator.validatePython(code, { expectedOutput: currentAssignment.expectedOutput, keywords: currentAssignment.keywords })
+      : AssignmentValidator.validate(code, currentAssignment.testCases);
+
     setValidationResult(result);
     setIsSubmitted(true);
     if (!result.isValid) { setSubmissionErrors(result.errors || []); setShowErrorModal(true); return; }
@@ -297,10 +326,10 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           <div className="ae-question"><h3>Question</h3><p>{currentAssignment.question}</p></div>
           <div className="ae-editor-section">
             <div className="ae-editor-header">
-              <label className="ae-label">HTML Code:</label>
+              <label className="ae-label">{currentAssignment.topic === 'Python' ? 'Python Code:' : 'HTML Code:'}</label>
               <button className="ae-clear-btn" onClick={handleClear} disabled={loading}>Clear</button>
             </div>
-            <textarea className="ae-textarea" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} />
+            <textarea className="ae-textarea ae-python-editor" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} style={currentAssignment.topic === 'Python' ? { fontFamily: 'Consolas, monospace', fontSize: '14px' } : {}} />
           </div>
           <div className="ae-button-group">
             <div className="ae-btn-slot">
@@ -323,8 +352,26 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           {isSubmitted && validationResult && <div className={`ae-submission-status ${validationResult.isValid ? 'ae-passed' : 'ae-failed'}`}><h4>{validationResult.isValid ? '✓ Passed!' : '⚠ Failed'}</h4>{validationResult.details.map((d, i) => <p key={i} className="ae-detail">{d}</p>)}</div>}
         </div>
         <div className="ae-right-panel">
-          <div className="ae-output-section"><h3>Your Output {loading && "..."}</h3><div className="ae-iframe-container"><iframe className="ae-preview-iframe" srcDoc={liveOutput} title="User Output" /></div></div>
-          <div className="ae-output-section ae-expected"><h3>Expected Output</h3><div className="ae-iframe-container"><iframe className="ae-preview-iframe ae-expected-iframe" srcDoc={currentAssignment.expectedOutput} title="Expected Output" /></div></div>
+          <div className="ae-output-section">
+            <h3>Your Output {loading && "..."}</h3>
+            <div className="ae-iframe-container">
+              {currentAssignment.topic === 'Python' ? (
+                <pre className="ae-python-output">{liveOutput}</pre>
+              ) : (
+                <iframe className="ae-preview-iframe" srcDoc={liveOutput} title="User Output" />
+              )}
+            </div>
+          </div>
+          <div className="ae-output-section ae-expected">
+            <h3>Expected Output</h3>
+            <div className="ae-iframe-container">
+              {currentAssignment.topic === 'Python' ? (
+                <pre className="ae-python-output ae-expected-output">{currentAssignment.expectedOutput}</pre>
+              ) : (
+                <iframe className="ae-preview-iframe ae-expected-iframe" srcDoc={currentAssignment.expectedOutput} title="Expected Output" />
+              )}
+            </div>
+          </div>
         </div>
       </div>
       {showSuccessModal && <div className="ae-success-modal-overlay"><div className="ae-success-modal"><h3>Success!</h3><p>Problem solved!</p><button className="ae-success-btn" onClick={() => setShowSuccessModal(false)}>Continue</button></div></div>}

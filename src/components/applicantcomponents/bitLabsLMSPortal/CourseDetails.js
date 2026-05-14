@@ -5,6 +5,7 @@ import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
 import { useUserContext } from "../../common/UserProvider";
 import FirstHtmlPage from "./FirstHtmlPage";
+import AssignmentEditor from "./AssignmentEditor";
 import { getAllAssignmentsByApplicant } from "./assignmentservice";
 
 
@@ -61,6 +62,8 @@ const CourseDetails = () => {
     '/courses/css',
     '/course/html',
     '/course/css',
+    '/course/python',
+    '/courses/python',
     '/assignment/first-html-page'
   ];
 
@@ -82,7 +85,8 @@ const CourseDetails = () => {
     html: false,
     css1: false,
     css2: false,
-    forms: false
+    forms: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
   });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
@@ -238,15 +242,30 @@ const CourseDetails = () => {
   const selectTopic = useCallback((index) => {
     setViewingAssignment(false);
     let isLocked = false;
-    if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
-    if (index === 2) isLocked = !assignmentCompletion.html;
-    if (index === 3) isLocked = !assignmentCompletion.css1;
-    if (index === 4) isLocked = !assignmentCompletion.css2;
+    
+    if (courseName.toLowerCase() === "python") {
+      if (index > 0) isLocked = (topicProgress[index - 1] || 0) < 100;
+      // Topic 2 unlocks after Topic 1 completion, etc.
+      // Special rule: Next topic unlocks after previous topic's assignment completion if it exists
+      const prevAssignmentMap = {
+        2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5', 
+        8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
+      };
+      if (prevAssignmentMap[index]) {
+        isLocked = !assignmentCompletion[prevAssignmentMap[index]];
+      }
+    } else {
+      if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
+      if (index === 2) isLocked = !assignmentCompletion.html;
+      if (index === 3) isLocked = !assignmentCompletion.css1;
+      if (index === 4) isLocked = !assignmentCompletion.css2;
+    }
+
     if (topicProgress[index] > 0) isLocked = false;
     if (isLocked) return;
     setSelectedTopicIndex(index);
     if (!document.fullscreenElement) toggleFullscreen();
-  }, [topicProgress, assignmentCompletion, toggleFullscreen]);
+  }, [topicProgress, assignmentCompletion, toggleFullscreen, courseName]);
 
   const handleModuleComplete = useCallback((index) => {
     const nextIdx = index + 1;
@@ -289,13 +308,24 @@ const CourseDetails = () => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
-      const assignments = [
-        null,
-        { type: 'html' },
-        { type: 'styling' },
-        { type: 'styling2' },
-        { type: 'forms' }
-      ];
+      let assignments = [];
+      if (courseName.toLowerCase() === "python") {
+        assignments = [
+          null,
+          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
+          { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
+          { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
+          { type: 'python10' }, { type: 'python11' }
+        ];
+      } else {
+        assignments = [
+          null,
+          { type: 'html' },
+          { type: 'styling' },
+          { type: 'styling2' },
+          { type: 'forms' }
+        ];
+      }
       if (assignments[index]) {
         setSidebarView('assignments');
         setViewingAssignment(true);
@@ -319,9 +349,10 @@ const CourseDetails = () => {
         html: new Set(),
         css1: new Set(),
         css2: new Set(),
-        forms: new Set()
+        forms: new Set(),
+        python: new Set()
       };
-      const totals = { html: 10, css1: 6, css2: 8, forms: 5 };
+      const totals = { html: 10, css1: 6, css2: 8, forms: 5, python: 11 };
 
       assignments.forEach(item => {
         let id = item.assignmentNumber ?? item.assignment_number ?? item.assignmentId ?? item.assignment_id ?? item.id;
@@ -335,6 +366,7 @@ const CourseDetails = () => {
           if (numId >= 101 && numId <= 106) completedIds.css1.add(numId);
           if (numId >= 201 && numId <= 208) completedIds.css2.add(numId);
           if (numId >= 301 && numId <= 305) completedIds.forms.add(numId);
+          if (numId >= 401 && numId <= 411) completedIds.python.add(numId);
         }
       });
 
@@ -342,7 +374,18 @@ const CourseDetails = () => {
         html: completedIds.html.size >= totals.html,
         css1: completedIds.css1.size >= totals.css1,
         css2: completedIds.css2.size >= totals.css2,
-        forms: completedIds.forms.size >= totals.forms
+        forms: completedIds.forms.size >= totals.forms,
+        python1: completedIds.python.has(401),
+        python2: completedIds.python.has(402),
+        python3: completedIds.python.has(403),
+        python4: completedIds.python.has(404),
+        python5: completedIds.python.has(405),
+        python6: completedIds.python.has(406),
+        python7: completedIds.python.has(407),
+        python8: completedIds.python.has(408),
+        python9: completedIds.python.has(409),
+        python10: completedIds.python.has(410),
+        python11: completedIds.python.has(411)
       });
     } catch (error) {
       console.error('[CourseDetails] Sync Error:', error);
@@ -369,6 +412,13 @@ const CourseDetails = () => {
       const group = groups.find(g => g.id === id);
       if (group) {
         handleModuleComplete(group.index);
+      }
+      
+      // Handle Python individual assignment completion logic
+      if (id >= 401 && id <= 411) {
+        // Python assignments are per-topic, so we don't necessarily trigger handleModuleComplete 
+        // unless it's the very last one, but we do need to refresh state
+        syncAssignments();
       }
     };
 
@@ -459,13 +509,33 @@ const CourseDetails = () => {
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
                         // Integrated Assignment Data
-                        const assignments = [
-                          null, // Topic 0
-                          { title: "First HTML Page", type: 'html', completionKey: 'html' }, // Topic 1
-                          { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
-                          { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
-                          { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
-                        ];
+                        let assignments = [];
+                        if (courseName.toLowerCase() === "python") {
+                          assignments = [
+                            null, // Topic 0
+                            { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
+                            { title: "Total & Average Marks", type: 'python2', completionKey: 'python2' },
+                            { title: "Calculate Interest", type: 'python3', completionKey: 'python3' },
+                            null, // Topic 4 (Loops - NO assignment as per request)
+                            { title: "Tuple", type: 'python4', completionKey: 'python4' },
+                            { title: "Remove Dups", type: 'python5', completionKey: 'python5' },
+                            { title: "Capitalize", type: 'python6', completionKey: 'python6' },
+                            { title: "Conditional Capitalize", type: 'python7', completionKey: 'python7' },
+                            { title: "Hypotenuse", type: 'python8', completionKey: 'python8' },
+                            { title: "Student Roster", type: 'python9', completionKey: 'python9' },
+                            { title: "Animal Counts", type: 'python10', completionKey: 'python10' },
+                            { title: "Shape", type: 'python11', completionKey: 'python11' },
+                          ];
+                        } else {
+                          assignments = [
+                            null, // Topic 0
+                            { title: "First HTML Page", type: 'html', completionKey: 'html' }, // Topic 1
+                            { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
+                            { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
+                            { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
+                          ];
+                        }
+
                         const topicAssignment = assignments[index];
                         const isAssignmentCompleted = topicAssignment ? assignmentCompletion[topicAssignment.completionKey] : false;
                         const isAssignmentUnlocked = (progress === 100 || isAssignmentCompleted) && !isTopicLocked;
@@ -531,10 +601,11 @@ const CourseDetails = () => {
                 <div className="course-player" ref={playerRef}>
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
-                      <FirstHtmlPage
+                      <AssignmentEditor
                         type={assignmentType}
                         onClose={handleCloseAssignment}
                         applicantId={applicantId}
+                        assignmentType={assignmentType}
                       />
                     </div>
                   ) : (
