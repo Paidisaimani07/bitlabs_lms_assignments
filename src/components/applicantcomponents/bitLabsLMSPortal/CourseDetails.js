@@ -339,8 +339,16 @@ const CourseDetails = () => {
   const selectTopic = (index) => {
     setViewingAssignment(false);
 
-    // Check if topic is locked (not first topic AND previous not 100%)
-    const isLocked = index > 0 && (topicProgress[index - 1] || 0) < 100;
+    // Check if topic is locked (using same logic as render)
+    let isLocked = false;
+    if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
+    if (index === 2) isLocked = !assignmentCompletion.html;
+    if (index === 3) isLocked = !assignmentCompletion.css1;
+    if (index === 4) isLocked = !assignmentCompletion.css2;
+
+    // If topic has progress, it should be considered unlocked (override lock)
+    if (topicProgress[index] > 0) isLocked = false;
+
     if (isLocked) return;
 
     setSelectedTopicIndex(index);
@@ -436,6 +444,9 @@ const CourseDetails = () => {
                         if (index === 2) isTopicLocked = !assignmentCompletion.html;
                         if (index === 3) isTopicLocked = !assignmentCompletion.css1;
                         if (index === 4) isTopicLocked = !assignmentCompletion.css2;
+
+                        // IMPORTANT: If a topic already has progress, it should NEVER be locked
+                        if (progress > 0) isTopicLocked = false;
 
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
