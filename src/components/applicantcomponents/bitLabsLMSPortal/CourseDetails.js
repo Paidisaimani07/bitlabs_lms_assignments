@@ -73,6 +73,17 @@ const CourseDetails = () => {
   const [courseProgressId, setCourseProgressId] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [sidebarView, setSidebarView] = useState("topics");
+  const [viewingAssignment, setViewingAssignment] = useState(false);
+  const [assignmentType, setAssignmentType] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({ title: "", message: "", subMessage: "", type: "topic" });
+  const [assignmentCompletion, setAssignmentCompletion] = useState({
+    html: false,
+    css1: false,
+    css2: false,
+    forms: false
+  });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
   const playerRef = useRef(null);
@@ -212,37 +223,32 @@ const CourseDetails = () => {
     }
   }, [applicantId, courseName, courseContent, topicProgress]);
 
-  const handleTopicComplete = (index) => {
-    const topic = courseContent[index];
-    if (!topic) return;
+  // ── 1. Utility Callbacks ──────────────────────────────────────────────────
+  const toggleFullscreen = useCallback(() => {
+    if (!playerRef.current) return;
+    if (!document.fullscreenElement) {
+      playerRef.current.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }, []);
 
-    setPopupContent({
-      title: "🎉 Congratulations!",
-      message: `You successfully completed ${topic.topic}.`,
-      subMessage: "Your next assignment is now unlocked.",
-      type: "topic"
-    });
-    setShowSuccessPopup(true);
+  const selectTopic = useCallback((index) => {
+    setViewingAssignment(false);
+    let isLocked = false;
+    if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
+    if (index === 2) isLocked = !assignmentCompletion.html;
+    if (index === 3) isLocked = !assignmentCompletion.css1;
+    if (index === 4) isLocked = !assignmentCompletion.css2;
+    if (topicProgress[index] > 0) isLocked = false;
+    if (isLocked) return;
+    setSelectedTopicIndex(index);
+    if (!document.fullscreenElement) toggleFullscreen();
+  }, [topicProgress, assignmentCompletion, toggleFullscreen]);
 
-    setTimeout(() => {
-      setShowSuccessPopup(false);
-      // Only switch to assignments if the current topic has an assignment that just unlocked
-      const assignments = [
-        null,
-        { type: 'html' },
-        { type: 'styling' },
-        { type: 'styling2' },
-        { type: 'forms' }
-      ];
-      if (assignments[index]) {
-        setSidebarView('assignments');
-        setViewingAssignment(true);
-        setAssignmentType(assignments[index].type);
-      }
-    }, 3000);
-  };
-
-  const handleModuleComplete = (index) => {
+  const handleModuleComplete = useCallback((index) => {
     const nextIdx = index + 1;
     const isLastModule = nextIdx >= courseContent.length;
 
@@ -267,40 +273,77 @@ const CourseDetails = () => {
       setShowSuccessPopup(false);
       if (!isLastModule) selectTopic(nextIdx);
     }, 3000);
+  }, [courseContent, courseName, selectTopic]);
+
+  const handleTopicComplete = (index) => {
+    const topic = courseContent[index];
+    if (!topic) return;
+
+    setPopupContent({
+      title: "🎉 Congratulations!",
+      message: `You successfully completed ${topic.topic}.`,
+      subMessage: "Your next assignment is now unlocked.",
+      type: "topic"
+    });
+    setShowSuccessPopup(true);
+
+    setTimeout(() => {
+      setShowSuccessPopup(false);
+      const assignments = [
+        null,
+        { type: 'html' },
+        { type: 'styling' },
+        { type: 'styling2' },
+        { type: 'forms' }
+      ];
+      if (assignments[index]) {
+        setSidebarView('assignments');
+        setViewingAssignment(true);
+        setAssignmentType(assignments[index].type);
+      }
+    }, 3000);
   };
 
   // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
 
-  const [sidebarView, setSidebarView] = useState("topics");
-  const [viewingAssignment, setViewingAssignment] = useState(false);
-  const [assignmentType, setAssignmentType] = useState(null);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [popupContent, setPopupContent] = useState({ title: "", message: "", subMessage: "", type: "topic" });
-  const [assignmentCompletion, setAssignmentCompletion] = useState({
-    html: false,
-    css1: false,
-    css2: false,
-    forms: false
-  });
 
   // Sync assignment completion state from backend on mount
   useEffect(() => {
     const syncAssignments = async () => {
       if (!applicantId) return;
       try {
-        const assignments = await getAllAssignmentsByApplicant(applicantId);
+        console.log('[CourseDetails] Syncing assignments for:', applicantId);
+        const res = await getAllAssignmentsByApplicant(applicantId);
+
+        // Ensure we have an array to work with
+        const assignments = Array.isArray(res) ? res : (res ? [res] : []);
+        console.log('[CourseDetails] Fetched assignments count:', assignments.length);
+
         const completion = { html: false, css1: false, css2: false, forms: false };
 
         assignments.forEach(item => {
-          if (item.assignmentNumber === 10 && item.status === 'COMPLETED') completion.html = true;
-          if (item.assignmentNumber === 106 && item.status === 'COMPLETED') completion.css1 = true;
-          if (item.assignmentNumber === 208 && item.status === 'COMPLETED') completion.css2 = true;
-          if (item.assignmentNumber === 305 && item.status === 'COMPLETED') completion.forms = true;
+          // Exhaustive check for ID and status fields
+          const id = Number(item.assignmentNumber || item.assignment_number || item.id || item.assignmentId || item.assignment_id);
+          const status = (item.status || item.assignmentStatus || item.assignment_status || "").toUpperCase();
+          const hasCode = !!(item.assignmentCode || item.assignment_code || item.code || item.submittedCode);
+
+          const isDone = status === 'COMPLETED' || status === 'SUBMITTED' || hasCode;
+
+          if (isDone) {
+            console.log('[CourseDetails] Found completed assignment:', id);
+            // Relaxed range for HTML (Topic 1)
+            if ((id >= 1 && id <= 20) || id === 1.1) completion.html = true;
+            // CSS Ranges
+            if (id >= 100 && id <= 110) completion.css1 = true;
+            if (id >= 200 && id <= 215) completion.css2 = true;
+            if (id >= 300 && id <= 310) completion.forms = true;
+          }
         });
 
+        console.log('[CourseDetails] Final Completion State:', completion);
         setAssignmentCompletion(completion);
       } catch (error) {
-        console.error('Failed to sync assignments:', error);
+        console.error('[CourseDetails] Failed to sync assignments:', error);
       }
     };
     syncAssignments();
@@ -311,11 +354,12 @@ const CourseDetails = () => {
     const handleAssignmentDone = (e) => {
       const { assignmentId } = e.detail;
 
-      // Update completion based on last IDs of each group
-      if (assignmentId === 10) setAssignmentCompletion(prev => ({ ...prev, html: true }));
-      if (assignmentId === 106) setAssignmentCompletion(prev => ({ ...prev, css1: true }));
-      if (assignmentId === 208) setAssignmentCompletion(prev => ({ ...prev, css2: true }));
-      if (assignmentId === 305) setAssignmentCompletion(prev => ({ ...prev, forms: true }));
+      // Update completion based on ID ranges
+      const id = Number(assignmentId);
+      if (id >= 1 && id <= 10) setAssignmentCompletion(prev => ({ ...prev, html: true }));
+      if (id >= 101 && id <= 106) setAssignmentCompletion(prev => ({ ...prev, css1: true }));
+      if (id >= 201 && id <= 208) setAssignmentCompletion(prev => ({ ...prev, css2: true }));
+      if (id >= 301 && id <= 305) setAssignmentCompletion(prev => ({ ...prev, forms: true }));
 
       // Trigger module success popup if it was the last assignment of a group
       const groups = [
@@ -333,31 +377,9 @@ const CourseDetails = () => {
 
     window.addEventListener('assignmentCompleted', handleAssignmentDone);
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
-  }, []);
+  }, [handleModuleComplete]);
 
   // ── 4. Topic selection ────────────────────────────────
-  const selectTopic = (index) => {
-    setViewingAssignment(false);
-
-    // Check if topic is locked (using same logic as render)
-    let isLocked = false;
-    if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
-    if (index === 2) isLocked = !assignmentCompletion.html;
-    if (index === 3) isLocked = !assignmentCompletion.css1;
-    if (index === 4) isLocked = !assignmentCompletion.css2;
-
-    // If topic has progress, it should be considered unlocked (override lock)
-    if (topicProgress[index] > 0) isLocked = false;
-
-    if (isLocked) return;
-
-    setSelectedTopicIndex(index);
-
-    // Try to go fullscreen immediately on user gesture
-    if (!document.fullscreenElement) {
-      toggleFullscreen();
-    }
-  };
 
 
   const handleAssignmentClick = (type) => {
@@ -372,7 +394,7 @@ const CourseDetails = () => {
 
 
   // ── 5. Overall progress from backend ───────────────────────────────────────────
-  const averageProgress = overallProgress;
+  // overallProgress is used directly from state
 
   const selectedVideo = courseContent[selectedTopicIndex]?.videos?.[0]?.url || "";
 
@@ -385,17 +407,6 @@ const CourseDetails = () => {
     return () => document.removeEventListener("fullscreenchange", handleFsChange);
   }, []);
 
-  const toggleFullscreen = () => {
-    if (!playerRef.current) return;
-
-    if (!document.fullscreenElement) {
-      playerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
 
   const SuccessPopup = () => (
     <div className={`success-popup-overlay ${showSuccessPopup ? 'active' : ''}`}>

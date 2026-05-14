@@ -24,22 +24,22 @@ const ASSIGNMENTS = [
   { id: 10, title: "Exercise 1.10: Sample Bill", question: "Table format for a sample bill.", expectedOutput: `<table><tr><td>Item</td><td>Price</td></tr></table>`, testCases: [{ selector: 'table', marks: 10 }], topic: 'HTML Basics' },
 
   // ─── CSS BASICS (Module 2: 2.1 - 2.6) ─────────────────────────────────────
-  { id: 101, title: "Exercise 2.1: Inline Red Body", question: "Body with inline red color.", expectedOutput: `<body style="color: red;">Hello</body>`, testCases: [{ selector: 'body', marks: 5 }], topic: 'CSS Basics' },
-  { id: 102, title: "Exercise 2.2: Internal Red Text", question: "Paragraph with red color using internal style.", expectedOutput: `<style>p{color:red;}</style><p>Text</p>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Basics' },
-  { id: 103, title: "Exercise 2.3: External Styles", question: "Styled heading and paragraph.", expectedOutput: `<style>h1{color:blue;}</style><h1>T</h1>`, testCases: [{ selector: 'h1', marks: 5 }], topic: 'CSS Basics' },
-  { id: 104, title: "Exercise 2.4: ID and Class", question: "Use ID and Class selectors.", expectedOutput: `<style>#id1{color:red;}</style><h1 id="id1">H</h1>`, testCases: [{ selector: '#id1', marks: 5 }], topic: 'CSS Basics' },
-  { id: 105, title: "Exercise 2.5: Descendant Selector", question: "Background color using descendant selector.", expectedOutput: `<style>ol li{background:yellow;}</style><ol><li>I</li></ol>`, testCases: [{ selector: 'ol li', marks: 5 }], topic: 'CSS Basics' },
-  { id: 106, title: "Exercise 2.6: Pseudo-Selectors", question: "Hover effects on links.", expectedOutput: `<style>a:hover{color:orange;}</style>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Basics' },
+  { id: 101, title: "Exercise 2.1: Inline Red Body", question: "Body with inline red color.", expectedOutput: `<body style="color: red;"><h1>This is red text</h1></body>`, testCases: [{ selector: 'body', marks: 5 }], topic: 'CSS Basics' },
+  { id: 102, title: "Exercise 2.2: Internal Red Text", question: "Paragraph with red color using internal style.", expectedOutput: `<style>p{color:red;}</style><p>This paragraph should be red.</p>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Basics' },
+  { id: 103, title: "Exercise 2.3: External Styles", question: "Styled heading and paragraph.", expectedOutput: `<style>h1{color:blue;} p{color: green;}</style><h1>Blue Heading</h1><p>Green paragraph</p>`, testCases: [{ selector: 'h1', marks: 5 }], topic: 'CSS Basics' },
+  { id: 104, title: "Exercise 2.4: ID and Class", question: "Use ID and Class selectors.", expectedOutput: `<style>#id1{color:red;} .cls1{color:blue;}</style><h1 id="id1">ID Selector</h1><p class="cls1">Class Selector</p>`, testCases: [{ selector: '#id1', marks: 5 }], topic: 'CSS Basics' },
+  { id: 105, title: "Exercise 2.5: Descendant Selector", question: "Background color using descendant selector.", expectedOutput: `<style>ol li{background:yellow; padding: 5px; margin: 2px;}</style><ol><li>Item with yellow background</li></ol>`, testCases: [{ selector: 'ol li', marks: 5 }], topic: 'CSS Basics' },
+  { id: 106, title: "Exercise 2.6: Pseudo-Selectors", question: "Hover effects on links.", expectedOutput: `<style>a:hover{color:orange; font-weight: bold;}</style><a href="#">Hover over me to see orange color</a>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Basics' },
 
   // ─── CSS ADVANCED (Module 3: 3.1 - 3.8) ───────────────────────────────────
-  { id: 201, title: "Exercise 3.1: Fruit Colors", question: "Color headings for fruits.", expectedOutput: `<style>.apple{color:red;}</style>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 202, title: "Exercise 3.2: Font Weight", question: "Heading font weight and size.", expectedOutput: `<style>h1{font-weight:bold;}</style>`, testCases: [{ selector: 'h1', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 203, title: "Exercise 3.3: Class Attribute", question: "Apply style using class.", expectedOutput: `<p class="txt">T</p>`, testCases: [{ selector: '.txt', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 204, title: "Exercise 3.4: ID Attribute", question: "Apply style using ID.", expectedOutput: `<h1 id="id1">H</h1>`, testCases: [{ selector: '#id1', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 205, title: "Exercise 3.5: Margin", question: "Apply margins using ID.", expectedOutput: `<style>#p1{margin:10px;}</style>`, testCases: [{ selector: '#p1', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 206, title: "Exercise 3.6: Color with ID", question: "Change text color using ID.", expectedOutput: `<style>#p1{color:red;}</style>`, testCases: [{ selector: '#p1', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 207, title: "Exercise 3.7: Alignment", question: "Center and Right align text.", expectedOutput: `<style>.c{text-align:center;}</style>`, testCases: [{ selector: '.c', marks: 5 }], topic: 'CSS Advanced' },
-  { id: 208, title: "Exercise 3.8: Styled Link", question: "Gray background for Google link.", expectedOutput: `<style>a{background:gray;}</style>`, testCases: [{ selector: 'a', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 201, title: "Exercise 3.1: Fruit Colors", question: "Color headings for fruits.", expectedOutput: `<style>.apple{color:red;} .banana{color:yellow; background: #333;}</style><h1 class="apple">Apple (Red)</h1><h1 class="banana">Banana (Yellow)</h1>`, testCases: [{ selector: 'style', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 202, title: "Exercise 3.2: Font Weight", question: "Heading font weight and size.", expectedOutput: `<style>h1{font-weight:bold; font-size: 48px;}</style><h1>Bold Large Heading</h1>`, testCases: [{ selector: 'h1', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 203, title: "Exercise 3.3: Class Attribute", question: "Apply style using class.", expectedOutput: `<style>.txt{color: purple; font-style: italic;}</style><p class="txt">Styled with class</p>`, testCases: [{ selector: '.txt', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 204, title: "Exercise 3.4: ID Attribute", question: "Apply style using ID.", expectedOutput: `<style>#id1{color: darkgreen; border: 2px solid green; padding: 10px;}</style><h1 id="id1">Styled with ID</h1>`, testCases: [{ selector: '#id1', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 205, title: "Exercise 3.5: Margin", question: "Apply margins using ID.", expectedOutput: `<style>#p1{margin: 50px; background: #eee; border: 1px solid #ccc;}</style><p id="p1">Paragraph with 50px margin</p>`, testCases: [{ selector: '#p1', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 206, title: "Exercise 3.6: Color with ID", question: "Change text color using ID.", expectedOutput: `<style>#p1{color:teal; font-size: 20px;}</style><p id="p1">Teal colored text</p>`, testCases: [{ selector: '#p1', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 207, title: "Exercise 3.7: Alignment", question: "Center and Right align text.", expectedOutput: `<style>.c{text-align:center; color: blue;} .r{text-align:right; color: red;}</style><h2 class="c">Centered Text</h2><h2 class="r">Right Aligned Text</h2>`, testCases: [{ selector: '.c', marks: 5 }], topic: 'CSS Advanced' },
+  { id: 208, title: "Exercise 3.8: Styled Link", question: "Gray background for Google link.", expectedOutput: `<style>a{background:gray; color: white; padding: 10px; text-decoration: none; border-radius: 4px;}</style><a href="https://google.com">Visit Google</a>`, testCases: [{ selector: 'a', marks: 5 }], topic: 'CSS Advanced' },
 
   // ─── HTML FORMS (Module 4: 4.1 - 4.5) ─────────────────────────────────────
   { id: 301, title: "Exercise 4.1: Registration", question: "Registration form.", expectedOutput: `<form><input type="text" /></form>`, testCases: [{ selector: 'form', marks: 5 }], topic: 'HTML Forms' },
@@ -70,19 +70,45 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false); // Track if already completed in backend
-  const [completedIds, setCompletedIds] = useState(new Set()); // Track all completed assignment IDs
+  const [completedIds, setCompletedIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`completed_assignments_${applicantId}`);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  // Keep localStorage in sync
+  useEffect(() => {
+    if (applicantId && completedIds.size > 0) {
+      localStorage.setItem(`completed_assignments_${applicantId}`, JSON.stringify(Array.from(completedIds)));
+    }
+  }, [completedIds, applicantId]);
 
   const activeAssignmentIdRef = useRef(ASSIGNMENTS[0].id);
   const isNavigatingRef = useRef(false);
 
-  const currentAssignment = useMemo(() => ASSIGNMENTS[currentIndex], [currentIndex]);
+  const filteredAssignments = useMemo(() => {
+    const filtered = ASSIGNMENTS.filter(a => {
+      if (assignmentType === 'html') return a.topic === 'HTML Basics';
+      if (assignmentType === 'styling') return a.topic === 'CSS Basics';
+      if (assignmentType === 'styling2') return a.topic === 'CSS Advanced';
+      if (assignmentType === 'forms') return a.topic === 'HTML Forms';
+      return true;
+    });
+    console.log('[AssignmentEditor] Filtered Topic Assignments:', filtered.length);
+    return filtered;
+  }, [assignmentType]);
+
+  const currentAssignment = useMemo(() => filteredAssignments[currentIndex] || filteredAssignments[0] || ASSIGNMENTS[0], [currentIndex, filteredAssignments]);
 
   const fetchSavedCodeFromBackend = useCallback(async (index) => {
     if (!applicantId) {
       console.log('[AssignmentEditor] No applicantId, skipping fetch');
       return;
     }
-    const target = ASSIGNMENTS[index];
+    const target = filteredAssignments[index] || filteredAssignments[0];
     if (!target) return;
     const assignmentId = target.id;
 
@@ -111,11 +137,13 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           console.log('[AssignmentEditor] Success! Loaded assignment code (length):', finalCode.length);
           setCode(finalCode);
           setLiveOutput(finalCode);
-          
+
           const validation = AssignmentValidator.validate(finalCode, target.testCases);
           setValidationResult(validation);
           setIsSubmitted(true);
           setIsCompleted(true);
+          // Ensure this dot stays green since it exists in the database
+          setCompletedIds(prev => new Set(prev).add(assignmentId));
         } else {
           const template = `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
           console.log('[AssignmentEditor] No submission found. Loading default template.');
@@ -136,20 +164,17 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       setLoading(false);
       isNavigatingRef.current = false;
     }
-  }, [applicantId]);
+  }, [applicantId, filteredAssignments]);
 
   const performNavigation = useCallback((newIndex) => {
     isNavigatingRef.current = true;
-    activeAssignmentIdRef.current = ASSIGNMENTS[newIndex].id;
+    activeAssignmentIdRef.current = filteredAssignments[newIndex].id;
     setCurrentIndex(newIndex);
-    
-    // Save to localStorage so we can resume after refresh
-    localStorage.setItem('bitlabs_last_assignment_idx', newIndex.toString());
-  }, []);
+  }, [filteredAssignments]);
 
   const handleNextAssignment = useCallback(() => {
-    if (currentIndex < ASSIGNMENTS.length - 1) performNavigation(currentIndex + 1);
-  }, [currentIndex, performNavigation]);
+    if (currentIndex < filteredAssignments.length - 1) performNavigation(currentIndex + 1);
+  }, [currentIndex, filteredAssignments, performNavigation]);
 
   const handlePrevAssignment = useCallback(() => {
     if (currentIndex > 0) performNavigation(currentIndex - 1);
@@ -157,7 +182,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
   const handleBack = () => {
     const topic = currentAssignment.topic;
-    const firstIdx = ASSIGNMENTS.findIndex(a => a.topic === topic);
+    const firstIdx = filteredAssignments.findIndex(a => a.topic === topic);
     if (firstIdx !== -1 && currentIndex !== firstIdx) performNavigation(firstIdx);
     else if (onClose) onClose();
   };
@@ -174,56 +199,47 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
     setLiveOutput('');
     setIsSubmitted(false);
     setValidationResult(null);
-    setIsCompleted(false);
   };
 
   useEffect(() => {
     const init = async () => {
-      if (!applicantId) return;                               
+      if (!applicantId) return;
       setLoading(true);
       try {
+        const filtered = filteredAssignments;
         let targetIdx = 0;
-        
+
         // Fetch ALL submissions to show progress buttons
         const allSubmissions = await getAllAssignmentsByApplicant(applicantId).catch(() => null);
-        if (allSubmissions) {
-          const ids = new Set(allSubmissions.filter(s => s.status === 'COMPLETED').map(s => s.assignmentNumber));
+        if (allSubmissions && Array.isArray(allSubmissions)) {
+          const ids = new Set(
+            allSubmissions
+              .filter(s => {
+                const status = (s.status || s.assignmentStatus || s.assignment_status || "").toUpperCase();
+                const hasCode = !!(s.assignmentCode || s.assignment_code || s.code || s.submittedCode);
+                return status === 'COMPLETED' || status === 'SUBMITTED' || hasCode;
+              })
+              .map(s => Number(s.assignmentNumber || s.assignment_number || s.id || s.assignmentId || s.assignment_id))
+          );
+          console.log('[AssignmentEditor] Found completed IDs in DB:', Array.from(ids));
           setCompletedIds(ids);
         }
 
-        if (assignmentType) {
-          const map = { 'html': 0, 'styling': 10, 'styling2': 16, 'forms': 24 };
-          targetIdx = map[assignmentType] ?? 0;
-        } else {
-          if (allSubmissions && allSubmissions.length > 0) {
-            const highest = allSubmissions.reduce((p, c) => (p.assignmentNumber > c.assignmentNumber) ? p : c);
-            const resumeIndex = ASSIGNMENTS.findIndex(a => a.id === highest.assignmentNumber);
-            if (resumeIndex !== -1) {
-              targetIdx = Math.min(resumeIndex + 1, ASSIGNMENTS.length - 1);
-            }
-          } else {
-            const savedIdx = localStorage.getItem('bitlabs_last_assignment_idx');
-            if (savedIdx !== null) {
-              const parsed = parseInt(savedIdx, 10);
-              if (!isNaN(parsed) && parsed >= 0 && parsed < ASSIGNMENTS.length) {
-                targetIdx = parsed;
-              }
-            }
-          }
-        }
-        
-        console.log(`[AssignmentEditor] Initializing with index ${targetIdx} (ID: ${ASSIGNMENTS[targetIdx].id})`);
-        activeAssignmentIdRef.current = ASSIGNMENTS[targetIdx].id;
-        
+        // Always start at the first assignment of the selected topic
+        targetIdx = 0;
+
+        console.log(`[AssignmentEditor] Initializing with topic index ${targetIdx} (ID: ${filtered[targetIdx].id})`);
+        activeAssignmentIdRef.current = filtered[targetIdx].id;
+
         if (currentIndex === targetIdx) {
           fetchSavedCodeFromBackend(targetIdx);
         } else {
           setCurrentIndex(targetIdx);
         }
-      } catch (e) { 
+      } catch (e) {
         console.error('[AssignmentEditor] Init Error:', e);
-      } finally { 
-        setLoading(false); 
+      } finally {
+        setLoading(false);
       }
     };
     init();
@@ -245,11 +261,6 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
     try {
       await submitAssignment({ applicantId: applicantId || 101, assignmentNumber: currentAssignment.id, assignmentCode: code, status: 'COMPLETED' });
-      
-      // Update localStorage so refresh takes them to the NEXT assignment
-      if (currentIndex < ASSIGNMENTS.length - 1) {
-        localStorage.setItem('bitlabs_last_assignment_idx', (currentIndex + 1).toString());
-      }
 
       setShowSuccessModal(true);
       setCompletedIds(prev => new Set(prev).add(currentAssignment.id));
@@ -268,19 +279,16 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
         <div className="ae-title-section"><h2>{currentAssignment.title}</h2><span className="ae-badge">{currentAssignment.topic}</span></div>
         <div className="ae-progress">
           <div className="ae-nav-dots">
-            {ASSIGNMENTS.filter(a => a.topic === currentAssignment.topic).map((a, tIdx) => {
-              const globalIdx = ASSIGNMENTS.findIndex(ga => ga.id === a.id);
-              return (
-                <button 
-                  key={a.id} 
-                  className={`ae-dot ${globalIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
-                  onClick={() => performNavigation(globalIdx)}
-                  title={a.title}
-                >
-                  {tIdx + 1}
-                </button>
-              );
-            })}
+            {filteredAssignments.map((a, tIdx) => (
+              <button
+                key={a.id}
+                className={`ae-dot ${tIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
+                onClick={() => performNavigation(tIdx)}
+                title={a.title}
+              >
+                {tIdx + 1}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -298,7 +306,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
             <div className="ae-btn-slot">
               {currentIndex > 0 && <button className="ae-btn ae-btn-prev" onClick={handlePrevAssignment}>← Previous</button>}
             </div>
-            
+
             <div className="ae-btn-center">
               <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
               {(!isSubmitted || !validationResult?.isValid) && (
@@ -307,7 +315,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
             </div>
 
             <div className="ae-btn-slot ae-btn-right">
-              {isSubmitted && validationResult?.isValid && currentIndex < ASSIGNMENTS.length - 1 && (
+              {((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
                 <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
               )}
             </div>
