@@ -110,21 +110,24 @@
 }
 
 .ae-dot.active {
-  background: #3498db; /* Blue for the CURRENT assignment */
-  color: white;
-  border-color: #2980b9;
-  box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-  z-index: 2;
+  background: #ff6b35 !important; /* Orange for the CURRENT assignment */
+  color: white !important;
+  border-color: #f7931e !important;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  z-index: 5;
+  transform: translateY(-2px);
 }
 
 .ae-dot.completed {
-  background: #2ecc71 !important; /* Green ONLY for submitted/valid */
-  color: white !important;
-  border-color: #27ae60 !important;
+  background: #2ecc71; /* Green for finished assignments */
+  color: white;
+  border-color: #27ae60;
 }
 
 .ae-dot.completed.active {
-  box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.4);
+  background: #ff6b35 !important;
+  border-color: #f7931e !important;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.5);
 }
 
 /* ─────────────────────────────────────────────────────────────────── */

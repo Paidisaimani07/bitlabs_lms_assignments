@@ -308,68 +308,65 @@ const CourseDetails = () => {
 
 
   // Sync assignment completion state from backend on mount
-  useEffect(() => {
-    const syncAssignments = async () => {
-      if (!applicantId) return;
-      try {
-        console.log('[CourseDetails] Syncing assignments for:', applicantId);
-        const res = await getAllAssignmentsByApplicant(applicantId);
+  // Sync assignment completion state from backend
+  const syncAssignments = useCallback(async () => {
+    if (!applicantId) return;
+    try {
+      const res = await getAllAssignmentsByApplicant(applicantId);
+      const assignments = Array.isArray(res) ? res : (res ? [res] : []);
+      
+      const completedIds = {
+        html: new Set(),
+        css1: new Set(),
+        css2: new Set(),
+        forms: new Set()
+      };
+      const totals = { html: 10, css1: 6, css2: 8, forms: 5 };
 
-        // Ensure we have an array to work with
-        const assignments = Array.isArray(res) ? res : (res ? [res] : []);
-        console.log('[CourseDetails] Fetched assignments count:', assignments.length);
+      assignments.forEach(item => {
+        let id = item.assignmentNumber ?? item.assignment_number ?? item.assignmentId ?? item.assignment_id ?? item.id;
+        const numId = Number(id);
+        const status = (item.status || item.assignmentStatus || item.assignment_status || "").toUpperCase();
+        const hasCode = !!(item.assignmentCode || item.assignment_code || item.code || item.submittedCode);
+        const isDone = status === 'COMPLETED' || status === 'SUBMITTED' || hasCode;
 
-        const completion = { html: false, css1: false, css2: false, forms: false };
+        if (isDone && !isNaN(numId)) {
+          if (numId >= 1 && numId <= 10) completedIds.html.add(numId);
+          if (numId >= 101 && numId <= 106) completedIds.css1.add(numId);
+          if (numId >= 201 && numId <= 208) completedIds.css2.add(numId);
+          if (numId >= 301 && numId <= 305) completedIds.forms.add(numId);
+        }
+      });
 
-        assignments.forEach(item => {
-          // Exhaustive check for ID and status fields
-          const id = Number(item.assignmentNumber || item.assignment_number || item.id || item.assignmentId || item.assignment_id);
-          const status = (item.status || item.assignmentStatus || item.assignment_status || "").toUpperCase();
-          const hasCode = !!(item.assignmentCode || item.assignment_code || item.code || item.submittedCode);
-
-          const isDone = status === 'COMPLETED' || status === 'SUBMITTED' || hasCode;
-
-          if (isDone) {
-            console.log('[CourseDetails] Found completed assignment:', id);
-            // Relaxed range for HTML (Topic 1)
-            if ((id >= 1 && id <= 20) || id === 1.1) completion.html = true;
-            // CSS Ranges
-            if (id >= 100 && id <= 110) completion.css1 = true;
-            if (id >= 200 && id <= 215) completion.css2 = true;
-            if (id >= 300 && id <= 310) completion.forms = true;
-          }
-        });
-
-        console.log('[CourseDetails] Final Completion State:', completion);
-        setAssignmentCompletion(completion);
-      } catch (error) {
-        console.error('[CourseDetails] Failed to sync assignments:', error);
-      }
-    };
-    syncAssignments();
+      setAssignmentCompletion({
+        html: completedIds.html.size >= totals.html,
+        css1: completedIds.css1.size >= totals.css1,
+        css2: completedIds.css2.size >= totals.css2,
+        forms: completedIds.forms.size >= totals.forms
+      });
+    } catch (error) {
+      console.error('[CourseDetails] Sync Error:', error);
+    }
   }, [applicantId]);
 
-  // Listen for assignment completion events from AssignmentEditor
+  useEffect(() => {
+    syncAssignments();
+  }, [syncAssignments]);
+
   useEffect(() => {
     const handleAssignmentDone = (e) => {
+      syncAssignments();
       const { assignmentId } = e.detail;
-
-      // Update completion based on ID ranges
       const id = Number(assignmentId);
-      if (id >= 1 && id <= 10) setAssignmentCompletion(prev => ({ ...prev, html: true }));
-      if (id >= 101 && id <= 106) setAssignmentCompletion(prev => ({ ...prev, css1: true }));
-      if (id >= 201 && id <= 208) setAssignmentCompletion(prev => ({ ...prev, css2: true }));
-      if (id >= 301 && id <= 305) setAssignmentCompletion(prev => ({ ...prev, forms: true }));
-
-      // Trigger module success popup if it was the last assignment of a group
+      
       const groups = [
-        { lastId: 10, index: 1 }, // HTML
-        { lastId: 106, index: 2 }, // CSS1
-        { lastId: 208, index: 3 }, // CSS2
-        { lastId: 305, index: 4 }  // Forms
+        { id: 10, index: 1 },
+        { id: 106, index: 2 },
+        { id: 208, index: 3 },
+        { id: 305, index: 4 }
       ];
 
-      const group = groups.find(g => g.lastId === assignmentId);
+      const group = groups.find(g => g.id === id);
       if (group) {
         handleModuleComplete(group.index);
       }
@@ -377,7 +374,7 @@ const CourseDetails = () => {
 
     window.addEventListener('assignmentCompleted', handleAssignmentDone);
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
-  }, [handleModuleComplete]);
+  }, [syncAssignments, handleModuleComplete]);
 
   // ── 4. Topic selection ────────────────────────────────
 
@@ -515,7 +512,7 @@ const CourseDetails = () => {
                                   <div className="assignment-info">
                                     <h4>{topicAssignment.title}</h4>
                                     <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
-                                      {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Start Assignment")}
+                                      {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Try Assignment")}
                                     </span>
                                   </div>
                                   {isAssignmentUnlocked && !isAssignmentCompleted && (
