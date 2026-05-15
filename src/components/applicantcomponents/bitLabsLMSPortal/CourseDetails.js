@@ -36,7 +36,7 @@ const COURSE_DATA = {
     { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "/python for beginners/python variables and data types_topic2/index_lms.html" }] },
     { topic: "Python Operators", videos: [{ title: "Operators", url: "/python for beginners/Python Operators_topic3/index_lms.html" }] },
     { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "/python for beginners/Python conditional statements_topic4/index_lms.html" }] },
-    { topic: "Python Loops", videos: [{ title: "Loops", url: "/python for beginners/Python Loops_topic5/index_lms.html" }] },
+    { topic: "Python Loops", videos: [{ title: "Loops", url: "/python for beginners/Python Loop Control Statements_topic5/index_lms.html" }] },
     { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "/python for beginners/Python Data Structures Part 1_topic6/index_lms.html" }] },
     { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "/python for beginners/Python Data Structures Part 2_topic7/index_lms.html" }] },
     { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "/python for beginners/Python Data Structures Part 3_topic8/index_lms.html" }] },
@@ -573,9 +573,9 @@ const CourseDetails = () => {
                             ))}
 
                             {topicAssignment && isAssignmentAllowed && (
-                            courseName.toLowerCase() !== "python" ||
-                            true // Show all Python assignments in sidebar for clarity
-                          ) && (
+                              courseName.toLowerCase() !== "python" ||
+                              true // Show all Python assignments in sidebar for clarity
+                            ) && (
                                 <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
                                   <div
                                     className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
