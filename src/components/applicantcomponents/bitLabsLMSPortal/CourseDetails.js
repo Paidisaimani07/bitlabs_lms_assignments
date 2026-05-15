@@ -228,44 +228,51 @@ const CourseDetails = () => {
   }, [applicantId, courseName, courseContent, topicProgress]);
 
   // ── 1. Utility Callbacks ──────────────────────────────────────────────────
+  const getTopicLockedStatus = useCallback((index) => {
+    if (index === 0) return false;
+    const progress = topicProgress[index] || 0;
+    if (progress > 0) return false; // Already started topics are never locked
+
+    // Default rule: Previous topic must be 100%
+    const prevProgress = topicProgress[index - 1] || 0;
+    if (prevProgress < 100) return true;
+
+    if (courseName.toLowerCase() === "python") {
+      const prevAssignmentMap = {
+        2: 'python1', 3: 'python2', 4: 'python3', 5: 'python3', 6: 'python4', 7: 'python5',
+        8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
+      };
+      const prevAssignKey = prevAssignmentMap[index];
+      if (prevAssignKey && !assignmentCompletion[prevAssignKey]) return true;
+    } else {
+      // HTML/CSS logic
+      if (index === 2 && !assignmentCompletion.html) return true;
+      if (index === 3 && !assignmentCompletion.css1) return true;
+      if (index === 4 && !assignmentCompletion.css2) return true;
+    }
+    return false;
+  }, [topicProgress, assignmentCompletion, courseName]);
+
+  const selectTopic = useCallback((index) => {
+    setViewingAssignment(false);
+    if (getTopicLockedStatus(index)) return;
+
+    setSelectedTopicIndex(index);
+    // Note: toggleFullscreen is not defined in this scope yet if moved up, 
+    // but here it is defined later in the component.
+  }, [getTopicLockedStatus]);
+
+  // Function to toggle fullscreen
   const toggleFullscreen = useCallback(() => {
     if (!playerRef.current) return;
     if (!document.fullscreenElement) {
       playerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
       });
     } else {
       document.exitFullscreen();
     }
   }, []);
-
-  const selectTopic = useCallback((index) => {
-    setViewingAssignment(false);
-    let isLocked = false;
-    
-    if (courseName.toLowerCase() === "python") {
-      if (index > 0) isLocked = (topicProgress[index - 1] || 0) < 100;
-      // Topic 2 unlocks after Topic 1 completion, etc.
-      // Special rule: Next topic unlocks after previous topic's assignment completion if it exists
-      const prevAssignmentMap = {
-        2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5', 
-        8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
-      };
-      if (prevAssignmentMap[index]) {
-        isLocked = !assignmentCompletion[prevAssignmentMap[index]];
-      }
-    } else {
-      if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
-      if (index === 2) isLocked = !assignmentCompletion.html;
-      if (index === 3) isLocked = !assignmentCompletion.css1;
-      if (index === 4) isLocked = !assignmentCompletion.css2;
-    }
-
-    if (topicProgress[index] > 0) isLocked = false;
-    if (isLocked) return;
-    setSelectedTopicIndex(index);
-    if (!document.fullscreenElement) toggleFullscreen();
-  }, [topicProgress, assignmentCompletion, toggleFullscreen, courseName]);
 
   const handleModuleComplete = useCallback((index) => {
     const nextIdx = index + 1;
@@ -330,21 +337,20 @@ const CourseDetails = () => {
         setSidebarView('assignments');
         setViewingAssignment(true);
         setAssignmentType(assignments[index].type);
+      } else if (courseName.toLowerCase() === "python" && index === 4) {
+        // Topic 4 (Loops) has no assignment, move to next topic
+        selectTopic(5);
       }
     }, 3000);
   };
 
-  // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
-
-
-  // Sync assignment completion state from backend on mount
   // Sync assignment completion state from backend
   const syncAssignments = useCallback(async () => {
     if (!applicantId) return;
     try {
       const res = await getAllAssignmentsByApplicant(applicantId);
       const assignments = Array.isArray(res) ? res : (res ? [res] : []);
-      
+
       const completedIds = {
         html: new Set(),
         css1: new Set(),
@@ -401,7 +407,7 @@ const CourseDetails = () => {
       syncAssignments();
       const { assignmentId } = e.detail;
       const id = Number(assignmentId);
-      
+
       const groups = [
         { id: 10, index: 1 },
         { id: 106, index: 2 },
@@ -413,21 +419,40 @@ const CourseDetails = () => {
       if (group) {
         handleModuleComplete(group.index);
       }
-      
+
       // Handle Python individual assignment completion logic
       if (id >= 401 && id <= 411) {
-        // Python assignments are per-topic, so we don't necessarily trigger handleModuleComplete 
-        // unless it's the very last one, but we do need to refresh state
-        syncAssignments();
+        // Immediately update local state for better responsiveness
+        const completionKey = `python${id - 400}`;
+        setAssignmentCompletion(prev => ({ ...prev, [completionKey]: true }));
+
+        syncAssignments().then(() => {
+          // Auto-advance logic for Python topics
+          const pythonNextTopicMap = {
+            401: 2, // Convert Distance (Topic 1) -> Operators (Topic 2)
+            402: 3, // Total Marks (Topic 2) -> Conditionals (Topic 3)
+            403: 4, // Interest (Topic 3) -> Loops (Topic 4)
+            404: 6, // Tuple (Topic 5) -> DS Part 2 (Topic 6)
+            405: 7, // Remove Dups (Topic 6) -> DS Part 3 (Topic 7)
+            406: 8, // Capitalize (Topic 7) -> Functions (Topic 8)
+            407: 9, // Cond Capitalize (Topic 8) -> Modules (Topic 9)
+            408: 10, // Hypotenuse (Topic 9) -> OOPS (Topic 10)
+            409: 11, // Roster (Topic 10) -> Constructors (Topic 11)
+            410: 12, // Animals (Topic 11) -> Inheritance (Topic 12)
+          };
+
+          const nextTopicIdx = pythonNextTopicMap[id];
+          if (nextTopicIdx !== undefined) {
+            // Small delay to ensure React has processed the state update for the lock
+            setTimeout(() => selectTopic(nextTopicIdx), 400);
+          }
+        });
       }
     };
 
     window.addEventListener('assignmentCompleted', handleAssignmentDone);
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
-  }, [syncAssignments, handleModuleComplete]);
-
-  // ── 4. Topic selection ────────────────────────────────
-
+  }, [syncAssignments, handleModuleComplete, selectTopic]);
 
   const handleAssignmentClick = (type) => {
     if (!isAssignmentAllowed) return;
@@ -439,10 +464,6 @@ const CourseDetails = () => {
     setViewingAssignment(false);
   };
 
-
-  // ── 5. Overall progress from backend ───────────────────────────────────────────
-  // overallProgress is used directly from state
-
   const selectedVideo = courseContent[selectedTopicIndex]?.videos?.[0]?.url || "";
 
   // Listen for fullscreen change events (e.g. user pressing Esc)
@@ -453,7 +474,6 @@ const CourseDetails = () => {
     document.addEventListener("fullscreenchange", handleFsChange);
     return () => document.removeEventListener("fullscreenchange", handleFsChange);
   }, []);
-
 
   const SuccessPopup = () => (
     <div className={`success-popup-overlay ${showSuccessPopup ? 'active' : ''}`}>
@@ -482,33 +502,19 @@ const CourseDetails = () => {
                     <h3 className="cd-title">{courseName}</h3>
                     <div className="cd-progress-labels">
                       <span>Overall Progress</span>
-
                     </div>
                     <div className="cd-progress-track">
                       <div className="cd-progress-fill" style={{ width: `${overallProgress}%` }} />
                     </div>
                   </div>
 
-
-
-
                   <div className="sidebar-scrollable">
                     <div className="topics-list">
                       {courseContent.map((t, index) => {
                         const progress = topicProgress[index] || 0;
-
-                        let isTopicLocked = false;
-                        if (index === 1) isTopicLocked = (topicProgress[0] || 0) < 100;
-                        if (index === 2) isTopicLocked = !assignmentCompletion.html;
-                        if (index === 3) isTopicLocked = !assignmentCompletion.css1;
-                        if (index === 4) isTopicLocked = !assignmentCompletion.css2;
-
-                        // IMPORTANT: If a topic already has progress, it should NEVER be locked
-                        if (progress > 0) isTopicLocked = false;
-
+                        const isTopicLocked = getTopicLockedStatus(index);
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
-                        // Integrated Assignment Data
                         let assignments = [];
                         if (courseName.toLowerCase() === "python") {
                           assignments = [
@@ -516,7 +522,7 @@ const CourseDetails = () => {
                             { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
                             { title: "Total & Average Marks", type: 'python2', completionKey: 'python2' },
                             { title: "Calculate Interest", type: 'python3', completionKey: 'python3' },
-                            null, // Topic 4 (Loops - NO assignment as per request)
+                            null, // Topic 4
                             { title: "Tuple", type: 'python4', completionKey: 'python4' },
                             { title: "Remove Dups", type: 'python5', completionKey: 'python5' },
                             { title: "Capitalize", type: 'python6', completionKey: 'python6' },
@@ -529,10 +535,10 @@ const CourseDetails = () => {
                         } else {
                           assignments = [
                             null, // Topic 0
-                            { title: "First HTML Page", type: 'html', completionKey: 'html' }, // Topic 1
-                            { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
-                            { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
-                            { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
+                            { title: "First HTML Page", type: 'html', completionKey: 'html' },
+                            { title: "CSS Part 1", type: 'styling', completionKey: 'css1' },
+                            { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' },
+                            { title: "Registration Forms", type: 'forms', completionKey: 'forms' },
                           ];
                         }
 
@@ -553,12 +559,9 @@ const CourseDetails = () => {
                               </strong>
                             </div>
                             {!isTopicLocked && (
-                              <>
-                                <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
-                                  <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
-                                </div>
-
-                              </>
+                              <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
+                                <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
+                              </div>
                             )}
                             {t.videos.map((video, i) => (
                               <p
@@ -569,28 +572,30 @@ const CourseDetails = () => {
                               </p>
                             ))}
 
-                            {/* Integrated Assignment Section */}
                             {topicAssignment && isAssignmentAllowed && (
-                              <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
-                                <div
-                                  className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
-                                  onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
-                                >
-                                  <div className="assignment-icon">
-                                    {isAssignmentCompleted ? "✔" : "📝"}
+                            courseName.toLowerCase() !== "python" ||
+                            true // Show all Python assignments in sidebar for clarity
+                          ) && (
+                                <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
+                                  <div
+                                    className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
+                                    onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
+                                  >
+                                    <div className="assignment-icon">
+                                      {isAssignmentCompleted ? "✔" : "📝"}
+                                    </div>
+                                    <div className="assignment-info">
+                                      <h4>{topicAssignment.title}</h4>
+                                      <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
+                                        {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Try Assignment")}
+                                      </span>
+                                    </div>
+                                    {isAssignmentUnlocked && !isAssignmentCompleted && (
+                                      <div className="assignment-arrow">→</div>
+                                    )}
                                   </div>
-                                  <div className="assignment-info">
-                                    <h4>{topicAssignment.title}</h4>
-                                    <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
-                                      {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Try Assignment")}
-                                    </span>
-                                  </div>
-                                  {isAssignmentUnlocked && !isAssignmentCompleted && (
-                                    <div className="assignment-arrow">→</div>
-                                  )}
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
                         );
                       })}

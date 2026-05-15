@@ -90,9 +90,9 @@
   min-width: 34px;
   height: 34px;
   border-radius: 6px;
-  border: 2px solid #ff6b35; 
-  background: white; 
-  color: #ff6b35; 
+  border: 2px solid #ff6b35;
+  background: white;
+  color: #ff6b35;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -110,7 +110,8 @@
 }
 
 .ae-dot.active {
-  background: #ff6b35 !important; /* Orange for the CURRENT assignment */
+  background: #ff6b35 !important;
+  /* Orange for the CURRENT assignment */
   color: white !important;
   border-color: #f7931e !important;
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
@@ -119,7 +120,8 @@
 }
 
 .ae-dot.completed {
-  background: #2ecc71; /* Green for finished assignments */
+  background: #2ecc71;
+  /* Green for finished assignments */
   color: white;
   border-color: #27ae60;
 }
@@ -723,13 +725,25 @@
 }
 
 @keyframes aeFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes aeScaleUp {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────────── */
@@ -823,4 +837,3 @@
 .ae-python-editor::placeholder {
   color: #555 !important;
 }
-

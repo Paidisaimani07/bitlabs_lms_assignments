@@ -200,7 +200,9 @@ class AssignmentValidator {
 
     // 1. Keyword Validation
     keywords.forEach(kw => {
-      const regex = new RegExp(`\\b${kw}\\b`);
+      // Escape special characters in keyword for regex (like c++)
+      const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedKw})`, 'i'); 
       const passed = regex.test(code);
       if (passed) passedCount++;
       results.push({

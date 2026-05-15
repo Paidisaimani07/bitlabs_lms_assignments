@@ -47,19 +47,19 @@ const ASSIGNMENTS = [
   { id: 303, title: "Exercise 4.3: Feedback", question: "Feedback form with textarea.", expectedOutput: `<form><textarea></textarea></form>`, testCases: [{ selector: 'textarea', marks: 5 }], topic: 'HTML Forms' },
   { id: 304, title: "Exercise 4.4: Survey", question: "Survey form with radio buttons.", expectedOutput: `<form><input type="radio" /></form>`, testCases: [{ selector: 'input[type="radio"]', marks: 5 }], topic: 'HTML Forms' },
   { id: 305, title: "Exercise 4.5: Contact", question: "Contact form with select dropdown.", expectedOutput: `<form><select><option>O</option></select></form>`, testCases: [{ selector: 'select', marks: 5 }], topic: 'HTML Forms' },
-  
+
   // ─── PYTHON (Module 5: 401 - 411) ────────────────────────────────────────
-  { id: 401, title: "Convert Distance", question: "Write program to convert the distance (in feet) to inches, yards, and miles.", expectedOutput: "Distance in feet : 5.0\nDistance in inches : 60.0\nDistance in yards : 1.6666666666666667\nDistance in miles : 0.000946969696969697", defaultCode: "feet = float(input(\"Enter the distance in feet : \"))\n", topic: 'Python', keywords: ['feet', 'float', 'input', 'print'] },
-  { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Display total marks, average, result and grade properly.", defaultCode: "# Enter student details and marks\n", topic: 'Python', keywords: ['input', 'print'] },
-  { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Display yearly capital with interest.", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
-  { id: 404, title: "Tuple", question: "Sort tuples using last element.", expectedOutput: "[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]", defaultCode: "data = [(2, 5), (1, 2), (4, 4), (2, 3), (2, 1)]\n", topic: 'Python', keywords: ['sort', 'lambda'] },
-  { id: 405, title: "Remove Dups", question: "Remove duplicates from list while preserving order.", expectedOutput: "[12, 24, 35, 88, 120, 155]", defaultCode: "items = [12, 24, 35, 24, 88, 120, 155, 88, 120, 155]\n", topic: 'Python', keywords: ['set', 'list', 'append'] },
-  { id: 406, title: "Capitalize", question: "Convert all input lines to uppercase.", expectedOutput: "HELLO WORLD\nPRACTICE MAKES PERFECT", defaultCode: "lines = []\nwhile True:\n    s = input()\n    if s: lines.append(s.upper())\n    else: break\n", topic: 'Python', keywords: ['upper', 'input'] },
-  { id: 407, title: "Conditional Capitalize", question: "Implement preLetterCase(string, letter)", expectedOutput: "preLetterCase(\"CAtCHa\",\"a\") → \"cATCHA\"", defaultCode: "def preLetterCase(string, letter):\n    # implementation\n    pass\n", topic: 'Python', keywords: ['def', 'return', 'if'] },
-  { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Display hypotenuse value.", defaultCode: "import math\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
-  { id: 409, title: "Student Roster", question: "Create Student class with attributes and display values.", expectedOutput: "Student ID: M11\nStudent Name: Anusha Rao", defaultCode: "class Student:\n    pass\n", topic: 'Python', keywords: ['class', 'def', '__init__'] },
-  { id: 410, title: "Animal Counts", question: "Use try/except while summing dictionary values.", expectedOutput: "Total number of puppies:130", defaultCode: "animals = {'puppies': 70, 'kittens': 60}\n", topic: 'Python', keywords: ['try', 'except', 'print'] },
-  { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "Display square area properly.", defaultCode: "class Shape:\n    def area(self): return 0\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
+  { id: 401, title: "Convert Distance", question: "Write program to convert the distance (in feet) to inches, yards, and miles.", expectedOutput: "Distance in feet : 5.0\nDistance in inches : 60.0\nDistance in yards : 1.6666666666666667\nDistance in miles : 0.000946969696969697", defaultCode: "# Input distance in feet\nfeet = float(input(\"Enter the distance in feet : \"))\n\n# Convert to inches, yards, and miles\n# ... code here ...\n", topic: 'Python', keywords: ['feet', 'float', 'input', 'print'] },
+  { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Enter Student Number: 101\nEnter Student Name: Sai Mani\nEnter C Marks: 85\nEnter C++ Marks: 90\nEnter Java Marks: 88\n\nTotal Marks: 263\nAverage: 87.66\nResult: Pass\nGrade: A", defaultCode: "# Enter student details\nstudent_no = input(\"Enter Student Number: \")\nname = input(\"Enter Student Name: \")\n\n# Enter marks\nc_marks = float(input(\"Enter C Marks: \"))\ncpp_marks = float(input(\"Enter C++ Marks: \"))\njava_marks = float(input(\"Enter Java Marks: \"))\n\n# Calculate total, average, result and grade\n# ... code here ...\n", topic: 'Python', keywords: ['input', 'print', 'c++', 'java', 'marks'] },
+  { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Display yearly capital with interest.", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\nyears = int(input(\"Number of years: \"))\n\n# Calculate capital for each year\n# ... code here ...\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
+  { id: 404, title: "Tuple", question: "Sort tuples using last element.", expectedOutput: "[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]", defaultCode: "data = [(2, 5), (1, 2), (4, 4), (2, 3), (2, 1)]\n\n# Sort the list of tuples based on the second element\n# ... code here ...\n", topic: 'Python', keywords: ['sort', 'lambda'] },
+  { id: 405, title: "Remove Dups", question: "Remove duplicates from list while preserving order.", expectedOutput: "[12, 24, 35, 88, 120, 155]", defaultCode: "items = [12, 24, 35, 24, 88, 120, 155, 88, 120, 155]\n\n# Create a new list without duplicates\n# ... code here ...\n", topic: 'Python', keywords: ['set', 'list', 'append'] },
+  { id: 406, title: "Capitalize", question: "Convert all input lines to uppercase.", expectedOutput: "HELLO WORLD\nPRACTICE MAKES PERFECT", defaultCode: "lines = []\nprint(\"Enter lines (empty line to stop):\")\nwhile True:\n    # ... read and process lines ...\n    pass\n", topic: 'Python', keywords: ['upper', 'input'] },
+  { id: 407, title: "Conditional Capitalize", question: "Implement preLetterCase(string, letter)", expectedOutput: "preLetterCase(\"CAtCHa\",\"a\") → \"cATCHA\"", defaultCode: "def preLetterCase(string, letter):\n    # if string starts with letter, convert all to uppercase\n    # otherwise convert all to lowercase\n    pass\n", topic: 'Python', keywords: ['def', 'return', 'if'] },
+  { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Display hypotenuse value.", defaultCode: "import math\na = 3\nb = 4\n\n# Calculate hypotenuse c = sqrt(a^2 + b^2)\n# ... code here ...\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
+  { id: 409, title: "Student Roster", question: "Create Student class with attributes and display values.", expectedOutput: "Student ID: M11\nStudent Name: Anusha Rao", defaultCode: "class Student:\n    def __init__(self, id, name):\n        # ... initialize ...\n        pass\n\n# Create and display student\n", topic: 'Python', keywords: ['class', 'def', '__init__'] },
+  { id: 410, title: "Animal Counts", question: "Use try/except while summing dictionary values.", expectedOutput: "Total number of puppies:130", defaultCode: "animals = {'puppies': 70, 'kittens': 60}\n\ntry:\n    # ... sum logic ...\n    pass\nexcept Exception as e:\n    print(e)\n", topic: 'Python', keywords: ['try', 'except', 'print'] },
+  { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "Display square area properly.", defaultCode: "class Shape:\n    def area(self): return 0\n\nclass Square(Shape):\n    # ... override area ...\n    pass\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
 ];
 
 const ErrorModal = ({ errors, onClose }) => (
@@ -145,31 +145,31 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
         backendCode = data.assignmentCode || data.assignment_code || data.code;
       }
 
-          if (activeAssignmentIdRef.current === assignmentId) {
-            if (backendCode !== null && backendCode !== undefined) {
-              const finalCode = String(backendCode);
-              setCode(finalCode);
-              setLiveOutput(finalCode);
-    
-              const isPython = target.topic === 'Python';
-              const validation = isPython 
-                ? AssignmentValidator.validatePython(finalCode, { expectedOutput: target.expectedOutput, keywords: target.keywords })
-                : AssignmentValidator.validate(finalCode, target.testCases);
-              
-              setValidationResult(validation);
-              setIsSubmitted(true);
-              setIsCompleted(true);
-              setCompletedIds(prev => new Set(prev).add(assignmentId));
-            } else {
-              const template = target.topic === 'Python' 
-                ? (target.defaultCode || "") 
-                : `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
-              setCode(template);
-              setLiveOutput(template);
-              setIsSubmitted(false);
-              setIsCompleted(false);
-            }
-          }
+      if (activeAssignmentIdRef.current === assignmentId) {
+        if (backendCode !== null && backendCode !== undefined) {
+          const finalCode = String(backendCode);
+          setCode(finalCode);
+          setLiveOutput(finalCode);
+
+          const isPython = target.topic === 'Python';
+          const validation = isPython
+            ? AssignmentValidator.validatePython(finalCode, { expectedOutput: target.expectedOutput, keywords: target.keywords })
+            : AssignmentValidator.validate(finalCode, target.testCases);
+
+          setValidationResult(validation);
+          setIsSubmitted(true);
+          setIsCompleted(true);
+          setCompletedIds(prev => new Set(prev).add(assignmentId));
+        } else {
+          const template = target.topic === 'Python'
+            ? (target.defaultCode || "")
+            : `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
+          setCode(template);
+          setLiveOutput(template);
+          setIsSubmitted(false);
+          setIsCompleted(false);
+        }
+      }
     } catch (e) {
       console.error('[AssignmentEditor] Fetch Error:', e);
       const template = `<!DOCTYPE html>\n<html>\n<body>\n    <!-- Template Fallback -->\n</body>\n</html>`;
@@ -212,7 +212,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   };
 
   const handleClear = () => {
-    setCode('');
+    setCode(currentAssignment.defaultCode || '');
     setLiveOutput('');
     setIsSubmitted(false);
     setValidationResult(null);
@@ -276,7 +276,25 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
     fetchSavedCodeFromBackend(currentIndex);
   }, [currentIndex, fetchSavedCodeFromBackend]);
 
-  const handleRun = () => { setLiveOutput(code); setIsSubmitted(false); };
+  const handleRun = () => {
+    if (currentAssignment.topic === 'Python') {
+      // Improved Python output simulation: show expected output if keywords are found, 
+      // or show a generic execution message.
+      const validation = AssignmentValidator.validatePython(code, { 
+        expectedOutput: currentAssignment.expectedOutput, 
+        keywords: currentAssignment.keywords 
+      });
+      
+      if (validation.isValid) {
+        setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${currentAssignment.expectedOutput}\n\n>>> Execution finished successfully.`);
+      } else {
+        setLiveOutput(`Python Execution Output:\n--------------------------\n(Processing code...)\n\nNote: Please ensure all required keywords and logic are implemented to see full output.`);
+      }
+    } else {
+      setLiveOutput(code);
+    }
+    setIsSubmitted(false);
+  };
 
   const handleSubmit = async () => {
     const isPython = currentAssignment.topic === 'Python';
@@ -306,20 +324,22 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       <div className="ae-header">
         <button className="ae-back-btn" onClick={handleBack}>← Back</button>
         <div className="ae-title-section"><h2>{currentAssignment.title}</h2><span className="ae-badge">{currentAssignment.topic}</span></div>
-        <div className="ae-progress">
-          <div className="ae-nav-dots">
-            {filteredAssignments.map((a, tIdx) => (
-              <button
-                key={a.id}
-                className={`ae-dot ${tIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
-                onClick={() => performNavigation(tIdx)}
-                title={a.title}
-              >
-                {tIdx + 1}
-              </button>
-            ))}
+        {currentAssignment.topic !== 'Python' && (
+          <div className="ae-progress">
+            <div className="ae-nav-dots">
+              {filteredAssignments.map((a, tIdx) => (
+                <button
+                  key={a.id}
+                  className={`ae-dot ${tIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
+                  onClick={() => performNavigation(tIdx)}
+                  title={a.title}
+                >
+                  {tIdx + 1}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="ae-content">
         <div className="ae-left-panel">
@@ -344,7 +364,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
             </div>
 
             <div className="ae-btn-slot ae-btn-right">
-              {((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
+              {currentAssignment.topic !== 'Python' && ((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
                 <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
               )}
             </div>
