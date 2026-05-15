@@ -1,0 +1,243 @@
+.score-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.score-modal {
+  background-color: #ffffff;
+  border-radius: 12px;
+  height: 90%;
+  width: 90%;
+  max-width: 500px;
+  max-height: 900px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  animation: slideDown 0.3s ease-out;
+}
+
+.score-modal::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.score-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: linear-gradient(90deg, #FBBB5C 0%, #E66A0E 100%);
+  color: #fff;
+}
+
+.score-modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.score-modal-close {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  color: #fff !important;
+  font-size: 1.6rem !important;
+  cursor: pointer;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  opacity: 0.9;
+  transition: opacity 0.2s, background-color 0.2s;
+  padding: 0 !important;
+  line-height: 0 !important;
+  outline: none !important;
+}
+
+.score-modal-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.score-modal-content {
+  padding: 24px;
+  background-color: #FAFAFA;
+}
+
+.score-intro-text {
+  font-size: 1rem;
+  color: #4A4A4A;
+  margin-top: 0;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-weight: 500;
+  text-align: center;
+}
+
+.score-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.score-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+  opacity: 0;
+  animation: slideInRight 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.score-list li:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.score-list li:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.score-list li:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.score-list li:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.score-list li:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+.score-list li:hover {
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(234, 123, 32, 0.1);
+}
+
+.score-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.score-icon {
+  font-size: 1.2rem;
+  background-color: #FFF3E8;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 2px 4px rgba(234, 123, 32, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.score-list li:hover .score-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.score-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.score-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2D3748;
+}
+
+.score-subtext {
+  font-size: 0.75rem;
+  color: #718096;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.score-value {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #EA7B20;
+  white-space: nowrap;
+}
+
+.score-modal-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeInFooter 0.4s ease-out forwards;
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInFooter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.score-modal-footer button{
+  background: linear-gradient(135deg, #EA7B20 0%, #D66311 100%);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: 20px;
+  height: 40px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  width: 100%;
+  box-shadow: 0 4px 10px rgba(234, 123, 32, 0.25);
+}
