@@ -34,18 +34,18 @@ const ApplicantCourses = () => {
   useEffect(() => {
     const loadCoursesProgress = async () => {
       if (!applicantId) return;
-      
+
       try {
         setLoading(true);
         // Get all courses progress for this applicant
         const applicantCourses = await ProgressAPIService.getApplicantProgress(applicantId);
-        
+
         // Convert to object with course names as keys for easy lookup
         const progressMap = {};
         applicantCourses.forEach(course => {
           progressMap[course.courseName.toLowerCase()] = course.overallProgress;
         });
-        
+
         setCoursesProgress(progressMap);
       } catch (error) {
         console.error('Error loading courses progress:', error);
