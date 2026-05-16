@@ -89,6 +89,13 @@ const CourseDetails = () => {
     python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
   });
 
+  // Refs for state to avoid stale closures in setTimeout callbacks
+  const topicProgressRef = useRef({});
+  const assignmentCompletionRef = useRef({
+    html: false, css1: false, css2: false, forms: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
+  });
+
   // Ref keeps the current topic index reachable inside async callbacks/effects
   const playerRef = useRef(null);
   const topicIndexRef = useRef(0);
@@ -157,6 +164,7 @@ const CourseDetails = () => {
           topicsProgress.forEach(topic => {
             progressMap[topic.topicIndex] = topic.topicProgress;
           });
+          topicProgressRef.current = progressMap;
           setTopicProgress(progressMap);
 
           // Find the last accessed topic (highest progress that's not 100%)
@@ -173,6 +181,7 @@ const CourseDetails = () => {
         } else {
           // Initialize with zero progress if no course progress exists
           setOverallProgress(0);
+          topicProgressRef.current = {};
           setTopicProgress({});
           setSelectedTopicIndex(0);
         }
@@ -180,6 +189,7 @@ const CourseDetails = () => {
         console.error('Error loading progress:', error);
         // Fallback to zero progress
         setOverallProgress(0);
+        topicProgressRef.current = {};
         setTopicProgress({});
         setSelectedTopicIndex(0);
       } finally {
@@ -193,17 +203,19 @@ const CourseDetails = () => {
   // ── 3. Progress update — save to backend ────────────────────────────────────
   const handleProgressUpdate = useCallback(async (p) => {
     if (!applicantId) return;
+    const numericP = Number(p);
     const idx = topicIndexRef.current;
-    const currentProgress = topicProgress[idx] || 0;
+    const currentProgress = topicProgressRef.current[idx] || 0;
 
-    if (p <= currentProgress) return; // ✅ progress can only move forward
+    if (numericP <= currentProgress) return; // ✅ progress can only move forward
 
     try {
       // Update local state immediately for UI responsiveness
-      setTopicProgress(prev => ({ ...prev, [idx]: p }));
+      const newTopicProgress = { ...topicProgressRef.current, [idx]: numericP };
+      topicProgressRef.current = newTopicProgress;
+      setTopicProgress(newTopicProgress);
 
       // Calculate new overall progress
-      const newTopicProgress = { ...topicProgress, [idx]: p };
       const totalProgress = Object.values(newTopicProgress).reduce((a, b) => a + b, 0);
       const newOverallProgress = Math.round(totalProgress / courseContent.length);
       setOverallProgress(newOverallProgress);
@@ -223,35 +235,37 @@ const CourseDetails = () => {
       }
     } catch (error) {
       console.error('Error saving progress:', error);
-      setTopicProgress(prev => ({ ...prev, [idx]: currentProgress }));
+      const rollbackProgress = { ...topicProgress, [idx]: currentProgress };
+      topicProgressRef.current = rollbackProgress;
+      setTopicProgress(rollbackProgress);
     }
   }, [applicantId, courseName, courseContent, topicProgress]);
 
   // ── 1. Utility Callbacks ──────────────────────────────────────────────────
   const getTopicLockedStatus = useCallback((index) => {
     if (index === 0) return false;
-    const progress = topicProgress[index] || 0;
+    const progress = topicProgressRef.current[index] || 0;
     if (progress > 0) return false; // Already started topics are never locked
 
     // Default rule: Previous topic must be 100%
-    const prevProgress = topicProgress[index - 1] || 0;
+    const prevProgress = topicProgressRef.current[index - 1] || 0;
     if (prevProgress < 100) return true;
 
     if (courseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
-        3: 'python1', 4: 'python2', 5: 'python3', 6: 'python4', 7: 'python5',
+        2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5',
         8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
       };
       const prevAssignKey = prevAssignmentMap[index];
-      if (prevAssignKey && !assignmentCompletion[prevAssignKey]) return true;
+      if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
     } else {
       // HTML/CSS logic
-      if (index === 2 && !assignmentCompletion.html) return true;
-      if (index === 3 && !assignmentCompletion.css1) return true;
-      if (index === 4 && !assignmentCompletion.css2) return true;
+      if (index === 2 && !assignmentCompletionRef.current.html) return true;
+      if (index === 3 && !assignmentCompletionRef.current.css1) return true;
+      if (index === 4 && !assignmentCompletionRef.current.css2) return true;
     }
     return false;
-  }, [topicProgress, assignmentCompletion, courseName]);
+  }, [courseName]);
 
   const selectTopic = useCallback((index) => {
     setViewingAssignment(false);
@@ -318,8 +332,8 @@ const CourseDetails = () => {
       let assignments = [];
       if (courseName.toLowerCase() === "python") {
         assignments = [
-          null, null, // Topic 0, 1
-          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, 
+          null,
+          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
           { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
           { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
           { type: 'python10' }, { type: 'python11' }
@@ -379,7 +393,7 @@ const CourseDetails = () => {
         }
       });
 
-      setAssignmentCompletion({
+      const newCompletion = {
         html: completedIds.html.size >= totals.html,
         css1: completedIds.css1.size >= totals.css1,
         css2: completedIds.css2.size >= totals.css2,
@@ -395,7 +409,9 @@ const CourseDetails = () => {
         python9: completedIds.python.has(409),
         python10: completedIds.python.has(410),
         python11: completedIds.python.has(411)
-      });
+      };
+      assignmentCompletionRef.current = newCompletion;
+      setAssignmentCompletion(newCompletion);
     } catch (error) {
       console.error('[CourseDetails] Sync Error:', error);
     }
@@ -427,22 +443,26 @@ const CourseDetails = () => {
       if (id >= 401 && id <= 411) {
         // Immediately update local state for better responsiveness
         const completionKey = `python${id - 400}`;
-        setAssignmentCompletion(prev => ({ ...prev, [completionKey]: true }));
+        setAssignmentCompletion(prev => {
+          const next = { ...prev, [completionKey]: true };
+          assignmentCompletionRef.current = next;
+          return next;
+        });
 
         syncAssignments().then(() => {
           // Auto-advance logic for Python topics
           const pythonNextTopicMap = {
-            401: 3, // Topic 2 (Ops) -> Conditionals (Topic 3)
-            402: 4, // Topic 3 (Cond) -> Loops (Topic 4)
-            403: 5, // Topic 4 (Loops) -> DS Part 1 (Topic 5)
-            404: 6, // Topic 5 (DS1) -> DS Part 2 (Topic 6)
-            405: 7, // Topic 6 (DS2) -> DS Part 3 (Topic 7)
-            406: 8, // Topic 7 (DS3) -> Functions (Topic 8)
-            407: 9, // Topic 8 (Funcs) -> Modules (Topic 9)
-            408: 10, // Topic 9 (Mods) -> OOPS (Topic 10)
-            409: 11, // Topic 10 (OOPS) -> Constructors (Topic 11)
-            410: 12, // Topic 11 (Cons) -> Inheritance (Topic 12)
-            411: 13, // Topic 12 (Inh) -> End
+            401: 2, // Convert Distance (Topic 1) -> Operators (Topic 2)
+            402: 3, // Total Marks (Topic 2) -> Conditionals (Topic 3)
+            403: 4, // Interest (Topic 3) -> Loops (Topic 4)
+            404: 6, // Tuple (Topic 5) -> DS Part 2 (Topic 6)
+            405: 7, // Remove Dups (Topic 6) -> DS Part 3 (Topic 7)
+            406: 8, // Capitalize (Topic 7) -> Functions (Topic 8)
+            407: 9, // Cond Capitalize (Topic 8) -> Modules (Topic 9)
+            408: 10, // Hypotenuse (Topic 9) -> OOPS (Topic 10)
+            409: 11, // Roster (Topic 10) -> Constructors (Topic 11)
+            410: 12, // Animals (Topic 11) -> Inheritance (Topic 12)
+            411: 13, // Shape (Topic 12) -> Inheritance (Topic 13)
           };
 
           const nextTopicIdx = pythonNextTopicMap[id];
@@ -458,17 +478,20 @@ const CourseDetails = () => {
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
   }, [syncAssignments, handleModuleComplete, selectTopic]);
 
-  const handleAssignmentClick = (type) => {
+  const handleAssignmentClick = (type, index) => {
     if (!isAssignmentAllowed) return;
     setAssignmentType(type);
     setViewingAssignment(true);
+    if (index !== undefined) {
+      setSelectedTopicIndex(index);
+    }
   };
 
   const handleAssignmentNavigate = (newAssignmentId) => {
     const id = Number(newAssignmentId);
     if (courseName.toLowerCase() === "python") {
       const pythonTopicMap = {
-        401: 2, 402: 3, 403: 4, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
+        401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
       };
       const topicIdx = pythonTopicMap[id];
       if (topicIdx !== undefined) {
@@ -544,10 +567,11 @@ const CourseDetails = () => {
                         let assignments = [];
                         if (courseName.toLowerCase() === "python") {
                           assignments = [
-                            null, null, // Topic 0, 1
+                            null, // Topic 0
                             { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
                             { title: "Total & Average Marks", type: 'python2', completionKey: 'python2' },
                             { title: "Calculate Interest", type: 'python3', completionKey: 'python3' },
+                            null, // Topic 4
                             { title: "Tuple", type: 'python4', completionKey: 'python4' },
                             { title: "Remove Dups", type: 'python5', completionKey: 'python5' },
                             { title: "Capitalize", type: 'python6', completionKey: 'python6' },
@@ -604,7 +628,7 @@ const CourseDetails = () => {
                                 <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
                                   <div
                                     className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
-                                    onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
+                                    onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type, index)}
                                   >
                                     <div className="assignment-icon">
                                       {isAssignmentCompleted ? "✔" : "📝"}
@@ -631,14 +655,14 @@ const CourseDetails = () => {
                 <div className="course-player" ref={playerRef}>
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
-                        <AssignmentEditor
-                          type={assignmentType}
-                          onClose={handleCloseAssignment}
-                          applicantId={applicantId}
-                          assignmentType={assignmentType}
-                          onNavigate={handleAssignmentNavigate}
-                          onNextTopic={handleNextTopic}
-                        />
+                      <AssignmentEditor
+                        type={assignmentType}
+                        onClose={handleCloseAssignment}
+                        applicantId={applicantId}
+                        assignmentType={assignmentType}
+                        onNavigate={handleAssignmentNavigate}
+                        onNextTopic={handleNextTopic}
+                      />
                     </div>
                   ) : (
                     <>

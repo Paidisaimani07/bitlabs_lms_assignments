@@ -284,11 +284,11 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
     if (currentAssignment.topic === 'Python') {
       // Improved Python output simulation: show expected output if keywords are found, 
       // or show a generic execution message.
-      const validation = AssignmentValidator.validatePython(code, { 
-        expectedOutput: currentAssignment.expectedOutput, 
-        keywords: currentAssignment.keywords 
+      const validation = AssignmentValidator.validatePython(code, {
+        expectedOutput: currentAssignment.expectedOutput,
+        keywords: currentAssignment.keywords
       });
-      
+
       if (validation.isValid) {
         setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${currentAssignment.expectedOutput}\n\n>>> Execution finished successfully.`);
       } else {
