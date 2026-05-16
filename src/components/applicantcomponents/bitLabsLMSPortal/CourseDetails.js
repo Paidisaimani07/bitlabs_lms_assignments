@@ -239,7 +239,7 @@ const CourseDetails = () => {
 
     if (courseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
-        2: 'python1', 3: 'python2', 4: 'python3', 5: 'python3', 6: 'python4', 7: 'python5',
+        3: 'python1', 4: 'python2', 5: 'python3', 6: 'python4', 7: 'python5',
         8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
       };
       const prevAssignKey = prevAssignmentMap[index];
@@ -318,8 +318,8 @@ const CourseDetails = () => {
       let assignments = [];
       if (courseName.toLowerCase() === "python") {
         assignments = [
-          null,
-          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
+          null, null, // Topic 0, 1
+          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, 
           { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
           { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
           { type: 'python10' }, { type: 'python11' }
@@ -432,17 +432,17 @@ const CourseDetails = () => {
         syncAssignments().then(() => {
           // Auto-advance logic for Python topics
           const pythonNextTopicMap = {
-            401: 2, // Convert Distance (Topic 1) -> Operators (Topic 2)
-            402: 3, // Total Marks (Topic 2) -> Conditionals (Topic 3)
-            403: 4, // Interest (Topic 3) -> Loops (Topic 4)
-            404: 6, // Tuple (Topic 5) -> DS Part 2 (Topic 6)
-            405: 7, // Remove Dups (Topic 6) -> DS Part 3 (Topic 7)
-            406: 8, // Capitalize (Topic 7) -> Functions (Topic 8)
-            407: 9, // Cond Capitalize (Topic 8) -> Modules (Topic 9)
-            408: 10, // Hypotenuse (Topic 9) -> OOPS (Topic 10)
-            409: 11, // Roster (Topic 10) -> Constructors (Topic 11)
-            410: 12, // Animals (Topic 11) -> Inheritance (Topic 12)
-            411: 13, // Shape (Topic 12) -> Inheritance (Topic 13)
+            401: 3, // Topic 2 (Ops) -> Conditionals (Topic 3)
+            402: 4, // Topic 3 (Cond) -> Loops (Topic 4)
+            403: 5, // Topic 4 (Loops) -> DS Part 1 (Topic 5)
+            404: 6, // Topic 5 (DS1) -> DS Part 2 (Topic 6)
+            405: 7, // Topic 6 (DS2) -> DS Part 3 (Topic 7)
+            406: 8, // Topic 7 (DS3) -> Functions (Topic 8)
+            407: 9, // Topic 8 (Funcs) -> Modules (Topic 9)
+            408: 10, // Topic 9 (Mods) -> OOPS (Topic 10)
+            409: 11, // Topic 10 (OOPS) -> Constructors (Topic 11)
+            410: 12, // Topic 11 (Cons) -> Inheritance (Topic 12)
+            411: 13, // Topic 12 (Inh) -> End
           };
 
           const nextTopicIdx = pythonNextTopicMap[id];
@@ -468,7 +468,7 @@ const CourseDetails = () => {
     const id = Number(newAssignmentId);
     if (courseName.toLowerCase() === "python") {
       const pythonTopicMap = {
-        401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
+        401: 2, 402: 3, 403: 4, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
       };
       const topicIdx = pythonTopicMap[id];
       if (topicIdx !== undefined) {
@@ -544,11 +544,10 @@ const CourseDetails = () => {
                         let assignments = [];
                         if (courseName.toLowerCase() === "python") {
                           assignments = [
-                            null, // Topic 0
+                            null, null, // Topic 0, 1
                             { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
                             { title: "Total & Average Marks", type: 'python2', completionKey: 'python2' },
                             { title: "Calculate Interest", type: 'python3', completionKey: 'python3' },
-                            null, // Topic 4
                             { title: "Tuple", type: 'python4', completionKey: 'python4' },
                             { title: "Remove Dups", type: 'python5', completionKey: 'python5' },
                             { title: "Capitalize", type: 'python6', completionKey: 'python6' },
