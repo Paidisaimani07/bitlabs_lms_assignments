@@ -33,18 +33,18 @@ const COURSE_DATA = {
   ],
   "python": [
     { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "/python for beginners/Introduction to Python_topic1/index_lms.html" }] },
-    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "/python for beginners/python variables and data types_topic2/index_lms.html" }] },
+    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "/python for beginners/Python Variables and Data Types_topic2/index_lms.html" }] },
     { topic: "Python Operators", videos: [{ title: "Operators", url: "/python for beginners/Python Operators_topic3/index_lms.html" }] },
-    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "/python for beginners/Python conditional statements_topic4/index_lms.html" }] },
+    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "/python for beginners/Python Conditional Statements_topic4/index_lms.html" }] },
     { topic: "Python Loops", videos: [{ title: "Loops", url: "/python for beginners/Python Loop Control Statements_topic5/index_lms.html" }] },
-    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "/python for beginners/Python Data Structures Part 1_topic6/index_lms.html" }] },
-    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "/python for beginners/Python Data Structures Part 2_topic7/index_lms.html" }] },
-    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "/python for beginners/Python Data Structures Part 3_topic8/index_lms.html" }] },
-    { topic: "Python functions", videos: [{ title: "Functions", url: "/python for beginners/python functions_topic9/index_lms.html" }] },
-    { topic: "Python modules", videos: [{ title: "Modules", url: "/python for beginners/python modules_topic10/index_lms.html" }] },
-    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "/python for beginners/Python OOPS_topic11/index_lms.html" }] },
+    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "/python for beginners/Python Data Structures  Part 1_topic6/index_lms.html" }] },
+    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "/python for beginners/Python Data Structures  Part 2_topic7/index_lms.html" }] },
+    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "/python for beginners/Python Data Structures  Part 3_(Strings)_topic8/index_lms.html" }] },
+    { topic: "Python functions", videos: [{ title: "Functions", url: "/python for beginners/Python Functions_topic9/index_lms.html" }] },
+    { topic: "Python modules", videos: [{ title: "Modules", url: "/python for beginners/Python Modules_topic10/index_lms.html" }] },
+    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "/python for beginners/Object Oriented Programming_topic11/index_lms.html" }] },
     { topic: "Python Constructors", videos: [{ title: "Constructors", url: "/python for beginners/Python Constructors_topic12/index_lms.html" }] },
-    { topic: "Python Inheritence", videos: [{ title: "Inheritence", url: "/python for beginners/Python Inheritence_topic13/index_lms.html" }] },
+    { topic: "Python Inheritance", videos: [{ title: "Inheritance", url: "/python for beginners/Python Inheritance_topic13/index_lms.html" }] },
   ],
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
@@ -337,9 +337,12 @@ const CourseDetails = () => {
         setSidebarView('assignments');
         setViewingAssignment(true);
         setAssignmentType(assignments[index].type);
-      } else if (courseName.toLowerCase() === "python" && index === 4) {
-        // Topic 4 (Loops) has no assignment, move to next topic
-        selectTopic(5);
+      } else {
+        // No assignment for this topic, move to next if available
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) {
+          selectTopic(nextIdx);
+        }
       }
     }, 3000);
   };
@@ -439,6 +442,7 @@ const CourseDetails = () => {
             408: 10, // Hypotenuse (Topic 9) -> OOPS (Topic 10)
             409: 11, // Roster (Topic 10) -> Constructors (Topic 11)
             410: 12, // Animals (Topic 11) -> Inheritance (Topic 12)
+            411: 13, // Shape (Topic 12) -> Inheritance (Topic 13)
           };
 
           const nextTopicIdx = pythonNextTopicMap[id];
@@ -460,8 +464,30 @@ const CourseDetails = () => {
     setViewingAssignment(true);
   };
 
+  const handleAssignmentNavigate = (newAssignmentId) => {
+    const id = Number(newAssignmentId);
+    if (courseName.toLowerCase() === "python") {
+      const pythonTopicMap = {
+        401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
+      };
+      const topicIdx = pythonTopicMap[id];
+      if (topicIdx !== undefined) {
+        setSelectedTopicIndex(topicIdx);
+      }
+    }
+  };
+
   const handleCloseAssignment = () => {
     setViewingAssignment(false);
+  };
+
+  const handleNextTopic = () => {
+    const nextIdx = selectedTopicIndex + 1;
+    if (nextIdx < courseContent.length) {
+      selectTopic(nextIdx);
+    } else {
+      setViewingAssignment(false);
+    }
   };
 
   const selectedVideo = courseContent[selectedTopicIndex]?.videos?.[0]?.url || "";
@@ -606,12 +632,14 @@ const CourseDetails = () => {
                 <div className="course-player" ref={playerRef}>
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
-                      <AssignmentEditor
-                        type={assignmentType}
-                        onClose={handleCloseAssignment}
-                        applicantId={applicantId}
-                        assignmentType={assignmentType}
-                      />
+                        <AssignmentEditor
+                          type={assignmentType}
+                          onClose={handleCloseAssignment}
+                          applicantId={applicantId}
+                          assignmentType={assignmentType}
+                          onNavigate={handleAssignmentNavigate}
+                          onNextTopic={handleNextTopic}
+                        />
                     </div>
                   ) : (
                     <>

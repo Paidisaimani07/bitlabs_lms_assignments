@@ -72,7 +72,7 @@ const ErrorModal = ({ errors, onClose }) => (
   </div>
 );
 
-const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
+const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, onNextTopic }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [code, setCode] = useState('');
   const [liveOutput, setLiveOutput] = useState('');
@@ -185,23 +185,27 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
   const performNavigation = useCallback((newIndex) => {
     isNavigatingRef.current = true;
-    activeAssignmentIdRef.current = filteredAssignments[newIndex].id;
+    const targetAssignment = filteredAssignments[newIndex];
+    activeAssignmentIdRef.current = targetAssignment.id;
     setCurrentIndex(newIndex);
-  }, [filteredAssignments]);
+    if (onNavigate) onNavigate(targetAssignment.id);
+  }, [filteredAssignments, onNavigate]);
 
   const handleNextAssignment = useCallback(() => {
-    if (currentIndex < filteredAssignments.length - 1) performNavigation(currentIndex + 1);
-  }, [currentIndex, filteredAssignments, performNavigation]);
+    if (currentAssignment.topic === 'Python') {
+      if (onNextTopic) onNextTopic();
+      else if (onClose) onClose();
+    } else {
+      if (currentIndex < filteredAssignments.length - 1) performNavigation(currentIndex + 1);
+    }
+  }, [currentIndex, filteredAssignments, performNavigation, currentAssignment, onNextTopic, onClose]);
 
   const handlePrevAssignment = useCallback(() => {
     if (currentIndex > 0) performNavigation(currentIndex - 1);
   }, [currentIndex, performNavigation]);
 
   const handleBack = () => {
-    const topic = currentAssignment.topic;
-    const firstIdx = filteredAssignments.findIndex(a => a.topic === topic);
-    if (firstIdx !== -1 && currentIndex !== firstIdx) performNavigation(firstIdx);
-    else if (onClose) onClose();
+    if (onClose) onClose();
   };
 
   const handleCodeChange = (newCode) => {
@@ -364,8 +368,10 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
             </div>
 
             <div className="ae-btn-slot ae-btn-right">
-              {currentAssignment.topic !== 'Python' && ((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
-                <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
+              {((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
+                <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>
+                  {currentAssignment.topic === 'Python' ? 'Next Topic →' : 'Next Assignment →'}
+                </button>
               )}
             </div>
           </div>
