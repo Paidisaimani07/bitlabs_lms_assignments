@@ -21,6 +21,7 @@ import badge1 from '../../images/LeaderBoardBadges/1.png';
 import badge2 from '../../images/LeaderBoardBadges/2.png';
 import badge3 from '../../images/LeaderBoardBadges/3.png';
 import LeaderboardModal from './LeaderboardModal';
+import ScoreSystemModal from './ScoreSystemModal';
 import { HiDocumentText } from "react-icons/hi";
 
 const safeGet = (key) => {
@@ -47,6 +48,7 @@ const ApplicantDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [imageMap, setImageMap] = useState({});
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
+  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [modalLeaderboard, setModalLeaderboard] = useState([]);
   const [modalLoading, setModalLoading] = useState(false);
   // const [contRecJobs, setCountRecJobs] = useState(0);
@@ -915,9 +917,17 @@ const allLoadingDone =
 
 ) : (
    <>
-                    <div className="progress-text">
-                      <p>Badge achievement level </p>
-                      {Math.round((cappedScore / goldScore) * 100)}%
+                    <div className="progress-text" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div>
+                        <p style={{ display: 'inline-block', margin: 0, marginRight: '10px' }}>Badge achievement level </p>
+                        <span 
+                          onClick={() => setIsScoreModalOpen(true)}
+                          style={{ fontSize: '12px', color: '#EA7B20', cursor: 'pointer', textDecoration: 'underline', fontWeight: '500' }}
+                        >
+                          Learn more
+                        </span>
+                      </div>
+                      <span>{Math.round((cappedScore / goldScore) * 100)}%</span>
                     </div>
                     <div style={{ position: "relative" }}>
                       <div className="badge-bar">
@@ -1812,7 +1822,10 @@ const allLoadingDone =
         imageMap={imageMap}
         defaultAvatarImg={defaultAvatarImg}
       />
-
+      <ScoreSystemModal 
+        isOpen={isScoreModalOpen} 
+        onClose={() => setIsScoreModalOpen(false)} 
+      />
     </div>
   );
 };
