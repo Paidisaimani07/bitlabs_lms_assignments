@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Unclosed Tag Detection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .pass {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Testing Unclosed Tag Detection</h1>
+
+    <div class="test">
+        <h3>Test 1: Unclosed H6 Tag (Should FAIL)</h3>
+        <div class="code">Student Code:
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry
+
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: Score: 0/12, Passed: false, Error: "✗ Unclosed &lt;H6&gt; tag found"</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Multiple Unclosed Tags (Should FAIL)</h3>
+        <div class="code">Student Code:
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: Score: 0/12, Passed: false, Errors: "✗ Unclosed &lt;H2&gt; tag found", "✗
+            Unclosed &lt;H4&gt; tag found"</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: Perfect HTML (Should PASS)</h3>
+        <div class="code">Student Code:
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result pass">Expected: Score: 12/12, Passed: true</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 4: Mismatched Tags (Should FAIL)</h3>
+        <div class="code">Student Code:
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h2&gt;
+            &lt;h2&gt;Banana&lt;/h1&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: Score: 0/12, Passed: false, Error: "✗ Mismatched closing tag"</div>
+    </div>
+
+    <div class="test">
+        <h3>Test 5: Self-Closing Tags (Should PASS)</h3>
+        <div class="code">Student Code:
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;img src="test.jpg" alt="test" /&gt;
+            &lt;br /&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result pass">Expected: Score: 4/4, Passed: true (self-closing tags ignored)</div>
+    </div>
+
+    <h2>Unclosed Tag Detection Features:</h2>
+    <ul>
+        <li>✅ Stack-based tag tracking</li>
+        <li>✅ Detects unclosed opening tags</li>
+        <li>✅ Detects mismatched closing tags</li>
+        <li>✅ Ignores self-closing tags (img, br, hr, input, meta, link)</li>
+        <li>✅ Ignores DOCTYPE and comments</li>
+        <li>✅ Returns 0 score if any unclosed tags found</li>
+        <li>✅ Provides specific error messages</li>
+    </ul>
+
+</body>
+
+</html>

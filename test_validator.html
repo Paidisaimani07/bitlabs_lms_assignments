@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HTML Validator Test Cases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .valid {
+            border-left: 5px solid green;
+        }
+
+        .invalid {
+            border-left: 5px solid red;
+        }
+
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            font-family: monospace;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .pass {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>HTML Validator Test Cases</h1>
+
+    <div class="test-case">
+        <h3>Test Case 1: Perfect HTML (Should PASS)</h3>
+        <div class="code">
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result pass">Expected: PASS - Full marks (10/10)</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test Case 2: Unclosed H6 tag (Should FAIL)</h3>
+        <div class="code">
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result fail">Expected: FAIL - Unclosed H6 tag</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test Case 3: Missing BODY tag (Should FAIL)</h3>
+        <div class="code">
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result fail">Expected: FAIL - Missing BODY tag</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test Case 4: Multiple unclosed tags (Should FAIL)</h3>
+        <div class="code">
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+        </div>
+        <div class="result fail">Expected: FAIL - Multiple unclosed tags</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test Case 5: Missing DOCTYPE (Should PASS with partial marks)</h3>
+        <div class="code">
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result pass">Expected: PASS - 9/10 marks (missing DOCTYPE)</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test Case 6: Only headings, no structure (Should FAIL)</h3>
+        <div class="code">
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+        </div>
+        <div class="result fail">Expected: FAIL - Missing HTML structure</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test Case 7: Empty heading (Should FAIL)</h3>
+        <div class="code">
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result fail">Expected: FAIL - Empty H3 tag</div>
+    </div>
+
+    <div class="test-case">
+        <h3>Test Case 8: Self-closing tags mixed (Should PASS)</h3>
+        <div class="code">
+            &lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;head&gt;&lt;/head&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;img src="test.jpg" alt="test" /&gt;
+            &lt;br /&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+        </div>
+        <div class="result pass">Expected: PASS - Full marks (10/10)</div>
+    </div>
+
+</body>
+
+</html>
