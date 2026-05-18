@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tag Pairing Validation Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-case {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+        }
+
+        .valid {
+            border-left: 5px solid green;
+        }
+
+        .invalid {
+            border-left: 5px solid red;
+        }
+
+        .code {
+            background: #f5f5f5;
+            padding: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .pass {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Tag Pairing Validation - Professional Tester Cases</h1>
+
+    <div class="test-case">
+        <h3>Test 1: Perfect Tag Pairing (PASS)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result pass">Expected: PASS - All tags properly paired</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 2: Unclosed H6 Tag (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Unclosed H6 tag</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 3: Mismatched Tag Order (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h2&gt;
+            &lt;h2&gt;Banana&lt;/h1&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Mismatched H1/H2 tags</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 4: Multiple Unclosed Tags (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Unclosed H2 and H4 tags</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 5: Unexpected Closing Tag (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;/h2&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Unexpected closing H2 tag</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 6: Nested Tags Wrong Order (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;div&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;/div&gt;
+            &lt;/body&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Wrong closing order (DIV before BODY)</div>
+    </div>
+
+    <div class="test-case valid">
+        <h3>Test 7: Self-Closing Tags (PASS)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;head&gt;&lt;/head&gt;
+            &lt;body&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;img src="test.jpg" alt="test" /&gt;
+            &lt;br /&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;hr /&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result pass">Expected: PASS - Self-closing tags ignored</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 8: Empty Tags (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;h1&gt;&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Empty H1 and H3 tags</div>
+    </div>
+
+    <div class="test-case invalid">
+        <h3>Test 9: Deep Nesting Error (FAIL)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;body&gt;
+            &lt;div&gt;
+            &lt;section&gt;
+            &lt;article&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;/section&gt;
+            &lt;/article&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result fail">Expected: FAIL - Wrong nesting order (SECTION/ARTICLE)</div>
+    </div>
+
+    <div class="test-case valid">
+        <h3>Test 10: Complex Valid Structure (PASS)</h3>
+        <div class="code">&lt;!DOCTYPE html&gt;
+            &lt;html&gt;
+            &lt;head&gt;
+            &lt;title&gt;Test&lt;/title&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+            &lt;header&gt;
+            &lt;h1&gt;Apple&lt;/h1&gt;
+            &lt;/header&gt;
+            &lt;main&gt;
+            &lt;section&gt;
+            &lt;h2&gt;Banana&lt;/h2&gt;
+            &lt;h3&gt;Orange&lt;/h3&gt;
+            &lt;/section&gt;
+            &lt;section&gt;
+            &lt;h4&gt;Grape&lt;/h4&gt;
+            &lt;h5&gt;Mango&lt;/h5&gt;
+            &lt;h6&gt;Cherry&lt;/h6&gt;
+            &lt;/section&gt;
+            &lt;/main&gt;
+            &lt;footer&gt;&lt;/footer&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;</div>
+        <div class="result pass">Expected: PASS - Complex but valid nesting</div>
+    </div>
+
+</body>
+
+</html>
