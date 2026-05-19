@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "./applicantcourses.css";
 import htmlandcss from "./html&css 1.jfif";
-
+import python from "./python.jfif";
 
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "./ProgressAPIService";
@@ -17,7 +17,7 @@ const ApplicantCourses = () => {
   const applicantId = user?.id;
 
   const coursesData = [
-    // { id: 1, name: "Python", img: python },
+    { id: 1, name: "Python", img: python },
     { id: 2, name: "HTML & CSS", img: htmlandcss },
     // { id: 3, name: "Java", img: java },
     // { id: 4, name: "SQL", img: sql },

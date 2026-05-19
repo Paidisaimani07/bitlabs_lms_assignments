@@ -804,3 +804,36 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.35);
 }
+
+/* ─────────────────────────────────────────────────────────────────── */
+/* PYTHON SPECIFIC STYLES */
+/* ─────────────────────────────────────────────────────────────────── */
+
+.ae-python-output {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    margin: 0;
+    height: 100%;
+    overflow-y: auto;
+    border: 1px solid #333;
+}
+
+.ae-expected-output {
+    border-left: 4px solid #f7931e !important;
+}
+
+.ae-python-editor {
+    background-color: #1e1e1e !important;
+    color: #9cdcfe !important;
+    caret-color: white !important;
+}
+
+.ae-python-editor::placeholder {
+    color: #555 !important;
+}
