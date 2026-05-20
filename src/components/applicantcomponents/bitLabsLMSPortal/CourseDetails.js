@@ -13,12 +13,9 @@ import { getAllAssignmentsByApplicant } from "./assignmentservice";
 // Course mapping to convert course names to actual course IDs
 const getCourseId = (courseName) => {
   const courseMap = {
-    "html & css": 1,
-    "python": 2,
-    "java": 3,
-    "sql": 4,
-    "react": 5,
-    "spring boot": 6
+    "html & css": 5,
+    "python": 13,
+    "interview preparedness": 7
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -32,22 +29,37 @@ const COURSE_DATA = {
     { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTML%20FORMS_topic5/story.html" }] },
   ],
   "python": [
-    { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "/python for beginners/Introduction to Python_topic1/index_lms.html" }] },
-    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "/python for beginners/Python Variables and Data Types_topic2/index_lms.html" }] },
-    { topic: "Python Operators", videos: [{ title: "Operators", url: "/python for beginners/Python Operators_topic3/index_lms.html" }] },
-    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "/python for beginners/Python Conditional Statements_topic4/index_lms.html" }] },
-    { topic: "Python Loops", videos: [{ title: "Loops", url: "/python for beginners/Python Loop Control Statements_topic5/index_lms.html" }] },
-    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "/python for beginners/Python Data Structures  Part 1_topic6/index_lms.html" }] },
-    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "/python for beginners/Python Data Structures  Part 2_topic7/index_lms.html" }] },
-    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "/python for beginners/Python Data Structures  Part 3_(Strings)_topic8/index_lms.html" }] },
-    { topic: "Python functions", videos: [{ title: "Functions", url: "/python for beginners/Python Functions_topic9/index_lms.html" }] },
-    { topic: "Python modules", videos: [{ title: "Modules", url: "/python for beginners/Python Modules_topic10/index_lms.html" }] },
-    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "/python for beginners/Object Oriented Programming_topic11/index_lms.html" }] },
-    { topic: "Python Constructors", videos: [{ title: "Constructors", url: "/python for beginners/Python Constructors_topic12/index_lms.html" }] },
-    { topic: "Python Inheritance", videos: [{ title: "Inheritance", url: "/python for beginners/Python Inheritance_topic13/index_lms.html" }] },
+    { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Introduction+to+Python_topic1/story.html" }] },
+    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Variables+and+Data+Types_topic2/story.html" }] },
+    { topic: "Python Operators", videos: [{ title: "Operators", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Operators_topic3/story.html" }] },
+    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Conditional+Statements_topic4/story.html" }] },
+    { topic: "Python Loops", videos: [{ title: "Loops", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Loop+Control+Statements_topic5/story.html" }] },
+    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+1_topic6/story.html" }] },
+    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+2_topic7/story.html" }] },
+    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+3_(Strings)_topic8/story.html" }] },
+    { topic: "Python functions", videos: [{ title: "Functions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Functions_topic9/story.html" }] },
+    { topic: "Python modules", videos: [{ title: "Modules", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Modules_topic10/story.html" }] },
+    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Object+Oriented+Programming_topic11/story.html" }] },
+    { topic: "Python Constructors", videos: [{ title: "Constructors", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Constructors_topic12/story.html" }] },
+    { topic: "Python Inheritance", videos: [{ title: "Inheritance", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Inheritance_topic13/story.html" }] },
   ],
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
+  ],
+  "interview preparedness": [
+    // ── Group 0: Understanding Yourself (3 subtopics) ──────────────────────
+    { topic: "Understanding Yourself – Self Realization", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Understanding Yourself – Self Realization", url: "/Interviewpreparedness/Softskills Foundation - Understanding Yourself  Self Realization/story.html" }] },
+    { topic: "Confidence Building & Self-Motivation", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Confidence Building & Self-Motivation", url: "/Interviewpreparedness/Softskills Foundation - Confidence building and self-motivation/story.html" }] },
+    { topic: "Overcoming Shyness, Fear & Anxiety", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Overcoming Shyness, Fear & Anxiety", url: "/Interviewpreparedness/Shyness, Fear, and Anxiety - Ways of Control/story.html" }] },
+    // ── Group 1: Introduction to Communication (4 subtopics) ───────────────
+    { topic: "Components of Communication", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Components of Communication", url: "/Interviewpreparedness/Softskills Foundation - Components of Communication/story.html" }] },
+    { topic: "Communication Methods", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Communication Methods", url: "/Interviewpreparedness/Softskills Foundation - Communication Methods/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 1", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 1", url: "/Interviewpreparedness/Conveying Message Effectively - Part 1/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 2", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 2", url: "/Interviewpreparedness/Softskills Foundation - Conveying Message Effectively - Part 2/story.html" }] },
+    // ── Group 2: Self Introduction (3 subtopics) ──────────────────────────
+    { topic: "Creating Self-Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Self-Introduction", url: "/Interviewpreparedness/Softskills Foundation - Creating Self-introduction/story.html" }] },
+    { topic: "Tips for Effective Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Tips for Effective Introduction", url: "/Interviewpreparedness/Softskills Foundation - Tips for Effective Introduction in Different Scenarios/story.html" }] },
+    { topic: "Creating Your First Impression", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Your First Impression", url: "/Interviewpreparedness/Softskills Foundation - Creating your First Impression/story.html" }] },
   ],
 };
 
@@ -55,6 +67,30 @@ const CourseDetails = () => {
   const { courseName } = useParams();
   const location = useLocation();
   const { user } = useUserContext();
+
+  // Provide default value to prevent toLowerCase error
+  const safeCourseName = courseName || '';
+
+  const [selectedTopicIndex, setSelectedTopicIndex] = useState(0);
+  const [topicProgress, setTopicProgress] = useState({});
+  const [overallProgress, setOverallProgress] = useState(0);
+  const [courseProgressId, setCourseProgressId] = useState(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [sidebarView, setSidebarView] = useState("topics");
+  const [collapsedGroups, setCollapsedGroups] = useState({});
+  const [viewingAssignment, setViewingAssignment] = useState(false);
+  const [assignmentType, setAssignmentType] = useState(null);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [popupContent, setPopupContent] = useState({ title: "", message: "", subMessage: "", type: "topic" });
+  const [assignmentCompletion, setAssignmentCompletion] = useState({
+    html: false,
+    css1: false,
+    css2: false,
+    forms: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
+  });
+
   const currentPath = location.pathname.toLowerCase();
 
   const allowedRoutes = [
@@ -70,24 +106,8 @@ const CourseDetails = () => {
   const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
   const applicantId = user?.id;
 
-  const [selectedTopicIndex, setSelectedTopicIndex] = useState(0);
-  const [topicProgress, setTopicProgress] = useState({});
-  const [overallProgress, setOverallProgress] = useState(0);
-  const [courseProgressId, setCourseProgressId] = useState(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [sidebarView, setSidebarView] = useState("topics");
-  const [viewingAssignment, setViewingAssignment] = useState(false);
-  const [assignmentType, setAssignmentType] = useState(null);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [popupContent, setPopupContent] = useState({ title: "", message: "", subMessage: "", type: "topic" });
-  const [assignmentCompletion, setAssignmentCompletion] = useState({
-    html: false,
-    css1: false,
-    css2: false,
-    forms: false,
-    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
-  });
+  // ── Interview Preparedness flag ──────────────────────────────────────────
+  const isInterviewPrep = safeCourseName.toLowerCase() === "interview preparedness";
 
   // Refs for state to avoid stale closures in setTimeout callbacks
   const topicProgressRef = useRef({});
@@ -151,12 +171,11 @@ const CourseDetails = () => {
 
         // Find the current course progress
         const currentCourse = applicantCourses.find(course =>
-          course.courseName.toLowerCase() === courseName.toLowerCase()
+          course.courseName?.toLowerCase() === safeCourseName.toLowerCase()
         );
 
         if (currentCourse) {
           setCourseProgressId(currentCourse.id);
-          setOverallProgress(currentCourse.overallProgress);
 
           // Get topics progress for this course
           const topicsProgress = await ProgressAPIService.getCourseTopics(currentCourse.id);
@@ -166,6 +185,14 @@ const CourseDetails = () => {
           });
           topicProgressRef.current = progressMap;
           setTopicProgress(progressMap);
+
+          if (safeCourseName.toLowerCase() === "interview preparedness") {
+            const totalProgress = Object.values(progressMap).reduce((a, b) => a + b, 0);
+            const calculatedProgress = courseContent.length > 0 ? Math.round(totalProgress / courseContent.length) : 0;
+            setOverallProgress(calculatedProgress);
+          } else {
+            setOverallProgress(currentCourse.overallProgress);
+          }
 
           // Find the last accessed topic (highest progress that's not 100%)
           const lastTopicIndex = topicsProgress.reduce((lastIdx, topic) => {
@@ -251,7 +278,10 @@ const CourseDetails = () => {
     const prevProgress = topicProgressRef.current[index - 1] || 0;
     if (prevProgress < 100) return true;
 
-    if (courseName.toLowerCase() === "python") {
+    // Interview Preparedness has no assignment gates — unlock on topic progress only
+    if (safeCourseName.toLowerCase() === "interview preparedness") return false;
+
+    if (safeCourseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
         2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5',
         8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
@@ -279,12 +309,28 @@ const CourseDetails = () => {
   // Function to toggle fullscreen
   const toggleFullscreen = useCallback(() => {
     if (!playerRef.current) return;
-    if (!document.fullscreenElement) {
-      playerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
+    const fsEl = document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+    if (!fsEl) {
+      const reqFS = playerRef.current.requestFullscreen ||
+        playerRef.current.webkitRequestFullscreen ||
+        playerRef.current.mozRequestFullScreen ||
+        playerRef.current.msRequestFullscreen;
+      if (reqFS) {
+        reqFS.call(playerRef.current).catch(err => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      }
     } else {
-      document.exitFullscreen();
+      const exitFS = document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen;
+      if (exitFS) {
+        exitFS.call(document);
+      }
     }
   }, []);
 
@@ -329,8 +375,16 @@ const CourseDetails = () => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
+
+      // Interview Preparedness: no assignments — always advance to next topic
+      if (safeCourseName.toLowerCase() === "interview preparedness") {
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) selectTopic(nextIdx);
+        return;
+      }
+
       let assignments = [];
-      if (courseName.toLowerCase() === "python") {
+      if (safeCourseName.toLowerCase() === "python") {
         assignments = [
           null,
           { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
@@ -489,7 +543,7 @@ const CourseDetails = () => {
 
   const handleAssignmentNavigate = (newAssignmentId) => {
     const id = Number(newAssignmentId);
-    if (courseName.toLowerCase() === "python") {
+    if (safeCourseName.toLowerCase() === "python") {
       const pythonTopicMap = {
         401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
       };
@@ -518,10 +572,22 @@ const CourseDetails = () => {
   // Listen for fullscreen change events (e.g. user pressing Esc)
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const fsEl = document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(!!fsEl);
     };
     document.addEventListener("fullscreenchange", handleFsChange);
-    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+    document.addEventListener("webkitfullscreenchange", handleFsChange);
+    document.addEventListener("mozfullscreenchange", handleFsChange);
+    document.addEventListener("MSFullscreenChange", handleFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFsChange);
+      document.removeEventListener("webkitfullscreenchange", handleFsChange);
+      document.removeEventListener("mozfullscreenchange", handleFsChange);
+      document.removeEventListener("MSFullscreenChange", handleFsChange);
+    };
   }, []);
 
   const SuccessPopup = () => (
@@ -537,6 +603,11 @@ const CourseDetails = () => {
       </div>
     </div>
   );
+
+  // Guard clause for undefined courseName (must be after all hooks)
+  if (!courseName) {
+    return <div>Course not found</div>;
+  }
 
   return (
     <div className="border-style">
@@ -559,13 +630,71 @@ const CourseDetails = () => {
 
                   <div className="sidebar-scrollable">
                     <div className="topics-list">
-                      {courseContent.map((t, index) => {
+
+                      {/* ── Interview Preparedness: grouped collapsible sidebar ── */}
+                      {isInterviewPrep && (() => {
+                        const groups = [
+                          { name: "Understanding Yourself" },
+                          { name: "Introduction to Communication" },
+                          { name: "Self Introduction" },
+                        ];
+                        return groups.map((group, gIdx) => {
+                          const subtopics = courseContent
+                            .map((t, i) => ({ ...t, flatIndex: i }))
+                            .filter(t => t.groupIndex === gIdx);
+                          const isGroupCollapsed = collapsedGroups[gIdx];
+                          const groupDone = subtopics.every(t => (topicProgress[t.flatIndex] || 0) === 100);
+                          const groupStarted = subtopics.some(t => (topicProgress[t.flatIndex] || 0) > 0);
+                          return (
+                            <div key={gIdx} className="ip-group-block">
+                              <div
+                                className={`ip-group-header ${groupDone ? 'group-done' : groupStarted ? 'group-started' : ''}`}
+                                onClick={() => setCollapsedGroups(prev => ({ ...prev, [gIdx]: !prev[gIdx] }))}
+                              >
+                                <span className="ip-group-title">{group.name}</span>
+                                <span className="ip-group-chevron">{isGroupCollapsed ? '▶' : '▼'}</span>
+                              </div>
+                              {!isGroupCollapsed && subtopics.map((t) => {
+                                const progress = topicProgress[t.flatIndex] || 0;
+                                const isLocked = getTopicLockedStatus(t.flatIndex);
+                                const isActive = !viewingAssignment && selectedTopicIndex === t.flatIndex;
+                                return (
+                                  <div
+                                    key={t.flatIndex}
+                                    className={`ip-subtopic-block ${isLocked ? 'topic-locked' : ''} ${isActive ? 'topic-active' : ''}`}
+                                    onClick={() => !isLocked && selectTopic(t.flatIndex)}
+                                  >
+                                    <div className="topic-info">
+                                      <strong>
+                                        {isLocked ? '🔒 ' : ''}
+                                        {t.topic}
+                                      </strong>
+                                    </div>
+                                    {!isLocked && (
+                                      <div style={{ height: '6px', background: '#eee', borderRadius: '10px', overflow: 'hidden', margin: '4px 0 2px 0' }}>
+                                        <div style={{ width: `${progress}%`, height: '100%', background: '#e49723ff', transition: 'width 0.4s ease' }} />
+                                      </div>
+                                    )}
+                                    {t.videos.map((video, vi) => (
+                                      <p key={vi} className={`video-link ${isActive ? 'active' : ''} ${isLocked ? 'disabled' : ''}`}>
+                                        {video.title}
+                                      </p>
+                                    ))}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        });
+                      })()}
+                      {/* ── Existing courses: flat sidebar (unchanged) ── */}
+                      {!isInterviewPrep && courseContent.map((t, index) => {
                         const progress = topicProgress[index] || 0;
                         const isTopicLocked = getTopicLockedStatus(index);
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
                         let assignments = [];
-                        if (courseName.toLowerCase() === "python") {
+                        if (safeCourseName.toLowerCase() === "python") {
                           assignments = [
                             null, // Topic 0
                             { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
@@ -622,7 +751,7 @@ const CourseDetails = () => {
                             ))}
 
                             {topicAssignment && isAssignmentAllowed && (
-                              courseName.toLowerCase() !== "python" ||
+                              safeCourseName.toLowerCase() !== "python" ||
                               true // Show all Python assignments in sidebar for clarity
                             ) && (
                                 <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
@@ -648,11 +777,17 @@ const CourseDetails = () => {
                           </div>
                         );
                       })}
+                      {/* ── close !isInterviewPrep block ── */}
+                      {!isInterviewPrep && null /* closing guard — map above renders its own closing */}
                     </div>
                   </div>
                 </div>
 
-                <div className="course-player" ref={playerRef}>
+                <div
+                  className="course-player"
+                  ref={playerRef}
+                  style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
+                >
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
                       <AssignmentEditor
@@ -683,6 +818,7 @@ const CourseDetails = () => {
                         className="video-frame"
                         title="Course Player"
                         allowFullScreen
+                        style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
                       />
                       <button
                         onClick={toggleFullscreen}

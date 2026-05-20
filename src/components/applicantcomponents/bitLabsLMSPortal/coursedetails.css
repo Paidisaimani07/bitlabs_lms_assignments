@@ -243,22 +243,38 @@
 }
 
 /* ── Native Fullscreen Styles ── */
-.course-player:fullscreen {
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  border-radius: 0;
-  padding: 0;
+.course-player:fullscreen,
+.course-player:-webkit-full-screen,
+.course-player:-moz-full-screen,
+.course-player:-ms-fullscreen {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: #000 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.course-player:fullscreen .video-frame {
-  height: 100%;
+.course-player:fullscreen .video-frame,
+.course-player:-webkit-full-screen .video-frame,
+.course-player:-moz-full-screen .video-frame,
+.course-player:-ms-fullscreen .video-frame {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1 !important;
+  border: none !important;
+  display: block !important;
 }
 
-.course-player:fullscreen .fullscreen-btn {
-  bottom: 80px;
-  right: 30px;
-  background: rgba(255, 255, 255, 0.2);
+.course-player:fullscreen .fullscreen-btn,
+.course-player:-webkit-full-screen .fullscreen-btn,
+.course-player:-moz-full-screen .fullscreen-btn,
+.course-player:-ms-fullscreen .fullscreen-btn {
+  bottom: 80px !important;
+  right: 30px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* ── Topic Lock Styles ── */
@@ -523,4 +539,68 @@
 .assignment-action-card.completed .assignment-status {
   color: #2ecc71;
   font-weight: 700;
+}
+
+/* ── Collapsible Group Styles for Interview Preparedness ── */
+.ip-group-block {
+  margin-bottom: 8px;
+}
+
+.ip-group-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #333;
+  transition: background 0.2s ease, color 0.2s ease;
+  user-select: none;
+  border: 1px solid #eaeaea;
+  margin-bottom: 4px;
+}
+
+.ip-group-header:hover {
+  background: #f1f3f5;
+  color: #D26B15;
+}
+
+.ip-group-icon {
+  margin-right: 8px;
+  font-size: 1.1rem;
+}
+
+.ip-group-title {
+  flex: 1;
+  font-size: 0.95rem;
+}
+
+.ip-group-chevron {
+  font-size: 0.8rem;
+  color: #666;
+  margin-left: 8px;
+}
+
+/* Indent the subtopic blocks under the group header */
+.ip-group-block .topic-block {
+  margin-left: 16px !important;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  padding: 10px 12px;
+  border-radius: 6px;
+}
+
+.ip-group-header.group-done {
+  background: #f4faf6;
+  color: #2b8a3e;
+  border-color: #d1ebd5;
+}
+
+.ip-group-header.group-done:hover {
+  background: #ebf7ee;
+}
+
+.ip-group-header.group-started {
+  border-left: 3px solid #e49723ff;
 }

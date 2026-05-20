@@ -1,7 +1,7 @@
-// function ExecuteScript(strId) {
-//     switch (strId) {
-//     }
-// }
+function ExecuteScript(strId) {
+    switch (strId) {
+    }
+}
 
 window.InitExecuteScripts = function () {
     var player = GetPlayer();
