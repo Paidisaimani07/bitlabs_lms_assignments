@@ -554,8 +554,11 @@ const CourseDetails = () => {
     }
   };
 
-  const handleCloseAssignment = () => {
+  const handleCloseAssignment = (goToPrevTopic = false) => {
     setViewingAssignment(false);
+    if (goToPrevTopic && selectedTopicIndex > 0) {
+      selectTopic(selectedTopicIndex - 1);
+    }
   };
 
   const handleNextTopic = () => {
