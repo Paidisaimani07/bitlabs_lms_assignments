@@ -211,6 +211,20 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
     }, [currentIndex, performNavigation]);
 
     const handleBack = () => {
+        const isHtmlCssTopic = ['HTML Basics', 'CSS Basics', 'CSS Advanced', 'HTML Forms'].includes(currentAssignment.topic);
+
+        if (isHtmlCssTopic) {
+            if (currentIndex === 0) {
+                if (onClose) {
+                    onClose();
+                    return;
+                }
+            } else {
+                performNavigation(0);
+                return;
+            }
+        }
+
         if (onClose) onClose();
     };
 
