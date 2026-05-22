@@ -1557,14 +1557,13 @@ const allLoadingDone =
                             </span>
                           </div>
                           <div className="portfolio-score-details">
-                            <div>
                               <h3>score</h3>
                               <p>{dashboardScore ?? 0}</p>
-                            </div>
+
                             {userRank !== null && (
                               <div style={{ paddingLeft: '12px', marginLeft: '12px' }}>
                                 <h3 style={{ color: '#2C2C2C' }}>rank</h3>
-                                <p style={{ color: '#EA7B20' }}>#{userRank}</p>
+                                <p style={{ color: '#EA7B20',fontSize:'20px' }}>#{userRank}</p>
                               </div>
                             )}
                           </div>

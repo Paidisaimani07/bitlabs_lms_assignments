@@ -615,6 +615,7 @@ color: #ea7b20;
 
 .portfolio-score-details p {
   margin-top: -10px;
+  text-align:right;
 }
 
 .portfolio .skills-container li {
