@@ -2,10 +2,12 @@ import React, { useState, useMemo, useEffect } from "react";
 import "./applicantcourses.css";
 import htmlandcss from "./html&css 1.jfif";
 import python from "./python.jfif";
-
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "./ProgressAPIService";
 import { useUserContext } from "../../common/UserProvider";
+
+// Interview prep image lives in /public — use URL, not import
+const interviewprep = process.env.PUBLIC_URL + "/download.png";
 
 const ApplicantCourses = () => {
   const [search, setSearch] = useState("");
@@ -23,11 +25,13 @@ const ApplicantCourses = () => {
     // { id: 4, name: "SQL", img: sql },
     // { id: 5, name: "Spring Boot", img: springboot },
     // { id: 6, name: "React", img: react },
+    { id: 7, name: "Interview Preparedness", img: interviewprep },
   ];
 
   const coursesMap = {
-    "html & css": 5,
-    "python": 13,
+    "html & css": 1,
+    "python": 2,
+    "interview preparedness": 7,
   };
 
   // Load progress from backend on component mount
@@ -42,9 +46,22 @@ const ApplicantCourses = () => {
 
         // Convert to object with course names as keys for easy lookup
         const progressMap = {};
-        applicantCourses.forEach(course => {
-          progressMap[course.courseName.toLowerCase()] = course.overallProgress;
-        });
+        for (const course of applicantCourses) {
+          const courseNameLower = course.courseName.toLowerCase();
+          if (courseNameLower === "interview preparedness") {
+            try {
+              const topicsProgress = await ProgressAPIService.getCourseTopics(course.id);
+              const totalProgress = topicsProgress.reduce((sum, t) => sum + (t.topicProgress || 0), 0);
+              const calculatedProgress = Math.round(totalProgress / 10);
+              progressMap[courseNameLower] = calculatedProgress;
+            } catch (e) {
+              console.error("Failed to load interview prep topics progress:", e);
+              progressMap[courseNameLower] = course.overallProgress;
+            }
+          } else {
+            progressMap[courseNameLower] = course.overallProgress;
+          }
+        }
 
         setCoursesProgress(progressMap);
       } catch (error) {

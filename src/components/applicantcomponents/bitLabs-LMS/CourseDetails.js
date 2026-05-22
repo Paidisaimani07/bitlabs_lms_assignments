@@ -5,8 +5,8 @@ import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "./ProgressAPIService";
 import { useUserContext } from "../../common/UserProvider";
 import FirstHtmlPage from "./FirstHtmlPage";
-import { getAllAssignmentsByApplicant } from "./assignmentservice";
 import AssignmentEditor from "./AssignmentEditor";
+import { getAllAssignmentsByApplicant } from "./assignmentservice";
 
 
 // ─── Static course data (outside component so it never re-creates) ───────────
@@ -15,10 +15,7 @@ const getCourseId = (courseName) => {
   const courseMap = {
     "html & css": 1,
     "python": 2,
-    "java": 3,
-    "sql": 4,
-    "react": 5,
-    "spring boot": 6
+    "interview preparedness": 7
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -49,26 +46,30 @@ const COURSE_DATA = {
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
   ],
+  "interview preparedness": [
+    // ── Group 0: Understanding Yourself (3 subtopics) ──────────────────────
+    { topic: "Understanding Yourself – Self Realization", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Understanding Yourself – Self Realization", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Understanding+Yourself++Self+Realization/story.html" }] },
+    { topic: "Confidence Building & Self-Motivation", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Confidence Building & Self-Motivation", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Confidence+building+and+self-motivation/story.html" }] },
+    { topic: "Overcoming Shyness, Fear & Anxiety", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Overcoming Shyness, Fear & Anxiety", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Shyness%2C+Fear%2C+and+Anxiety+-+Ways+of+Control/story.html" }] },
+    // ── Group 1: Introduction to Communication (4 subtopics) ───────────────
+    { topic: "Components of Communication", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Components of Communication", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Components+of+Communication/story.html" }] },
+    { topic: "Communication Methods", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Communication Methods", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Communication+Methods/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 1", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Conveying+Message+Effectively+-+Part+1/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 2", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Conveying+Message+Effectively+-+Part+2/story.html" }] },
+    // ── Group 2: Self Introduction (3 subtopics) ──────────────────────────
+    { topic: "Creating Self-Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Self-Introduction", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+Self-introduction/story.html" }] },
+    { topic: "Tips for Effective Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Tips for Effective Introduction", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Tips+for+Effective+Introduction+in+Different+Scenarios/story.html" }] },
+    { topic: "Creating Your First Impression", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Your First Impression", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+your+First+Impression/story.html" }] },
+  ],
 };
 
 const CourseDetails = () => {
   const { courseName } = useParams();
   const location = useLocation();
   const { user } = useUserContext();
-  const currentPath = location.pathname.toLowerCase();
 
-  const allowedRoutes = [
-    '/courses/html',
-    '/courses/css',
-    '/courses/python',
-    '/course/html',
-    '/course/css',
-    '/course/python',
-    '/assignment/first-html-page'
-  ];
-
-  const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
-  const applicantId = user?.id;
+  // Provide default value to prevent toLowerCase error
+  const safeCourseName = courseName || '';
 
   const [selectedTopicIndex, setSelectedTopicIndex] = useState(0);
   const [topicProgress, setTopicProgress] = useState({});
@@ -77,6 +78,7 @@ const CourseDetails = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sidebarView, setSidebarView] = useState("topics");
+  const [collapsedGroups, setCollapsedGroups] = useState({});
   const [viewingAssignment, setViewingAssignment] = useState(false);
   const [assignmentType, setAssignmentType] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -86,21 +88,32 @@ const CourseDetails = () => {
     css1: false,
     css2: false,
     forms: false,
-    python1: false,
-    python2: false, python3:
-      false, python4: false,
-    python5: false, python6: false,
-    python7: false, python8: false,
-    python9: false,
-    python10: false,
-    python11: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
   });
+
+  const currentPath = location.pathname.toLowerCase();
+
+  const allowedRoutes = [
+    '/courses/html',
+    '/courses/css',
+    '/course/html',
+    '/course/css',
+    '/course/python',
+    '/courses/python',
+    '/assignment/first-html-page'
+  ];
+
+  const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
+  const applicantId = user?.id;
+
+  // ── Interview Preparedness flag ──────────────────────────────────────────
+  const isInterviewPrep = safeCourseName.toLowerCase() === "interview preparedness";
 
   // Refs for state to avoid stale closures in setTimeout callbacks
   const topicProgressRef = useRef({});
   const assignmentCompletionRef = useRef({
     html: false, css1: false, css2: false, forms: false,
-    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
   });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
@@ -158,12 +171,11 @@ const CourseDetails = () => {
 
         // Find the current course progress
         const currentCourse = applicantCourses.find(course =>
-          course.courseName.toLowerCase() === courseName.toLowerCase()
+          course.courseName?.toLowerCase() === safeCourseName.toLowerCase()
         );
 
         if (currentCourse) {
           setCourseProgressId(currentCourse.id);
-          setOverallProgress(currentCourse.overallProgress);
 
           // Get topics progress for this course
           const topicsProgress = await ProgressAPIService.getCourseTopics(currentCourse.id);
@@ -173,6 +185,15 @@ const CourseDetails = () => {
           });
           topicProgressRef.current = progressMap;
           setTopicProgress(progressMap);
+
+          if (safeCourseName.toLowerCase() === "interview preparedness") {
+            // For interview preparedness, recalculate overall from topic data
+            const totalProgress = Object.values(progressMap).reduce((a, b) => a + b, 0);
+            const calculatedProgress = courseContent.length > 0 ? Math.round(totalProgress / courseContent.length) : 0;
+            setOverallProgress(calculatedProgress);
+          } else {
+            setOverallProgress(currentCourse.overallProgress);
+          }
 
           // Find the last accessed topic (highest progress that's not 100%)
           const lastTopicIndex = topicsProgress.reduce((lastIdx, topic) => {
@@ -210,9 +231,9 @@ const CourseDetails = () => {
   // ── 3. Progress update — save to backend ────────────────────────────────────
   const handleProgressUpdate = useCallback(async (p) => {
     if (!applicantId) return;
+    const numericP = Number(p);
     const idx = topicIndexRef.current;
     const currentProgress = topicProgressRef.current[idx] || 0;
-    const numericP = Number(p);
 
     if (numericP <= currentProgress) return; // ✅ progress can only move forward
 
@@ -227,17 +248,18 @@ const CourseDetails = () => {
       const newOverallProgress = Math.round(totalProgress / courseContent.length);
       setOverallProgress(newOverallProgress);
 
-      // Save to backend
+      // Save to backend — include overallProgress so the backend stores it
       await ProgressAPIService.saveProgress({
         applicantId,
         courseId: getCourseId(courseName),
         courseName,
         topicIndex: idx,
         topicName: courseContent[idx]?.topic || '',
-        topicProgress: p
+        topicProgress: numericP,
+        overallProgress: newOverallProgress
       });
 
-      if (p === 100) {
+      if (numericP === 100) {
         handleTopicComplete(idx);
       }
     } catch (error) {
@@ -258,7 +280,10 @@ const CourseDetails = () => {
     const prevProgress = topicProgressRef.current[index - 1] || 0;
     if (prevProgress < 100) return true;
 
-    if (courseName.toLowerCase() === "python") {
+    // Interview Preparedness has no assignment gates — unlock on topic progress only
+    if (safeCourseName.toLowerCase() === "interview preparedness") return false;
+
+    if (safeCourseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
         2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5',
         8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
@@ -272,7 +297,7 @@ const CourseDetails = () => {
       if (index === 4 && !assignmentCompletionRef.current.css2) return true;
     }
     return false;
-  }, [courseName]);
+  }, [safeCourseName]);
 
   const selectTopic = useCallback((index) => {
     setViewingAssignment(false);
@@ -286,12 +311,28 @@ const CourseDetails = () => {
   // Function to toggle fullscreen
   const toggleFullscreen = useCallback(() => {
     if (!playerRef.current) return;
-    if (!document.fullscreenElement) {
-      playerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
+    const fsEl = document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+    if (!fsEl) {
+      const reqFS = playerRef.current.requestFullscreen ||
+        playerRef.current.webkitRequestFullscreen ||
+        playerRef.current.mozRequestFullScreen ||
+        playerRef.current.msRequestFullscreen;
+      if (reqFS) {
+        reqFS.call(playerRef.current).catch(err => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      }
     } else {
-      document.exitFullscreen();
+      const exitFS = document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen;
+      if (exitFS) {
+        exitFS.call(document);
+      }
     }
   }, []);
 
@@ -336,8 +377,16 @@ const CourseDetails = () => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
+
+      // Interview Preparedness: no assignments — always advance to next topic
+      if (safeCourseName.toLowerCase() === "interview preparedness") {
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) selectTopic(nextIdx);
+        return;
+      }
+
       let assignments = [];
-      if (courseName.toLowerCase() === "python") {
+      if (safeCourseName.toLowerCase() === "python") {
         assignments = [
           null,
           { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
@@ -358,14 +407,16 @@ const CourseDetails = () => {
         setSidebarView('assignments');
         setViewingAssignment(true);
         setAssignmentType(assignments[index].type);
+      } else {
+        // No assignment for this topic, move to next if available
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) {
+          selectTopic(nextIdx);
+        }
       }
     }, 3000);
   };
 
-  // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
-
-
-  // Sync assignment completion state from backend on mount
   // Sync assignment completion state from backend
   const syncAssignments = useCallback(async () => {
     if (!applicantId) return;
@@ -399,10 +450,11 @@ const CourseDetails = () => {
       });
 
       const newCompletion = {
-        html: completedIds.html.size >= totals.html,
-        css1: completedIds.css1.size >= totals.css1,
-        css2: completedIds.css2.size >= totals.css2,
-        forms: completedIds.forms.size >= totals.forms, python1: completedIds.python.has(401),
+        html: completedIds.html.size >= totals.html || completedIds.html.has(10),
+        css1: completedIds.css1.size >= totals.css1 || completedIds.css1.has(106),
+        css2: completedIds.css2.size >= totals.css2 || completedIds.css2.has(208),
+        forms: completedIds.forms.size >= totals.forms || completedIds.forms.has(305),
+        python1: completedIds.python.has(401),
         python2: completedIds.python.has(402),
         python3: completedIds.python.has(403),
         python4: completedIds.python.has(404),
@@ -440,8 +492,18 @@ const CourseDetails = () => {
 
       const group = groups.find(g => g.id === id);
       if (group) {
+        const htmlCssKeys = { 10: 'html', 106: 'css1', 208: 'css2', 305: 'forms' };
+        const compKey = htmlCssKeys[id];
+        if (compKey) {
+          setAssignmentCompletion(prev => {
+            const next = { ...prev, [compKey]: true };
+            assignmentCompletionRef.current = next;
+            return next;
+          });
+        }
         handleModuleComplete(group.index);
       }
+
       // Handle Python individual assignment completion logic
       if (id >= 401 && id <= 411) {
         // Immediately update local state for better responsiveness
@@ -481,65 +543,67 @@ const CourseDetails = () => {
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
   }, [syncAssignments, handleModuleComplete, selectTopic]);
 
-
-  // ── 4. Topic selection ────────────────────────────────
-
-
   const handleAssignmentClick = (type, index) => {
     if (!isAssignmentAllowed) return;
     setAssignmentType(type);
-    setSelectedTopicIndex(index);
     setViewingAssignment(true);
+    if (index !== undefined) {
+      setSelectedTopicIndex(index);
+    }
   };
 
-  const handleCloseAssignment = () => {
-    setViewingAssignment(false);
-  };
-
-  const handleNextTopic = useCallback(() => {
-    // For Python, use the assignment-type-to-next-topic map
-    if (courseName.toLowerCase() === 'python') {
-      const pythonAssignmentNextTopicMap = {
-        'python1': 2,  // Convert Distance -> Operators (topic 2)
-        'python2': 3,  // Total & Average Marks -> Conditionals (topic 3)
-        'python3': 4,  // Calculate Interest -> Loops (topic 4)
-        'python4': 6,  // Tuple -> DS Part 2 (topic 6)
-        'python5': 7,  // Remove Dups -> DS Part 3 (topic 7)
-        'python6': 8,  // Capitalize -> Functions (topic 8)
-        'python7': 9,  // Conditional Capitalize -> Modules (topic 9)
-        'python8': 10, // Hypotenuse -> OOPS (topic 10)
-        'python9': 11, // Student Roster -> Constructors (topic 11)
-        'python10': 12,// Animal Counts -> Inheritance (topic 12)
-        'python11': 13,// Shape -> end
+  const handleAssignmentNavigate = (newAssignmentId) => {
+    const id = Number(newAssignmentId);
+    if (safeCourseName.toLowerCase() === "python") {
+      const pythonTopicMap = {
+        401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
       };
-      const nextIdx = pythonAssignmentNextTopicMap[assignmentType];
-      if (nextIdx !== undefined && nextIdx < courseContent.length) {
-        setViewingAssignment(false);
-        selectTopic(nextIdx);
-      } else {
-        setViewingAssignment(false);
-      }
-    } else {
-      // HTML/CSS: simply go to next sequential topic
-      const nextIdx = selectedTopicIndex + 1;
-      if (nextIdx < courseContent.length) {
-        selectTopic(nextIdx);
-      } else {
-        setViewingAssignment(false);
+      const topicIdx = pythonTopicMap[id];
+      if (topicIdx !== undefined) {
+        setSelectedTopicIndex(topicIdx);
       }
     }
-  }, [assignmentType, courseName, courseContent, selectedTopicIndex, selectTopic]);
+  };
+
+  const handleCloseAssignment = (goToPrevTopic = false) => {
+    setViewingAssignment(false);
+    if (goToPrevTopic && selectedTopicIndex > 0) {
+      selectTopic(selectedTopicIndex - 1);
+    }
+  };
+
+  const handleNextTopic = () => {
+    const nextIdx = selectedTopicIndex + 1;
+
+    if (nextIdx < courseContent.length) {
+      selectTopic(nextIdx);
+    } else {
+      setViewingAssignment(false);
+    }
+  };
+
   const selectedVideo = courseContent[selectedTopicIndex]?.videos?.[0]?.url || "";
 
   // Listen for fullscreen change events (e.g. user pressing Esc)
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const fsEl = document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(!!fsEl);
     };
     document.addEventListener("fullscreenchange", handleFsChange);
-    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+    document.addEventListener("webkitfullscreenchange", handleFsChange);
+    document.addEventListener("mozfullscreenchange", handleFsChange);
+    document.addEventListener("MSFullscreenChange", handleFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFsChange);
+      document.removeEventListener("webkitfullscreenchange", handleFsChange);
+      document.removeEventListener("mozfullscreenchange", handleFsChange);
+      document.removeEventListener("MSFullscreenChange", handleFsChange);
+    };
   }, []);
-
 
   const SuccessPopup = () => (
     <div className={`success-popup-overlay ${showSuccessPopup ? 'active' : ''}`}>
@@ -555,6 +619,11 @@ const CourseDetails = () => {
     </div>
   );
 
+  // Guard clause for undefined courseName (must be after all hooks)
+  if (!courseName) {
+    return <div>Course not found</div>;
+  }
+
   return (
     <div className="border-style">
       <div className="blur-border-style"></div>
@@ -568,26 +637,80 @@ const CourseDetails = () => {
                     <h3 className="cd-title">{courseName}</h3>
                     <div className="cd-progress-labels">
                       <span>Overall Progress</span>
-
                     </div>
                     <div className="cd-progress-track">
                       <div className="cd-progress-fill" style={{ width: `${overallProgress}%` }} />
                     </div>
                   </div>
 
-
-
-
                   <div className="sidebar-scrollable">
                     <div className="topics-list">
-                      {courseContent.map((t, index) => {
-                        const progress = topicProgress[index] || 0;
 
+                      {/* ── Interview Preparedness: grouped collapsible sidebar ── */}
+                      {isInterviewPrep && (() => {
+                        const groups = [
+                          { name: "Understanding Yourself" },
+                          { name: "Introduction to Communication" },
+                          { name: "Self Introduction" },
+                        ];
+                        return groups.map((group, gIdx) => {
+                          const subtopics = courseContent
+                            .map((t, i) => ({ ...t, flatIndex: i }))
+                            .filter(t => t.groupIndex === gIdx);
+                          const isGroupCollapsed = collapsedGroups[gIdx];
+                          const groupDone = subtopics.every(t => (topicProgress[t.flatIndex] || 0) === 100);
+                          const groupStarted = subtopics.some(t => (topicProgress[t.flatIndex] || 0) > 0);
+                          return (
+                            <div key={gIdx} className="ip-group-block">
+                              <div
+                                className={`ip-group-header ${groupDone ? 'group-done' : groupStarted ? 'group-started' : ''}`}
+                                onClick={() => setCollapsedGroups(prev => ({ ...prev, [gIdx]: !prev[gIdx] }))}
+                              >
+                                <span className="ip-group-title">{group.name}</span>
+                                <span className="ip-group-chevron">{isGroupCollapsed ? '▶' : '▼'}</span>
+                              </div>
+                              {!isGroupCollapsed && subtopics.map((t) => {
+                                const progress = topicProgress[t.flatIndex] || 0;
+                                const isLocked = getTopicLockedStatus(t.flatIndex);
+                                const isActive = !viewingAssignment && selectedTopicIndex === t.flatIndex;
+                                return (
+                                  <div
+                                    key={t.flatIndex}
+                                    className={`ip-subtopic-block ${isLocked ? 'topic-locked' : ''} ${isActive ? 'topic-active' : ''}`}
+                                    onClick={() => !isLocked && selectTopic(t.flatIndex)}
+                                  >
+                                    <div className="topic-info">
+                                      <strong>
+                                        {isLocked ? '🔒 ' : ''}
+                                        {t.topic}
+                                      </strong>
+                                    </div>
+                                    {!isLocked && (
+                                      <div style={{ height: '6px', background: '#eee', borderRadius: '10px', overflow: 'hidden', margin: '4px 0 2px 0' }}>
+                                        <div style={{ width: `${progress}%`, height: '100%', background: '#e49723ff', transition: 'width 0.4s ease' }} />
+                                      </div>
+                                    )}
+                                    {t.videos.map((video, vi) => (
+                                      <p key={vi} className={`video-link ${isActive ? 'active' : ''} ${isLocked ? 'disabled' : ''}`}>
+                                        {video.title}
+                                      </p>
+                                    ))}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        });
+                      })()}
+
+                      {/* ── Existing courses: flat sidebar (unchanged) ── */}
+                      {!isInterviewPrep && courseContent.map((t, index) => {
+                        const progress = topicProgress[index] || 0;
                         const isTopicLocked = getTopicLockedStatus(index);
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
                         let assignments = [];
-                        if (courseName.toLowerCase() === "python") {
+                        if (safeCourseName.toLowerCase() === "python") {
                           assignments = [
                             null, // Topic 0
                             { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
@@ -612,6 +735,7 @@ const CourseDetails = () => {
                             { title: "Registration Forms", type: 'forms', completionKey: 'forms' },
                           ];
                         }
+
                         const topicAssignment = assignments[index];
                         const isAssignmentCompleted = topicAssignment ? assignmentCompletion[topicAssignment.completionKey] : false;
                         const isAssignmentUnlocked = (progress === 100 || isAssignmentCompleted) && !isTopicLocked;
@@ -629,12 +753,9 @@ const CourseDetails = () => {
                               </strong>
                             </div>
                             {!isTopicLocked && (
-
                               <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
                                 <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
                               </div>
-
-
                             )}
                             {t.videos.map((video, i) => (
                               <p
@@ -645,9 +766,8 @@ const CourseDetails = () => {
                               </p>
                             ))}
 
-                            {/* Integrated Assignment Section */}
                             {topicAssignment && isAssignmentAllowed && (
-                              courseName.toLowerCase() !== "python" ||
+                              safeCourseName.toLowerCase() !== "python" ||
                               true // Show all Python assignments in sidebar for clarity
                             ) && (
                                 <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
@@ -667,13 +787,8 @@ const CourseDetails = () => {
                                     {isAssignmentUnlocked && !isAssignmentCompleted && (
                                       <div className="assignment-arrow">→</div>
                                     )}
-
                                   </div>
-                                  {isAssignmentUnlocked && !isAssignmentCompleted && (
-                                    <div className="assignment-arrow">→</div>
-                                  )}
                                 </div>
-
                               )}
                           </div>
                         );
@@ -682,14 +797,20 @@ const CourseDetails = () => {
                   </div>
                 </div>
 
-                <div className="course-player" ref={playerRef}>
+                <div
+                  className="course-player"
+                  ref={playerRef}
+                  style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
+                >
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
                       <AssignmentEditor
-                        assignmentType={assignmentType}
+                        type={assignmentType}
                         onClose={handleCloseAssignment}
-                        onNextTopic={handleNextTopic}
                         applicantId={applicantId}
+                        assignmentType={assignmentType}
+                        onNavigate={handleAssignmentNavigate}
+                        onNextTopic={handleNextTopic}
                       />
                     </div>
                   ) : (
@@ -711,6 +832,7 @@ const CourseDetails = () => {
                         className="video-frame"
                         title="Course Player"
                         allowFullScreen
+                        style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
                       />
                       <button
                         onClick={toggleFullscreen}
@@ -727,7 +849,7 @@ const CourseDetails = () => {
         </div>
       </div>
       <SuccessPopup />
-    </div >
+    </div>
   );
 };
 
