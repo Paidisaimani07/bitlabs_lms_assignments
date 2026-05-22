@@ -51,7 +51,7 @@ function ApplicantNavBar() {
     email: "",
   };
   const [card, setCard] = useState(DEFAULT_CARD);
-  const applicantId = user.id;
+  const applicantId = user?.id;
 
   const handleRedirect = () => {
     navigate("/applicant-interview-prep");
@@ -135,6 +135,7 @@ function ApplicantNavBar() {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user?.id) return;
       try {
         const response = await apiClient.get(
           `/applicant/getApplicantById/${user.id}`
@@ -189,7 +190,7 @@ function ApplicantNavBar() {
   useEffect(() => {
     const handleResize = () => {
       const shouldHide = hideSidebarRoutes.some((route) =>
-        pathname.startsWith(route)
+        pathname.startsWith(route) 
       );
 
       if (shouldHide) {
@@ -235,22 +236,23 @@ function ApplicantNavBar() {
     if ($.cookie("isButtonActive") == 1) {
       $("body").addClass("sidebar-enable show-job");
     }
-
-    apiClient
-      .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
-      .then((response) => {
-        const imageUrl = URL.createObjectURL(response.data);
-        setImageSrc(imageUrl);
-      })
-      .catch(() => {
-        setImageSrc("../images/user/avatar/image-01.jpg");
-      });
+    if (user?.id) {
+      apiClient
+        .get(`/applicant-image/getphoto/${user.id}`, { responseType: "blob" })
+        .then((response) => {
+          const imageUrl = URL.createObjectURL(response.data);
+          setImageSrc(imageUrl);
+        })
+        .catch(() => {
+          setImageSrc("../images/user/avatar/image-01.jpg");
+        });
+      }
 
     return () => {
       window.removeEventListener("resize", handleResize);
       $("#left-menu-btn").off("click");
     };
-  }, [pathname, user.id]);
+  }, [pathname, user?.id]);
 
   const handleLogout = async () => {
     console.log("🔍 ApplicantNavBar handleLogout called");
@@ -281,6 +283,7 @@ function ApplicantNavBar() {
   }, [user?.id]);
 
   const fetchAlertCount = async () => {
+    if (!user?.id) return;
     try {
       // Get the count directly from the new backend API
       const response = await apiClient.get(
@@ -309,7 +312,7 @@ function ApplicantNavBar() {
     }, 200);
     console.log(userData);
     return () => clearInterval(checkUserData);
-  }, [user.id]);
+  }, [user?.id]);
 
   return (
     <div>
