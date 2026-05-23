@@ -35,11 +35,38 @@ const PYTHON_TEST_SPECS = {
         appendCode: `\n\ntry:\n    print("TEST_RESULT:", preLetterCase("CAtCHa", "a"))\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
         checkLines: ["test_result: catcha"]
     },
-    408: {
-        inputs: [],
-        appendCode: `\n\ntry:\n    import math\n    # Student should have defined a, b, and calculated c\n    if 'a' in dir() and 'b' in dir():\n        if 'c' in dir():\n            result = c\n        elif 'hypotenuse' in dir():\n            result = hypotenuse  \n        else:\n            result = math.sqrt(a**2 + b**2)\n        print(f"Hypotenuse: {result}")\nexcept Exception as e:\n    print(f"Error: {e}")\n`,
-        checkLines: ["hypotenuse: 5.0"]
-    },
+  408: {
+    inputs: [],
+    appendCode: `
+try:
+    import math
+
+    # STRICT VALIDATION
+
+    if 'a' not in dir():
+        print("TEST_ERROR: variable a missing")
+
+    elif 'b' not in dir():
+        print("TEST_ERROR: variable b missing")
+
+    elif 'c' not in dir() and 'hypotenuse' not in dir():
+        print("TEST_ERROR: hypotenuse calculation missing")
+
+    else:
+        result = c if 'c' in dir() else hypotenuse
+
+        expected = math.sqrt(a**2 + b**2)
+
+        if abs(result - expected) < 0.0001:
+            print("TEST_RESULT: PASS")
+        else:
+            print("TEST_RESULT: FAIL")
+
+except Exception as e:
+    print("TEST_ERROR:", e)
+`,
+    checkLines: ["test_result: pass"]
+},
     409: {
         inputs: [],
         appendCode: `\n\ntry:\n    s = Student("M11", "Anusha Rao")\n    print("TEST_RESULT:", s.id, s.name)\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
@@ -396,7 +423,17 @@ class AssignmentValidator {
             405: { keywords: ['set(', 'list(', 'dict', 'for'], description: 'must remove duplicates using logic (set/dict/loop)' },
             406: { keywords: ['upper', 'lower', 'for', 'while'], description: 'must process with loop and string methods' },
             407: { keywords: ['def', 'if', 'else'], description: 'must define a function with conditional logic' },
-            408: { keywords: ['math', 'sqrt', 'import', '**'], description: 'must use math module or ** operator' },
+           408: {
+    keywords: ['a', 'b'],
+    requiredPatterns: [
+        /(sqrt\s*\()/i,
+        /c\s*=/i
+    ],
+    forbiddenPatterns: [
+        /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i
+    ],
+    description: 'must calculate hypotenuse using sqrt() and variables'
+},
             409: { keywords: ['class', '__init__', 'self'], description: 'must define a class with __init__' },
             410: { keywords: ['for', 'sum', 'values', 'items'], description: 'must iterate through dictionary' },
             411: { keywords: ['class', 'def', 'super', 'inherit'], description: 'must use class inheritance' }
@@ -464,80 +501,6 @@ class AssignmentValidator {
         }
         
         return false; // Code looks legitimate
-    }
-
-    /**
-     * Execute individual test case
-     */
-    static executeTestCase(doc, testCase) {
-        const { selector, text, attribute, marks = 0, message } = testCase;
-
-        try {
-            const elements = doc.querySelectorAll(selector);
-
-            if (elements.length === 0) {
-                return {
-                    testCase: selector,
-                    passed: false,
-                    message: `✗ ${selector} not found`,
-                    marks: 0
-                };
-            }
-
-            if (text) {
-                const normalizedExpected = AssignmentValidator.normalize(text);
-                const hasText = Array.from(elements).some(el =>
-                    AssignmentValidator.normalize(el.textContent).includes(normalizedExpected)
-                );
-
-                if (!hasText) {
-                    return {
-                        testCase: selector,
-                        passed: false,
-                        message: `✗ ${selector} with text similar to "${text}" not found`,
-                        marks: 0
-                    };
-                }
-            }
-
-            if (attribute) {
-                const hasAttribute = Array.from(elements).some(el => {
-                    if (!el.hasAttribute(attribute.name)) return false;
-                    if (!attribute.value) return true;
-
-                    const actualAttr = AssignmentValidator.normalize(el.getAttribute(attribute.name));
-                    const expectedAttr = AssignmentValidator.normalize(attribute.value);
-                    return actualAttr.includes(expectedAttr);
-                });
-
-                if (!hasAttribute) {
-                    const attrMsg = attribute.value
-                        ? `${selector} with ${attribute.name} similar to "${attribute.value}"`
-                        : `${selector} with ${attribute.name} attribute`;
-                    return {
-                        testCase: selector,
-                        passed: false,
-                        message: `✗ ${attrMsg} not found`,
-                        marks: 0
-                    };
-                }
-            }
-
-            return {
-                testCase: selector,
-                passed: true,
-                message: message || `✓ ${selector} found`,
-                marks: marks
-            };
-
-        } catch (error) {
-            return {
-                testCase: selector,
-                passed: false,
-                message: message || `✗ Error testing ${selector}: ${error.message}`,
-                marks: 0
-            };
-        }
     }
 
     /**
