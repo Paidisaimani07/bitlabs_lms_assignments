@@ -382,7 +382,17 @@ class AssignmentValidator {
         const requiredLogic = {
             402: { keywords: ['total', '+', 'average', '/', 'if'], description: 'must calculate total and average with conditional logic' },
             403: { keywords: ['for', 'while', 'loop', '*', '+'], description: 'must use loop for yearly calculation' },
-            404: { keywords: ['sort', 'lambda', 'key'], description: 'must use sorted() with lambda' },
+            404: {
+    requiredPatterns: [
+        /sorted\s*\(/i,
+        /lambda\s+/i,
+        /key\s*=/i
+    ],
+    forbiddenPatterns: [
+        /print\s*\(\s*["']\s*\[\(2,\s*1\)/i
+    ],
+    description: 'must use sorted() with lambda and key'
+},
             405: { keywords: ['set(', 'list(', 'dict', 'for'], description: 'must remove duplicates using logic (set/dict/loop)' },
             406: { keywords: ['upper', 'lower', 'for', 'while'], description: 'must process with loop and string methods' },
             407: { keywords: ['def', 'if', 'else'], description: 'must define a function with conditional logic' },
@@ -395,15 +405,44 @@ class AssignmentValidator {
         const assignmentLogic = requiredLogic[assignmentId];
         
         // If assignment has required logic, check for it
-        if (assignmentLogic) {
-            const hasRequiredLogic = assignmentLogic.keywords.some(keyword => 
-                code.toLowerCase().includes(keyword.toLowerCase())
-            );
-            
-            if (!hasRequiredLogic) {
-                return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
-            }
+      if (assignmentLogic) {
+
+    // OLD keyword logic support
+    if (assignmentLogic.keywords) {
+
+        const hasRequiredLogic = assignmentLogic.keywords.some(keyword =>
+            code.toLowerCase().includes(keyword.toLowerCase())
+        );
+
+        if (!hasRequiredLogic) {
+            return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
         }
+    }
+
+    // NEW regex-based strict validation
+    if (assignmentLogic.requiredPatterns) {
+
+        const missingPattern = assignmentLogic.requiredPatterns.find(
+            pattern => !pattern.test(code)
+        );
+
+        if (missingPattern) {
+            return `Code must contain actual sorting logic. ${assignmentLogic.description}`;
+        }
+    }
+
+    // Detect hardcoded answers
+    if (assignmentLogic.forbiddenPatterns) {
+
+        const hasForbidden = assignmentLogic.forbiddenPatterns.some(
+            pattern => pattern.test(code)
+        );
+
+        if (hasForbidden) {
+            return 'Hardcoded output detected. Use actual logic instead of directly printing the answer.';
+        }
+    }
+}
         
         // Check if code is just printing without processing input
         if (assignmentId === 402 || assignmentId === 406) {
