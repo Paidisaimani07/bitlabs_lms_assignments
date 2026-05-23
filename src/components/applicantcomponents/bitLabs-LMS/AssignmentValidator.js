@@ -37,8 +37,8 @@ const PYTHON_TEST_SPECS = {
     },
     408: {
         inputs: [],
-        appendCode: `\n\ntry:\n    print("TEST_RESULT:", c)\nexcept:\n    try:\n        import math\n        print("TEST_RESULT:", math.sqrt(a**2 + b**2))\n    except:\n        pass\n`,
-        checkLines: ["test_result: 5.0"]
+        appendCode: `\n\ntry:\n    import math\n    # Student should have defined a, b, and calculated c\n    if 'a' in dir() and 'b' in dir():\n        if 'c' in dir():\n            result = c\n        elif 'hypotenuse' in dir():\n            result = hypotenuse  \n        else:\n            result = math.sqrt(a**2 + b**2)\n        print(f"Hypotenuse: {result}")\nexcept Exception as e:\n    print(f"Error: {e}")\n`,
+        checkLines: ["hypotenuse: 5.0"]
     },
     409: {
         inputs: [],
@@ -78,20 +78,19 @@ class AssignmentValidator {
 
             // Execute test cases dynamically
             testCases.forEach(testCase => {
-                maxScore += testCase.marks || 0;
                 const result = this.executeTestCase(doc, testCase);
                 results.push(result);
-
-                if (result.passed) {
-                    score += testCase.marks || 0;
-                }
+                maxScore += result.maxMarks || (testCase.marks || 0);
+                score += result.marks || 0;
             });
 
+            const passedAll = results.every(result => result.passed);
+
             return {
-                isValid: score === maxScore && unclosedCheck.isValid,
+                isValid: passedAll && unclosedCheck.isValid,
                 score,
                 maxScore,
-                details: results.map(r => r.message),
+                details: results.flatMap(r => r.subResults ? r.subResults.map(sr => sr.message) : [r.message]),
                 results,
                 errors: unclosedCheck.errors
             };
@@ -161,6 +160,215 @@ class AssignmentValidator {
     static normalize(str) {
         if (!str) return '';
         return str.replace(/\s+/g, ' ').trim().toLowerCase();
+    }
+
+    static matchNormalized(actual, expected, exact = false) {
+        const normalizedActual = AssignmentValidator.normalize(actual);
+        const normalizedExpected = AssignmentValidator.normalize(expected);
+        return exact
+            ? normalizedActual === normalizedExpected
+            : normalizedActual.includes(normalizedExpected);
+    }
+
+    static parseInlineStyle(styleString) {
+        if (!styleString) return {};
+        return String(styleString)
+            .split(';')
+            .map(decl => decl.split(':').map(part => part && part.trim()))
+            .filter(([prop]) => prop)
+            .reduce((styles, [prop, value]) => {
+                styles[prop.toLowerCase()] = value || '';
+                return styles;
+            }, {});
+    }
+
+    static hasClasses(element, classNames) {
+        if (!classNames) return true;
+        const required = Array.isArray(classNames) ? classNames : String(classNames).split(/\s+/).filter(Boolean);
+        const actual = new Set(
+            String(element.className || '')
+                .split(/\s+/)
+                .filter(Boolean)
+                .map(cls => cls.toLowerCase())
+        );
+        return required.every(cls => actual.has(String(cls).toLowerCase()));
+    }
+
+    static matchAttribute(element, attribute) {
+        if (!element || !attribute || !attribute.name) return false;
+        if (!element.hasAttribute(attribute.name)) return false;
+        if (!attribute.value) return true;
+        return AssignmentValidator.matchNormalized(
+            element.getAttribute(attribute.name),
+            attribute.value,
+            Boolean(attribute.exact)
+        );
+    }
+
+    static evaluateStyle(element, styleExpectations) {
+        if (!styleExpectations || Object.keys(styleExpectations).length === 0) return true;
+        const inlineStyles = AssignmentValidator.parseInlineStyle(element.getAttribute('style') || '');
+        return Object.entries(styleExpectations).every(([property, expectedValue]) => {
+            const actualValue = inlineStyles[property.toLowerCase()];
+            if (actualValue === undefined || actualValue === null) return false;
+            return AssignmentValidator.matchNormalized(actualValue, expectedValue, false);
+        });
+    }
+
+    static executeTestCase(doc, testCase) {
+        const {
+            selector,
+            checks,
+            text,
+            contains,
+            exactText = false,
+            attribute,
+            className,
+            classes,
+            style,
+            parentSelector,
+            childSelector,
+            minCount,
+            maxCount,
+            requiredCount,
+            theme,
+            role,
+            ariaLabel,
+            marks = 0,
+            message
+        } = testCase;
+
+        if (Array.isArray(checks) && checks.length > 0) {
+            let subtotal = 0;
+            let submax = 0;
+            const childResults = checks.map(subcase => {
+                const result = AssignmentValidator.executeTestCase(doc, subcase);
+                submax += result.maxMarks || (subcase.marks || 0);
+                subtotal += result.marks || 0;
+                return result;
+            });
+
+            return {
+                testCase: message || selector || 'Group check',
+                passed: subtotal === submax,
+                message: message || `Group validation ${subtotal === submax ? 'passed' : 'had issues'}`,
+                marks: subtotal,
+                maxMarks: submax,
+                subResults: childResults
+            };
+        }
+
+        const targetElements = selector
+            ? Array.from(doc.querySelectorAll(selector))
+            : [doc.documentElement];
+
+        if (selector && targetElements.length === 0) {
+            return {
+                testCase: selector,
+                passed: false,
+                message: `✗ ${selector} not found`,
+                marks: 0,
+                maxMarks: marks
+            };
+        }
+
+        if (requiredCount && targetElements.length < requiredCount) {
+            return {
+                testCase: selector || message || 'Count validation',
+                passed: false,
+                message: `✗ Expected at least ${requiredCount} element(s) for ${selector || 'root'}`,
+                marks: 0,
+                maxMarks: marks
+            };
+        }
+
+        if (minCount && targetElements.length < minCount) {
+            return {
+                testCase: selector || message || 'Count validation',
+                passed: false,
+                message: `✗ Expected at least ${minCount} element(s) for ${selector || 'root'}`,
+                marks: 0,
+                maxMarks: marks
+            };
+        }
+
+        if (maxCount && targetElements.length > maxCount) {
+            return {
+                testCase: selector || message || 'Count validation',
+                passed: false,
+                message: `✗ Expected no more than ${maxCount} element(s) for ${selector || 'root'}`,
+                marks: 0,
+                maxMarks: marks
+            };
+        }
+
+        const hasTextCheck = () => {
+            if (!text && !contains) return true;
+            const expected = text || contains;
+            return targetElements.some(el => {
+                const actual = el.textContent || '';
+                return AssignmentValidator.matchNormalized(actual, expected, exactText);
+            });
+        };
+
+        const hasClassCheck = () => {
+            if (!className && !classes) return true;
+            return targetElements.some(el => AssignmentValidator.hasClasses(el, className || classes));
+        };
+
+        const hasAttributeCheck = () => {
+            if (!attribute) return true;
+            return targetElements.some(el => AssignmentValidator.matchAttribute(el, attribute));
+        };
+
+        const hasParentCheck = () => {
+            if (!parentSelector) return true;
+            return targetElements.some(el => el.closest(parentSelector));
+        };
+
+        const hasChildCheck = () => {
+            if (!childSelector) return true;
+            return targetElements.some(el => el.querySelector(childSelector));
+        };
+
+        const hasRoleCheck = () => {
+            if (!role && !ariaLabel) return true;
+            return targetElements.some(el => {
+                const roleMatch = role ? AssignmentValidator.matchNormalized(el.getAttribute('role') || '', role, exactText) : true;
+                const ariaMatch = ariaLabel ? AssignmentValidator.matchNormalized(el.getAttribute('aria-label') || '', ariaLabel, exactText) : true;
+                return roleMatch && ariaMatch;
+            });
+        };
+
+        const hasStyleCheck = () => {
+            if (!style && !theme) return true;
+            return targetElements.some(el => {
+                const styleOk = style ? AssignmentValidator.evaluateStyle(el, style) : true;
+                let themeOk = true;
+                if (theme) {
+                    if (theme.classIncludes) {
+                        themeOk = AssignmentValidator.hasClasses(el, theme.classIncludes);
+                    }
+                    if (themeOk && theme.styleIncludes) {
+                        themeOk = AssignmentValidator.evaluateStyle(el, theme.styleIncludes);
+                    }
+                }
+                return styleOk && themeOk;
+            });
+        };
+
+        const passed = hasTextCheck() && hasClassCheck() && hasAttributeCheck() && hasParentCheck() && hasChildCheck() && hasRoleCheck() && hasStyleCheck();
+        const defaultMessage = passed
+            ? `✓ ${selector || 'HTML structure'} passed` 
+            : `✗ ${selector || 'HTML structure'} did not satisfy all checks`;
+
+        return {
+            testCase: selector || message || 'HTML validation',
+            passed,
+            message: message || defaultMessage,
+            marks: passed ? marks : 0,
+            maxMarks: marks
+        };
     }
 
     /**

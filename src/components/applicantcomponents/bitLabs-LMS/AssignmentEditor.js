@@ -50,16 +50,16 @@ const ASSIGNMENTS = [
 
     // ─── PYTHON (Module 5: 401 - 411) ────────────────────────────────────────
     { id: 401, title: "Convert Distance", question: "Write program to convert the distance (in feet) to inches, yards, and miles.", expectedOutput: "Distance in feet : 5.0\nDistance in inches : 60.0\nDistance in yards : 1.6666666666666667\nDistance in miles : 0.000946969696969697", defaultCode: "# Input distance in feet\nfeet = float(input(\"Enter the distance in feet : \"))\n\n# Convert to inches, yards, and miles\n# ... code here ...\n", topic: 'Python', keywords: ['feet', 'float', 'input', 'print'] },
-    { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Enter Student Number: 101\nEnter Student Name: Sai Mani\nEnter C Marks: 85\nEnter C++ Marks: 90\nEnter Java Marks: 88\n\nTotal Marks: 263\nAverage: 87.66\nResult: Pass\nGrade: A", defaultCode: "# Enter student details\nstudent_no = input(\"Enter Student Number: \")\nname = input(\"Enter Student Name: \")\n\n# Enter marks\nc_marks = float(input(\"Enter C Marks: \"))\ncpp_marks = float(input(\"Enter C++ Marks: \"))\njava_marks = float(input(\"Enter Java Marks: \"))\n\n# Calculate total, average, result and grade\n# ... code here ...\n", topic: 'Python', keywords: ['input', 'print', 'c++', 'java', 'marks'] },
-    { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Display yearly capital with interest.", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\nyears = int(input(\"Number of years: \"))\n\n# Calculate capital for each year\n# ... code here ...\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
+    { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Enter Student Number: 101\nEnter Student Name: Sai Mani\nEnter C Marks: 85\nEnter C++ Marks: 90\nEnter Java Marks: 88\n\nTotal Marks: 263\nAverage: 87.67\nResult: Pass\nGrade: A", defaultCode: "# Enter student details\nstudent_no = input(\"Enter Student Number: \")\nname = input(\"Enter Student Name: \")\n\n# Enter marks\nc_marks = float(input(\"Enter C Marks: \"))\ncpp_marks = float(input(\"Enter C++ Marks: \"))\njava_marks = float(input(\"Enter Java Marks: \"))\n\n# Calculate total, average, result and grade\n# ... code here ...\n", topic: 'Python', keywords: ['input', 'print', 'c++', 'java', 'marks'] },
+    { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Initial balance: 1000\nInterest rate: 10\nNumber of years: 3\n\n1100\n1210\n1331", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\nyears = int(input(\"Number of years: \"))\n\n# Calculate capital for each year\n# ... code here ...\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
     { id: 404, title: "Tuple", question: "Sort tuples using last element.", expectedOutput: "[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]", defaultCode: "data = [(2, 5), (1, 2), (4, 4), (2, 3), (2, 1)]\n\n# Sort the list of tuples based on the second element\n# ... code here ...\n", topic: 'Python', keywords: ['sort', 'lambda'] },
     { id: 405, title: "Remove Dups", question: "Remove duplicates from list while preserving order.", expectedOutput: "[12, 24, 35, 88, 120, 155]", defaultCode: "items = [12, 24, 35, 24, 88, 120, 155, 88, 120, 155]\n\n# Create a new list without duplicates\n# ... code here ...\n", topic: 'Python', keywords: ['set', 'list', 'append'] },
     { id: 406, title: "Capitalize", question: "Convert all input lines to uppercase.", expectedOutput: "HELLO WORLD\nPRACTICE MAKES PERFECT", defaultCode: "lines = []\nprint(\"Enter lines (empty line to stop):\")\nwhile True:\n    # ... read and process lines ...\n    pass\n", topic: 'Python', keywords: ['upper', 'input'] },
     { id: 407, title: "Conditional Capitalize", question: "Implement preLetterCase(string, letter)", expectedOutput: "preLetterCase(\"CAtCHa\",\"a\") → \"cATCHA\"", defaultCode: "def preLetterCase(string, letter):\n    # if string starts with letter, convert all to uppercase\n    # otherwise convert all to lowercase\n    pass\n", topic: 'Python', keywords: ['def', 'return', 'if'] },
-    { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Display hypotenuse value.", defaultCode: "import math\na = 3\nb = 4\n\n# Calculate hypotenuse c = sqrt(a^2 + b^2)\n# ... code here ...\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
+    { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Hypotenuse: 5.0", defaultCode: "import math\na = 3\nb = 4\n\n# Calculate hypotenuse c = sqrt(a^2 + b^2)\n# ... code here ...\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
     { id: 409, title: "Student Roster", question: "Create Student class with attributes and display values.", expectedOutput: "Student ID: M11\nStudent Name: Anusha Rao", defaultCode: "class Student:\n    def __init__(self, id, name):\n        # ... initialize ...\n        pass\n\n# Create and display student\n", topic: 'Python', keywords: ['class', 'def', '__init__'] },
     { id: 410, title: "Animal Counts", question: "Use try/except while summing dictionary values.", expectedOutput: "Total number of puppies:130", defaultCode: "animals = {'puppies': 70, 'kittens': 60}\n\ntry:\n    # ... sum logic ...\n    pass\nexcept Exception as e:\n    print(e)\n", topic: 'Python', keywords: ['try', 'except', 'print'] },
-    { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "Display square area properly.", defaultCode: "class Shape:\n    def area(self): return 0\n\nclass Square(Shape):\n    # ... override area ...\n    pass\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
+    { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "test_result_area: 25\ntest_result_parent: true", defaultCode: "class Shape:\n    def area(self): return 0\n\nclass Square(Shape):\n    # ... override area ...\n    pass\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
 
 ];
 
@@ -197,17 +197,21 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
                 if (backendCode !== null && backendCode !== undefined) {
                     const finalCode = String(backendCode);
                     setCode(finalCode);
-                    setLiveOutput(finalCode);
                     const isPython = target.topic === 'Python';
                     let validation = null;
                     if (isPython) {
                         if (pyodide) {
                             validation = await AssignmentValidator.validatePython(pyodide, finalCode, target.id);
+                            // Display execution output for Python
+                            setLiveOutput(`>>> Previous Submission Execution:\n\n${validation.executionOutput || "Code executed successfully with no output."}`);
                         } else {
                             validation = { isValid: true, details: ["Loaded previous submission."], results: [] };
+                            setLiveOutput(">>> Python runtime is loading... Please wait.");
                         }
                     } else {
                         validation = AssignmentValidator.validate(finalCode, target.testCases);
+                        // Display the code for HTML/CSS
+                        setLiveOutput(finalCode);
                     }
 
                     setValidationResult(validation);
