@@ -5,6 +5,57 @@
  * Lightweight, scalable, production-ready assessment platform
  */
 
+const PYTHON_TEST_SPECS = {
+    401: {
+        inputs: ["5"],
+        checkLines: ["distance in feet : 5", "distance in inches : 60", "distance in yards : 1.666", "distance in miles : 0.000946"]
+    },
+    402: {
+        inputs: ["101", "Sai Mani", "85", "90", "88"],
+        checkLines: ["total marks: 263", "average: 87.67", "result: pass", "grade: a"]
+    },
+    403: {
+        inputs: ["1000", "10", "3"],
+        checkLines: ["1100", "1210", "1331"]
+    },
+    404: {
+        inputs: [],
+        checkLines: ["[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]"]
+    },
+    405: {
+        inputs: [],
+        checkLines: ["[12, 24, 35, 88, 120, 155]"]
+    },
+    406: {
+        inputs: ["hello world", "practice makes perfect", ""],
+        checkLines: ["HELLO WORLD", "PRACTICE MAKES PERFECT"]
+    },
+    407: {
+        inputs: [],
+        appendCode: `\n\ntry:\n    print("TEST_RESULT:", preLetterCase("CAtCHa", "a"))\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
+        checkLines: ["test_result: catcha"]
+    },
+    408: {
+        inputs: [],
+        appendCode: `\n\ntry:\n    print("TEST_RESULT:", c)\nexcept:\n    try:\n        import math\n        print("TEST_RESULT:", math.sqrt(a**2 + b**2))\n    except:\n        pass\n`,
+        checkLines: ["test_result: 5.0"]
+    },
+    409: {
+        inputs: [],
+        appendCode: `\n\ntry:\n    s = Student("M11", "Anusha Rao")\n    print("TEST_RESULT:", s.id, s.name)\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
+        checkLines: ["m11", "anusha rao"]
+    },
+    410: {
+        inputs: [],
+        checkLines: ["130"]
+    },
+    411: {
+        inputs: [],
+        appendCode: `\n\ntry:\n    sq = Square(5)\n    print("TEST_RESULT_AREA:", sq.area())\n    print("TEST_RESULT_PARENT:", isinstance(sq, Shape))\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
+        checkLines: ["test_result_area: 25", "test_result_parent: true"]
+    }
+};
+
 class AssignmentValidator {
     /**
      * Main validation function
@@ -113,6 +164,62 @@ class AssignmentValidator {
     }
 
     /**
+     * Check if code is suspicious (just printing expected output)
+     */
+    static isSuspiciousCode(code, assignmentId) {
+        const spec = PYTHON_TEST_SPECS[assignmentId] || {};
+        const checkLines = spec.checkLines || [];
+        
+        // Define required keywords/logic patterns for each assignment
+        const requiredLogic = {
+            402: { keywords: ['total', '+', 'average', '/', 'if'], description: 'must calculate total and average with conditional logic' },
+            403: { keywords: ['for', 'while', 'loop', '*', '+'], description: 'must use loop for yearly calculation' },
+            404: { keywords: ['sort', 'lambda', 'key'], description: 'must use sorted() with lambda' },
+            405: { keywords: ['set(', 'list(', 'dict', 'for'], description: 'must remove duplicates using logic (set/dict/loop)' },
+            406: { keywords: ['upper', 'lower', 'for', 'while'], description: 'must process with loop and string methods' },
+            407: { keywords: ['def', 'if', 'else'], description: 'must define a function with conditional logic' },
+            408: { keywords: ['math', 'sqrt', 'import', '**'], description: 'must use math module or ** operator' },
+            409: { keywords: ['class', '__init__', 'self'], description: 'must define a class with __init__' },
+            410: { keywords: ['for', 'sum', 'values', 'items'], description: 'must iterate through dictionary' },
+            411: { keywords: ['class', 'def', 'super', 'inherit'], description: 'must use class inheritance' }
+        };
+
+        const assignmentLogic = requiredLogic[assignmentId];
+        
+        // If assignment has required logic, check for it
+        if (assignmentLogic) {
+            const hasRequiredLogic = assignmentLogic.keywords.some(keyword => 
+                code.toLowerCase().includes(keyword.toLowerCase())
+            );
+            
+            if (!hasRequiredLogic) {
+                return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
+            }
+        }
+        
+        // Check if code is just printing without processing input
+        if (assignmentId === 402 || assignmentId === 406) {
+            // For these assignments, input() must be called
+            if (!code.includes('input(')) {
+                return 'Code must read input using input() function';
+            }
+        }
+        
+        // Check for suspicious pattern: printing expected outputs without variables
+        if (checkLines.length > 0) {
+            const printCount = (code.match(/print\(/g) || []).length;
+            const variableAssignments = (code.match(/\w+\s*=/g) || []).length;
+            
+            // If more prints than variable assignments, suspicious
+            if (printCount > 0 && variableAssignments === 0 && printCount >= checkLines.length) {
+                return 'Your code appears to only print expected output. You must calculate values and store in variables.';
+            }
+        }
+        
+        return false; // Code looks legitimate
+    }
+
+    /**
      * Execute individual test case
      */
     static executeTestCase(doc, testCase) {
@@ -131,9 +238,9 @@ class AssignmentValidator {
             }
 
             if (text) {
-                const normalizedExpected = this.normalize(text);
+                const normalizedExpected = AssignmentValidator.normalize(text);
                 const hasText = Array.from(elements).some(el =>
-                    this.normalize(el.textContent).includes(normalizedExpected)
+                    AssignmentValidator.normalize(el.textContent).includes(normalizedExpected)
                 );
 
                 if (!hasText) {
@@ -151,8 +258,8 @@ class AssignmentValidator {
                     if (!el.hasAttribute(attribute.name)) return false;
                     if (!attribute.value) return true;
 
-                    const actualAttr = this.normalize(el.getAttribute(attribute.name));
-                    const expectedAttr = this.normalize(attribute.value);
+                    const actualAttr = AssignmentValidator.normalize(el.getAttribute(attribute.name));
+                    const expectedAttr = AssignmentValidator.normalize(attribute.value);
                     return actualAttr.includes(expectedAttr);
                 });
 
@@ -187,55 +294,127 @@ class AssignmentValidator {
     }
 
     /**
-     * Python validation function
+     * Python validation function using Pyodide
+     * @param {Object} pyodide - Loaded Pyodide instance
      * @param {string} code - Student's Python code
-     * @param {Object} config - { expectedOutput, keywords, testCases }
-     * @returns {Object} - {isValid, details, results, errors}
+     * @param {number} assignmentId - The ID of the assignment
+     * @returns {Promise<Object>} - {isValid, details, results, errors}
      */
-    static validatePython(code, config = {}) {
-        const { expectedOutput, keywords = [], testCases = [] } = config;
-        const results = [];
-        let passedCount = 0;
-        const errors = [];
-
-        // 1. Keyword Validation
-        keywords.forEach(kw => {
-            // Escape special characters in keyword for regex (like c++)
-            const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${escapedKw})`, 'i');
-            const passed = regex.test(code);
-            if (passed) passedCount++;
-            results.push({
-                testCase: `Keyword: ${kw}`,
-                passed,
-                message: passed ? `✓ Keyword "${kw}" found` : `✗ Keyword "${kw}" missing`
-            });
-        });
-
-        // 2. Output Validation (Simulation/Check)
-        // Since we don't have a live interpreter, we'll look for print statements or logic
-        if (expectedOutput) {
-            // This is a simplified check: does the code contain the logic to produce the output?
-            // In a real LMS, we'd run this through a backend or Pyodide.
-            // For now, we'll validate based on keywords and structure.
-            const normalizedExpected = this.normalize(expectedOutput);
-
-            // We'll mark it as potentially valid if it has the right keywords
-            const isValid = results.every(r => r.passed);
-
+    static async validatePython(pyodide, code, assignmentId) {
+        if (!pyodide) {
             return {
-                isValid,
-                details: results.map(r => r.message),
-                results,
-                errors: isValid ? [] : [{ type: 'Logic Error', message: 'Assignment requirements not fully met', line: 'N/A' }]
+                isValid: false,
+                details: ["Pyodide runtime is not ready."],
+                results: [],
+                errors: [{ type: 'Runtime Error', message: 'Python runtime is loading...', line: 'N/A' }]
             };
         }
 
+        // Check for suspicious code (just printing expected output)
+        const suspiciousResult = this.isSuspiciousCode(code, assignmentId);
+        if (suspiciousResult) {
+            return {
+                isValid: false,
+                details: [suspiciousResult],
+                results: [{ testCase: 'Code Logic', passed: false, message: '✗ ' + suspiciousResult }],
+                errors: [{ type: 'Logic Error', message: suspiciousResult, line: 'N/A' }]
+            };
+        }
+
+        const spec = PYTHON_TEST_SPECS[assignmentId] || { inputs: [], checkLines: [] };
+        const results = [];
+        const errors = [];
+        let executionOutput = "";
+
+        // 1. Prepare inputs mock and injection code
+        const mockInputs = spec.inputs || [];
+        const appendCode = spec.appendCode || "";
+
+        // Setup custom stdout capturing and input mocking in Python
+        const jsonInputs = JSON.stringify(mockInputs);
+        const bootstrapCode = `
+import sys
+import json
+import builtins
+
+# Capture stdout
+class StdoutCapturer:
+    def __init__(self):
+        self.data = []
+    def write(self, s):
+        self.data.append(s)
+    def flush(self):
+        pass
+
+capturer = StdoutCapturer()
+sys.stdout = capturer
+
+# Mock input
+inputs = json.loads('''${jsonInputs}''')
+input_index = 0
+
+def mock_input(prompt=""):
+    global input_index
+    if input_index < len(inputs):
+        val = str(inputs[input_index])
+        input_index += 1
+        # Print prompt and value to mimic console interaction
+        print(f"{prompt}{val}")
+        return val
+    return ""
+
+builtins.input = mock_input
+`;
+
+        const executionCode = `${bootstrapCode}\n\n# --- Student Code ---\n${code}\n\n# --- Test Runner ---\n${appendCode}\n\n# Restore stdout and get captured output\nsys.stdout = sys.__stdout__\ncaptured_output = "".join(capturer.data)\n`;
+
+        try {
+            // Run the code in Pyodide
+            await pyodide.runPythonAsync(executionCode);
+            
+            // Extract captured output
+            executionOutput = pyodide.globals.get('captured_output');
+        } catch (error) {
+            return {
+                isValid: false,
+                details: [`Syntax/Runtime Error: ${error.message}`],
+                results: [{ testCase: 'Execution', passed: false, message: `Error: ${error.message}` }],
+                errors: [{ type: 'Runtime Error', message: error.message, line: 'N/A' }]
+            };
+        }
+
+        // 2. Perform validation checks
+        const normalizedActual = AssignmentValidator.normalize(executionOutput);
+
+        // Verification criteria:
+        // If the spec lists specific checkLines, verify each one is in the output (case-insensitive check)
+        if (spec.checkLines && spec.checkLines.length > 0) {
+            spec.checkLines.forEach(line => {
+                const normalizedLine = AssignmentValidator.normalize(line);
+                const passed = normalizedActual.includes(normalizedLine);
+                results.push({
+                    testCase: `Output check: "${line}"`,
+                    passed,
+                    message: passed ? `✓ Found expected output: "${line}"` : `✗ Missing expected output: "${line}"`
+                });
+            });
+        } else {
+            // Fallback to basic execution check
+            results.push({
+                testCase: 'Execution',
+                passed: true,
+                message: '✓ Code executed successfully.'
+            });
+        }
+
+        const isValid = results.every(r => r.passed);
+
         return {
-            isValid: results.every(r => r.passed),
+            isValid,
             details: results.map(r => r.message),
             results,
-            errors
+            errors: isValid ? [] : [{ type: 'Logic Error', message: 'Assignment criteria not fully met. Review output details.', line: 'N/A' }],
+            executionOutput
         };
     }
 }

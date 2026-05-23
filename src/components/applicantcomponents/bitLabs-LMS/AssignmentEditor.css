@@ -185,10 +185,9 @@
 /* ─────────────────────────────────────────────────────────────────── */
 
 .ae-editor-section {
-    flex: 1;
+    flex: none; /* Prevent shrinking so it retains its natural content height and never overlaps siblings */
     display: flex;
     flex-direction: column;
-    min-height: 0;
 }
 
 .ae-editor-header {
@@ -225,7 +224,7 @@
 
 .ae-textarea {
     flex: 1;
-    min-height: 500px;
+    min-height: 350px; /* Reduced min-height for better layout fitting and responsiveness */
     padding: 15px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;

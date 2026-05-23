@@ -73,6 +73,21 @@ const ErrorModal = ({ errors, onClose }) => (
     </div>
 );
 
+const loadScript = (src) => {
+    return new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) {
+            resolve();
+            return;
+        }
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = (err) => reject(err);
+        document.head.appendChild(script);
+    });
+};
+
 const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, onNextTopic }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [code, setCode] = useState('');
@@ -84,6 +99,8 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false); // Track if already completed in backend
+    const [pyodide, setPyodide] = useState(null);
+    const [pyodideLoading, setPyodideLoading] = useState(false);
     const [completedIds, setCompletedIds] = useState(() => {
         try {
             const saved = localStorage.getItem(`completed_assignments_${applicantId}`);
@@ -93,16 +110,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
         }
     });
 
-    // Keep localStorage in sync
-    useEffect(() => {
-        if (applicantId && completedIds.size > 0) {
-            localStorage.setItem(`completed_assignments_${applicantId}`, JSON.stringify(Array.from(completedIds)));
-        }
-    }, [completedIds, applicantId]);
-
-    const activeAssignmentIdRef = useRef(ASSIGNMENTS[0].id);
-    const isNavigatingRef = useRef(false);
-
+    // Compute filtered assignments and current assignment before using in effects
     const filteredAssignments = useMemo(() => {
         const filtered = ASSIGNMENTS.filter(a => {
             if (assignmentType === 'html') return a.topic === 'HTML Basics';
@@ -117,6 +125,45 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
     }, [assignmentType]);
 
     const currentAssignment = useMemo(() => filteredAssignments[currentIndex] || filteredAssignments[0] || ASSIGNMENTS[0], [currentIndex, filteredAssignments]);
+
+    const activeAssignmentIdRef = useRef(ASSIGNMENTS[0].id);
+    const isNavigatingRef = useRef(false);
+
+    useEffect(() => {
+        const loadPyodideRuntime = async () => {
+            if (!pyodide && !pyodideLoading) {
+                setPyodideLoading(true);
+                try {
+                    console.log('[AssignmentEditor] Loading Pyodide loader script dynamically...');
+                    await loadScript('https://cdn.jsdelivr.net/pyodide/v0.26.1/full/pyodide.js');
+
+                    if (window.loadPyodide) {
+                        console.log('[AssignmentEditor] Initializing Pyodide Wasm instance...');
+                        const instance = await window.loadPyodide();
+                        setPyodide(instance);
+                        console.log('[AssignmentEditor] Pyodide initialized successfully.');
+                    } else {
+                        throw new Error('window.loadPyodide is not defined after script load.');
+                    }
+                } catch (e) {
+                    console.error('[AssignmentEditor] Pyodide dynamic loading/initialization error:', e);
+                } finally {
+                    setPyodideLoading(false);
+                }
+            }
+        };
+
+        if (currentAssignment.topic === 'Python') {
+            loadPyodideRuntime();
+        }
+    }, [currentAssignment.topic, pyodide, pyodideLoading]);
+
+    // Keep localStorage in sync
+    useEffect(() => {
+        if (applicantId && completedIds.size > 0) {
+            localStorage.setItem(`completed_assignments_${applicantId}`, JSON.stringify(Array.from(completedIds)));
+        }
+    }, [completedIds, applicantId]);
 
     const fetchSavedCodeFromBackend = useCallback(async (index) => {
         if (!applicantId) {
@@ -152,12 +199,16 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
                     setCode(finalCode);
                     setLiveOutput(finalCode);
                     const isPython = target.topic === 'Python';
-                    const validation = isPython ?
-                        AssignmentValidator.validatePython(finalCode, {
-                            expectedOutput:
-                                target.expectedOutput, keywords: target.keywords
-                        })
-                        : AssignmentValidator.validate(finalCode, target.testCases);
+                    let validation = null;
+                    if (isPython) {
+                        if (pyodide) {
+                            validation = await AssignmentValidator.validatePython(pyodide, finalCode, target.id);
+                        } else {
+                            validation = { isValid: true, details: ["Loaded previous submission."], results: [] };
+                        }
+                    } else {
+                        validation = AssignmentValidator.validate(finalCode, target.testCases);
+                    }
 
                     setValidationResult(validation);
                     setIsSubmitted(true);
@@ -297,21 +348,24 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
     // This ensures persistence works on Refresh, Previous, and Next.
     useEffect(() => {
         fetchSavedCodeFromBackend(currentIndex);
-    }, [currentIndex, fetchSavedCodeFromBackend]);
+    }, [currentIndex, fetchSavedCodeFromBackend, pyodide]);
 
-    const handleRun = () => {
+    const handleRun = async () => {
         if (currentAssignment.topic === 'Python') {
-            // Improved Python output simulation: show expected output if keywords are found, 
-            // or show a generic execution message.
-            const validation = AssignmentValidator.validatePython(code, {
-                expectedOutput: currentAssignment.expectedOutput,
-                keywords: currentAssignment.keywords
-            });
-
-            if (validation.isValid) {
-                setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${currentAssignment.expectedOutput}\n\n>>> Execution finished successfully.`);
-            } else {
-                setLiveOutput(`Python Execution Output:\n--------------------------\n(Processing code...)\n\nNote: Please ensure all required keywords and logic are implemented to see full output.`);
+            if (!pyodide) {
+                setLiveOutput("Python runtime is loading... Please wait.");
+                return;
+            }
+            setLiveOutput(`>>> Executing ${currentAssignment.title}...\n`);
+            try {
+                const validation = await AssignmentValidator.validatePython(pyodide, code, currentAssignment.id);
+                if (validation.errors && validation.errors.length > 0 && validation.errors[0].type === 'Runtime Error') {
+                    setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\nRuntime Error:\n${validation.errors[0].message}`);
+                } else {
+                    setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${validation.executionOutput || "Code executed successfully with no output."}\n\n>>> Execution finished successfully.`);
+                }
+            } catch (err) {
+                setLiveOutput(`Error executing code:\n${err.message}`);
             }
         } else {
             setLiveOutput(code);
@@ -321,9 +375,18 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
 
     const handleSubmit = async () => {
         const isPython = currentAssignment.topic === 'Python';
-        const result = isPython
-            ? AssignmentValidator.validatePython(code, { expectedOutput: currentAssignment.expectedOutput, keywords: currentAssignment.keywords })
-            : AssignmentValidator.validate(code, currentAssignment.testCases);
+        
+        let result;
+        if (isPython) {
+            if (!pyodide) {
+                setSubmissionErrors([{ message: 'Python runtime is still loading. Please wait.' }]);
+                setShowErrorModal(true);
+                return;
+            }
+            result = await AssignmentValidator.validatePython(pyodide, code, currentAssignment.id);
+        } else {
+            result = AssignmentValidator.validate(code, currentAssignment.testCases);
+        }
 
         setValidationResult(result);
         setIsSubmitted(true);
@@ -371,9 +434,9 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
                     <div className="ae-editor-section">
                         <div className="ae-editor-header">
                             <label className="ae-label">{currentAssignment.topic === 'Python' ? 'Python Code:' : 'HTML Code:'}</label>
-                            <button className="ae-clear-btn" onClick={handleClear} disabled={loading}>Clear</button>
+                            <button className="ae-clear-btn" onClick={handleClear} disabled={loading || (currentAssignment.topic === 'Python' && pyodideLoading)}>Clear</button>
                         </div>
-                        <textarea className="ae-textarea" ae-python-editor value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} style={currentAssignment.topic === 'Python' ? { fontFamily: 'Consolas, monospace', fontSize: '14px' } : {}} />
+                        <textarea className="ae-textarea" ae-python-editor value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder={currentAssignment.topic === 'Python' && pyodideLoading ? "Loading Python runtime..." : "Type here..."} spellCheck="false" disabled={loading || (currentAssignment.topic === 'Python' && pyodideLoading)} style={currentAssignment.topic === 'Python' ? { fontFamily: 'Consolas, monospace', fontSize: '14px' } : {}} />
                     </div>
                     <div className="ae-button-group">
                         <div className="ae-btn-slot">
@@ -381,9 +444,9 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
                         </div>
 
                         <div className="ae-btn-center">
-                            <button className="ae-btn ae-btn-primary" onClick={handleRun}>▶ Run</button>
+                            <button className="ae-btn ae-btn-primary" onClick={handleRun} disabled={loading || (currentAssignment.topic === 'Python' && (!pyodide || pyodideLoading))}>▶ Run</button>
                             {(!isSubmitted || !validationResult?.isValid) && (
-                                <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim() || loading}>✓ Submit</button>
+                                <button className="ae-btn ae-btn-success" onClick={handleSubmit} disabled={!code.trim() || loading || (currentAssignment.topic === 'Python' && (!pyodide || pyodideLoading))}>✓ Submit</button>
                             )}
                         </div>
 
