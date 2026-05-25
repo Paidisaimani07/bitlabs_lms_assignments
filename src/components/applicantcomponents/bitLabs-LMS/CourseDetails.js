@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./coursedetails.css";
 import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "./ProgressAPIService";
@@ -66,6 +66,7 @@ const COURSE_DATA = {
 const CourseDetails = () => {
   const { courseName } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const { user } = useUserContext();
 
   // Provide default value to prevent toLowerCase error
@@ -802,6 +803,29 @@ const CourseDetails = () => {
                   ref={playerRef}
                   style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
                 >
+                  {!isFullscreen && (
+                    <p
+                      onClick={() => navigate("/applicant-lmscourses-list")}
+                      style={{
+                        color: "#f97316",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        marginBottom: "12px",
+                        fontSize: "16px",
+                        transition: "color 0.2s ease, text-decoration 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.color = "#ea580c";
+                        e.target.style.textDecoration = "underline";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.color = "#f97316";
+                        e.target.style.textDecoration = "none";
+                      }}
+                    >
+                      ← Back
+                    </p>
+                  )}
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
                       <AssignmentEditor
@@ -814,7 +838,7 @@ const CourseDetails = () => {
                       />
                     </div>
                   ) : (
-                    <>
+                    <div className="video-player-wrapper">
                       {!isFullscreen && (
                         <div className="immersive-overlay" onClick={toggleFullscreen}>
                           <div className="overlay-msg">
@@ -840,7 +864,7 @@ const CourseDetails = () => {
                       >
                         {isFullscreen ? "✕ Exit Fullscreen" : "⛶ Fullscreen"}
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
