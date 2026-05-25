@@ -85,12 +85,250 @@ except Exception as e:
 
 class AssignmentValidator {
     /**
+     * Check if an assignment contains images in its expected output or test cases
+     */
+    static isImageAssignment(expectedOutput, testCases) {
+        if (expectedOutput && expectedOutput.toLowerCase().includes('<img')) {
+            return true;
+        }
+        if (testCases && testCases.some(tc => tc.selector && tc.selector.toLowerCase().includes('img'))) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Get significant child nodes (ignores comment nodes, whitespace-only text, and style tags)
+     */
+    static getSignificantChildren(node) {
+        return Array.from(node.childNodes).filter(child => {
+            if (child.nodeType === 8) return false; // Node.COMMENT_NODE
+            if (child.nodeType === 1) { // Node.ELEMENT_NODE
+                if (child.tagName.toLowerCase() === 'style') return false;
+            }
+            if (child.nodeType === 3) { // Node.TEXT_NODE
+                return child.nodeValue.trim().length > 0;
+            }
+            return true;
+        });
+    }
+
+    /**
+     * Parse CSS styles from text into selectors and normalized declarations list
+     */
+    static parseCSSRules(cssText) {
+        const rules = {};
+        const cleanCss = cssText.replace(/\/\*[\s\S]*?\*\//g, '');
+        const regex = /([^{]+)\{([^}]+)\}/g;
+        let match;
+        while ((match = regex.exec(cleanCss)) !== null) {
+            const selector = match[1].trim().toLowerCase().replace(/\s+/g, ' ');
+            const declarations = match[2].split(';')
+                .map(d => d.trim())
+                .filter(Boolean)
+                .map(d => {
+                    const parts = d.split(':');
+                    if (parts.length < 2) return null;
+                    const prop = parts[0].trim().toLowerCase();
+                    const val = parts.slice(1).join(':').trim().toLowerCase().replace(/\s+/g, ' ');
+                    return `${prop}:${val}`;
+                })
+                .filter(Boolean)
+                .sort();
+            
+            if (!rules[selector]) {
+                rules[selector] = [];
+            }
+            rules[selector] = [...rules[selector], ...declarations].sort();
+        }
+        return rules;
+    }
+
+    /**
+     * Compare student internal CSS style block text with expected CSS text
+     */
+    static compareCSSDetailed(studentCSS, expectedCSS) {
+        const studentRules = this.parseCSSRules(studentCSS);
+        const expectedRules = this.parseCSSRules(expectedCSS);
+
+        for (const selector of Object.keys(expectedRules)) {
+            const normalizedSelector = selector.replace(/\s+/g, '');
+            const matchingStudentSelector = Object.keys(studentRules).find(
+                s => s.replace(/\s+/g, '') === normalizedSelector
+            );
+
+            if (!matchingStudentSelector) {
+                return {
+                    passed: false,
+                    message: `Missing CSS rules for selector "${selector}".`
+                };
+            }
+
+            const expectedDecls = expectedRules[selector];
+            const studentDecls = studentRules[matchingStudentSelector];
+
+            for (const decl of expectedDecls) {
+                const normalizedDecl = decl.replace(/\s+/g, '');
+                const hasDecl = studentDecls.some(sd => sd.replace(/\s+/g, '') === normalizedDecl);
+                if (!hasDecl) {
+                    return {
+                        passed: false,
+                        message: `CSS selector "${selector}" is missing expected declaration "${decl}".`
+                    };
+                }
+            }
+        }
+        return { passed: true };
+    }
+
+    /**
+     * Compare student inline style string with expected inline style string
+     */
+    static compareInlineStylesDetailed(studentStyle, expectedStyle, tagName) {
+        const studentParsed = this.parseInlineStyle(studentStyle);
+        const expectedParsed = this.parseInlineStyle(expectedStyle);
+
+        for (const [prop, expectedVal] of Object.entries(expectedParsed)) {
+            const studentVal = studentParsed[prop];
+            if (studentVal === undefined || studentVal === null) {
+                return {
+                    passed: false,
+                    message: `Inline style on <${tagName}> is missing expected property "${prop}".`
+                };
+            }
+            if (!this.matchNormalized(studentVal, expectedVal, false)) {
+                return {
+                    passed: false,
+                    message: `Inline style "${prop}" on <${tagName}> expected "${expectedVal}" but found "${studentVal}".`
+                };
+            }
+        }
+        return { passed: true };
+    }
+
+    /**
+     * Recursively compare two nodes (student and expected)
+     */
+    static compareNodesDetailed(studentNode, expectedNode) {
+        // Node.TEXT_NODE is 3
+        if (expectedNode.nodeType === 3) {
+            const expectedText = expectedNode.nodeValue.trim();
+            if (!expectedText) return { passed: true };
+
+            const studentText = studentNode.textContent || '';
+            const passed = this.normalize(studentText).includes(this.normalize(expectedText));
+            if (!passed) {
+                return {
+                    passed: false,
+                    message: `Expected text "${expectedText}" but found "${studentText.trim() || 'empty text'}"`
+                };
+            }
+            return { passed: true };
+        }
+
+        // Node.ELEMENT_NODE is 1
+        if (expectedNode.nodeType === 1) {
+            if (studentNode.nodeType !== 1) {
+                return {
+                    passed: false,
+                    message: `Expected an element <${expectedNode.tagName.toLowerCase()}> but found text/other node.`
+                };
+            }
+            const expectedTag = expectedNode.tagName.toLowerCase();
+            const studentTag = studentNode.tagName.toLowerCase();
+            if (studentTag !== expectedTag) {
+                return {
+                    passed: false,
+                    message: `Expected element <${expectedTag}> but found <${studentTag}>.`
+                };
+            }
+
+            // Compare attributes
+            for (let i = 0; i < expectedNode.attributes.length; i++) {
+                const attr = expectedNode.attributes[i];
+                const attrName = attr.name;
+                const expectedVal = attr.value;
+
+                if (!studentNode.hasAttribute(attrName)) {
+                    return {
+                        passed: false,
+                        message: `Element <${expectedTag}> is missing expected attribute "${attrName}".`
+                    };
+                }
+                const studentVal = studentNode.getAttribute(attrName);
+
+                if (attrName === 'style') {
+                    const styleCompare = this.compareInlineStylesDetailed(studentVal, expectedVal, expectedTag);
+                    if (!styleCompare.passed) return styleCompare;
+                } else {
+                    if (this.normalize(studentVal) !== this.normalize(expectedVal)) {
+                        return {
+                            passed: false,
+                            message: `Attribute "${attrName}" on <${expectedTag}> expected "${expectedVal}" but found "${studentVal}".`
+                        };
+                    }
+                }
+            }
+
+            // Compare children
+            const expectedChildren = this.getSignificantChildren(expectedNode);
+            const studentChildren = this.getSignificantChildren(studentNode);
+
+            if (expectedChildren.length === 0) {
+                const expectedText = expectedNode.textContent.trim();
+                if (expectedText) {
+                    const studentText = studentNode.textContent.trim();
+                    const passed = this.normalize(studentText).includes(this.normalize(expectedText));
+                    if (!passed) {
+                        return {
+                            passed: false,
+                            message: `Expected <${expectedTag}> to contain text "${expectedText}" but found "${studentText || 'empty'}"`
+                        };
+                    }
+                }
+                return { passed: true };
+            }
+
+            let studentIdx = 0;
+            for (let expectedChild of expectedChildren) {
+                let foundMatch = false;
+                let lastError = null;
+                while (studentIdx < studentChildren.length) {
+                    const childResult = this.compareNodesDetailed(studentChildren[studentIdx], expectedChild);
+                    if (childResult.passed) {
+                        foundMatch = true;
+                        studentIdx++;
+                        break;
+                    } else {
+                        lastError = childResult.message;
+                    }
+                    studentIdx++;
+                }
+                if (!foundMatch) {
+                    const expectedChildDesc = expectedChild.nodeType === 1 
+                        ? `<${expectedChild.tagName.toLowerCase()}>` 
+                        : `text "${expectedChild.nodeValue.trim()}"`;
+                    return {
+                        passed: false,
+                        message: `Inside <${expectedTag}>: Missing or incorrect child ${expectedChildDesc}.` + (lastError ? ` Details: ${lastError}` : '')
+                    };
+                }
+            }
+
+            return { passed: true };
+        }
+
+        return { passed: true };
+    }
+
+    /**
      * Main validation function
      * @param {string} code - Student's HTML code
      * @param {Array} testCases - Dynamic test cases configuration
+     * @param {string} expectedOutput - Expected HTML output
      * @returns {Object} - {isValid, details, results, errors}
      */
-    static validate(code, testCases = []) {
+    static validate(code, testCases = [], expectedOutput = '') {
         const results = [];
         let score = 0;
         let maxScore = 0;
@@ -102,6 +340,64 @@ class AssignmentValidator {
 
             // Check for unclosed tags first (Detailed Syntax Validation)
             const unclosedCheck = this.checkUnclosedTags(code);
+            if (!unclosedCheck.isValid) {
+                return {
+                    isValid: false,
+                    score: 0,
+                    maxScore: testCases.reduce((sum, tc) => sum + (tc.marks || 0), 0),
+                    details: unclosedCheck.errors.map(e => e.message),
+                    results: [],
+                    errors: unclosedCheck.errors
+                };
+            }
+
+            // Perform DOM matching if expectedOutput is provided and it is NOT an image assignment
+            if (expectedOutput && expectedOutput.trim() && !this.isImageAssignment(expectedOutput, testCases)) {
+                const expectedDoc = parser.parseFromString(expectedOutput, 'text/html');
+
+                // Extract and validate internal CSS <style> blocks
+                const expectedStyleElements = Array.from(expectedDoc.querySelectorAll('style'));
+                const studentStyleElements = Array.from(doc.querySelectorAll('style'));
+
+                for (const expectedStyleEl of expectedStyleElements) {
+                    const expectedCSS = expectedStyleEl.textContent;
+                    let styleMatched = false;
+                    let lastCssError = null;
+                    for (const studentStyleEl of studentStyleElements) {
+                        const cssResult = this.compareCSSDetailed(studentStyleEl.textContent, expectedCSS);
+                        if (cssResult.passed) {
+                            styleMatched = true;
+                            break;
+                        } else {
+                            lastCssError = cssResult.message;
+                        }
+                    }
+                    if (!styleMatched) {
+                        const errMsg = lastCssError || 'Missing or incorrect CSS style block.';
+                        return {
+                            isValid: false,
+                            score: 0,
+                            maxScore: testCases.reduce((sum, tc) => sum + (tc.marks || 0), 0),
+                            details: [errMsg],
+                            results: [{ testCase: 'CSS Style check', passed: false, message: `✗ CSS styling did not match expected: ${errMsg}` }],
+                            errors: [{ type: 'Validation Error', message: errMsg, line: 'N/A' }]
+                        };
+                    }
+                }
+
+                // Verify HTML nodes
+                const compareResult = this.compareNodesDetailed(doc.body, expectedDoc.body);
+                if (!compareResult.passed) {
+                    return {
+                        isValid: false,
+                        score: 0,
+                        maxScore: testCases.reduce((sum, tc) => sum + (tc.marks || 0), 0),
+                        details: [compareResult.message],
+                        results: [{ testCase: 'Output matching', passed: false, message: `✗ Output matching failed: ${compareResult.message}` }],
+                        errors: [{ type: 'Validation Error', message: compareResult.message, line: 'N/A' }]
+                    };
+                }
+            }
 
             // Execute test cases dynamically
             testCases.forEach(testCase => {

@@ -209,7 +209,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
                             setLiveOutput(">>> Python runtime is loading... Please wait.");
                         }
                     } else {
-                        validation = AssignmentValidator.validate(finalCode, target.testCases);
+                        validation = AssignmentValidator.validate(finalCode, target.testCases, target.expectedOutput);
                         // Display the code for HTML/CSS
                         setLiveOutput(finalCode);
                     }
@@ -389,7 +389,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
             }
             result = await AssignmentValidator.validatePython(pyodide, code, currentAssignment.id);
         } else {
-            result = AssignmentValidator.validate(code, currentAssignment.testCases);
+            result = AssignmentValidator.validate(code, currentAssignment.testCases, currentAssignment.expectedOutput);
         }
 
         setValidationResult(result);
