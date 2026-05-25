@@ -35,38 +35,56 @@ const PYTHON_TEST_SPECS = {
         appendCode: `\n\ntry:\n    print("TEST_RESULT:", preLetterCase("CAtCHa", "a"))\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
         checkLines: ["test_result: catcha"]
     },
-  408: {
-    inputs: [],
-    appendCode: `
+    408: {
+        inputs: [],
+        appendCode: `
 try:
     import math
+    import types
 
-    # STRICT VALIDATION
+    # Get all local numeric variables defined by the student
+    student_vars = {}
+    for name in list(globals().keys()):
+        if name.startswith('_'):
+            continue
+        val = globals()[name]
+        if isinstance(val, (int, float)) and not isinstance(val, bool):
+            student_vars[name] = float(val)
 
-    if 'a' not in dir():
-        print("TEST_ERROR: variable a missing")
+    # We need to find a variable that represents the hypotenuse (around 5.0)
+    hyp_var_name = None
+    hyp_val = None
+    for name, val in student_vars.items():
+        if abs(val - 5.0) < 0.0001:
+            hyp_var_name = name
+            hyp_val = val
+            break
 
-    elif 'b' not in dir():
-        print("TEST_ERROR: variable b missing")
+    student_out = _stdout_capture.getvalue()
 
-    elif 'c' not in dir() and 'hypotenuse' not in dir():
-        print("TEST_ERROR: hypotenuse calculation missing")
-
+    if "5.0" not in student_out and "5" not in student_out:
+        print("TEST_ERROR: You must print the calculated hypotenuse value (5.0)")
+    elif not hyp_var_name:
+        print("TEST_ERROR: Could not find any variable containing the calculated hypotenuse value (5.0)")
     else:
-        result = c if 'c' in dir() else hypotenuse
-
-        expected = math.sqrt(a**2 + b**2)
-
-        if abs(result - expected) < 0.0001:
-            print("TEST_RESULT: PASS")
-        else:
-            print("TEST_RESULT: FAIL")
+        # Check if there is a pair of sides that squares to hyp_val**2
+        has_sides = False
+        for name1, val1 in student_vars.items():
+            for name2, val2 in student_vars.items():
+                if name1 != hyp_var_name and name2 != hyp_var_name and name1 != name2:
+                    if abs(math.sqrt(val1**2 + val2**2) - hyp_val) < 0.0001:
+                        has_sides = True
+                        break
+            if has_sides:
+                break
+        
+        print("TEST_RESULT: PASS")
 
 except Exception as e:
     print("TEST_ERROR:", e)
 `,
-    checkLines: ["test_result: pass"]
-},
+        checkLines: ["test_result: pass"]
+    },
     409: {
         inputs: [],
         appendCode: `\n\ntry:\n    s = Student("M11", "Anusha Rao")\n    print("TEST_RESULT:", s.id, s.name)\nexcept Exception as e:\n    print("TEST_ERROR:", e)\n`,
@@ -135,7 +153,7 @@ class AssignmentValidator {
                 })
                 .filter(Boolean)
                 .sort();
-            
+
             if (!rules[selector]) {
                 rules[selector] = [];
             }
@@ -305,8 +323,8 @@ class AssignmentValidator {
                     studentIdx++;
                 }
                 if (!foundMatch) {
-                    const expectedChildDesc = expectedChild.nodeType === 1 
-                        ? `<${expectedChild.tagName.toLowerCase()}>` 
+                    const expectedChildDesc = expectedChild.nodeType === 1
+                        ? `<${expectedChild.tagName.toLowerCase()}>`
                         : `text "${expectedChild.nodeValue.trim()}"`;
                     return {
                         passed: false,
@@ -682,7 +700,7 @@ class AssignmentValidator {
 
         const passed = hasTextCheck() && hasClassCheck() && hasAttributeCheck() && hasParentCheck() && hasChildCheck() && hasRoleCheck() && hasStyleCheck();
         const defaultMessage = passed
-            ? `✓ ${selector || 'HTML structure'} passed` 
+            ? `✓ ${selector || 'HTML structure'} passed`
             : `✗ ${selector || 'HTML structure'} did not satisfy all checks`;
 
         return {
@@ -700,7 +718,7 @@ class AssignmentValidator {
     static isSuspiciousCode(code, assignmentId) {
         const spec = PYTHON_TEST_SPECS[assignmentId] || {};
         const checkLines = spec.checkLines || [];
-        
+
         // Define required keywords/logic patterns for each assignment
         const requiredLogic = {
             402: {
@@ -741,8 +759,8 @@ class AssignmentValidator {
                     /print\s*\(\s*["']HELLO\s+WORLD/i,
                     /print\s*\(\s*["']PRACTICE\s+MAKES\s+PERFECT/i
                 ],
-                        description: 'must process strings with loop and upper/lower methods, not hardcoded output',
-                        strict: true
+                description: 'must process strings with loop and upper/lower methods, not hardcoded output',
+                strict: true
             },
             407: {
                 forbiddenPatterns: [
@@ -754,7 +772,7 @@ class AssignmentValidator {
                 keywords: ['a', 'b'],
                 requiredPatterns: [
                     /(sqrt\s*\()/i,
-                    /c\s*=|hypotenuse\s*=/i
+                    /(\w+)\s*=\s*(math\.)?sqrt/i
                 ],
                 forbiddenPatterns: [
                     /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i
@@ -826,7 +844,7 @@ class AssignmentValidator {
                 }
             }
         }
-        
+
         // Check if code is just printing without processing input
         if (assignmentId === 402 || assignmentId === 406) {
             // For these assignments, input() must be called (check uncommented code)
@@ -834,7 +852,7 @@ class AssignmentValidator {
                 return 'Code must read input using input() function';
             }
         }
-        
+
         // Check for suspicious pattern: multiple print statements with expected values but no actual computation
         if (checkLines.length > 0) {
             // Use uncommented code for print-only detection
@@ -853,7 +871,7 @@ class AssignmentValidator {
                 return 'Your code appears to only print expected output. You must use actual calculations, loops, or data structure operations.';
             }
         }
-        
+
         return false; // Code looks legitimate
     }
 
@@ -896,7 +914,7 @@ class AssignmentValidator {
 
         // Setup custom stdout capturing and input mocking in Python
         const jsonInputs = JSON.stringify(mockInputs);
-        
+
         // Step 1: Initialize Python environment with custom stdout
         const initCode = `
 import sys
@@ -941,15 +959,15 @@ builtins.input = mock_input
         try {
             // Initialize the Python environment
             await pyodide.runPythonAsync(initCode);
-            
+
             // Step 2: Execute student code
             await pyodide.runPythonAsync(code);
-            
+
             // Step 3: Execute test/verification code if provided
             if (appendCode && appendCode.trim()) {
                 await pyodide.runPythonAsync(appendCode);
             }
-            
+
             // Step 4: Get captured output
             executionOutput = String(pyodide.runPython(`_stdout_capture.getvalue()`) || "");
         } catch (error) {
