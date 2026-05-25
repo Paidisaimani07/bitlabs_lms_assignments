@@ -407,96 +407,154 @@ class AssignmentValidator {
         
         // Define required keywords/logic patterns for each assignment
         const requiredLogic = {
-            402: { keywords: ['total', '+', 'average', '/', 'if'], description: 'must calculate total and average with conditional logic' },
-            403: { keywords: ['for', 'while', 'loop', '*', '+'], description: 'must use loop for yearly calculation' },
+            402: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']total\s+marks:\s*263/i,
+                    /print\s*\(\s*["']average:\s*87/i
+                ],
+                description: 'must calculate total and average using actual computations with input()'
+            },
+            403: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*1100\s*\)/i,
+                    /print\s*\(\s*1210\s*\)/i,
+                    /print\s*\(\s*1331\s*\)/i
+                ],
+                description: 'must use loop for compound interest calculation, not hardcoded values'
+            },
             404: {
-    requiredPatterns: [
-        /sorted\s*\(/i,
-        /lambda\s+/i,
-        /key\s*=/i
-    ],
-    forbiddenPatterns: [
-        /print\s*\(\s*["']\s*\[\(2,\s*1\)/i
-    ],
-    description: 'must use sorted() with lambda and key'
-},
-            405: { keywords: ['set(', 'list(', 'dict', 'for'], description: 'must remove duplicates using logic (set/dict/loop)' },
-            406: { keywords: ['upper', 'lower', 'for', 'while'], description: 'must process with loop and string methods' },
-            407: { keywords: ['def', 'if', 'else'], description: 'must define a function with conditional logic' },
-           408: {
-    keywords: ['a', 'b'],
-    requiredPatterns: [
-        /(sqrt\s*\()/i,
-        /c\s*=/i
-    ],
-    forbiddenPatterns: [
-        /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i
-    ],
-    description: 'must calculate hypotenuse using sqrt() and variables'
-},
-            409: { keywords: ['class', '__init__', 'self'], description: 'must define a class with __init__' },
-            410: { keywords: ['for', 'sum', 'values', 'items'], description: 'must iterate through dictionary' },
-            411: { keywords: ['class', 'def', 'super', 'inherit'], description: 'must use class inheritance' }
+                requiredPatterns: [
+                    /sorted\s*\(/i,
+                    /lambda\s+/i,
+                    /key\s*=/i
+                ],
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']\s*\[\(2,\s*1\)/i
+                ],
+                description: 'must use sorted() with lambda and key'
+            },
+            405: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*\[\s*12\s*,\s*24\s*,\s*35/i,
+                    /\[\s*12\s*,\s*24\s*,\s*35\s*,\s*88\s*,\s*120\s*,\s*155\s*\]/i
+                ],
+                description: 'must use set/dict logic to remove duplicates, not hardcoded results'
+            },
+            406: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']HELLO\s+WORLD/i,
+                    /print\s*\(\s*["']PRACTICE\s+MAKES\s+PERFECT/i
+                ],
+                        description: 'must process strings with loop and upper/lower methods, not hardcoded output',
+                        strict: true
+            },
+            407: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']catcha["']\s*\)/i
+                ],
+                description: 'must define a function with conditional logic and return statement'
+            },
+            408: {
+                keywords: ['a', 'b'],
+                requiredPatterns: [
+                    /(sqrt\s*\()/i,
+                    /c\s*=|hypotenuse\s*=/i
+                ],
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i
+                ],
+                description: 'must calculate hypotenuse using sqrt() and variables'
+            },
+            409: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']M11["']\s*,\s*["']Anusha/i
+                ],
+                description: 'must define a Student class with __init__ and instance variables'
+            },
+            410: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*130\s*\)/i,
+                    /print\s*\(\s*["']130["']\s*\)/i
+                ],
+                description: 'must iterate through dictionary items and calculate sum with actual logic'
+            },
+            411: {
+                forbiddenPatterns: [
+                    /print\s*\(\s*["']25["']\s*,\s*["']True/i,
+                    /print\s*\(\s*25\s*,\s*True\s*\)/i
+                ],
+                description: 'must use class inheritance with super() and method override'
+            }
         };
 
         const assignmentLogic = requiredLogic[assignmentId];
-        
-        // If assignment has required logic, check for it
-      if (assignmentLogic) {
 
-    // OLD keyword logic support
-    if (assignmentLogic.keywords) {
+        // Strip comments and docstrings so commented-out logic doesn't pass checks
+        const codeNoComments = String(code || '')
+            .replace(/('{3}[\s\S]*?'{3}|\"{3}[\s\S]*?\"{3})/g, '')
+            .replace(/#.*$/gm, '')
+            .trim();
 
-        const hasRequiredLogic = assignmentLogic.keywords.some(keyword =>
-            code.toLowerCase().includes(keyword.toLowerCase())
-        );
+        // Prefer uncommented code for validation; fallback to original
+        const subjectCode = codeNoComments.length > 0 ? codeNoComments : String(code || '');
 
-        if (!hasRequiredLogic) {
-            return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
+        // If assignment has required logic, check for it using uncommented code
+        if (assignmentLogic) {
+            // Detect hardcoded answers first
+            if (assignmentLogic.forbiddenPatterns) {
+                const hasForbidden = assignmentLogic.forbiddenPatterns.some(
+                    pattern => pattern.test(subjectCode)
+                );
+                if (hasForbidden) {
+                    return 'Hardcoded output detected. Use actual logic instead of directly printing the answer.';
+                }
+            }
+
+            // Required regex patterns (if provided)
+            if (assignmentLogic.requiredPatterns) {
+                const missingPattern = assignmentLogic.requiredPatterns.find(
+                    pattern => !pattern.test(subjectCode)
+                );
+                if (missingPattern) {
+                    return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
+                }
+            }
+
+            // Fallback keyword checks only when no requiredPatterns exist
+            if (assignmentLogic.keywords && !assignmentLogic.requiredPatterns) {
+                const hasRequiredLogic = assignmentLogic.keywords.some(keyword =>
+                    subjectCode.toLowerCase().includes(keyword.toLowerCase())
+                );
+                if (!hasRequiredLogic) {
+                    return `Code must contain actual logic to solve the problem. ${assignmentLogic.description}`;
+                }
+            }
         }
-    }
-
-    // NEW regex-based strict validation
-    if (assignmentLogic.requiredPatterns) {
-
-        const missingPattern = assignmentLogic.requiredPatterns.find(
-            pattern => !pattern.test(code)
-        );
-
-        if (missingPattern) {
-            return `Code must contain actual sorting logic. ${assignmentLogic.description}`;
-        }
-    }
-
-    // Detect hardcoded answers
-    if (assignmentLogic.forbiddenPatterns) {
-
-        const hasForbidden = assignmentLogic.forbiddenPatterns.some(
-            pattern => pattern.test(code)
-        );
-
-        if (hasForbidden) {
-            return 'Hardcoded output detected. Use actual logic instead of directly printing the answer.';
-        }
-    }
-}
         
         // Check if code is just printing without processing input
         if (assignmentId === 402 || assignmentId === 406) {
-            // For these assignments, input() must be called
-            if (!code.includes('input(')) {
+            // For these assignments, input() must be called (check uncommented code)
+            if (!/input\s*\(/i.test(subjectCode)) {
                 return 'Code must read input using input() function';
             }
         }
         
-        // Check for suspicious pattern: printing expected outputs without variables
+        // Check for suspicious pattern: multiple print statements with expected values but no actual computation
         if (checkLines.length > 0) {
-            const printCount = (code.match(/print\(/g) || []).length;
-            const variableAssignments = (code.match(/\w+\s*=/g) || []).length;
-            
-            // If more prints than variable assignments, suspicious
-            if (printCount > 0 && variableAssignments === 0 && printCount >= checkLines.length) {
-                return 'Your code appears to only print expected output. You must calculate values and store in variables.';
+            // Use uncommented code for print-only detection
+            const printCount = (subjectCode.match(/print\(/g) || []).length;
+            const variableAssignments = (subjectCode.match(/\w+\s*=(?!=)/g) || []).length;
+            const arithmeticOps = (subjectCode.match(/[+\-*/%]|\bsum\s*\(|\blen\s*\(|\bsorted\s*\(/g) || []).length;
+            const loopCount = (subjectCode.match(/for\s+\w+\s+in|while\s+/g) || []).length;
+
+            // If the uncommented code is empty, it's likely commented-out code
+            if (!subjectCode || subjectCode.trim().length === 0) {
+                return 'Code appears to be commented out or empty. Remove comments and include actual logic.';
+            }
+
+            // Suspicious if: lots of prints, few/no variable assignments, and no arithmetic/logic
+            if (printCount >= checkLines.length && variableAssignments < 1 && arithmeticOps === 0 && loopCount === 0) {
+                return 'Your code appears to only print expected output. You must use actual calculations, loops, or data structure operations.';
             }
         }
         
@@ -542,48 +600,62 @@ class AssignmentValidator {
 
         // Setup custom stdout capturing and input mocking in Python
         const jsonInputs = JSON.stringify(mockInputs);
-        const bootstrapCode = `
+        
+        // Step 1: Initialize Python environment with custom stdout
+        const initCode = `
 import sys
 import json
 import builtins
 
-# Capture stdout
-class StdoutCapturer:
+# Custom stdout class
+class OutputCapture:
     def __init__(self):
-        self.data = []
-    def write(self, s):
-        self.data.append(s)
+        self.lines = []
+    
+    def write(self, text):
+        if text:
+            self.lines.append(text)
+        return len(text) if text else 0
+    
     def flush(self):
         pass
+    
+    def getvalue(self):
+        return ''.join(self.lines)
 
-capturer = StdoutCapturer()
-sys.stdout = capturer
+# Replace stdout
+_stdout_capture = OutputCapture()
+_original_stdout = sys.stdout
+sys.stdout = _stdout_capture
 
-# Mock input
-inputs = json.loads('''${jsonInputs}''')
-input_index = 0
+# Mock input setup
+_inputs_list = json.loads('''${jsonInputs}''')
+_input_index = [0]
 
 def mock_input(prompt=""):
-    global input_index
-    if input_index < len(inputs):
-        val = str(inputs[input_index])
-        input_index += 1
-        # Print prompt and value to mimic console interaction
-        print(f"{prompt}{val}")
+    if _input_index[0] < len(_inputs_list):
+        val = str(_inputs_list[_input_index[0]])
+        _input_index[0] += 1
         return val
     return ""
 
 builtins.input = mock_input
 `;
 
-        const executionCode = `${bootstrapCode}\n\n# --- Student Code ---\n${code}\n\n# --- Test Runner ---\n${appendCode}\n\n# Restore stdout and get captured output\nsys.stdout = sys.__stdout__\ncaptured_output = "".join(capturer.data)\n`;
-
         try {
-            // Run the code in Pyodide
-            await pyodide.runPythonAsync(executionCode);
+            // Initialize the Python environment
+            await pyodide.runPythonAsync(initCode);
             
-            // Extract captured output
-            executionOutput = pyodide.globals.get('captured_output');
+            // Step 2: Execute student code
+            await pyodide.runPythonAsync(code);
+            
+            // Step 3: Execute test/verification code if provided
+            if (appendCode && appendCode.trim()) {
+                await pyodide.runPythonAsync(appendCode);
+            }
+            
+            // Step 4: Get captured output
+            executionOutput = String(pyodide.runPython(`_stdout_capture.getvalue()`) || "");
         } catch (error) {
             return {
                 isValid: false,
