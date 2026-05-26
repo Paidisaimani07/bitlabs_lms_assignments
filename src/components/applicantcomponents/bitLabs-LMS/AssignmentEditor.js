@@ -584,10 +584,20 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, on
             setLiveOutput(`>>> Executing ${currentAssignment.title}...\n`);
             try {
                 const validation = await AssignmentValidator.validatePython(pyodide, code, currentAssignment.id);
-                if (validation.errors && validation.errors.length > 0 && validation.errors[0].type === 'Runtime Error') {
-                    setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\nRuntime Error:\n${validation.errors[0].message}`);
+                if (validation.executionOutput === undefined) {
+                    // Execution didn't finish due to Runtime Error, Syntax Error, or Logic/Style early returns
+                    const errorMsg = validation.errors && validation.errors.length > 0 ? validation.errors[0].message : 'Error executing code.';
+                    const errorType = validation.errors && validation.errors.length > 0 ? validation.errors[0].type : 'Error';
+                    setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${errorType}:\n${errorMsg}`);
                 } else {
-                    setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${validation.executionOutput || "Code executed successfully with no output."}\n\n>>> Execution finished successfully.`);
+                    // Execution finished. Show output, and indicate if it matches criteria.
+                    let out = `>>> Executing ${currentAssignment.title}...\n\n${validation.executionOutput || "Code executed successfully with no output."}`;
+                    if (!validation.isValid) {
+                        out += `\n\n>>> Note: The output does not match the expected result.`;
+                    } else {
+                        out += `\n\n>>> Execution finished successfully.`;
+                    }
+                    setLiveOutput(out);
                 }
             } catch (err) {
                 setLiveOutput(`Error executing code:\n${err.message}`);

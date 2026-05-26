@@ -101,8 +101,7 @@ const WorkingScormPlayer = ({ courseId, onProgressUpdate }) => {
     };
   }, [courseId, totalCount, updateProgressState]);
 
-  return null; 
+  return null;
 };
 
 export default WorkingScormPlayer;
- 
