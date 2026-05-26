@@ -418,6 +418,71 @@
   
 
   <link rel="stylesheet" href="html5/data/css/output.min.css" data-noprefix/>
+<script>
+(function () {
+  console.log("ðŸš€ SCORM Progress Tracker Started");
+  let lastSlide = -1;
+  function getPlayerSafe() {
+    try {
+      if (typeof GetPlayer === "function") {
+        return GetPlayer();
+      }
+    } catch (e) {}
+    return null;
+  }
+  function getProgress() {
+    const player = getPlayerSafe();
+    let current = 0;
+    let total = 0;
+    if (player) {
+      try {
+        current =
+          player.GetVar("SlideNumber") ||
+          player.GetVar("slideNumber") ||
+          player.GetVar("System.SlideNumber") ||
+          0;
+        total =
+          player.GetVar("TotalSlides") ||
+          player.GetVar("totalSlides") ||
+          0;
+      } catch (err) {
+        console.error("âŒ Error reading variables:", err);
+      }
+    }
+    if (!current) {
+      const allSlides = document.querySelectorAll('.cs-listitem.listitem');
+      const selectedSlide = document.querySelector('.cs-listitem.listitem.cs-selected');
+      if (allSlides.length > 0 && selectedSlide) {
+        const slidesArray = Array.from(allSlides);
+        current = slidesArray.indexOf(selectedSlide) + 1;
+        total = slidesArray.length;
+      }
+    }
+    if (current > 0) {
+      return {
+        visited: current,
+        total: total || 100
+      };
+    }
+    return null;
+  }
+  setInterval(() => {
+    const data = getProgress();
+    if (data && data.visited !== lastSlide) {
+      lastSlide = data.visited;
+      window.parent.postMessage(
+        {
+          type: "SCORM_PROGRESS",
+          current: data.visited,
+          total: data.total
+        },
+        "*"
+      );
+    }
+  }, 1500);
+})();
+</script>
 </body>
 <script src="html5/lib/scripts/bootstrapper.min.js"></script>
 </html>
+

@@ -83,7 +83,8 @@ try:
 except Exception as e:
     print("TEST_ERROR:", e)
 `,
-        checkLines: ["test_result: pass"]
+        checkLines: ["test_result: pass"],
+        exactOutput: "Hypotenuse: 5.0"
     },
     409: {
         inputs: [],
@@ -496,6 +497,32 @@ class AssignmentValidator {
     }
 
     /**
+     * Helper to verify import statements are only placed at the top of the file
+     */
+    static checkImportsAtTop(code) {
+        const cleanedCode = String(code || '')
+            .replace(/('{3}[\s\S]*?'{3}|\"{3}[\s\S]*?\"{3})/g, '')
+            .replace(/#.*$/gm, '');
+        const lines = cleanedCode.split('\n');
+        let seenNonImportCode = false;
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                continue;
+            }
+            const isImport = /^(import\b|from\b)/.test(trimmed);
+            if (isImport) {
+                if (seenNonImportCode) {
+                    return `Import statements must be placed at the top of the file before other code. Found: "${trimmed}"`;
+                }
+            } else {
+                seenNonImportCode = true;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Helper to normalize strings (remove extra whitespace, newlines, etc.)
      */
     static normalize(str) {
@@ -903,10 +930,22 @@ class AssignmentValidator {
             };
         }
 
+        // Check if import statements are only at the top of the file
+        const importCheckError = this.checkImportsAtTop(code);
+        if (importCheckError) {
+            return {
+                isValid: false,
+                details: [importCheckError],
+                results: [{ testCase: 'Import Placement', passed: false, message: `✗ ${importCheckError}` }],
+                errors: [{ type: 'Style Error', message: importCheckError, line: 'N/A' }]
+            };
+        }
+
         const spec = PYTHON_TEST_SPECS[assignmentId] || { inputs: [], checkLines: [] };
         const results = [];
         const errors = [];
         let executionOutput = "";
+        let studentOutput = "";
 
         // 1. Prepare inputs mock and injection code
         const mockInputs = spec.inputs || [];
@@ -963,6 +1002,9 @@ builtins.input = mock_input
             // Step 2: Execute student code
             await pyodide.runPythonAsync(code);
 
+            // Capture the student's output before executing verification tests
+            studentOutput = String(pyodide.runPython(`_stdout_capture.getvalue()`) || "");
+
             // Step 3: Execute test/verification code if provided
             if (appendCode && appendCode.trim()) {
                 await pyodide.runPythonAsync(appendCode);
@@ -981,6 +1023,17 @@ builtins.input = mock_input
 
         // 2. Perform validation checks
         const normalizedActual = AssignmentValidator.normalize(executionOutput);
+        const normalizedStudentOutput = AssignmentValidator.normalize(studentOutput);
+
+        if (spec.exactOutput) {
+            const normalizedExpected = AssignmentValidator.normalize(spec.exactOutput);
+            const passed = normalizedStudentOutput === normalizedExpected;
+            results.push({
+                testCase: `Exact output check`,
+                passed,
+                message: passed ? `✓ Output matches expected: "${spec.exactOutput}"` : `✗ Output expected: "${spec.exactOutput}", but got: "${studentOutput.trim() || 'no output'}"`
+            });
+        }
 
         // Verification criteria:
         // If the spec lists specific checkLines, verify each one is in the output (case-insensitive check)
@@ -1011,6 +1064,89 @@ builtins.input = mock_input
             results,
             errors: isValid ? [] : [{ type: 'Logic Error', message: 'Assignment criteria not fully met. Review output details.', line: 'N/A' }],
             executionOutput
+        };
+    }
+
+    /**
+     * SQL validation — keyword-based, no HTML parsing.
+     * Checks that the student wrote a real SQL statement containing the required keywords.
+     * @param {string} code - Student's SQL code
+     * @param {string[]} requiredKeywords - Keywords that must appear in the query (from assignment definition)
+     * @param {string} expectedOutput - Human-readable expected result label (e.g. "Table created")
+     * @returns {Object} - {isValid, details, results, errors}
+     */
+    static validateSQL(code, requiredKeywords, expectedOutput) {
+        const results = [];
+        const errors = [];
+
+        // 1. Must have some code
+        const trimmed = (code || '').trim();
+        if (!trimmed || trimmed === '-- Write your query here') {
+            return {
+                isValid: false,
+                details: ['Please write your SQL query before submitting.'],
+                results: [{ testCase: 'SQL Code', passed: false, message: '✗ No SQL query written.' }],
+                errors: [{ type: 'Empty Code', message: 'No SQL query written.', line: 'N/A' }]
+            };
+        }
+
+        // 2. Must not be only comments
+        const strippedComments = trimmed.replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '').trim();
+        if (!strippedComments) {
+            return {
+                isValid: false,
+                details: ['Your submission contains only comments. Please write the actual SQL query.'],
+                results: [{ testCase: 'SQL Code', passed: false, message: '✗ Only comments found — no SQL query.' }],
+                errors: [{ type: 'Empty Code', message: 'Only comments — no SQL query.', line: 'N/A' }]
+            };
+        }
+
+        // 3. Check required SQL keywords (case-insensitive)
+        const upperCode = code.toUpperCase();
+        if (requiredKeywords && requiredKeywords.length > 0) {
+            // At least ONE group of keywords must match (treat each entry as an OR alternative)
+            const keywordGroups = Array.isArray(requiredKeywords[0]) ? requiredKeywords : [requiredKeywords];
+            const anyGroupPassed = keywordGroups.some(group =>
+                group.every(kw => upperCode.includes(kw.toUpperCase()))
+            );
+
+            // Flatten for display
+            const allKws = [...new Set(keywordGroups.flat())];
+            const foundKws = allKws.filter(kw => upperCode.includes(kw.toUpperCase()));
+            const missingKws = allKws.filter(kw => !upperCode.includes(kw.toUpperCase()));
+
+            foundKws.forEach(kw => {
+                results.push({ testCase: `Keyword: ${kw}`, passed: true, message: `✓ Found expected keyword: ${kw}` });
+            });
+
+            if (!anyGroupPassed) {
+                missingKws.forEach(kw => {
+                    results.push({ testCase: `Keyword: ${kw}`, passed: false, message: `✗ Missing expected keyword: ${kw}` });
+                    errors.push({ type: 'Missing Keyword', message: `Missing SQL keyword: ${kw}`, line: 'N/A' });
+                });
+            }
+        }
+
+        // 4. Basic SQL structure — must contain at least one SQL statement keyword
+        const sqlStatementKws = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER', 'TRUNCATE', 'BEGIN', 'COMMIT', 'ROLLBACK', 'GRANT', 'REVOKE'];
+        const hasStatement = sqlStatementKws.some(kw => upperCode.includes(kw));
+        if (!hasStatement) {
+            results.push({ testCase: 'SQL Statement', passed: false, message: '✗ No recognizable SQL statement found (SELECT, INSERT, CREATE, etc.).' });
+            errors.push({ type: 'Invalid SQL', message: 'No SQL statement keyword found.', line: 'N/A' });
+        } else {
+            results.push({ testCase: 'SQL Statement', passed: true, message: '✓ SQL statement detected.' });
+        }
+
+        const isValid = results.every(r => r.passed) && errors.length === 0;
+
+        return {
+            isValid,
+            details: isValid
+                ? [`✓ Query accepted. Expected result: ${expectedOutput || 'Query executed successfully.'}`]
+                : results.filter(r => !r.passed).map(r => r.message),
+            results,
+            errors,
+            executionOutput: isValid ? (expectedOutput || 'Query executed successfully.') : null
         };
     }
 }
