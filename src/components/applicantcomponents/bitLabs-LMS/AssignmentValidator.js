@@ -748,6 +748,42 @@ class AssignmentValidator {
 
         // Define required keywords/logic patterns for each assignment
         const requiredLogic = {
+            401: {
+                inputs: ["5"],
+                checkLines: [
+                    "Distance in feet : 5.0",
+                    "Distance in inches : 60.0",
+                    "Distance in yards : 1.6666666666666667",
+                    "Distance in miles : 0.000946969696969697"
+                ],
+
+                requiredPatterns: [
+                    /feet\s*=\s*float\s*\(\s*input/i,
+                    /inches\s*=\s*feet\s*\*\s*12/i,
+                    /yards\s*=\s*feet\s*\/\s*3/i,
+                    /miles\s*=\s*feet\s*\/\s*5280/i
+                ],
+
+                forbiddenPatterns: [
+                    // ❌ Hardcoded output strings (any number)
+                    /print\s*\(\s*["']Distance in feet\s*:\s*\d+/i,
+                    /print\s*\(\s*["']Distance in inches\s*:\s*\d+/i,
+                    /print\s*\(\s*["']Distance in yards\s*:\s*\d+(\.\d+)?/i,
+                    /print\s*\(\s*["']Distance in miles\s*:\s*\d+(\.\d+)?/i,
+
+                    // ❌ Fully hardcoded assignment (any constant number)
+                    /inches\s*=\s*\d+(\.\d+)?(?!\s*\*)/i,
+                    /yards\s*=\s*\d+(\.\d+)?(?!\s*\*)/i,
+                    /miles\s*=\s*\d+(\.\d+)?(?!\s*\*)/i,
+
+                    // ❌ Fake computation using same constant input
+                    /feet\s*=\s*\d+(\.\d+)?\s*$/m,
+
+                    // ❌ Commenting out logic
+                    /#\s*(inches|yards|miles)\s*=/i
+                ],
+                description: 'must calculate total distance in yards inches and miles'
+            },
             402: {
                 forbiddenPatterns: [
                     /print\s*\(\s*["']total\s+marks:\s*263/i,
@@ -802,14 +838,36 @@ class AssignmentValidator {
                     /(\w+)\s*=\s*(math\.)?sqrt/i
                 ],
                 forbiddenPatterns: [
-                    /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i
+                    /print\s*\(\s*["']hypotenuse["']\s*,\s*5(\.0+)?\s*\)/i,
+                    /print\s*\(\s*["']test_result:\s*pass["']\s*\)/i,
+                    /print\s*\(\s*["']5(\.0+)?["']\s*\)/i,
+                    /print\s*\(\s*5(\.0+)?\s*\)/i
                 ],
                 description: 'must calculate hypotenuse using sqrt() and variables'
             },
             409: {
-                forbiddenPatterns: [
-                    /print\s*\(\s*["']M11["']\s*,\s*["']Anusha/i
+                requiredPatterns: [
+                    /class\s+Student/i,
+                    /def\s+__init__/i,
+                    /Student\s*\(/i,
+                    /self\s*\.\s*id/i,
+                    /self\s*\.\s*name/i
                 ],
+
+                forbiddenPatterns: [
+                    // ❌ Direct hardcoded output bypass
+                    /print\s*\(\s*["']Student\s*ID\s*:\s*M11/i,
+                    /print\s*\(\s*["']Student\s*Name\s*:\s*Anusha/i,
+
+                    // ❌ Raw hardcoded values (anywhere in print)
+                    /M11\s*,\s*Anusha/i,
+                    /Anusha\s+Rao/i,
+
+                    // ❌ Bypass without class usage
+                    /print\s*\(\s*["']M11["']/i,
+                    /print\s*\(\s*["']Anusha/i
+                ],
+
                 description: 'must define a Student class with __init__ and instance variables'
             },
             410: {
@@ -919,69 +977,83 @@ class AssignmentValidator {
             };
         }
 
-        // Check for suspicious code (just printing expected output)
+        // -------------------------------
+        // 1. LOGIC VALIDATION (STRICT)
+        // -------------------------------
         const suspiciousResult = this.isSuspiciousCode(code, assignmentId);
+
+        // ❌ HARD BLOCK suspicious / hardcoded / print-only code
         if (suspiciousResult) {
             return {
                 isValid: false,
-                details: [suspiciousResult],
-                results: [{ testCase: 'Code Logic', passed: false, message: '✗ ' + suspiciousResult }],
-                errors: [{ type: 'Logic Error', message: suspiciousResult, line: 'N/A' }]
+                details: [`❌ ${suspiciousResult}`],
+                results: [{
+                    testCase: 'Logic Validation',
+                    passed: false,
+                    message: suspiciousResult
+                }],
+                errors: [{
+                    type: 'Logic Error',
+                    message: suspiciousResult,
+                    line: 'N/A'
+                }]
             };
         }
 
-        // Check if import statements are only at the top of the file
+        // -------------------------------
+        // 2. IMPORT CHECK
+        // -------------------------------
         const importCheckError = this.checkImportsAtTop(code);
         if (importCheckError) {
             return {
                 isValid: false,
                 details: [importCheckError],
-                results: [{ testCase: 'Import Placement', passed: false, message: `✗ ${importCheckError}` }],
-                errors: [{ type: 'Style Error', message: importCheckError, line: 'N/A' }]
+                results: [{
+                    testCase: 'Import Placement',
+                    passed: false,
+                    message: `✗ ${importCheckError}`
+                }],
+                errors: [{
+                    type: 'Style Error',
+                    message: importCheckError,
+                    line: 'N/A'
+                }]
             };
         }
 
         const spec = PYTHON_TEST_SPECS[assignmentId] || { inputs: [], checkLines: [] };
+
         const results = [];
-        const errors = [];
         let executionOutput = "";
         let studentOutput = "";
 
-        // 1. Prepare inputs mock and injection code
         const mockInputs = spec.inputs || [];
         const appendCode = spec.appendCode || "";
-
-        // Setup custom stdout capturing and input mocking in Python
         const jsonInputs = JSON.stringify(mockInputs);
 
-        // Step 1: Initialize Python environment with custom stdout
+        // -------------------------------
+        // 3. PYTHON RUNTIME SETUP
+        // -------------------------------
         const initCode = `
 import sys
 import json
 import builtins
 
-# Custom stdout class
 class OutputCapture:
     def __init__(self):
         self.lines = []
-    
     def write(self, text):
         if text:
             self.lines.append(text)
         return len(text) if text else 0
-    
     def flush(self):
         pass
-    
     def getvalue(self):
         return ''.join(self.lines)
 
-# Replace stdout
 _stdout_capture = OutputCapture()
-_original_stdout = sys.stdout
 sys.stdout = _stdout_capture
 
-# Mock input setup
 _inputs_list = json.loads('''${jsonInputs}''')
 _input_index = [0]
 
@@ -996,59 +1068,67 @@ builtins.input = mock_input
 `;
 
         try {
-            // Initialize the Python environment
             await pyodide.runPythonAsync(initCode);
-
-            // Step 2: Execute student code
             await pyodide.runPythonAsync(code);
 
-            // Capture the student's output before executing verification tests
             studentOutput = String(pyodide.runPython(`_stdout_capture.getvalue()`) || "");
 
-            // Step 3: Execute test/verification code if provided
             if (appendCode && appendCode.trim()) {
                 await pyodide.runPythonAsync(appendCode);
             }
 
-            // Step 4: Get captured output
             executionOutput = String(pyodide.runPython(`_stdout_capture.getvalue()`) || "");
+
         } catch (error) {
             return {
                 isValid: false,
                 details: [`Syntax/Runtime Error: ${error.message}`],
-                results: [{ testCase: 'Execution', passed: false, message: `Error: ${error.message}` }],
-                errors: [{ type: 'Runtime Error', message: error.message, line: 'N/A' }]
+                results: [{
+                    testCase: 'Execution',
+                    passed: false,
+                    message: `Error: ${error.message}`
+                }],
+                errors: [{
+                    type: 'Runtime Error',
+                    message: error.message,
+                    line: 'N/A'
+                }]
             };
         }
 
-        // 2. Perform validation checks
-        const normalizedActual = AssignmentValidator.normalize(executionOutput);
-        const normalizedStudentOutput = AssignmentValidator.normalize(studentOutput);
+        // -------------------------------
+        // 4. OUTPUT VALIDATION
+        // -------------------------------
+        const normalizedActual = this.normalize(executionOutput);
+        const normalizedStudentOutput = this.normalize(studentOutput);
 
         if (spec.exactOutput) {
-            const normalizedExpected = AssignmentValidator.normalize(spec.exactOutput);
+            const normalizedExpected = this.normalize(spec.exactOutput);
             const passed = normalizedStudentOutput === normalizedExpected;
+
             results.push({
-                testCase: `Exact output check`,
+                testCase: 'Exact output check',
                 passed,
-                message: passed ? `✓ Output matches expected: "${spec.exactOutput}"` : `✗ Output expected: "${spec.exactOutput}", but got: "${studentOutput.trim() || 'no output'}"`
+                message: passed
+                    ? `✓ Output matches expected`
+                    : `✗ Output mismatch`
             });
         }
 
-        // Verification criteria:
-        // If the spec lists specific checkLines, verify each one is in the output (case-insensitive check)
         if (spec.checkLines && spec.checkLines.length > 0) {
             spec.checkLines.forEach(line => {
-                const normalizedLine = AssignmentValidator.normalize(line);
+                const normalizedLine = this.normalize(line);
                 const passed = normalizedActual.includes(normalizedLine);
+
                 results.push({
                     testCase: `Output check: "${line}"`,
                     passed,
-                    message: passed ? `✓ Found expected output: "${line}"` : `✗ Missing expected output: "${line}"`
+                    message: passed
+                        ? `✓ Found expected output: "${line}"`
+                        : `✗ Missing expected output: "${line}"`
                 });
             });
         } else {
-            // Fallback to basic execution check
             results.push({
                 testCase: 'Execution',
                 passed: true,
@@ -1056,13 +1136,26 @@ builtins.input = mock_input
             });
         }
 
-        const isValid = results.every(r => r.passed);
+        const outputValid = results.every(r => r.passed);
 
+        // -------------------------------
+        // 5. FINAL RESPONSE
+        // -------------------------------
         return {
-            isValid,
+            isValid: outputValid,
+
             details: results.map(r => r.message),
+
             results,
-            errors: isValid ? [] : [{ type: 'Logic Error', message: 'Assignment criteria not fully met. Review output details.', line: 'N/A' }],
+
+            errors: outputValid
+                ? []
+                : [{
+                    type: 'Output Error',
+                    message: 'Output validation failed.',
+                    line: 'N/A'
+                }],
+
             executionOutput
         };
     }
