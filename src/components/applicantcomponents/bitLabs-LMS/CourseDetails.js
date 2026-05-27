@@ -415,10 +415,32 @@ const CourseDetails = () => {
       if (safeCourseName.toLowerCase() === "python") {
         assignments = [
           null,
-          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
-          { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
-          { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
-          { type: 'python10' }, { type: 'python11' }
+          { type: 'python1' },
+          { type: 'python2' },
+          { type: 'python3' },
+          null,
+          { type: 'python4' },
+          { type: 'python5' },
+          { type: 'python6' },
+          { type: 'python7' },
+          { type: 'python8' },
+          { type: 'python9' },
+          { type: 'python10' },
+          { type: 'python11' }
+        ];
+      } else if (safeCourseName.toLowerCase() === "sql") {
+        assignments = [
+          null,
+          { type: 'employee_table' },
+          { type: 'employee_data' },
+          { type: 'employee_sales' },
+          { type: 'customer_sales' },
+          { type: 'student' },
+          { type: 'customer_table' },
+          { type: 'sales_customers_orders' },
+          { type: 'customer_sub_queries' },
+          { type: 'banks' },
+          null
         ];
       } else {
         assignments = [
