@@ -17,6 +17,20 @@ import initSqlJs from 'sql.js';
 // CDN for the sql.js WASM binary — avoids bundling a 1 MB file
 const SQL_WASM_URL = 'https://sql.js.org/dist/sql-wasm.wasm';
 
+// Valid SQL data types whitelist
+const VALID_DATA_TYPES = [
+    'INT', 'INTEGER',
+    'VARCHAR', 'CHAR', 'CHARACTER',
+    'TEXT',
+    'REAL', 'FLOAT', 'DOUBLE',
+    'DATE', 'DATETIME', 'TIMESTAMP',
+    'DECIMAL', 'NUMERIC',
+    'BOOLEAN',
+    'BLOB',
+    'SMALLINT', 'BIGINT',
+    'TINYINT'
+];
+
 class SqlEngine {
     // ── Singleton ──────────────────────────────────────────────
     static _instance = null;
@@ -123,6 +137,17 @@ class SqlEngine {
             };
         }
 
+        // Validate data types in CREATE TABLE statements
+        const validationError = this._validateDataTypes(trimmed);
+        if (validationError) {
+            return {
+                success: false,
+                statements: [],
+                error: validationError,
+                summary: 'Data Type Validation Error',
+            };
+        }
+
         // Split into individual statements for reporting
         const stmts = this._splitStatements(trimmed);
         const results = [];
@@ -192,6 +217,57 @@ class SqlEngine {
     }
 
     // ── Private helpers ───────────────────────────────────────
+
+    /** Validate data types in CREATE TABLE statements */
+    _validateDataTypes(sql) {
+        const upperSql = sql.toUpperCase();
+        
+        // Check if this is a CREATE TABLE statement
+        if (!upperSql.includes('CREATE TABLE')) {
+            return null; // Not a CREATE TABLE, no validation needed
+        }
+
+        // Extract the CREATE TABLE statement
+        const createTableMatch = sql.match(/CREATE\s+TABLE\s+[\w\d_]+\s*\(([\s\S]+)\)/i);
+        if (!createTableMatch) {
+            return null; // Couldn't parse, let SQLite handle it
+        }
+
+        const columnDefinitions = createTableMatch[1];
+        const errors = [];
+
+        // Split by comma to get individual column definitions
+        const columns = columnDefinitions.split(',').map(col => col.trim());
+
+        for (const column of columns) {
+            // Skip constraint definitions (PRIMARY KEY, FOREIGN KEY, etc.)
+            if (column.toUpperCase().includes('PRIMARY KEY') ||
+                column.toUpperCase().includes('FOREIGN KEY') ||
+                column.toUpperCase().includes('UNIQUE') ||
+                column.toUpperCase().includes('CHECK') ||
+                column.toUpperCase().includes('CONSTRAINT')) {
+                continue;
+            }
+
+            // Extract the data type from the column definition
+            // Format: column_name data_type[(size)] [constraints]
+            const parts = column.split(/\s+/);
+            if (parts.length < 2) continue;
+
+            const dataType = parts[1].toUpperCase();
+            
+            // Handle data types with parameters like VARCHAR(100) or DECIMAL(10,2)
+            // Extract the base type name before the opening parenthesis
+            const baseDataType = dataType.split('(')[0].trim();
+            
+            // Check if the base data type is valid
+            if (!VALID_DATA_TYPES.includes(baseDataType)) {
+                errors.push(`Invalid data type: ${dataType}. Valid types are: ${VALID_DATA_TYPES.join(', ')}`);
+            }
+        }
+
+        return errors.length > 0 ? errors.join('\n') : null;
+    }
 
     /** Naive statement splitter — splits on semicolons outside quotes. */
     _splitStatements(sql) {
