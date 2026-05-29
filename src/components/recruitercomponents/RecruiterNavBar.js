@@ -304,6 +304,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
                 </Link>
               </li>
 
+
               <li>
                 <Link to="/recruiter-jobopenings" className={location.pathname === "/recruiter-jobopenings" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
                   <span className="icon-submit dash-icon"></span>
@@ -343,12 +344,27 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
                   <span className="dash-titles">Static Feedback</span>
                 </Link>
               </li>
+                            <li>
+  <Link
+    to="/recruiter-lms-overview"
+    className={
+      location.pathname === "/recruiter-lms-overview"
+        ? "tf-effect active"
+        : ""
+    }
+    onClick={handleMenuItemClick}
+  >
+    <span className="icon-dashboard dash-icon"></span>
+    <span className="dash-titles">LMS Overview</span>
+  </Link>
+</li>
               <li>
                 <Link to="/recruiter-mentor-rating" className={location.pathname === "/recruiter-mentor-rating" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
                   <span className="icon-feedback dash-icon"></span>
                   <span className="dash-titles">Mentor Rating</span>
                 </Link>
               </li>
+              
               <li>
                 <Link
                   to="/recruiter-postjob"
