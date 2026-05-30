@@ -7,6 +7,9 @@ function RecruiterLmsOverview() {
 
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [progressFilter, setProgressFilter] = useState("");
+  const [assignmentsFilter, setAssignmentsFilter] = useState("");
+  const [coursesFilter, setCoursesFilter] = useState("");
 
   const API = process.env.REACT_APP_API_URL;
 
@@ -24,14 +27,22 @@ function RecruiterLmsOverview() {
         const url = `${API}/api/progress/lms-overview-page`;
         console.log("FETCH URL:", url);
 
+        const token = localStorage.getItem('jwtToken');
+        const headers = {
+          "Content-Type": "application/json",
+        };
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const res = await fetch(url, {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: headers,
         });
 
         console.log("STATUS:", res.status);
+        console.log("HEADERS:", Object.fromEntries(res.headers.entries()));
 
         if (!res.ok) {
           const errorText = await res.text();
@@ -42,12 +53,16 @@ function RecruiterLmsOverview() {
 
         const data = await res.json();
         console.log("API RESPONSE:", data);
+        console.log("Response type:", typeof data);
+        console.log("Is array:", Array.isArray(data));
+        console.log("Keys:", Object.keys(data));
 
         const list = Array.isArray(data)
           ? data
-          : data?.data || data?.content || [];
+          : data?.data || data?.content || data?.students || [];
 
         console.log("FINAL STUDENT LIST:", list);
+        console.log("Student count:", list.length);
 
         setStudents(list);
       } catch (err) {
@@ -60,11 +75,29 @@ function RecruiterLmsOverview() {
   }, [API]);
 
   // ✅ Safe filter
-  const filteredStudents = (students || []).filter((s) =>
-    (s?.applicantName || "")
+  const filteredStudents = (students || []).filter((s) => {
+    const nameMatch = (s?.applicantName || "")
       .toLowerCase()
-      .includes(searchTerm.toLowerCase())
-  );
+      .includes(searchTerm.toLowerCase());
+    
+    const progressValue = s?.overallProgress != null ? Number(s.overallProgress) : 0;
+    const progressMatch = progressFilter === "" || 
+      (progressFilter === "high" && progressValue >= 70) ||
+      (progressFilter === "medium" && progressValue >= 40 && progressValue < 70) ||
+      (progressFilter === "low" && progressValue < 40);
+    
+    const assignmentsValue = s?.assignmentsSubmitted ?? 0;
+    const assignmentsMatch = assignmentsFilter === "" || 
+      (assignmentsFilter === "completed" && assignmentsValue > 0) ||
+      (assignmentsFilter === "pending" && assignmentsValue === 0);
+    
+    const coursesValue = s?.coursesCompleted ?? 0;
+    const coursesMatch = coursesFilter === "" || 
+      (coursesFilter === "completed" && coursesValue > 0) ||
+      (coursesFilter === "pending" && coursesValue === 0);
+    
+    return nameMatch && progressMatch && assignmentsMatch && coursesMatch;
+  });
 
   // Styles
   const dashboardContainer = {
@@ -156,21 +189,97 @@ function RecruiterLmsOverview() {
           {showStudentsOverview && (
             <div style={{ marginTop: "25px" }}>
               
-              {/* Search */}
-              <input
-                type="text"
-                placeholder="Search student..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  padding: "10px",
-                  width: "100%",
-                  maxWidth: "300px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  marginBottom: "20px",
-                }}
-              />
+              {/* Filters Container */}
+              <div style={{ 
+                display: "flex", 
+                gap: "15px", 
+                flexWrap: "wrap", 
+                marginBottom: "20px",
+                alignItems: "center"
+              }}>
+                {/* Search */}
+                <input
+                  type="text"
+                  placeholder="Search student..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    width: "200px",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                  }}
+                />
+
+                {/* Progress Filter */}
+                <select
+                  value={progressFilter}
+                  onChange={(e) => setProgressFilter(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    width: "150px",
+                  }}
+                >
+                  <option value="">All Progress</option>
+                  <option value="high">High (≥70%)</option>
+                  <option value="medium">Medium (40-70%)</option>
+                  <option value="low">Low (&lt;40%)</option>
+                </select>
+
+                {/* Assignments Filter */}
+                <select
+                  value={assignmentsFilter}
+                  onChange={(e) => setAssignmentsFilter(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    width: "150px",
+                  }}
+                >
+                  <option value="">All Assignments</option>
+                  <option value="completed">Submitted</option>
+                  <option value="pending">Not Submitted</option>
+                </select>
+
+                {/* Courses Filter */}
+                <select
+                  value={coursesFilter}
+                  onChange={(e) => setCoursesFilter(e.target.value)}
+                  style={{
+                    padding: "10px",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    width: "150px",
+                  }}
+                >
+                  <option value="">All Courses</option>
+                  <option value="completed">Completed</option>
+                  <option value="pending">Not Completed</option>
+                </select>
+
+                {/* Clear Filters Button */}
+                <button
+                  onClick={() => {
+                    setSearchTerm("");
+                    setProgressFilter("");
+                    setAssignmentsFilter("");
+                    setCoursesFilter("");
+                  }}
+                  style={{
+                    padding: "10px 15px",
+                    backgroundColor: "#64748b",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
 
               {/* Empty state */}
               {filteredStudents.length === 0 ? (

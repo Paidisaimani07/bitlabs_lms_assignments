@@ -11,7 +11,6 @@ import Background from '../../images/user/avatar/Recruiterloginbg.png';
 import logo from '../../images/user/avatar/bitlabslogo.svg';
 import Backgroundimagemobile1 from '../../images/user/avatar/backgroundimage-mobile-recruiter.png';
  
- 
 function RegisterBody({handleLogin}) {
   const [activeTab, setActiveTab] = useState('Candidate');
   const navigate = useNavigate();
