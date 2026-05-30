@@ -62,36 +62,38 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     }
 
     // Define an async function to fetch the logo
-    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
-    if (savedImage) {
-      setImageSrc(savedImage);
-    } else {
-      apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
-        responseType: 'blob',
-      })
-        .then(response => {
-          const blob = response.data;
-          const imageUrl = URL.createObjectURL(blob);
-          setImageSrc(imageUrl);
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            const base64data = reader.result;
-            // Save the base64 encoded image in localStorage
-            localStorage.setItem(`companyLogo_${user.id}`, base64data);
-            // setImageSrc(base64data); // Optionally, set the image src directly after fetching
-          };
-          reader.readAsDataURL(blob);
-
+    if (user && user.id) {
+      const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+      if (savedImage) {
+        setImageSrc(savedImage);
+      } else {
+        apiClient.get(`/recruiters/companylogo/download/${user.id}`, {
+          responseType: 'blob',
         })
-        .catch(error => {
-          console.error('Error fetching image URL:', error);
-          setImageSrc(null);
-        });
+          .then(response => {
+            const blob = response.data;
+            const imageUrl = URL.createObjectURL(blob);
+            setImageSrc(imageUrl);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64data = reader.result;
+              // Save the base64 encoded image in localStorage
+              localStorage.setItem(`companyLogo_${user.id}`, base64data);
+              // setImageSrc(base64data); // Optionally, set the image src directly after fetching
+            };
+            reader.readAsDataURL(blob);
+
+          })
+          .catch(error => {
+            console.error('Error fetching image URL:', error);
+            setImageSrc(null);
+          });
+      }
     }
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleLogout = async() => {
     console.log('Logout button clicked');
@@ -114,6 +116,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
 
   const fetchAlertCount = async () => {
     try {
+      if (!user || !user.id) return;
       const response = await apiClient.get(`/recuriters/appledjobs/${user.id}/unread-alert-count`);
       setAlertCount(response.data);
 
@@ -124,6 +127,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
   useEffect(() => {
     const fetchAlertCount = async () => {
       try {
+        if (!user || !user.id) return;
         const response = await apiClient.get(`/recuriters/appledjobs/${user.id}/unread-alert-count`);
         setAlertCount(response.data);
       } catch (error) {
@@ -131,7 +135,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
       }
     };
     fetchAlertCount();
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleBellClick = () => {
 
@@ -170,9 +174,11 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     }
   };
 
-  const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
-  if (savedImage) {
-    setImageSrc(savedImage);
+  if (user && user.id) {
+    const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
+    if (savedImage) {
+      setImageSrc(savedImage);
+    }
   }
 
   return (
@@ -262,7 +268,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
 
                     </div>
                     <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
-                      <h4>Welcome {user.username}</h4>
+                      <h4>Welcome {user?.username || 'User'}</h4>
                       <div className="sub-account-item">
                         <a href="/recruiter-change-password">
                           <span className="icon-change-passwords" /> Change

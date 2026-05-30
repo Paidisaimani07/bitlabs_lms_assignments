@@ -35,6 +35,7 @@ import { RefreshProvider } from "./components/common/RefreshContext";
 import ProtectedRoute from './ProtectedRoute';
 import { ResumeProvider } from './components/applicantcomponents/ResumeContext';
 import RecruiterLmsOverview from "./components/recruitercomponents/RecruiterLmsOverview";
+import TopicProgressPage from "./components/recruitercomponents/TopicProgressPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -175,6 +176,10 @@ function App() {
                       <Route
                         path="/recruiter-lms-overview"
                         element={<RecruiterLmsOverview />}
+                      />
+                      <Route
+                        path="/recruiter/topic-progress/:applicantId"
+                        element={<TopicProgressPage />}
                       />
 
 

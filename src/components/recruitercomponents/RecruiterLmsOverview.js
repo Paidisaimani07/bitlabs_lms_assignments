@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import RecruiterNavBar from "./RecruiterNavBar";
+import { useNavigate } from "react-router-dom";
 
 function RecruiterLmsOverview() {
+  const navigate = useNavigate();
   const [imageSrc, setImageSrc] = useState(null);
   const [showStudentsOverview, setShowStudentsOverview] = useState(false);
 
@@ -317,7 +319,17 @@ function RecruiterLmsOverview() {
                           }}
                         >
                           <td style={tdStyle}>
-                            {student.applicantId}
+                            <span
+                              style={{
+                                color: "#2563eb",
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                                fontWeight: "600",
+                              }}
+                              onClick={() => navigate(`/recruiter/topic-progress/${student.applicantId}`)}
+                            >
+                              {student.applicantId}
+                            </span>
                           </td>
 
                           <td style={tdStyle}>
