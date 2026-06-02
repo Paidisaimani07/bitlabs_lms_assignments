@@ -615,6 +615,7 @@ color: #ea7b20;
 
 .portfolio-score-details p {
   margin-top: -10px;
+  text-align:right;
 }
 
 .portfolio .skills-container li {
@@ -1892,6 +1893,7 @@ color: #ea7b20;
   display: flex;
   justify-content: flex-end;
   margin-bottom: 10px;
+  margin-top:-20px;
 }
 .build-resume-btn {
   font-size: 14px;   
