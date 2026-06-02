@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import "./coursedetails.css";
 import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "./ProgressAPIService";
@@ -15,7 +15,8 @@ const getCourseId = (courseName) => {
   const courseMap = {
     "html & css": 1,
     "python": 2,
-    "interview preparedness": 7
+    "interview preparedness": 7,
+    "sql": 4
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -61,6 +62,20 @@ const COURSE_DATA = {
     { topic: "Tips for Effective Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Tips for Effective Introduction", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Tips+for+Effective+Introduction+in+Different+Scenarios/story.html" }] },
     { topic: "Creating Your First Impression", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Your First Impression", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+your+First+Impression/story.html" }] },
   ],
+    sql: [
+    { topic: "Introduction to Structured Query Language(SQL)", videos: [{ title: "Introduction to Structured Query Language(SQL)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Introduction%20to%20Structured%20Query%20Language(SQL)/story.html" }] },
+    { topic: "Data Definition Language (DDL)", videos: [{ title: "Data Definition Language (DDL)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Data%20Definition%20Language%20(DDL)/story.html" }] },
+    { topic: "Data Manipulation Language (DML)", videos: [{ title: "Data Manipulation Language (DML)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Data%20Manipulation%20Language%20(DML)/story.html" }] },
+    { topic: "Constraints", videos: [{ title: "Constraints", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Constraints_/story.html" }] },
+    { topic: "Normalization", videos: [{ title: "Normalization", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Normalization/story.html" }] },
+    { topic: "SQL Clauses", videos: [{ title: "SQL Clauses", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Clauses/story.html" }] },
+    { topic: "SQL Functions", videos: [{ title: "SQL Functions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Functions/story.html" }] },
+    { topic: "SQL Joins and Views", videos: [{ title: "SQL Joins and Views", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Joins%20and%20Views/story.html" }] },
+    { topic: "SQL Operators", videos: [{ title: "SQL Operators", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Operators/story.html" }] },
+    { topic: "SQL Sub-queries", videos: [{ title: "SQL Sub-queries", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Sub-queries/story.html" }] },
+    { topic: "TCL and DCL Commands", videos: [{ title: "TCL and DCL Commands", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/TCL%20and%20DCL%20Commands_/story.html" }] },
+  ],
+
 };
 
 const CourseDetails = () => {
@@ -88,8 +103,11 @@ const CourseDetails = () => {
     css1: false,
     css2: false,
     forms: false,
-    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false,
+    sql1: false, sql2: false, sql3: false, sql4: false, sql5: false, sql6: false, sql7: false, sql8: false, sql9: false
   });
+
+  const navigate = useNavigate();
 
   const currentPath = location.pathname.toLowerCase();
 
@@ -100,6 +118,8 @@ const CourseDetails = () => {
     '/course/css',
     '/course/python',
     '/courses/python',
+    '/course/sql',
+    '/courses/sql',
     '/assignment/first-html-page'
   ];
 
@@ -290,6 +310,14 @@ const CourseDetails = () => {
       };
       const prevAssignKey = prevAssignmentMap[index];
       if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
+          } else if (safeCourseName.toLowerCase() === "sql") {
+      const prevAssignmentMap = {
+        2: 'sql1', 3: 'sql2', 4: 'sql3', 5: 'sql4', 6: 'sql5',
+        7: 'sql6', 8: 'sql7', 9: 'sql8', 10: 'sql9'
+      };
+      const prevAssignKey = prevAssignmentMap[index];
+      if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
+
     } else {
       // HTML/CSS logic
       if (index === 2 && !assignmentCompletionRef.current.html) return true;
@@ -393,6 +421,20 @@ const CourseDetails = () => {
           { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
           { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
           { type: 'python10' }, { type: 'python11' }
+            ];
+      } else if (safeCourseName.toLowerCase() === "sql") {
+        assignments = [
+          null,
+          { type: 'employee_table' },
+          { type: 'employee_data' },
+          { type: 'employee_sales' },
+          { type: 'customer_sales' },
+          { type: 'student' },
+          { type: 'customer_table' },
+          { type: 'sales_customers_orders' },
+          { type: 'customer_sub_queries' },
+          { type: 'banks' },
+          null
         ];
       } else {
         assignments = [
@@ -429,7 +471,8 @@ const CourseDetails = () => {
         css1: new Set(),
         css2: new Set(),
         forms: new Set(),
-        python: new Set()
+        python: new Set(),
+        sql: new Set()
       };
       const totals = { html: 10, css1: 6, css2: 8, forms: 5, python: 11 };
 
@@ -446,6 +489,7 @@ const CourseDetails = () => {
           if (numId >= 201 && numId <= 208) completedIds.css2.add(numId);
           if (numId >= 301 && numId <= 305) completedIds.forms.add(numId);
           if (numId >= 401 && numId <= 411) completedIds.python.add(numId);
+          if (numId >= 5011 && numId <= 5094) completedIds.sql.add(numId);
         }
       });
 
@@ -464,7 +508,16 @@ const CourseDetails = () => {
         python8: completedIds.python.has(408),
         python9: completedIds.python.has(409),
         python10: completedIds.python.has(410),
-        python11: completedIds.python.has(411)
+        python11: completedIds.python.has(411),
+        sql1: completedIds.sql.has(5015),
+        sql2: completedIds.sql.has(5025),
+        sql3: completedIds.sql.has(5035),
+        sql4: completedIds.sql.has(5046),
+        sql5: completedIds.sql.has(5054),
+        sql6: completedIds.sql.has(5065),
+        sql7: completedIds.sql.has(5074),
+        sql8: completedIds.sql.has(5084),
+        sql9: completedIds.sql.has(5094)
       };
       assignmentCompletionRef.current = newCompletion;
       setAssignmentCompletion(newCompletion);
@@ -537,6 +590,47 @@ const CourseDetails = () => {
           }
         });
       }
+      
+      // Handle SQL individual assignment completion logic
+      if (id >= 5011 && id <= 5094) {
+        let completionKey = null;
+        if (id === 5015) completionKey = 'sql1';
+        else if (id === 5025) completionKey = 'sql2';
+        else if (id === 5035) completionKey = 'sql3';
+        else if (id === 5046) completionKey = 'sql4';
+        else if (id === 5054) completionKey = 'sql5';
+        else if (id === 5065) completionKey = 'sql6';
+        else if (id === 5074) completionKey = 'sql7';
+        else if (id === 5084) completionKey = 'sql8';
+        else if (id === 5094) completionKey = 'sql9';
+
+        if (completionKey) {
+          setAssignmentCompletion(prev => {
+            const next = { ...prev, [completionKey]: true };
+            assignmentCompletionRef.current = next;
+            return next;
+          });
+
+          syncAssignments().then(() => {
+            const sqlNextTopicMap = {
+              'sql1': 2,
+              'sql2': 3,
+              'sql3': 4,
+              'sql4': 5,
+              'sql5': 6,
+              'sql6': 7,
+              'sql7': 8,
+              'sql8': 9,
+              'sql9': 10
+            };
+            const nextTopicIdx = sqlNextTopicMap[completionKey];
+            if (nextTopicIdx !== undefined) {
+              setTimeout(() => selectTopic(nextTopicIdx), 400);
+            }
+          });
+        }
+      }
+
     };
 
     window.addEventListener('assignmentCompleted', handleAssignmentDone);
@@ -726,6 +820,21 @@ const CourseDetails = () => {
                             { title: "Animal Counts", type: 'python10', completionKey: 'python10' },
                             { title: "Shape", type: 'python11', completionKey: 'python11' },
                           ];
+                                                  } else if (safeCourseName.toLowerCase() === "sql") {
+                          assignments = [
+                            null, // Topic 0
+                            { title: "Employee Table", type: 'employee_table', completionKey: 'sql1' },
+                            { title: "Employee Data", type: 'employee_data', completionKey: 'sql2' },
+                            { title: "Employee & Sales", type: 'employee_sales', completionKey: 'sql3' },
+                            { title: "Customer Sales", type: 'customer_sales', completionKey: 'sql4' },
+                            { title: "Student", type: 'student', completionKey: 'sql5' },
+                            { title: "Customer Table", type: 'customer_table', completionKey: 'sql6' },
+                            { title: "Sales, Customers & Orders", type: 'sales_customers_orders', completionKey: 'sql7' },
+                            { title: "Customer Sub-queries", type: 'customer_sub_queries', completionKey: 'sql8' },
+                            { title: "Banks", type: 'banks', completionKey: 'sql9' },
+                            null, // Topic 10
+                          ];
+
                         } else {
                           assignments = [
                             null, // Topic 0
@@ -802,6 +911,30 @@ const CourseDetails = () => {
                   ref={playerRef}
                   style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
                 >
+                                    {!isFullscreen && (
+                    <p
+                      onClick={() => navigate("/applicant-lmscourses-list")}
+                      style={{
+                        color: "#f97316",
+                        cursor: "pointer",
+                        fontWeight: "600",
+                        marginBottom: "12px",
+                        fontSize: "16px",
+                        transition: "color 0.2s ease, text-decoration 0.2s ease"
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.color = "#ea580c";
+                        e.target.style.textDecoration = "underline";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.color = "#f97316";
+                        e.target.style.textDecoration = "none";
+                      }}
+                    >
+                      ← Back
+                    </p>
+                  )}
+
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
                       <AssignmentEditor
@@ -814,7 +947,7 @@ const CourseDetails = () => {
                       />
                     </div>
                   ) : (
-                    <>
+                     <div className="video-player-wrapper">
                       {!isFullscreen && (
                         <div className="immersive-overlay" onClick={toggleFullscreen}>
                           <div className="overlay-msg">
@@ -840,7 +973,7 @@ const CourseDetails = () => {
                       >
                         {isFullscreen ? "✕ Exit Fullscreen" : "⛶ Fullscreen"}
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
