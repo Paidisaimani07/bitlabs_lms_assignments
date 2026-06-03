@@ -16,7 +16,8 @@ const getCourseId = (courseName) => {
     "html & css": 1,
     "python": 2,
     "interview preparedness": 7,
-    "sql": 4
+    "sql": 4,
+    "javascript & es6": 5
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -46,6 +47,24 @@ const COURSE_DATA = {
   ],
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
+  ],
+  "javascript & es6": [
+
+    { topic: "Introduction to Scalable Vector Graphics (SVG)", videos: [{ title: "Introduction to Scalable Vector Graphics (SVG)", url: "/javascript/Introduction to Scalable Vector Graphics (SVG)/story.html" }] },
+    { topic: "SVG - Shape Properties", videos: [{ title: "SVG - Shape Properties", url: "/javascript/SVG - Shape Properties/story.html" }] },
+    { topic: "Introduction to Responsive Web Designs", videos: [{ title: "Introduction to Responsive Web Designs", url: "/javascript/Introduction to Responsive Web Designs/story.html" }] },
+    { topic: "Introduction to Media Queries", videos: [{ title: "Introduction to Media Queries", url: "/javascript/Introduction to Media Queries/story.html" }] },
+    { topic: "Implementation of Web Applications Using Media Queries", videos: [{ title: "Implementation of Web Applications Using Media Queries", url: "/javascript/Implementation of Web Applications Using Media Queries/story.html" }] },
+    { topic: "Introduction to JavaScript", videos: [{ title: "Introduction to JavaScript", url: "/javascript/Introduction to JavaScript/story.html" }] },
+    { topic: "JavaScript - Working with Data Types and Operators", videos: [{ title: "JavaScript - Working with Data Types and Operators", url: "/javascript/JavaScript - Working with Data Types and Operators/story.html" }] },
+    { topic: "JavaScript - Control Statements", videos: [{ title: "JavaScript - Control Statements", url: "/javascript/JavaScript – Control Statements/story.html" }] },
+    { topic: "JavaScript Validation & Regular Expressions", videos: [{ title: "JavaScript Validation & Regular Expressions", url: "/javascript/JavaScript Validation  Regular Expressions/story.html" }] },
+    { topic: "JavaScript Events", videos: [{ title: "JavaScript Events", url: "/javascript/JavaScript Events/story.html" }] },
+    { topic: "Introduction to ECMAScript (ES6)", videos: [{ title: "Introduction to ECMAScript (ES6)", url: "/javascript/Introduction to ECMAScript (ES6)/story.html" }] },
+    { topic: "ECMAScript (ES6) - Functions", videos: [{ title: "ECMAScript (ES6) - Functions", url: "/javascript/ECMAScript(ES6) - Functions/story.html" }] },
+    { topic: "Introduction to JavaScript Object Notation (JSON)", videos: [{ title: "Introduction to JavaScript Object Notation (JSON)", url: "/javascript/Introduction to _JavaScript Object Notation(JSON)/story.html" }] },
+    { topic: "JSON - Objects", videos: [{ title: "JSON - Objects", url: "/javascript/JSON - Objects/story.html" }] },
+
   ],
   "interview preparedness": [
     // ── Group 0: Understanding Yourself (3 subtopics) ──────────────────────
@@ -299,8 +318,9 @@ const CourseDetails = () => {
     const prevProgress = topicProgressRef.current[index - 1] || 0;
     if (prevProgress < 100) return true;
 
-    // Interview Preparedness has no assignment gates — unlock on topic progress only
+    // Interview Preparedness and JavaScript have no assignment gates — unlock on topic progress only
     if (safeCourseName.toLowerCase() === "interview preparedness") return false;
+    if (safeCourseName.toLowerCase() === "javascript & es6") return false;
 
     if (safeCourseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
@@ -404,8 +424,9 @@ const CourseDetails = () => {
     setTimeout(() => {
       setShowSuccessPopup(false);
 
-      // Interview Preparedness: no assignments — always advance to next topic
-      if (safeCourseName.toLowerCase() === "interview preparedness") {
+      // Interview Preparedness and JavaScript & ES6: no assignments — always advance to next topic
+      if (safeCourseName.toLowerCase() === "interview preparedness" ||
+        safeCourseName.toLowerCase() === "javascript & es6") {
         const nextIdx = index + 1;
         if (nextIdx < courseContent.length) selectTopic(nextIdx);
         return;
@@ -839,6 +860,9 @@ const CourseDetails = () => {
                             { title: "Banks", type: 'banks', completionKey: 'sql9' },
                             null, // Topic 10
                           ];
+                        } else if (safeCourseName.toLowerCase() === "javascript & es6") {
+                          // JavaScript & ES6 has no assignments — all null to suppress assignment cards
+                          assignments = Array(courseContent.length).fill(null);
                         } else {
                           assignments = [
                             null, // Topic 0

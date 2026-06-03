@@ -4,6 +4,7 @@ import htmlandcss from "./html&css 1.jfif";
 import python from "./python.jfif";
 import interviewprep from "./interviewpreparedness.jpeg";
 import sqlimg from "./sql.jfif";
+import javascript from "./javascript";
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "./ProgressAPIService";
 import { useUserContext } from "../../common/UserProvider";
@@ -22,7 +23,7 @@ const ApplicantCourses = () => {
     { id: 2, name: "HTML & CSS", img: htmlandcss },
     // { id: 3, name: "Java", img: java },
     { id: 4, name: "SQL", img: sqlimg },
-    // { id: 5, name: "Spring Boot", img: springboot },
+    { id: 5, name: "JavaScript & ES6", img: javascript },
     // { id: 6, name: "React", img: react },
     { id: 7, name: "Interview Preparedness", img: interviewprep },
   ];
@@ -31,6 +32,7 @@ const ApplicantCourses = () => {
     "html & css": 1,
     "python": 2,
     "sql": 4,
+    "javascript & es6": 5,
     "interview preparedness": 7,
   };
 
