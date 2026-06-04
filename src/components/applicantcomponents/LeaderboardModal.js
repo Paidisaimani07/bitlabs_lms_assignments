@@ -4,9 +4,8 @@ import badge1 from '../../images/LeaderBoardBadges/1.png';
 import badge2 from '../../images/LeaderBoardBadges/2.png';
 import badge3 from '../../images/LeaderBoardBadges/3.png';
 
-const LeaderboardModal = ({ isOpen, onClose, leaderboard, loading, imageMap, defaultAvatarImg, currentUser }) => {
+const LeaderboardModal = ({ isOpen, onClose, leaderboard, loading, imageMap, defaultAvatarImg }) => {
   if (!isOpen) return null;
-  //if (!leaderboard || !Array.isArray(leaderboard)) return null;
 
   const medals = [badge1, badge2, badge3];
 
@@ -40,7 +39,7 @@ const LeaderboardModal = ({ isOpen, onClose, leaderboard, loading, imageMap, def
           {topThree.map((entry, index) => (
             <div key={entry.applicantId} className={`podium-item rank-${index + 1}`}>
               <div className="podium-avatar-wrapper">
-                <img
+                <img 
                   src={imageMap[entry.applicantId] || defaultAvatarImg}
                   alt={entry.name}
                   className="podium-avatar"
@@ -54,29 +53,6 @@ const LeaderboardModal = ({ isOpen, onClose, leaderboard, loading, imageMap, def
             </div>
           ))}
         </div>
-        {/* Your Position Section */}
-        {!loading && currentUser && (
-          <div className="leaderboard-user-position">
-            <h4 className="section-title">Your Position</h4>
-            <div className="user-rank-card">
-              <div className="user-rank-info">
-                <span className="user-rank-number">
-                  {currentUser.rank ? currentUser.rank : '—'}
-                  {currentUser.rank && <span className="rank-suffix">{getOrdinalSuffix(currentUser.rank)}</span>}
-                </span>
-                <div className="user-avatar">
-                  <img
-                    src={imageMap[currentUser.id] || defaultAvatarImg}
-                    alt={currentUser.name}
-                  />
-                </div>
-                <span className="user-name">{currentUser.name} (You)</span>
-              </div>
-              <span className="user-score">{currentUser.score}</span>
-            </div>
-          </div>
-        )}
-
 
         {/* List Section */}
         <div className="leaderboard-modal-list">
@@ -92,20 +68,19 @@ const LeaderboardModal = ({ isOpen, onClose, leaderboard, loading, imageMap, def
             restLeaders.map((entry, index) => {
               const actualRank = index + 4; // Since we start from 4th position
               const suffix = getOrdinalSuffix(actualRank);
-              const isCurrentUser = String(entry.applicantId) === String(currentUser?.id);
               return (
-                <div key={entry.applicantId} className={`leaderboard-list-item ${isCurrentUser ? 'current-user-highlight' : ''}`}>
+                <div key={entry.applicantId} className="leaderboard-list-item">
                   <span className="list-rank">
                     <span className="rank-number">{actualRank}</span>
                     <span className="rank-suffix">{suffix}</span>
                   </span>
                   <div className="list-avatar">
-                    <img
+                    <img 
                       src={imageMap[entry.applicantId] || defaultAvatarImg}
                       alt={entry.name}
                     />
                   </div>
-                  <span className="list-name">{entry.name} {isCurrentUser && "(You)"}</span>
+                  <span className="list-name">{entry.name}</span>
                   <span className="list-score">{entry.score}</span>
                 </div>
               );

@@ -62,6 +62,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
     }
 
     // Define an async function to fetch the logo
+     if (user && user.id) {
     const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
     if (savedImage) {
       setImageSrc(savedImage);
@@ -87,11 +88,12 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
           console.error('Error fetching image URL:', error);
           setImageSrc(null);
         });
+      }
     }
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleLogout = async() => {
     console.log('Logout button clicked');
@@ -131,7 +133,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
       }
     };
     fetchAlertCount();
-  }, [user.id]);
+  }, [user?.id]);
 
   const handleBellClick = () => {
 
@@ -169,11 +171,12 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
       setIsOpen(!isOpen);
     }
   };
-
+   if (user && user.id) {
   const savedImage = localStorage.getItem(`companyLogo_${user.id}`);
   if (savedImage) {
     setImageSrc(savedImage);
   }
+}
 
   return (
     <div>
@@ -262,7 +265,7 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
 
                     </div>
                     <div className={`sub-account ${isSubAccountVisible ? 'show' : ''}`}>
-                      <h4>Welcome {user.username}</h4>
+                       <h4>Welcome {user?.username || 'User'}</h4>
                       <div className="sub-account-item">
                         <a href="/recruiter-change-password">
                           <span className="icon-change-passwords" /> Change
@@ -343,6 +346,23 @@ function RecruiterNavBar({ imageSrc, setImageSrc }) {
                   <span className="dash-titles">Static Feedback</span>
                 </Link>
               </li>
+               <li>
+                <Link
+                  to="/recruiter-lms-overview"
+                  className={
+                    location.pathname === "/recruiter-lms-overview"
+                      ? "tf-effect active"
+                      : ""
+                  }
+                  onClick={handleMenuItemClick}
+                >
+                  <span className="icon-dashboard dash-icon"></span>
+                  <span className="dash-titles">LMS Overview</span>
+                </Link>
+              </li>
+
+
+
               <li>
                 <Link to="/recruiter-mentor-rating" className={location.pathname === "/recruiter-mentor-rating" ? "tf-effect active" : ""} onClick={handleMenuItemClick}>
                   <span className="icon-feedback dash-icon"></span>

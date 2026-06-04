@@ -83,32 +83,89 @@ const Assignment = () => {
             unlocked: false
         }
     ];
+    // Full set of SQL assignments
+    const SQL_ASSIGNMENTS = [
+        {
+            id: 501,
+            topic: "Employee Table",
+            subButton: "Create Employee Table",
+            unlocked: true
+        },
+        {
+            id: 502,
+            topic: "Employee Data",
+            subButton: "Insert Employee Data",
+            unlocked: false
+        },
+        {
+            id: 503,
+            topic: "Employee & Sales",
+            subButton: "Join Operations",
+            unlocked: false
+        },
+        {
+            id: 504,
+            topic: "Customer Sales",
+            subButton: "Customer Sales Query",
+            unlocked: false
+        },
+        {
+            id: 505,
+            topic: "Student",
+            subButton: "Student Details Query",
+            unlocked: false
+        },
+        {
+            id: 506,
+            topic: "Customer Table",
+            subButton: "Customer Table Creation",
+            unlocked: false
+        },
+        {
+            id: 507,
+            topic: "Sales, Customers & Orders",
+            subButton: "Complex Joins",
+            unlocked: false
+        },
+        {
+            id: 508,
+            topic: "Customer Sub-queries",
+            subButton: "Sub-query Exercise",
+            unlocked: false
+        },
+        {
+            id: 509,
+            topic: "Banks",
+            subButton: "Banks Query",
+            unlocked: false
+        }
+    ];
+
 
     // Course-specific assignments - allow navigation but control assignment content
     const getCourseAssignments = () => {
         // Requirement 3: Use exact route matching with an array
-        const allowedRoutes = [
+        const htmlAllowedRoutes = [
             '/courses/html',
             '/courses/css',
             '/course/html', // Added to ensure compatibility with existing singular routes
             '/course/css',  // Added to ensure compatibility with existing singular routes
             '/assignment/first-html-page'
         ];
+        // SQL routes
+        const sqlAllowedRoutes = [
+            '/courses/sql',
+            '/course/sql'
+        ];
 
-        // Requirement 4: Check whether the current route starts with one of the allowed routes
-        const isAllowedRoute = allowedRoutes.some(route => currentPath.startsWith(route));
-
-        console.log("Current Path:", currentPath);
-        console.log("Is HTML/CSS course with assignments:", isAllowedRoute);
-
-        // Requirement 6: If the route IS an allowed HTML/CSS route - show all HTML/CSS assignments
-        if (isAllowedRoute) {
+         if (htmlAllowedRoutes.some(route => currentPath.startsWith(route))) {
             console.log("HTML/CSS course - showing full assignments");
             return [...HTML_CSS_ASSIGNMENTS];
         }
-
-        // Requirement 5: If the route is NOT an allowed HTML/CSS route - return empty array
-        console.log("Non-HTML/CSS course - showing 'Assignments were not uploaded for this course.'");
+          if (sqlAllowedRoutes.some(route => currentPath.startsWith(route))) {
+            return [...SQL_ASSIGNMENTS];
+        }
+        
         return [];
     };
 
@@ -209,7 +266,18 @@ const Assignment = () => {
             "html tables": 'table',
             "html links": 'links',
             "smartphone description": 'smartphone',
-            "bill table": 'bill'
+            "bill table": 'bill',
+            
+            // SQL Map
+            "employee table": "employee_table",
+            "employee data": "employee_data",
+            "employee & sales": "employee_sales",
+            "customer sales": "customer_sales",
+            "student": "student",
+            "customer table": "customer_table",
+            "sales, customers & orders": "sales_customers_orders",
+            "customer sub-queries": "customer_sub_queries",
+            "banks": "banks"
         };
 
         const type = typeMap[t] || '';
