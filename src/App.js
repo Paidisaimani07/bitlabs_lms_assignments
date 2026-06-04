@@ -34,7 +34,8 @@ import FeedbackResponses from "./pages/feedbackpage/FeedbackResponses";
 import { RefreshProvider } from "./components/common/RefreshContext";
 import ProtectedRoute from './ProtectedRoute';
 import { ResumeProvider } from './components/applicantcomponents/ResumeContext';
-
+import RecruiterLmsOverview from "./components/recruitercomponents/RecruiterLmsOverview";
+import TopicProgressPage from "./components/recruitercomponents/TopicProgressPage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -172,7 +173,14 @@ function App() {
                     <Route path="/recruiter-mentor-rating" element={<RecruiterHomePage />} />
                       <Route path="/applicant-lmscourses-list" element={<ApplicantHomePage />} />
                       <Route path="/course/:courseName" element={<ApplicantHomePage />} />
-
+                        <Route
+                        path="/recruiter-lms-overview"
+                        element={<RecruiterLmsOverview />}
+                      />
+                      <Route
+                        path="/recruiter/topic-progress/:applicantId"
+                        element={<TopicProgressPage />}
+                      />
 
                   </>
                 ) : (
