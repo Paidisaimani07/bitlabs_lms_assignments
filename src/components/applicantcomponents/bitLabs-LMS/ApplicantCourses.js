@@ -2,12 +2,14 @@ import React, { useState, useMemo, useEffect } from "react";
 import "./applicantcourses.css";
 import htmlandcss from "./html&css 1.jfif";
 import python from "./python.jfif";
+import interviewprep from "./interviewpreparedness.jpeg";
+import sqlimg from "./sql.jfif";
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "./ProgressAPIService";
 import { useUserContext } from "../../common/UserProvider";
 
 // Interview prep image lives in /public — use URL, not import
-const interviewprep = process.env.PUBLIC_URL + "/download.png";
+// const interviewprep = process.env.PUBLIC_URL + "/download.png";
 
 const ApplicantCourses = () => {
   const [search, setSearch] = useState("");
@@ -22,7 +24,7 @@ const ApplicantCourses = () => {
     { id: 1, name: "Python", img: python },
     { id: 2, name: "HTML & CSS", img: htmlandcss },
     // { id: 3, name: "Java", img: java },
-    // { id: 4, name: "SQL", img: sql },
+    { id: 4, name: "SQL", img: sqlimg },
     // { id: 5, name: "Spring Boot", img: springboot },
     // { id: 6, name: "React", img: react },
     { id: 7, name: "Interview Preparedness", img: interviewprep },
@@ -31,6 +33,7 @@ const ApplicantCourses = () => {
   const coursesMap = {
     "html & css": 1,
     "python": 2,
+    "sql": 4,
     "interview preparedness": 7,
   };
 
