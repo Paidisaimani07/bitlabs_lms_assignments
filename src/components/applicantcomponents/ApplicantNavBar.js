@@ -18,7 +18,7 @@ import shape3 from "../../images/dashboard/side-nav-icons/skillValidation.svg";
 import shape4 from "../../images/dashboard/side-nav-icons/mentorSphere.svg";
 import shape from "../../images/dashboard/side-nav-icons/dashboard.svg";
 import shape2 from "../../images/dashboard/side-nav-icons/buildportfolio.svg";
-import botImage1 from "../../images/dashboard/side-nav-icons/robot.png";
+//import botImage1 from "../../images/dashboard/side-nav-icons/robot.png";
 import "./ApplicantNavBar.css";
 import notificationIcon from "../../images/notificationIcon.svg";
 import { useRefresh } from "../common/RefreshContext"
@@ -515,34 +515,8 @@ function ApplicantNavBar() {
                   </span>
                 </Link>
               </li>
-              <li>
-                <div>
-                  <Link
-                    onClick={hideMenu}
-                    to="/applicant-interview-prep"
-                    className={
-                      pathname === "/applicant-interview-prep"
-                        ? "tf-effect active"
-                        : ""
-                    }
-                  >
-                    <span className="dash-icon">
-                      <img
-                        src={botImage1}
-                        alt="Ask Newton"
-                        width="30"
-                        height="30"
-                      />
-                    </span>
-                    <span
-                      className="dash-titles"
-                      style={{ textTransform: "none" }}
-                    >
-                      Ask newton
-                    </span>
-                  </Link>
-                </div>
-              </li>
+               {/* Ask Newton sidebar item removed – replaced by LMS Portal */}
+
               <li>
                 <Link
                   id="tour-skill-validation"

@@ -440,17 +440,25 @@ color: #ea7b20;
   margin-top: 10px;
 }
 
+.portfolio-score-details {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .portfolio .profile-side-section h3 {
   font-size: 9px;
   font-weight: 500;
   color: #2C2C2C;
   text-align: right;
+  margin: 0;
 }
 
 .portfolio .profile-side-section p {
   font-size: 29px;
   font-weight: bold;
   color: #EA7B20;
+  margin: 0;
 }
 
 .profile-extra-details {
@@ -1611,7 +1619,7 @@ color: #ea7b20;
   background: transparent linear-gradient(239deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box;
   box-shadow: 0px 0px 20px #f7aa4b80;
   border-radius: 6px;
-  padding: 12px 15px 8px 15px;
+  padding: 12px 15px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1654,10 +1662,12 @@ color: #ea7b20;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 35px;
+  gap: 25px;
   width: 100%;
   flex: 1;
-  /* padding-top: 8px; */
+  flex-shrink: 0;
+  min-height: 100px;
+  padding-bottom: 5px;
 }
 
 .leaderboard-member {
@@ -1678,7 +1688,7 @@ color: #ea7b20;
   justify-content: center;
   align-items: center;
   margin-top: 2px;
-  margin-bottom: 4px;
+  margin-bottom: 15px;
 }
 
 .leaderboard-halo-rings {
@@ -1686,13 +1696,13 @@ color: #ea7b20;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
 }
 
 .leaderboard-member--first .leaderboard-halo-rings {
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
 }
 
 .leaderboard-halo-rings::before,
@@ -1725,8 +1735,8 @@ color: #ea7b20;
 }
 
 .leaderboard-avatar {
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid lightgrey;
@@ -1738,8 +1748,8 @@ color: #ea7b20;
 }
 
 .leaderboard-member--first .leaderboard-avatar {
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   border-color: lightgrey;
   border-width: 2px;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
@@ -1995,5 +2005,216 @@ color: #ea7b20;
     height: 40px;
     margin-bottom: 30px;
 
+  }
+}
+
+/* Score Modal Styling */
+.score-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  animation: fadeIn 0.25s ease;
+}
+
+.score-modal {
+  -ms-overflow-style: none;
+  animation: slideDown .3s ease-out;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px #0003;
+  height: 90%;
+  max-height: 900px;
+  max-width: 500px;
+  overflow: scroll;
+  scrollbar-width: none;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+
+.score-modal-header {
+  background: linear-gradient(90deg, #FBBB5C 0%, #E66A0E 100%);
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  position: relative;
+}
+
+.score-modal-header h2 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  color: #ffffff;
+}
+
+.score-modal-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.score-modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.score-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.score-modal-body p {
+  color: #5A6A85;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: normal;
+}
+
+.score-modal-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.score-modal-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #F0F2F5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.score-modal-list li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 106, 14, 0.08);
+  border-color: rgba(230, 106, 14, 0.15);
+}
+
+.score-modal-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.score-modal-icon-wrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #FFF3E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.score-modal-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.score-modal-title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #1A202C;
+}
+
+.score-modal-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #718096;
+}
+
+.score-modal-value {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #0f0b08;
+  white-space: nowrap;
+}
+
+.score-modal-footer {
+  margin-top: 16px;
+  padding-bottom: 8px;
+}
+
+.score-modal-footer button {
+  background: linear-gradient(135deg, #ea7b20, #d66311);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px #ea7b2040;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 600;
+  height: 40px;
+  padding: 12px 32px;
+  transition: background-color .2s, transform .2s;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+.score-modal-footer button:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(230, 106, 14, 0.35);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }

@@ -14,6 +14,7 @@ import botImage from '../../images/dashboard/mobilebanners/Bot.png';
 import characterImg from '../../images/dashboard/mobilebanners/Group.png';
 import './ApplicantDashboard.css';
 import flameImg from '../../images/dashboard/flame.png';
+import group1465 from '../../images/dashboard/group-1465.svg';
 import GuidedTour from "./GuidedTour";
 import defaultAvatarImg from '../../images/user/avatar/image-01.jpg';
 import { useLocation } from "react-router-dom";
@@ -21,7 +22,6 @@ import badge1 from '../../images/LeaderBoardBadges/1.png';
 import badge2 from '../../images/LeaderBoardBadges/2.png';
 import badge3 from '../../images/LeaderBoardBadges/3.png';
 import LeaderboardModal from './LeaderboardModal';
-import ScoreSystemModal from './ScoreSystemModal';
 import { HiDocumentText } from "react-icons/hi";
 
 const safeGet = (key) => {
@@ -48,7 +48,7 @@ const ApplicantDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [imageMap, setImageMap] = useState({});
   const [isLeaderboardModalOpen, setIsLeaderboardModalOpen] = useState(false);
-  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
+  const [isPointsModalOpen, setIsPointsModalOpen] = useState(false);
   const [modalLeaderboard, setModalLeaderboard] = useState([]);
   const [modalLoading, setModalLoading] = useState(false);
   // const [contRecJobs, setCountRecJobs] = useState(0);
@@ -92,6 +92,7 @@ const ApplicantDashboard = () => {
   const [dashboardScore, setDashboardScore] = useState(0);
   const [cappedScore, setCappedScore] = useState(0);
   const [userLevel, setUserLevel] = useState("");
+  const [userRank, setUserRank] = useState(null);
   const [bronzeScore, setBronzeScore] = useState(200);
   const [silverScore, setSilverScore] = useState(300);
   const [goldScore, setGoldScore] = useState(500);
@@ -414,9 +415,9 @@ const allLoadingDone =
   }, [user?.id, TOUR_KEY]);
 
   useEffect(() => {
-    const idToUse = applicantId ?? profileData?.applicant?.id;
+    const idToUse = applicantId ?? profileData?.applicant?.id ?? user?.id;
     if (idToUse) fetchDashboardScore(idToUse);
-  }, [applicantId, profileData?.applicant?.id]);
+  }, [applicantId, profileData?.applicant?.id, user?.id]);
 
   const fetchDashboardScore = async (id) => {
     if (!id) return setDashboardScore(0);
@@ -434,6 +435,9 @@ const allLoadingDone =
       if (scoreRes && typeof scoreRes === "object") {
         parsedScore = scoreRes.total_score ?? scoreRes.totalScore ?? scoreRes.score ?? 0;
         level = scoreRes.level ?? "";
+        if (scoreRes.rank !== undefined || scoreRes.ranking !== undefined || scoreRes.rank_index !== undefined) {
+          setUserRank(scoreRes.rank ?? scoreRes.ranking ?? scoreRes.rank_index);
+        }
 
         // Update badge thresholds if available
         if (Array.isArray(scoreRes.badgeScores)) {
@@ -654,14 +658,26 @@ const allLoadingDone =
     fetchTechBuzz();
   }, [user.id]);
 
-   // Fetch leaderboard top-3
+   // Fetch leaderboard top-10 for display, full list for real rank
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
         setLeaderboardLoading(true);
         setLeaderboardError(null);
-        const { data } = await apiClient.get(`/applicant-scores/leaderboard?limit=3`);
-        setLeaderboard(data || []);
+
+        // Fetch top 10 for display
+        const { data: top10 } = await apiClient.get(`/applicant-scores/leaderboard?limit=10`);
+        setLeaderboard(top10 || []);
+
+        // Fetch full list to compute real rank
+        const { data: fullList } = await apiClient.get(`/applicant-scores/leaderboard?limit=10000`);
+        if (fullList && Array.isArray(fullList)) {
+          const myEntry = fullList.find(e => String(e.applicantId) === String(user.id));
+          if (myEntry) {
+            const realRank = fullList.indexOf(myEntry) + 1;
+            setUserRank(realRank);
+          }
+        }
       } catch (err) {
         console.error('Failed to fetch leaderboard:', err);
         setLeaderboard([]);
@@ -673,13 +689,25 @@ const allLoadingDone =
     fetchLeaderboard();
   }, []);
 
-  // Fetch modal leaderboard with 10 leaders
+  // Fetch modal leaderboard with 10 leaders (full list for rank)
   const fetchModalLeaderboard = async () => {
     try {
       setModalLoading(true);
-      const { data } = await apiClient.get(`/applicant-scores/leaderboard?limit=10`);
-      console.log("Leader Board ",data);
-      setModalLeaderboard(data || []);
+
+      // Fetch top 10 for display in modal
+      const { data: top10 } = await apiClient.get(`/applicant-scores/leaderboard?limit=10`);
+      console.log("Leader Board ", top10);
+      setModalLeaderboard(top10 || []);
+
+      // Fetch full list to compute real rank if not already known
+      const { data: fullList } = await apiClient.get(`/applicant-scores/leaderboard?limit=10000`);
+      if (fullList && Array.isArray(fullList)) {
+        const myEntry = fullList.find(e => String(e.applicantId) === String(user.id));
+        if (myEntry) {
+          const realRank = fullList.indexOf(myEntry) + 1;
+          setUserRank(realRank);
+        }
+      }
     } catch (err) {
       console.error('Failed to fetch modal leaderboard:', err);
       setModalLeaderboard([]);
@@ -776,7 +804,7 @@ const allLoadingDone =
       id: "asknewton",
       selector: "#tour-ask-newton",
       placement: "top",
-      text: "🎯 Ask Newton — Your AI-powered learning companion. Ask anything — get help with skills, subjects, practicals, exams, projects, and more. Learn, practice, and solve problems effectively."
+      text: "🎯 LMS Assignments — View and complete your course assignments."
     },
     {
       id: "arena",
@@ -865,36 +893,65 @@ const allLoadingDone =
     </div>
   </div>
 </div>) : (
-                  <div className="display-flex robo-container" >
-                    <div className="card robo-card">
-                      <div className="container">
+                  <div className="display-flex" style={{ width: '100%', justifyContent: 'center', paddingTop: '0px', paddingBottom: '10px' }}>
+                    <div 
+                      // onClick={() => navigate('/applicant-lmscourses-list')} 
+                      style={{ 
+                        
+                        background: 'transparent linear-gradient(282deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box',
+                        boxShadow: '0px 0px 15px #F7AA4B',
+                        borderRadius: '6px',
+                        height: '111px',
+                        width: '100%',
+                        position: 'relative',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0 30px'
+                      }}
+                    >
+                      <img 
+                        src={group1465} 
+                        alt="LMS Assignments Illustration" 
+                        style={{ 
+                          position: 'absolute',
+                          left: '10px',
+                          bottom: '-10px',
+                          width: '245px',
+                          height: '189px',
+                          objectFit: 'contain'
+                        }} 
+                      />
 
-                        <div className="robo-img ">
-                          <span>
-                            <a onClick={handleRedirect3}>
-                              <img
-                                src={botImage}
-                                alt="Bot icon"
-                                width="150px"
-                                height="250px"
-                              />
-                            </a>
-                          </span>
-                        </div>
+                      <div style={{ marginLeft: '250px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <span style={{
+                          textAlign: 'left',
+                          font: 'normal normal bold 22px/33px Poppins',
+                          letterSpacing: '0px',
+                          color: '#6A2E00',
+                          margin: 0
+                        }}>
+                          <span style={{ color: '#FFFFFF' }}>Get started your</span> LMS Assignments
+                        </span>
 
-                        <div className="robo-card-text">
-                          <p className="robo-card-para">
-                            Any topic. Anytime - <span onClick={handleRedirect3} style={{ fontSize: "24px", fontWeight: "1200", color: "#7E3601", cursor: "pointer" }} id="tour-ask-newton">Ask Newton!</span>
-                          </p>
-
-                          <button
-                            onClick={handleRedirect3}
-                          >
-                            Get started
-                          </button>
-
-                        </div>
-
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); navigate('/applicant-lmscourses-list'); }}
+                      
+                          style={{
+                            background: '#FFFFFF',
+                            borderRadius: '4px',
+                            color: '#1A1A1A',
+                            fontFamily: 'Poppins, sans-serif',
+                            fontWeight: 'bold',
+                            fontSize: '14px',
+                            border: 'none',
+                            padding: '10px 24px',
+                            cursor: 'pointer',
+                            boxShadow: '0px 3px 6px #00000029'
+                          }}
+                        >
+                          Get Started
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -918,16 +975,19 @@ const allLoadingDone =
 ) : (
    <>
                     <div className="progress-text" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <p style={{ display: 'inline-block', margin: 0, marginRight: '10px' }}>Badge achievement level </p>
-                        <span 
-                          onClick={() => setIsScoreModalOpen(true)}
-                          style={{ fontSize: '12px', color: '#EA7B20', cursor: 'pointer', textDecoration: 'underline', fontWeight: '500' }}
-                        >
-                          Learn more
-                        </span>
-                      </div>
-                      <span>{Math.round((cappedScore / goldScore) * 100)}%</span>
+                      <p style={{ margin: 0 }}>Badge achievement level {Math.round((cappedScore / goldScore) * 100)}%</p>
+                      <span
+                        onClick={() => setIsPointsModalOpen(true)}
+                        style={{
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          color: '#E66A0E',
+                          fontWeight: 'bold',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        Learn More
+                      </span>
                     </div>
                     <div style={{ position: "relative" }}>
                       <div className="badge-bar">
@@ -1005,7 +1065,7 @@ const allLoadingDone =
                       </h4>
                       {/* <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p> */}
                       <button onClick={handleRedirectHackathon}>
-                        Enter Hackathons!
+                        Enter arena!
                       </button>
                     </div>
 
@@ -1077,6 +1137,7 @@ const allLoadingDone =
                           });
                         })()}
                       </div>
+                      
                     </div>
                   )}
                   </div> {/* end arena-leaderboard-col */}
@@ -1467,8 +1528,16 @@ const allLoadingDone =
                         </span>
                       </div>
                       <div className="portfolio-score-details">
-                        <h3>score</h3>
-                        <p>{dashboardScore ?? 0}</p>
+                        <div>
+                          <h3>score</h3>
+                          <p>{dashboardScore ?? 0}</p>
+                        </div>
+                        {userRank !== null && (
+                          <div style={{ borderLeft: '1px solid #ddd', paddingLeft: '12px', marginLeft: '12px' }}>
+                            <h3 style={{ color: '#EA7B20' }}>rank</h3>
+                            <p style={{ color: '#EA7B20' }}>#{userRank}</p>
+                          </div>
+                        )}
                       </div>
 
                     </div>
@@ -1821,11 +1890,92 @@ const allLoadingDone =
         loading={modalLoading}
         imageMap={imageMap}
         defaultAvatarImg={defaultAvatarImg}
+        currentUser={{
+          id: user.id,
+          name: card.name || user.name || "You",
+          score: dashboardScore,
+          rank: userRank
+        }}
       />
-      <ScoreSystemModal 
-        isOpen={isScoreModalOpen} 
-        onClose={() => setIsScoreModalOpen(false)} 
-      />
+
+      {/* Points Info Modal */}
+      {isPointsModalOpen && (
+        <div className="score-modal-overlay" onClick={() => setIsPointsModalOpen(false)}>
+          <div className="score-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="score-modal-header">
+              <h2>How do points work?</h2>
+              <button className="score-modal-close-btn" onClick={() => setIsPointsModalOpen(false)}>×</button>
+            </div>
+            <div className="score-modal-body">
+              <p>You can earn points by taking one of the actions below.</p>
+              
+              <ul className="score-modal-list">
+                <li className="score-modal-card">
+                  <div className="score-modal-left">
+                    <div className="score-modal-icon-wrap">🏆</div>
+                    <div className="score-modal-details">
+                      <span className="score-modal-title">Conquer The Challenge</span>
+                      <span className="score-modal-sub">Hackathon Submission</span>
+                    </div>
+                  </div>
+                  <span className="score-modal-value">+25 Points</span>
+                </li>
+
+                <li className="score-modal-card">
+                  <div className="score-modal-left">
+                    <div className="score-modal-icon-wrap">🧠</div>
+                    <div className="score-modal-details">
+                      <span className="score-modal-title">Prove Your Expertise</span>
+                      <span className="score-modal-sub">Skill Validation Test</span>
+                    </div>
+                  </div>
+                  <span className="score-modal-value">+20 Points</span>
+                </li>
+
+                <li className="score-modal-card">
+                  <div className="score-modal-left">
+                    <div className="score-modal-icon-wrap">🚀</div>
+                    <div className="score-modal-details">
+                      <span className="score-modal-title">Ignite Your Journey</span>
+                      <span className="score-modal-sub">Hackathon Registration</span>
+                    </div>
+                  </div>
+                  <span className="score-modal-value">+5 Points</span>
+                </li>
+
+                <li className="score-modal-card">
+                  <div className="score-modal-left">
+                    <div className="score-modal-icon-wrap">🤝</div>
+                    <div className="score-modal-details">
+                      <span className="score-modal-title">Link With Leaders</span>
+                      <span className="score-modal-sub">Mentor Connect Registration</span>
+                    </div>
+                  </div>
+                  <span className="score-modal-value">+5 Points</span>
+                </li>
+
+                <li className="score-modal-card">
+                  <div className="score-modal-left">
+                    <div className="score-modal-icon-wrap">📺</div>
+                    <div className="score-modal-details">
+                      <span className="score-modal-title">Catch The Vibe</span>
+                      <span className="score-modal-sub">Watching Tech Buzz Shorts</span>
+                    </div>
+                  </div>
+                  <span className="score-modal-value">+2 Points</span>
+                </li>
+              </ul>
+
+              <div className="score-modal-footer">
+                <button onClick={() => setIsPointsModalOpen(false)}>
+                  Got It!
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
