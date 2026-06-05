@@ -17,7 +17,9 @@ const getCourseId = (courseName) => {
     "python": 2,
     "interview preparedness": 7,
     "sql": 4,
-    "javascript & es6": 5
+    "javascript & es6": 5,
+    "react.js": 6,
+    "java exceptions & algorithms": 8
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -94,6 +96,33 @@ const COURSE_DATA = {
     { topic: "SQL Sub-queries", videos: [{ title: "SQL Sub-queries", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Sub-queries/story.html" }] },
     { topic: "TCL and DCL Commands", videos: [{ title: "TCL and DCL Commands", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/TCL%20and%20DCL%20Commands_/story.html" }] },
   ],
+  "react.js": [
+    { topic: "Introduction to ReactJS", videos: [{ title: "Introduction to ReactJS", url: "/React/Introduction to ReactJs/story.html" }] },
+    { topic: "ReactJS – Environment Setup", videos: [{ title: "ReactJS – Environment Setup", url: "/React/ReactJS - Environment Setup/story.html" }] },
+    { topic: "ReactJS Components", videos: [{ title: "ReactJS Components", url: "/React/ReactJS Components/story.html" }] },
+    { topic: "ReactJS Component Life Cycle", videos: [{ title: "ReactJS Component Life Cycle", url: "/React/ReactJS Component Life Cycle/story.html" }] },
+    { topic: "ReactJS Hooks", videos: [{ title: "ReactJS Hooks", url: "/React/ReactJS Hooks/story.html" }] },
+    { topic: "ReactJS Forms and UI", videos: [{ title: "ReactJS Forms and UI", url: "/React/ReactJS Forms and UI/story.html" }] },
+    { topic: "ReactJS Router", videos: [{ title: "ReactJS Router", url: "/React/ReactJS Router/story.html" }] },
+    { topic: "ReactJS Conditional Rendering", videos: [{ title: "ReactJS Conditional Rendering", url: "/React/ReactJS Conditional Rendering/story.html" }] },
+    { topic: "ReactJS Event Handling", videos: [{ title: "ReactJS Event Handling", url: "/React/ReactJS Event Handling/story.html" }] },
+    { topic: "ReactJS Styles", videos: [{ title: "ReactJS Styles", url: "/React/ReactJS Styles/story.html" }] },
+    { topic: "ReactJS Unit Testing & API Integration", videos: [{ title: "ReactJS Unit Testing & API Integration", url: "/React/ReactJS Unit Testing  API\u00A0Integration/story.html" }] },
+    { topic: "Final Project (Frontend Project)", videos: [{ title: "Final Project (Frontend Project)", url: "" }] }
+  ],
+  "java exceptions & algorithms": [
+    { topic: "Exception Handling Overview", videos: [{ title: "Exception Handling Overview", url: "/java_exception_algorithms/java_exception_algorithms/EXCEPTION HANDLING OVERVIEW/story.html" }] },
+    { topic: "Exception Handling Methods", videos: [{ title: "Exception Handling Methods", url: "/java_exception_algorithms/java_exception_algorithms/Exception Handling Methods/story.html" }] },
+    { topic: "Custom Exceptions", videos: [{ title: "Custom Exceptions", url: "/java_exception_algorithms/java_exception_algorithms/CUSTOM EXCEPTIONS/story.html" }] },
+    { topic: "File Handling using Byte Streams", videos: [{ title: "File Handling using Byte Streams", url: "/java_exception_algorithms/java_exception_algorithms/FILE HANDLING USING BYTE STREAMS/story.html" }] },
+    { topic: "File Handling using Character Streams", videos: [{ title: "File Handling using Character Streams", url: "/java_exception_algorithms/java_exception_algorithms/FILE HANDLING USING CHARACTER STREAMS/story.html" }] },
+    { topic: "Multi Threading", videos: [{ title: "Multi Threading", url: "/java_exception_algorithms/java_exception_algorithms/MULTITHREADING/story.html" }] },
+    { topic: "Memory Management and Garbage Collection", videos: [{ title: "Memory Management and Garbage Collection", url: "/java_exception_algorithms/java_exception_algorithms/MEMORY MANAGEMENT AND GARBAGE COLLECTION/story.html" }] },
+    { topic: "Sorting Algorithms", videos: [{ title: "Sorting Algorithms", url: "/java_exception_algorithms/java_exception_algorithms/SORTING ALGORITHMS/story.html" }] },
+    { topic: "Searching Algorithms", videos: [{ title: "Searching Algorithms", url: "/java_exception_algorithms/java_exception_algorithms/SEARCHING ALGORITHMS/story.html" }] },
+    { topic: "Working with Large Datasets", videos: [{ title: "Working with Large Datasets", url: "/java_exception_algorithms/java_exception_algorithms/WORKING WITH LARGE DATASETS/story.html" }] },
+    { topic: "UML Diagrams", videos: [{ title: "UML Diagrams", url: "/java_exception_algorithms/java_exception_algorithms/UML DIAGRAMS/story.html" }] }
+  ]
 };
 
 const CourseDetails = () => {
@@ -321,6 +350,8 @@ const CourseDetails = () => {
     // Interview Preparedness and JavaScript have no assignment gates — unlock on topic progress only
     if (safeCourseName.toLowerCase() === "interview preparedness") return false;
     if (safeCourseName.toLowerCase() === "javascript & es6") return false;
+    if (safeCourseName.toLowerCase() === "react.js") return false;
+    if (safeCourseName.toLowerCase() === "java exceptions & algorithms") return false;
 
     if (safeCourseName.toLowerCase() === "python") {
       const prevAssignmentMap = {
@@ -426,7 +457,9 @@ const CourseDetails = () => {
 
       // Interview Preparedness and JavaScript & ES6: no assignments — always advance to next topic
       if (safeCourseName.toLowerCase() === "interview preparedness" ||
-        safeCourseName.toLowerCase() === "javascript & es6") {
+        safeCourseName.toLowerCase() === "javascript & es6" ||
+        safeCourseName.toLowerCase() === "react.js" ||
+        safeCourseName.toLowerCase() === "java exceptions & algorithms") {
         const nextIdx = index + 1;
         if (nextIdx < courseContent.length) selectTopic(nextIdx);
         return;
@@ -860,8 +893,8 @@ const CourseDetails = () => {
                             { title: "Banks", type: 'banks', completionKey: 'sql9' },
                             null, // Topic 10
                           ];
-                        } else if (safeCourseName.toLowerCase() === "javascript & es6") {
-                          // JavaScript & ES6 has no assignments — all null to suppress assignment cards
+                        } else if (safeCourseName.toLowerCase() === "javascript & es6" || safeCourseName.toLowerCase() === "react.js" || safeCourseName.toLowerCase() === "java exceptions & algorithms") {
+                          // JavaScript & ES6 and React.js have no assignments — all null to suppress assignment cards
                           assignments = Array(courseContent.length).fill(null);
                         } else {
                           assignments = [
@@ -986,14 +1019,41 @@ const CourseDetails = () => {
                         courseId={`${courseName}_${selectedTopicIndex}`}
                         onProgressUpdate={handleProgressUpdate}
                       />
-                      <iframe
-                        key={`${courseName}_${selectedTopicIndex}`}
-                        src={selectedVideo}
-                        className="video-frame"
-                        title="Course Player"
-                        allowFullScreen
-                        style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
-                      />
+                      {selectedVideo ? (
+                        <iframe
+                          key={`${courseName}_${selectedTopicIndex}`}
+                          src={selectedVideo}
+                          className="video-frame"
+                          title="Course Player"
+                          allowFullScreen
+                          style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
+                        />
+                      ) : (
+                        <div 
+                          className="video-frame" 
+                          style={{ 
+                            display: 'flex', 
+                            flexDirection: 'column', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            background: '#1B1B1B', 
+                            color: '#fff', 
+                            padding: '20px', 
+                            textAlign: 'center',
+                            border: '1px solid #333',
+                            borderRadius: '8px',
+                            boxSizing: 'border-box',
+                            ...(isFullscreen ? { width: "100%", height: "100%", flex: 1, borderRadius: 0 } : {}) 
+                          }}
+                        >
+                          <h3 style={{ color: '#e49723', marginBottom: '15px', fontSize: '24px' }}>
+                            {courseContent[selectedTopicIndex]?.topic}
+                          </h3>
+                          <p style={{ maxWidth: '600px', fontSize: '16px', lineHeight: '1.6', color: '#ccc' }}>
+                            Welcome to the Final Project module! Please follow your curriculum guidelines to build your React.js frontend application. Once done, share your repository link with your mentor or upload your final submission.
+                          </p>
+                        </div>
+                      )}
                       <button
                         onClick={toggleFullscreen}
                         className="fullscreen-btn"

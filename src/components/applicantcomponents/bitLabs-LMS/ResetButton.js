@@ -8,8 +8,9 @@ const getCourseId = (courseName) => {
     "python": 2,
     "java": 3,
     "sql": 4,
-    "react": 5,
-    "spring boot": 6
+    "javascript & es6": 5,
+    "react.js": 6,
+    "java exceptions & algorithms": 8
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
