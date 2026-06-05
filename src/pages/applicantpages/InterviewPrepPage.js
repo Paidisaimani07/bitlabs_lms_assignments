@@ -573,7 +573,7 @@ function InterviewPrepPage() {
       e.preventDefault();
       const msg = input.trim();
       if (!msg) return;
-      analytics.track("ASK NEWTON", currentUser?.id);
+     // analytics.track("ASK NEWTON", currentUser?.id);
       setInput("");
       sendMessage(msg);
     }
@@ -733,7 +733,7 @@ function InterviewPrepPage() {
 
             </div>
             <div className="center">
-              <h2 className="ask-newton-text">Ask Newton!</h2>
+            <h2 className="ask-newton-text">LMS Assignments</h2>
             </div>
 
             <div className="ai-top-buttons">
@@ -758,7 +758,8 @@ function InterviewPrepPage() {
                 <span>
                   <img src={botImage} alt="Bot icon" />
                 </span>
-                <h2>Ask Newton!</h2>
+                  <h2>LMS Assignments</h2>
+
               </div>
 
               <div className="ai-sidebar-saved-content">
@@ -986,7 +987,7 @@ function InterviewPrepPage() {
                       setInput(v);
                       if (isCoolingDown) setQueuedMessage(v);
                     }}
-                    placeholder="Ask newton!"
+                    placeholder="Type your message..."
                     onKeyDown={handleKeyPress}
                     disabled={isLoading || isCoolingDown}
                     aria-label="Chat input"
@@ -994,7 +995,8 @@ function InterviewPrepPage() {
                   />
 
                   <span
-                  onClick={() => {analytics.track("ASK NEWTON", currentUser?.id);sendMessage(); setInput("");}}
+                                   onClick={() => {sendMessage(); setInput("");}}
+
                     aria-label="Send message"
                     style={{
                       cursor: input.trim() ? "pointer" : "default",
