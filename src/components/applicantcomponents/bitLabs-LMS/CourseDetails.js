@@ -117,11 +117,11 @@ const COURSE_DATA = {
     { topic: "File Handling using Byte Streams", videos: [{ title: "File Handling using Byte Streams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/FILE+HANDLING+USING+BYTE+STREAMS/story.html" }] },
     { topic: "File Handling using Character Streams", videos: [{ title: "File Handling using Character Streams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/FILE%20HANDLING%20USING%20CHARACTER%20STREAMS/story.html" }] },
     { topic: "Multi Threading", videos: [{ title: "Multi Threading", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/MULTITHREADING/story.html" }] },
-    { topic: "Memory Management and Garbage Collection", videos: [{ title: "Memory Management and Garbage Collection", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/MEMORY MANAGEMENT AND GARBAGE COLLECTION/story.html" }] },
-    { topic: "Sorting Algorithms", videos: [{ title: "Sorting Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/Sorting+Algorithms/story.html" }] },
-    { topic: "Searching Algorithms", videos: [{ title: "Searching Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/Searching+Algorithms/story.html" }] },
-    { topic: "Working with Large Datasets", videos: [{ title: "Working with Large Datasets", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/Working+with+Large+Datasets/story.html" }] },
-    { topic: "UML Diagrams", videos: [{ title: "UML Diagrams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/UML+Diagrams/story.html" }] }
+    { topic: "Memory Management and Garbage Collection", videos: [{ title: "Memory Management and Garbage Collection", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/MEMORY%20MANAGEMENT%20AND%20GARBAGE%20COLLECTION/story.html" }] },
+    { topic: "Sorting Algorithms", videos: [{ title: "Sorting Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/SORTING%20ALGORITHMS/story.html" }] },
+    { topic: "Searching Algorithms", videos: [{ title: "Searching Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/SEARCHING%20ALGORITHMS/story.html" }] },
+    { topic: "Working with Large Datasets", videos: [{ title: "Working with Large Datasets", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/WORKING+WITH+LARGE+DATASETS/story.html" }] },
+    { topic: "UML Diagrams", videos: [{ title: "UML Diagrams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/UML+DIAGRAMS/story.html" }] }
   ]
 };
 
