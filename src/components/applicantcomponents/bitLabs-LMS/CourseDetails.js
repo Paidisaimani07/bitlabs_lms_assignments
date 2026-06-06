@@ -108,7 +108,6 @@ const COURSE_DATA = {
     { topic: "ReactJS Event Handling", videos: [{ title: "ReactJS Event Handling", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Event+Handling/story.html" }] },
     { topic: "ReactJS Styles", videos: [{ title: "ReactJS Styles", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Styles/story.html" }] },
     { topic: "ReactJS Unit Testing & API Integration", videos: [{ title: "ReactJS Unit Testing & API Integration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Unit+Testing++API%C2%A0Integration/story.html" }] },
-    { topic: "Final Project (Frontend Project)", videos: [{ title: "Final Project (Frontend Project)", url: "" }] }
   ],
   "java exceptions & algorithms": [
     { topic: "Exception Handling Overview", videos: [{ title: "Exception Handling Overview", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/EXCEPTION+HANDLING+OVERVIEW/story.html" }] },
