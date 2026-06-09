@@ -16,7 +16,10 @@ const getCourseId = (courseName) => {
     "html & css": 1,
     "python": 2,
     "interview preparedness": 7,
-    "sql": 4
+    "sql": 4,
+    "javascript & es6": 5,
+    "react.js": 6,
+    "java exceptions & algorithms": 8
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -47,6 +50,25 @@ const COURSE_DATA = {
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
   ],
+    "javascript & es6": [
+
+    { topic: "Introduction to Scalable Vector Graphics (SVG)", videos: [{ title: "Introduction to Scalable Vector Graphics (SVG)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+Scalable+Vector+Graphics+(SVG)/story.html" }] },
+    { topic: "SVG - Shape Properties", videos: [{ title: "SVG - Shape Properties", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/SVG+-+Shape+Properties/story.html" }] },
+    { topic: "Introduction to Responsive Web Designs", videos: [{ title: "Introduction to Responsive Web Designs", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+Responsive+Web+Designs/story.html" }] },
+    { topic: "Introduction to Media Queries", videos: [{ title: "Introduction to Media Queries", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+Media+Queries/story.html" }] },
+    { topic: "Implementation of Web Applications Using Media Queries", videos: [{ title: "Implementation of Web Applications Using Media Queries", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Implementation+of+Web+Applications+Using+Media+Queries/story.html" }] },
+    { topic: "Introduction to JavaScript", videos: [{ title: "Introduction to JavaScript", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+JavaScript/story.html " }] },
+    { topic: "JavaScript - Working with Data Types and Operators", videos: [{ title: "JavaScript - Working with Data Types and Operators", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/JavaScript+-+Working+with+Data+Types+and+Operators/story.html" }] },
+    { topic: "JavaScript - Control Statements", videos: [{ title: "JavaScript - Control Statements", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/JavaScript+%E2%80%93+Control+Statements/story.html" }] },
+    { topic: "JavaScript Validation & Regular Expressions", videos: [{ title: "JavaScript Validation & Regular Expressions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/JavaScript+Validation++Regular+Expressions/story.html" }] },
+    { topic: "JavaScript Events", videos: [{ title: "JavaScript Events", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/JavaScript+Events/story.html" }] },
+    { topic: "Introduction to ECMAScript (ES6)", videos: [{ title: "Introduction to ECMAScript (ES6)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+ECMAScript+(ES6)/story.html" }] },
+    { topic: "ECMAScript (ES6) - Functions", videos: [{ title: "ECMAScript (ES6) - Functions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/ECMAScript(ES6)+-+Functions+(1)/story.html" }] },
+    { topic: "Introduction to JavaScript Object Notation (JSON)", videos: [{ title: "Introduction to JavaScript Object Notation (JSON)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+_JavaScript+Object+Notation(JSON)/story.html" }] },
+    { topic: "JSON - Objects", videos: [{ title: "JSON - Objects", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/JSON+-+Objects/story.html" }] },
+
+  ],
+
   "interview preparedness": [
     // ── Group 0: Understanding Yourself (3 subtopics) ──────────────────────
     { topic: "Understanding Yourself – Self Realization", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Understanding Yourself – Self Realization", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Understanding+Yourself++Self+Realization/story.html" }] },
@@ -75,6 +97,32 @@ const COURSE_DATA = {
     { topic: "SQL Sub-queries", videos: [{ title: "SQL Sub-queries", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/SQL%20Sub-queries/story.html" }] },
     { topic: "TCL and DCL Commands", videos: [{ title: "TCL and DCL Commands", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/TCL%20and%20DCL%20Commands_/story.html" }] },
   ],
+  "react.js": [
+    { topic: "Introduction to ReactJS", videos: [{ title: "Introduction to ReactJS", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/Introduction+to+ReactJs/story.html" }] },
+    { topic: "ReactJS – Environment Setup", videos: [{ title: "ReactJS – Environment Setup", url: " https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+-+Environment+Setup/story.html" }] },
+    { topic: "ReactJS Components", videos: [{ title: "ReactJS Components", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Components/story.html" }] },
+    { topic: "ReactJS Component Life Cycle", videos: [{ title: "ReactJS Component Life Cycle", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Component+Life+Cycle/story.html" }] },
+    { topic: "ReactJS Hooks", videos: [{ title: "ReactJS Hooks", url: "  https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Hooks/story.html" }] },
+    { topic: "ReactJS Forms and UI", videos: [{ title: "ReactJS Forms and UI", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Forms+and+UI/story.html" }] },
+    { topic: "ReactJS Router", videos: [{ title: "ReactJS Router", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Router/story.html" }] },
+    { topic: "ReactJS Conditional Rendering", videos: [{ title: "ReactJS Conditional Rendering", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Conditional+Rendering/story.html" }] },
+    { topic: "ReactJS Event Handling", videos: [{ title: "ReactJS Event Handling", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Event+Handling/story.html" }] },
+    { topic: "ReactJS Styles", videos: [{ title: "ReactJS Styles", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Styles/story.html" }] },
+    { topic: "ReactJS Unit Testing & API Integration", videos: [{ title: "ReactJS Unit Testing & API Integration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/React/ReactJS+Unit+Testing++API%C2%A0Integration/story.html" }] },
+  ],
+  "java exceptions & algorithms": [
+    { topic: "Exception Handling Overview", videos: [{ title: "Exception Handling Overview", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/EXCEPTION+HANDLING+OVERVIEW/story.html" }] },
+    { topic: "Exception Handling Methods", videos: [{ title: "Exception Handling Methods", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/Exception+Handling+Methods/story.html" }] },
+    { topic: "Custom Exceptions", videos: [{ title: "Custom Exceptions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/CUSTOM+EXCEPTIONS/story.html" }] },
+    { topic: "File Handling using Byte Streams", videos: [{ title: "File Handling using Byte Streams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/FILE+HANDLING+USING+BYTE+STREAMS/story.html" }] },
+    { topic: "File Handling using Character Streams", videos: [{ title: "File Handling using Character Streams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/FILE%20HANDLING%20USING%20CHARACTER%20STREAMS/story.html" }] },
+    { topic: "Multi Threading", videos: [{ title: "Multi Threading", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/MULTITHREADING/story.html" }] },
+    { topic: "Memory Management and Garbage Collection", videos: [{ title: "Memory Management and Garbage Collection", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/MEMORY%20MANAGEMENT%20AND%20GARBAGE%20COLLECTION/story.html" }] },
+    { topic: "Sorting Algorithms", videos: [{ title: "Sorting Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/SORTING%20ALGORITHMS/story.html" }] },
+    { topic: "Searching Algorithms", videos: [{ title: "Searching Algorithms", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/SEARCHING%20ALGORITHMS/story.html" }] },
+    { topic: "Working with Large Datasets", videos: [{ title: "Working with Large Datasets", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/WORKING+WITH+LARGE+DATASETS/story.html" }] },
+    { topic: "UML Diagrams", videos: [{ title: "UML Diagrams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/UML+DIAGRAMS/story.html" }] }
+  ]
 
 };
 
@@ -133,8 +181,8 @@ const CourseDetails = () => {
   const topicProgressRef = useRef({});
   const assignmentCompletionRef = useRef({
     html: false, css1: false, css2: false, forms: false,
-    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
-  });
+  python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false,
+    sql1: false, sql2: false, sql3: false, sql4: false, sql5: false, sql6: false, sql7: false, sql8: false, sql9: false  });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
   const playerRef = useRef(null);
@@ -406,8 +454,11 @@ const CourseDetails = () => {
     setTimeout(() => {
       setShowSuccessPopup(false);
 
-      // Interview Preparedness: no assignments — always advance to next topic
-      if (safeCourseName.toLowerCase() === "interview preparedness") {
+         // Interview Preparedness and JavaScript & ES6: no assignments — always advance to next topic
+      if (safeCourseName.toLowerCase() === "interview preparedness" ||
+        safeCourseName.toLowerCase() === "javascript & es6" ||
+        safeCourseName.toLowerCase() === "react.js" ||
+        safeCourseName.toLowerCase() === "java exceptions & algorithms") {
         const nextIdx = index + 1;
         if (nextIdx < courseContent.length) selectTopic(nextIdx);
         return;
@@ -834,6 +885,10 @@ const CourseDetails = () => {
                             { title: "Banks", type: 'banks', completionKey: 'sql9' },
                             null, // Topic 10
                           ];
+                                                  } else if (safeCourseName.toLowerCase() === "javascript & es6" || safeCourseName.toLowerCase() === "react.js" || safeCourseName.toLowerCase() === "java exceptions & algorithms") {
+                          // JavaScript & ES6 and React.js have no assignments — all null to suppress assignment cards
+                          assignments = Array(courseContent.length).fill(null);
+
 
                         } else {
                           assignments = [
@@ -959,14 +1014,41 @@ const CourseDetails = () => {
                         courseId={`${courseName}_${selectedTopicIndex}`}
                         onProgressUpdate={handleProgressUpdate}
                       />
-                      <iframe
-                        key={`${courseName}_${selectedTopicIndex}`}
-                        src={selectedVideo}
-                        className="video-frame"
-                        title="Course Player"
-                        allowFullScreen
-                        style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
-                      />
+                                          {selectedVideo ? (
+                        <iframe
+                          key={`${courseName}_${selectedTopicIndex}`}
+                          src={selectedVideo}
+                          className="video-frame"
+                          title="Course Player"
+                          allowFullScreen
+                          style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
+                        />
+                      ) : (
+                        <div
+                          className="video-frame"
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#1B1B1B',
+                            color: '#fff',
+                            padding: '20px',
+                            textAlign: 'center',
+                            border: '1px solid #333',
+                            borderRadius: '8px',
+                            boxSizing: 'border-box',
+                            ...(isFullscreen ? { width: "100%", height: "100%", flex: 1, borderRadius: 0 } : {})
+                          }}
+                        >
+                          <h3 style={{ color: '#e49723', marginBottom: '15px', fontSize: '24px' }}>
+                            {courseContent[selectedTopicIndex]?.topic}
+                          </h3>
+                          <p style={{ maxWidth: '600px', fontSize: '16px', lineHeight: '1.6', color: '#ccc' }}>
+                            Welcome to the Final Project module! Please follow your curriculum guidelines to build your React.js frontend application. Once done, share your repository link with your mentor or upload your final submission.
+                          </p>
+                        </div>
+                      )}
                       <button
                         onClick={toggleFullscreen}
                         className="fullscreen-btn"
