@@ -7,7 +7,8 @@ import sqlimg from "./sql.jfif";
 import javascript from "./javascript.jpeg";
 import reactimg from "./React-JS.png";
 import javaexceptionsimg from "./java_exceptions_algorithms.jpeg";
-
+import java from "./Java.png";
+import springboot from "./Springboot.png";
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "./ProgressAPIService";
 import { useUserContext } from "../../common/UserProvider";
@@ -27,19 +28,22 @@ const ApplicantCourses = () => {
   const coursesData = [
     { id: 1, name: "Python", img: python },
     { id: 2, name: "HTML & CSS", img: htmlandcss },
-    // { id: 3, name: "Java", img: java },
+    { id: 3, name: "Java", img: java },
     { id: 4, name: "SQL", img: sqlimg },
-     { id: 5, name: "JavaScript & ES6", img: javascript },
+    { id: 5, name: "JavaScript & ES6", img: javascript },
     { id: 6, name: "React.js", img: reactimg },
     { id: 7, name: "Interview Preparedness", img: interviewprep },
     { id: 8, name: "Java Exceptions & Algorithms", img: javaexceptionsimg },
+    { id: 9, name: "Spring Boot", img: springboot },
   ];
 
   const coursesMap = {
     "html & css": 1,
     "python": 2,
+    "java": 3,
     "sql": 4,
-        "javascript & es6": 5,
+    "spring boot": 9,
+    "javascript & es6": 5,
     "react.js": 6,
     "java exceptions & algorithms": 8,
 

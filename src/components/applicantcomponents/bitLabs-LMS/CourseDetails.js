@@ -15,6 +15,8 @@ const getCourseId = (courseName) => {
   const courseMap = {
     "html & css": 1,
     "python": 2,
+    "java": 3,
+    "spring boot": 9,
     "interview preparedness": 7,
     "sql": 4,
     "javascript & es6": 5,
@@ -47,10 +49,45 @@ const COURSE_DATA = {
     { topic: "Python Constructors", videos: [{ title: "Constructors", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Constructors_topic12/story.html" }] },
     { topic: "Python Inheritance", videos: [{ title: "Inheritance", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Inheritance_topic13/story.html" }] },
   ],
-  java: [
-    { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
+  "java": [
+    { topic: "Problem solving Fundamentals", videos: [{ title: "Problem solving Fundamentals", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/Topic+1+PROBLEM+SOLVING+FUNDAMENTALS+-+Copy/story.html" }] },
+    { topic: "Introduction to java", videos: [{ title: "Introduction to java", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/INTRODUCTION+TO+JAVA/story.html" }] },
+    { topic: "Data Types", videos: [{ title: "Data Types", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/Topic+3+DATA+TYPES/story.html" }] },
+    { topic: "Control Statements", videos: [{ title: "Control Statements", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/CONTROL+STATEMENTS/story.html" }] },
+    { topic: "Arrays", videos: [{ title: "Arrays", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/ARRAYS/story.html" }] },
+    { topic: "Java Classes and Objects", videos: [{ title: "Java Classes and Objects", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/JAVA+CLASS+AND+OBJECTS/story.html" }] },
+    { topic: "Java Classes Members", videos: [{ title: "Java Classes Members", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/JAVA+CLASS+MEMBERS/story.html" }] },
+    { topic: "Strings", videos: [{ title: "Strings", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/STRINGS/story.html" }] },
+    { topic: "OOPS - part1", videos: [{ title: "OOPS - part1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/OOPS+-+PART1/story.html" }] },
+    { topic: "OOPS - part2", videos: [{ title: "OOPS - part2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/OOPS+–+PART2/story.html" }] },
+    { topic: "Data Structures", videos: [{ title: "Data Structures", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/DATA+STRUCTURES/story.html" }] },
+    { topic: "Collections in java - 1", videos: [{ title: "Collections in java - 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/COLLECTIONS+IN+JAVA+–+1/story.html" }] },
+    { topic: "Collections in java - 2", videos: [{ title: "Collections in java - 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/COLLECTIONS+IN+JAVA_+-+2/story.html" }] },
+
   ],
-    "javascript & es6": [
+  "spring boot": [
+    { topic: "Introduction to Hibernate", videos: [{ title: "Introduction to Hibernate", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Hibernate/story.html" }] },
+    { topic: "Hibernate Configuration", videos: [{ title: "Hibernate Configuration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Configuration/story.html" }] },
+    { topic: "Hibernate CRUD Operations", videos: [{ title: "Hibernate CRUD Operations", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+CRUD+Operations/story.html" }] },
+    { topic: "Hibernate Caching", videos: [{ title: "Hibernate Caching", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Caching/story.html" }] },
+    { topic: "Hibernate Collection Mapping", videos: [{ title: "Hibernate Collection Mapping", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Collection+Mapping/story.html" }] },
+    { topic: "Hibernate Association Mapping", videos: [{ title: "Hibernate Association Mapping", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Association+Mapping/story.html" }] },
+    { topic: "Hibernate Query Language", videos: [{ title: "Hibernate Query Language", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Query+Language/story.html" }] },
+    { topic: "JUnit Testing", videos: [{ title: "JUnit Testing", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/JUnit+Testing/story.html" }] },
+    { topic: "Introduction to Spring Framework", videos: [{ title: "Introduction to Spring Framework", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Spring+_Framework/story.html" }] },
+    { topic: "Spring with Hibernate", videos: [{ title: "Spring with Hibernate", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+with+Hibernate/story.html" }] },
+    { topic: "Spring with Hibernate Integration", videos: [{ title: "Spring with Hibernate Integration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+with+Hibernate+Integration/story.html" }] },
+    { topic: "Annotations in Spring MVC Framework", videos: [{ title: "Annotations in Spring MVC Framework", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Annotations+in+Spring+MVC+Framework/story.html" }] },
+    { topic: "Introduction to Spring Boot", videos: [{ title: "Introduction to Spring Boot", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Spring+Boot_/story.html" }] },
+    { topic: "Introduction to Web Services", videos: [{ title: "Introduction to Web Services", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Web+Services/story.html" }] },
+    { topic: "CRUD Operations in Spring Boot Using REST API", videos: [{ title: "CRUD Operations in Spring Boot Using REST API", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/CRUD+Operations+in+Spring+Boot+Using+REST+API/story.html" }] },
+    { topic: "Spring Security Part 1", videos: [{ title: "Spring Security Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Security+Part+1/story.html" }] },
+    { topic: "Spring Security Part 2", videos: [{ title: "Spring Security Part 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Security+Part+2/story.html" }] },
+    { topic: "Spring Boot with JSON Web Token (JWT)", videos: [{ title: "Spring Boot with JSON Web Token (JWT)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Boot+with+JSON+Web+Token+(JWT)%C2%A0/story.html" }] },
+    { topic: "Introduction to Swagger", videos: [{ title: "Introduction to Swagger", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Swagger/story.html" }] },
+    { topic: "Git and GitHub", videos: [{ title: "Git and GitHub", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Git+and+GitHub/story.html" }] },
+  ],
+  "javascript & es6": [
 
     { topic: "Introduction to Scalable Vector Graphics (SVG)", videos: [{ title: "Introduction to Scalable Vector Graphics (SVG)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/Introduction+to+Scalable+Vector+Graphics+(SVG)/story.html" }] },
     { topic: "SVG - Shape Properties", videos: [{ title: "SVG - Shape Properties", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javascript/SVG+-+Shape+Properties/story.html" }] },
@@ -84,7 +121,7 @@ const COURSE_DATA = {
     { topic: "Tips for Effective Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Tips for Effective Introduction", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Tips+for+Effective+Introduction+in+Different+Scenarios/story.html" }] },
     { topic: "Creating Your First Impression", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Your First Impression", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+your+First+Impression/story.html" }] },
   ],
-    sql: [
+  sql: [
     { topic: "Introduction to Structured Query Language(SQL)", videos: [{ title: "Introduction to Structured Query Language(SQL)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Introduction%20to%20Structured%20Query%20Language(SQL)/story.html" }] },
     { topic: "Data Definition Language (DDL)", videos: [{ title: "Data Definition Language (DDL)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Data%20Definition%20Language%20(DDL)/story.html" }] },
     { topic: "Data Manipulation Language (DML)", videos: [{ title: "Data Manipulation Language (DML)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Data%20Manipulation%20Language%20(DML)/story.html" }] },
@@ -181,8 +218,9 @@ const CourseDetails = () => {
   const topicProgressRef = useRef({});
   const assignmentCompletionRef = useRef({
     html: false, css1: false, css2: false, forms: false,
-  python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false,
-    sql1: false, sql2: false, sql3: false, sql4: false, sql5: false, sql6: false, sql7: false, sql8: false, sql9: false  });
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false,
+    sql1: false, sql2: false, sql3: false, sql4: false, sql5: false, sql6: false, sql7: false, sql8: false, sql9: false
+  });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
   const playerRef = useRef(null);
@@ -358,7 +396,7 @@ const CourseDetails = () => {
       };
       const prevAssignKey = prevAssignmentMap[index];
       if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
-          } else if (safeCourseName.toLowerCase() === "sql") {
+    } else if (safeCourseName.toLowerCase() === "sql") {
       const prevAssignmentMap = {
         2: 'sql1', 3: 'sql2', 4: 'sql3', 5: 'sql4', 6: 'sql5',
         7: 'sql6', 8: 'sql7', 9: 'sql8', 10: 'sql9'
@@ -366,7 +404,7 @@ const CourseDetails = () => {
       const prevAssignKey = prevAssignmentMap[index];
       if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
 
-    } else {
+    } else if (safeCourseName.toLowerCase() === "html & css") {
       // HTML/CSS logic
       if (index === 2 && !assignmentCompletionRef.current.html) return true;
       if (index === 3 && !assignmentCompletionRef.current.css1) return true;
@@ -454,8 +492,11 @@ const CourseDetails = () => {
     setTimeout(() => {
       setShowSuccessPopup(false);
 
-         // Interview Preparedness and JavaScript & ES6: no assignments — always advance to next topic
+      // Interview Preparedness, Java, Spring Boot, JavaScript & ES6, React.js, Java Exceptions & Algorithms:
+      // no assignments — always advance to next topic
       if (safeCourseName.toLowerCase() === "interview preparedness" ||
+        safeCourseName.toLowerCase() === "java" ||
+        safeCourseName.toLowerCase() === "spring boot" ||
         safeCourseName.toLowerCase() === "javascript & es6" ||
         safeCourseName.toLowerCase() === "react.js" ||
         safeCourseName.toLowerCase() === "java exceptions & algorithms") {
@@ -472,7 +513,7 @@ const CourseDetails = () => {
           { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
           { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
           { type: 'python10' }, { type: 'python11' }
-            ];
+        ];
       } else if (safeCourseName.toLowerCase() === "sql") {
         assignments = [
           null,
@@ -641,7 +682,7 @@ const CourseDetails = () => {
           }
         });
       }
-      
+
       // Handle SQL individual assignment completion logic
       if (id >= 5011 && id <= 5094) {
         let completionKey = null;
@@ -871,7 +912,7 @@ const CourseDetails = () => {
                             { title: "Animal Counts", type: 'python10', completionKey: 'python10' },
                             { title: "Shape", type: 'python11', completionKey: 'python11' },
                           ];
-                                                  } else if (safeCourseName.toLowerCase() === "sql") {
+                        } else if (safeCourseName.toLowerCase() === "sql") {
                           assignments = [
                             null, // Topic 0
                             { title: "Employee Table", type: 'employee_table', completionKey: 'sql1' },
@@ -885,8 +926,14 @@ const CourseDetails = () => {
                             { title: "Banks", type: 'banks', completionKey: 'sql9' },
                             null, // Topic 10
                           ];
-                                                  } else if (safeCourseName.toLowerCase() === "javascript & es6" || safeCourseName.toLowerCase() === "react.js" || safeCourseName.toLowerCase() === "java exceptions & algorithms") {
-                          // JavaScript & ES6 and React.js have no assignments — all null to suppress assignment cards
+                        } else if (
+                          safeCourseName.toLowerCase() === "java" ||
+                          safeCourseName.toLowerCase() === "spring boot" ||
+                          safeCourseName.toLowerCase() === "javascript & es6" ||
+                          safeCourseName.toLowerCase() === "react.js" ||
+                          safeCourseName.toLowerCase() === "java exceptions & algorithms"
+                        ) {
+                          // These courses have no assignments — all null to suppress assignment cards
                           assignments = Array(courseContent.length).fill(null);
 
 
@@ -966,7 +1013,7 @@ const CourseDetails = () => {
                   ref={playerRef}
                   style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
                 >
-                                    {!isFullscreen && (
+                  {!isFullscreen && (
                     <p
                       onClick={() => navigate("/applicant-lmscourses-list")}
                       style={{
@@ -1002,7 +1049,7 @@ const CourseDetails = () => {
                       />
                     </div>
                   ) : (
-                     <div className="video-player-wrapper">
+                    <div className="video-player-wrapper">
                       {!isFullscreen && (
                         <div className="immersive-overlay" onClick={toggleFullscreen}>
                           <div className="overlay-msg">
@@ -1014,7 +1061,7 @@ const CourseDetails = () => {
                         courseId={`${courseName}_${selectedTopicIndex}`}
                         onProgressUpdate={handleProgressUpdate}
                       />
-                                          {selectedVideo ? (
+                      {selectedVideo ? (
                         <iframe
                           key={`${courseName}_${selectedTopicIndex}`}
                           src={selectedVideo}
