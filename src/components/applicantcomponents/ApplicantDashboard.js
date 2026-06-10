@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Nagulmeera from '../../images/dashboard/mobilebanners/mentor1.png';
 import Karunakar from '../../images/dashboard/mobilebanners/karun.png';
 import suhel from '../../images/dashboard/mobilebanners/suhel.png';
-import SmartPhone from "../../images/dashboard/mobilebanners/smartphone.png"
+import SmartPhone from "../../images/dashboard/mobilebanners/smartphone-lms.png"
 import appStoreIcon from "../../images/dashboard/mobilebanners/appstoreicon.png";
 import playStore from "../../images/dashboard/mobilebanners/playstore.png";
 import botImage from '../../images/dashboard/mobilebanners/Bot.png';
@@ -62,15 +62,15 @@ const ApplicantDashboard = () => {
   const [blogs, setBlogs] = useState([]);
   const [blogsLoading, setBlogsLoading] = useState(true);
   const [blogsError, setBlogsError] = useState(null);
-    const [showStreakModal, setShowStreakModal] = useState(false);
+  const [showStreakModal, setShowStreakModal] = useState(false);
   const [streakDetails, setStreakDetails] = useState(null);
   const [streakLoading, setStreakLoading] = useState(true);
-   const location = useLocation();
+  const location = useLocation();
   const [imageSrc, setImageSrc] = useState('../images/user/avatar/image-01.jpg');
   const [techBuzzVideos, setTechBuzzVideos] = useState([]);
   const [techBuzzLoading, setTechBuzzLoading] = useState(true);
   const [mentorLoading, setMentorLoading] = useState(true);
-    const [portfolioLoading, setPortfolioLoading] = useState(true);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
   const [badgeLoading, setBadgeLoading] = useState(true);
   const [sessionSkipped, setSessionSkipped] = useState(() => {
     return sessionStorage.getItem("streak_skipped_today") === "true";
@@ -78,7 +78,7 @@ const ApplicantDashboard = () => {
 
   const maxVideos = window.innerWidth > 1700 ? 6 : 4;
   const [showTour, setShowTour] = useState(false);
-      const [showSnackBar, setShowSnackBar] = useState(false);
+  const [showSnackBar, setShowSnackBar] = useState(false);
   const [snackBarMessage, setSnackBarMessage] = useState("");
   const [preRestorationStreak, setPreRestorationStreak] = useState(0);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -135,20 +135,20 @@ const ApplicantDashboard = () => {
   const TOUR_KEY = user?.id ? `tour_seen_${user.id}` : null;
 
   const applicantId = user.id;
-const allLoadingDone =
-  !loading &&
-  !blogsLoading &&
-  !techBuzzLoading &&
-  !badgeLoading &&
-  !portfolioLoading &&
-  !streakLoading &&
-  !mentorLoading &&
-  !leaderboardLoading;
-  
+  const allLoadingDone =
+    !loading &&
+    !blogsLoading &&
+    !techBuzzLoading &&
+    !badgeLoading &&
+    !portfolioLoading &&
+    !streakLoading &&
+    !mentorLoading &&
+    !leaderboardLoading;
+
   const fetchCard = async () => {
     try {
       if (!applicantId) return;
-                  if (!streakDetails) {
+      if (!streakDetails) {
         setStreakLoading(true);
       }
 
@@ -225,20 +225,20 @@ const allLoadingDone =
         }, 500);
       }
     } catch (err) {
-      if (err.response?.status === 404&&!sessionSkipped) {
+      if (err.response?.status === 404 && !sessionSkipped) {
         setStreakDetails({ currentStreak: 0, longestStreak: 0, attemptedToday: false });
         setTimeout(() => setShowStreakModal(true), 500);
       }
-     else if (err.response?.status === 404) {
-  
+      else if (err.response?.status === 404) {
 
-  setStreakDetails({
-    currentStreak: 0,
-    longestStreak: 0,
-    attemptedToday: false
-  });
 
-} else {
+        setStreakDetails({
+          currentStreak: 0,
+          longestStreak: 0,
+          attemptedToday: false
+        });
+
+      } else {
         console.error("Failed to fetch streak details:", err);
       }
     } finally {
@@ -250,22 +250,22 @@ const allLoadingDone =
     fetchStreakDetails();
   }, [user?.id]);
 
-    useEffect(() => {
-  if (streakLoading) return;   // 🔥 wait for API
+  useEffect(() => {
+    if (streakLoading) return;   // 🔥 wait for API
 
-  if (
-    location.state?.action === "OPEN_STREAK_MODAL" &&
-    streakDetails?.attemptedToday === false    // 🔥 strict check
-  ) {
-    setShowStreakModal(true);
+    if (
+      location.state?.action === "OPEN_STREAK_MODAL" &&
+      streakDetails?.attemptedToday === false    // 🔥 strict check
+    ) {
+      setShowStreakModal(true);
 
-    // clear navigation state
-    navigate(location.pathname, { replace: true });
-  }
-}, [location.state, streakLoading, streakDetails]);
+      // clear navigation state
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location.state, streakLoading, streakDetails]);
 
 
-   useEffect(() => {
+  useEffect(() => {
     setSessionSkipped(false);
   }, [user?.id]);
 
@@ -463,8 +463,8 @@ const allLoadingDone =
       setDashboardScore(0);
     }
     finally {
-  setBadgeLoading(false);
-}
+      setBadgeLoading(false);
+    }
   };
 
 
@@ -542,13 +542,13 @@ const allLoadingDone =
 
 
         if (profileIdResponse.status === 200 && profileId === 0) {
-           navigate('/applicant-basic-details-form/1');
+          navigate('/applicant-basic-details-form/1');
         } else {
           setLoading(false);
         }
       } catch (error) {
         console.error('Error fetching profile ID:', error);
-          setLoading(false);
+        setLoading(false);
 
       }
     };
@@ -576,8 +576,8 @@ const allLoadingDone =
         console.error('Error updating profile status:', error);
       }
       finally {
-      setPortfolioLoading(false);
-    }
+        setPortfolioLoading(false);
+      }
     };
 
     fetchUserData();
@@ -658,7 +658,7 @@ const allLoadingDone =
     fetchTechBuzz();
   }, [user.id]);
 
-   // Fetch leaderboard top-10 for display, full list for real rank
+  // Fetch leaderboard top-10 for display, full list for real rank
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
@@ -726,26 +726,11 @@ const allLoadingDone =
   };
 
   useEffect(() => {
-  const fetchImages = async () => {
-    const newImageMap = {};
+    const fetchImages = async () => {
+      const newImageMap = {};
 
-    // Fetch images for main leaderboard
-    for (const entry of leaderboard) {
-      try {
-        const res = await apiClient.get(
-          `/applicant-image/getphoto/${entry.applicantId}`,
-          { responseType: "blob" } // important
-        );
-
-        newImageMap[entry.applicantId] = URL.createObjectURL(res.data);
-      } catch (err) {
-        newImageMap[entry.applicantId] = defaultAvatarImg; // fallback
-      }
-    }
-
-    // Fetch images for modal leaderboard
-    for (const entry of modalLeaderboard) {
-      if (!newImageMap[entry.applicantId]) {
+      // Fetch images for main leaderboard
+      for (const entry of leaderboard) {
         try {
           const res = await apiClient.get(
             `/applicant-image/getphoto/${entry.applicantId}`,
@@ -757,15 +742,30 @@ const allLoadingDone =
           newImageMap[entry.applicantId] = defaultAvatarImg; // fallback
         }
       }
+
+      // Fetch images for modal leaderboard
+      for (const entry of modalLeaderboard) {
+        if (!newImageMap[entry.applicantId]) {
+          try {
+            const res = await apiClient.get(
+              `/applicant-image/getphoto/${entry.applicantId}`,
+              { responseType: "blob" } // important
+            );
+
+            newImageMap[entry.applicantId] = URL.createObjectURL(res.data);
+          } catch (err) {
+            newImageMap[entry.applicantId] = defaultAvatarImg; // fallback
+          }
+        }
+      }
+
+      setImageMap(newImageMap);
+    };
+
+    if (leaderboard.length > 0 || modalLeaderboard.length > 0) {
+      fetchImages();
     }
-
-    setImageMap(newImageMap);
-  };
-
-  if (leaderboard.length > 0 || modalLeaderboard.length > 0) {
-    fetchImages();
-  }
-}, [leaderboard, modalLeaderboard]);
+  }, [leaderboard, modalLeaderboard]);
 
 
   const handleRedirectTechBuzz = () => {
@@ -780,9 +780,9 @@ const allLoadingDone =
   };
 
   const handleRedirectResume = () => {
-     navigate("/applicant-view-profile", {
-    state: { scrollToATS: true }
-  });
+    navigate("/applicant-view-profile", {
+      state: { scrollToATS: true }
+    });
   };
 
   const handleRedirectHackathon = () => {
@@ -855,329 +855,329 @@ const allLoadingDone =
           <div className="row mr-0 ml-10" style={{ marginTop: '-85px' }}>
             <div className="col-lg-12 col-md-12">
               <div className="page-title-dashboard">
-                  <div className="title-dashboard" style={{ position: "relative" }}>
-                                  
+                <div className="title-dashboard" style={{ position: "relative" }}>
+
                   <div>
-                 {!allLoadingDone ? ( 
-                  <div className="build-btn-skeleton"></div>
-                 ) : (
-                   <div className="build-btn-wrapper">
-                    
- <button
-  onClick={handleRedirectResume}
-  className="build-resume-btn"
->
-  <HiDocumentText className="btn-icon" />
-  ATS Resume Builder
-</button>
-                </div>
-                 )}
+                    {!allLoadingDone ? (
+                      <div className="build-btn-skeleton"></div>
+                    ) : (
+                      <div className="build-btn-wrapper">
 
-
-                <div className="dashboard-top-container">
-                  {!allLoadingDone ?(<div className="display-flex robo-container">
-  <div className="card robo-card">
-    <div className="container">
-
-      <div className="robo-img">
-        <div className="robo-skeleton-img"></div>
-      </div>
-
-      <div className="robo-card-text">
-        <div className="robo-skeleton-text"></div>
-        <div className="robo-skeleton-text short"></div>
-
-        <div className="robo-skeleton-btn"></div>
-      </div>
-
-    </div>
-  </div>
-</div>) : (
-                  <div className="display-flex" style={{ width: '100%', justifyContent: 'center', paddingTop: '0px', paddingBottom: '10px' }}>
-                    <div 
-                      // onClick={() => navigate('/applicant-lmscourses-list')} 
-                      style={{ 
-                        
-                        background: 'transparent linear-gradient(282deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box',
-                        boxShadow: '0px 0px 15px #F7AA4B',
-                        borderRadius: '6px',
-                        height: '111px',
-                        width: '100%',
-                        position: 'relative',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0 30px'
-                      }}
-                    >
-                      <img 
-                        src={group1465} 
-                        alt="LMS Assignments Illustration" 
-                        style={{ 
-                          position: 'absolute',
-                          left: '10px',
-                          bottom: '-10px',
-                          width: '245px',
-                          height: '189px',
-                          objectFit: 'contain'
-                        }} 
-                      />
-
-                      <div style={{ marginLeft: '250px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <span style={{
-                          textAlign: 'left',
-                          font: 'normal normal bold 22px/33px Poppins',
-                          letterSpacing: '0px',
-                          color: '#6A2E00',
-                          margin: 0
-                        }}>
-                          <span style={{ color: '#FFFFFF' }}>Get started your</span> LMS Assignments
-                        </span>
-
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); navigate('/applicant-lmscourses-list'); }}
-                      
-                          style={{
-                            background: '#FFFFFF',
-                            borderRadius: '4px',
-                            color: '#1A1A1A',
-                            fontFamily: 'Poppins, sans-serif',
-                            fontWeight: 'bold',
-                            fontSize: '14px',
-                            border: 'none',
-                            padding: '10px 24px',
-                            cursor: 'pointer',
-                            boxShadow: '0px 3px 6px #00000029'
-                          }}
+                        <button
+                          onClick={handleRedirectResume}
+                          className="build-resume-btn"
                         >
-                          Get Started
+                          <HiDocumentText className="btn-icon" />
+                          ATS Resume Builder
                         </button>
                       </div>
-                    </div>
-                  </div>
-)}
-                  <div className="badge-progress-wrapper">
-                    {!allLoadingDone ? (
-
-  <div className="adb-badge-skeleton-container">
-
-    <div className="adb-badge-skeleton-title-row">
-      <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-lg"></div>
-      <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-sm"></div>
-    </div>
-
-   
-
-    <div className="adb-badge-skeleton-indicator"></div>
-
-  </div>
-
-) : (
-   <>
-                    <div className="progress-text" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <p style={{ margin: 0 }}>Badge achievement level {Math.round((cappedScore / goldScore) * 100)}%</p>
-                      <span
-                        onClick={() => setIsPointsModalOpen(true)}
-                        style={{
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          color: '#E66A0E',
-                          fontWeight: 'bold',
-                          textDecoration: 'underline'
-                        }}
-                      >
-                        Learn More
-                      </span>
-                    </div>
-                    <div style={{ position: "relative" }}>
-                      <div className="badge-bar">
-
-                        <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
-                          <span>Bronze</span>
-                        </div>
-
-                        <div className="segment silver" style={{ width: `${silverWidth}%` }}>
-                          <span>Silver</span>
-                        </div>
-
-                        <div className="segment gold" style={{ width: `${goldWidth}%` }}>
-                          <span>Gold</span>
-                        </div>
-
-                        <div
-                          className="progress-fill"
-                          style={{
-                            width: `${Math.min(100, (cappedScore / goldScore) * 100)}%`,
-                          }}
-                        ></div>
-                      </div>
-
-                      <div
-                        className="bubble-indicator"
-                        style={{
-                          left: `${(cappedScore / goldScore) * 100}%`,
-                          transform: "translateX(-50%)",
-                        }}
-                      >
-                        {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
-                      </div>
-                    </div>
-                    {!nextBadge && (
-                      <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
                     )}
-                    </>
-)}
+
+
+                    <div className="dashboard-top-container">
+                      {!allLoadingDone ? (<div className="display-flex robo-container">
+                        <div className="card robo-card">
+                          <div className="container">
+
+                            <div className="robo-img">
+                              <div className="robo-skeleton-img"></div>
+                            </div>
+
+                            <div className="robo-card-text">
+                              <div className="robo-skeleton-text"></div>
+                              <div className="robo-skeleton-text short"></div>
+
+                              <div className="robo-skeleton-btn"></div>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>) : (
+                        <div className="display-flex" style={{ width: '100%', justifyContent: 'center', paddingTop: '0px', paddingBottom: '10px' }}>
+                          <div
+                            // onClick={() => navigate('/applicant-lmscourses-list')} 
+                            style={{
+
+                              background: 'transparent linear-gradient(282deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box',
+                              boxShadow: '0px 0px 15px #F7AA4B',
+                              borderRadius: '6px',
+                              height: '100px',
+                              width: '100%',
+                              position: 'relative',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '0 30px'
+                            }}
+                          >
+                            <img
+                              src={group1465}
+                              alt="LMS Assignments Illustration"
+                              style={{
+                                position: 'absolute',
+                                left: '10px',
+                                bottom: '-10px',
+                                width: '245px',
+                                height: '189px',
+                                objectFit: 'contain'
+                              }}
+                            />
+
+                            <div style={{ marginLeft: '250px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                              <span style={{
+                                textAlign: 'left',
+                                font: 'normal normal bold 22px/33px Poppins',
+                                letterSpacing: '0px',
+                                color: '#6A2E00',
+                                margin: 0
+                              }}>
+                                <span style={{ color: '#FFFFFF' }}>Get started your</span> LMS Assignments
+                              </span>
+
+                              <button
+                                onClick={(e) => { e.stopPropagation(); navigate('/applicant-lmscourses-list'); }}
+
+                                style={{
+                                  background: '#FFFFFF',
+                                  borderRadius: '4px',
+                                  color: '#1A1A1A',
+                                  fontFamily: 'Poppins, sans-serif',
+                                  fontWeight: 'bold',
+                                  fontSize: '14px',
+                                  border: 'none',
+                                  padding: '10px 24px',
+                                  cursor: 'pointer',
+                                  boxShadow: '0px 3px 6px #00000029'
+                                }}
+                              >
+                                Get Started
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="badge-progress-wrapper">
+                        {!allLoadingDone ? (
+
+                          <div className="adb-badge-skeleton-container">
+
+                            <div className="adb-badge-skeleton-title-row">
+                              <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-lg"></div>
+                              <div className="adb-badge-skeleton-heading adb-badge-skeleton-heading-sm"></div>
+                            </div>
+
+
+
+                            <div className="adb-badge-skeleton-indicator"></div>
+
+                          </div>
+
+                        ) : (
+                          <>
+                            <div className="progress-text" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <p style={{ margin: 0 }}>Badge achievement level {Math.round((cappedScore / goldScore) * 100)}%</p>
+                              <span
+                                onClick={() => setIsPointsModalOpen(true)}
+                                style={{
+                                  cursor: 'pointer',
+                                  fontSize: '13px',
+                                  color: '#E66A0E',
+                                  fontWeight: 'bold',
+                                  textDecoration: 'underline'
+                                }}
+                              >
+                                Learn More
+                              </span>
+                            </div>
+                            <div style={{ position: "relative" }}>
+                              <div className="badge-bar">
+
+                                <div className="segment bronze" style={{ width: `${bronzeWidth}%` }}>
+                                  <span>Bronze</span>
+                                </div>
+
+                                <div className="segment silver" style={{ width: `${silverWidth}%` }}>
+                                  <span>Silver</span>
+                                </div>
+
+                                <div className="segment gold" style={{ width: `${goldWidth}%` }}>
+                                  <span>Gold</span>
+                                </div>
+
+                                <div
+                                  className="progress-fill"
+                                  style={{
+                                    width: `${Math.min(100, (cappedScore / goldScore) * 100)}%`,
+                                  }}
+                                ></div>
+                              </div>
+
+                              <div
+                                className="bubble-indicator"
+                                style={{
+                                  left: `${(cappedScore / goldScore) * 100}%`,
+                                  transform: "translateX(-50%)",
+                                }}
+                              >
+                                {cappedScore} / {nextBadge ? nextBadge.score : goldScore}
+                              </div>
+                            </div>
+                            {!nextBadge && (
+                              <p className="congrats-text"> Congrats Buddy! You unlocked all badges!</p>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                    </div>
                   </div>
 
                 </div>
               </div>
-              
-            </div>
-            </div>
             </div>
             <div className="col-lg-12 col-md-12">
               <div className="row dash-count profile-cards">
                 <div className="profile-card-row1">
-                   {/* Arena + Leaderboard column */}
+                  {/* Arena + Leaderboard column */}
                   <div className="arena-leaderboard-col">
-                  {/* Arena Online */}
-                  {!allLoadingDone ? (<div className="arena arena-skeleton">
+                    {/* Arena Online */}
+                    {!allLoadingDone ? (<div className="arena arena-skeleton">
 
-  <div className="arena-topSection">
-    <div className="arena-skeleton-title"></div>
+                      <div className="arena-topSection">
+                        <div className="arena-skeleton-title"></div>
 
-    <div className="arena-skeleton-text"></div>
-    <div className="arena-skeleton-text short"></div>
+                        <div className="arena-skeleton-text"></div>
+                        <div className="arena-skeleton-text short"></div>
 
-    <div className="arena-skeleton-btn"></div>
-  </div>
+                        <div className="arena-skeleton-btn"></div>
+                      </div>
 
-  <div className="arena-image">
-    <div className="arena-skeleton-img"></div>
-  </div>
+                      <div className="arena-image">
+                        <div className="arena-skeleton-img"></div>
+                      </div>
 
-</div>):(
-                  <div className="arena">
-                    <div className="arena-topSection">
-                      <h4 id="tour-innovation-arena">
-                        {/* Compete. Learn. Win. */}
-                        Take challenges. Climb the leaderboard!
-                      </h4>
-                      {/* <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p> */}
-                      <button onClick={handleRedirectHackathon}>
-                        Enter arena!
-                      </button>
-                    </div>
+                    </div>) : (
+                      <div className="arena">
+                        <div className="arena-topSection">
+                          <h4 id="tour-innovation-arena">
+                            {/* Compete. Learn. Win. */}
+                            Take challenges. Climb the leaderboard!
+                          </h4>
+                          {/* <p>Take part in Arena’s hackathons to test your coding skills and gain hands-on experience solving real problems.</p> */}
+                          <button onClick={handleRedirectHackathon}>
+                            Enter arena!
+                          </button>
+                        </div>
 
-                    <div className="arena-image">
-                      <img
-                        src={characterImg}
-                        alt="Character Illustration"
-                      />
-                    </div>
+                        <div className="arena-image">
+                          <img
+                            src={characterImg}
+                            alt="Character Illustration"
+                          />
+                        </div>
 
-                  </div>)}
+                      </div>)}
 
                     {/* Our Leaderboard */}
-                  {!allLoadingDone ? (
-                    <div className="leaderboard-card leaderboard-skeleton">
-                      <div className="lb-skeleton-title"></div>
-                      <div className="lb-skeleton-podium">
-                        {[0,1,2].map(i => (
-                          <div key={i} className="lb-skeleton-member">
-                            <div className="lb-skeleton-avatar"></div>
-                            <div className="lb-skeleton-name"></div>
-                          </div>
-                        ))}
+                    {!allLoadingDone ? (
+                      <div className="leaderboard-card leaderboard-skeleton">
+                        <div className="lb-skeleton-title"></div>
+                        <div className="lb-skeleton-podium">
+                          {[0, 1, 2].map(i => (
+                            <div key={i} className="lb-skeleton-member">
+                              <div className="lb-skeleton-avatar"></div>
+                              <div className="lb-skeleton-name"></div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ) : leaderboardError ? (
-                    <div className="leaderboard-card">
-                      <div className="leaderboard-top-section">
-                        <h4 className="leaderboard-title">Our Leaderboard</h4>
-                        <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
+                    ) : leaderboardError ? (
+                      <div className="leaderboard-card">
+                        <div className="leaderboard-top-section">
+                          <h4 className="leaderboard-title">Our Leaderboard</h4>
+                          <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
+                        </div>
+                        <div className="leaderboard-error">
+                          <p>{leaderboardError}</p>
+
+                        </div>
                       </div>
-                      <div className="leaderboard-error">
-                        <p>{leaderboardError}</p>
-                      
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="leaderboard-card">
-                      <div className="leaderboard-top-section">
-                        <h4 className="leaderboard-title">Our Leaderboard</h4>
-                        <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
-                      </div>
-                      <div className="leaderboard-podium">
-                        {/* Arrange as 2nd, 1st, 3rd for podium effect */}
-                        {(() => {
-                          const medals = [badge1, badge2, badge3];
-                          const podiumOrder = [1, 0, 2]; // indices: 2nd, 1st, 3rd
-                          return podiumOrder.map((rankIdx) => {
-                            const entry = leaderboard[rankIdx];
-                            if (!entry) return null;
-                            const isFirst = rankIdx === 0;
-                            const defaultAvatar = defaultAvatarImg;
-                            return (
-                              <div key={entry.applicantId} className={`leaderboard-member${isFirst ? ' leaderboard-member--first' : ''}`}>
-                                <div className="leaderboard-avatar-wrap">
-                                  <div className="leaderboard-halo-rings">
-                                      
-<img
-  src={imageMap[entry.applicantId] || defaultAvatarImg}
-  alt={entry.name}
-  className="leaderboard-avatar"
-/>
+                    ) : (
+                      <div className="leaderboard-card">
+                        <div className="leaderboard-top-section">
+                          <h4 className="leaderboard-title">Our Leaderboard</h4>
+                          <span className="leaderboard-explore" onClick={openLeaderboardModal}>Explore</span>
+                        </div>
+                        <div className="leaderboard-podium">
+                          {/* Arrange as 2nd, 1st, 3rd for podium effect */}
+                          {(() => {
+                            const medals = [badge1, badge2, badge3];
+                            const podiumOrder = [1, 0, 2]; // indices: 2nd, 1st, 3rd
+                            return podiumOrder.map((rankIdx) => {
+                              const entry = leaderboard[rankIdx];
+                              if (!entry) return null;
+                              const isFirst = rankIdx === 0;
+                              const defaultAvatar = defaultAvatarImg;
+                              return (
+                                <div key={entry.applicantId} className={`leaderboard-member${isFirst ? ' leaderboard-member--first' : ''}`}>
+                                  <div className="leaderboard-avatar-wrap">
+                                    <div className="leaderboard-halo-rings">
+
+                                      <img
+                                        src={imageMap[entry.applicantId] || defaultAvatarImg}
+                                        alt={entry.name}
+                                        className="leaderboard-avatar"
+                                      />
+                                    </div>
+                                    <img src={medals[rankIdx]} alt={`Rank ${rankIdx + 1}`} className="leaderboard-medal" />
                                   </div>
-                                  <img src={medals[rankIdx]} alt={`Rank ${rankIdx + 1}`} className="leaderboard-medal" />
+                                  <span className="leaderboard-name">{entry.name?.split(' ')[0]} ({entry.score})</span>
                                 </div>
-                                <span className="leaderboard-name">{entry.name?.split(' ')[0]} ({entry.score})</span>
-                              </div>
-                            );
-                          });
-                        })()}
+                              );
+                            });
+                          })()}
+                        </div>
+
                       </div>
-                      
-                    </div>
-                  )}
+                    )}
                   </div> {/* end arena-leaderboard-col */}
 
                   {/* MentorSphere */}
                   <div className="mentor-sphere">
                     {!allLoadingDone ? (
-  <div className="mentor-skeleton-header">
+                      <div className="mentor-skeleton-header">
 
-    <div className="mentor-skeleton-top">
-      <div className="skeleton-title"></div>
-      <div className="skeleton-viewmore"></div>
-    </div>
+                        <div className="mentor-skeleton-top">
+                          <div className="skeleton-title"></div>
+                          <div className="skeleton-viewmore"></div>
+                        </div>
 
-    <div className="mentor-skeleton-tabs">
-      <div className="skeleton-tab"></div>
-      <div className="skeleton-tab"></div>
-      <div className="skeleton-tab"></div>
-    </div>
+                        <div className="mentor-skeleton-tabs">
+                          <div className="skeleton-tab"></div>
+                          <div className="skeleton-tab"></div>
+                          <div className="skeleton-tab"></div>
+                        </div>
 
-  </div>
-) : (<>
-                    <div className="mentor-topSection">
-                      <h4 id="tour-mentor-sphere">
-                        Mentor sphere
-                      </h4>
-                      <span
-                        onClick={handleRedirectMentor}
-                      >
-                        View more
-                      </span>
-                    </div>
+                      </div>
+                    ) : (<>
+                      <div className="mentor-topSection">
+                        <h4 id="tour-mentor-sphere">
+                          Mentor sphere
+                        </h4>
+                        <span
+                          onClick={handleRedirectMentor}
+                        >
+                          View more
+                        </span>
+                      </div>
 
-                    <div className="mentor-heading">
-                      <h4 >Guiding star</h4>
-                      <h4 >Realm of insight</h4>
-                      <h4 >Insight hour</h4>
-                    </div>
-</>)}
-  {!allLoadingDone  ? (
+                      <div className="mentor-heading">
+                        <h4 >Guiding star</h4>
+                        <h4 >Realm of insight</h4>
+                        <h4 >Insight hour</h4>
+                      </div>
+                    </>)}
+                    {!allLoadingDone ? (
                       <div className="mentor-skeleton-list">
                         {[...Array(4)].map((_, idx) => (
                           <div key={idx} className="mentor-skeleton-item">
@@ -1287,7 +1287,7 @@ const allLoadingDone =
                       </div>
                     )}
                   </div>
-                                      {/* Right Column Wrapper for Streak and Portfolio */}
+                  {/* Right Column Wrapper for Streak and Portfolio */}
                   <div className="portfolio-group-col">
 
                     {/* Recent Streaks */}
@@ -1300,7 +1300,7 @@ const allLoadingDone =
                           <div className="streak-text-container">
                             <span className="streak-number">{streakDetails?.currentStreak || 0}</span>
                           </div>
-                                                    <img src={flameImg} alt="Flame" className="streak-flame-img" />
+                          <img src={flameImg} alt="Flame" className="streak-flame-img" />
                         </div>
                         <div className="streak-right-section">
                           <div className="streak-days-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1363,9 +1363,9 @@ const allLoadingDone =
 
                                 if (isToday) {
                                   status = attemptedDates.has(cellKey) ? 'taken' : 'upcoming';
-                             
+
                                 } else {
-                                 status = attemptedDates.has(cellKey) ? 'taken' : 'missed';
+                                  status = attemptedDates.has(cellKey) ? 'taken' : 'missed';
                                 }
 
                                 if (isRestorable && cellKey === yestKey) {
@@ -1435,76 +1435,76 @@ const allLoadingDone =
                       </div>
                     )}
 
-                  {/*  My Portfolio */}
-                   {!allLoadingDone ? (
- <div className="portfolio">
+                    {/*  My Portfolio */}
+                    {!allLoadingDone ? (
+                      <div className="portfolio">
 
-    {/* Header */}
-    <div className="portfolio-heading">
-      <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-lg"></div>
-      <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-sm"></div>
-    </div>
+                        {/* Header */}
+                        <div className="portfolio-heading">
+                          <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-lg"></div>
+                          <div className="adb-portfolio-skeleton-heading adb-portfolio-skeleton-heading-sm"></div>
+                        </div>
 
-    {/* Profile + Score */}
-    <div className="profile-side-section adb-portfolio-skeleton-profile">
+                        {/* Profile + Score */}
+                        <div className="profile-side-section adb-portfolio-skeleton-profile">
 
-      <div className="adb-portfolio-skeleton-avatar"></div>
+                          <div className="adb-portfolio-skeleton-avatar"></div>
 
-      <div className="portfolio-score-details">
-        <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-text-short"></div>
-        <div className="adb-portfolio-skeleton-score"></div>
-      </div>
+                          <div className="portfolio-score-details">
+                            <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-text-short"></div>
+                            <div className="adb-portfolio-skeleton-score"></div>
+                          </div>
 
-    </div>
+                        </div>
 
-    {/* Name */}
-    <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-name"></div>
+                        {/* Name */}
+                        <div className="adb-portfolio-skeleton-text adb-portfolio-skeleton-name"></div>
 
-    {/* Skills */}
-    <div className="skills-container adb-portfolio-skeleton-skills">
-      {[...Array(6)].map((_, i) => (
-        <div key={i} className="adb-portfolio-skeleton-pill"></div>
-      ))}
-    </div>
-
-  </div>
-) : (
-                  <div className="portfolio">
-                    <div className="portfolio-heading">
-                      <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }} id="tour-portfolio">
-                        My portfolio
-                      </h4>
-                      <span
-                        onClick={handleRedirectResume}
-                      >
-                        Explore
-                      </span>
-                    </div>
-                    <div className="profile-side-section">
-                      <div>
-                        <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} style={{
-                          borderRadius: "85%",
-                          width: "65px",
-                          height: "65px",
-                          border: "2px solid #EA7B20"
-                        }} />
-                        <span className="badges">
-                          {earnedBadges.map(badge => (
-                            <img
-                              key={badge.name}
-                              src={`./images/dashboard/badge-${badge.name}.png`}
-                              width="15"
-                              height="23"
-                            />
+                        {/* Skills */}
+                        <div className="skills-container adb-portfolio-skeleton-skills">
+                          {[...Array(6)].map((_, i) => (
+                            <div key={i} className="adb-portfolio-skeleton-pill"></div>
                           ))}
-                        </span>
+                        </div>
+
                       </div>
-                      <div className="profile-extra-details">
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="#EA7B20" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2
+                    ) : (
+                      <div className="portfolio">
+                        <div className="portfolio-heading">
+                          <h4 style={{ margin: 0, fontWeight: "700", color: "#1A1A1A" }} id="tour-portfolio">
+                            My portfolio
+                          </h4>
+                          <span
+                            onClick={handleRedirectResume}
+                          >
+                            Explore
+                          </span>
+                        </div>
+                        <div className="profile-side-section">
+                          <div>
+                            <img src={imageSrc || '../images/user/avatar/image-01.jpg'} alt="Profile" onError={() => setImageSrc('../images/user/avatar/image-01.jpg')} style={{
+                              borderRadius: "85%",
+                              width: "65px",
+                              height: "65px",
+                              border: "2px solid #EA7B20"
+                            }} />
+                            <span className="badges">
+                              {earnedBadges.map(badge => (
+                                <img
+                                  key={badge.name}
+                                  src={`./images/dashboard/badge-${badge.name}.png`}
+                                  width="15"
+                                  height="23"
+                                />
+                              ))}
+                            </span>
+                          </div>
+                          <div className="profile-extra-details">
+                            <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="#EA7B20" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2
            19.86 19.86 0 0 1-8.63-3.07
            19.5 19.5 0 0 1-6-6
            19.86 19.86 0 0 1-3.07-8.63
@@ -1514,92 +1514,92 @@ const allLoadingDone =
            a16 16 0 0 0 6 6l1.98-1.98
            a2 2 0 0 1 2.11-.45c.97.37 2 .62 3.06.74
            A2 2 0 0 1 22 16.92z" />
-                          </svg>
-                          <p>{card?.mobileNumber}</p>
-                        </span>
-                        <span>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="#EA7B20" stroke="white" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
-                            <polyline points="22 6 12 13 2 6"></polyline>
-                          </svg>
-                          <p>{profileData?.applicant?.email}</p>
-                        </span>
-                      </div>
-                      <div className="portfolio-score-details">
-                        <div>
-                          <h3>score</h3>
-                          <p>{dashboardScore ?? 0}</p>
-                        </div>
-                        {userRank !== null && (
-                          <div style={{ borderLeft: '1px solid #ddd', paddingLeft: '12px', marginLeft: '12px' }}>
-                            <h3 style={{ color: '#EA7B20' }}>rank</h3>
-                            <p style={{ color: '#EA7B20' }}>#{userRank}</p>
-                          </div>
-                        )}
-                      </div>
-
-                    </div>
-                    <h3 style={{ color: 'black', fontWeight: 'bold', margin: 0 }}>
-                      {card?.name}
-                    </h3>
-                    <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
-                      {(() => {
-                        const addedBadges =
-                          profileData?.applicant?.applicantSkillBadges
-                            ?.filter(badge => badge.flag === 'added')
-                            .map(badge => ({
-                              id: badge.id,
-                              name: badge.skillBadge.name,
-                              status: badge.status,
-                              flag: badge.flag,
-                            })) || [];
-
-                        const requiredSkills =
-                          profileData?.skillsRequired?.map(skillReq => ({
-                            id: skillReq.id,
-                            name: skillReq.skillName,
-                            status: 'REQUIRED',
-                            flag: 'required',
-                          })) || [];
-
-                        const allSkills = [...addedBadges, ...requiredSkills];
-
-                        allSkills.sort((a, b) => {
-                          const lenDiff = a.name.length - b.name.length;
-                          if (lenDiff !== 0) return lenDiff;
-                          return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
-                        });
-
-                        return allSkills.map(skill => (
-                          <React.Fragment key={skill.id}>
-                            <span>
-                              <a>
-                                <ul
-                                  className="skill-but"
-                                  style={{
-                                    color: 'black',
-                                    backgroundColor: skill.flag === 'removed' ? '#D9534F' : '#E8E8E8',
-                                    display: 'inline-flex',
-                                    marginRight: '2px',
-                                  }}
-                                >
-                                  <li style={{ display: 'flex', alignItems: 'center' }}>{skill.name}</li>
-                                </ul>
-                              </a>
+                              </svg>
+                              <p>{card?.mobileNumber}</p>
                             </span>
-                          </React.Fragment>
-                        ));
-                      })()}
-                    </div>
+                            <span>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="#EA7B20" stroke="white" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                                <polyline points="22 6 12 13 2 6"></polyline>
+                              </svg>
+                              <p>{profileData?.applicant?.email}</p>
+                            </span>
+                          </div>
+                          <div className="portfolio-score-details">
+                            <div>
+                              <h3>score</h3>
+                              <p>{dashboardScore ?? 0}</p>
+                            </div>
+                            {userRank !== null && (
+                              <div style={{ borderLeft: '1px solid #ddd', paddingLeft: '12px', marginLeft: '12px' }}>
+                                <h3 style={{ color: '#EA7B20' }}>rank</h3>
+                                <p style={{ color: '#EA7B20' }}>#{userRank}</p>
+                              </div>
+                            )}
+                          </div>
 
-                  </div>)}
+                        </div>
+                        <h3 style={{ color: 'black', fontWeight: 'bold', margin: 0 }}>
+                          {card?.name}
+                        </h3>
+                        <div className="skills-container" style={{ display: 'flex', flexWrap: 'wrap' }}>
+                          {(() => {
+                            const addedBadges =
+                              profileData?.applicant?.applicantSkillBadges
+                                ?.filter(badge => badge.flag === 'added')
+                                .map(badge => ({
+                                  id: badge.id,
+                                  name: badge.skillBadge.name,
+                                  status: badge.status,
+                                  flag: badge.flag,
+                                })) || [];
+
+                            const requiredSkills =
+                              profileData?.skillsRequired?.map(skillReq => ({
+                                id: skillReq.id,
+                                name: skillReq.skillName,
+                                status: 'REQUIRED',
+                                flag: 'required',
+                              })) || [];
+
+                            const allSkills = [...addedBadges, ...requiredSkills];
+
+                            allSkills.sort((a, b) => {
+                              const lenDiff = a.name.length - b.name.length;
+                              if (lenDiff !== 0) return lenDiff;
+                              return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+                            });
+
+                            return allSkills.map(skill => (
+                              <React.Fragment key={skill.id}>
+                                <span>
+                                  <a>
+                                    <ul
+                                      className="skill-but"
+                                      style={{
+                                        color: 'black',
+                                        backgroundColor: skill.flag === 'removed' ? '#D9534F' : '#E8E8E8',
+                                        display: 'inline-flex',
+                                        marginRight: '2px',
+                                      }}
+                                    >
+                                      <li style={{ display: 'flex', alignItems: 'center' }}>{skill.name}</li>
+                                    </ul>
+                                  </a>
+                                </span>
+                              </React.Fragment>
+                            ));
+                          })()}
+                        </div>
+
+                      </div>)}
                   </div>
                 </div>
                 <div className="profile-card-row2">
 
-                      {/* Tech Vibes */}
+                  {/* Tech Vibes */}
                   <div className="tech-vibes">
                     <div className="tech-vibes-header">
                       <h3 id="tour-techvibes">Tech vibes</h3>
@@ -1684,7 +1684,7 @@ const allLoadingDone =
                       <button style={{ textTransform: "none" }} onClick={handleRedirectTechBuzz}>View more</button>
                     </div>
                     <div className="tech-buzz-images">
-                      {!allLoadingDone  ? (
+                      {!allLoadingDone ? (
                         [...Array(maxVideos)].map((_, i) => (
                           <div key={i} className="skeleton-thumb"></div>
                         ))
@@ -1720,74 +1720,74 @@ const allLoadingDone =
 
 
 
-            
 
-                    {/* Download our App */}
+
+                  {/* Download our App */}
                   {!allLoadingDone ? (<div className="app-card app-card-skeleton">
 
-  <div className="app-sub-card">
-
-    <div className="app-skeleton-text"></div>
-    <div className="app-skeleton-text short"></div>
-
-    <div className="app-skeleton-store-row">
-      <div className="app-skeleton-store"></div>
-      <div className="app-skeleton-store"></div>
-    </div>
-
-  </div>
-
-  <div className="app-img">
-    <div className="app-skeleton-img"></div>
-  </div>
-
-</div>):(
-                  <div className="app-card">
                     <div className="app-sub-card">
-                      <p className="app-card-text">
-                        Why open laptop when bitLabs can be right in your pocket.
-                      </p>
 
-                      <p className="app-card-download-text">
-                        Download the app now!
-                      </p>
+                      <div className="app-skeleton-text"></div>
+                      <div className="app-skeleton-text short"></div>
 
-                      <div
-                        className="app-store-icons"
-                      >
-                        <a
-                          href="https://apps.apple.com/in/app/bitlabs/id6742783587"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        > <img
-                            src={appStoreIcon}
-                            alt="App Store"
-                          /></a>
-
-
-                        <a
-                          href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <img
-                            src={playStore}
-                            alt="Google Play"
-                          />
-                        </a>
+                      <div className="app-skeleton-store-row">
+                        <div className="app-skeleton-store"></div>
+                        <div className="app-skeleton-store"></div>
                       </div>
+
                     </div>
 
-
-                    {/* ✅ Mobile Image Below */}
                     <div className="app-img">
-                      <img
-                        src={SmartPhone}
-                        alt="App Preview"
-                      />
+                      <div className="app-skeleton-img"></div>
                     </div>
 
-                  </div>)}
+                  </div>) : (
+                    <div className="app-card">
+                      <div className="app-sub-card">
+                        <p className="app-card-text">
+                          Why open laptop when bitLabs can be right in your pocket.
+                        </p>
+
+                        <p className="app-card-download-text">
+                          Download the app now!
+                        </p>
+
+                        <div
+                          className="app-store-icons"
+                        >
+                          <a
+                            href="https://apps.apple.com/in/app/bitlabs/id6742783587"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          > <img
+                              src={appStoreIcon}
+                              alt="App Store"
+                            /></a>
+
+
+                          <a
+                            href="https://play.google.com/store/apps/details?id=com.bigtimes&utm_source=dashbd-ps-button&utm_medium=bj-dab-ps-app&utm_campaign=bj-ps-int-prof-dboard"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={playStore}
+                              alt="Google Play"
+                            />
+                          </a>
+                        </div>
+                      </div>
+
+
+                      {/* ✅ Mobile Image Below */}
+                      <div className="app-img">
+                        <img
+                          src={SmartPhone}
+                          alt="App Preview"
+                        />
+                      </div>
+
+                    </div>)}
                 </div>
 
               </div>
@@ -1804,7 +1804,7 @@ const allLoadingDone =
           steps={tourSteps}
         />
       )}
-                  {/* Restore-first prompt: shown when restoreAvailable=true before test modal */}
+      {/* Restore-first prompt: shown when restoreAvailable=true before test modal */}
       {showRestorePrompt && (
         <div className="streak-modal-overlay">
           <div className="streak-modal-content" style={{ maxWidth: '400px' }}>
@@ -1882,7 +1882,7 @@ const allLoadingDone =
           }}
         />
       )}
- {/* Leaderboard Modal */}
+      {/* Leaderboard Modal */}
       <LeaderboardModal
         isOpen={isLeaderboardModalOpen}
         onClose={closeLeaderboardModal}
@@ -1908,7 +1908,7 @@ const allLoadingDone =
             </div>
             <div className="score-modal-body">
               <p>You can earn points by taking one of the actions below.</p>
-              
+
               <ul className="score-modal-list">
                 <li className="score-modal-card">
                   <div className="score-modal-left">
