@@ -1260,7 +1260,7 @@
 }
 
 .badge-progress-wrapper {
-  width: 40%;
+  width: 70%;
   padding: 0 10px 10px 10px;
   position: relative;
   box-shadow: 0px 0px 15px #F7AA4B;
@@ -1981,6 +1981,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 15px;
   gap: 6px;
 }
 
