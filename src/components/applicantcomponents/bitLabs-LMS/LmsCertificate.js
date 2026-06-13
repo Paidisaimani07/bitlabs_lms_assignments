@@ -263,7 +263,7 @@ const CertificateTemplate = ({
 }) => (
   <div className="certificate-template-wrapper" ref={certificateRef}>
 
-    <img src={certificateBg} className="certificate-background" />
+    <img src={certificateBg} className="certificate-background" alt="Certificate Background" />
 
     <div className="certificate-name">{applicantName}</div>
 
