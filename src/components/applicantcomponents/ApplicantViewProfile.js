@@ -362,6 +362,7 @@ const ApplicantViewProfile = () => {
                   certificates={lmsCertificates}
                   onViewCertificate={handleViewCertificate}
                   onDownloadCertificate={handleDownloadCertificate}
+                  applicantName={applicantName}
                 />
               )}
             </div>

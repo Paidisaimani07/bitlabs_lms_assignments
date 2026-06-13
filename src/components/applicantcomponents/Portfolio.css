@@ -1023,9 +1023,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .cert-preview {
   position: relative !important;
   width: 100% !important;
-  height: 140px !important;
+  height: 141.5px !important;
   overflow: hidden !important;
   border-radius: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.cert-card-preview-scaler {
+  transform: scale(0.1887) !important;
+  transform-origin: top center !important;
+  flex-shrink: 0 !important;
 }
 
 .cert-bg {

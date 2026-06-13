@@ -198,6 +198,7 @@ const LmsCertificate = () => {
           certificates={completedCourses}
           onViewCertificate={handleViewCertificate}
           onDownloadCertificate={handleDownloadCertificate}
+          applicantName={applicantName}
         />
       </div>
 
