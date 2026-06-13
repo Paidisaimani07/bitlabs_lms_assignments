@@ -36,6 +36,7 @@ import ResumeTemplates from '../../components/applicantcomponents/ApplicantAtsRe
 import ResumePreview from '../../components/applicantcomponents/ApplicantAtsResume/ResumePreview';
 import ApplicantCourses from '../../components/applicantcomponents/bitLabs-LMS/ApplicantCourses';
 import CourseDetails from '../../components/applicantcomponents/bitLabs-LMS/CourseDetails';
+import LmsCertificate from '../../components/applicantcomponents/bitLabs-LMS/LmsCertificate';
 
 function ApplicantHomePage() {
   const [activeRoute, setActiveRoute] = useState('');
@@ -161,8 +162,11 @@ function ApplicantHomePage() {
         setActiveRoute('feedback-forms');
         break;
          case '/applicant-lmscourses-list':
-          setActiveRoute('lmscourses');
-        break;
+           setActiveRoute('lmscourses');
+         break;
+         case '/applicant-lms-certificate':
+           setActiveRoute('lmscertificate');
+         break;
          default:
       // 👇 check if route starts with /blogs/ (for blog single page)
       if (pathname.startsWith('/blogs/')) {
@@ -219,6 +223,7 @@ function ApplicantHomePage() {
       {activeRoute === 'feedback-form-fill' && <FeedbackFormFill />}
         {activeRoute === 'lmscourses' && <ApplicantCourses />}
       {activeRoute === 'coursedetails' && <CourseDetails />}
+      {activeRoute === 'lmscertificate' && <LmsCertificate />}
       </div> 
   )
 }

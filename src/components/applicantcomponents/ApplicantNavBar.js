@@ -21,7 +21,7 @@ import shape2 from "../../images/dashboard/side-nav-icons/buildportfolio.svg";
 //import botImage1 from "../../images/dashboard/side-nav-icons/robot.png";
 import "./ApplicantNavBar.css";
 import notificationIcon from "../../images/notificationIcon.svg";
-import { useRefresh } from "../common/RefreshContext"
+import { useRefresh } from "../common/RefreshContext";
 
 function ApplicantNavBar() {
   const location = useLocation();

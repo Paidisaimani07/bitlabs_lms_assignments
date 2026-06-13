@@ -36,6 +36,7 @@ import ProtectedRoute from './ProtectedRoute';
 import { ResumeProvider } from './components/applicantcomponents/ResumeContext';
 import RecruiterLmsOverview from "./components/recruitercomponents/RecruiterLmsOverview";
 import TopicProgressPage from "./components/recruitercomponents/TopicProgressPage";
+import CertificateVerify from './components/applicantcomponents/bitLabs-LMS/CertificateVerify';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -97,6 +98,7 @@ function App() {
                 <Route path="/feedback-builder/edit/:formId" element={<FeedbackFormBuilder />} />
                 <Route path="/feedback/:formId" element={<MentorConnectFeedbackForm />} />
                 <Route path="/feedback-responses/:formId" element={<FeedbackResponses />} />
+                <Route path="/certificate/verify/:certificateId" element={<CertificateVerify />} />
                 <Route path="/applicant-feedback-forms" element={
                   <ProtectedRoute>
                     <ApplicantHomePage />
@@ -173,6 +175,7 @@ function App() {
                     <Route path="/recruiter-mentor-rating" element={<RecruiterHomePage />} />
                       <Route path="/applicant-lmscourses-list" element={<ApplicantHomePage />} />
                       <Route path="/course/:courseName" element={<ApplicantHomePage />} />
+                      <Route path="/applicant-lms-certificate" element={<ApplicantHomePage />} />
                         <Route
                         path="/recruiter-lms-overview"
                         element={<RecruiterLmsOverview />}

@@ -893,62 +893,22 @@ const ApplicantDashboard = () => {
                           </div>
                         </div>
                       </div>) : (
-                        <div className="display-flex" style={{ width: '100%', justifyContent: 'center', paddingTop: '0px', paddingBottom: '10px' }}>
-                          <div
-                            // onClick={() => navigate('/applicant-lmscourses-list')} 
-                            style={{
-
-                              background: 'transparent linear-gradient(282deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box',
-                              boxShadow: '0px 0px 15px #F7AA4B',
-                              borderRadius: '6px',
-                              height: '100px',
-                              width: '100%',
-                              position: 'relative',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '0 30px'
-                            }}
-                          >
+                        <div className="lms-banner-wrapper">
+                          <div className="lms-banner-card">
                             <img
                               src={group1465}
                               alt="LMS Assignments Illustration"
-                              style={{
-                                position: 'absolute',
-                                left: '10px',
-                                bottom: '-10px',
-                                width: '245px',
-                                height: '189px',
-                                objectFit: 'contain'
-                              }}
+                              className="lms-banner-image"
                             />
 
-                            <div style={{ marginLeft: '250px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                              <span style={{
-                                textAlign: 'left',
-                                font: 'normal normal bold 22px/33px Poppins',
-                                letterSpacing: '0px',
-                                color: '#6A2E00',
-                                margin: 0
-                              }}>
-                                <span style={{ color: '#FFFFFF' }}>Get started your</span> LMS Assignments
+                            <div className="lms-banner-content">
+                              <span className="lms-banner-text">
+                                <span className="lms-banner-text-white">Get started your</span> LMS Assignments
                               </span>
 
                               <button
                                 onClick={(e) => { e.stopPropagation(); navigate('/applicant-lmscourses-list'); }}
-
-                                style={{
-                                  background: '#FFFFFF',
-                                  borderRadius: '4px',
-                                  color: '#1A1A1A',
-                                  fontFamily: 'Poppins, sans-serif',
-                                  fontWeight: 'bold',
-                                  fontSize: '14px',
-                                  border: 'none',
-                                  padding: '10px 24px',
-                                  cursor: 'pointer',
-                                  boxShadow: '0px 3px 6px #00000029'
-                                }}
+                                className="lms-banner-button"
                               >
                                 Get Started
                               </button>
