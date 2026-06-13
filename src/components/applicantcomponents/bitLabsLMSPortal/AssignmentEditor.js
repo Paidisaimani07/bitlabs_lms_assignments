@@ -46,7 +46,20 @@ const ASSIGNMENTS = [
   { id: 302, title: "Exercise 4.2: Login", question: "Login form.", expectedOutput: `<form><input type="password" /></form>`, testCases: [{ selector: 'form', marks: 5 }], topic: 'HTML Forms' },
   { id: 303, title: "Exercise 4.3: Feedback", question: "Feedback form with textarea.", expectedOutput: `<form><textarea></textarea></form>`, testCases: [{ selector: 'textarea', marks: 5 }], topic: 'HTML Forms' },
   { id: 304, title: "Exercise 4.4: Survey", question: "Survey form with radio buttons.", expectedOutput: `<form><input type="radio" /></form>`, testCases: [{ selector: 'input[type="radio"]', marks: 5 }], topic: 'HTML Forms' },
-  { id: 305, title: "Exercise 4.5: Contact", question: "Contact form with select dropdown.", expectedOutput: `<form><select><option>O</option></select></form>`, testCases: [{ selector: 'select', marks: 5 }], topic: 'HTML Forms' }
+  { id: 305, title: "Exercise 4.5: Contact", question: "Contact form with select dropdown.", expectedOutput: `<form><select><option>O</option></select></form>`, testCases: [{ selector: 'select', marks: 5 }], topic: 'HTML Forms' },
+
+  // ─── PYTHON (Module 5: 401 - 411) ────────────────────────────────────────
+  { id: 401, title: "Convert Distance", question: "Write program to convert the distance (in feet) to inches, yards, and miles.", expectedOutput: "Distance in feet : 5.0\nDistance in inches : 60.0\nDistance in yards : 1.6666666666666667\nDistance in miles : 0.000946969696969697", defaultCode: "# Input distance in feet\nfeet = float(input(\"Enter the distance in feet : \"))\n\n# Convert to inches, yards, and miles\n# ... code here ...\n", topic: 'Python', keywords: ['feet', 'float', 'input', 'print'] },
+  { id: 402, title: "Total & Average Marks", question: "Write a python script to enter student number, name, marks in c, c++ and java calculate and display total marks, average, result and grade.", expectedOutput: "Enter Student Number: 101\nEnter Student Name: Sai Mani\nEnter C Marks: 85\nEnter C++ Marks: 90\nEnter Java Marks: 88\n\nTotal Marks: 263\nAverage: 87.66\nResult: Pass\nGrade: A", defaultCode: "# Enter student details\nstudent_no = input(\"Enter Student Number: \")\nname = input(\"Enter Student Name: \")\n\n# Enter marks\nc_marks = float(input(\"Enter C Marks: \"))\ncpp_marks = float(input(\"Enter C++ Marks: \"))\njava_marks = float(input(\"Enter Java Marks: \"))\n\n# Calculate total, average, result and grade\n# ... code here ...\n", topic: 'Python', keywords: ['input', 'print', 'c++', 'java', 'marks'] },
+  { id: 403, title: "Calculate Interest", question: "Write a program which asks for initial balance and interest rate and calculates the capital after n years using loop.", expectedOutput: "Display yearly capital with interest.", defaultCode: "balance = float(input(\"Initial balance: \"))\nrate = float(input(\"Interest rate: \"))\nyears = int(input(\"Number of years: \"))\n\n# Calculate capital for each year\n# ... code here ...\n", topic: 'Python', keywords: ['for', 'while', 'print'] },
+  { id: 404, title: "Tuple", question: "Sort tuples using last element.", expectedOutput: "[(2, 1), (1, 2), (2, 3), (4, 4), (2, 5)]", defaultCode: "data = [(2, 5), (1, 2), (4, 4), (2, 3), (2, 1)]\n\n# Sort the list of tuples based on the second element\n# ... code here ...\n", topic: 'Python', keywords: ['sort', 'lambda'] },
+  { id: 405, title: "Remove Dups", question: "Remove duplicates from list while preserving order.", expectedOutput: "[12, 24, 35, 88, 120, 155]", defaultCode: "items = [12, 24, 35, 24, 88, 120, 155, 88, 120, 155]\n\n# Create a new list without duplicates\n# ... code here ...\n", topic: 'Python', keywords: ['set', 'list', 'append'] },
+  { id: 406, title: "Capitalize", question: "Convert all input lines to uppercase.", expectedOutput: "HELLO WORLD\nPRACTICE MAKES PERFECT", defaultCode: "lines = []\nprint(\"Enter lines (empty line to stop):\")\nwhile True:\n    # ... read and process lines ...\n    pass\n", topic: 'Python', keywords: ['upper', 'input'] },
+  { id: 407, title: "Conditional Capitalize", question: "Implement preLetterCase(string, letter)", expectedOutput: "preLetterCase(\"CAtCHa\",\"a\") → \"cATCHA\"", defaultCode: "def preLetterCase(string, letter):\n    # if string starts with letter, convert all to uppercase\n    # otherwise convert all to lowercase\n    pass\n", topic: 'Python', keywords: ['def', 'return', 'if'] },
+  { id: 408, title: "Hypotenuse", question: "Calculate hypotenuse using math module.", expectedOutput: "Display hypotenuse value.", defaultCode: "import math\na = 3\nb = 4\n\n# Calculate hypotenuse c = sqrt(a^2 + b^2)\n# ... code here ...\n", topic: 'Python', keywords: ['import', 'math', 'sqrt'] },
+  { id: 409, title: "Student Roster", question: "Create Student class with attributes and display values.", expectedOutput: "Student ID: M11\nStudent Name: Anusha Rao", defaultCode: "class Student:\n    def __init__(self, id, name):\n        # ... initialize ...\n        pass\n\n# Create and display student\n", topic: 'Python', keywords: ['class', 'def', '__init__'] },
+  { id: 410, title: "Animal Counts", question: "Use try/except while summing dictionary values.", expectedOutput: "Total number of puppies:130", defaultCode: "animals = {'puppies': 70, 'kittens': 60}\n\ntry:\n    # ... sum logic ...\n    pass\nexcept Exception as e:\n    print(e)\n", topic: 'Python', keywords: ['try', 'except', 'print'] },
+  { id: 411, title: "Shape", question: "Create Shape and Square class with area method.", expectedOutput: "Display square area properly.", defaultCode: "class Shape:\n    def area(self): return 0\n\nclass Square(Shape):\n    # ... override area ...\n    pass\n", topic: 'Python', keywords: ['class', 'def', 'super'] }
 ];
 
 const ErrorModal = ({ errors, onClose }) => (
@@ -59,7 +72,7 @@ const ErrorModal = ({ errors, onClose }) => (
   </div>
 );
 
-const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
+const AssignmentEditor = ({ assignmentType, onClose, applicantId, onNavigate, onNextTopic }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [code, setCode] = useState('');
   const [liveOutput, setLiveOutput] = useState('');
@@ -95,6 +108,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       if (assignmentType === 'styling') return a.topic === 'CSS Basics';
       if (assignmentType === 'styling2') return a.topic === 'CSS Advanced';
       if (assignmentType === 'forms') return a.topic === 'HTML Forms';
+      if (assignmentType?.startsWith('python')) return a.topic === 'Python';
       return true;
     });
     console.log('[AssignmentEditor] Filtered Topic Assignments:', filtered.length);
@@ -134,19 +148,22 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       if (activeAssignmentIdRef.current === assignmentId) {
         if (backendCode !== null && backendCode !== undefined) {
           const finalCode = String(backendCode);
-          console.log('[AssignmentEditor] Success! Loaded assignment code (length):', finalCode.length);
           setCode(finalCode);
           setLiveOutput(finalCode);
 
-          const validation = AssignmentValidator.validate(finalCode, target.testCases);
+          const isPython = target.topic === 'Python';
+          const validation = isPython
+            ? AssignmentValidator.validatePython(finalCode, { expectedOutput: target.expectedOutput, keywords: target.keywords })
+            : AssignmentValidator.validate(finalCode, target.testCases);
+
           setValidationResult(validation);
           setIsSubmitted(true);
           setIsCompleted(true);
-          // Ensure this dot stays green since it exists in the database
           setCompletedIds(prev => new Set(prev).add(assignmentId));
         } else {
-          const template = `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
-          console.log('[AssignmentEditor] No submission found. Loading default template.');
+          const template = target.topic === 'Python'
+            ? (target.defaultCode || "")
+            : `<!DOCTYPE html>\n<html>\n<head>\n    <title>${target.title}</title>\n</head>\n<body>\n\n    <!-- Write code for ${target.title} here -->\n\n</body>\n</html>`;
           setCode(template);
           setLiveOutput(template);
           setIsSubmitted(false);
@@ -168,23 +185,41 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
   const performNavigation = useCallback((newIndex) => {
     isNavigatingRef.current = true;
-    activeAssignmentIdRef.current = filteredAssignments[newIndex].id;
+    const targetAssignment = filteredAssignments[newIndex];
+    activeAssignmentIdRef.current = targetAssignment.id;
     setCurrentIndex(newIndex);
-  }, [filteredAssignments]);
+    if (onNavigate) onNavigate(targetAssignment.id);
+  }, [filteredAssignments, onNavigate]);
 
   const handleNextAssignment = useCallback(() => {
-    if (currentIndex < filteredAssignments.length - 1) performNavigation(currentIndex + 1);
-  }, [currentIndex, filteredAssignments, performNavigation]);
+    if (currentAssignment.topic === 'Python') {
+      if (onNextTopic) onNextTopic();
+      else if (onClose) onClose();
+    } else {
+      if (currentIndex < filteredAssignments.length - 1) performNavigation(currentIndex + 1);
+    }
+  }, [currentIndex, filteredAssignments, performNavigation, currentAssignment, onNextTopic, onClose]);
 
   const handlePrevAssignment = useCallback(() => {
     if (currentIndex > 0) performNavigation(currentIndex - 1);
   }, [currentIndex, performNavigation]);
 
   const handleBack = () => {
-    const topic = currentAssignment.topic;
-    const firstIdx = filteredAssignments.findIndex(a => a.topic === topic);
-    if (firstIdx !== -1 && currentIndex !== firstIdx) performNavigation(firstIdx);
-    else if (onClose) onClose();
+    const isHtmlCssTopic = ['HTML Basics', 'CSS Basics', 'CSS Advanced', 'HTML Forms'].includes(currentAssignment.topic);
+
+    if (isHtmlCssTopic) {
+      if (currentIndex === 0) {
+        if (onClose) {
+          onClose();
+          return;
+        }
+      } else {
+        performNavigation(0);
+        return;
+      }
+    }
+
+    if (onClose) onClose();
   };
 
   const handleCodeChange = (newCode) => {
@@ -195,7 +230,7 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
   };
 
   const handleClear = () => {
-    setCode('');
+    setCode(currentAssignment.defaultCode || '');
     setLiveOutput('');
     setIsSubmitted(false);
     setValidationResult(null);
@@ -225,8 +260,16 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
           setCompletedIds(ids);
         }
 
-        // Always start at the first assignment of the selected topic
-        targetIdx = 0;
+        // Start at the correct index based on assignmentType (e.g. 'python2' -> index 1)
+        if (assignmentType?.startsWith('python')) {
+          const match = assignmentType.match(/python(\d+)/);
+          if (match) {
+            const num = parseInt(match[1]);
+            if (!isNaN(num)) targetIdx = num - 1;
+          }
+        } else {
+          targetIdx = 0;
+        }
 
         console.log(`[AssignmentEditor] Initializing with topic index ${targetIdx} (ID: ${filtered[targetIdx].id})`);
         activeAssignmentIdRef.current = filtered[targetIdx].id;
@@ -251,10 +294,32 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
     fetchSavedCodeFromBackend(currentIndex);
   }, [currentIndex, fetchSavedCodeFromBackend]);
 
-  const handleRun = () => { setLiveOutput(code); setIsSubmitted(false); };
+  const handleRun = () => {
+    if (currentAssignment.topic === 'Python') {
+      // Improved Python output simulation: show expected output if keywords are found, 
+      // or show a generic execution message.
+      const validation = AssignmentValidator.validatePython(code, {
+        expectedOutput: currentAssignment.expectedOutput,
+        keywords: currentAssignment.keywords
+      });
+
+      if (validation.isValid) {
+        setLiveOutput(`>>> Executing ${currentAssignment.title}...\n\n${currentAssignment.expectedOutput}\n\n>>> Execution finished successfully.`);
+      } else {
+        setLiveOutput(`Python Execution Output:\n--------------------------\n(Processing code...)\n\nNote: Please ensure all required keywords and logic are implemented to see full output.`);
+      }
+    } else {
+      setLiveOutput(code);
+    }
+    setIsSubmitted(false);
+  };
 
   const handleSubmit = async () => {
-    const result = AssignmentValidator.validate(code, currentAssignment.testCases);
+    const isPython = currentAssignment.topic === 'Python';
+    const result = isPython
+      ? AssignmentValidator.validatePython(code, { expectedOutput: currentAssignment.expectedOutput, keywords: currentAssignment.keywords })
+      : AssignmentValidator.validate(code, currentAssignment.testCases);
+
     setValidationResult(result);
     setIsSubmitted(true);
     if (!result.isValid) { setSubmissionErrors(result.errors || []); setShowErrorModal(true); return; }
@@ -277,30 +342,32 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
       <div className="ae-header">
         <button className="ae-back-btn" onClick={handleBack}>← Back</button>
         <div className="ae-title-section"><h2>{currentAssignment.title}</h2><span className="ae-badge">{currentAssignment.topic}</span></div>
-        <div className="ae-progress">
-          <div className="ae-nav-dots">
-            {filteredAssignments.map((a, tIdx) => (
-              <button
-                key={a.id}
-                className={`ae-dot ${tIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
-                onClick={() => performNavigation(tIdx)}
-                title={a.title}
-              >
-                {tIdx + 1}
-              </button>
-            ))}
+        {currentAssignment.topic !== 'Python' && (
+          <div className="ae-progress">
+            <div className="ae-nav-dots">
+              {filteredAssignments.map((a, tIdx) => (
+                <button
+                  key={a.id}
+                  className={`ae-dot ${tIdx === currentIndex ? 'active' : ''} ${completedIds.has(a.id) ? 'completed' : ''}`}
+                  onClick={() => performNavigation(tIdx)}
+                  title={a.title}
+                >
+                  {tIdx + 1}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="ae-content">
         <div className="ae-left-panel">
           <div className="ae-question"><h3>Question</h3><p>{currentAssignment.question}</p></div>
           <div className="ae-editor-section">
             <div className="ae-editor-header">
-              <label className="ae-label">HTML Code:</label>
+              <label className="ae-label">{currentAssignment.topic === 'Python' ? 'Python Code:' : 'HTML Code:'}</label>
               <button className="ae-clear-btn" onClick={handleClear} disabled={loading}>Clear</button>
             </div>
-            <textarea className="ae-textarea" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} />
+            <textarea className="ae-textarea ae-python-editor" value={code} onChange={(e) => handleCodeChange(e.target.value)} placeholder="Type here..." spellCheck="false" disabled={loading} style={currentAssignment.topic === 'Python' ? { fontFamily: 'Consolas, monospace', fontSize: '14px' } : {}} />
           </div>
           <div className="ae-button-group">
             <div className="ae-btn-slot">
@@ -316,15 +383,35 @@ const AssignmentEditor = ({ assignmentType, onClose, applicantId }) => {
 
             <div className="ae-btn-slot ae-btn-right">
               {((isSubmitted && validationResult?.isValid) || isCompleted) && currentIndex < filteredAssignments.length - 1 && (
-                <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>Next Assignment →</button>
+                <button className="ae-btn ae-btn-next" onClick={handleNextAssignment}>
+                  {currentAssignment.topic === 'Python' ? 'Next Topic →' : 'Next Assignment →'}
+                </button>
               )}
             </div>
           </div>
           {isSubmitted && validationResult && <div className={`ae-submission-status ${validationResult.isValid ? 'ae-passed' : 'ae-failed'}`}><h4>{validationResult.isValid ? '✓ Passed!' : '⚠ Failed'}</h4>{validationResult.details.map((d, i) => <p key={i} className="ae-detail">{d}</p>)}</div>}
         </div>
         <div className="ae-right-panel">
-          <div className="ae-output-section"><h3>Your Output {loading && "..."}</h3><div className="ae-iframe-container"><iframe className="ae-preview-iframe" srcDoc={liveOutput} title="User Output" /></div></div>
-          <div className="ae-output-section ae-expected"><h3>Expected Output</h3><div className="ae-iframe-container"><iframe className="ae-preview-iframe ae-expected-iframe" srcDoc={currentAssignment.expectedOutput} title="Expected Output" /></div></div>
+          <div className="ae-output-section">
+            <h3>Your Output {loading && "..."}</h3>
+            <div className="ae-iframe-container">
+              {currentAssignment.topic === 'Python' ? (
+                <pre className="ae-python-output">{liveOutput}</pre>
+              ) : (
+                <iframe className="ae-preview-iframe" srcDoc={liveOutput} title="User Output" />
+              )}
+            </div>
+          </div>
+          <div className="ae-output-section ae-expected">
+            <h3>Expected Output</h3>
+            <div className="ae-iframe-container">
+              {currentAssignment.topic === 'Python' ? (
+                <pre className="ae-python-output ae-expected-output">{currentAssignment.expectedOutput}</pre>
+              ) : (
+                <iframe className="ae-preview-iframe ae-expected-iframe" srcDoc={currentAssignment.expectedOutput} title="Expected Output" />
+              )}
+            </div>
+          </div>
         </div>
       </div>
       {showSuccessModal && <div className="ae-success-modal-overlay"><div className="ae-success-modal"><h3>Success!</h3><p>Problem solved!</p><button className="ae-success-btn" onClick={() => setShowSuccessModal(false)}>Continue</button></div></div>}

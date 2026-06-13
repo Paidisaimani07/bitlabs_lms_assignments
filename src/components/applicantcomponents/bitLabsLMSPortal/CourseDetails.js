@@ -5,6 +5,7 @@ import WorkingScormPlayer from "./WorkingScormPlayer";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
 import { useUserContext } from "../../common/UserProvider";
 import FirstHtmlPage from "./FirstHtmlPage";
+import AssignmentEditor from "./AssignmentEditor";
 import { getAllAssignmentsByApplicant } from "./assignmentservice";
 
 
@@ -12,12 +13,9 @@ import { getAllAssignmentsByApplicant } from "./assignmentservice";
 // Course mapping to convert course names to actual course IDs
 const getCourseId = (courseName) => {
   const courseMap = {
-    "html & css": 1,
-    "python": 2,
-    "java": 3,
-    "sql": 4,
-    "react": 5,
-    "spring boot": 6
+    "html & css": 5,
+    "python": 13,
+    "interview preparedness": 7
   };
   return courseMap[courseName.toLowerCase()] || 0;
 };
@@ -31,22 +29,37 @@ const COURSE_DATA = {
     { topic: "HTML Forms", videos: [{ title: "Creating Forms in HTML", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/HTML%20FORMS_topic5/story.html" }] },
   ],
   "python": [
-    { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "/python for beginners/Introduction to Python_topic1/index_lms.html" }] },
-    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "/python for beginners/python variables and data types_topic2/index_lms.html" }] },
-    { topic: "Python Operators", videos: [{ title: "Operators", url: "/python for beginners/Python Operators_topic3/index_lms.html" }] },
-    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "/python for beginners/Python conditional statements_topic4/index_lms.html" }] },
-    { topic: "Python Loops", videos: [{ title: "Loops", url: "/python for beginners/Python Loops_topic5/index_lms.html" }] },
-    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "/python for beginners/Python Data Structures Part 1_topic6/index_lms.html" }] },
-    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "/python for beginners/Python Data Structures Part 2_topic7/index_lms.html" }] },
-    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "/python for beginners/Python Data Structures Part 3_topic8/index_lms.html" }] },
-    { topic: "Python functions", videos: [{ title: "Functions", url: "/python for beginners/python functions_topic9/index_lms.html" }] },
-    { topic: "Python modules", videos: [{ title: "Modules", url: "/python for beginners/python modules_topic10/index_lms.html" }] },
-    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "/python for beginners/Python OOPS_topic11/index_lms.html" }] },
-    { topic: "Python Constructors", videos: [{ title: "Constructors", url: "/python for beginners/Python Constructors_topic12/index_lms.html" }] },
-    { topic: "Python Inheritence", videos: [{ title: "Inheritence", url: "/python for beginners/Python Inheritence_topic13/index_lms.html" }] },
+    { topic: "Introduction to python", videos: [{ title: "What is a python?", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Introduction+to+Python_topic1/story.html" }] },
+    { topic: "Python variables and data types", videos: [{ title: "Variables and Data Types", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Variables+and+Data+Types_topic2/story.html" }] },
+    { topic: "Python Operators", videos: [{ title: "Operators", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Operators_topic3/story.html" }] },
+    { topic: "Python conditional statements", videos: [{ title: "Conditional Statements", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Conditional+Statements_topic4/story.html" }] },
+    { topic: "Python Loops", videos: [{ title: "Loops", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Loop+Control+Statements_topic5/story.html" }] },
+    { topic: "Python Data Structures Part 1", videos: [{ title: "Data Structures Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+1_topic6/story.html" }] },
+    { topic: "Python Data Structures Part 2", videos: [{ title: "Data Structures Part 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+2_topic7/story.html" }] },
+    { topic: "Python Data Structures Part 3", videos: [{ title: "Data Structures Part 3", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Data+Structures++Part+3_(Strings)_topic8/story.html" }] },
+    { topic: "Python functions", videos: [{ title: "Functions", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Functions_topic9/story.html" }] },
+    { topic: "Python modules", videos: [{ title: "Modules", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Modules_topic10/story.html" }] },
+    { topic: "Python OOPS", videos: [{ title: "OOPS concepts", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Object+Oriented+Programming_topic11/story.html" }] },
+    { topic: "Python Constructors", videos: [{ title: "Constructors", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Constructors_topic12/story.html" }] },
+    { topic: "Python Inheritance", videos: [{ title: "Inheritance", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Python+Inheritance_topic13/story.html" }] },
   ],
   java: [
     { topic: "Java Basics", videos: [{ title: "Java Course", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/How+to+Set+Goals_web+2/story.html" }] },
+  ],
+  "interview preparedness": [
+    // ── Group 0: Understanding Yourself (3 subtopics) ──────────────────────
+    { topic: "Understanding Yourself – Self Realization", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Understanding Yourself – Self Realization", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Understanding+Yourself++Self+Realization/story.html" }] },
+    { topic: "Confidence Building & Self-Motivation", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Confidence Building & Self-Motivation", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Confidence+building+and+self-motivation/story.html" }] },
+    { topic: "Overcoming Shyness, Fear & Anxiety", groupName: "Understanding Yourself", groupIndex: 0, videos: [{ title: "Overcoming Shyness, Fear & Anxiety", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Shyness%2C+Fear%2C+and+Anxiety+-+Ways+of+Control/story.html" }] },
+    // ── Group 1: Introduction to Communication (4 subtopics) ───────────────
+    { topic: "Components of Communication", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Components of Communication", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Components+of+Communication/story.html" }] },
+    { topic: "Communication Methods", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Communication Methods", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Communication+Methods/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 1", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Conveying+Message+Effectively+-+Part+1/story.html" }] },
+    { topic: "Conveying Message Effectively – Part 2", groupName: "Introduction to Communication", groupIndex: 1, videos: [{ title: "Conveying Message Effectively – Part 2", url: "/https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Conveying+Message+Effectively+-+Part+2/story.html" }] },
+    // ── Group 2: Self Introduction (3 subtopics) ──────────────────────────
+    { topic: "Creating Self-Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Self-Introduction", url: "/https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+Self-introduction/story.html" }] },
+    { topic: "Tips for Effective Introduction", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Tips for Effective Introduction", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Tips+for+Effective+Introduction+in+Different+Scenarios/story.html" }] },
+    { topic: "Creating Your First Impression", groupName: "Self Introduction", groupIndex: 2, videos: [{ title: "Creating Your First Impression", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/Softskills+Foundation+-+Creating+your+First+Impression/story.html" }] },
   ],
 };
 
@@ -54,18 +67,9 @@ const CourseDetails = () => {
   const { courseName } = useParams();
   const location = useLocation();
   const { user } = useUserContext();
-  const currentPath = location.pathname.toLowerCase();
 
-  const allowedRoutes = [
-    '/courses/html',
-    '/courses/css',
-    '/course/html',
-    '/course/css',
-    '/assignment/first-html-page'
-  ];
-
-  const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
-  const applicantId = user?.id;
+  // Provide default value to prevent toLowerCase error
+  const safeCourseName = courseName || '';
 
   const [selectedTopicIndex, setSelectedTopicIndex] = useState(0);
   const [topicProgress, setTopicProgress] = useState({});
@@ -74,6 +78,7 @@ const CourseDetails = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sidebarView, setSidebarView] = useState("topics");
+  const [collapsedGroups, setCollapsedGroups] = useState({});
   const [viewingAssignment, setViewingAssignment] = useState(false);
   const [assignmentType, setAssignmentType] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -82,7 +87,33 @@ const CourseDetails = () => {
     html: false,
     css1: false,
     css2: false,
-    forms: false
+    forms: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
+  });
+
+  const currentPath = location.pathname.toLowerCase();
+
+  const allowedRoutes = [
+    '/courses/html',
+    '/courses/css',
+    '/course/html',
+    '/course/css',
+    '/course/python',
+    '/courses/python',
+    '/assignment/first-html-page'
+  ];
+
+  const isAssignmentAllowed = allowedRoutes.some(route => currentPath.startsWith(route));
+  const applicantId = user?.id;
+
+  // ── Interview Preparedness flag ──────────────────────────────────────────
+  const isInterviewPrep = safeCourseName.toLowerCase() === "interview preparedness";
+
+  // Refs for state to avoid stale closures in setTimeout callbacks
+  const topicProgressRef = useRef({});
+  const assignmentCompletionRef = useRef({
+    html: false, css1: false, css2: false, forms: false,
+    python1: false, python2: false, python3: false, python4: false, python5: false, python6: false, python7: false, python8: false, python9: false, python10: false, python11: false
   });
 
   // Ref keeps the current topic index reachable inside async callbacks/effects
@@ -140,12 +171,11 @@ const CourseDetails = () => {
 
         // Find the current course progress
         const currentCourse = applicantCourses.find(course =>
-          course.courseName.toLowerCase() === courseName.toLowerCase()
+          course.courseName?.toLowerCase() === safeCourseName.toLowerCase()
         );
 
         if (currentCourse) {
           setCourseProgressId(currentCourse.id);
-          setOverallProgress(currentCourse.overallProgress);
 
           // Get topics progress for this course
           const topicsProgress = await ProgressAPIService.getCourseTopics(currentCourse.id);
@@ -153,7 +183,16 @@ const CourseDetails = () => {
           topicsProgress.forEach(topic => {
             progressMap[topic.topicIndex] = topic.topicProgress;
           });
+          topicProgressRef.current = progressMap;
           setTopicProgress(progressMap);
+
+          if (safeCourseName.toLowerCase() === "interview preparedness") {
+            const totalProgress = Object.values(progressMap).reduce((a, b) => a + b, 0);
+            const calculatedProgress = courseContent.length > 0 ? Math.round(totalProgress / courseContent.length) : 0;
+            setOverallProgress(calculatedProgress);
+          } else {
+            setOverallProgress(currentCourse.overallProgress);
+          }
 
           // Find the last accessed topic (highest progress that's not 100%)
           const lastTopicIndex = topicsProgress.reduce((lastIdx, topic) => {
@@ -169,6 +208,7 @@ const CourseDetails = () => {
         } else {
           // Initialize with zero progress if no course progress exists
           setOverallProgress(0);
+          topicProgressRef.current = {};
           setTopicProgress({});
           setSelectedTopicIndex(0);
         }
@@ -176,6 +216,7 @@ const CourseDetails = () => {
         console.error('Error loading progress:', error);
         // Fallback to zero progress
         setOverallProgress(0);
+        topicProgressRef.current = {};
         setTopicProgress({});
         setSelectedTopicIndex(0);
       } finally {
@@ -189,17 +230,19 @@ const CourseDetails = () => {
   // ── 3. Progress update — save to backend ────────────────────────────────────
   const handleProgressUpdate = useCallback(async (p) => {
     if (!applicantId) return;
+    const numericP = Number(p);
     const idx = topicIndexRef.current;
-    const currentProgress = topicProgress[idx] || 0;
+    const currentProgress = topicProgressRef.current[idx] || 0;
 
-    if (p <= currentProgress) return; // ✅ progress can only move forward
+    if (numericP <= currentProgress) return; // ✅ progress can only move forward
 
     try {
       // Update local state immediately for UI responsiveness
-      setTopicProgress(prev => ({ ...prev, [idx]: p }));
+      const newTopicProgress = { ...topicProgressRef.current, [idx]: numericP };
+      topicProgressRef.current = newTopicProgress;
+      setTopicProgress(newTopicProgress);
 
       // Calculate new overall progress
-      const newTopicProgress = { ...topicProgress, [idx]: p };
       const totalProgress = Object.values(newTopicProgress).reduce((a, b) => a + b, 0);
       const newOverallProgress = Math.round(totalProgress / courseContent.length);
       setOverallProgress(newOverallProgress);
@@ -219,34 +262,77 @@ const CourseDetails = () => {
       }
     } catch (error) {
       console.error('Error saving progress:', error);
-      setTopicProgress(prev => ({ ...prev, [idx]: currentProgress }));
+      const rollbackProgress = { ...topicProgress, [idx]: currentProgress };
+      topicProgressRef.current = rollbackProgress;
+      setTopicProgress(rollbackProgress);
     }
   }, [applicantId, courseName, courseContent, topicProgress]);
 
   // ── 1. Utility Callbacks ──────────────────────────────────────────────────
-  const toggleFullscreen = useCallback(() => {
-    if (!playerRef.current) return;
-    if (!document.fullscreenElement) {
-      playerRef.current.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
+  const getTopicLockedStatus = useCallback((index) => {
+    if (index === 0) return false;
+    const progress = topicProgressRef.current[index] || 0;
+    if (progress > 0) return false; // Already started topics are never locked
+
+    // Default rule: Previous topic must be 100%
+    const prevProgress = topicProgressRef.current[index - 1] || 0;
+    if (prevProgress < 100) return true;
+
+    // Interview Preparedness has no assignment gates — unlock on topic progress only
+    if (safeCourseName.toLowerCase() === "interview preparedness") return false;
+
+    if (safeCourseName.toLowerCase() === "python") {
+      const prevAssignmentMap = {
+        2: 'python1', 3: 'python2', 4: 'python3', 6: 'python4', 7: 'python5',
+        8: 'python6', 9: 'python7', 10: 'python8', 11: 'python9', 12: 'python10', 13: 'python11'
+      };
+      const prevAssignKey = prevAssignmentMap[index];
+      if (prevAssignKey && !assignmentCompletionRef.current[prevAssignKey]) return true;
     } else {
-      document.exitFullscreen();
+      // HTML/CSS logic
+      if (index === 2 && !assignmentCompletionRef.current.html) return true;
+      if (index === 3 && !assignmentCompletionRef.current.css1) return true;
+      if (index === 4 && !assignmentCompletionRef.current.css2) return true;
     }
-  }, []);
+    return false;
+  }, [courseName]);
 
   const selectTopic = useCallback((index) => {
     setViewingAssignment(false);
-    let isLocked = false;
-    if (index === 1) isLocked = (topicProgress[0] || 0) < 100;
-    if (index === 2) isLocked = !assignmentCompletion.html;
-    if (index === 3) isLocked = !assignmentCompletion.css1;
-    if (index === 4) isLocked = !assignmentCompletion.css2;
-    if (topicProgress[index] > 0) isLocked = false;
-    if (isLocked) return;
+    if (getTopicLockedStatus(index)) return;
+
     setSelectedTopicIndex(index);
-    if (!document.fullscreenElement) toggleFullscreen();
-  }, [topicProgress, assignmentCompletion, toggleFullscreen]);
+    // Note: toggleFullscreen is not defined in this scope yet if moved up, 
+    // but here it is defined later in the component.
+  }, [getTopicLockedStatus]);
+
+  // Function to toggle fullscreen
+  const toggleFullscreen = useCallback(() => {
+    if (!playerRef.current) return;
+    const fsEl = document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+    if (!fsEl) {
+      const reqFS = playerRef.current.requestFullscreen ||
+        playerRef.current.webkitRequestFullscreen ||
+        playerRef.current.mozRequestFullScreen ||
+        playerRef.current.msRequestFullscreen;
+      if (reqFS) {
+        reqFS.call(playerRef.current).catch(err => {
+          console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+      }
+    } else {
+      const exitFS = document.exitFullscreen ||
+        document.webkitExitFullscreen ||
+        document.mozCancelFullScreen ||
+        document.msExitFullscreen;
+      if (exitFS) {
+        exitFS.call(document);
+      }
+    }
+  }, []);
 
   const handleModuleComplete = useCallback((index) => {
     const nextIdx = index + 1;
@@ -289,39 +375,61 @@ const CourseDetails = () => {
 
     setTimeout(() => {
       setShowSuccessPopup(false);
-      const assignments = [
-        null,
-        { type: 'html' },
-        { type: 'styling' },
-        { type: 'styling2' },
-        { type: 'forms' }
-      ];
+
+      // Interview Preparedness: no assignments — always advance to next topic
+      if (safeCourseName.toLowerCase() === "interview preparedness") {
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) selectTopic(nextIdx);
+        return;
+      }
+
+      let assignments = [];
+      if (safeCourseName.toLowerCase() === "python") {
+        assignments = [
+          null,
+          { type: 'python1' }, { type: 'python2' }, { type: 'python3' }, null,
+          { type: 'python4' }, { type: 'python5' }, { type: 'python6' },
+          { type: 'python7' }, { type: 'python8' }, { type: 'python9' },
+          { type: 'python10' }, { type: 'python11' }
+        ];
+      } else {
+        assignments = [
+          null,
+          { type: 'html' },
+          { type: 'styling' },
+          { type: 'styling2' },
+          { type: 'forms' }
+        ];
+      }
       if (assignments[index]) {
         setSidebarView('assignments');
         setViewingAssignment(true);
         setAssignmentType(assignments[index].type);
+      } else {
+        // No assignment for this topic, move to next if available
+        const nextIdx = index + 1;
+        if (nextIdx < courseContent.length) {
+          selectTopic(nextIdx);
+        }
       }
     }, 3000);
   };
 
-  // ── 4. Topic selection — saves last topic to backend ────────────────────────────────
-
-
-  // Sync assignment completion state from backend on mount
   // Sync assignment completion state from backend
   const syncAssignments = useCallback(async () => {
     if (!applicantId) return;
     try {
       const res = await getAllAssignmentsByApplicant(applicantId);
       const assignments = Array.isArray(res) ? res : (res ? [res] : []);
-      
+
       const completedIds = {
         html: new Set(),
         css1: new Set(),
         css2: new Set(),
-        forms: new Set()
+        forms: new Set(),
+        python: new Set()
       };
-      const totals = { html: 10, css1: 6, css2: 8, forms: 5 };
+      const totals = { html: 10, css1: 6, css2: 8, forms: 5, python: 11 };
 
       assignments.forEach(item => {
         let id = item.assignmentNumber ?? item.assignment_number ?? item.assignmentId ?? item.assignment_id ?? item.id;
@@ -335,15 +443,29 @@ const CourseDetails = () => {
           if (numId >= 101 && numId <= 106) completedIds.css1.add(numId);
           if (numId >= 201 && numId <= 208) completedIds.css2.add(numId);
           if (numId >= 301 && numId <= 305) completedIds.forms.add(numId);
+          if (numId >= 401 && numId <= 411) completedIds.python.add(numId);
         }
       });
 
-      setAssignmentCompletion({
+      const newCompletion = {
         html: completedIds.html.size >= totals.html,
         css1: completedIds.css1.size >= totals.css1,
         css2: completedIds.css2.size >= totals.css2,
-        forms: completedIds.forms.size >= totals.forms
-      });
+        forms: completedIds.forms.size >= totals.forms,
+        python1: completedIds.python.has(401),
+        python2: completedIds.python.has(402),
+        python3: completedIds.python.has(403),
+        python4: completedIds.python.has(404),
+        python5: completedIds.python.has(405),
+        python6: completedIds.python.has(406),
+        python7: completedIds.python.has(407),
+        python8: completedIds.python.has(408),
+        python9: completedIds.python.has(409),
+        python10: completedIds.python.has(410),
+        python11: completedIds.python.has(411)
+      };
+      assignmentCompletionRef.current = newCompletion;
+      setAssignmentCompletion(newCompletion);
     } catch (error) {
       console.error('[CourseDetails] Sync Error:', error);
     }
@@ -358,7 +480,7 @@ const CourseDetails = () => {
       syncAssignments();
       const { assignmentId } = e.detail;
       const id = Number(assignmentId);
-      
+
       const groups = [
         { id: 10, index: 1 },
         { id: 106, index: 2 },
@@ -370,40 +492,106 @@ const CourseDetails = () => {
       if (group) {
         handleModuleComplete(group.index);
       }
+
+      // Handle Python individual assignment completion logic
+      if (id >= 401 && id <= 411) {
+        // Immediately update local state for better responsiveness
+        const completionKey = `python${id - 400}`;
+        setAssignmentCompletion(prev => {
+          const next = { ...prev, [completionKey]: true };
+          assignmentCompletionRef.current = next;
+          return next;
+        });
+
+        syncAssignments().then(() => {
+          // Auto-advance logic for Python topics
+          const pythonNextTopicMap = {
+            401: 2, // Convert Distance (Topic 1) -> Operators (Topic 2)
+            402: 3, // Total Marks (Topic 2) -> Conditionals (Topic 3)
+            403: 4, // Interest (Topic 3) -> Loops (Topic 4)
+            404: 6, // Tuple (Topic 5) -> DS Part 2 (Topic 6)
+            405: 7, // Remove Dups (Topic 6) -> DS Part 3 (Topic 7)
+            406: 8, // Capitalize (Topic 7) -> Functions (Topic 8)
+            407: 9, // Cond Capitalize (Topic 8) -> Modules (Topic 9)
+            408: 10, // Hypotenuse (Topic 9) -> OOPS (Topic 10)
+            409: 11, // Roster (Topic 10) -> Constructors (Topic 11)
+            410: 12, // Animals (Topic 11) -> Inheritance (Topic 12)
+            411: 13, // Shape (Topic 12) -> Inheritance (Topic 13)
+          };
+
+          const nextTopicIdx = pythonNextTopicMap[id];
+          if (nextTopicIdx !== undefined) {
+            // Small delay to ensure React has processed the state update for the lock
+            setTimeout(() => selectTopic(nextTopicIdx), 400);
+          }
+        });
+      }
     };
 
     window.addEventListener('assignmentCompleted', handleAssignmentDone);
     return () => window.removeEventListener('assignmentCompleted', handleAssignmentDone);
-  }, [syncAssignments, handleModuleComplete]);
+  }, [syncAssignments, handleModuleComplete, selectTopic]);
 
-  // ── 4. Topic selection ────────────────────────────────
-
-
-  const handleAssignmentClick = (type) => {
+  const handleAssignmentClick = (type, index) => {
     if (!isAssignmentAllowed) return;
     setAssignmentType(type);
     setViewingAssignment(true);
+    if (index !== undefined) {
+      setSelectedTopicIndex(index);
+    }
   };
 
-  const handleCloseAssignment = () => {
+  const handleAssignmentNavigate = (newAssignmentId) => {
+    const id = Number(newAssignmentId);
+    if (safeCourseName.toLowerCase() === "python") {
+      const pythonTopicMap = {
+        401: 1, 402: 2, 403: 3, 404: 5, 405: 6, 406: 7, 407: 8, 408: 9, 409: 10, 410: 11, 411: 12
+      };
+      const topicIdx = pythonTopicMap[id];
+      if (topicIdx !== undefined) {
+        setSelectedTopicIndex(topicIdx);
+      }
+    }
+  };
+
+  const handleCloseAssignment = (goToPrevTopic = false) => {
     setViewingAssignment(false);
+    if (goToPrevTopic && selectedTopicIndex > 0) {
+      selectTopic(selectedTopicIndex - 1);
+    }
   };
 
-
-  // ── 5. Overall progress from backend ───────────────────────────────────────────
-  // overallProgress is used directly from state
+  const handleNextTopic = () => {
+    const nextIdx = selectedTopicIndex + 1;
+    if (nextIdx < courseContent.length) {
+      selectTopic(nextIdx);
+    } else {
+      setViewingAssignment(false);
+    }
+  };
 
   const selectedVideo = courseContent[selectedTopicIndex]?.videos?.[0]?.url || "";
 
   // Listen for fullscreen change events (e.g. user pressing Esc)
   useEffect(() => {
     const handleFsChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const fsEl = document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      setIsFullscreen(!!fsEl);
     };
     document.addEventListener("fullscreenchange", handleFsChange);
-    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+    document.addEventListener("webkitfullscreenchange", handleFsChange);
+    document.addEventListener("mozfullscreenchange", handleFsChange);
+    document.addEventListener("MSFullscreenChange", handleFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFsChange);
+      document.removeEventListener("webkitfullscreenchange", handleFsChange);
+      document.removeEventListener("mozfullscreenchange", handleFsChange);
+      document.removeEventListener("MSFullscreenChange", handleFsChange);
+    };
   }, []);
-
 
   const SuccessPopup = () => (
     <div className={`success-popup-overlay ${showSuccessPopup ? 'active' : ''}`}>
@@ -419,6 +607,11 @@ const CourseDetails = () => {
     </div>
   );
 
+  // Guard clause for undefined courseName (must be after all hooks)
+  if (!courseName) {
+    return <div>Course not found</div>;
+  }
+
   return (
     <div className="border-style">
       <div className="blur-border-style"></div>
@@ -432,40 +625,104 @@ const CourseDetails = () => {
                     <h3 className="cd-title">{courseName}</h3>
                     <div className="cd-progress-labels">
                       <span>Overall Progress</span>
-
                     </div>
                     <div className="cd-progress-track">
                       <div className="cd-progress-fill" style={{ width: `${overallProgress}%` }} />
                     </div>
                   </div>
 
-
-
-
                   <div className="sidebar-scrollable">
                     <div className="topics-list">
-                      {courseContent.map((t, index) => {
+
+                      {/* ── Interview Preparedness: grouped collapsible sidebar ── */}
+                      {isInterviewPrep && (() => {
+                        const groups = [
+                          { name: "Understanding Yourself" },
+                          { name: "Introduction to Communication" },
+                          { name: "Self Introduction" },
+                        ];
+                        return groups.map((group, gIdx) => {
+                          const subtopics = courseContent
+                            .map((t, i) => ({ ...t, flatIndex: i }))
+                            .filter(t => t.groupIndex === gIdx);
+                          const isGroupCollapsed = collapsedGroups[gIdx];
+                          const groupDone = subtopics.every(t => (topicProgress[t.flatIndex] || 0) === 100);
+                          const groupStarted = subtopics.some(t => (topicProgress[t.flatIndex] || 0) > 0);
+                          return (
+                            <div key={gIdx} className="ip-group-block">
+                              <div
+                                className={`ip-group-header ${groupDone ? 'group-done' : groupStarted ? 'group-started' : ''}`}
+                                onClick={() => setCollapsedGroups(prev => ({ ...prev, [gIdx]: !prev[gIdx] }))}
+                              >
+                                <span className="ip-group-title">{group.name}</span>
+                                <span className="ip-group-chevron">{isGroupCollapsed ? '▶' : '▼'}</span>
+                              </div>
+                              {!isGroupCollapsed && subtopics.map((t) => {
+                                const progress = topicProgress[t.flatIndex] || 0;
+                                const isLocked = getTopicLockedStatus(t.flatIndex);
+                                const isActive = !viewingAssignment && selectedTopicIndex === t.flatIndex;
+                                return (
+                                  <div
+                                    key={t.flatIndex}
+                                    className={`ip-subtopic-block ${isLocked ? 'topic-locked' : ''} ${isActive ? 'topic-active' : ''}`}
+                                    onClick={() => !isLocked && selectTopic(t.flatIndex)}
+                                  >
+                                    <div className="topic-info">
+                                      <strong>
+                                        {isLocked ? '🔒 ' : ''}
+                                        {t.topic}
+                                      </strong>
+                                    </div>
+                                    {!isLocked && (
+                                      <div style={{ height: '6px', background: '#eee', borderRadius: '10px', overflow: 'hidden', margin: '4px 0 2px 0' }}>
+                                        <div style={{ width: `${progress}%`, height: '100%', background: '#e49723ff', transition: 'width 0.4s ease' }} />
+                                      </div>
+                                    )}
+                                    {t.videos.map((video, vi) => (
+                                      <p key={vi} className={`video-link ${isActive ? 'active' : ''} ${isLocked ? 'disabled' : ''}`}>
+                                        {video.title}
+                                      </p>
+                                    ))}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          );
+                        });
+                      })()}
+                      {/* ── Existing courses: flat sidebar (unchanged) ── */}
+                      {!isInterviewPrep && courseContent.map((t, index) => {
                         const progress = topicProgress[index] || 0;
-
-                        let isTopicLocked = false;
-                        if (index === 1) isTopicLocked = (topicProgress[0] || 0) < 100;
-                        if (index === 2) isTopicLocked = !assignmentCompletion.html;
-                        if (index === 3) isTopicLocked = !assignmentCompletion.css1;
-                        if (index === 4) isTopicLocked = !assignmentCompletion.css2;
-
-                        // IMPORTANT: If a topic already has progress, it should NEVER be locked
-                        if (progress > 0) isTopicLocked = false;
-
+                        const isTopicLocked = getTopicLockedStatus(index);
                         const isActive = !viewingAssignment && selectedTopicIndex === index;
 
-                        // Integrated Assignment Data
-                        const assignments = [
-                          null, // Topic 0
-                          { title: "First HTML Page", type: 'html', completionKey: 'html' }, // Topic 1
-                          { title: "CSS Part 1", type: 'styling', completionKey: 'css1' }, // Topic 2
-                          { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' }, // Topic 3
-                          { title: "Registration Forms", type: 'forms', completionKey: 'forms' }, // Topic 4
-                        ];
+                        let assignments = [];
+                        if (safeCourseName.toLowerCase() === "python") {
+                          assignments = [
+                            null, // Topic 0
+                            { title: "Convert Distance", type: 'python1', completionKey: 'python1' },
+                            { title: "Total & Average Marks", type: 'python2', completionKey: 'python2' },
+                            { title: "Calculate Interest", type: 'python3', completionKey: 'python3' },
+                            null, // Topic 4
+                            { title: "Tuple", type: 'python4', completionKey: 'python4' },
+                            { title: "Remove Dups", type: 'python5', completionKey: 'python5' },
+                            { title: "Capitalize", type: 'python6', completionKey: 'python6' },
+                            { title: "Conditional Capitalize", type: 'python7', completionKey: 'python7' },
+                            { title: "Hypotenuse", type: 'python8', completionKey: 'python8' },
+                            { title: "Student Roster", type: 'python9', completionKey: 'python9' },
+                            { title: "Animal Counts", type: 'python10', completionKey: 'python10' },
+                            { title: "Shape", type: 'python11', completionKey: 'python11' },
+                          ];
+                        } else {
+                          assignments = [
+                            null, // Topic 0
+                            { title: "First HTML Page", type: 'html', completionKey: 'html' },
+                            { title: "CSS Part 1", type: 'styling', completionKey: 'css1' },
+                            { title: "CSS Part 2", type: 'styling2', completionKey: 'css2' },
+                            { title: "Registration Forms", type: 'forms', completionKey: 'forms' },
+                          ];
+                        }
+
                         const topicAssignment = assignments[index];
                         const isAssignmentCompleted = topicAssignment ? assignmentCompletion[topicAssignment.completionKey] : false;
                         const isAssignmentUnlocked = (progress === 100 || isAssignmentCompleted) && !isTopicLocked;
@@ -483,12 +740,9 @@ const CourseDetails = () => {
                               </strong>
                             </div>
                             {!isTopicLocked && (
-                              <>
-                                <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
-                                  <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
-                                </div>
-
-                              </>
+                              <div style={{ height: "6px", background: "#eee", borderRadius: "10px", overflow: "hidden", margin: "6px 0" }}>
+                                <div style={{ width: `${progress}%`, height: "100%", background: "#e49723ff", transition: "width 0.4s ease" }} />
+                              </div>
                             )}
                             {t.videos.map((video, i) => (
                               <p
@@ -499,42 +753,53 @@ const CourseDetails = () => {
                               </p>
                             ))}
 
-                            {/* Integrated Assignment Section */}
                             {topicAssignment && isAssignmentAllowed && (
-                              <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
-                                <div
-                                  className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
-                                  onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type)}
-                                >
-                                  <div className="assignment-icon">
-                                    {isAssignmentCompleted ? "✔" : "📝"}
+                              safeCourseName.toLowerCase() !== "python" ||
+                              true // Show all Python assignments in sidebar for clarity
+                            ) && (
+                                <div className="topic-assignment-section" onClick={(e) => e.stopPropagation()}>
+                                  <div
+                                    className={`assignment-action-card ${!isAssignmentUnlocked ? 'locked' : ''} ${isAssignmentCompleted ? 'completed' : ''} ${viewingAssignment && assignmentType === topicAssignment.type ? 'active' : ''}`}
+                                    onClick={() => (isAssignmentUnlocked || isAssignmentCompleted) && handleAssignmentClick(topicAssignment.type, index)}
+                                  >
+                                    <div className="assignment-icon">
+                                      {isAssignmentCompleted ? "✔" : "📝"}
+                                    </div>
+                                    <div className="assignment-info">
+                                      <h4>{topicAssignment.title}</h4>
+                                      <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
+                                        {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Try Assignment")}
+                                      </span>
+                                    </div>
+                                    {isAssignmentUnlocked && !isAssignmentCompleted && (
+                                      <div className="assignment-arrow">→</div>
+                                    )}
                                   </div>
-                                  <div className="assignment-info">
-                                    <h4>{topicAssignment.title}</h4>
-                                    <span className={`assignment-status ${isAssignmentCompleted ? 'completed' : ''}`}>
-                                      {isAssignmentCompleted ? "Completed" : (!isAssignmentUnlocked ? "Locked (Complete topic first)" : "Try Assignment")}
-                                    </span>
-                                  </div>
-                                  {isAssignmentUnlocked && !isAssignmentCompleted && (
-                                    <div className="assignment-arrow">→</div>
-                                  )}
                                 </div>
-                              </div>
-                            )}
+                              )}
                           </div>
                         );
                       })}
+                      {/* ── close !isInterviewPrep block ── */}
+                      {!isInterviewPrep && null /* closing guard — map above renders its own closing */}
                     </div>
                   </div>
                 </div>
 
-                <div className="course-player" ref={playerRef}>
+                <div
+                  className="course-player"
+                  ref={playerRef}
+                  style={isFullscreen ? { display: "flex", flexDirection: "column", width: "100vw", height: "100vh", background: "#000", borderRadius: 0, padding: 0, margin: 0 } : {}}
+                >
                   {viewingAssignment && isAssignmentAllowed ? (
                     <div className="assignment-inline-view">
-                      <FirstHtmlPage
+                      <AssignmentEditor
                         type={assignmentType}
                         onClose={handleCloseAssignment}
                         applicantId={applicantId}
+                        assignmentType={assignmentType}
+                        onNavigate={handleAssignmentNavigate}
+                        onNextTopic={handleNextTopic}
                       />
                     </div>
                   ) : (
@@ -556,6 +821,7 @@ const CourseDetails = () => {
                         className="video-frame"
                         title="Course Player"
                         allowFullScreen
+                        style={isFullscreen ? { width: "100%", height: "100%", border: "none", flex: 1 } : {}}
                       />
                       <button
                         onClick={toggleFullscreen}

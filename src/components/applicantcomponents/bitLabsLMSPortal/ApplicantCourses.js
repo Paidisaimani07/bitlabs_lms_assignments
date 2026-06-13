@@ -6,6 +6,7 @@ import java from "./assets/java.jfif";
 import sql from "./assets/sql.jfif";
 import react from "./assets/reactjs.jfif";
 import springboot from "./assets/springboot.jfif";
+import interviewprep from "./assets/interview.png";
 
 import { useNavigate } from "react-router-dom";
 import ProgressAPIService from "../../../services/ProgressAPIService.js";
@@ -27,11 +28,13 @@ const ApplicantCourses = () => {
     { id: 4, name: "SQL", img: sql },
     { id: 5, name: "Spring Boot", img: springboot },
     { id: 6, name: "React", img: react },
+    { id: 7, name: "Interview Preparedness", img: interviewprep },
   ];
 
   const coursesMap = {
     "html & css": 5,
     "python": 13,
+    "interview preparedness": 7,
   };
 
   // Load progress from backend on component mount
@@ -46,9 +49,22 @@ const ApplicantCourses = () => {
         
         // Convert to object with course names as keys for easy lookup
         const progressMap = {};
-        applicantCourses.forEach(course => {
-          progressMap[course.courseName.toLowerCase()] = course.overallProgress;
-        });
+        for (const course of applicantCourses) {
+          const courseNameLower = course.courseName.toLowerCase();
+          if (courseNameLower === "interview preparedness") {
+            try {
+              const topicsProgress = await ProgressAPIService.getCourseTopics(course.id);
+              const totalProgress = topicsProgress.reduce((sum, t) => sum + (t.topicProgress || 0), 0);
+              const calculatedProgress = Math.round(totalProgress / 10);
+              progressMap[courseNameLower] = calculatedProgress;
+            } catch (e) {
+              console.error("Failed to load interview prep topics progress:", e);
+              progressMap[courseNameLower] = course.overallProgress;
+            }
+          } else {
+            progressMap[courseNameLower] = course.overallProgress;
+          }
+        }
         
         setCoursesProgress(progressMap);
       } catch (error) {

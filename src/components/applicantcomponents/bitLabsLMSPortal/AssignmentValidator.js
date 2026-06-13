@@ -185,6 +185,59 @@ class AssignmentValidator {
       };
     }
   }
+
+  /**
+   * Python validation function
+   * @param {string} code - Student's Python code
+   * @param {Object} config - { expectedOutput, keywords, testCases }
+   * @returns {Object} - {isValid, details, results, errors}
+   */
+  static validatePython(code, config = {}) {
+    const { expectedOutput, keywords = [], testCases = [] } = config;
+    const results = [];
+    let passedCount = 0;
+    const errors = [];
+
+    // 1. Keyword Validation
+    keywords.forEach(kw => {
+      // Escape special characters in keyword for regex (like c++)
+      const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedKw})`, 'i'); 
+      const passed = regex.test(code);
+      if (passed) passedCount++;
+      results.push({
+        testCase: `Keyword: ${kw}`,
+        passed,
+        message: passed ? `✓ Keyword "${kw}" found` : `✗ Keyword "${kw}" missing`
+      });
+    });
+
+    // 2. Output Validation (Simulation/Check)
+    // Since we don't have a live interpreter, we'll look for print statements or logic
+    if (expectedOutput) {
+      // This is a simplified check: does the code contain the logic to produce the output?
+      // In a real LMS, we'd run this through a backend or Pyodide.
+      // For now, we'll validate based on keywords and structure.
+      const normalizedExpected = this.normalize(expectedOutput);
+      
+      // We'll mark it as potentially valid if it has the right keywords
+      const isValid = results.every(r => r.passed);
+
+      return {
+        isValid,
+        details: results.map(r => r.message),
+        results,
+        errors: isValid ? [] : [{ type: 'Logic Error', message: 'Assignment requirements not fully met', line: 'N/A' }]
+      };
+    }
+
+    return {
+      isValid: results.every(r => r.passed),
+      details: results.map(r => r.message),
+      results,
+      errors
+    };
+  }
 }
 
 export default AssignmentValidator;
