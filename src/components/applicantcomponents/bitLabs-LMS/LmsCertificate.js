@@ -102,7 +102,21 @@ const LmsCertificate = () => {
       course.updatedAt ||
       course.updated_at;
 
-    const date = src ? new Date(src) : new Date();
+    let date;
+    if (Array.isArray(src)) {
+      const year = src[0] || new Date().getFullYear();
+      const month = src[1] !== undefined ? src[1] - 1 : new Date().getMonth();
+      const day = src[2] || 1;
+      date = new Date(year, month, day);
+    } else if (src) {
+      date = new Date(src);
+    } else {
+      date = new Date();
+    }
+
+    if (isNaN(date.getTime())) {
+      date = new Date();
+    }
 
     const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -198,15 +212,17 @@ const LmsCertificate = () => {
             </div>
 
             <div className="cert-modal-body">
-
-              <CertificateTemplate
-                certificateRef={certificateRef}
-                applicantName={applicantName}
-                course={selectedCourse}
-                getIssuedDate={getIssuedDate}
-                getVerificationUrl={getVerificationUrl}
-              />
-
+              <div className="certificate-preview-outer">
+                <div className="certificate-preview-scaler">
+                  <CertificateTemplate
+                    certificateRef={certificateRef}
+                    applicantName={applicantName}
+                    course={selectedCourse}
+                    getIssuedDate={getIssuedDate}
+                    getVerificationUrl={getVerificationUrl}
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="cert-modal-footer">

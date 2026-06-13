@@ -9,6 +9,7 @@ import KeySkillsCard from "./KeySkillsCard";
 import SkillBadgesGrid from "./SkillBadgesGrid";
 import "./modalpopup.css";
 import "./Portfolio.css";
+import "./bitLabs-LMS/LmsCertificate.css";
 import ApplicantAtsResume from "./ApplicantAtsResume/ApplicantAtsResume";
 import { useResume } from "./ResumeContext";
 import { useState, useEffect } from "react";
@@ -41,6 +42,37 @@ const getCourseIcon = (courseName) => {
   if (name.includes("sql")) return sqlIcon;
   if (name.includes("java")) return javaIcon;
   return null;
+};
+
+const getIssuedDate = (course) => {
+  if (!course) return '';
+  const src =
+    course.completedDate ||
+    course.completed_date ||
+    course.updatedAt ||
+    course.updated_at;
+
+  let date;
+  if (Array.isArray(src)) {
+    const year = src[0] || new Date().getFullYear();
+    const month = src[1] !== undefined ? src[1] - 1 : new Date().getMonth();
+    const day = src[2] || 1;
+    date = new Date(year, month, day);
+  } else if (src) {
+    date = new Date(src);
+  } else {
+    date = new Date();
+  }
+
+  if (isNaN(date.getTime())) {
+    date = new Date();
+  }
+
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  return `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
 };
 
 const ApplicantViewProfile = () => {
@@ -102,7 +134,7 @@ const ApplicantViewProfile = () => {
       setDownloadingCertificate(course);
       // Wait for offscreen template rendering
       await new Promise((resolve) => setTimeout(resolve, 500));
-      
+
       if (!downloadRef.current) {
         console.error("Download template ref not found");
         return;
@@ -326,8 +358,8 @@ const ApplicantViewProfile = () => {
               {loadingCertificates ? (
                 <p>Loading certificates...</p>
               ) : (
-                <LmsCertificatesGrid 
-                  certificates={lmsCertificates} 
+                <LmsCertificatesGrid
+                  certificates={lmsCertificates}
                   onViewCertificate={handleViewCertificate}
                   onDownloadCertificate={handleDownloadCertificate}
                 />
@@ -337,8 +369,8 @@ const ApplicantViewProfile = () => {
 
             {/* Certificate View Modal */}
             {showCertificateModal && selectedCertificate && (
-              <div 
-                className="cert-modal-backdrop" 
+              <div
+                className="cert-modal-backdrop"
                 onClick={() => setShowCertificateModal(false)}
                 style={{
                   position: 'fixed',
@@ -353,7 +385,7 @@ const ApplicantViewProfile = () => {
                   zIndex: 999
                 }}
               >
-                <div 
+                <div
                   className="cert-modal-dialog"
                   onClick={(e) => e.stopPropagation()}
                   style={{
@@ -368,7 +400,7 @@ const ApplicantViewProfile = () => {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{selectedCertificate.courseName}</h3>
-                    <button 
+                    <button
                       onClick={() => setShowCertificateModal(false)}
                       style={{
                         background: 'none',
@@ -381,104 +413,54 @@ const ApplicantViewProfile = () => {
                       ×
                     </button>
                   </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    <div 
-                      style={{
-                        position: 'relative',
-                        width: '1060px',
-                        height: '750px',
-                        fontFamily: 'Georgia, serif',
-                        overflow: 'visible',
-                        transform: 'scale(0.85)',
-                        transformOrigin: 'top center'
-                      }}
-                    >
-                      <img 
-                        src={certificateBg} 
-                        alt="Certificate" 
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain'
-                        }}
-                      />
-                      
-                      <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '13%',
-                        transform: 'translateX(-50%)',
-                        fontSize: '35px',
-                        fontWeight: 700,
-                        color: '#111827',
-                        whiteSpace: 'nowrap'
-                      }}>
-                        {applicantName}
-                      </div>
-                      
-                      <div style={{
-                        position: 'absolute',
-                        top: '60%',
-                        left: '8%',
-                        fontSize: '20px',
-                        color: '#334155',
-                        textAlign: 'left',
-                        maxWidth: '90%',
-                        wordWrap: 'break-word'
-                      }}>
-                        {selectedCertificate.courseName}
-                      </div>
-                      
-                      <div style={{
-                        position: 'absolute',
-                        top: '65.5%',
-                        left: '16%',
-                        fontSize: '14px',
-                        color: '#475569'
-                      }}>
-                        {selectedCertificate.completedDate || selectedCertificate.completed_date || new Date().toLocaleDateString()}
-                      </div>
 
-                      {getCourseIcon(selectedCertificate.courseName) && (
+                  <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="certificate-preview-outer">
+                      <div className="certificate-preview-scaler">
                         <div 
-                          style={{
-                            position: 'absolute',
-                            bottom: '100px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 10
-                          }}
+                          className="certificate-template-wrapper"
+                          style={{ fontFamily: 'Georgia, serif' }}
                         >
                           <img 
-                            src={getCourseIcon(selectedCertificate.courseName)} 
-                            alt="Skill Icon" 
-                            style={{
-                              width: '100px',
-                              height: 'auto'
-                            }}
+                            src={certificateBg} 
+                            alt="Certificate" 
+                            className="certificate-background"
                           />
-                        </div>
-                      )}
+                          
+                          <div className="certificate-name">
+                            {applicantName}
+                          </div>
+                          
+                          <div className="certificate-course">
+                            {selectedCertificate.courseName}
+                          </div>
+                          
+                          <div className="certificate-date">
+                            {getIssuedDate(selectedCertificate)}
+                          </div>
 
-                      <div style={{
-                        position: 'absolute',
-                        top: '70%',
-                        right: '70px'
-                      }}>
-                        <QRCode
-                          value={`name:${selectedCertificate.applicantName || selectedCertificate.applicant_name || applicantName || 'Student'}\ncourse:${selectedCertificate.courseName || selectedCertificate.course_name || 'Course'}\nVERIFIED`}
-                          size={120}
-                          bordered={false}
-                          type="svg"
-                        />
+                          {getCourseIcon(selectedCertificate.courseName) && (
+                            <div className="certificate-skill-icon">
+                              <img 
+                                src={getCourseIcon(selectedCertificate.courseName)} 
+                                alt="Skill Icon" 
+                              />
+                            </div>
+                          )}
+
+                          <div className="certificate-qr">
+                            <QRCode
+                              value={`name:${selectedCertificate.applicantName || selectedCertificate.applicant_name || applicantName || 'Student'}\ncourse:${selectedCertificate.courseName || selectedCertificate.course_name || 'Course'}\nVERIFIED`}
+                              size={120}
+                              bordered={false}
+                              type="svg"
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
                     <button
                       onClick={() => handleDownloadCertificate(selectedCertificate)}
@@ -518,89 +500,37 @@ const ApplicantViewProfile = () => {
               <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
                 <div 
                   ref={downloadRef}
-                  style={{
-                    position: 'relative',
-                    width: '1060px',
-                    height: '750px',
-                    fontFamily: 'Georgia, serif',
-                    overflow: 'visible'
-                  }}
+                  className="certificate-template-wrapper"
+                  style={{ fontFamily: 'Georgia, serif' }}
                 >
                   <img 
                     src={certificateBg} 
                     alt="Certificate" 
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain'
-                    }}
+                    className="certificate-background"
                   />
                   
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '13%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '35px',
-                    fontWeight: 700,
-                    color: '#111827',
-                    whiteSpace: 'nowrap'
-                  }}>
+                  <div className="certificate-name">
                     {applicantName}
                   </div>
                   
-                  <div style={{
-                    position: 'absolute',
-                    top: '60%',
-                    left: '8%',
-                    fontSize: '20px',
-                    color: '#334155',
-                    textAlign: 'left',
-                    maxWidth: '90%',
-                    wordWrap: 'break-word'
-                  }}>
+                  <div className="certificate-course">
                     {downloadingCertificate.courseName}
                   </div>
                   
-                  <div style={{
-                    position: 'absolute',
-                    top: '65.5%',
-                    left: '16%',
-                    fontSize: '14px',
-                    color: '#475569'
-                  }}>
-                    {downloadingCertificate.completedDate || downloadingCertificate.completed_date || new Date().toLocaleDateString()}
+                  <div className="certificate-date">
+                    {getIssuedDate(downloadingCertificate)}
                   </div>
 
                   {getCourseIcon(downloadingCertificate.courseName) && (
-                    <div 
-                      style={{
-                        position: 'absolute',
-                        bottom: '100px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 10
-                      }}
-                    >
+                    <div className="certificate-skill-icon">
                       <img 
                         src={getCourseIcon(downloadingCertificate.courseName)} 
                         alt="Skill Icon" 
-                        style={{
-                          width: '100px',
-                          height: 'auto'
-                        }}
                       />
                     </div>
                   )}
 
-                  <div style={{
-                    position: 'absolute',
-                    top: '70%',
-                    right: '70px'
-                  }}>
+                  <div className="certificate-qr">
                     <QRCode
                       value={`name:${downloadingCertificate.applicantName || downloadingCertificate.applicant_name || applicantName || 'Student'}\ncourse:${downloadingCertificate.courseName || downloadingCertificate.course_name || 'Course'}\nVERIFIED`}
                       size={120}
