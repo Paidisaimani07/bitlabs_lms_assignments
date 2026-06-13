@@ -1,4 +1,6 @@
 import certificateBg from '../../images/certificate-template.png';
+import eyeIcon from '../../images/eye-certificate.png';
+import downloadIcon from '../../images/download-certificate.png';
 
 /**
  * LMS CERTIFICATES GRID (FIXED)
@@ -8,6 +10,7 @@ import certificateBg from '../../images/certificate-template.png';
 const LmsCertificatesGrid = ({
     certificates = [],
     onViewCertificate,
+    onDownloadCertificate,
 }) => {
 
     if (!certificates.length) {
@@ -25,22 +28,26 @@ const LmsCertificatesGrid = ({
 
     /* ---------------- DOWNLOAD ---------------- */
     const handleDownload = async (cert) => {
-        try {
-            if (!cert?.certificateUrl) {
-                alert("Certificate not available yet");
-                return;
+        if (onDownloadCertificate) {
+            onDownloadCertificate(cert);
+        } else {
+            try {
+                if (!cert?.certificateUrl) {
+                    alert("Certificate not available yet");
+                    return;
+                }
+
+                const response = await fetch(cert.certificateUrl);
+                const blob = await response.blob();
+
+                const link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = `${cert.courseName || "certificate"}.png`;
+                link.click();
+
+            } catch (err) {
+                console.error("Download failed:", err);
             }
-
-            const response = await fetch(cert.certificateUrl);
-            const blob = await response.blob();
-
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `${cert.courseName || "certificate"}.png`;
-            link.click();
-
-        } catch (err) {
-            console.error("Download failed:", err);
         }
     };
 
@@ -67,24 +74,29 @@ const LmsCertificatesGrid = ({
                             {cert.courseName}
                         </div>
 
+                        {/* Hover Overlay */}
+                        <div className="cert-hover-overlay">
+                            <button 
+                                className="cert-icon-btn view-btn" 
+                                onClick={() => handleView(cert)}
+                                title="View"
+                            >
+                                <img src={eyeIcon} alt="View" />
+                            </button>
+                            <button 
+                                className="cert-icon-btn download-btn" 
+                                onClick={() => handleDownload(cert)}
+                                title="Download"
+                            >
+                                <img src={downloadIcon} alt="Download" />
+                            </button>
+                        </div>
+
                     </div>
 
                     {/* TITLE */}
                     <div className="cert-title">
                         {cert.courseName || "Course"}
-                    </div>
-
-                    {/* ACTIONS */}
-                    <div className="cert-actions">
-
-                        <button onClick={() => handleView(cert)}>
-                            👁 View
-                        </button>
-
-                        <button onClick={() => handleDownload(cert)}>
-                            ⬇ Download
-                        </button>
-
                     </div>
 
                 </div>

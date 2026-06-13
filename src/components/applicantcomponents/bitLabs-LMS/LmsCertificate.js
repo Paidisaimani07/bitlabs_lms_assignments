@@ -7,9 +7,29 @@ import ProgressAPIService from './ProgressAPIService';
 import { useUserContext } from '../../common/UserProvider';
 import apiClient from '../../../services/apiClient';
 import certificateBg from '../../../images/certificate-template.png';
-
+import htmlCssIcon from '../../../images/html-css-certificate.png';
+import pythonIcon from '../../../images/python-certificate.png';
+import javaIcon from '../../../images/java-certificate.png';
+import sqlIcon from '../../../images/sql-certificate.png';
+import javascriptIcon from '../../../images/javascript-certificate.png';
+import reactIcon from '../../../images/react-certificate.png';
+import springbootIcon from '../../../images/springboot-certificate.png';
+import LmsCertificatesGrid from '../LmsCertificatesGrid';
+import '../Portfolio.css';
 import './LmsCertificate.css';
 
+const getCourseIcon = (courseName) => {
+  if (!courseName) return null;
+  const name = courseName.toLowerCase();
+  if (name.includes("html") || name.includes("css")) return htmlCssIcon;
+  if (name.includes("python")) return pythonIcon;
+  if (name.includes("springboot") || name.includes("spring boot")) return springbootIcon;
+  if (name.includes("react")) return reactIcon;
+  if (name.includes("javascript") || name.includes("js")) return javascriptIcon;
+  if (name.includes("sql")) return sqlIcon;
+  if (name.includes("java")) return javaIcon;
+  return null;
+};
 const LmsCertificate = () => {
   const [completedCourses, setCompletedCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -85,8 +105,8 @@ const LmsCertificate = () => {
     const date = src ? new Date(src) : new Date();
 
     const months = [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
     return `Issued On ${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
@@ -159,32 +179,12 @@ const LmsCertificate = () => {
       </div>
 
       {/* GRID */}
-      <div className="certificate-cards-grid">
-
-        {completedCourses.map((course) => (
-          <div key={course.id} className="certificate-course-card">
-
-            <h3>{course.courseName}</h3>
-
-            <p>{getIssuedDate(course)}</p>
-
-            <div className="card-actions">
-
-              <button onClick={() => handleViewCertificate(course)}>
-                👁 View Certificate
-              </button>
-
-              <button
-                onClick={() => handleDownloadCertificate(course)}
-                disabled={downloadingId === course.id}
-              >
-                {downloadingId === course.id ? 'Generating...' : 'Download'}
-              </button>
-
-            </div>
-
-          </div>
-        ))}
+      <div className="lms-certificate-container">
+        <LmsCertificatesGrid
+          certificates={completedCourses}
+          onViewCertificate={handleViewCertificate}
+          onDownloadCertificate={handleDownloadCertificate}
+        />
       </div>
 
       {/* MODAL */}
@@ -221,6 +221,19 @@ const LmsCertificate = () => {
         </div>
       )}
 
+      {/* Hidden container for offscreen PDF rendering */}
+      {downloadingId && selectedCourse && (
+        <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+          <CertificateTemplate
+            certificateRef={certificateRef}
+            applicantName={applicantName}
+            course={selectedCourse}
+            getIssuedDate={getIssuedDate}
+            getVerificationUrl={getVerificationUrl}
+          />
+        </div>
+      )}
+
     </div>
   );
 };
@@ -244,11 +257,18 @@ const CertificateTemplate = ({
       {getIssuedDate(course).replace("Issued On ", "")}
     </div>
 
+    {getCourseIcon(course.courseName) && (
+      <div className="certificate-skill-icon">
+        <img src={getCourseIcon(course.courseName)} alt="Skill Icon" />
+      </div>
+    )}
+
     <div className="certificate-qr">
       <QRCode
-        value={`name:${applicantName}\ncourse:${course.courseName}`}
+        value={`name:${applicantName || course.applicantName || course.applicant_name || 'Student'}\ncourse:${course.courseName || course.course_name || 'Course'}\nVERIFIED`}
         size={120}
         bordered={false}
+        type="svg"
       />
     </div>
 

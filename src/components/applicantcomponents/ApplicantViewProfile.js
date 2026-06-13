@@ -19,6 +19,30 @@ import LmsUnlockModal from "./bitLabs-LMS/LmsUnlockModal";
 import LmsCertificatesGrid from "./LmsCertificatesGrid";
 import certificateBg from '../../images/certificate-template.png';
 import apiClient from '../../services/apiClient';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import { QRCode } from 'antd';
+import htmlCssIcon from '../../images/html-css-certificate.png';
+import pythonIcon from '../../images/python-certificate.png';
+import javaIcon from '../../images/java-certificate.png';
+import sqlIcon from '../../images/sql-certificate.png';
+import javascriptIcon from '../../images/javascript-certificate.png';
+import reactIcon from '../../images/react-certificate.png';
+import springbootIcon from '../../images/springboot-certificate.png';
+
+const getCourseIcon = (courseName) => {
+  if (!courseName) return null;
+  const name = courseName.toLowerCase();
+  if (name.includes("html") || name.includes("css")) return htmlCssIcon;
+  if (name.includes("python")) return pythonIcon;
+  if (name.includes("springboot") || name.includes("spring boot")) return springbootIcon;
+  if (name.includes("react")) return reactIcon;
+  if (name.includes("javascript") || name.includes("js")) return javascriptIcon;
+  if (name.includes("sql")) return sqlIcon;
+  if (name.includes("java")) return javaIcon;
+  return null;
+};
+
 const ApplicantViewProfile = () => {
   const { user } = useUserContext();
   const applicantId = user?.id;
@@ -68,6 +92,38 @@ const ApplicantViewProfile = () => {
   const handleViewCertificate = (cert) => {
     setSelectedCertificate(cert);
     setShowCertificateModal(true);
+  };
+
+  const [downloadingCertificate, setDownloadingCertificate] = useState(null);
+  const downloadRef = useRef(null);
+
+  const handleDownloadCertificate = async (course) => {
+    try {
+      setDownloadingCertificate(course);
+      // Wait for offscreen template rendering
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      
+      if (!downloadRef.current) {
+        console.error("Download template ref not found");
+        return;
+      }
+
+      const canvas = await html2canvas(downloadRef.current, {
+        scale: 2.5,
+        useCORS: true
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg');
+      const pdf = new jsPDF('landscape', 'mm', 'a4');
+      pdf.addImage(imgData, 'JPEG', 0, 0, 297, 210);
+
+      const name = course.courseName?.replace(/[^a-z0-9]/gi, '_') || 'Certificate';
+      pdf.save(`${name}.pdf`);
+    } catch (err) {
+      console.error("Download failed:", err);
+    } finally {
+      setDownloadingCertificate(null);
+    }
   };
 
   const [loadedSections, setLoadedSections] = useState({
@@ -259,50 +315,6 @@ const ApplicantViewProfile = () => {
                 onLoaded={() => markLoaded("skillBadges")}
                 showContent={allLoaded}
               />
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', paddingBottom: '8px' }}>
-                <button
-                  style={{
-                    position: 'relative',
-                    overflow: 'hidden',
-                    background: 'transparent linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box',
-                    color: '#FFFFFF',
-                    padding: '16px 40px',
-                    borderRadius: '50px',
-                    border: 'none',
-                    fontWeight: '500',
-                    fontSize: '14px',
-                    letterSpacing: '0.5px',
-                    textTransform: 'none',
-                    cursor: 'pointer',
-                    boxShadow: '0 10px 25px rgba(249, 115, 22, 0.3)',
-                    transition: 'all 0.3s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    fontFamily: 'inherit',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-3px)';
-                    e.currentTarget.style.boxShadow = '0 12px 30px rgba(249, 115, 22, 0.45)';
-                    e.currentTarget.style.background = '#FFFFFF';
-                    e.currentTarget.style.color = '#E66A0E';
-                    e.currentTarget.style.border = '2px solid #E66A0E';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 10px 25px rgba(249, 115, 22, 0.3)';
-                    e.currentTarget.style.background = 'transparent linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%) 0% 0% no-repeat padding-box';
-                    e.currentTarget.style.color = '#FFFFFF';
-                    e.currentTarget.style.border = 'none';
-                  }}
-                  onClick={handleLmsCertificatesClick}
-                  disabled={checkingProgress}
-                >
-                  <span style={{ position: 'relative', zIndex: 1 }}>
-                    {checkingProgress ? 'Checking...' : 'LMS Certificates'}
-                  </span>
-                </button>
-              </div>
             </div>
             {/* =================== /Skill Badges (NEW CARD) =================== */}
             {/* ===================== LMS CERTIFICATES ===================== */}
@@ -317,6 +329,7 @@ const ApplicantViewProfile = () => {
                 <LmsCertificatesGrid 
                   certificates={lmsCertificates} 
                   onViewCertificate={handleViewCertificate}
+                  onDownloadCertificate={handleDownloadCertificate}
                 />
               )}
             </div>
@@ -430,23 +443,57 @@ const ApplicantViewProfile = () => {
                         {selectedCertificate.completedDate || selectedCertificate.completed_date || new Date().toLocaleDateString()}
                       </div>
 
-                 
+                      {getCourseIcon(selectedCertificate.courseName) && (
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            bottom: '100px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 10
+                          }}
+                        >
+                          <img 
+                            src={getCourseIcon(selectedCertificate.courseName)} 
+                            alt="Skill Icon" 
+                            style={{
+                              width: '100px',
+                              height: 'auto'
+                            }}
+                          />
+                        </div>
+                      )}
 
                       <div style={{
                         position: 'absolute',
                         top: '70%',
                         right: '70px'
                       }}>
-                        {/* <QRCode
-                          value={`name:${selectedCertificate.applicantName || selectedCertificate.applicant_name || user?.name}\ncourse:${selectedCertificate.courseName}`}
+                        <QRCode
+                          value={`name:${selectedCertificate.applicantName || selectedCertificate.applicant_name || applicantName || 'Student'}\ncourse:${selectedCertificate.courseName || selectedCertificate.course_name || 'Course'}\nVERIFIED`}
                           size={120}
                           bordered={false}
-                        /> */}
+                          type="svg"
+                        />
                       </div>
                     </div>
                   </div>
                   
                   <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+                    <button
+                      onClick={() => handleDownloadCertificate(selectedCertificate)}
+                      style={{
+                        padding: '10px 20px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: 'linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%)',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontWeight: 600
+                      }}
+                    >
+                      Download PDF
+                    </button>
                     <button
                       onClick={() => setShowCertificateModal(false)}
                       style={{
@@ -461,6 +508,105 @@ const ApplicantViewProfile = () => {
                     >
                       Close
                     </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Hidden container for offscreen PDF rendering and download capture */}
+            {downloadingCertificate && (
+              <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+                <div 
+                  ref={downloadRef}
+                  style={{
+                    position: 'relative',
+                    width: '1060px',
+                    height: '750px',
+                    fontFamily: 'Georgia, serif',
+                    overflow: 'visible'
+                  }}
+                >
+                  <img 
+                    src={certificateBg} 
+                    alt="Certificate" 
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '13%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '35px',
+                    fontWeight: 700,
+                    color: '#111827',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {applicantName}
+                  </div>
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '60%',
+                    left: '8%',
+                    fontSize: '20px',
+                    color: '#334155',
+                    textAlign: 'left',
+                    maxWidth: '90%',
+                    wordWrap: 'break-word'
+                  }}>
+                    {downloadingCertificate.courseName}
+                  </div>
+                  
+                  <div style={{
+                    position: 'absolute',
+                    top: '65.5%',
+                    left: '16%',
+                    fontSize: '14px',
+                    color: '#475569'
+                  }}>
+                    {downloadingCertificate.completedDate || downloadingCertificate.completed_date || new Date().toLocaleDateString()}
+                  </div>
+
+                  {getCourseIcon(downloadingCertificate.courseName) && (
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        bottom: '100px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 10
+                      }}
+                    >
+                      <img 
+                        src={getCourseIcon(downloadingCertificate.courseName)} 
+                        alt="Skill Icon" 
+                        style={{
+                          width: '100px',
+                          height: 'auto'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{
+                    position: 'absolute',
+                    top: '70%',
+                    right: '70px'
+                  }}>
+                    <QRCode
+                      value={`name:${downloadingCertificate.applicantName || downloadingCertificate.applicant_name || applicantName || 'Student'}\ncourse:${downloadingCertificate.courseName || downloadingCertificate.course_name || 'Course'}\nVERIFIED`}
+                      size={120}
+                      bordered={false}
+                      type="svg"
+                    />
                   </div>
                 </div>
               </div>
