@@ -186,15 +186,79 @@
   background: #fff;
   border-radius: 12px;
   width: 90%;
-  max-width: 900px;
-  padding: 20px;
+  max-width: 800px;
+  padding: 24px;
   animation: fadeIn 0.3s ease;
+  position: relative;
 }
 
 .cert-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-right: 40px;
+  margin-bottom: 15px;
+}
+
+.cert-modal-close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 100;
+}
+
+.cert-modal-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: scale(1.05);
+}
+
+.cert-modal-close-btn:active {
+  transform: scale(0.95);
+}
+
+.cert-btn-primary {
+  padding: 10px 20px !important;
+  border-radius: 4px !important;
+  border: none !important;
+  background: linear-gradient(286deg, #fbbb5c 0%, #e66a0e 100%) !important;
+  color: white !important;
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.cert-btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.cert-btn-secondary {
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 2px solid #e66a0e;
+  background: white;
+  color: #e66a0e;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.cert-btn-secondary:hover {
+  background: #fff8f5;
+  transform: translateY(-1px);
 }
 
 .cert-modal-title {
@@ -244,19 +308,18 @@
   /* 🔥 prevents border cut */
 }
 
-/* Name FIX (perfect center) */
+/* Name FIX (left-aligned) */
 .certificate-name {
   position: absolute;
   top: 50%;
-  left: 13%;
-  transform: translateX(-50%);
+  left: 8%;
   font-size: 35px;
   font-weight: 700;
   color: #111827;
   white-space: nowrap;
 }
 
-/* Course FIX */
+/* Course FIX (left-aligned) */
 .certificate-course {
   position: absolute;
   top: 62%;
@@ -301,7 +364,7 @@
 /* Responsive Wrapper for Certificate Preview in Modal */
 .certificate-preview-outer {
   width: 100%;
-  height: 637.5px; /* Default desktop height: 750 * 0.85 */
+  height: 487.5px; /* Default desktop height: 750 * 0.65 */
   display: flex;
   justify-content: center;
   overflow: hidden;
@@ -309,18 +372,18 @@
 }
 
 .certificate-preview-scaler {
-  transform: scale(0.85);
+  transform: scale(0.65);
   transform-origin: top center;
   flex-shrink: 0;
 }
 
 /* Media Queries for responsiveness */
-@media (max-width: 992px) {
+@media (max-width: 850px) {
   .certificate-preview-scaler {
-    transform: scale(0.7);
+    transform: scale(0.55);
   }
   .certificate-preview-outer {
-    height: 525px; /* 750 * 0.7 */
+    height: 412.5px; /* 750 * 0.55 */
   }
 }
 

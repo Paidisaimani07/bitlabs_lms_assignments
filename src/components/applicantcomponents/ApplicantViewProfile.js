@@ -393,26 +393,23 @@ const ApplicantViewProfile = () => {
                     background: '#fff',
                     borderRadius: '12px',
                     width: '90%',
-                    maxWidth: '900px',
-                    padding: '20px',
+                    maxWidth: '800px',
+                    padding: '24px',
                     maxHeight: '90vh',
-                    overflow: 'auto'
+                    overflow: 'auto',
+                    position: 'relative'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                  <button
+                    className="cert-modal-close-btn"
+                    onClick={() => setShowCertificateModal(false)}
+                    aria-label="Close"
+                  >
+                    ×
+                  </button>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', paddingRight: '40px' }}>
                     <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{selectedCertificate.courseName}</h3>
-                    <button
-                      onClick={() => setShowCertificateModal(false)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '24px',
-                        cursor: 'pointer',
-                        color: '#64748b'
-                      }}
-                    >
-                      ×
-                    </button>
                   </div>
 
                   <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -462,34 +459,12 @@ const ApplicantViewProfile = () => {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '15px' }}>
                     <button
+                      className="cert-btn-primary"
                       onClick={() => handleDownloadCertificate(selectedCertificate)}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: '6px',
-                        border: 'none',
-                        background: 'linear-gradient(286deg, #FBBB5C 0%, #E66A0E 100%)',
-                        color: 'white',
-                        cursor: 'pointer',
-                        fontWeight: 600
-                      }}
                     >
                       Download PDF
-                    </button>
-                    <button
-                      onClick={() => setShowCertificateModal(false)}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: '6px',
-                        border: '2px solid #e66a0e',
-                        background: 'white',
-                        color: '#e66a0e',
-                        cursor: 'pointer',
-                        fontWeight: 600
-                      }}
-                    >
-                      Close
                     </button>
                   </div>
                 </div>

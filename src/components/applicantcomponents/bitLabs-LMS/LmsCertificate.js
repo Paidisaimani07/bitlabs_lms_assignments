@@ -206,10 +206,10 @@ const LmsCertificate = () => {
       {viewingCertificate && selectedCourse && (
         <div className="cert-modal-backdrop" onClick={handleCloseModal}>
           <div className="cert-modal-dialog" onClick={(e) => e.stopPropagation()}>
+            <button className="cert-modal-close-btn" onClick={handleCloseModal} aria-label="Close">×</button>
 
             <div className="cert-modal-header">
               <h3>{selectedCourse.courseName}</h3>
-              <button onClick={handleCloseModal}>✖</button>
             </div>
 
             <div className="cert-modal-body">
@@ -227,11 +227,9 @@ const LmsCertificate = () => {
             </div>
 
             <div className="cert-modal-footer">
-
-              <button onClick={() => handleDownloadCertificate(selectedCourse)}>
+              <button className="cert-btn-primary" onClick={() => handleDownloadCertificate(selectedCourse)}>
                 Download PDF
               </button>
-
             </div>
 
           </div>

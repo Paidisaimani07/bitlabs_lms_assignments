@@ -1001,7 +1001,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .cert-title {
   margin-top: 8px !important;
   font-size: 14px !important;
-  font-weight: 500 !important;
+  font-weight: bold !important;
+  text-transform: uppercase !important;
 }
 
 .cert-actions {
@@ -1096,26 +1097,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer !important;
   transition: transform 0.15s ease, filter 0.15s ease !important;
   padding: 0 !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  background: transparent !important;
   box-sizing: border-box !important;
+  box-shadow: none !important;
 }
 
 .cert-icon-btn img {
-  width: 24px !important;
-  height: 24px !important;
+  width: 36px !important;
+  height: 36px !important;
   object-fit: contain !important;
 }
 
 .cert-icon-btn.view-btn {
-  background: #ffffff !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .cert-icon-btn.download-btn {
-  background: #E66A0E !important; /* brand orange */
+  background: transparent !important;
   min-width: 46px !important;
   padding: 0 !important;
   transform: none !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: none !important;
 }
 
 .cert-icon-btn:hover {
@@ -1125,5 +1128,5 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .cert-icon-btn.download-btn:hover {
   transform: scale(1.08) !important;
-  background: #E66A0E !important;
+  background: transparent !important;
 }
